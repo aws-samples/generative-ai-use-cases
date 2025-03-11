@@ -17,7 +17,7 @@
     ]
   },
   "context": {
-    "env": "",
+    "env": "dev",
     "ragEnabled": false,
     "kendraIndexArn": null,
     "kendraDataSourceBucketName": null,
