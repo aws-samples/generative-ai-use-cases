@@ -21,6 +21,14 @@ const AuthWithUserpool: React.FC<Props> = (props) => {
         identityPoolId: import.meta.env.VITE_APP_IDENTITY_POOL_ID,
       },
     },
+    API: {
+      Events: {
+        // TODO
+        endpoint: `https://jiinfzwujrblvdthn7svyonbt4.appsync-api.ap-northeast-1.amazonaws.com/event`,
+        region: process.env.AWS_DEFAULT_REGION!,
+        defaultAuthMode: 'userPool',
+      },
+    },
   });
 
   I18n.putVocabularies(translations);

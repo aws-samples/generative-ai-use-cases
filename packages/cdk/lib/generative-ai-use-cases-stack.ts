@@ -15,6 +15,7 @@ import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { Agent } from 'generative-ai-use-cases';
 import { UseCaseBuilder } from './construct/use-case-builder';
+import { Events } from './construct/events';
 import { ProcessedStackInput } from './stack-input';
 
 export interface GenerativeAiUseCasesStackProps extends StackProps {
@@ -197,6 +198,11 @@ export class GenerativeAiUseCasesStack extends Stack {
       userPool: auth.userPool,
       idPool: auth.idPool,
       api: api.api,
+    });
+
+    // Events (for bidirectional communication)
+    new Events(this, 'Events', {
+      userPool: auth.userPool,
     });
 
     // Cfn Outputs
