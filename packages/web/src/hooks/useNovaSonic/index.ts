@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useCallback } from 'react';
 import { events } from 'aws-amplify/data';
 import { AudioPlayer } from './AudioPlayer';
 
-const MAX_AUDIO_CHUNKS_PER_BATCH = 5;
+// TODO
+const MAX_AUDIO_CHUNKS_PER_BATCH = 1;
 
 const arrayBufferToBase64 = (buffer: any) => {
   const binary = [];
@@ -17,8 +18,9 @@ const float32ArrayToInt16Array = (float32Array: Float32Array): Int16Array => {
   const int16Array = new Int16Array(float32Array.length);
   for (let i = 0; i < float32Array.length; i++) {
     // Float32を-32768から32767の範囲にスケーリング
-    const s = Math.max(-1, Math.min(1, float32Array[i]));
-    int16Array[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+    // const s = Math.max(-1, Math.min(1, float32Array[i]));
+    // int16Array[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+    int16Array[i] = Math.max(-1, Math.min(1, float32Array[i])) * 0x7FFF;
   }
   return int16Array;
 };
@@ -45,7 +47,7 @@ const base64ToFloat32Array = (base64String: string) => {
 };
 
 export const useNovaSonic = () => {
-  const [isRecording, setIsRecording] = useState(false);
+  const isRecording = useRef(false);
   const audioPlayerRef = useRef<any>(null);
   const channelRef = useRef<any>(null);
   const audioContextRef = useRef<any>(null);
@@ -86,8 +88,8 @@ export const useNovaSonic = () => {
     audioPlayerRef.current = audioPlayer;
   };
 
-  const processAudioInput = async () => {
-    if (isRecording) {
+  const processAudioInput = useCallback(async () => {
+    if (isRecording.current) {
       let processedChunks = 0;
       let combinedLength = 0;
 
@@ -114,20 +116,14 @@ export const useNovaSonic = () => {
         }
 
         const int16Array = float32ArrayToInt16Array(combinedBuffer);
-        const buffer = int16Array.buffer;
-        const bytes = new Uint8Array(buffer);
-        const base64Data = arrayBufferToBase64(bytes);
+        const base64Data = arrayBufferToBase64(int16Array.buffer);
 
         dispatchEvent('audioInput', base64Data);
       }
+
+      setTimeout(() => processAudioInput(), 0);
     }
-
-    setTimeout(() => processAudioInput(), 100);
-  };
-
-  useEffect(() => {
-    processAudioInput();
-  }, []);
+  }, [isRecording]);
 
   const connectToAppSync = async () => {
     audioInputQueue.current = [];
@@ -160,8 +156,6 @@ export const useNovaSonic = () => {
   const startRecording = async () => {
     await dispatchEvent('audioStart');
 
-    setIsRecording(true);
-
     const sourceNode = audioContextRef.current.createMediaStreamSource(audioStreamRef.current);
 
     if (audioContextRef.current.createScriptProcessor) {
@@ -184,9 +178,14 @@ export const useNovaSonic = () => {
       sourceNodeRef.current = sourceNode;
       processorRef.current = processor;
     }
+
+    isRecording.current = true;
+    processAudioInput();
   };
 
   const stopRecording = async () => {
+    isRecording.current = false;
+
     if (processorRef.current) {
       processorRef.current.disconnect();
       processorRef.current = null;
@@ -212,13 +211,11 @@ export const useNovaSonic = () => {
       audioContextRef.current = null;
     }
 
-    setIsRecording(false);
-
     await dispatchEvent('audioStop');
   };
 
   return {
-    isRecording,
+    isRecording: isRecording.current,
     startSession,
     startRecording,
     stopRecording,

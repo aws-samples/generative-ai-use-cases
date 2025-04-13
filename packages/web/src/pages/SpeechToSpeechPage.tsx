@@ -20,7 +20,7 @@ const SpeechToSpeech: React.FC = () => {
         </button>
       </div>
       <div>
-        isRecording: {isRecording}
+        isRecording: {isRecording.toString()}
       </div>
       <div>
         <button onClick={startRecording}>
