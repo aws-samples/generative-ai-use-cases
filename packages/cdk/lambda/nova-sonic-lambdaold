@@ -1,0 +1,538 @@
+import { Amplify } from 'aws-amplify';
+import { events } from 'aws-amplify/data';
+import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
+import {
+  BedrockRuntimeClient,
+  InvokeModelWithBidirectionalStreamCommand,
+  InvokeModelWithBidirectionalStreamInput,
+} from "@aws-sdk/client-bedrock-runtime";
+import { NodeHttp2Handler } from "@smithy/node-http-handler";
+import { randomUUID } from "crypto";
+
+// WebSocketをグローバルに設定（Lambda環境用）
+Object.assign(global, { WebSocket: require('ws') });
+
+// AppSync Events のチャンネル名
+const CHANNEL_NAME = '/default/nova-sonic';
+
+// Nova Sonic の設定
+const DEFAULT_INFERENCE_CONFIG = {
+  maxTokens: 1024,
+  topP: 0.9,
+  temperature: 0.7,
+};
+
+const DEFAULT_AUDIO_INPUT_CONFIG = {
+  audioType: "SPEECH",
+  encoding: "base64",
+  mediaType: "audio/lpcm",
+  sampleRateHertz: 16000,
+  sampleSizeBits: 16,
+  channelCount: 1,
+};
+
+const DEFAULT_AUDIO_OUTPUT_CONFIG = {
+  ...DEFAULT_AUDIO_INPUT_CONFIG,
+  sampleRateHertz: 24000,
+  voiceId: "tiffany",
+};
+
+const DEFAULT_TEXT_CONFIG = {
+  mediaType: "text/plain"
+};
+
+const DEFAULT_SYSTEM_PROMPT = "あなたは親切なAIアシスタントです。ユーザーの質問に簡潔に答えてください。";
+
+// セッション管理用のマップ
+const activeSessions = new Map();
+
+export const handler = async (event: any) => {
+  try {
+    console.log('Lambda function started');
+    console.log('Event:', JSON.stringify(event, null, 2));
+
+    // AppSync Events の設定
+    Amplify.configure(
+      {
+        API: {
+          Events: {
+            endpoint: `${process.env.EVENT_API_ENDPOINT!}/event`,
+            region: process.env.AWS_DEFAULT_REGION!,
+            defaultAuthMode: 'iam',
+          },
+        },
+      },
+      {
+        Auth: {
+          credentialsProvider: {
+            getCredentialsAndIdentityId: async () => {
+              const provider = fromNodeProviderChain();
+              const credentials = await provider();
+              return {
+                credentials,
+              };
+            },
+            clearCredentialsAndIdentityId: async () => {},
+          },
+        },
+      }
+    );
+
+    // Bedrock クライアントの初期化
+    const bedrockClient = new BedrockRuntimeClient({
+      region: 'us-east-1', // TODO
+      requestHandler: new NodeHttp2Handler({
+        requestTimeout: 300000,
+        sessionTimeout: 300000,
+      })
+    });
+
+    // AppSync Events に接続
+    console.log(`Connecting to AppSync Events channel: ${CHANNEL_NAME}`);
+    const appSyncChannel = await events.connect(CHANNEL_NAME);
+    console.log('Connected to AppSync Events!');
+
+    // AppSync Events からのメッセージ受信
+    appSyncChannel.subscribe({
+      next: async (data: any) => {
+        if (data.event?.type === 'ClientToAppSync') {
+          console.log('Received data from client:', data.event.data);
+
+          const clientData = data.event.data;
+          const sessionId = clientData.sessionId;
+
+          if (!sessionId) {
+            console.error('No sessionId provided in client data');
+            return;
+          }
+
+          // セッション開始アクション
+          if (clientData.action === 'startSession') {
+            console.log(`Starting new session: ${sessionId}`);
+            await startNovaSession(sessionId, bedrockClient, appSyncChannel);
+            return;
+          }
+
+          // 録音停止アクション
+          if (clientData.action === 'stopRecording') {
+            console.log(`Stopping recording for session: ${sessionId}`);
+            const session = activeSessions.get(sessionId);
+            if (session) {
+              await endAudioContent(session);
+            }
+            return;
+          }
+
+          // 音声データの処理
+          if (clientData.audioData) {
+            let session = activeSessions.get(sessionId);
+
+            // セッションがなければ新規作成
+            if (!session) {
+              console.log(`Creating new session for: ${sessionId}`);
+              session = await startNovaSession(sessionId, bedrockClient, appSyncChannel);
+            }
+
+            // 音声データをNova Sonicに送信
+            await streamAudioToNova(session, clientData.audioData);
+          }
+        }
+      },
+      error: (e: any) => {
+        console.error('Error in AppSync Events subscription:', e);
+      },
+    });
+
+    // 実際は Bedrock のデータ受信待ちで止まるが、ここでは仮の処理として sleep で止める
+    await new Promise(s => setTimeout(s, 15 * 60 * 1000)); // 15分待機
+
+    // クリーンアップ
+    console.log('Cleaning up sessions before exit');
+    for (const [sessionId, session] of activeSessions.entries()) {
+      try {
+        await closeSession(session);
+        console.log(`Closed session: ${sessionId}`);
+      } catch (err) {
+        console.error(`Error closing session ${sessionId}:`, err);
+      }
+    }
+
+    return { statusCode: 200, body: 'Lambda execution completed' };
+  } catch (error) {
+    console.error('Error in Lambda handler:', error);
+    return { statusCode: 500, body: 'Error in Lambda handler' };
+  }
+};
+
+// Nova Sonicセッションを開始する関数
+async function startNovaSession(sessionId: string, bedrockClient: BedrockRuntimeClient, appSyncChannel: any) {
+  console.log(`Initializing Nova Sonic session: ${sessionId}`);
+
+  // セッション情報を作成
+  const session = {
+    sessionId,
+    bedrockClient,
+    appSyncChannel,
+    promptName: randomUUID(),
+    audioContentId: randomUUID(),
+    queue: [],
+    isActive: true,
+    isPromptStartSent: false,
+    isAudioContentStartSent: false,
+    responseProcessor: null as any
+  };
+
+  // セッションを保存
+  activeSessions.set(sessionId, session);
+
+  try {
+    // Nova Sonicとの双方向ストリームを開始
+    await startNovaStream(session);
+    return session;
+  } catch (error) {
+    console.error(`Error in startNovaSession: ${error}`);
+    activeSessions.delete(sessionId);
+    throw error;
+  }
+}
+
+// Nova Sonicとの双方向ストリームを開始する関数
+async function startNovaStream(session: any) {
+  try {
+    console.log(`Starting bidirectional stream for session: ${session.sessionId}`);
+    
+    // 非同期イテレータを作成
+    const asyncIterable = createSessionAsyncIterable(session);
+    
+    // セッション開始イベントをキューに追加
+    addEventToQueue(session, {
+      event: {
+        sessionStart: {
+          inferenceConfiguration: DEFAULT_INFERENCE_CONFIG
+        }
+      }
+    });
+    
+    // プロンプト開始イベントをキューに追加
+    addEventToQueue(session, {
+      event: {
+        promptStart: {
+          promptName: session.promptName,
+          textOutputConfiguration: {
+            mediaType: "text/plain",
+          },
+          audioOutputConfiguration: DEFAULT_AUDIO_OUTPUT_CONFIG
+        }
+      }
+    });
+    session.isPromptStartSent = true;
+    
+    // システムプロンプトを設定
+    const textPromptID = randomUUID();
+    addEventToQueue(session, {
+      event: {
+        contentStart: {
+          promptName: session.promptName,
+          contentName: textPromptID,
+          type: "TEXT",
+          interactive: true,
+          role: "SYSTEM",
+          textInputConfiguration: DEFAULT_TEXT_CONFIG,
+        },
+      }
+    });
+    
+    addEventToQueue(session, {
+      event: {
+        textInput: {
+          promptName: session.promptName,
+          contentName: textPromptID,
+          content: DEFAULT_SYSTEM_PROMPT,
+        },
+      }
+    });
+    
+    addEventToQueue(session, {
+      event: {
+        contentEnd: {
+          promptName: session.promptName,
+          contentName: textPromptID,
+        },
+      }
+    });
+
+    // 音声入力開始イベントをキューに追加
+    addEventToQueue(session, {
+      event: {
+        contentStart: {
+          promptName: session.promptName,
+          contentName: session.audioContentId,
+          type: "AUDIO",
+          interactive: true,
+          role: "USER",
+          audioInputConfiguration: DEFAULT_AUDIO_INPUT_CONFIG,
+        },
+      }
+    });
+    session.isAudioContentStartSent = true;
+
+    // Bedrock Nova Sonicとの双方向ストリームを開始
+    console.log(`Invoking Bedrock model for session ${session.sessionId}`);
+    const response = await session.bedrockClient.send(
+      new InvokeModelWithBidirectionalStreamCommand({
+        modelId: "amazon.nova-sonic-v1:0",
+        body: asyncIterable,
+      })
+    );
+
+    console.log(`Stream established for session ${session.sessionId}, processing responses...`);
+
+    // レスポンスの処理
+    session.responseProcessor = processResponseStream(session, response);
+  } catch (error) {
+    console.error(`Error starting Nova stream for session ${session.sessionId}:`, error);
+    await closeSession(session);
+    throw error;
+  }
+}
+
+// Nova Sonicからのレスポンスを処理する関数
+async function processResponseStream(session: any, response: any) {
+  try {
+    console.log(`Starting to process response stream for session ${session.sessionId}`);
+    for await (const event of response.body) {
+      if (!session.isActive) {
+        console.log(`Session ${session.sessionId} is no longer active, stopping response processing`);
+        break;
+      }
+
+      if (event.chunk?.bytes) {
+        try {
+          const textResponse = new TextDecoder().decode(event.chunk.bytes);
+          console.log(`Received response from Nova Sonic for session ${session.sessionId}: ${textResponse.substring(0, 100)}...`);
+
+          try {
+            const jsonResponse = JSON.parse(textResponse);
+
+            // 音声出力イベントの処理
+            if (jsonResponse.event?.audioOutput) {
+              console.log(`Received audio output for session ${session.sessionId} ${jsonResponse.event.audioOutput.content}`);
+
+              // AppSync Eventsを通じてクライアントに音声データを送信
+              try {
+                await session.appSyncChannel.publish({
+                  type: 'BedrockToAppSync',
+                  data: {
+                    sessionId: session.sessionId,
+                    audioData: jsonResponse.event.audioOutput.content,
+                    timestamp: Date.now()
+                  }
+                });
+                console.log(`Sent audio data to client for session ${session.sessionId}`);
+              } catch (error) {
+                console.error(`Error sending audio data to client for session ${session.sessionId}:`, error);
+              }
+            }
+            
+            // テキスト出力イベントの処理
+            if (jsonResponse.event?.textOutput) {
+              console.log(`Received text output for session ${session.sessionId}: ${jsonResponse.event.textOutput.content}`);
+            }
+            
+            // その他のイベントの処理
+            if (jsonResponse.event?.contentStart) {
+              console.log(`Received contentStart event for session ${session.sessionId}: ${JSON.stringify(jsonResponse.event.contentStart)}`);
+            } else if (jsonResponse.event?.contentEnd) {
+              console.log(`Received contentEnd event for session ${session.sessionId}: ${JSON.stringify(jsonResponse.event.contentEnd)}`);
+            } else if (jsonResponse.event?.promptEnd) {
+              console.log(`Received promptEnd event for session ${session.sessionId}: ${JSON.stringify(jsonResponse.event.promptEnd)}`);
+            } else if (jsonResponse.event?.sessionEnd) {
+              console.log(`Received sessionEnd event for session ${session.sessionId}`);
+              // セッションが終了した場合は、セッションを閉じる
+              await closeSession(session);
+            } else {
+              // その他のイベント
+              const eventKeys = Object.keys(jsonResponse.event || {});
+              if (eventKeys.length > 0) {
+                console.log(`Received other event for session ${session.sessionId}: ${eventKeys.join(', ')}`);
+              }
+            }
+          } catch (e) {
+            console.error(`Error parsing response for session ${session.sessionId}:`, e);
+          }
+        } catch (e) {
+          console.error(`Error processing response chunk for session ${session.sessionId}:`, e);
+        }
+      } else if (event.modelStreamErrorException) {
+        console.error(`Model stream error for session ${session.sessionId}:`, event.modelStreamErrorException);
+      } else if (event.internalServerException) {
+        console.error(`Internal server error for session ${session.sessionId}:`, event.internalServerException);
+      }
+    }
+    
+    console.log(`Response stream processing complete for session ${session.sessionId}`);
+  } catch (error) {
+    console.error(`Error processing response stream for session ${session.sessionId}:`, error);
+  }
+}
+
+// 音声データをNova Sonicに送信する関数
+async function streamAudioToNova(session: any, base64AudioData: string) {
+  if (!session.isActive || !session.isAudioContentStartSent) {
+    console.log(`Cannot stream audio: Session ${session.sessionId} not active or audio content not started`);
+    return;
+  }
+  
+  console.log(`Streaming audio chunk to Nova Sonic for session ${session.sessionId}`);
+  
+  // 音声データイベントをキューに追加
+  addEventToQueue(session, {
+    event: {
+      audioInput: {
+        promptName: session.promptName,
+        contentName: session.audioContentId,
+        content: base64AudioData,
+      },
+    }
+  });
+}
+
+// 音声入力を終了する関数
+async function endAudioContent(session: any) {
+  if (!session.isActive || !session.isAudioContentStartSent) {
+    console.log(`Cannot end audio content: Session ${session.sessionId} not active or audio content not started`);
+    return;
+  }
+  
+  console.log(`Ending audio content for session ${session.sessionId}`);
+  
+  try {
+    // 音声コンテンツ終了イベントをキューに追加
+    addEventToQueue(session, {
+      event: {
+        contentEnd: {
+          promptName: session.promptName,
+          contentName: session.audioContentId,
+        }
+      }
+    });
+    
+    // 少し待機して、音声コンテンツ終了イベントが処理されるのを待つ
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // プロンプト終了イベントをキューに追加
+    addEventToQueue(session, {
+      event: {
+        promptEnd: {
+          promptName: session.promptName
+        }
+      }
+    });
+    
+    // 少し待機して、プロンプト終了イベントが処理されるのを待つ
+    await new Promise(resolve => setTimeout(resolve, 500));
+  } catch (error) {
+    console.error(`Error ending audio content for session ${session.sessionId}:`, error);
+  }
+}
+
+// セッションを閉じる関数
+async function closeSession(session: any) {
+  if (!session || !session.isActive) {
+    if (session) {
+      console.log(`Session ${session.sessionId} already closed`);
+    }
+    return;
+  }
+  
+  console.log(`Closing session ${session.sessionId}`);
+  
+  try {
+    // 音声コンテンツが開始されていれば終了
+    if (session.isAudioContentStartSent) {
+      await endAudioContent(session);
+    }
+    
+    // セッション終了イベントをキューに追加
+    addEventToQueue(session, {
+      event: {
+        sessionEnd: {}
+      }
+    });
+    
+    // 少し待機して、セッション終了イベントが処理されるのを待つ
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // セッションを非アクティブにする
+    session.isActive = false;
+    
+    // アクティブセッションから削除
+    activeSessions.delete(session.sessionId);
+    
+    console.log(`Session ${session.sessionId} closed`);
+  } catch (error) {
+    console.error(`Error closing session ${session.sessionId}:`, error);
+    
+    // エラーが発生しても確実にセッションを閉じる
+    session.isActive = false;
+    activeSessions.delete(session.sessionId);
+  }
+}
+
+// イベントをセッションのキューに追加する関数
+function addEventToQueue(session: any, event: any) {
+  if (!session || !session.isActive) return;
+  
+  session.queue.push(event);
+  console.log(`Added event to queue for session ${session.sessionId}: ${JSON.stringify(event).substring(0, 100)}...`);
+}
+
+// セッション用の非同期イテレータを作成する関数
+function createSessionAsyncIterable(session: any): AsyncIterable<InvokeModelWithBidirectionalStreamInput> {
+  return {
+    [Symbol.asyncIterator]: () => {
+      console.log(`Creating async iterator for session ${session.sessionId}`);
+
+      return {
+        next: async (): Promise<IteratorResult<InvokeModelWithBidirectionalStreamInput>> => {
+          try {
+            // セッションがアクティブでなければ終了
+            if (!session || !session.isActive) {
+              console.log(`Session ${session?.sessionId} is not active, iterator done`);
+              return { value: undefined, done: true };
+            }
+
+            // キューが空なら待機
+            while (session.queue.length === 0 && session.isActive) {
+              await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            // セッションが非アクティブになっていれば終了
+            if (!session.isActive) {
+              return { value: undefined, done: true };
+            }
+
+            // キューからイベントを取得
+            const nextEvent = session.queue.shift();
+            console.log(`Sending event to Nova Sonic: ${JSON.stringify(nextEvent).substring(0, 100)}...`);
+
+            return {
+              value: {
+                chunk: {
+                  bytes: new TextEncoder().encode(JSON.stringify(nextEvent))
+                }
+              },
+              done: false
+            };
+          } catch (error) {
+            console.error(`Error in session ${session?.sessionId} iterator:`, error);
+            if (session) {
+              session.isActive = false;
+            }
+            return { value: undefined, done: true };
+          }
+        }
+      };
+    }
+  };
+}

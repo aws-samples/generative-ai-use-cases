@@ -1,12 +1,11 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { events } from 'aws-amplify/data';
 
-// AppSync Events のチャンネル名
-const CHANNEL_NAME = '/default/nova-sonic';
+const CHANNEL_NAME = '/default/dummy-session';
 
 // バッファリング設定
-const MAX_QUEUE_SIZE = 200; // 最大キューサイズを小さくする
-const MAX_CHUNKS_PER_BATCH = 5; // 一度に処理する最大チャンク数を減らす
+// const MAX_QUEUE_SIZE = 200; // 最大キューサイズを小さくする
+// const MAX_CHUNKS_PER_BATCH = 5; // 一度に処理する最大チャンク数を減らす
 
 // 音声データの変換ユーティリティ
 const convertFloat32ToInt16 = (float32Array: Float32Array): Int16Array => {
@@ -20,13 +19,13 @@ const convertFloat32ToInt16 = (float32Array: Float32Array): Int16Array => {
 };
 
 export const useNovaSonic = () => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-  
+  // const [isConnected, setIsConnected] = useState(false);
+  // const [isRecording, setIsRecording] = useState(false);
+  // const [isPlaying, setIsPlaying] = useState(false);
+  // const [error, setError] = useState<Error | null>(null);
+
   // refs
-  const channelRef = useRef<any>(null);
+  // const channelRef = useRef<any>(null);
   // 録音用と再生用に別々のAudioContextを使用
   const recordingContextRef = useRef<AudioContext | null>(null); // 16000Hz
   const playbackContextRef = useRef<AudioContext | null>(null);  // 24000Hz
@@ -37,7 +36,7 @@ export const useNovaSonic = () => {
   const analyserNodeRef = useRef<AnalyserNode | null>(null);
   const sessionIdRef = useRef<string>(crypto.randomUUID());
   const recordingParamRef = useRef<AudioParam | null>(null);
-  
+
   // バッファリング用のrefs
   const audioBufferQueueRef = useRef<Float32Array[]>([]);
   const isProcessingAudioRef = useRef<boolean>(false);
@@ -115,9 +114,9 @@ export const useNovaSonic = () => {
           binary += String.fromCharCode(bytes[i]);
         }
         const base64Data = btoa(binary);
-        
-        console.log(`Sending buffered audio data, chunks: ${chunksToProcess.length}, total samples: ${combinedLength}`);
-        
+
+        console.log(`Sending buffered audio data ${base64Data}`);
+
         // AppSync Events経由でLambdaに送信
         try {
           await channelRef.current.publish({
@@ -128,7 +127,7 @@ export const useNovaSonic = () => {
               timestamp: Date.now()
             }
           });
-          
+
           console.log('Buffered audio data sent successfully');
         } catch (publishError) {
           console.error('Failed to publish audio data:', publishError);
@@ -173,6 +172,9 @@ export const useNovaSonic = () => {
           latencyHint: 'interactive'
         });
         
+        console.log('Recording context sample rate:', recordingContextRef.current.sampleRate);
+        console.log('Playback context sample rate:', playbackContextRef.current.sampleRate);
+        
         console.log('Loading audio worklets...');
         
         // Audio Workletの登録 - 完全なURLを使用
@@ -212,48 +214,58 @@ export const useNovaSonic = () => {
         channelRef.current = channel;
         setIsConnected(true);
         console.log('Connected to AppSync Events');
-        
+
         // バッファをクリア
         audioBufferQueueRef.current = [];
         isProcessingAudioRef.current = false;
-        
+
         // AppSync Eventsからのメッセージ受信
         channel.subscribe({
           next: (data: any) => {
             if (data.event?.type === 'BedrockToAppSync' && data.event?.data) {
+              // セッションIDをチェックして、自分宛のメッセージのみ処理
+              if (data.event.data.sessionId !== sessionIdRef.current) {
+                console.log(`Ignoring message for different session: ${data.event.data.sessionId}`);
+                return;
+              }
+
               console.log('Received audio data from Bedrock');
-              
+
               // 受信した音声データを再生
               if (data.event.data.audioData && audioWorkletNodeRef.current) {
                 try {
+                  console.log(`Received audio data from Bedrock, processing for playback ${data.event.data.audioData}`);
+
                   // Base64エンコードされた音声データをデコード
                   const binaryData = atob(data.event.data.audioData);
                   const bytes = new Uint8Array(binaryData.length);
                   for (let i = 0; i < binaryData.length; i++) {
                     bytes[i] = binaryData.charCodeAt(i);
                   }
-                  
+
                   // PCM音声データをFloat32Arrayに変換
                   const int16Data = new Int16Array(bytes.buffer);
                   const float32Data = new Float32Array(int16Data.length);
                   for (let i = 0; i < int16Data.length; i++) {
                     float32Data[i] = int16Data[i] / 32768.0;
                   }
-                  
+
+                  console.log(`Processing audio data: length=${float32Data.length}, sample rate=${playbackContextRef.current?.sampleRate || 'unknown'}`);
+
                   // 再生用AudioContextの状態を確認して再開
                   if (playbackContextRef.current && playbackContextRef.current.state === 'suspended') {
                     playbackContextRef.current.resume();
                     console.log('Playback AudioContext resumed, state:', playbackContextRef.current.state);
                   }
-                  
+
                   // 音声データをWorkletに送信
                   audioWorkletNodeRef.current.port.postMessage({
                     type: 'audio',
                     audioData: float32Data
                   });
-                  
+
                   setIsPlaying(true);
-                  
+
                   // 再生状態を一定時間後に更新
                   setTimeout(() => {
                     setIsPlaying(false);
@@ -276,26 +288,26 @@ export const useNovaSonic = () => {
         setIsConnected(false);
       }
     };
-    
+
     // 初期化処理を実行
     initializeAudio().then(connectToAppSync);
-    
+
     // クリーンアップ関数
     return () => {
       console.log('Cleaning up Nova Sonic hook');
-      
+
       // バッファをクリア
       if (audioBufferQueueRef.current.length > 0) {
         console.log(`Clearing audio buffer queue with ${audioBufferQueueRef.current.length} items`);
         audioBufferQueueRef.current = [];
       }
-      
+
       // マイクストリームの停止
       if (micStreamRef.current) {
         micStreamRef.current.getTracks().forEach(track => track.stop());
         micStreamRef.current = null;
       }
-      
+
       // AudioWorkletNodeの切断
       if (audioWorkletNodeRef.current) {
         audioWorkletNodeRef.current.disconnect();
@@ -516,14 +528,14 @@ export const useNovaSonic = () => {
       console.error('Cannot start new session: Not connected to AppSync Events');
       return;
     }
-    
+
     // バッファをクリア
     audioBufferQueueRef.current = [];
     isProcessingAudioRef.current = false;
-    
+
     sessionIdRef.current = crypto.randomUUID();
     console.log(`Started new session with ID: ${sessionIdRef.current}`);
-    
+
     // 新しいセッション開始を通知
     channelRef.current.publish({
       type: 'ClientToAppSync',
@@ -538,7 +550,7 @@ export const useNovaSonic = () => {
       console.error('Failed to send start session notification:', err);
     });
   }, [isConnected]);
-  
+
   return {
     isConnected,
     isRecording,
@@ -547,6 +559,41 @@ export const useNovaSonic = () => {
     startRecording,
     stopRecording,
     startNewSession,
-    sessionId: sessionIdRef.current
+    sessionId: sessionIdRef.current,
+    // getDebugInfo
   };
 };
+
+// デバッグ情報を取得する関数
+// const getDebugInfo = useCallback(() => {
+//   if (audioWorkletNodeRef.current) {
+//     console.log('Requesting debug info from audio worklet');
+//     audioWorkletNodeRef.current.port.postMessage({
+//       type: 'debug'
+//     });
+//   }
+// }, []);
+//  
+// // 定期的にデバッグ情報を取得
+// useEffect(() => {
+//   if (isPlaying && audioWorkletNodeRef.current) {
+//     const debugInterval = setInterval(() => {
+//       getDebugInfo();
+//     }, 5000);
+//     
+//     return () => {
+//       clearInterval(debugInterval);
+//     };
+//   }
+// }, [isPlaying, getDebugInfo]);
+//  
+// // AudioWorkletからのデバッグ情報を受信
+// useEffect(() => {
+//   if (audioWorkletNodeRef.current) {
+//     audioWorkletNodeRef.current.port.onmessage = (event) => {
+//       if (event.data.type === 'debug-info') {
+//         console.log('Debug info from audio worklet:', event.data);
+//       }
+//     };
+//   }
+// }, []);

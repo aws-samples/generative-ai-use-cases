@@ -1,13 +1,13 @@
 // Audio sample buffer to minimize reallocations
 class ExpandableBuffer {
   constructor() {
-    // Start with one second's worth of buffered audio capacity
+    // Start with one second's worth of buffered audio capacity at 24000Hz
     this.buffer = new Float32Array(24000);
     this.readIndex = 0;
     this.writeIndex = 0;
     this.underflowedSamples = 0;
     this.isInitialBuffering = true;
-    this.initialBufferLength = 24000;  // One second
+    this.initialBufferLength = 4800;  // 200ms buffer for faster start
     this.lastWriteTime = 0;
   }
 
@@ -86,11 +86,11 @@ class AudioPlayerProcessor extends AudioWorkletProcessor {
   constructor() {
     super();
     this.playbackBuffer = new ExpandableBuffer();
-    console.log('[AudioWorklet] AudioPlayerProcessor initialized');
-    
+    console.log(`[AudioWorklet] AudioPlayerProcessor initialized with sampleRate: ${sampleRate}`);
+
     this.port.onmessage = (event) => {
       console.log('[AudioWorklet] Player received message:', event.data);
-      
+
       if (event.data.type === "audio") {
         console.log('[AudioWorklet] Received audio data for playback, length:', event.data.audioData.length);
         this.playbackBuffer.write(event.data.audioData);
@@ -106,7 +106,7 @@ class AudioPlayerProcessor extends AudioWorkletProcessor {
         this.playbackBuffer.clearBuffer();
       }
     };
-    
+
     // 初期化完了を通知
     this.port.postMessage({
       type: 'init',

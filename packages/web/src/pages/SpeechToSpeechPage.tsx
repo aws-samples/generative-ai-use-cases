@@ -3,8 +3,8 @@ import { useNovaSonic } from '../hooks/useNovaSonic';
 
 const SpeechToSpeech: React.FC = () => {
   const {
-    isConnected,
-    startNewSession,
+    isRecording,
+    startSession,
     startRecording,
     stopRecording,
   } = useNovaSonic();
@@ -13,12 +13,14 @@ const SpeechToSpeech: React.FC = () => {
     <div>
       <h1>Speech To Speech</h1>
       <div>
-        isConnected: {isConnected.toString()}
       </div>
       <div>
-        <button onClick={startNewSession}>
-          Start New Session
+        <button onClick={startSession}>
+          Start Session
         </button>
+      </div>
+      <div>
+        isRecording: {isRecording}
       </div>
       <div>
         <button onClick={startRecording}>

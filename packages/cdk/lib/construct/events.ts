@@ -39,6 +39,7 @@ export class Events extends Construct {
 
     const lambda = new NodejsFunction(this, 'NovaSonic', {
       runtime: Runtime.NODEJS_LATEST,
+      // TODO: change filename
       entry: './lambda/nova-sonic-lambda.ts',
       timeout: Duration.minutes(15),
       environment: {
@@ -47,6 +48,7 @@ export class Events extends Construct {
       bundling: {
         nodeModules: ['@aws-sdk/client-bedrock-runtime'],
       },
+      memorySize: 512,
     });
 
     eventApi.grantConnect(lambda);
