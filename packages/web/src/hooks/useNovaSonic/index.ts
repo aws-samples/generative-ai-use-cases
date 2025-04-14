@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react';
+import { useRef, useState } from 'react';
 import { events, EventsChannel } from 'aws-amplify/data';
 import { AudioPlayer } from './AudioPlayer';
 import { v4 as uuid } from 'uuid';
@@ -48,8 +48,8 @@ const base64ToFloat32Array = (base64String: string) => {
 
 export const useNovaSonic = () => {
   const api = useHttp();
-  const isActive = useRef(false);
-  const isLoading = useRef(false);
+  const [isActive, setIsActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const audioPlayerRef = useRef<AudioPlayer | null>(null);
   const channelRef = useRef<EventsChannel | null>(null);
   const audioContextRef = useRef<any>(null);
@@ -90,28 +90,26 @@ export const useNovaSonic = () => {
     audioPlayerRef.current = audioPlayer;
   };
 
-  const processAudioInput = useCallback(async () => {
-    if (isActive.current) {
-      if (audioInputQueue.current.length > MIN_AUDIO_CHUNKS_PER_BATCH) {
-        const chunksToProcess: string[] = [];
+  const processAudioInput = async () => {
+    if (audioInputQueue.current.length > MIN_AUDIO_CHUNKS_PER_BATCH) {
+      const chunksToProcess: string[] = [];
 
-        let processedChunks = 0;
+      let processedChunks = 0;
 
-        while (audioInputQueue.current.length > 0 && processedChunks < MAX_AUDIO_CHUNKS_PER_BATCH) {
-          const chunk = audioInputQueue.current.shift();
+      while (audioInputQueue.current.length > 0 && processedChunks < MAX_AUDIO_CHUNKS_PER_BATCH) {
+        const chunk = audioInputQueue.current.shift();
 
-          if (chunk) {
-            chunksToProcess.push(chunk);
-            processedChunks += 1;
-          }
+        if (chunk) {
+          chunksToProcess.push(chunk);
+          processedChunks += 1;
         }
-
-        dispatchEvent('audioInput', chunksToProcess);
       }
 
-      setTimeout(() => processAudioInput(), 0);
+      await dispatchEvent('audioInput', chunksToProcess);
     }
-  }, [isActive]);
+
+    setTimeout(() => processAudioInput(), 0);
+  }
 
   const connectToAppSync = async () => {
     audioInputQueue.current = [];
@@ -128,11 +126,11 @@ export const useNovaSonic = () => {
           if (event.event === 'ready') {
             console.log('Now ready to speech-to-speech!');
             startRecording().then(() => {
-              isLoading.current = false;
+              setIsLoading(false);
             });
           } else if (event.event === 'end') {
             console.log('Received "end" event');
-            if (isActive.current) {
+            if (isActive) {
               console.log('Close the session');
               closeSession();
             }
@@ -182,13 +180,13 @@ export const useNovaSonic = () => {
       processorRef.current = processor;
     }
 
-    isActive.current = true;
+    setIsActive(true);
 
     processAudioInput();
   };
 
   const stopRecording = async () => {
-    isActive.current = false;
+    setIsActive(false);
 
     if (processorRef.current) {
       processorRef.current.disconnect();
@@ -219,11 +217,11 @@ export const useNovaSonic = () => {
   };
 
   const startSession = async () => {
-    if (isActive.current || isLoading.current) {
+    if (isActive || isLoading) {
       return;
     }
 
-    isLoading.current = true;
+    setIsLoading(true);
 
     await connectToAppSync();
     await initAudio();
@@ -232,13 +230,13 @@ export const useNovaSonic = () => {
   const closeSession = async () => {
     await stopRecording();
 
-    isActive.current = false;
-    isLoading.current = false;
+    setIsActive(false);
+    setIsLoading(false);
   };
 
   return {
-    isActive: isActive.current,
-    isLoading: isLoading.current,
+    isActive,
+    isLoading,
     startSession,
     closeSession,
   }

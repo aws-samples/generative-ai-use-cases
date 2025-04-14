@@ -393,11 +393,16 @@ export const handler = async (event: { channelId: string }) => {
             enqueueSessionEnd();
 
             if (channel) {
-              await channel.publish({
-                direction: 'btoc',
-                event: 'end',
-              });
-              channel.close();
+              try {
+                await channel.publish({
+                  direction: 'btoc',
+                  event: 'end',
+                });
+                channel.close();
+              } catch (e) {
+                console.error(e);
+                throw e;
+              }
             }
           }
         }
@@ -446,6 +451,7 @@ export const handler = async (event: { channelId: string }) => {
           direction: 'btoc',
           event: 'end',
         });
+        channel.close();
       } catch (e) {
         console.error(e);
       }
