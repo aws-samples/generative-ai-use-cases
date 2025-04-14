@@ -130,6 +130,12 @@ export const useNovaSonic = () => {
             startRecording().then(() => {
               isLoading.current = false;
             });
+          } else if (event.event === 'end') {
+            console.log('Received "end" event');
+            if (isActive.current) {
+              console.log('Close the session');
+              closeSession();
+            }
           } else if (event.event === 'audioOutput' && audioPlayerRef.current) {
             const chunks: string[] = event.data;
 
@@ -153,6 +159,8 @@ export const useNovaSonic = () => {
   };
 
   const startRecording = async () => {
+    await dispatchEvent('promptStart');
+    await dispatchEvent('systemPrompt', 'You are an AI assistant');
     await dispatchEvent('audioStart');
 
     const sourceNode = audioContextRef.current.createMediaStreamSource(audioStreamRef.current);
@@ -211,13 +219,21 @@ export const useNovaSonic = () => {
   };
 
   const startSession = async () => {
+    if (isActive.current || isLoading.current) {
+      return;
+    }
+
     isLoading.current = true;
+
     await connectToAppSync();
     await initAudio();
   };
 
   const closeSession = async () => {
     await stopRecording();
+
+    isActive.current = false;
+    isLoading.current = false;
   };
 
   return {

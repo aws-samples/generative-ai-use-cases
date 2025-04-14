@@ -75,7 +75,7 @@ const enqueuePromptStart = () => {
   });
 };
 
-const enqueueSystemPrompt = () => {
+const enqueueSystemPrompt = (prompt: string) => {
   const contentName = randomUUID();
 
   eventQueue.push({
@@ -98,7 +98,7 @@ const enqueueSystemPrompt = () => {
       textInput: {
         promptName,
         contentName,
-        content: 'You are the AI assistant',
+        content: prompt,
       },
     }
   });
@@ -172,7 +172,7 @@ const enqueueAudioStop = () => {
 };
 
 const enqueueAudioInput = (audioInputBase64Array: string[]) => {
-  if (!isAudioStarted) {
+  if (!isAudioStarted || !isActive) {
     return;
   }
 
@@ -314,7 +314,9 @@ const processResponseStream = async (channel: EventsChannel, response: any) => {
   }
 };
 
-export const handler = async (event: { channel: string }) => {
+export const handler = async (event: { channelId: string }) => {
+  let channel: EventsChannel | null = null;
+
   try {
     console.log('event', event);
 
@@ -323,6 +325,8 @@ export const handler = async (event: { channel: string }) => {
     isActive = true;
 
     promptName = randomUUID();
+
+    console.log('promptName', promptName);
 
     const bedrock = new BedrockRuntimeClient({
       region: 'us-east-1', // TODO
@@ -333,6 +337,8 @@ export const handler = async (event: { channel: string }) => {
         maxConcurrentStreams: 1,
       }),
     });
+
+    console.log('Bedrock client initialized');
 
     Amplify.configure(
       {
@@ -360,13 +366,22 @@ export const handler = async (event: { channel: string }) => {
       }
     );
 
-    const channel = await events.connect(`/${process.env.NAMESPACE}/${event.channel}`);
+    console.log('Amplify configured');
+    console.log(`Connect to the channel /${process.env.NAMESPACE}/${event.channelId}`)
+
+    channel = await events.connect(`/${process.env.NAMESPACE}/${event.channelId}`);
+
+    console.log('Connected!');
 
     channel.subscribe({
       next: async (data: any) => {
         const event = data?.event;
         if (event && event.direction === 'ctob') {
-          if (event.event === 'audioStart') {
+          if (event.event === 'promptStart') {
+            enqueuePromptStart();
+          } else if (event.event === 'systemPrompt') {
+            enqueueSystemPrompt(event.data);
+          } else if (event.event === 'audioStart') {
             enqueueAudioStart();
           } else if (event.event === 'audioInput') {
             enqueueAudioInput(event.data);
@@ -376,18 +391,40 @@ export const handler = async (event: { channel: string }) => {
             enqueueAudioStop();
             enqueuePromptEnd();
             enqueueSessionEnd();
-            channel.close();
+
+            if (channel) {
+              await channel.publish({
+                direction: 'btoc',
+                event: 'end',
+              });
+              channel.close();
+            }
           }
         }
       },
       error: console.error,
     });
 
+    console.log('Subscribed to the channel');
+
     enqueueSessionStart();
-    enqueuePromptStart();
-    enqueueSystemPrompt();
+
+    // Without this sleep, the error below is raised
+    // "Subscription has not been initialized"
+    console.log('Sleep...');
+    await new Promise(s => setTimeout(s, 1000));
+
+    // Notify the status to the client
+    await channel.publish({
+      direction: 'btoc',
+      event: 'ready',
+    });
+
+    console.log('I\'m ready');
 
     const asyncIterator = createAsyncIterator();
+
+    console.log('Async iterator created');
 
     const response = await bedrock.send(
       new InvokeModelWithBidirectionalStreamCommand({
@@ -396,17 +433,24 @@ export const handler = async (event: { channel: string }) => {
       }),
     );
 
-    // Notify the status to the client
-    await channel.publish({
-      direction: 'btoc',
-      event: 'ready',
-    });
+    console.log('Bidirectional stream command sent');
 
     // Start response stream
     await processResponseStream(channel, response);
   } catch (e) {
     console.error(e);
   } finally {
+    if (channel) {
+      try {
+        channel.publish({
+          direction: 'btoc',
+          event: 'end',
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     initialize();
     console.log('Session ended. Every parameters are initialized.');
   }

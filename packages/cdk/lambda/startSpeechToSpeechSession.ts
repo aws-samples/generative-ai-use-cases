@@ -15,7 +15,7 @@ export const handler = async (
     await lambda.send(new InvokeCommand({
       FunctionName: process.env.SPEECH_TO_SPEECH_TASK_FUNCTION_ARN,
       InvocationType: InvocationType.Event,
-      Payload: JSON.stringify({ channel }),
+      Payload: JSON.stringify({ channelId: channel }),
     }));
 
     return {
