@@ -9,13 +9,13 @@ import {
   RagKnowledgeBase,
   Transcribe,
   CommonWebAcl,
+  SpeechToSpeech,
 } from './construct';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { Agent } from 'generative-ai-use-cases';
 import { UseCaseBuilder } from './construct/use-case-builder';
-import { Events } from './construct/events';
 import { ProcessedStackInput } from './stack-input';
 
 export interface GenerativeAiUseCasesStackProps extends StackProps {
@@ -107,6 +107,13 @@ export class GenerativeAiUseCasesStack extends Stack {
       });
     }
 
+    // SpeechToSpeech (for bidirectional communication)
+    const speechToSpeech = new SpeechToSpeech(this, 'SpeechToSpeech', {
+      envSuffix: params.env,
+      api: api.api,
+      userPool: auth.userPool,
+    });
+
     // Web Frontend
     const web = new Web(this, 'Api', {
       // Auth
@@ -136,6 +143,8 @@ export class GenerativeAiUseCasesStack extends Stack {
       agentNames: api.agentNames,
       inlineAgents: params.inlineAgents,
       useCaseBuilderEnabled: params.useCaseBuilderEnabled,
+      speechToSpeechNamespace: speechToSpeech.namespace,
+      speechToSpeechEventApiEndpoint: speechToSpeech.eventApiEndpoint,
       // Frontend
       hiddenUseCases: params.hiddenUseCases,
       // Custom Domain
@@ -198,11 +207,6 @@ export class GenerativeAiUseCasesStack extends Stack {
       userPool: auth.userPool,
       idPool: auth.idPool,
       api: api.api,
-    });
-
-    // Events (for bidirectional communication)
-    new Events(this, 'Events', {
-      userPool: auth.userPool,
     });
 
     // Cfn Outputs
@@ -310,6 +314,14 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     new CfnOutput(this, 'HiddenUseCases', {
       value: JSON.stringify(params.hiddenUseCases),
+    });
+
+    new CfnOutput(this, 'SpeechToSpeechNamespace', {
+      value: speechToSpeech.namespace,
+    });
+
+    new CfnOutput(this, 'SpeechToSpeechEventApiEndpoint', {
+      value: speechToSpeech.eventApiEndpoint,
     });
 
     this.userPool = auth.userPool;

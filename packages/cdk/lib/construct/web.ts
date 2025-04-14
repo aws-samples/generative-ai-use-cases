@@ -47,6 +47,8 @@ export interface WebProps {
   hostedZoneId?: string | null;
   useCaseBuilderEnabled: boolean;
   hiddenUseCases: HiddenUseCases;
+  speechToSpeechNamespace: string;
+  speechToSpeechEventApiEndpoint: string;
 }
 
 export class Web extends Construct {
@@ -197,6 +199,8 @@ export class Web extends Construct {
         VITE_APP_USE_CASE_BUILDER_ENABLED:
           props.useCaseBuilderEnabled.toString(),
         VITE_APP_HIDDEN_USE_CASES: JSON.stringify(props.hiddenUseCases),
+        VITE_APP_SPEECH_TO_SPEECH_NAMESPACE: props.speechToSpeechNamespace,
+        VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT: props.speechToSpeechEventApiEndpoint,
       },
     });
     // Enhance computing resources

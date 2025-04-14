@@ -1,11 +1,14 @@
 import { useRef, useCallback } from 'react';
-import { events } from 'aws-amplify/data';
+import { events, EventsChannel } from 'aws-amplify/data';
 import { AudioPlayer } from './AudioPlayer';
+import { v4 as uuid } from 'uuid';
+import useHttp from '../../hooks/useHttp';
 
-// TODO
-const MAX_AUDIO_CHUNKS_PER_BATCH = 1;
+const NAMESPACE = import.meta.env.VITE_APP_SPEECH_TO_SPEECH_NAMESPACE!;
+const MIN_AUDIO_CHUNKS_PER_BATCH = 10;
+const MAX_AUDIO_CHUNKS_PER_BATCH = 20;
 
-const arrayBufferToBase64 = (buffer: any) => {
+const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
   const binary = [];
   const bytes = new Uint8Array(buffer);
   for (let i = 0; i < bytes.byteLength; i++) {
@@ -17,9 +20,6 @@ const arrayBufferToBase64 = (buffer: any) => {
 const float32ArrayToInt16Array = (float32Array: Float32Array): Int16Array => {
   const int16Array = new Int16Array(float32Array.length);
   for (let i = 0; i < float32Array.length; i++) {
-    // Float32を-32768から32767の範囲にスケーリング
-    // const s = Math.max(-1, Math.min(1, float32Array[i]));
-    // int16Array[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
     int16Array[i] = Math.max(-1, Math.min(1, float32Array[i])) * 0x7FFF;
   }
   return int16Array;
@@ -47,14 +47,16 @@ const base64ToFloat32Array = (base64String: string) => {
 };
 
 export const useNovaSonic = () => {
-  const isRecording = useRef(false);
-  const audioPlayerRef = useRef<any>(null);
-  const channelRef = useRef<any>(null);
+  const api = useHttp();
+  const isActive = useRef(false);
+  const isLoading = useRef(false);
+  const audioPlayerRef = useRef<AudioPlayer | null>(null);
+  const channelRef = useRef<EventsChannel | null>(null);
   const audioContextRef = useRef<any>(null);
   const audioStreamRef = useRef<any>(null);
   const sourceNodeRef = useRef<any>(null);
   const processorRef = useRef<any>(null);
-  const audioInputQueue = useRef<Float32Array[]>([]);
+  const audioInputQueue = useRef<string[]>([]);
 
   const dispatchEvent = async (event: string, data: any = undefined) => {
     if (channelRef.current) {
@@ -89,56 +91,56 @@ export const useNovaSonic = () => {
   };
 
   const processAudioInput = useCallback(async () => {
-    if (isRecording.current) {
-      let processedChunks = 0;
-      let combinedLength = 0;
+    if (isActive.current) {
+      if (audioInputQueue.current.length > MIN_AUDIO_CHUNKS_PER_BATCH) {
+        const chunksToProcess: string[] = [];
 
-      const chunksToProcess: Float32Array[] = [];
+        let processedChunks = 0;
 
-      while (audioInputQueue.current.length > 0 && processedChunks < MAX_AUDIO_CHUNKS_PER_BATCH) {
-        const chunk = audioInputQueue.current.shift();
+        while (audioInputQueue.current.length > 0 && processedChunks < MAX_AUDIO_CHUNKS_PER_BATCH) {
+          const chunk = audioInputQueue.current.shift();
 
-        if (chunk) {
-          chunksToProcess.push(chunk);
-          combinedLength += chunk.length;
-          processedChunks += 1;
-        }
-      }
-
-      if (chunksToProcess.length > 0) {
-        let offset = 0;
-
-        const combinedBuffer = new Float32Array(combinedLength);
-
-        for (const chunk of chunksToProcess) {
-          combinedBuffer.set(chunk, offset);
-          offset += chunk.length;
+          if (chunk) {
+            chunksToProcess.push(chunk);
+            processedChunks += 1;
+          }
         }
 
-        const int16Array = float32ArrayToInt16Array(combinedBuffer);
-        const base64Data = arrayBufferToBase64(int16Array.buffer);
-
-        dispatchEvent('audioInput', base64Data);
+        dispatchEvent('audioInput', chunksToProcess);
       }
 
       setTimeout(() => processAudioInput(), 0);
     }
-  }, [isRecording]);
+  }, [isActive]);
 
   const connectToAppSync = async () => {
     audioInputQueue.current = [];
 
-    const channel = await events.connect('/default/dummy-session');
+    const channelId = uuid();
+    console.log(`/${NAMESPACE}/${channelId}`);
+    const channel = await events.connect(`/${NAMESPACE}/${channelId}`);
     channelRef.current = channel;
 
     channel.subscribe({
       next: (data: any) => {
         const event = data?.event;
         if (event && event.direction === 'btoc') {
-          console.log(event);
-          if (event.event === 'audioOutput') {
-            const audioData = base64ToFloat32Array(event.data.content);
-            audioPlayerRef.current.playAudio(audioData);
+          if (event.event === 'ready') {
+            console.log('Now ready to speech-to-speech!');
+            startRecording().then(() => {
+              isLoading.current = false;
+            });
+          } else if (event.event === 'audioOutput' && audioPlayerRef.current) {
+            const chunks: string[] = event.data;
+
+            while (chunks.length > 0) {
+              const chunk = chunks.shift();
+
+              if (chunk) {
+                const audioData = base64ToFloat32Array(chunk);
+                audioPlayerRef.current.playAudio(audioData);
+              }
+            }
           }
         }
       },
@@ -146,11 +148,8 @@ export const useNovaSonic = () => {
         console.error(e);
       },
     });
-  };
 
-  const startSession = async () => {
-    await initAudio();
-    await connectToAppSync();
+    await api.post(`speech-to-speech`, { channel: channelId });
   };
 
   const startRecording = async () => {
@@ -163,13 +162,9 @@ export const useNovaSonic = () => {
 
       processor.onaudioprocess = (e: any) => {
         const inputData = e.inputBuffer.getChannelData(0);
-        // const pcmData = new Int16Array(inputData.length);
-        // for (let i = 0; i < inputData.length; i++) {
-        //   pcmData[i] = Math.max(-1, Math.min(1, inputData[i])) * 0x7FFF;
-        // }
-        // const base64Data = arrayBufferToBase64(pcmData.buffer);
-        // dispatchEvent('audioInput', base64Data);
-        audioInputQueue.current.push(inputData);
+        const int16Array = float32ArrayToInt16Array(inputData);
+        const base64Data = arrayBufferToBase64(int16Array.buffer);
+        audioInputQueue.current.push(base64Data);
       };
 
       sourceNode.connect(processor);
@@ -179,12 +174,13 @@ export const useNovaSonic = () => {
       processorRef.current = processor;
     }
 
-    isRecording.current = true;
+    isActive.current = true;
+
     processAudioInput();
   };
 
   const stopRecording = async () => {
-    isRecording.current = false;
+    isActive.current = false;
 
     if (processorRef.current) {
       processorRef.current.disconnect();
@@ -214,10 +210,20 @@ export const useNovaSonic = () => {
     await dispatchEvent('audioStop');
   };
 
+  const startSession = async () => {
+    isLoading.current = true;
+    await connectToAppSync();
+    await initAudio();
+  };
+
+  const closeSession = async () => {
+    await stopRecording();
+  };
+
   return {
-    isRecording: isRecording.current,
+    isActive: isActive.current,
+    isLoading: isLoading.current,
     startSession,
-    startRecording,
-    stopRecording,
+    closeSession,
   }
 };

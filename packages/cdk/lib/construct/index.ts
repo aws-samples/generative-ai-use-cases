@@ -8,4 +8,4 @@ export * from './common-web-acl';
 export * from './agent';
 export * from './rag-knowledge-base';
 export * from './guardrail';
-export * from './events';
+export * from './speech-to-speech';

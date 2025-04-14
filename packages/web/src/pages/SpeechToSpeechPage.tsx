@@ -3,16 +3,20 @@ import { useNovaSonic } from '../hooks/useNovaSonic';
 
 const SpeechToSpeech: React.FC = () => {
   const {
-    isRecording,
+    isActive,
+    isLoading,
     startSession,
-    startRecording,
-    stopRecording,
+    closeSession,
   } = useNovaSonic();
 
   return (
     <div>
       <h1>Speech To Speech</h1>
       <div>
+        isActive: {isActive.toString()}
+      </div>
+      <div>
+        isLoading: {isLoading.toString()}
       </div>
       <div>
         <button onClick={startSession}>
@@ -20,16 +24,8 @@ const SpeechToSpeech: React.FC = () => {
         </button>
       </div>
       <div>
-        isRecording: {isRecording.toString()}
-      </div>
-      <div>
-        <button onClick={startRecording}>
-          Start Recording
-        </button>
-      </div>
-      <div>
-        <button onClick={stopRecording}>
-          Stop Recording
+        <button onClick={closeSession}>
+          Close Session
         </button>
       </div>
     </div>

@@ -8,7 +8,8 @@ import { useTranslation } from 'react-i18next';
 const samlCognitoDomainName: string = import.meta.env
   .VITE_APP_SAML_COGNITO_DOMAIN_NAME;
 const samlCognitoFederatedIdentityProviderName: string = import.meta.env
-  .VITE_APP_SAML_COGNITO_FEDERATED_IDENTITY_PROVIDER_NAME;
+                                                               .VITE_APP_SAML_COGNITO_FEDERATED_IDENTITY_PROVIDER_NAME;
+const speechToSpeechEventApiEndpoint: string = import.meta.env.VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT;
 
 type Props = {
   children: React.ReactNode;
@@ -63,8 +64,7 @@ const AuthWithSAML: React.FC<Props> = (props) => {
     },
     API: {
       Events: {
-        // TODO
-        endpoint: `https://jiinfzwujrblvdthn7svyonbt4.appsync-api.ap-northeast-1.amazonaws.com/event`,
+        endpoint: speechToSpeechEventApiEndpoint,
         region: process.env.AWS_DEFAULT_REGION!,
         defaultAuthMode: 'userPool',
       },

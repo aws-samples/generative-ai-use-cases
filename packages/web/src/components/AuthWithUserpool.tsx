@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 const selfSignUpEnabled: boolean =
   import.meta.env.VITE_APP_SELF_SIGN_UP_ENABLED === 'true';
+const speechToSpeechEventApiEndpoint: string = import.meta.env.VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT;
 
 type Props = {
   children: React.ReactNode;
@@ -23,8 +24,7 @@ const AuthWithUserpool: React.FC<Props> = (props) => {
     },
     API: {
       Events: {
-        // TODO
-        endpoint: `https://jiinfzwujrblvdthn7svyonbt4.appsync-api.ap-northeast-1.amazonaws.com/event`,
+        endpoint: speechToSpeechEventApiEndpoint,
         region: process.env.AWS_DEFAULT_REGION!,
         defaultAuthMode: 'userPool',
       },

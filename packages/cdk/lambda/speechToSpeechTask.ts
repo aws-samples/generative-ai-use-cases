@@ -1,28 +1,46 @@
 import { Amplify } from 'aws-amplify';
-import { events } from 'aws-amplify/data';
+import { events, EventsChannel } from 'aws-amplify/data';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { randomUUID } from "crypto";
 import {
   BedrockRuntimeClient,
   InvokeModelWithBidirectionalStreamCommand,
-  // InvokeModelWithBidirectionalStreamInput,
+  InvokeModelWithBidirectionalStreamInput,
 } from "@aws-sdk/client-bedrock-runtime";
 import { NodeHttp2Handler } from '@smithy/node-http-handler';
 
 Object.assign(global, { WebSocket: require('ws') });
 
-// Event queue
-const queue: Array<any> = [];
+const MAX_AUDIO_INPUT_QUEUE_SIZE = 200;
+const MIN_AUDIO_OUTPUT_QUEUE_SIZE = 10;
+const MAX_AUDIO_OUTPUT_PER_BATCH = 20;
 
-// Array of base64 input data
-const audioInputQueue: string[] = [];
+// Flags
+let isActive = false;
+let isProcessingAudio = false;
+let isAudioStarted = false;
 
-const promptName = randomUUID();
+// Queues
+let eventQueue: Array<any> = [];
+let audioInputQueue: string[] = [];
+let audioOutputQueue: string[] = [];
+
+// IDs
+let promptName = randomUUID();
 let audioContentId = randomUUID();
-let audioStarted = false;
+
+const initialize = () => {
+  isActive = false;
+  isProcessingAudio = false;
+  isAudioStarted = false;
+
+  eventQueue = [];
+  audioInputQueue = [];
+  audioOutputQueue = [];
+};
 
 const enqueueSessionStart = () => {
-  queue.push({
+  eventQueue.push({
     event: {
       sessionStart: {
         inferenceConfiguration: {
@@ -36,7 +54,7 @@ const enqueueSessionStart = () => {
 };
 
 const enqueuePromptStart = () => {
-  queue.push({
+  eventQueue.push({
     event: {
       promptStart: {
         promptName,
@@ -60,7 +78,7 @@ const enqueuePromptStart = () => {
 const enqueueSystemPrompt = () => {
   const contentName = randomUUID();
 
-  queue.push({
+  eventQueue.push({
     event: {
       contentStart: {
         promptName,
@@ -75,7 +93,7 @@ const enqueueSystemPrompt = () => {
     },
   });
 
-  queue.push({
+  eventQueue.push({
     event: {
       textInput: {
         promptName,
@@ -85,7 +103,7 @@ const enqueueSystemPrompt = () => {
     }
   });
 
-  queue.push({
+  eventQueue.push({
     event: {
       contentEnd: {
         promptName,
@@ -98,7 +116,7 @@ const enqueueSystemPrompt = () => {
 const enqueueAudioStart = () => {
   audioContentId = randomUUID();
 
-  queue.push({
+  eventQueue.push({
     event: {
       contentStart: {
         promptName,
@@ -118,11 +136,32 @@ const enqueueAudioStart = () => {
     },
   });
 
-  audioStarted = true;
+  isAudioStarted = true;
+};
+
+const enqueuePromptEnd = () => {
+  eventQueue.push({
+    event: {
+      promptEnd: {
+        promptName,
+      },
+    }
+  });
+};
+
+const enqueueSessionEnd = () => {
+  eventQueue.push({
+    event: {
+      sessionEnd: {},
+    },
+  });
 };
 
 const enqueueAudioStop = () => {
-  queue.push({
+  isAudioStarted = false;
+  isActive = false;
+
+  eventQueue.push({
     event: {
       contentEnd: {
         promptName,
@@ -130,25 +169,86 @@ const enqueueAudioStop = () => {
       },
     },
   });
-
-  audioStarted = false;
 };
 
-const enqueueAudioInput = (audioInput: string) => {
-  audioInputQueue.push(audioInput);
+const enqueueAudioInput = (audioInputBase64Array: string[]) => {
+  if (!isAudioStarted) {
+    return;
+  }
+
+  for (const audioInput of audioInputBase64Array) {
+    audioInputQueue.push(audioInput);
+  }
+
+  // Audio input queue full, dropping oldest chunk
+  while (audioInputQueue.length - MAX_AUDIO_INPUT_QUEUE_SIZE > 0) {
+    audioInputQueue.shift();
+  }
+
+  if (!isProcessingAudio) {
+    isProcessingAudio = true;
+    // Start audio event loop
+    processAudioQueue();
+  }
+};
+
+const enqueueAudioOutput = async (channel: EventsChannel, audioOutput: string) => {
+  audioOutputQueue.push(audioOutput);
+
+  if (audioOutputQueue.length > MIN_AUDIO_OUTPUT_QUEUE_SIZE) {
+    const chunksToProcess: string[] = [];
+
+    let processedChunks = 0;
+
+    while (audioOutputQueue.length > 0 && processedChunks < MAX_AUDIO_OUTPUT_PER_BATCH) {
+      const chunk = audioOutputQueue.shift();
+      console.log('chunk to process', chunk);
+
+      if (chunk) {
+        chunksToProcess.push(chunk);
+        processedChunks += 1;
+      }
+    }
+
+    await channel.publish({
+      direction: 'btoc',
+      event: 'audioOutput',
+      data: chunksToProcess,
+    });
+  }
+};
+
+const forcePublishAudioOutput = async (channel: EventsChannel) => {
+  const chunksToProcess = [];
+
+  while (audioOutputQueue.length > 0) {
+    const chunk = audioOutputQueue.shift();
+    if (chunk) {
+      chunksToProcess.push(chunk);
+    }
+  }
+
+  await channel.publish({
+    direction: 'btoc',
+    event: 'audioOutput',
+    data: chunksToProcess,
+  });
 };
 
 const createAsyncIterator = () => {
   return {
     [Symbol.asyncIterator]: () => {
       return {
-        next: async () => {
-          while (queue.length === 0) {
-            // TODO: close signal
+        next: async (): Promise<IteratorResult<InvokeModelWithBidirectionalStreamInput>> => {
+          while (eventQueue.length === 0 && isActive) {
             await new Promise(s => setTimeout(s, 100));
           }
 
-          const nextEvent = queue.shift();
+          if (!isActive) {
+            return { value: undefined, done: true };
+          }
+
+          const nextEvent = eventQueue.shift();
           console.log(`Consume event ${JSON.stringify(nextEvent)}`);
           return {
             value: {
@@ -162,7 +262,8 @@ const createAsyncIterator = () => {
       };
     },
     return: async () => {
-      return { value: undefined, done: true}
+      console.log('It seems all done.');
+      return { value: undefined, done: true }
     },
     throw: async (error: any) => {
       console.error(error)
@@ -172,10 +273,10 @@ const createAsyncIterator = () => {
 }
 
 const processAudioQueue = async () => {
-  while (audioInputQueue.length > 0 && audioStarted) {
+  while (audioInputQueue.length > 0 && isAudioStarted && isActive) {
     const audioChunk = audioInputQueue.shift();
 
-    queue.push({
+    eventQueue.push({
       event: {
         audioInput: {
           promptName,
@@ -186,24 +287,25 @@ const processAudioQueue = async () => {
     });
   }
 
-  setTimeout(() => processAudioQueue(), 0);
+  if (isAudioStarted && isActive) {
+    setTimeout(() => processAudioQueue(), 0);
+  } else {
+    isProcessingAudio = false;
+  }
 };
 
-const processResponseStream = async (channel: any, response: any) => {
+const processResponseStream = async (channel: EventsChannel, response: any) => {
   try {
     for await (const event of response.body) {
-      const textResponse = new TextDecoder().decode(event.chunk.bytes);
-
       if (event.chunk?.bytes) {
+        const textResponse = new TextDecoder().decode(event.chunk.bytes);
         const jsonResponse = JSON.parse(textResponse);
         console.log('JSON Response', jsonResponse);
 
         if (jsonResponse.event?.audioOutput) {
-          await channel.publish({
-            direction: 'btoc',
-            event: 'audioOutput',
-            data: jsonResponse.event.audioOutput,
-          });
+          await enqueueAudioOutput(channel, jsonResponse.event.audioOutput.content);
+        } else if (jsonResponse.event?.contentEnd && jsonResponse.event?.contentEnd?.type === 'AUDIO') {
+          await forcePublishAudioOutput(channel);
         }
       }
     }
@@ -212,9 +314,15 @@ const processResponseStream = async (channel: any, response: any) => {
   }
 };
 
-export const handler = async (event: any) => {
+export const handler = async (event: { channel: string }) => {
   try {
     console.log('event', event);
+
+    initialize();
+
+    isActive = true;
+
+    promptName = randomUUID();
 
     const bedrock = new BedrockRuntimeClient({
       region: 'us-east-1', // TODO
@@ -230,7 +338,7 @@ export const handler = async (event: any) => {
       {
         API: {
           Events: {
-            endpoint: `${process.env.EVENT_API_ENDPOINT!}/event`,
+            endpoint: process.env.EVENT_API_ENDPOINT!,
             region: process.env.AWS_DEFAULT_REGION!,
             defaultAuthMode: 'iam',
           },
@@ -252,7 +360,7 @@ export const handler = async (event: any) => {
       }
     );
 
-    const channel = await events.connect('/default/dummy-session'); // TODO
+    const channel = await events.connect(`/${process.env.NAMESPACE}/${event.channel}`);
 
     channel.subscribe({
       next: async (data: any) => {
@@ -260,10 +368,15 @@ export const handler = async (event: any) => {
         if (event && event.direction === 'ctob') {
           if (event.event === 'audioStart') {
             enqueueAudioStart();
-          } else if (event.event === 'audioStop') {
-            enqueueAudioStop();
           } else if (event.event === 'audioInput') {
             enqueueAudioInput(event.data);
+          } else if (event.event === 'audioStop') {
+            // Currently we accept only one turn audio session
+            // Receiving 'audioStop' event means closing the session.
+            enqueueAudioStop();
+            enqueuePromptEnd();
+            enqueueSessionEnd();
+            channel.close();
           }
         }
       },
@@ -283,12 +396,18 @@ export const handler = async (event: any) => {
       }),
     );
 
-    // Start audio event loop
-    processAudioQueue();
+    // Notify the status to the client
+    await channel.publish({
+      direction: 'btoc',
+      event: 'ready',
+    });
 
     // Start response stream
     await processResponseStream(channel, response);
   } catch (e) {
     console.error(e);
+  } finally {
+    initialize();
+    console.log('Session ended. Every parameters are initialized.');
   }
 };
