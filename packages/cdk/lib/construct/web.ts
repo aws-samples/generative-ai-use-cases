@@ -66,7 +66,6 @@ export class Web extends Construct {
       this,
       'SecurityHeadersPolicy',
       {
-        responseHeadersPolicyName: `${id}-SecurityHeaders`,
         securityHeadersBehavior: {
           // Content Security Policy configuration
           contentSecurityPolicy: {
