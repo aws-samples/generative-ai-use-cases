@@ -6,8 +6,13 @@ import {
   BedrockRuntimeClient,
   InvokeModelWithBidirectionalStreamCommand,
   InvokeModelWithBidirectionalStreamInput,
+  InvokeModelWithBidirectionalStreamCommandOutput,
 } from "@aws-sdk/client-bedrock-runtime";
 import { NodeHttp2Handler } from '@smithy/node-http-handler';
+import {
+  SpeechToSpeechEventType,
+  SpeechToSpeechEvent,
+} from 'generative-ai-use-cases';
 
 Object.assign(global, { WebSocket: require('ws') });
 
@@ -37,6 +42,14 @@ const initialize = () => {
   eventQueue = [];
   audioInputQueue = [];
   audioOutputQueue = [];
+};
+
+const dispatchEvent = async (channel: EventsChannel, event: SpeechToSpeechEventType, data: any = undefined) => {
+  await channel.publish({
+    direction: 'btoc',
+    event,
+    data,
+  } as SpeechToSpeechEvent);
 };
 
 const enqueueSessionStart = () => {
@@ -202,7 +215,6 @@ const enqueueAudioOutput = async (channel: EventsChannel, audioOutput: string) =
 
     while (audioOutputQueue.length > 0 && processedChunks < MAX_AUDIO_OUTPUT_PER_BATCH) {
       const chunk = audioOutputQueue.shift();
-      console.log('chunk to process', chunk);
 
       if (chunk) {
         chunksToProcess.push(chunk);
@@ -210,11 +222,7 @@ const enqueueAudioOutput = async (channel: EventsChannel, audioOutput: string) =
       }
     }
 
-    await channel.publish({
-      direction: 'btoc',
-      event: 'audioOutput',
-      data: chunksToProcess,
-    });
+    await dispatchEvent(channel, 'audioOutput', chunksToProcess);
   }
 };
 
@@ -228,11 +236,7 @@ const forcePublishAudioOutput = async (channel: EventsChannel) => {
     }
   }
 
-  await channel.publish({
-    direction: 'btoc',
-    event: 'audioOutput',
-    data: chunksToProcess,
-  });
+  await dispatchEvent(channel, 'audioOutput', chunksToProcess);
 };
 
 const createAsyncIterator = () => {
@@ -249,7 +253,7 @@ const createAsyncIterator = () => {
           }
 
           const nextEvent = eventQueue.shift();
-          console.log(`Consume event ${JSON.stringify(nextEvent)}`);
+
           return {
             value: {
               chunk: {
@@ -262,7 +266,6 @@ const createAsyncIterator = () => {
       };
     },
     return: async () => {
-      console.log('It seems all done.');
       return { value: undefined, done: true }
     },
     throw: async (error: any) => {
@@ -294,18 +297,40 @@ const processAudioQueue = async () => {
   }
 };
 
-const processResponseStream = async (channel: EventsChannel, response: any) => {
+const processResponseStream = async (channel: EventsChannel, response: InvokeModelWithBidirectionalStreamCommandOutput) => {
+  if (!response.body) {
+    throw new Error('Response body is null');
+  }
+
   try {
     for await (const event of response.body) {
       if (event.chunk?.bytes) {
         const textResponse = new TextDecoder().decode(event.chunk.bytes);
         const jsonResponse = JSON.parse(textResponse);
-        console.log('JSON Response', jsonResponse);
+
+        console.log('Bedrock response', jsonResponse);
 
         if (jsonResponse.event?.audioOutput) {
           await enqueueAudioOutput(channel, jsonResponse.event.audioOutput.content);
         } else if (jsonResponse.event?.contentEnd && jsonResponse.event?.contentEnd?.type === 'AUDIO') {
           await forcePublishAudioOutput(channel);
+        } else if (jsonResponse.event?.contentStart && jsonResponse.event?.contentStart?.type === 'TEXT') {
+          await dispatchEvent(channel, 'textStart', {
+            id: jsonResponse.event?.contentStart?.contentId,
+            role: jsonResponse.event?.contentStart?.role?.toLowerCase(),
+          });
+        } else if (jsonResponse.event?.textOutput) {
+          await dispatchEvent(channel, 'textOutput', {
+            id: jsonResponse.event?.textOutput?.contentId,
+            role: jsonResponse.event?.textOutput?.role?.toLowerCase(),
+            content: jsonResponse.event?.textOutput?.content,
+          });
+        } else if (jsonResponse.event?.contentEnd && jsonResponse.event?.contentEnd?.type === 'TEXT') {
+          await dispatchEvent(channel, 'textStop', {
+            id: jsonResponse.event?.contentEnd?.contentId,
+            role: jsonResponse.event?.contentEnd?.role?.toLowerCase(),
+            stopReason: jsonResponse.event?.contentEnd?.stopReason,
+          });
         }
       }
     }
@@ -318,7 +343,7 @@ export const handler = async (event: { channelId: string }) => {
   let channel: EventsChannel | null = null;
 
   try {
-    console.log('event', event);
+    console.log('channelId', event.channelId);
 
     initialize();
 
@@ -394,10 +419,7 @@ export const handler = async (event: { channelId: string }) => {
 
             if (channel) {
               try {
-                await channel.publish({
-                  direction: 'btoc',
-                  event: 'end',
-                });
+                await dispatchEvent(channel, 'end');
                 channel.close();
               } catch (e) {
                 console.error(e);
@@ -420,10 +442,7 @@ export const handler = async (event: { channelId: string }) => {
     await new Promise(s => setTimeout(s, 1000));
 
     // Notify the status to the client
-    await channel.publish({
-      direction: 'btoc',
-      event: 'ready',
-    });
+    await dispatchEvent(channel, 'ready');
 
     console.log('I\'m ready');
 
@@ -447,11 +466,11 @@ export const handler = async (event: { channelId: string }) => {
   } finally {
     if (channel) {
       try {
-        channel.publish({
-          direction: 'btoc',
-          event: 'end',
+        dispatchEvent(channel, 'end').then(() => {
+          if (channel) {
+            channel.close();
+          }
         });
-        channel.close();
       } catch (e) {
         console.error(e);
       }

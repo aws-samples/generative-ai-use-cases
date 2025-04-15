@@ -3,6 +3,11 @@ import { events, EventsChannel } from 'aws-amplify/data';
 import { AudioPlayer } from './AudioPlayer';
 import { v4 as uuid } from 'uuid';
 import useHttp from '../../hooks/useHttp';
+import useChatHistory from './useChatHistory';
+import {
+  SpeechToSpeechEventType,
+  SpeechToSpeechEvent,
+} from 'generative-ai-use-cases';
 
 const NAMESPACE = import.meta.env.VITE_APP_SPEECH_TO_SPEECH_NAMESPACE!;
 const MIN_AUDIO_CHUNKS_PER_BATCH = 10;
@@ -46,25 +51,27 @@ const base64ToFloat32Array = (base64String: string) => {
   }
 };
 
-export const useNovaSonic = () => {
+export const useSpeechToSpeech = () => {
   const api = useHttp();
+  const { clear, messages, setupSystemPrompt, onTextOutput, onTextStop } = useChatHistory();
   const [isActive, setIsActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const systemPromptRef = useRef<string>('');
   const audioPlayerRef = useRef<AudioPlayer | null>(null);
   const channelRef = useRef<EventsChannel | null>(null);
-  const audioContextRef = useRef<any>(null);
-  const audioStreamRef = useRef<any>(null);
-  const sourceNodeRef = useRef<any>(null);
-  const processorRef = useRef<any>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioStreamRef = useRef<MediaStream | null>(null);
+  const sourceNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
+  const processorRef = useRef<ScriptProcessorNode | null>(null);
   const audioInputQueue = useRef<string[]>([]);
 
-  const dispatchEvent = async (event: string, data: any = undefined) => {
+  const dispatchEvent = async (event: SpeechToSpeechEventType, data: any = undefined) => {
     if (channelRef.current) {
       await channelRef.current.publish({
-        direction: 'ctob', // client to bedrock
+        direction: 'ctob',
         event,
         data,
-      });
+      } as SpeechToSpeechEvent);
     }
   };
 
@@ -145,6 +152,14 @@ export const useNovaSonic = () => {
                 audioPlayerRef.current.playAudio(audioData);
               }
             }
+          } else if (event.event === 'textStart') {
+            console.log('textStart', event.data);
+          } else if (event.event === 'textOutput') {
+            console.log('textOutput', event.data);
+            onTextOutput(event.data);
+          } else if (event.event === 'textStop') {
+            console.log('textStop', event.data);
+            onTextStop(event.data);
           }
         }
       },
@@ -153,13 +168,19 @@ export const useNovaSonic = () => {
       },
     });
 
-    await api.post(`speech-to-speech`, { channel: channelId });
+    await api.post('speech-to-speech', { channel: channelId });
   };
 
   const startRecording = async () => {
+    if (!audioContextRef.current || !audioStreamRef.current || !systemPromptRef.current) {
+      return;
+    }
+
     await dispatchEvent('promptStart');
-    await dispatchEvent('systemPrompt', 'You are an AI assistant');
+    await dispatchEvent('systemPrompt', systemPromptRef.current);
     await dispatchEvent('audioStart');
+
+    setupSystemPrompt(systemPromptRef.current);
 
     const sourceNode = audioContextRef.current.createMediaStreamSource(audioStreamRef.current);
 
@@ -216,12 +237,16 @@ export const useNovaSonic = () => {
     await dispatchEvent('audioStop');
   };
 
-  const startSession = async () => {
+  const startSession = async (systemPrompt: string) => {
     if (isActive || isLoading) {
       return;
     }
 
+    clear();
+
     setIsLoading(true);
+
+    systemPromptRef.current = systemPrompt;
 
     await connectToAppSync();
     await initAudio();
@@ -235,6 +260,7 @@ export const useNovaSonic = () => {
   };
 
   return {
+    messages,
     isActive,
     isLoading,
     startSession,
