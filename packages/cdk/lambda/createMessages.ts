@@ -1,7 +1,13 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { CreateMessagesRequest } from 'generative-ai-use-cases';
+import { CreateMessagesRequest, ExtraData } from 'generative-ai-use-cases';
 import { batchCreateMessages, findChatById } from './repository';
-import sanitizeHtml from 'sanitize-html';
+
+const isValidExtraData = (extra: ExtraData): boolean => {
+  return (
+    extra.source.data.startsWith('javascript:') ||
+    !extra.source.data.startsWith('s3://')
+  );
+};
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -30,9 +36,8 @@ export const handler = async (
     if (req.messages) {
       for (const message of req.messages) {
         if (message.extraData && message.extraData.length > 0) {
-          // Sanitize HTML content in extraData
           for (const extra of message.extraData) {
-            if (extra.source.data.startsWith('javascript:')) {
+            if (!isValidExtraData(extra)) {
               return {
                 statusCode: 400,
                 headers: {
@@ -43,16 +48,6 @@ export const handler = async (
                   message: 'Invalid extraData',
                 }),
               };
-            }
-
-            if (!extra.source.data.startsWith('s3://')) {
-              extra.source.data = sanitizeHtml(extra.source.data, {
-                allowedTags: [
-                  ...sanitizeHtml.defaults.allowedTags,
-                  'body',
-                  'html',
-                ],
-              });
             }
           }
         }
