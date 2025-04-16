@@ -1112,6 +1112,22 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  'us.mistral.pixtral-large-2502-v1:0': {
+    defaultParams: MISTRAL_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'eu.mistral.pixtral-large-2502-v1:0': {
+    defaultParams: MISTRAL_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
   'cohere.command-r-v1:0': {
     defaultParams: COMMANDR_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,

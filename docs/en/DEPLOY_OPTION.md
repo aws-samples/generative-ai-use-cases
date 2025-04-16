@@ -649,6 +649,8 @@ As of 2025/03, the multimodal models are:
 "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
 "us.meta.llama3-2-90b-instruct-v1:0",
 "us.meta.llama3-2-11b-instruct-v1:0",
+"us.mistral.pixtral-large-2502-v1:0",
+"eu.mistral.pixtral-large-2502-v1:0",
 "amazon.nova-pro-v1:0",
 "amazon.nova-lite-v1:0",
 "us.amazon.nova-pro-v1:0",
@@ -815,6 +817,8 @@ This solution supports the following text generation models:
 "mistral.mistral-large-2407-v1:0",
 "mistral.mistral-large-2402-v1:0",
 "mistral.mistral-small-2402-v1:0",
+"us.mistral.pixtral-large-2502-v1:0",
+"eu.mistral.pixtral-large-2502-v1:0",
 "anthropic.claude-v2:1",
 "anthropic.claude-v2",
 "anthropic.claude-instant-v1",
@@ -897,6 +901,7 @@ const envs: Record<string, Partial<StackInput>> = {
       { modelId: 'us.deepseek.r1-v1:0', region: 'us-east-1' },
       { modelId: 'us.meta.llama3-3-70b-instruct-v1:0', region: 'us-east-1' },
       { modelId: 'us.meta.llama3-2-90b-instruct-v1:0', region: 'us-east-1' },
+      { modelId: 'us.mistral.pixtral-large-2502-v1:0', region: 'us-east-1' },
     ],
     imageGenerationModelIds: [
       'amazon.nova-canvas-v1:0',
@@ -942,6 +947,10 @@ const envs: Record<string, Partial<StackInput>> = {
       },
       {
         "modelId": "us.meta.llama3-2-90b-instruct-v1:0",
+        "region": "us-east-1"
+      },
+      {
+        "modelId": "us.mistral.pixtral-large-2502-v1:0",
         "region": "us-east-1"
       }
     ],
@@ -992,6 +1001,7 @@ const envs: Record<string, Partial<StackInput>> = {
       'meta.llama3-8b-instruct-v1:0',
       'cohere.command-r-plus-v1:0',
       'cohere.command-r-v1:0',
+      'us.mistral.pixtral-large-2502-v1:0',
       'mistral.mistral-large-2402-v1:0',
     ],
     imageGenerationModelIds: [

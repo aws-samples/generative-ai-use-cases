@@ -215,6 +215,7 @@ If you would like to have your use case featured, please contact us via [Issue](
 - [Blog (Japanese): Debugging Methods to Improve Accuracy in RAG Chat](https://qiita.com/sugimount-a/items/7ed3c5fc1eb867e28566)
 - [Blog (Japanese): Customizing GenU with No Coding Using Amazon Q Developer CLI](https://qiita.com/wadabee/items/659e189018ad1a08e152)
 - [Blog (Japanese): How to Customize Generative AI Use Cases JP](https://aws.amazon.com/jp/blogs/news/how-to-generative-ai-use-cases-jp/)
+- [Blog (Japanese): Generative AI Use Cases JP ~ First Contribution Guide](https://aws.amazon.com/jp/builders-flash/202504/genu-development-guide/)
 - [Blog (Japanese): Let Generative AI Decline Unreasonable Requests ~ Integrating Generative AI into Browsers ~](https://aws.amazon.com/jp/builders-flash/202405/genai-sorry-message/)
 - [Blog (Japanese): Developing an Interpreter with Amazon Bedrock!](https://aws.amazon.com/jp/builders-flash/202311/bedrock-interpreter/)
 - [Video (Japanese): The Appeal and Usage of Generative AI Use Cases JP (GenU) for Thoroughly Considering Generative AI Use Cases](https://www.youtube.com/live/s1P5A2SIWgc?si=PBQ4ZHQXU4pDhL8A)
