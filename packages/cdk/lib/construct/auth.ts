@@ -14,11 +14,11 @@ import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 export interface AuthProps {
-  selfSignUpEnabled: boolean;
-  allowedIpV4AddressRanges?: string[] | null;
-  allowedIpV6AddressRanges?: string[] | null;
-  allowedSignUpEmailDomains?: string[] | null;
-  samlAuthEnabled: boolean;
+  readonly selfSignUpEnabled: boolean;
+  readonly allowedIpV4AddressRanges?: string[] | null;
+  readonly allowedIpV6AddressRanges?: string[] | null;
+  readonly allowedSignUpEmailDomains?: string[] | null;
+  readonly samlAuthEnabled: boolean;
 }
 
 export class Auth extends Construct {

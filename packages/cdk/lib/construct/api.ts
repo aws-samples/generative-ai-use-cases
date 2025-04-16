@@ -30,26 +30,26 @@ import {
 
 export interface BackendApiProps {
   // Context Params
-  modelRegion: string;
-  modelIds: ModelConfiguration[];
-  imageGenerationModelIds: ModelConfiguration[];
-  videoGenerationModelIds: ModelConfiguration[];
-  videoBucketRegionMap: Record<string, string>;
-  endpointNames: string[];
-  queryDecompositionEnabled: boolean;
-  rerankingModelId?: string | null;
-  customAgents: Agent[];
-  crossAccountBedrockRoleArn?: string | null;
+  readonly modelRegion: string;
+  readonly modelIds: ModelConfiguration[];
+  readonly imageGenerationModelIds: ModelConfiguration[];
+  readonly videoGenerationModelIds: ModelConfiguration[];
+  readonly videoBucketRegionMap: Record<string, string>;
+  readonly endpointNames: string[];
+  readonly queryDecompositionEnabled: boolean;
+  readonly rerankingModelId?: string | null;
+  readonly customAgents: Agent[];
+  readonly crossAccountBedrockRoleArn?: string | null;
 
   // Resource
-  userPool: UserPool;
-  idPool: IdentityPool;
-  userPoolClient: UserPoolClient;
-  table: Table;
-  knowledgeBaseId?: string;
-  agents?: Agent[];
-  guardrailIdentify?: string;
-  guardrailVersion?: string;
+  readonly userPool: UserPool;
+  readonly idPool: IdentityPool;
+  readonly userPoolClient: UserPoolClient;
+  readonly table: Table;
+  readonly knowledgeBaseId?: string;
+  readonly agents?: Agent[];
+  readonly guardrailIdentify?: string;
+  readonly guardrailVersion?: string;
 }
 
 export class Api extends Construct {

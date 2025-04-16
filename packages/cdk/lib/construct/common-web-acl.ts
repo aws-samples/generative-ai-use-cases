@@ -3,10 +3,10 @@ import { CfnIPSet, CfnWebACL, CfnWebACLProps } from 'aws-cdk-lib/aws-wafv2';
 import { Construct } from 'constructs';
 
 export interface CommonWebAclProps {
-  scope: 'REGIONAL' | 'CLOUDFRONT';
-  allowedIpV4AddressRanges?: string[] | null;
-  allowedIpV6AddressRanges?: string[] | null;
-  allowedCountryCodes?: string[] | null;
+  readonly scope: 'REGIONAL' | 'CLOUDFRONT';
+  readonly allowedIpV4AddressRanges?: string[] | null;
+  readonly allowedIpV6AddressRanges?: string[] | null;
+  readonly allowedCountryCodes?: string[] | null;
 }
 
 export class CommonWebAcl extends Construct {

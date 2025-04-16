@@ -7,10 +7,10 @@ import { ProcessedStackInput } from './stack-input';
 import { ModelConfiguration } from 'generative-ai-use-cases';
 
 export interface DashboardStackProps extends StackProps {
-  params: ProcessedStackInput;
-  userPool: cognito.UserPool;
-  userPoolClient: cognito.UserPoolClient;
-  appRegion: string;
+  readonly params: ProcessedStackInput;
+  readonly userPool: cognito.UserPool;
+  readonly userPoolClient: cognito.UserPoolClient;
+  readonly appRegion: string;
 }
 
 export class DashboardStack extends Stack {

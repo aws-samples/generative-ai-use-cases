@@ -10,7 +10,7 @@ import { CommonWebAcl } from './construct/common-web-acl';
 import { ProcessedStackInput } from './stack-input';
 
 interface CloudFrontWafStackProps extends StackProps {
-  params: ProcessedStackInput;
+  readonly params: ProcessedStackInput;
 }
 
 export class CloudFrontWafStack extends Stack {
