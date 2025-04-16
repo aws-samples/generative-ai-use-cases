@@ -5,22 +5,18 @@ import {
   DeleteObjectsCommand,
   ListObjectsV2Command,
 } from '@aws-sdk/client-s3';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 import { Readable } from 'stream';
+import { VideoJob } from 'generative-ai-use-cases';
+import { updateJobStatus } from './repositoryVideoJob';
 
 export interface CopyVideoJobParams {
-  id: string;
-  createdDate: string;
-  jobId: string;
-  srcBucket: string;
-  srcRegion: string;
+  job: VideoJob;
 }
 
 const BUCKET_NAME: string = process.env.BUCKET_NAME!;
-const TABLE_NAME: string = process.env.TABLE_NAME!;
-const dynamoDb = new DynamoDBClient({});
-const dynamoDbDocument = DynamoDBDocumentClient.from(dynamoDb);
+const videoBucketRegionMap = JSON.parse(
+  process.env.VIDEO_BUCKET_REGION_MAP ?? '{}'
+);
 
 const copyAndDeleteObject = async (
   jobId: string,
@@ -77,13 +73,12 @@ const copyAndDeleteObject = async (
 };
 
 export const handler = async (event: CopyVideoJobParams): Promise<void> => {
-  const id = event.id;
-  const createdDate = event.createdDate;
-  const jobId = event.jobId;
-  const dstBucket = BUCKET_NAME;
+  const job = event.job;
+  const jobId = job.jobId;
   const dstRegion = process.env.AWS_DEFAULT_REGION!;
-  const srcBucket = event.srcBucket;
-  const srcRegion = event.srcRegion;
+  const dstBucket = BUCKET_NAME;
+  const srcRegion = job.region;
+  const srcBucket = videoBucketRegionMap[srcRegion];
 
   try {
     await copyAndDeleteObject(
@@ -94,40 +89,9 @@ export const handler = async (event: CopyVideoJobParams): Promise<void> => {
       dstRegion
     );
 
-    const updateCommand = new UpdateCommand({
-      TableName: TABLE_NAME,
-      Key: {
-        id,
-        createdDate,
-      },
-      UpdateExpression: 'set #status = :status',
-      ExpressionAttributeNames: {
-        '#status': 'status',
-      },
-      ExpressionAttributeValues: {
-        ':status': 'Completed',
-      },
-    });
-
-    await dynamoDbDocument.send(updateCommand);
+    await updateJobStatus(job, 'Completed');
   } catch (error) {
     console.error(error);
-
-    const updateCommand = new UpdateCommand({
-      TableName: TABLE_NAME,
-      Key: {
-        id,
-        createdDate,
-      },
-      UpdateExpression: 'set #status = :status',
-      ExpressionAttributeNames: {
-        '#status': 'status',
-      },
-      ExpressionAttributeValues: {
-        ':status': 'Failed',
-      },
-    });
-
-    await dynamoDbDocument.send(updateCommand);
+    await updateJobStatus(job, 'Failed');
   }
 };

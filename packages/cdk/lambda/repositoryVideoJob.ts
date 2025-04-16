@@ -67,7 +67,7 @@ export const createJob = async (
   return item;
 };
 
-const updateJobStatus = async (job: VideoJob, status: string) => {
+export const updateJobStatus = async (job: VideoJob, status: string) => {
   const updateCommand = new UpdateCommand({
     TableName: TABLE_NAME,
     Key: {
@@ -113,18 +113,7 @@ const checkAndUpdateJob = async (
     // Video generation is complete, but the video copying is not finished.
     // We will run the copy job to set the status to "Finalizing".
     if (res.status === 'Completed') {
-      const srcRegion = job.region;
-      const videoBucketRegionMap = JSON.parse(
-        process.env.VIDEO_BUCKET_REGION_MAP ?? '{}'
-      );
-      const srcBucket = videoBucketRegionMap[srcRegion];
-      const params: CopyVideoJobParams = {
-        id: job.id,
-        createdDate: job.createdDate,
-        jobId: job.jobId,
-        srcBucket,
-        srcRegion,
-      };
+      const params: CopyVideoJobParams = { job };
 
       await lambda.send(
         new InvokeCommand({
