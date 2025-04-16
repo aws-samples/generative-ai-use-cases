@@ -15108,7 +15108,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
             "Arn",
           ],
         },
-        "Runtime": "nodejs20.x",
+        "Runtime": "nodejs18.x",
         "Timeout": 300,
       },
       "Type": "AWS::Lambda::Function",
