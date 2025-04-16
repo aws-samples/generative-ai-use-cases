@@ -81,6 +81,7 @@ const enqueuePromptStart = () => {
           sampleRateHertz: 24000,
           sampleSizeBits: 16,
           channelCount: 1,
+          // TODO: avoid hardcoding
           voiceId: "tiffany",
         }
       }
