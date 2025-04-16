@@ -441,6 +441,7 @@ export class Api extends Construct {
       timeout: Duration.minutes(15),
       environment: {
         TABLE_NAME: table.tableName,
+        BUCKET_NAME: fileBucket.bucketName,
       },
     });
     table.grantReadWriteData(createMessagesFunction);

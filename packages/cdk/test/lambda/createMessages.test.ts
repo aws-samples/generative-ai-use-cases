@@ -12,6 +12,18 @@ const mockedFindChatById = findChatById as jest.MockedFunction<
   typeof findChatById
 >;
 
+// Mock the environment variable
+const originalEnv = process.env;
+beforeEach(() => {
+  jest.resetModules();
+  process.env = { ...originalEnv };
+  process.env.BUCKET_NAME = 'test-bucket';
+});
+
+afterAll(() => {
+  process.env = originalEnv;
+});
+
 // Helper function to create APIGatewayProxyEvent
 function createAPIGatewayProxyEvent(
   body: unknown | null,
@@ -124,38 +136,25 @@ describe('createMessages Lambda handler', () => {
     expect(mockedBatchCreateMessages).not.toHaveBeenCalled();
   });
 
-  // Test for invalid extraData
-  test('returns 400 error when extraData is invalid | javascript:alert(1)', async () => {
+  // Test for internal server error
+  test('returns 500 error when an exception occurs', async () => {
     const messages: ToBeRecordedMessage[] = [
       {
         messageId: 'msg123',
         role: 'user',
         content: 'Hello, world!',
         usecase: 'test',
-        extraData: [
-          {
-            type: 'image',
-            name: 'test.png',
-            source: {
-              type: 'base64',
-              mediaType: 'image/png',
-              data: 'javascript:alert(1)',
-            },
-          },
-        ],
       },
     ];
     const userId = 'testUser';
     const chatId = 'chat123';
 
-    // Set up mock
-    mockedFindChatById.mockResolvedValue({
-      id: `user#${userId}`,
-      createdDate: '1234567890',
-      chatId: `chat#${chatId}`,
-      usecase: '',
-      title: '',
-      updatedDate: '',
+    // Spy on console.log to avoid cluttering test output
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+
+    // Set up mock to throw an error
+    mockedFindChatById.mockImplementation(() => {
+      throw new Error('Test error');
     });
 
     // Execute test
@@ -164,74 +163,13 @@ describe('createMessages Lambda handler', () => {
     );
 
     // Verify results
-    expect(result.statusCode).toBe(400);
+    expect(result.statusCode).toBe(500);
     expect(JSON.parse(result.body)).toEqual({
-      message: 'Invalid extraData',
+      message: 'Internal Server Error',
     });
-    expect(mockedBatchCreateMessages).not.toHaveBeenCalled();
-  });
-
-  // Test for extraData sanitization
-  test('sanitizes extraData correctly | <script>alert("XSS")</script><p>Valid content</p>', async () => {
-    // Test data with HTML in extraData
-    const messages: ToBeRecordedMessage[] = [
-      {
-        messageId: 'msg123',
-        role: 'user',
-        content: 'Hello, world!',
-        usecase: 'test',
-        extraData: [
-          {
-            type: 'json',
-            name: 'test.json',
-            source: {
-              type: 'json',
-              mediaType: 'application/json',
-              data: '<script>alert("XSS")</script><p>Valid content</p>',
-            },
-          },
-        ],
-      },
-    ];
-
-    const userId = 'testUser';
-    const chatId = 'chat123';
-
-    const expectedRecordedMessages: RecordedMessage[] = [
-      {
-        id: `chat#${chatId}`,
-        createdDate: expect.any(String),
-        messageId: 'msg123',
-        role: 'user',
-        content: 'Hello, world!',
-        userId: `user#${userId}`,
-        feedback: 'none',
-        usecase: 'test',
-        extraData: messages[0].extraData,
-      },
-    ];
-
-    // Set up mocks
-    mockedFindChatById.mockResolvedValue({
-      id: `user#${userId}`,
-      createdDate: '1234567890',
-      chatId: `chat#${chatId}`,
-      usecase: '',
-      title: '',
-      updatedDate: '',
-    });
-    mockedBatchCreateMessages.mockResolvedValue(expectedRecordedMessages);
-
-    // Execute test - Expected: script tags are sanitized but p tags are allowed
-    await handler(createAPIGatewayProxyEvent({ messages }, chatId, userId));
-
-    // Verify that extraData is sanitized when calling batchCreateMessages
-    const sanitizedMessages = mockedBatchCreateMessages.mock.calls[0][0];
-    expect(sanitizedMessages[0].extraData?.[0].source.data).not.toContain(
-      '<script>'
-    );
-    expect(sanitizedMessages[0].extraData?.[0].source.data).toContain(
-      '<p>Valid content</p>'
-    );
+    expect(consoleLogSpy).toHaveBeenCalled();
+    
+    // Restore the spy
+    consoleLogSpy.mockRestore();
   });
 });

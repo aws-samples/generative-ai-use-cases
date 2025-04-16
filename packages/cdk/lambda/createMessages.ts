@@ -2,11 +2,10 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { CreateMessagesRequest, ExtraData } from 'generative-ai-use-cases';
 import { batchCreateMessages, findChatById } from './repository';
 
-const isValidExtraData = (extra: ExtraData): boolean => {
-  return (
-    extra.source.data.startsWith('javascript:') ||
-    !extra.source.data.startsWith('s3://')
-  );
+const FILE_UPLOAD_BUCKET_NAME = process.env.BUCKET_NAME!;
+
+const isValidExtraData = (extra: ExtraData, bucketName: string): boolean => {
+  return extra.source.data.startsWith(`https://${bucketName}`);
 };
 
 export const handler = async (
@@ -37,7 +36,7 @@ export const handler = async (
       for (const message of req.messages) {
         if (message.extraData && message.extraData.length > 0) {
           for (const extra of message.extraData) {
-            if (!isValidExtraData(extra)) {
+            if (!isValidExtraData(extra, FILE_UPLOAD_BUCKET_NAME)) {
               return {
                 statusCode: 400,
                 headers: {
