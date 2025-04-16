@@ -53,7 +53,7 @@ const base64ToFloat32Array = (base64String: string) => {
 
 export const useSpeechToSpeech = () => {
   const api = useHttp();
-  const { clear, messages, setupSystemPrompt, onTextOutput, onTextStop } = useChatHistory();
+  const { clear, messages, setupSystemPrompt, onTextStart, onTextOutput, onTextStop, isAssistantSpeeching } = useChatHistory();
   const [isActive, setIsActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const systemPromptRef = useRef<string>('');
@@ -131,7 +131,6 @@ export const useSpeechToSpeech = () => {
         const event = data?.event;
         if (event && event.direction === 'btoc') {
           if (event.event === 'ready') {
-            console.log('Now ready to speech-to-speech!');
             startRecording().then(() => {
               setIsLoading(false);
             });
@@ -154,6 +153,7 @@ export const useSpeechToSpeech = () => {
             }
           } else if (event.event === 'textStart') {
             console.log('textStart', event.data);
+            onTextStart(event.data);
           } else if (event.event === 'textOutput') {
             console.log('textOutput', event.data);
             onTextOutput(event.data);
@@ -263,6 +263,7 @@ export const useSpeechToSpeech = () => {
     messages,
     isActive,
     isLoading,
+    isAssistantSpeeching,
     startSession,
     closeSession,
   }

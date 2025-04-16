@@ -1,109 +1,93 @@
 import { useState, useRef } from 'react';
 import { UnrecordedMessage } from 'generative-ai-use-cases';
 
-type SpeechToSpeechMessage = UnrecordedMessage & { isPartial: boolean };
-
-// stopReason が INTERRUPTED だったら content は空
-// そこから先のそのロールの発言は無視される (基本的にアシスタントの発言と思われる)
-// ユーザーの発言が到着したら、interrupted を解除
-
 const useChatHistory = () => {
-  const [messages, setMessages] = useState<SpeechToSpeechMessage[]>([]);
+  const [messages, setMessages] = useState<UnrecordedMessage[]>([]);
+  const [isAssistantSpeeching, setIsAssistantSpeeching] = useState(false);
   const messageCache = useRef<Record<string, UnrecordedMessage>>({});
+  const generationStageCache = useRef<Record<string, string>>({});
   const stopReasonCache = useRef<Record<string, string>>({});
-  const interrupted = useRef<boolean>(false);
 
   const clear = () => {
     setMessages([]);
     messageCache.current = {};
+    generationStageCache.current = {};
+    stopReasonCache.current = {};
   }
 
   const setupSystemPrompt = (prompt: string) => {
     setMessages([{
       role: 'system',
       content: prompt,
-      isPartial: false,
     }]);
   };
 
-  const updateMessages = (newMessage: SpeechToSpeechMessage) => {
-    if (interrupted.current) {
-      if (newMessage.role === 'assistant') {
-        return;
-      } else {
-        interrupted.current = false;
-      }
+  const tryUpdateMessage = (id: string) => {
+    if (
+      !messageCache.current[id] ||
+        !generationStageCache.current[id] ||
+        !stopReasonCache.current[id]
+    ) {
+      return;
+    }
+
+    if (generationStageCache.current[id] !== 'FINAL') {
+      return;
+    }
+
+    if (stopReasonCache.current[id] === 'INTERRUPTED') {
+      return;
     }
 
     setMessages((messages) => {
       const lastMessageIndex = messages.length - 1;
       const lastMessage = messages[lastMessageIndex];
       const messagesWithoutLast = messages.slice(0, lastMessageIndex);
+      const role = messageCache.current[id].role;
+      const content = messageCache.current[id].content;
 
-      if (lastMessage) {
-        if (lastMessage.role !== newMessage.role) {
-          return [...messagesWithoutLast, lastMessage, newMessage];
-        } else {
-          if (lastMessage.isPartial && !newMessage.isPartial) {
-            return [...messagesWithoutLast, newMessage];
-          } else {
-            const updatedLastMessage = {
-              ...lastMessage,
-              content: lastMessage.content + ' ' + newMessage.content,
-              isPartial: newMessage.isPartial,
-            };
-            return [...messagesWithoutLast, updatedLastMessage];
-          }
-        }
-      }
-
-      if (lastMessage) {
-        return [...messagesWithoutLast, lastMessage];
+      if (lastMessage.role === role) {
+        const updatedLastMessage: UnrecordedMessage = {
+          ...lastMessage,
+          content: lastMessage.content + ' ' + content,
+        };
+        return [...messagesWithoutLast, updatedLastMessage];
       } else {
-        return [...messagesWithoutLast];
+        const newMessage: UnrecordedMessage = { role, content };
+        return [...messagesWithoutLast, lastMessage, newMessage];
       }
     });
+  }
+
+  const onTextStart = (data: { id: string, role: string, generationStage: string}) => {
+    generationStageCache.current[data.id] = data.generationStage;
+    tryUpdateMessage(data.id);
+
+    if (data.role === 'assistant' && data.generationStage === 'SPECULATIVE') {
+      setIsAssistantSpeeching(true);
+    } else {
+      setIsAssistantSpeeching(false);
+    }
   };
 
   const onTextOutput = (data: { id: string, role: string, content: string}) => {
-    if (stopReasonCache.current[data.id]) {
-      const newMessage: SpeechToSpeechMessage = {
-        role: data.role as 'user' | 'assistant',
-        content: data.content,
-        isPartial: stopReasonCache.current[data.id] === 'PARTIAL_TURN',
-      };
-
-      updateMessages(newMessage);
-    } else {
-      messageCache.current[data.id] = { role: data.role as 'user' | 'assistant', content: data.content };
-    }
+    messageCache.current[data.id] = { role: data.role as 'user' | 'assistant', content: data.content };
+    tryUpdateMessage(data.id);
   };
 
   const onTextStop = (data: { id: string, stopReason: string }) => {
-    if (data.stopReason === 'INTERRUPTED') {
-      interrupted.current = true;
-      return;
-    }
-
-    if (messageCache.current[data.id]) {
-      const newMessage: SpeechToSpeechMessage = {
-        role: messageCache.current[data.id].role,
-        content: messageCache.current[data.id].content,
-        isPartial: data.stopReason === 'PARTIAL_TURN',
-      };
-
-      updateMessages(newMessage);
-    } else {
-      stopReasonCache.current[data.id] = data.stopReason;
-    }
+    stopReasonCache.current[data.id] = data.stopReason;
+    tryUpdateMessage(data.id);
   };
 
   return {
     clear,
     messages,
     setupSystemPrompt,
+    onTextStart,
     onTextOutput,
     onTextStop,
+    isAssistantSpeeching,
   };
 }
 

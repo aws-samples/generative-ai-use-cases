@@ -34,22 +34,30 @@ let audioOutputQueue: string[] = [];
 let promptName = randomUUID();
 let audioContentId = randomUUID();
 
-const initialize = () => {
-  isActive = false;
-  isProcessingAudio = false;
-  isAudioStarted = false;
-
+const clearQueue = () => {
   eventQueue = [];
   audioInputQueue = [];
   audioOutputQueue = [];
 };
 
+const initialize = () => {
+  isActive = false;
+  isProcessingAudio = false;
+  isAudioStarted = false;
+
+  clearQueue();
+};
+
 const dispatchEvent = async (channel: EventsChannel, event: SpeechToSpeechEventType, data: any = undefined) => {
-  await channel.publish({
-    direction: 'btoc',
-    event,
-    data,
-  } as SpeechToSpeechEvent);
+  try {
+    await channel.publish({
+      direction: 'btoc',
+      event,
+      data,
+    } as SpeechToSpeechEvent);
+  } catch (e) {
+    console.error('Failed to publish the event via channel. The channel might be closed', event, data);
+  }
 };
 
 const enqueueSessionStart = () => {
@@ -173,7 +181,9 @@ const enqueueSessionEnd = () => {
 
 const enqueueAudioStop = () => {
   isAudioStarted = false;
-  isActive = false;
+
+  clearQueue();
+  // isActive = false;
 
   eventQueue.push({
     event: {
@@ -245,24 +255,33 @@ const createAsyncIterator = () => {
     [Symbol.asyncIterator]: () => {
       return {
         next: async (): Promise<IteratorResult<InvokeModelWithBidirectionalStreamInput>> => {
-          while (eventQueue.length === 0 && isActive) {
-            await new Promise(s => setTimeout(s, 100));
-          }
+          try {
+            while (eventQueue.length === 0 && isActive) {
+              await new Promise(s => setTimeout(s, 100));
+            }
 
-          if (!isActive) {
+            const nextEvent = eventQueue.shift();
+
+            if (!nextEvent) {
+              return { value: undefined, done: true };
+            }
+
+            if (nextEvent.event.sessionEnd) {
+              isActive = false;
+            }
+
+            return {
+              value: {
+                chunk: {
+                  bytes: new TextEncoder().encode(JSON.stringify(nextEvent)),
+                },
+              },
+              done: false,
+            };
+          } catch (e) {
+            console.error('Error in asyncIterator', e);
             return { value: undefined, done: true };
           }
-
-          const nextEvent = eventQueue.shift();
-
-          return {
-            value: {
-              chunk: {
-                bytes: new TextEncoder().encode(JSON.stringify(nextEvent)),
-              },
-            },
-            done: false,
-          };
         },
       };
     },
@@ -309,16 +328,21 @@ const processResponseStream = async (channel: EventsChannel, response: InvokeMod
         const textResponse = new TextDecoder().decode(event.chunk.bytes);
         const jsonResponse = JSON.parse(textResponse);
 
-        console.log('Bedrock response', jsonResponse);
-
         if (jsonResponse.event?.audioOutput) {
           await enqueueAudioOutput(channel, jsonResponse.event.audioOutput.content);
         } else if (jsonResponse.event?.contentEnd && jsonResponse.event?.contentEnd?.type === 'AUDIO') {
           await forcePublishAudioOutput(channel);
         } else if (jsonResponse.event?.contentStart && jsonResponse.event?.contentStart?.type === 'TEXT') {
+          let generationStage = null;
+
+          if (jsonResponse.event?.contentStart?.additionalModelFields) {
+            generationStage = JSON.parse(jsonResponse.event?.contentStart?.additionalModelFields).generationStage;
+          }
+
           await dispatchEvent(channel, 'textStart', {
             id: jsonResponse.event?.contentStart?.contentId,
             role: jsonResponse.event?.contentStart?.role?.toLowerCase(),
+            generationStage,
           });
         } else if (jsonResponse.event?.textOutput) {
           await dispatchEvent(channel, 'textOutput', {
@@ -336,7 +360,7 @@ const processResponseStream = async (channel: EventsChannel, response: InvokeMod
       }
     }
   } catch (e) {
-    console.error(e);
+    console.error('Error in processResponseStream', e);
   }
 };
 
@@ -417,16 +441,6 @@ export const handler = async (event: { channelId: string }) => {
             enqueueAudioStop();
             enqueuePromptEnd();
             enqueueSessionEnd();
-
-            if (channel) {
-              try {
-                await dispatchEvent(channel, 'end');
-                channel.close();
-              } catch (e) {
-                console.error(e);
-                throw e;
-              }
-            }
           }
         }
       },
@@ -463,7 +477,7 @@ export const handler = async (event: { channelId: string }) => {
     // Start response stream
     await processResponseStream(channel, response);
   } catch (e) {
-    console.error(e);
+    console.error('Error in main process', e);
   } finally {
     if (channel) {
       try {
@@ -473,7 +487,7 @@ export const handler = async (event: { channelId: string }) => {
           }
         });
       } catch (e) {
-        console.error(e);
+        console.error('Error during finalization', e);
       }
     }
 
