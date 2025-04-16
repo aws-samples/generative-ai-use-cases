@@ -102,7 +102,7 @@ const InputChatContent: React.FC<Props> = (props) => {
 
   const disabledSend = useMemo(() => {
     return (
-      props.content === '' ||
+      props.content.trim() === '' ||
       props.disabled ||
       uploading ||
       errorMessages.length > 0

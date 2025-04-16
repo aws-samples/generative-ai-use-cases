@@ -1,6 +1,7 @@
 import { PrimaryKey } from './base';
 
 export type GenerateVideoParams = {
+  taskType?: string;
   prompt: string;
   durationSeconds: number;
   dimension?: string;

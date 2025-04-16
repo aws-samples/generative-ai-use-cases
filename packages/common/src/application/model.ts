@@ -163,6 +163,7 @@ export const modelFeatureFlags: Record<string, FeatureFlags> = {
   // === Video ===
 
   'amazon.nova-reel-v1:0': MODEL_FEATURE.VIDEO_GEN,
+  'amazon.nova-reel-v1:1': MODEL_FEATURE.VIDEO_GEN,
   'luma.ray-v2:0': MODEL_FEATURE.VIDEO_GEN,
 
   // === Embedding ===

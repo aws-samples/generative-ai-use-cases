@@ -1086,6 +1086,7 @@ video:
     play: Play
     prompt: Prompt
     status: Status
+  taskType: Task Type
   upload: Upload
   uploadImage: Upload Image
   uploadImageHelp: Specify the image used in the first frame of the video.

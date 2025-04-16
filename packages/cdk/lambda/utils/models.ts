@@ -719,6 +719,41 @@ const createBodyVideoNovaReel = (params: GenerateVideoParams) => {
   };
 };
 
+const createBodyVideoNovaReelV11 = (params: GenerateVideoParams) => {
+  if (params.taskType === 'TEXT_VIDEO') {
+    return {
+      taskType: 'TEXT_VIDEO',
+      textToVideoParams: {
+        text: params.prompt,
+        images: params.images,
+      },
+      videoGenerationConfig: {
+        durationSeconds: params.durationSeconds,
+        fps: params.fps,
+        dimension: params.dimension,
+        seed: params.seed,
+      },
+    };
+  } else if (params.taskType === 'MULTI_SHOT_AUTOMATED') {
+    return {
+      taskType: 'MULTI_SHOT_AUTOMATED',
+      multiShotAutomatedParams: {
+        text: params.prompt,
+      },
+      videoGenerationConfig: {
+        durationSeconds: params.durationSeconds,
+        fps: params.fps,
+        dimension: params.dimension,
+        seed: params.seed,
+      },
+    };
+  } else if (params.taskType === 'MULTI_SHOT_MANUAL') {
+    throw new Error('Not implemented yet');
+  } else {
+    throw new Error(`Unknown task type ${params.taskType}`);
+  }
+};
+
 const createBodyVideoLumaRayV2 = (params: GenerateVideoParams) => {
   return {
     prompt: params.prompt,
@@ -1276,6 +1311,9 @@ export const BEDROCK_VIDEO_GEN_MODELS: {
 } = {
   'amazon.nova-reel-v1:0': {
     createBodyVideo: createBodyVideoNovaReel,
+  },
+  'amazon.nova-reel-v1:1': {
+    createBodyVideo: createBodyVideoNovaReelV11,
   },
   'luma.ray-v2:0': {
     createBodyVideo: createBodyVideoLumaRayV2,

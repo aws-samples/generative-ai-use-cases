@@ -949,6 +949,7 @@ video:
     play: 再生
     prompt: プロンプト
     status: ステータス
+  taskType: タスクタイプ
   upload: アップロード
   uploadImage: 画像アップロード
   uploadImageHelp: 動画の 1 フレーム目に使われる画像を指定できます
