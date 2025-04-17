@@ -838,6 +838,7 @@ useCaseBuilder:
         {{text:what to implement}}
         </instruction>
       title: Code generation
+    name: Programming
     queryGeneration:
       description: Generate queries for various databases.
       inputExample1:
@@ -848,7 +849,7 @@ useCaseBuilder:
           value1: Athena
           value2: |-
             describe cloudtrail_logs_aws_cloudtrail_logs_XXXXXXXXXXXX_XXXXXXXX;
-            
+
             eventversion        	string
             useridentity        	struct<type:string,principalid:string,arn:string,accountid:string,invokedby:string,accesskeyid:string,username:string,sessioncontext:struct<attributes:struct<mfaauthenticated:string,creationdate:string>,sessionissuer:struct<type:string,principalid:string,arn:string,accountid:string,username:string>,ec2roledelivery:string,webidfederationdata:map<string,string>>>
             eventtime           	string
@@ -880,7 +881,7 @@ useCaseBuilder:
           key1: Database-Type
           key2: Information about the tables to be used
           key3: Natural language description of the query you want to execute
-          value1 : Redshift
+          value1: Redshift
           value2: |-
             CREATE TABLE customers (
               customer_id INTEGER PRIMARY KEY,
@@ -932,7 +933,6 @@ useCaseBuilder:
         <query>{{text:Natural language description of the query you want to execute}}</query>
         After the AI says "Yes, I understand," the AI will consider and output how to fulfill the user's request, consider and output efficient query methods, and then output in the format ```sql{query to execute}```.
       title: SQL Generation
-    name: Programming
   textAnalysis:
     name: Text analysis
     qaPair:

@@ -846,6 +846,7 @@ useCaseBuilder:
         {{text:実装したい内容}}
         </instruction>
       title: コード作成
+    name: プログラミング
     queryGeneration:
       description: 様々なデータベースに向けたクエリを生成します。
       inputExample1:
@@ -856,7 +857,7 @@ useCaseBuilder:
           value1: Athena
           value2: |-
             describe cloudtrail_logs_aws_cloudtrail_logs_XXXXXXXXXXXX_XXXXXXXX;
-            
+
             eventversion        	string
             useridentity        	struct<type:string,principalid:string,arn:string,accountid:string,invokedby:string,accesskeyid:string,username:string,sessioncontext:struct<attributes:struct<mfaauthenticated:string,creationdate:string>,sessionissuer:struct<type:string,principalid:string,arn:string,accountid:string,username:string>,ec2roledelivery:string,webidfederationdata:map<string,string>>>
             eventtime           	string
@@ -940,7 +941,6 @@ useCaseBuilder:
         <query>{{text:実行したいクエリの自然言語による説明}}</query>
         AI はまず、ユーザーの希望をどうすれば叶えられるのかとこのケースにおいて効率的なクエリとはなにか、について考えたあと、```sql{実行すべきクエリ}```の形で出力してください。
       title: SQL 生成
-    name: プログラミング
   textAnalysis:
     name: テキスト分析
     qaPair:

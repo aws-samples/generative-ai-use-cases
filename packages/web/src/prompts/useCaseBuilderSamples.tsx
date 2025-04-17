@@ -700,14 +700,20 @@ export const getUseCaseBuilderSamplePrompts = (
     description: t('useCaseBuilder.programming.queryGeneration.description', {
       ns: 'prompts',
     }),
-    promptTemplate: t('useCaseBuilder.programming.queryGeneration.promptTemplate', {
-      ns: 'prompts',
-    }),
+    promptTemplate: t(
+      'useCaseBuilder.programming.queryGeneration.promptTemplate',
+      {
+        ns: 'prompts',
+      }
+    ),
     inputExamples: [
       {
-        title: t('useCaseBuilder.programming.queryGeneration.inputExample1.title', {
-          ns: 'prompts',
-        }),
+        title: t(
+          'useCaseBuilder.programming.queryGeneration.inputExample1.title',
+          {
+            ns: 'prompts',
+          }
+        ),
         examples: {
           [t(
             'useCaseBuilder.programming.queryGeneration.inputExample1.parameters.key1',
@@ -733,9 +739,12 @@ export const getUseCaseBuilderSamplePrompts = (
         },
       },
       {
-        title: t('useCaseBuilder.programming.queryGeneration.inputExample2.title', {
-          ns: 'prompts',
-        }),
+        title: t(
+          'useCaseBuilder.programming.queryGeneration.inputExample2.title',
+          {
+            ns: 'prompts',
+          }
+        ),
         examples: {
           [t(
             'useCaseBuilder.programming.queryGeneration.inputExample2.parameters.key1',
@@ -761,9 +770,12 @@ export const getUseCaseBuilderSamplePrompts = (
         },
       },
       {
-        title: t('useCaseBuilder.programming.queryGeneration.inputExample3.title', {
-          ns: 'prompts',
-        }),
+        title: t(
+          'useCaseBuilder.programming.queryGeneration.inputExample3.title',
+          {
+            ns: 'prompts',
+          }
+        ),
         examples: {
           [t(
             'useCaseBuilder.programming.queryGeneration.inputExample3.parameters.key1',
