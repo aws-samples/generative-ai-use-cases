@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 
 const selfSignUpEnabled: boolean =
   import.meta.env.VITE_APP_SELF_SIGN_UP_ENABLED === 'true';
-const speechToSpeechEventApiEndpoint: string = import.meta.env.VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT;
+const speechToSpeechEventApiEndpoint: string = import.meta.env
+  .VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT;
 
 type Props = {
   children: React.ReactNode;

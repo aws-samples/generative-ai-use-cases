@@ -200,7 +200,8 @@ export class Web extends Construct {
           props.useCaseBuilderEnabled.toString(),
         VITE_APP_HIDDEN_USE_CASES: JSON.stringify(props.hiddenUseCases),
         VITE_APP_SPEECH_TO_SPEECH_NAMESPACE: props.speechToSpeechNamespace,
-        VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT: props.speechToSpeechEventApiEndpoint,
+        VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT:
+          props.speechToSpeechEventApiEndpoint,
       },
     });
     // Enhance computing resources

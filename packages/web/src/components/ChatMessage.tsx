@@ -140,7 +140,6 @@ const ChatMessage: React.FC<Props> = (props) => {
           ? 'bg-gray-100/70'
           : ''
       }`}>
-
       <div
         className={`${
           props.className ?? ''

@@ -25,7 +25,7 @@ const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
 const float32ArrayToInt16Array = (float32Array: Float32Array): Int16Array => {
   const int16Array = new Int16Array(float32Array.length);
   for (let i = 0; i < float32Array.length; i++) {
-    int16Array[i] = Math.max(-1, Math.min(1, float32Array[i])) * 0x7FFF;
+    int16Array[i] = Math.max(-1, Math.min(1, float32Array[i])) * 0x7fff;
   }
   return int16Array;
 };
@@ -53,7 +53,15 @@ const base64ToFloat32Array = (base64String: string) => {
 
 export const useSpeechToSpeech = () => {
   const api = useHttp();
-  const { clear, messages, setupSystemPrompt, onTextStart, onTextOutput, onTextStop, isAssistantSpeeching } = useChatHistory();
+  const {
+    clear,
+    messages,
+    setupSystemPrompt,
+    onTextStart,
+    onTextOutput,
+    onTextStop,
+    isAssistantSpeeching,
+  } = useChatHistory();
   const [isActive, setIsActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const systemPromptRef = useRef<string>('');
@@ -65,7 +73,11 @@ export const useSpeechToSpeech = () => {
   const processorRef = useRef<ScriptProcessorNode | null>(null);
   const audioInputQueue = useRef<string[]>([]);
 
-  const dispatchEvent = async (event: SpeechToSpeechEventType, data: any = undefined) => {
+  const dispatchEvent = async (
+    event: SpeechToSpeechEventType,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data: any = undefined
+  ) => {
     if (channelRef.current) {
       await channelRef.current.publish({
         direction: 'ctob',
@@ -80,12 +92,12 @@ export const useSpeechToSpeech = () => {
       audio: {
         echoCancellation: true,
         noiseSuppression: true,
-        autoGainControl: true
-      }
+        autoGainControl: true,
+      },
     });
 
     const audioContext = new AudioContext({
-      sampleRate: 16000
+      sampleRate: 16000,
     });
 
     audioStreamRef.current = audioStream;
@@ -103,7 +115,10 @@ export const useSpeechToSpeech = () => {
 
       let processedChunks = 0;
 
-      while (audioInputQueue.current.length > 0 && processedChunks < MAX_AUDIO_CHUNKS_PER_BATCH) {
+      while (
+        audioInputQueue.current.length > 0 &&
+        processedChunks < MAX_AUDIO_CHUNKS_PER_BATCH
+      ) {
         const chunk = audioInputQueue.current.shift();
 
         if (chunk) {
@@ -116,7 +131,7 @@ export const useSpeechToSpeech = () => {
     }
 
     setTimeout(() => processAudioInput(), 0);
-  }
+  };
 
   const connectToAppSync = async () => {
     audioInputQueue.current = [];
@@ -127,6 +142,7 @@ export const useSpeechToSpeech = () => {
     channelRef.current = channel;
 
     channel.subscribe({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       next: (data: any) => {
         const event = data?.event;
         if (event && event.direction === 'btoc') {
@@ -158,6 +174,7 @@ export const useSpeechToSpeech = () => {
           }
         }
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       error: (e: any) => {
         console.error(e);
       },
@@ -167,7 +184,11 @@ export const useSpeechToSpeech = () => {
   };
 
   const startRecording = async () => {
-    if (!audioContextRef.current || !audioStreamRef.current || !systemPromptRef.current) {
+    if (
+      !audioContextRef.current ||
+      !audioStreamRef.current ||
+      !systemPromptRef.current
+    ) {
       return;
     }
 
@@ -177,11 +198,17 @@ export const useSpeechToSpeech = () => {
 
     setupSystemPrompt(systemPromptRef.current);
 
-    const sourceNode = audioContextRef.current.createMediaStreamSource(audioStreamRef.current);
+    const sourceNode = audioContextRef.current.createMediaStreamSource(
+      audioStreamRef.current
+    );
 
     if (audioContextRef.current.createScriptProcessor) {
-      const processor = audioContextRef.current.createScriptProcessor(512, 1, 1);
-
+      const processor = audioContextRef.current.createScriptProcessor(
+        512,
+        1,
+        1
+      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       processor.onaudioprocess = (e: any) => {
         const inputData = e.inputBuffer.getChannelData(0);
         const int16Array = float32ArrayToInt16Array(inputData);
@@ -220,7 +247,9 @@ export const useSpeechToSpeech = () => {
     }
 
     if (audioStreamRef.current) {
-      audioStreamRef.current.getTracks().forEach((track: any) => track.stop());
+      audioStreamRef.current
+        .getTracks()
+        .forEach((track: MediaStreamTrack) => track.stop());
       audioStreamRef.current = null;
     }
 
@@ -261,5 +290,5 @@ export const useSpeechToSpeech = () => {
     isAssistantSpeeching,
     startSession,
     closeSession,
-  }
+  };
 };

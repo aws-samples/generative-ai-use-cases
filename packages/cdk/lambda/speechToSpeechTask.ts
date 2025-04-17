@@ -1,13 +1,13 @@
 import { Amplify } from 'aws-amplify';
 import { events, EventsChannel } from 'aws-amplify/data';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-import { randomUUID } from "crypto";
+import { randomUUID } from 'crypto';
 import {
   BedrockRuntimeClient,
   InvokeModelWithBidirectionalStreamCommand,
   InvokeModelWithBidirectionalStreamInput,
   InvokeModelWithBidirectionalStreamCommandOutput,
-} from "@aws-sdk/client-bedrock-runtime";
+} from '@aws-sdk/client-bedrock-runtime';
 import { NodeHttp2Handler } from '@smithy/node-http-handler';
 import {
   SpeechToSpeechEventType,
@@ -48,7 +48,11 @@ const initialize = () => {
   clearQueue();
 };
 
-const dispatchEvent = async (channel: EventsChannel, event: SpeechToSpeechEventType, data: any = undefined) => {
+const dispatchEvent = async (
+  channel: EventsChannel,
+  event: SpeechToSpeechEventType,
+  data: any = undefined
+) => {
   try {
     await channel.publish({
       direction: 'btoc',
@@ -56,7 +60,11 @@ const dispatchEvent = async (channel: EventsChannel, event: SpeechToSpeechEventT
       data,
     } as SpeechToSpeechEvent);
   } catch (e) {
-    console.error('Failed to publish the event via channel. The channel might be closed', event, data);
+    console.error(
+      'Failed to publish the event via channel. The channel might be closed',
+      event,
+      data
+    );
   }
 };
 
@@ -68,10 +76,10 @@ const enqueueSessionStart = () => {
           maxTokens: 1024,
           topP: 0.9,
           temperature: 0.7,
-        }
-      }
-    }
-  })
+        },
+      },
+    },
+  });
 };
 
 const enqueuePromptStart = () => {
@@ -80,20 +88,20 @@ const enqueuePromptStart = () => {
       promptStart: {
         promptName,
         textOutputConfiguration: {
-          mediaType: "text/plain",
+          mediaType: 'text/plain',
         },
         audioOutputConfiguration: {
-          audioType: "SPEECH",
-          encoding: "base64",
-          mediaType: "audio/lpcm",
+          audioType: 'SPEECH',
+          encoding: 'base64',
+          mediaType: 'audio/lpcm',
           sampleRateHertz: 24000,
           sampleSizeBits: 16,
           channelCount: 1,
           // TODO: avoid hardcoding
-          voiceId: "tiffany",
-        }
-      }
-    }
+          voiceId: 'tiffany',
+        },
+      },
+    },
   });
 };
 
@@ -105,11 +113,11 @@ const enqueueSystemPrompt = (prompt: string) => {
       contentStart: {
         promptName,
         contentName,
-        type: "TEXT",
+        type: 'TEXT',
         interactive: true,
-        role: "SYSTEM",
+        role: 'SYSTEM',
         textInputConfiguration: {
-          mediaType: "text/plain",
+          mediaType: 'text/plain',
         },
       },
     },
@@ -122,7 +130,7 @@ const enqueueSystemPrompt = (prompt: string) => {
         contentName,
         content: prompt,
       },
-    }
+    },
   });
 
   eventQueue.push({
@@ -131,8 +139,8 @@ const enqueueSystemPrompt = (prompt: string) => {
         promptName,
         contentName,
       },
-    }
-  })
+    },
+  });
 };
 
 const enqueueAudioStart = () => {
@@ -147,9 +155,9 @@ const enqueueAudioStart = () => {
         interactive: true,
         role: 'USER',
         audioInputConfiguration: {
-          audioType: "SPEECH",
-          encoding: "base64",
-          mediaType: "audio/lpcm",
+          audioType: 'SPEECH',
+          encoding: 'base64',
+          mediaType: 'audio/lpcm',
           sampleRateHertz: 16000,
           sampleSizeBits: 16,
           channelCount: 1,
@@ -167,7 +175,7 @@ const enqueuePromptEnd = () => {
       promptEnd: {
         promptName,
       },
-    }
+    },
   });
 };
 
@@ -216,7 +224,10 @@ const enqueueAudioInput = (audioInputBase64Array: string[]) => {
   }
 };
 
-const enqueueAudioOutput = async (channel: EventsChannel, audioOutput: string) => {
+const enqueueAudioOutput = async (
+  channel: EventsChannel,
+  audioOutput: string
+) => {
   audioOutputQueue.push(audioOutput);
 
   if (audioOutputQueue.length > MIN_AUDIO_OUTPUT_QUEUE_SIZE) {
@@ -224,7 +235,10 @@ const enqueueAudioOutput = async (channel: EventsChannel, audioOutput: string) =
 
     let processedChunks = 0;
 
-    while (audioOutputQueue.length > 0 && processedChunks < MAX_AUDIO_OUTPUT_PER_BATCH) {
+    while (
+      audioOutputQueue.length > 0 &&
+      processedChunks < MAX_AUDIO_OUTPUT_PER_BATCH
+    ) {
       const chunk = audioOutputQueue.shift();
 
       if (chunk) {
@@ -254,10 +268,12 @@ const createAsyncIterator = () => {
   return {
     [Symbol.asyncIterator]: () => {
       return {
-        next: async (): Promise<IteratorResult<InvokeModelWithBidirectionalStreamInput>> => {
+        next: async (): Promise<
+          IteratorResult<InvokeModelWithBidirectionalStreamInput>
+        > => {
           try {
             while (eventQueue.length === 0 && isActive) {
-              await new Promise(s => setTimeout(s, 100));
+              await new Promise((s) => setTimeout(s, 100));
             }
 
             const nextEvent = eventQueue.shift();
@@ -286,14 +302,14 @@ const createAsyncIterator = () => {
       };
     },
     return: async () => {
-      return { value: undefined, done: true }
+      return { value: undefined, done: true };
     },
     throw: async (error: any) => {
-      console.error(error)
+      console.error(error);
       throw error;
     },
-  }
-}
+  };
+};
 
 const processAudioQueue = async () => {
   while (audioInputQueue.length > 0 && isAudioStarted && isActive) {
@@ -317,7 +333,10 @@ const processAudioQueue = async () => {
   }
 };
 
-const processResponseStream = async (channel: EventsChannel, response: InvokeModelWithBidirectionalStreamCommandOutput) => {
+const processResponseStream = async (
+  channel: EventsChannel,
+  response: InvokeModelWithBidirectionalStreamCommandOutput
+) => {
   if (!response.body) {
     throw new Error('Response body is null');
   }
@@ -329,14 +348,25 @@ const processResponseStream = async (channel: EventsChannel, response: InvokeMod
         const jsonResponse = JSON.parse(textResponse);
 
         if (jsonResponse.event?.audioOutput) {
-          await enqueueAudioOutput(channel, jsonResponse.event.audioOutput.content);
-        } else if (jsonResponse.event?.contentEnd && jsonResponse.event?.contentEnd?.type === 'AUDIO') {
+          await enqueueAudioOutput(
+            channel,
+            jsonResponse.event.audioOutput.content
+          );
+        } else if (
+          jsonResponse.event?.contentEnd &&
+          jsonResponse.event?.contentEnd?.type === 'AUDIO'
+        ) {
           await forcePublishAudioOutput(channel);
-        } else if (jsonResponse.event?.contentStart && jsonResponse.event?.contentStart?.type === 'TEXT') {
+        } else if (
+          jsonResponse.event?.contentStart &&
+          jsonResponse.event?.contentStart?.type === 'TEXT'
+        ) {
           let generationStage = null;
 
           if (jsonResponse.event?.contentStart?.additionalModelFields) {
-            generationStage = JSON.parse(jsonResponse.event?.contentStart?.additionalModelFields).generationStage;
+            generationStage = JSON.parse(
+              jsonResponse.event?.contentStart?.additionalModelFields
+            ).generationStage;
           }
 
           await dispatchEvent(channel, 'textStart', {
@@ -350,7 +380,10 @@ const processResponseStream = async (channel: EventsChannel, response: InvokeMod
             role: jsonResponse.event?.textOutput?.role?.toLowerCase(),
             content: jsonResponse.event?.textOutput?.content,
           });
-        } else if (jsonResponse.event?.contentEnd && jsonResponse.event?.contentEnd?.type === 'TEXT') {
+        } else if (
+          jsonResponse.event?.contentEnd &&
+          jsonResponse.event?.contentEnd?.type === 'TEXT'
+        ) {
           await dispatchEvent(channel, 'textStop', {
             id: jsonResponse.event?.contentEnd?.contentId,
             role: jsonResponse.event?.contentEnd?.role?.toLowerCase(),
@@ -417,9 +450,13 @@ export const handler = async (event: { channelId: string }) => {
     );
 
     console.log('Amplify configured');
-    console.log(`Connect to the channel /${process.env.NAMESPACE}/${event.channelId}`)
+    console.log(
+      `Connect to the channel /${process.env.NAMESPACE}/${event.channelId}`
+    );
 
-    channel = await events.connect(`/${process.env.NAMESPACE}/${event.channelId}`);
+    channel = await events.connect(
+      `/${process.env.NAMESPACE}/${event.channelId}`
+    );
 
     console.log('Connected!');
 
@@ -454,12 +491,12 @@ export const handler = async (event: { channelId: string }) => {
     // Without this sleep, the error below is raised
     // "Subscription has not been initialized"
     console.log('Sleep...');
-    await new Promise(s => setTimeout(s, 1000));
+    await new Promise((s) => setTimeout(s, 1000));
 
     // Notify the status to the client
     await dispatchEvent(channel, 'ready');
 
-    console.log('I\'m ready');
+    console.log("I'm ready");
 
     const asyncIterator = createAsyncIterator();
 
@@ -469,7 +506,7 @@ export const handler = async (event: { channelId: string }) => {
       new InvokeModelWithBidirectionalStreamCommand({
         modelId: 'amazon.nova-sonic-v1:0',
         body: asyncIterator,
-      }),
+      })
     );
 
     console.log('Bidirectional stream command sent');

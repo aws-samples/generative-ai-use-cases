@@ -167,7 +167,7 @@ const routes: RouteObject[] = [
         path: '/agent/:agentName',
         element: <AgentChatPage />,
       }
-                          : null,
+    : null,
   {
     path: '/speech-to-speech',
     element: <SpeechToSpeechPage />,

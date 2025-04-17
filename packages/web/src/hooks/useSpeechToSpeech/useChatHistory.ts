@@ -13,20 +13,22 @@ const useChatHistory = () => {
     messageCache.current = {};
     generationStageCache.current = {};
     stopReasonCache.current = {};
-  }
+  };
 
   const setupSystemPrompt = (prompt: string) => {
-    setMessages([{
-      role: 'system',
-      content: prompt,
-    }]);
+    setMessages([
+      {
+        role: 'system',
+        content: prompt,
+      },
+    ]);
   };
 
   const tryUpdateMessage = (id: string) => {
     if (
       !messageCache.current[id] ||
-        !generationStageCache.current[id] ||
-        !stopReasonCache.current[id]
+      !generationStageCache.current[id] ||
+      !stopReasonCache.current[id]
     ) {
       return;
     }
@@ -57,9 +59,13 @@ const useChatHistory = () => {
         return [...messagesWithoutLast, lastMessage, newMessage];
       }
     });
-  }
+  };
 
-  const onTextStart = (data: { id: string, role: string, generationStage: string}) => {
+  const onTextStart = (data: {
+    id: string;
+    role: string;
+    generationStage: string;
+  }) => {
     generationStageCache.current[data.id] = data.generationStage;
     tryUpdateMessage(data.id);
 
@@ -70,12 +76,19 @@ const useChatHistory = () => {
     }
   };
 
-  const onTextOutput = (data: { id: string, role: string, content: string}) => {
-    messageCache.current[data.id] = { role: data.role as 'user' | 'assistant', content: data.content };
+  const onTextOutput = (data: {
+    id: string;
+    role: string;
+    content: string;
+  }) => {
+    messageCache.current[data.id] = {
+      role: data.role as 'user' | 'assistant',
+      content: data.content,
+    };
     tryUpdateMessage(data.id);
   };
 
-  const onTextStop = (data: { id: string, stopReason: string }) => {
+  const onTextStop = (data: { id: string; stopReason: string }) => {
     stopReasonCache.current[data.id] = data.stopReason;
     tryUpdateMessage(data.id);
   };
@@ -89,6 +102,6 @@ const useChatHistory = () => {
     onTextStop,
     isAssistantSpeeching,
   };
-}
+};
 
 export default useChatHistory;

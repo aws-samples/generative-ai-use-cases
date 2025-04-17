@@ -8,8 +8,9 @@ import { useTranslation } from 'react-i18next';
 const samlCognitoDomainName: string = import.meta.env
   .VITE_APP_SAML_COGNITO_DOMAIN_NAME;
 const samlCognitoFederatedIdentityProviderName: string = import.meta.env
-                                                               .VITE_APP_SAML_COGNITO_FEDERATED_IDENTITY_PROVIDER_NAME;
-const speechToSpeechEventApiEndpoint: string = import.meta.env.VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT;
+  .VITE_APP_SAML_COGNITO_FEDERATED_IDENTITY_PROVIDER_NAME;
+const speechToSpeechEventApiEndpoint: string = import.meta.env
+  .VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT;
 
 type Props = {
   children: React.ReactNode;
