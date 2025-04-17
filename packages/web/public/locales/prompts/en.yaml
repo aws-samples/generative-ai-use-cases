@@ -884,21 +884,21 @@ useCaseBuilder:
           value1: Redshift
           value2: |-
             CREATE TABLE customers (
-              customer_id INTEGER PRIMARY KEY,
-                first_name VARCHAR(50) NOT NULL,
-                last_name VARCHAR(50) NOT NULL,
-                email VARCHAR(100) UNIQUE NOT NULL,
-                birth_date DATE,
-                phone VARCHAR(20),
-                address VARCHAR(200),
-                city VARCHAR(50),
-                state VARCHAR(25),
-                postal_code VARCHAR(10),
-                country VARCHAR(50),
-                created_at TIMESTAMP DEFAULT GETDATE()
-                CONSTRAINT pk_customers PRIMARY KEY (customer_id),
-                CONSTRAINT uq_customer_email UNIQUE (email)
-            );
+              customer_id INTEGER,
+              first_name VARCHAR(50) NOT NULL,
+              last_name VARCHAR(50) NOT NULL,
+              email VARCHAR(100) NOT NULL,
+              birth_date DATE,
+              phone VARCHAR(20),
+              address VARCHAR(200),
+              city VARCHAR(50),
+              state VARCHAR(25),
+              postal_code VARCHAR(10),
+              country VARCHAR(50),
+              created_at TIMESTAMP DEFAULT GETDATE(),
+              CONSTRAINT pk_customers PRIMARY KEY (customer_id),
+              CONSTRAINT uq_customer_email UNIQUE (email)
+            )
             CREATE TABLE orders (
               order_id INTEGER IDENTITY(1,1),
               customer_id INTEGER NOT NULL,
@@ -931,7 +931,8 @@ useCaseBuilder:
         <database>{{select:Database-Type:Athena,Redshift,PostgreSQL,Oracle,MySQL}}</database>
         <schema>{{text:Information about the tables to be used}}</schema>
         <query>{{text:Natural language description of the query you want to execute}}</query>
-        After the AI says "Yes, I understand," the AI will consider and output how to fulfill the user's request, consider and output efficient query methods, and then output in the format ```sql{query to execute}```.
+        First, the AI should think about how to fulfill the user's wishes and consider SQL (preferably written in a straightforward manner) that is easy for the user to understand, then output it in the format ```sql{query to be executed}```.
+        However, when using WITH clauses or CASE clauses, please always assign aliases to all table names and column names, and access them through these aliases.
       title: SQL Generation
   textAnalysis:
     name: Text analysis
