@@ -208,6 +208,7 @@ GenU をご利用いただく際の、構成と料金試算例を公開してお
 
 ## 参照
 
+- [GitHub: Generative AI Use Cases を 1 click でデプロイする](https://github.com/aws-samples/sample-one-click-generative-ai-solutions)
 - [ブログ: 生成 AI アプリをノーコードで作成・社内配布できる GenU ユースケースビルダー](https://aws.amazon.com/jp/blogs/news/genu-use-cases-builder/)
 - [ブログ: RAG プロジェクトを成功させる方法 #1 ~ あるいは早く失敗しておく方法 ~](https://aws.amazon.com/jp/builders-flash/202502/way-to-succeed-rag-project/)
 - [ブログ: RAG チャットで精度向上のためのデバッグ方法](https://qiita.com/sugimount-a/items/7ed3c5fc1eb867e28566)
