@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { events, EventsChannel } from 'aws-amplify/data';
 import { AudioPlayer } from './AudioPlayer';
+import { AudioRecorder } from './AudioRecorder';
 import { v4 as uuid } from 'uuid';
 import useHttp from '../../hooks/useHttp';
 import useChatHistory from './useChatHistory';
@@ -66,12 +67,19 @@ export const useSpeechToSpeech = () => {
   const [isLoading, setIsLoading] = useState(false);
   const systemPromptRef = useRef<string>('');
   const audioPlayerRef = useRef<AudioPlayer | null>(null);
+  const audioRecorderRef = useRef<AudioRecorder | null>(null);
   const channelRef = useRef<EventsChannel | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const audioStreamRef = useRef<MediaStream | null>(null);
-  const sourceNodeRef = useRef<MediaStreamAudioSourceNode | null>(null);
-  const processorRef = useRef<ScriptProcessorNode | null>(null);
   const audioInputQueue = useRef<string[]>([]);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+
+  const resetState = () => {
+    setIsLoading(false);
+    setIsActive(false);
+    audioRecorderRef.current = null;
+    audioPlayerRef.current = null;
+    channelRef.current = null;
+    audioInputQueue.current = [];
+  };
 
   const dispatchEvent = async (
     event: SpeechToSpeechEventType,
@@ -88,25 +96,28 @@ export const useSpeechToSpeech = () => {
   };
 
   const initAudio = async () => {
-    const audioStream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true,
-      },
-    });
-
-    const audioContext = new AudioContext({
-      sampleRate: 16000,
-    });
-
-    audioStreamRef.current = audioStream;
-    audioContextRef.current = audioContext;
-
     const audioPlayer = new AudioPlayer();
-    await audioPlayer.start();
-
     audioPlayerRef.current = audioPlayer;
+
+    const audioRecorder = new AudioRecorder();
+    audioRecorder.addEventListener('onAudioRecorded', (audioData: Float32Array) => {
+      const int16Array = float32ArrayToInt16Array(audioData);
+      const base64Data = arrayBufferToBase64(int16Array.buffer);
+      audioInputQueue.current.push(base64Data);
+    });
+
+    // Add error listener to handle microphone permission issues
+    audioRecorder.addEventListener('onError', (error: { type: string; message: string }) => {
+      console.error('Audio recorder error:', error.type, error.message);
+      // You can add UI notification here if needed
+      if (error.type === 'NotAllowedError' || error.type === 'PermissionDeniedError') {
+        // Handle microphone permission denied specifically
+        resetState();
+        setErrorMessages([...errorMessages, 'The microphone is not available. Please grant permission to use the microphone.']);
+      }
+    });
+
+    audioRecorderRef.current = audioRecorder;
   };
 
   const processAudioInput = async () => {
@@ -137,10 +148,9 @@ export const useSpeechToSpeech = () => {
     audioInputQueue.current = [];
 
     const channelId = uuid();
-    console.log(`/${NAMESPACE}/${channelId}`);
     const channel = await events.connect(`/${NAMESPACE}/${channelId}`);
-    channelRef.current = channel;
 
+    channelRef.current = channel;
     channel.subscribe({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       next: (data: any) => {
@@ -184,11 +194,7 @@ export const useSpeechToSpeech = () => {
   };
 
   const startRecording = async () => {
-    if (
-      !audioContextRef.current ||
-      !audioStreamRef.current ||
-      !systemPromptRef.current
-    ) {
+    if (!audioPlayerRef.current || !audioRecorderRef.current || !systemPromptRef.current) {
       return;
     }
 
@@ -198,29 +204,13 @@ export const useSpeechToSpeech = () => {
 
     setupSystemPrompt(systemPromptRef.current);
 
-    const sourceNode = audioContextRef.current.createMediaStreamSource(
-      audioStreamRef.current
-    );
+    await audioPlayerRef.current.start();
 
-    if (audioContextRef.current.createScriptProcessor) {
-      const processor = audioContextRef.current.createScriptProcessor(
-        512,
-        1,
-        1
-      );
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      processor.onaudioprocess = (e: any) => {
-        const inputData = e.inputBuffer.getChannelData(0);
-        const int16Array = float32ArrayToInt16Array(inputData);
-        const base64Data = arrayBufferToBase64(int16Array.buffer);
-        audioInputQueue.current.push(base64Data);
-      };
+    // Start recording using the AudioRecorder and check for success
+    const success = await audioRecorderRef.current.start();
 
-      sourceNode.connect(processor);
-      processor.connect(audioContextRef.current.destination);
-
-      sourceNodeRef.current = sourceNode;
-      processorRef.current = processor;
+    if (!success) {
+      return;
     }
 
     setIsActive(true);
@@ -231,31 +221,14 @@ export const useSpeechToSpeech = () => {
   const stopRecording = async () => {
     setIsActive(false);
 
-    if (processorRef.current) {
-      processorRef.current.disconnect();
-      processorRef.current = null;
-    }
-
-    if (sourceNodeRef.current) {
-      sourceNodeRef.current.disconnect();
-      sourceNodeRef.current = null;
+    if (audioRecorderRef.current) {
+      audioRecorderRef.current.stop();
+      audioRecorderRef.current = null;
     }
 
     if (audioPlayerRef.current) {
       audioPlayerRef.current.stop();
       audioPlayerRef.current = null;
-    }
-
-    if (audioStreamRef.current) {
-      audioStreamRef.current
-        .getTracks()
-        .forEach((track: MediaStreamTrack) => track.stop());
-      audioStreamRef.current = null;
-    }
-
-    if (audioContextRef.current) {
-      audioContextRef.current.close();
-      audioContextRef.current = null;
     }
 
     await dispatchEvent('audioStop');
@@ -290,5 +263,6 @@ export const useSpeechToSpeech = () => {
     isAssistantSpeeching,
     startSession,
     closeSession,
+    errorMessages,
   };
 };

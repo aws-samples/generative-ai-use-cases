@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSpeechToSpeech } from '../hooks/useSpeechToSpeech';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,6 +15,7 @@ import ScrollTopBottom from '../components/ScrollTopBottom';
 import Alert from '../components/Alert.tsx';
 import useFollow from '../hooks/useFollow';
 import BedrockIcon from '../assets/bedrock.svg?react';
+import { toast } from 'sonner';
 
 const SpeechToSpeech: React.FC = () => {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ const SpeechToSpeech: React.FC = () => {
     isAssistantSpeeching,
     startSession,
     closeSession,
+    errorMessages,
   } = useSpeechToSpeech();
   const [showSystemPrompt, setShowSystemPrompt] = useState(false);
   // TODO: avoid hardcoding
@@ -47,6 +49,12 @@ const SpeechToSpeech: React.FC = () => {
   const isEmpty = useMemo(() => {
     return messagesWithoutSystemPrompt.length === 0;
   }, [messagesWithoutSystemPrompt]);
+
+  useEffect(() => {
+    if (errorMessages.length > 0) {
+      toast.error(errorMessages[errorMessages.length - 1]);
+    }
+  }, [errorMessages]);
 
   return (
     <>
