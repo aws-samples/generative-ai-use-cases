@@ -8,15 +8,16 @@ import {
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
+  console.log(event.body); // TODO: delete
   try {
-    const { channel } = JSON.parse(event.body!);
+    const { channel, model } = JSON.parse(event.body!);
     const lambda = new LambdaClient({});
 
     await lambda.send(
       new InvokeCommand({
         FunctionName: process.env.SPEECH_TO_SPEECH_TASK_FUNCTION_ARN,
         InvocationType: InvocationType.Event,
-        Payload: JSON.stringify({ channelId: channel }),
+        Payload: JSON.stringify({ channelId: channel, model }),
       })
     );
 

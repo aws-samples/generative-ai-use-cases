@@ -19,6 +19,7 @@ import {
   PiVideoCamera,
   PiFlowArrow,
   PiMagicWand,
+  PiMicrophoneBold,
   PiTreeStructure,
 } from 'react-icons/pi';
 import { Outlet } from 'react-router-dom';
@@ -131,6 +132,12 @@ const App: React.FC = () => {
           display: 'usecase' as const,
         }
       : null,
+    {
+      label: t('navigation.speechToSpeech'),
+      to: '/speech-to-speech',
+      icon: <PiMicrophoneBold />,
+      display: 'usecase' as const,
+    },
     enabled('generate')
       ? {
           label: t('navigation.textGeneration'),

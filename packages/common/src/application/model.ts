@@ -19,6 +19,7 @@ const MODEL_FEATURE: Record<string, FeatureFlags> = {
   VIDEO_GEN: { video_gen: true },
   EMBEDDING: { embedding: true },
   RERANKING: { reranking: true },
+  SPEECH_TO_SPEECH: { speechToSpeech: true },
   // Additional Flags
   LIGHT: { light: true },
 };
@@ -182,6 +183,11 @@ export const modelFeatureFlags: Record<string, FeatureFlags> = {
   'amazon.rerank-v1:0': MODEL_FEATURE.RERANKING,
   // Cohere
   'cohere.rerank-v3-5:0': MODEL_FEATURE.RERANKING,
+
+  // === Speech to Speech ===
+
+  // Amazon
+  'amazon.nova-sonic-v1:0': MODEL_FEATURE.SPEECH_TO_SPEECH,
 };
 
 export const BEDROCK_TEXT_MODELS = Object.keys(modelFeatureFlags).filter(
@@ -199,3 +205,6 @@ export const BEDROCK_EMBEDDING_MODELS = Object.keys(modelFeatureFlags).filter(
 export const BEDROCK_RERANKING_MODELS = Object.keys(modelFeatureFlags).filter(
   (model) => modelFeatureFlags[model].reranking
 );
+export const BEDROCK_SPEECH_TO_SPEECH_MODELS = Object.keys(
+  modelFeatureFlags
+).filter((model) => modelFeatureFlags[model].speechToSpeech);

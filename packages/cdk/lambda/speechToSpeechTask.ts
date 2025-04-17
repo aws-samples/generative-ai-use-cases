@@ -12,6 +12,7 @@ import { NodeHttp2Handler } from '@smithy/node-http-handler';
 import {
   SpeechToSpeechEventType,
   SpeechToSpeechEvent,
+  Model,
 } from 'generative-ai-use-cases';
 
 Object.assign(global, { WebSocket: require('ws') });
@@ -26,6 +27,7 @@ let isProcessingAudio = false;
 let isAudioStarted = false;
 
 // Queues
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let eventQueue: Array<any> = [];
 let audioInputQueue: string[] = [];
 let audioOutputQueue: string[] = [];
@@ -51,6 +53,7 @@ const initialize = () => {
 const dispatchEvent = async (
   channel: EventsChannel,
   event: SpeechToSpeechEventType,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any = undefined
 ) => {
   try {
@@ -304,6 +307,7 @@ const createAsyncIterator = () => {
     return: async () => {
       return { value: undefined, done: true };
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     throw: async (error: any) => {
       console.error(error);
       throw error;
@@ -397,11 +401,11 @@ const processResponseStream = async (
   }
 };
 
-export const handler = async (event: { channelId: string }) => {
+export const handler = async (event: { channelId: string; model: Model }) => {
   let channel: EventsChannel | null = null;
 
   try {
-    console.log('channelId', event.channelId);
+    console.log('event', event);
 
     initialize();
 
@@ -412,7 +416,7 @@ export const handler = async (event: { channelId: string }) => {
     console.log('promptName', promptName);
 
     const bedrock = new BedrockRuntimeClient({
-      region: 'us-east-1', // TODO
+      region: event.model.region,
       requestHandler: new NodeHttp2Handler({
         requestTimeout: 300000,
         sessionTimeout: 300000,
@@ -461,6 +465,7 @@ export const handler = async (event: { channelId: string }) => {
     console.log('Connected!');
 
     channel.subscribe({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       next: async (data: any) => {
         const event = data?.event;
         if (event && event.direction === 'ctob') {
@@ -504,7 +509,7 @@ export const handler = async (event: { channelId: string }) => {
 
     const response = await bedrock.send(
       new InvokeModelWithBidirectionalStreamCommand({
-        modelId: 'amazon.nova-sonic-v1:0',
+        modelId: event.model.modelId,
         body: asyncIterator,
       })
     );

@@ -112,6 +112,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       envSuffix: params.env,
       api: api.api,
       userPool: auth.userPool,
+      speechToSpeechModelIds: params.speechToSpeechModelIds,
     });
 
     // Web Frontend
@@ -145,6 +146,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       useCaseBuilderEnabled: params.useCaseBuilderEnabled,
       speechToSpeechNamespace: speechToSpeech.namespace,
       speechToSpeechEventApiEndpoint: speechToSpeech.eventApiEndpoint,
+      speechToSpeechModelIds: params.speechToSpeechModelIds,
       // Frontend
       hiddenUseCases: params.hiddenUseCases,
       // Custom Domain
@@ -322,6 +324,10 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     new CfnOutput(this, 'SpeechToSpeechEventApiEndpoint', {
       value: speechToSpeech.eventApiEndpoint,
+    });
+
+    new CfnOutput(this, 'SpeechToSpeechModelIds', {
+      value: JSON.stringify(params.speechToSpeechModelIds),
     });
 
     this.userPool = auth.userPool;

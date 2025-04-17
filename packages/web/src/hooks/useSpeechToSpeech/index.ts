@@ -8,6 +8,7 @@ import useChatHistory from './useChatHistory';
 import {
   SpeechToSpeechEventType,
   SpeechToSpeechEvent,
+  Model,
 } from 'generative-ai-use-cases';
 
 const NAMESPACE = import.meta.env.VITE_APP_SPEECH_TO_SPEECH_NAMESPACE!;
@@ -100,22 +101,34 @@ export const useSpeechToSpeech = () => {
     audioPlayerRef.current = audioPlayer;
 
     const audioRecorder = new AudioRecorder();
-    audioRecorder.addEventListener('onAudioRecorded', (audioData: Float32Array) => {
-      const int16Array = float32ArrayToInt16Array(audioData);
-      const base64Data = arrayBufferToBase64(int16Array.buffer);
-      audioInputQueue.current.push(base64Data);
-    });
+    audioRecorder.addEventListener(
+      'onAudioRecorded',
+      (audioData: Float32Array) => {
+        const int16Array = float32ArrayToInt16Array(audioData);
+        const base64Data = arrayBufferToBase64(int16Array.buffer);
+        audioInputQueue.current.push(base64Data);
+      }
+    );
 
     // Add error listener to handle microphone permission issues
-    audioRecorder.addEventListener('onError', (error: { type: string; message: string }) => {
-      console.error('Audio recorder error:', error.type, error.message);
-      // You can add UI notification here if needed
-      if (error.type === 'NotAllowedError' || error.type === 'PermissionDeniedError') {
-        // Handle microphone permission denied specifically
-        resetState();
-        setErrorMessages([...errorMessages, 'The microphone is not available. Please grant permission to use the microphone.']);
+    audioRecorder.addEventListener(
+      'onError',
+      (error: { type: string; message: string }) => {
+        console.error('Audio recorder error:', error.type, error.message);
+        // You can add UI notification here if needed
+        if (
+          error.type === 'NotAllowedError' ||
+          error.type === 'PermissionDeniedError'
+        ) {
+          // Handle microphone permission denied specifically
+          resetState();
+          setErrorMessages([
+            ...errorMessages,
+            'The microphone is not available. Please grant permission to use the microphone.',
+          ]);
+        }
       }
-    });
+    );
 
     audioRecorderRef.current = audioRecorder;
   };
@@ -144,7 +157,7 @@ export const useSpeechToSpeech = () => {
     setTimeout(() => processAudioInput(), 0);
   };
 
-  const connectToAppSync = async () => {
+  const connectToAppSync = async (model: Model) => {
     audioInputQueue.current = [];
 
     const channelId = uuid();
@@ -190,11 +203,15 @@ export const useSpeechToSpeech = () => {
       },
     });
 
-    await api.post('speech-to-speech', { channel: channelId });
+    await api.post('speech-to-speech', { channel: channelId, model });
   };
 
   const startRecording = async () => {
-    if (!audioPlayerRef.current || !audioRecorderRef.current || !systemPromptRef.current) {
+    if (
+      !audioPlayerRef.current ||
+      !audioRecorderRef.current ||
+      !systemPromptRef.current
+    ) {
       return;
     }
 
@@ -234,7 +251,7 @@ export const useSpeechToSpeech = () => {
     await dispatchEvent('audioStop');
   };
 
-  const startSession = async (systemPrompt: string) => {
+  const startSession = async (systemPrompt: string, model: Model) => {
     if (isActive || isLoading) {
       return;
     }
@@ -245,7 +262,7 @@ export const useSpeechToSpeech = () => {
 
     systemPromptRef.current = systemPrompt;
 
-    await connectToAppSync();
+    await connectToAppSync(model);
     await initAudio();
   };
 

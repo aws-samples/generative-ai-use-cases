@@ -21,7 +21,7 @@ class AudioRecorderProcessor extends AudioWorkletProcessor {
     // Send the audio data to the main thread
     this.port.postMessage({
       type: 'audio',
-      audioData: input.slice()
+      audioData: input.slice(),
     });
 
     return true;

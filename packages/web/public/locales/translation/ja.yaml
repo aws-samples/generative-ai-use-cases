@@ -543,6 +543,7 @@ navigation:
   ragChat: RAG チャット
   settings: 設定
   speechRecognition: 音声認識
+  speechToSpeech: 音声チャット
   summary: 要約
   textGeneration: 文章生成
   translation: 翻訳
@@ -626,6 +627,14 @@ sketch:
   clear: クリア
   pen_size: ペンサイズ
   upload_image: 画像をアップロード
+speech_to_speech:
+  close: セッションを終了する
+  default_system_prompt: You are an AI assistant.
+  experimental_warning: >-
+    音声チャットはまだ実験的な段階です。アーキテクチャ等は今後変更される可能性があります。会話履歴は保存されません。対応言語は英語のみです。
+  experimental_warning_title: 音声チャットについて
+  start: セッションを始める
+  title: 音声チャット
 summarize:
   additional_context: 追加コンテキスト
   additional_context_placeholder: 追加で考慮してほしい点を入力することができます（カジュアルさ等）

@@ -48,7 +48,7 @@ class ExpandableBuffer {
     if (this.writeIndex - this.readIndex >= this.initialBufferLength) {
       // Filled the initial buffer length, so we can start playback with some cushion
       this.isInitialBuffering = false;
-      // console.log("Initial audio buffer filled");
+      // console.log('Initial audio buffer filled');
     }
   }
 

@@ -6,11 +6,14 @@ import * as agw from 'aws-cdk-lib/aws-apigateway';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { ModelConfiguration } from 'generative-ai-use-cases';
+import { BEDROCK_SPEECH_TO_SPEECH_MODELS } from '@generative-ai-use-cases/common';
 
 export interface SpeechToSpeechProps {
   envSuffix: string;
   userPool: cognito.UserPool;
   api: agw.RestApi;
+  speechToSpeechModelIds: ModelConfiguration[];
 }
 
 export class SpeechToSpeech extends Construct {
@@ -19,6 +22,14 @@ export class SpeechToSpeech extends Construct {
 
   constructor(scope: Construct, id: string, props: SpeechToSpeechProps) {
     super(scope, id);
+
+    const speechToSpeechModelIds = props.speechToSpeechModelIds;
+
+    for (const model of speechToSpeechModelIds) {
+      if (!BEDROCK_SPEECH_TO_SPEECH_MODELS.includes(model.modelId)) {
+        throw new Error(`Unsupported Model Name: ${model.modelId}`);
+      }
+    }
 
     const channelNamespaceName = 'speech-to-speech';
     const eventApi = new appsync.EventApi(this, 'EventApi', {

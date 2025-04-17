@@ -13,9 +13,11 @@ import Button from '../components/Button';
 import InputChatContent from '../components/InputChatContent';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import Alert from '../components/Alert.tsx';
+import Select from '../components/Select';
 import useFollow from '../hooks/useFollow';
 import BedrockIcon from '../assets/bedrock.svg?react';
 import { toast } from 'sonner';
+import { MODELS } from '../hooks/useModel';
 
 const SpeechToSpeech: React.FC = () => {
   const { t } = useTranslation();
@@ -29,10 +31,13 @@ const SpeechToSpeech: React.FC = () => {
     errorMessages,
   } = useSpeechToSpeech();
   const [showSystemPrompt, setShowSystemPrompt] = useState(false);
-  // TODO: avoid hardcoding
-  const [systemPrompt, setSystemPrompt] = useState('You are an AI assistant.');
+  const [systemPrompt, setSystemPrompt] = useState(
+    t('speech_to_speech.default_system_prompt')
+  );
   const [inputSystemPrompt, setInputSystemPrompt] = useState(systemPrompt);
   const { scrollableContainer, setFollowing } = useFollow();
+  const { speechToSpeechModelIds, speechToSpeechModels } = MODELS;
+  const [modelId, setModelId] = useState(speechToSpeechModelIds[0]); // TODO (query parameters?)
 
   const messagesWithoutSystemPrompt = useMemo(() => {
     return messages.filter((m) => m.role !== 'system');
@@ -60,17 +65,28 @@ const SpeechToSpeech: React.FC = () => {
     <>
       <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-          Speech to Speech
+          {t('speech_to_speech.title')}
         </div>
 
-        {isEmpty && (
+        {isEmpty && !isLoading && (
+          <div className="mt-2 flex w-full items-end justify-center lg:mt-0 print:hidden">
+            <Select
+              value={modelId}
+              onChange={setModelId}
+              options={speechToSpeechModelIds.map((m) => {
+                return { value: m, label: m };
+              })}
+            />
+          </div>
+        )}
+
+        {isEmpty && !isLoading && (
           <div className="flex h-[calc(100vh-9rem)] flex-col items-center justify-center">
             <Alert
-              title="About speech to speech"
+              title={t('speech_to_speech.experimental_warning_title')}
               severity="warning"
               className="w-11/12 md:w-10/12 lg:w-4/6 xl:w-3/6">
-              Speech to Speech
-              はまだ実験的な段階です。アーキテクチャ等は今後変更される可能性があります。また、会話履歴は保存されません。
+              {t('speech_to_speech.experimental_warning')}
             </Alert>
             <div className="relative flex h-full flex-col items-center justify-center">
               <BedrockIcon className="fill-gray-400" />
@@ -132,8 +148,12 @@ const SpeechToSpeech: React.FC = () => {
                     outlined
                     className="text-xs"
                     onClick={() => {
-                      setInputSystemPrompt('You are an AI assistant.');
-                      setSystemPrompt('You are an AI assistant.');
+                      setInputSystemPrompt(
+                        t('speech_to_speech.default_system_prompt')
+                      );
+                      setSystemPrompt(
+                        t('speech_to_speech.default_system_prompt')
+                      );
                     }}>
                     {t('chat.initialize')}
                   </Button>
@@ -160,14 +180,18 @@ const SpeechToSpeech: React.FC = () => {
             <Button
               className="h-12 w-11/12 md:w-10/12 lg:w-4/6 xl:w-3/6"
               onClick={() => {
+                const model = speechToSpeechModels.find(
+                  (m) => m.modelId === modelId
+                );
                 setFollowing(true);
-                startSession(systemPrompt);
+                startSession(systemPrompt, model!);
               }}
               outlined={true}
               disabled={isLoading}>
               {!isLoading ? (
                 <>
-                  <PiMicrophoneBold className="mr-2 size-5" /> Start new session
+                  <PiMicrophoneBold className="mr-2 size-5" />{' '}
+                  {t('speech_to_speech.start')}
                 </>
               ) : (
                 <span className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></span>
@@ -180,7 +204,8 @@ const SpeechToSpeech: React.FC = () => {
               disabled={isLoading}>
               {!isLoading ? (
                 <>
-                  <PiStopCircleBold className="mr-2 size-5" /> Close session
+                  <PiStopCircleBold className="mr-2 size-5" />{' '}
+                  {t('speech_to_speech.close')}
                 </>
               ) : (
                 <span className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></span>

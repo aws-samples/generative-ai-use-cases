@@ -624,6 +624,7 @@ navigation:
   ragChat: RAG Chat
   settings: Settings
   speechRecognition: Speech Recognition
+  speechToSpeech: Speech to Speech
   summary: Summary
   textGeneration: Text Generation
   translation: Translation
@@ -726,6 +727,14 @@ sketch:
   clear: Clear
   pen_size: Pen Size
   upload_image: Upload Image
+speech_to_speech:
+  close: Close session
+  default_system_prompt: You are an AI assistant.
+  experimental_warning: >-
+    Speech to Speech is still in an experimental stage. The architecture, etc. may be changed in the future. Conversation history will not be saved. The supported language is English only.
+  experimental_warning_title: About Speech to Speech
+  start: Start new session
+  title: Speech to Speech
 summarize:
   additional_context: Additional context
   additional_context_placeholder: 'You can enter additional points to consider (e.g., casualness, etc.)'

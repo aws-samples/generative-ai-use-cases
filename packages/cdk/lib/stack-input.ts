@@ -68,6 +68,17 @@ export const stackInputSchema = z.object({
       ])
     )
     .default(['amazon.nova-reel-v1:0']),
+  speechToSpeechModelIds: z
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          modelId: z.string(),
+          region: z.string(),
+        }),
+      ])
+    )
+    .default(['amazon.nova-sonic-v1:0']),
   endpointNames: z.array(z.string()).default([]),
   crossAccountBedrockRoleArn: z.string().nullish(),
   // RAG
@@ -160,6 +171,12 @@ export const processedStackInputSchema = stackInputSchema.extend({
     })
   ),
   videoGenerationModelIds: z.array(
+    z.object({
+      modelId: z.string(),
+      region: z.string(),
+    })
+  ),
+  speechToSpeechModelIds: z.array(
     z.object({
       modelId: z.string(),
       region: z.string(),

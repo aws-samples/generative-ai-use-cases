@@ -47,28 +47,34 @@ export class AudioRecorder {
         const errorMessage = error.message || 'Failed to access microphone';
 
         // Notify error listeners
-        this.onErrorListeners.forEach(listener => listener({
-          type: errorType,
-          message: errorMessage,
-          originalError: error
-        }));
+        this.onErrorListeners.forEach((listener) =>
+          listener({
+            type: errorType,
+            message: errorMessage,
+            originalError: error,
+          })
+        );
 
         // Don't throw, just return false to indicate failure
         console.error('Microphone access error:', errorType, errorMessage);
         return false;
       }
 
-      this.sourceNode = this.audioContext.createMediaStreamSource(this.audioStream);
+      this.sourceNode = this.audioContext.createMediaStreamSource(
+        this.audioStream
+      );
 
       // Add the audio worklet module
       try {
         await this.audioContext.audioWorklet.addModule(AudioRecorderWorkletUrl);
       } catch (error) {
-        this.onErrorListeners.forEach(listener => listener({
-          type: 'WorkletError',
-          message: 'Failed to load audio worklet',
-          originalError: error
-        }));
+        this.onErrorListeners.forEach((listener) =>
+          listener({
+            type: 'WorkletError',
+            message: 'Failed to load audio worklet',
+            originalError: error,
+          })
+        );
         this.cleanup();
         return false;
       }
@@ -87,24 +93,28 @@ export class AudioRecorder {
         if (event.data.type === 'audio') {
           const audioData = event.data.audioData;
           // Notify listeners that audio was recorded
-          this.onAudioRecordedListeners.forEach(listener => listener(audioData));
+          this.onAudioRecordedListeners.forEach((listener) =>
+            listener(audioData)
+          );
         }
       };
 
       // Start recording
       this.workletNode.port.postMessage({
-        type: 'start'
+        type: 'start',
       });
 
       this.initialized = true;
       return true;
     } catch (error) {
       // Catch any other unexpected errors
-      this.onErrorListeners.forEach(listener => listener({
-        type: 'InitializationError',
-        message: 'Failed to initialize audio recorder',
-        originalError: error
-      }));
+      this.onErrorListeners.forEach((listener) =>
+        listener({
+          type: 'InitializationError',
+          message: 'Failed to initialize audio recorder',
+          originalError: error,
+        })
+      );
       this.cleanup();
       return false;
     }
@@ -129,7 +139,7 @@ export class AudioRecorder {
 
     if (ObjectExt.exists(this.audioStream)) {
       try {
-        this.audioStream.getTracks().forEach(track => track.stop());
+        this.audioStream.getTracks().forEach((track) => track.stop());
       } catch (e) {
         console.error('Error stopping audio tracks:', e);
       }
@@ -155,7 +165,7 @@ export class AudioRecorder {
       // Stop recording
       if (ObjectExt.exists(this.workletNode)) {
         this.workletNode.port.postMessage({
-          type: 'stop'
+          type: 'stop',
         });
       }
 

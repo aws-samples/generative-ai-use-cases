@@ -49,3 +49,4 @@ export VITE_APP_OPTIMIZE_PROMPT_FUNCTION_ARN=$(extract_value "$stack_output" Opt
 export VITE_APP_HIDDEN_USE_CASES=$(extract_value "$stack_output" HiddenUseCases)
 export VITE_APP_SPEECH_TO_SPEECH_NAMESPACE=$(extract_value "$stack_output" SpeechToSpeechNamespace)
 export VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT=$(extract_value "$stack_output" SpeechToSpeechEventApiEndpoint)
+export VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS=$(extract_value "$stack_output" SpeechToSpeechModelIds)
