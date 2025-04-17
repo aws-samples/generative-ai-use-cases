@@ -838,6 +838,100 @@ useCaseBuilder:
         {{text:what to implement}}
         </instruction>
       title: Code generation
+    queryGeneration:
+      description: Generate queries for various databases.
+      inputExample1:
+        parameters:
+          key1: Database-Type
+          key2: Information about the tables to be used
+          key3: Natural language description of the query you want to execute
+          value1: Athena
+          value2: |-
+            describe cloudtrail_logs_aws_cloudtrail_logs_XXXXXXXXXXXX_XXXXXXXX;
+            
+            eventversion        	string
+            useridentity        	struct<type:string,principalid:string,arn:string,accountid:string,invokedby:string,accesskeyid:string,username:string,sessioncontext:struct<attributes:struct<mfaauthenticated:string,creationdate:string>,sessionissuer:struct<type:string,principalid:string,arn:string,accountid:string,username:string>,ec2roledelivery:string,webidfederationdata:map<string,string>>>
+            eventtime           	string
+            eventsource         	string
+            eventname           	string
+            awsregion           	string
+            sourceipaddress     	string
+            useragent           	string
+            errorcode           	string
+            errormessage        	string
+            requestparameters   	string
+            responseelements    	string
+            additionaleventdata 	string
+            requestid           	string
+            eventid             	string
+            resources           	array<struct<arn:string,accountid:string,type:string>>
+            eventtype           	string
+            apiversion          	string
+            readonly            	string
+            recipientaccountid  	string
+            serviceeventdetails 	string
+            sharedeventid       	string
+            vpcendpointid       	string
+            tlsdetails          	struct<tlsversion:string,ciphersuite:string,clientprovidedhostheader:string>
+          value3: Output the top 10 identities that have been hitting the API the most in the past month, along with the number of times.
+        title: Athena
+      inputExample2:
+        parameters:
+          key1: Database-Type
+          key2: Information about the tables to be used
+          key3: Natural language description of the query you want to execute
+          value1 : Redshift
+          value2: |-
+            CREATE TABLE customers (
+              customer_id INTEGER PRIMARY KEY,
+                first_name VARCHAR(50) NOT NULL,
+                last_name VARCHAR(50) NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                birth_date DATE,
+                phone VARCHAR(20),
+                address VARCHAR(200),
+                city VARCHAR(50),
+                state VARCHAR(25),
+                postal_code VARCHAR(10),
+                country VARCHAR(50),
+                created_at TIMESTAMP DEFAULT GETDATE()
+                CONSTRAINT pk_customers PRIMARY KEY (customer_id),
+                CONSTRAINT uq_customer_email UNIQUE (email)
+            );
+            CREATE TABLE orders (
+              order_id INTEGER IDENTITY(1,1),
+              customer_id INTEGER NOT NULL,
+              order_date TIMESTAMP DEFAULT GETDATE() NOT NULL,
+              status VARCHAR(20) NOT NULL,
+              total_amount DECIMAL(10,2) NOT NULL,
+              payment_method VARCHAR(50),
+              shipping_address VARCHAR(200),
+              shipping_city VARCHAR(50),
+              shipping_state VARCHAR(25),
+              shipping_postal_code VARCHAR(10),
+              shipping_country VARCHAR(50),
+              CONSTRAINT pk_orders PRIMARY KEY (order_id),
+              CONSTRAINT fk_orders_customers FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+            );
+          value3: Calculate the average sales by age group. Divide the age groups by 10, such as 21-30, 31-40, etc., and group those 20 years old and under as "20 and under" and those 80 years old and above as "80 and above".
+        title: Redshift
+      inputExample3:
+        parameters:
+          key1: Database-Type
+          key2: Information about the tables to be used
+          key3: Natural language description of the query you want to execute
+          value1: PostgreSQL
+          value2: None
+          value3: Query to find the average size per record (in KB) for all tables with more than 1 record
+        title: PostgreSQL
+      promptTemplate: |-
+        You are a database specialist AI. The user provides the database to query with the <database> tag, information about the tables to use with the <schema> tag, and a natural language description of the query they want to execute with the <query> tag.
+        You should generate an efficient query that takes into consideration the <database> type.
+        <database>{{select:Database-Type:Athena,Redshift,PostgreSQL,Oracle,MySQL}}</database>
+        <schema>{{text:Information about the tables to be used}}</schema>
+        <query>{{text:Natural language description of the query you want to execute}}</query>
+        After the AI says "Yes, I understand," the AI will consider and output how to fulfill the user's request, consider and output efficient query methods, and then output in the format ```sql{query to execute}```.
+      title: SQL Generation
     name: Programming
   textAnalysis:
     name: Text analysis
