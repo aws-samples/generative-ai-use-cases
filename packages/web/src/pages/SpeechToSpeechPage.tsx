@@ -8,7 +8,9 @@ import ExpandableField from '../components/ExpandableField';
 import Button from '../components/Button';
 import InputChatContent from '../components/InputChatContent';
 import ScrollTopBottom from '../components/ScrollTopBottom';
+import Alert from '../components/Alert.tsx';
 import useFollow from '../hooks/useFollow';
+import BedrockIcon from '../assets/bedrock.svg?react';
 
 const SpeechToSpeech: React.FC = () => {
   const { t } = useTranslation();
@@ -48,6 +50,17 @@ const SpeechToSpeech: React.FC = () => {
       <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
         Speech to Speech
       </div>
+
+      {isEmpty && (
+        <div className="flex flex-col justify-center items-center h-[calc(100vh-9rem)]">
+          <Alert title="About speech to speech" severity="warning" className="w-11/12 md:w-10/12 lg:w-4/6 xl:w-3/6">
+            Speech to Speech はまだ実験的な段階です。アーキテクチャ等は今後変更される可能性があります。また、会話履歴は保存されません。
+          </Alert>
+          <div className="relative flex h-full flex-col items-center justify-center">
+            <BedrockIcon className="fill-gray-400" />
+          </div>
+        </div>
+      )}
 
       {!isEmpty && (
         <div className="my-2 flex flex-col items-end pr-3 print:hidden">
@@ -127,7 +140,7 @@ const SpeechToSpeech: React.FC = () => {
 
           {!isActive ? (
             <Button className="w-11/12 md:w-10/12 lg:w-4/6 xl:w-3/6 h-12" onClick={() => { setFollowing(true); startSession(systemPrompt); }} outlined={true} disabled={isLoading}>
-              {!isLoading ? (<><PiMicrophoneBold className="size-5 mr-2"/> Start session</>) : (<span className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></span>)}
+              {!isLoading ? (<><PiMicrophoneBold className="size-5 mr-2"/> Start new session</>) : (<span className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></span>)}
             </Button>
           ) : (
             <Button className="w-11/12 md:w-10/12 lg:w-4/6 xl:w-3/6 h-12" onClick={closeSession} disabled={isLoading}>

@@ -135,9 +135,7 @@ export const useSpeechToSpeech = () => {
               setIsLoading(false);
             });
           } else if (event.event === 'end') {
-            console.log('Received "end" event');
             if (isActive) {
-              console.log('Close the session');
               closeSession();
             }
           } else if (event.event === 'audioOutput' && audioPlayerRef.current) {
@@ -152,13 +150,10 @@ export const useSpeechToSpeech = () => {
               }
             }
           } else if (event.event === 'textStart') {
-            console.log('textStart', event.data);
             onTextStart(event.data);
           } else if (event.event === 'textOutput') {
-            console.log('textOutput', event.data);
             onTextOutput(event.data);
           } else if (event.event === 'textStop') {
-            console.log('textStop', event.data);
             onTextStop(event.data);
           }
         }
