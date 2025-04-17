@@ -947,6 +947,7 @@ video:
   status:
     completed: 完了
     failed: 失敗
+    finalizing: 終了中
     inprogress: 処理中
   supportedExtensions: 'サポートされている拡張子: {{acceptedExtensions}}'
   supportedImageDimensions: 'サポートされている画像サイズ: {{supportedDimensions}}'

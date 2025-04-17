@@ -9408,6 +9408,208 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
       "Type": "AWS::ApiGateway::Authorizer",
       "UpdateReplacePolicy": "Delete",
     },
+    "APICopyVideoJobB772026B": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "APICopyVideoJobServiceRoleDefaultPolicy1BE7F305",
+        "APICopyVideoJobServiceRoleEB5412FA",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "BUCKET_NAME": {
+              "Ref": "APIFileBucket8FB29855",
+            },
+            "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
+            "IMAGE_GENERATION_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
+            "MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+            "MODEL_REGION": "us-east-1",
+            "TABLE_NAME": {
+              "Ref": "DatabaseTableF104A135",
+            },
+            "VIDEO_BUCKET_REGION_MAP": {
+              "Fn::Join": [
+                "",
+                [
+                  "{"us-east-1":"",
+                  {
+                    "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
+                  },
+                  ""}",
+                ],
+              ],
+            },
+            "VIDEO_GENERATION_MODEL_IDS": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "APICopyVideoJobServiceRoleEB5412FA",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APICopyVideoJobServiceRoleDefaultPolicy1BE7F305": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject",
+                "s3:DeleteObject",
+                "s3:ListBucket",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "APIFileBucket8FB29855",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "APIFileBucket8FB29855",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DatabaseTableF104A135",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DatabaseTableF104A135",
+                          "Arn",
+                        ],
+                      },
+                      "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "APICopyVideoJobServiceRoleDefaultPolicy1BE7F305",
+        "Roles": [
+          {
+            "Ref": "APICopyVideoJobServiceRoleEB5412FA",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APICopyVideoJobServiceRoleEB5412FA": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Delete",
+    },
     "APICreateChatE07AFAF4": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
@@ -12010,6 +12212,12 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
             "BUCKET_NAME": {
               "Ref": "APIFileBucket8FB29855",
             },
+            "COPY_VIDEO_JOB_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "APICopyVideoJobB772026B",
+                "Arn",
+              ],
+            },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
             "IMAGE_GENERATION_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
             "MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
@@ -12085,73 +12293,6 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Statement": [
             {
               "Action": [
-                "s3:GetObject",
-                "s3:DeleteObject",
-                "s3:ListBucket",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:s3:::",
-                      {
-                        "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
-                      },
-                    ],
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:s3:::",
-                      {
-                        "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "APIFileBucket8FB29855",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "APIFileBucket8FB29855",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": [
                 "dynamodb:BatchGetItem",
                 "dynamodb:GetRecords",
                 "dynamodb:GetShardIterator",
@@ -12184,6 +12325,32 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
                         ],
                       },
                       "/index/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "APICopyVideoJobB772026B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "APICopyVideoJobB772026B",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
                     ],
                   ],
                 },

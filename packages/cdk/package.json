@@ -32,6 +32,7 @@
     "@aws-sdk/client-bedrock-runtime": "^3.755.0",
     "@aws-sdk/client-dynamodb": "^3.755.0",
     "@aws-sdk/client-kendra": "^3.755.0",
+    "@aws-sdk/client-lambda": "^3.755.0",
     "@aws-sdk/client-s3": "^3.755.0",
     "@aws-sdk/client-sagemaker-runtime": "^3.755.0",
     "@aws-sdk/client-transcribe": "^3.755.0",

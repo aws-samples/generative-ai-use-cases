@@ -284,10 +284,11 @@ export class Api extends Construct {
     }
     table.grantWriteData(generateVideoFunction);
 
-    const listVideoJobs = new NodejsFunction(this, 'ListVideoJobs', {
+    const copyVideoJob = new NodejsFunction(this, 'CopyVideoJob', {
       runtime: Runtime.NODEJS_LATEST,
-      entry: './lambda/listVideoJobs.ts',
+      entry: './lambda/copyVideoJob.ts',
       timeout: Duration.minutes(15),
+      memorySize: 512,
       environment: {
         MODEL_REGION: modelRegion,
         MODEL_IDS: JSON.stringify(modelIds),
@@ -304,7 +305,7 @@ export class Api extends Construct {
     });
     for (const region of Object.keys(props.videoBucketRegionMap)) {
       const bucketName = props.videoBucketRegionMap[region];
-      listVideoJobs.role?.addToPrincipalPolicy(
+      copyVideoJob.role?.addToPrincipalPolicy(
         new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['s3:GetObject', 's3:DeleteObject', 's3:ListBucket'],
@@ -315,8 +316,30 @@ export class Api extends Construct {
         })
       );
     }
-    fileBucket.grantWrite(listVideoJobs);
+    fileBucket.grantWrite(copyVideoJob);
+    table.grantWriteData(copyVideoJob);
+
+    const listVideoJobs = new NodejsFunction(this, 'ListVideoJobs', {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: './lambda/listVideoJobs.ts',
+      timeout: Duration.minutes(15),
+      environment: {
+        MODEL_REGION: modelRegion,
+        MODEL_IDS: JSON.stringify(modelIds),
+        IMAGE_GENERATION_MODEL_IDS: JSON.stringify(imageGenerationModelIds),
+        VIDEO_GENERATION_MODEL_IDS: JSON.stringify(videoGenerationModelIds),
+        VIDEO_BUCKET_REGION_MAP: JSON.stringify(props.videoBucketRegionMap),
+        CROSS_ACCOUNT_BEDROCK_ROLE_ARN: crossAccountBedrockRoleArn ?? '',
+        BUCKET_NAME: fileBucket.bucketName,
+        TABLE_NAME: table.tableName,
+        COPY_VIDEO_JOB_FUNCTION_ARN: copyVideoJob.functionArn,
+      },
+      bundling: {
+        nodeModules: ['@aws-sdk/client-bedrock-runtime'],
+      },
+    });
     table.grantReadWriteData(listVideoJobs);
+    copyVideoJob.grantInvoke(listVideoJobs);
 
     const deleteVideoJob = new NodejsFunction(this, 'DeleteVideoJob', {
       runtime: Runtime.NODEJS_LATEST,

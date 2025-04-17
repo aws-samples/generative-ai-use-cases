@@ -804,7 +804,7 @@ const GenerateVideoPage: React.FC = () => {
                             onClick={() => {
                               setPreview(job);
                             }}
-                            disabled={job.status === 'InProgress'}>
+                            disabled={job.status !== 'Completed'}>
                             <PiPlayFill className="text-aws-smile" />
                           </ButtonIcon>
                         </td>
@@ -835,7 +835,7 @@ const GenerateVideoPage: React.FC = () => {
                             onClick={() => {
                               downloadFile(job);
                             }}
-                            disabled={job.status === 'InProgress'}
+                            disabled={job.status !== 'Completed'}
                             loading={downloadingJobIds[job.createdDate]}>
                             <PiDownload className="text-aws-smile" />
                           </ButtonIcon>
