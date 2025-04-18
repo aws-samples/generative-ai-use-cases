@@ -67,5 +67,9 @@ export const getParams = (app: cdk.App): ProcessedStackInput => {
       params.videoGenerationModelIds,
       params.modelRegion
     ),
+    speechToSpeechModelIds: convertToModelConfiguration(
+      params.speechToSpeechModelIds,
+      params.modelRegion
+    ),
   };
 };

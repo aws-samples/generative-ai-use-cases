@@ -18,6 +18,7 @@ import {
   PiFlowArrow,
   PiTreeStructure,
   PiPenNib,
+  PiMicrophoneBold,
 } from 'react-icons/pi';
 import AwsIcon from '../assets/aws.svg?react';
 import useInterUseCases from '../hooks/useInterUseCases';
@@ -45,7 +46,14 @@ const ragKnowledgeBaseEnabled: boolean =
   import.meta.env.VITE_APP_RAG_KNOWLEDGE_BASE_ENABLED === 'true';
 const agentEnabled: boolean = import.meta.env.VITE_APP_AGENT_ENABLED === 'true';
 const inlineAgents: boolean = import.meta.env.VITE_APP_INLINE_AGENTS === 'true';
-const { visionEnabled, flowChatEnabled, agentNames } = MODELS;
+const {
+  imageGenModelIds,
+  videoGenModelIds,
+  speechToSpeechModelIds,
+  visionEnabled,
+  flowChatEnabled,
+  agentNames,
+} = MODELS;
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -85,6 +93,10 @@ const LandingPage: React.FC = () => {
     } else {
       navigate(`/agent`);
     }
+  };
+
+  const demoSpeechToSpeech = () => {
+    navigate('/speech-to-speech');
   };
 
   const demoGenerate = () => {
@@ -306,6 +318,14 @@ const LandingPage: React.FC = () => {
             description={t('landing.use_cases.flow_chat.description')}
           />
         )}
+        {speechToSpeechModelIds.length > 0 && enabled('speechToSpeech') && (
+          <CardDemo
+            label={t('landing.use_cases.speech_to_speech.title')}
+            onClickDemo={demoSpeechToSpeech}
+            icon={<PiMicrophoneBold />}
+            description={t('landing.use_cases.speech_to_speech.description')}
+          />
+        )}
         {enabled('generate') && (
           <CardDemo
             label={t('landing.use_cases.generate_text.title')}
@@ -346,7 +366,7 @@ const LandingPage: React.FC = () => {
             description={t('landing.use_cases.web_content.description')}
           />
         )}
-        {enabled('image') && (
+        {imageGenModelIds.length > 0 && enabled('image') && (
           <CardDemo
             label={t('landing.use_cases.image.title')}
             onClickDemo={demoGenerateImage}
@@ -354,7 +374,7 @@ const LandingPage: React.FC = () => {
             description={t('landing.use_cases.image.description')}
           />
         )}
-        {enabled('video') && (
+        {videoGenModelIds.length > 0 && enabled('video') && (
           <CardDemo
             label={t('landing.use_cases.video-generation.title')}
             onClickDemo={demoGenerateVideo}

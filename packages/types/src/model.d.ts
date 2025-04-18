@@ -12,6 +12,9 @@ export type FeatureFlags = {
 
   embedding?: boolean;
   reranking?: boolean;
+
+  speechToSpeech?: boolean;
+
   // Additional Flags
   light?: boolean;
 };
