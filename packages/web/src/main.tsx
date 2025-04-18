@@ -49,7 +49,12 @@ const samlAuthEnabled: boolean =
   import.meta.env.VITE_APP_SAMLAUTH_ENABLED === 'true';
 const agentEnabled: boolean = import.meta.env.VITE_APP_AGENT_ENABLED === 'true';
 const inlineAgents: boolean = import.meta.env.VITE_APP_INLINE_AGENTS === 'true';
-const { visionEnabled, imageGenModelIds, videoGenModelIds } = MODELS;
+const {
+  visionEnabled,
+  imageGenModelIds,
+  videoGenModelIds,
+  speechToSpeechModelIds,
+} = MODELS;
 const useCaseBuilderEnabled: boolean =
   import.meta.env.VITE_APP_USE_CASE_BUILDER_ENABLED === 'true';
 // eslint-disable-next-line  react-hooks/rules-of-hooks
@@ -168,10 +173,12 @@ const routes: RouteObject[] = [
         element: <AgentChatPage />,
       }
     : null,
-  {
-    path: '/speech-to-speech',
-    element: <SpeechToSpeechPage />,
-  },
+  speechToSpeechModelIds.length > 0 && enabled('speechToSpeech')
+    ? {
+        path: '/speech-to-speech',
+        element: <SpeechToSpeechPage />,
+      }
+    : null,
   {
     path: '*',
     element: <NotFound />,

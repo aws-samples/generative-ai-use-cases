@@ -566,6 +566,12 @@ landing:
       sub_kb: Knowledge Base
       sub_kendra: Amazon Kendra
       title: RAG Chat
+    speech_to_speech:
+      description: >-
+        In Voice Chat, you can have a bidirectional voice chat with generative AI.
+        Similar to natural conversation, you can also interrupt and speak while the AI is talking.
+        Also, by setting a system prompt, you can have voice conversations with AI that has specific roles.
+      title: Voice Chat
     summarize:
       description: >-
         LLMs are good at summarizing large amounts of text. You can provide context when summarizing, such as "in one line" or "in words a child can understand".
