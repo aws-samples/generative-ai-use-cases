@@ -346,9 +346,8 @@ const bedrockAgentApi: ApiInterface = {
           stopReason: 'error',
         });
       } else if (e instanceof DependencyFailedException) {
-        const modelAccessURL = `https://${process.env.MODEL_REGION}.console.aws.amazon.com/bedrock/home?region=${process.env.MODEL_REGION}#/modelaccess`;
         yield streamingChunk({
-          text: `The selected model is not enabled. Please enable the model in the [Bedrock console Model Access screen](${modelAccessURL}).`,
+          text: `Your request couldn't be completed. Please try again later. If the problem continues, please report the problem to the administrator.`,
           stopReason: 'error',
         });
       } else {
