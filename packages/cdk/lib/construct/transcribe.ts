@@ -19,9 +19,9 @@ import {
 import { Construct } from 'constructs';
 
 export interface TranscribeProps {
-  userPool: UserPool;
-  idPool: IdentityPool;
-  api: RestApi;
+  readonly userPool: UserPool;
+  readonly idPool: IdentityPool;
+  readonly api: RestApi;
 }
 
 export class Transcribe extends Construct {

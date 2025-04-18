@@ -76,13 +76,13 @@ Financial Activity	6,291	9,718`;
 const EMBEDDING_MODELS = Object.keys(MODEL_VECTOR_MAPPING);
 
 interface OpenSearchServerlessIndexProps {
-  collectionId: string;
-  vectorIndexName: string;
-  vectorField: string;
-  metadataField: string;
-  textField: string;
-  vectorDimension: string;
-  ragKnowledgeBaseBinaryVector: boolean;
+  readonly collectionId: string;
+  readonly vectorIndexName: string;
+  readonly vectorField: string;
+  readonly metadataField: string;
+  readonly textField: string;
+  readonly vectorDimension: string;
+  readonly ragKnowledgeBaseBinaryVector: boolean;
 }
 
 class OpenSearchServerlessIndex extends Construct {

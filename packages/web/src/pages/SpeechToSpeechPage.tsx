@@ -5,6 +5,7 @@ import {
   PiArrowClockwiseBold,
   PiStopCircleBold,
   PiMicrophoneBold,
+  PiEar,
 } from 'react-icons/pi';
 import ChatMessage from '../components/ChatMessage';
 import Switch from '../components/Switch';
@@ -32,12 +33,12 @@ const SpeechToSpeech: React.FC = () => {
   } = useSpeechToSpeech();
   const [showSystemPrompt, setShowSystemPrompt] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState(
-    t('speech_to_speech.default_system_prompt')
+    t('speechToSpeech.default_system_prompt')
   );
   const [inputSystemPrompt, setInputSystemPrompt] = useState(systemPrompt);
   const { scrollableContainer, setFollowing } = useFollow();
   const { speechToSpeechModelIds, speechToSpeechModels } = MODELS;
-  const [modelId, setModelId] = useState(speechToSpeechModelIds[0]); // TODO (query parameters?)
+  const [modelId, setModelId] = useState(speechToSpeechModelIds[0]);
 
   const messagesWithoutSystemPrompt = useMemo(() => {
     return messages.filter((m) => m.role !== 'system');
@@ -65,10 +66,10 @@ const SpeechToSpeech: React.FC = () => {
     <>
       <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-          {t('speech_to_speech.title')}
+          {t('speechToSpeech.title')}
         </div>
 
-        {isEmpty && !isLoading && (
+        {isEmpty && !isLoading && !isActive && (
           <div className="mt-2 flex w-full items-end justify-center lg:mt-0 print:hidden">
             <Select
               value={modelId}
@@ -80,16 +81,31 @@ const SpeechToSpeech: React.FC = () => {
           </div>
         )}
 
-        {isEmpty && !isLoading && (
+        {isEmpty && !isLoading && !isActive && (
           <div className="flex h-[calc(100vh-9rem)] flex-col items-center justify-center">
             <Alert
-              title={t('speech_to_speech.experimental_warning_title')}
+              title={t('speechToSpeech.experimental_warning_title')}
               severity="warning"
               className="w-11/12 md:w-10/12 lg:w-4/6 xl:w-3/6">
-              {t('speech_to_speech.experimental_warning')}
+              {t('speechToSpeech.experimental_warning')}
             </Alert>
             <div className="relative flex h-full flex-col items-center justify-center">
               <BedrockIcon className="fill-gray-400" />
+            </div>
+          </div>
+        )}
+
+        {isEmpty && isLoading && (
+          <div className="flex h-[calc(100vh-9rem)] animate-pulse flex-col items-center justify-center">
+            <span className="size-32 animate-spin rounded-full border-8 border-gray-400 border-t-transparent"></span>
+          </div>
+        )}
+
+        {isEmpty && !isLoading && isActive && (
+          <div className="flex h-[calc(100vh-9rem)] animate-pulse flex-col items-center justify-center">
+            <PiEar className="size-32" />
+            <div className="mt-5 text-lg">
+              {t('speechToSpeech.im_listening')}
             </div>
           </div>
         )}
@@ -115,22 +131,17 @@ const SpeechToSpeech: React.FC = () => {
                   chatContent={m}
                   hideFeedback={true}
                   hideSaveSystemContext={true}
+                  loading={
+                    m.role === 'assistant' &&
+                    idx === showingMessages.length - 1 &&
+                    isAssistantSpeeching &&
+                    isActive
+                  }
                 />
                 <div className="w-full border-b border-gray-300"></div>
               </div>
             );
           })}
-          {isAssistantSpeeching && (
-            <div>
-              <ChatMessage
-                chatContent={{ role: 'assistant', content: '' }}
-                hideFeedback={true}
-                hideSaveSystemContext={true}
-                loading={true}
-              />
-              <div className="w-full border-b border-gray-300"></div>
-            </div>
-          )}
         </div>
 
         <div className="fixed right-4 top-[calc(50vh-2rem)] z-0 lg:right-8">
@@ -149,10 +160,10 @@ const SpeechToSpeech: React.FC = () => {
                     className="text-xs"
                     onClick={() => {
                       setInputSystemPrompt(
-                        t('speech_to_speech.default_system_prompt')
+                        t('speechToSpeech.default_system_prompt')
                       );
                       setSystemPrompt(
-                        t('speech_to_speech.default_system_prompt')
+                        t('speechToSpeech.default_system_prompt')
                       );
                     }}>
                     {t('chat.initialize')}
@@ -191,7 +202,7 @@ const SpeechToSpeech: React.FC = () => {
               {!isLoading ? (
                 <>
                   <PiMicrophoneBold className="mr-2 size-5" />{' '}
-                  {t('speech_to_speech.start')}
+                  {t('speechToSpeech.start')}
                 </>
               ) : (
                 <span className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></span>
@@ -205,7 +216,7 @@ const SpeechToSpeech: React.FC = () => {
               {!isLoading ? (
                 <>
                   <PiStopCircleBold className="mr-2 size-5" />{' '}
-                  {t('speech_to_speech.close')}
+                  {t('speechToSpeech.close')}
                 </>
               ) : (
                 <span className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></span>

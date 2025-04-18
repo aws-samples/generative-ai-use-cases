@@ -23,24 +23,24 @@ const KENDRA_STATE_CFN_PARAMETER_NAME = 'kendraState';
 
 export interface RagProps {
   // Context Params
-  envSuffix: string;
-  kendraIndexLanguage: string;
-  kendraIndexArnInCdkContext?: string | null;
-  kendraDataSourceBucketName?: string | null;
-  kendraIndexScheduleEnabled: boolean;
-  kendraIndexScheduleCreateCron?: IndexScheduleCron | null;
-  kendraIndexScheduleDeleteCron?: IndexScheduleCron | null;
+  readonly envSuffix: string;
+  readonly kendraIndexLanguage: string;
+  readonly kendraIndexArnInCdkContext?: string | null;
+  readonly kendraDataSourceBucketName?: string | null;
+  readonly kendraIndexScheduleEnabled: boolean;
+  readonly kendraIndexScheduleCreateCron?: IndexScheduleCron | null;
+  readonly kendraIndexScheduleDeleteCron?: IndexScheduleCron | null;
 
   // Resource
-  userPool: UserPool;
-  api: RestApi;
+  readonly userPool: UserPool;
+  readonly api: RestApi;
 }
 
 export interface IndexScheduleCron {
-  minute: string;
-  hour: string;
-  month: string;
-  weekDay: string;
+  readonly minute: string;
+  readonly hour: string;
+  readonly month: string;
+  readonly weekDay: string;
 }
 
 class KendraIndexWithCfnParameter extends kendra.CfnIndex {

@@ -210,6 +210,7 @@ If you would like to have your use case featured, please contact us via [Issue](
 
 ## References
 
+- [GitHub (Japanese): How to deploy GenU by one click](https://github.com/aws-samples/sample-one-click-generative-ai-solutions)
 - [Blog (Japanese): GenU Use Case Builder for Creating and Distributing Generative AI Apps with No Code](https://aws.amazon.com/jp/blogs/news/genu-use-cases-builder/)
 - [Blog (Japanese): How to Make RAG Projects Successful #1 ~ Or How to Fail Fast ~](https://aws.amazon.com/jp/builders-flash/202502/way-to-succeed-rag-project/)
 - [Blog (Japanese): Debugging Methods to Improve Accuracy in RAG Chat](https://qiita.com/sugimount-a/items/7ed3c5fc1eb867e28566)

@@ -194,6 +194,13 @@ export const useSpeechToSpeech = () => {
             onTextOutput(event.data);
           } else if (event.event === 'textStop') {
             onTextStop(event.data);
+
+            if (
+              event.data.stopReason &&
+              event.data.stopReason === 'INTERRUPTED'
+            ) {
+              audioPlayerRef.current?.bargeIn();
+            }
           }
         }
       },

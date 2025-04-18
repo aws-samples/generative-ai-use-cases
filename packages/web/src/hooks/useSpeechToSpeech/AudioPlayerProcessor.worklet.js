@@ -1,3 +1,4 @@
+// This file is copied from https://github.com/aws-samples/amazon-nova-samples/blob/main/speech-to-speech/sample-codes/websocket-nodejs/public/src/lib/play/AudioPlayerProcessor.worklet.js
 // Audio sample buffer to minimize reallocations
 class ExpandableBuffer {
   constructor() {

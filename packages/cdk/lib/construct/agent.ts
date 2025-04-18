@@ -20,8 +20,8 @@ import { Agent as AgentType } from 'generative-ai-use-cases';
 
 interface AgentProps {
   // Context Params
-  searchAgentEnabled: boolean;
-  searchApiKey?: string | null;
+  readonly searchAgentEnabled: boolean;
+  readonly searchApiKey?: string | null;
 }
 
 export class Agent extends Construct {

@@ -194,7 +194,6 @@ const enqueueAudioStop = () => {
   isAudioStarted = false;
 
   clearQueue();
-  // isActive = false;
 
   eventQueue.push({
     event: {

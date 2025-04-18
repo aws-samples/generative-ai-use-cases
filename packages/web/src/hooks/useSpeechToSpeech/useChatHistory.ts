@@ -1,64 +1,91 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { UnrecordedMessage } from 'generative-ai-use-cases';
 
+type EventMessage = {
+  id: string;
+  role: string;
+  content: string;
+  generationStage: string;
+  stopReason: string;
+};
+
+type EventMessageCacheEntity = Partial<EventMessage> & {
+  id: string;
+};
+
 const useChatHistory = () => {
-  const [messages, setMessages] = useState<UnrecordedMessage[]>([]);
-  const [isAssistantSpeeching, setIsAssistantSpeeching] = useState(false);
-  const messageCache = useRef<Record<string, UnrecordedMessage>>({});
-  const generationStageCache = useRef<Record<string, string>>({});
-  const stopReasonCache = useRef<Record<string, string>>({});
+  const [eventMessages, setEventMessages] = useState<EventMessage[][]>([]);
+  const eventMessageCache = useRef<Record<string, EventMessage>>({});
 
   const clear = () => {
-    setMessages([]);
-    messageCache.current = {};
-    generationStageCache.current = {};
-    stopReasonCache.current = {};
+    setEventMessages([]);
+    eventMessageCache.current = {};
   };
 
   const setupSystemPrompt = (prompt: string) => {
-    setMessages([
-      {
-        role: 'system',
-        content: prompt,
-      },
+    setEventMessages([
+      [
+        {
+          id: 'system',
+          role: 'system',
+          content: prompt,
+          generationStage: 'FINAL',
+          stopReason: 'END_TURN',
+        },
+      ],
     ]);
   };
 
-  const tryUpdateMessage = (id: string) => {
+  const tryUpdateEventMessage = (tmpEventMessage: EventMessageCacheEntity) => {
+    const currentCacheEntity = eventMessageCache.current[tmpEventMessage.id];
+
+    const newEntity = {
+      id: tmpEventMessage.id,
+      role: tmpEventMessage.role ?? currentCacheEntity?.role,
+      content: tmpEventMessage.content ?? currentCacheEntity?.content,
+      generationStage:
+        tmpEventMessage.generationStage ?? currentCacheEntity?.generationStage,
+      stopReason: tmpEventMessage.stopReason ?? currentCacheEntity?.stopReason,
+    };
+
+    eventMessageCache.current[tmpEventMessage.id] = newEntity;
+
     if (
-      !messageCache.current[id] ||
-      !generationStageCache.current[id] ||
-      !stopReasonCache.current[id]
+      newEntity.role &&
+      newEntity.content &&
+      newEntity.generationStage &&
+      newEntity.stopReason
     ) {
-      return;
+      setEventMessages((prevEventMessages) => {
+        const lastEventMessagesIndex = prevEventMessages.length - 1;
+        const lastEventMessages = prevEventMessages[lastEventMessagesIndex];
+        const eventMessagesWithoutLast = prevEventMessages.slice(
+          0,
+          lastEventMessagesIndex
+        );
+
+        if (lastEventMessages[0].role === newEntity.role) {
+          if (newEntity.generationStage === 'FINAL') {
+            const countFinals = lastEventMessages.filter(
+              (m) => m.generationStage === 'FINAL'
+            ).length;
+            const beforeEventMessages = lastEventMessages.slice(0, countFinals);
+            const afterEventMessages = lastEventMessages.slice(countFinals + 1);
+            return [
+              ...eventMessagesWithoutLast,
+              [...beforeEventMessages, newEntity, ...afterEventMessages],
+            ];
+          } else {
+            return [
+              ...eventMessagesWithoutLast,
+              [...lastEventMessages, newEntity],
+            ];
+          }
+        } else {
+          return [...eventMessagesWithoutLast, lastEventMessages, [newEntity]];
+        }
+      });
     }
-
-    if (generationStageCache.current[id] !== 'FINAL') {
-      return;
-    }
-
-    if (stopReasonCache.current[id] === 'INTERRUPTED') {
-      return;
-    }
-
-    setMessages((messages) => {
-      const lastMessageIndex = messages.length - 1;
-      const lastMessage = messages[lastMessageIndex];
-      const messagesWithoutLast = messages.slice(0, lastMessageIndex);
-      const role = messageCache.current[id].role;
-      const content = messageCache.current[id].content;
-
-      if (lastMessage.role === role) {
-        const updatedLastMessage: UnrecordedMessage = {
-          ...lastMessage,
-          content: lastMessage.content + ' ' + content,
-        };
-        return [...messagesWithoutLast, updatedLastMessage];
-      } else {
-        const newMessage: UnrecordedMessage = { role, content };
-        return [...messagesWithoutLast, lastMessage, newMessage];
-      }
-    });
   };
 
   const onTextStart = (data: {
@@ -66,14 +93,11 @@ const useChatHistory = () => {
     role: string;
     generationStage: string;
   }) => {
-    generationStageCache.current[data.id] = data.generationStage;
-    tryUpdateMessage(data.id);
-
-    if (data.role === 'assistant' && data.generationStage === 'SPECULATIVE') {
-      setIsAssistantSpeeching(true);
-    } else {
-      setIsAssistantSpeeching(false);
-    }
+    tryUpdateEventMessage({
+      id: data.id,
+      role: data.role,
+      generationStage: data.generationStage,
+    });
   };
 
   const onTextOutput = (data: {
@@ -81,17 +105,73 @@ const useChatHistory = () => {
     role: string;
     content: string;
   }) => {
-    messageCache.current[data.id] = {
-      role: data.role as 'user' | 'assistant',
+    tryUpdateEventMessage({
+      id: data.id,
+      role: data.role,
       content: data.content,
-    };
-    tryUpdateMessage(data.id);
+    });
   };
 
   const onTextStop = (data: { id: string; stopReason: string }) => {
-    stopReasonCache.current[data.id] = data.stopReason;
-    tryUpdateMessage(data.id);
+    tryUpdateEventMessage({ id: data.id, stopReason: data.stopReason });
   };
+
+  const messages: UnrecordedMessage[] = useMemo(() => {
+    let interrupted: boolean = false;
+
+    const res: UnrecordedMessage[] = [];
+
+    for (const ms of eventMessages) {
+      if (interrupted) {
+        res[res.length - 1].content =
+          res[res.length - 1].content +
+          ' ' +
+          ms.map((m: EventMessage) => m.content).join(' ');
+        interrupted = false;
+      } else {
+        const interruptedIndex = ms.findIndex(
+          (m: EventMessage) => m.stopReason === 'INTERRUPTED'
+        );
+
+        if (interruptedIndex === 0) {
+          interrupted = true;
+        } else if (interruptedIndex > 0) {
+          res.push({
+            role: ms[0].role as 'system' | 'user' | 'assistant',
+            content: ms
+              .slice(0, interruptedIndex)
+              .map((m: EventMessage) => m.content)
+              .join(' '),
+          });
+        } else {
+          res.push({
+            role: ms[0].role as 'system' | 'user' | 'assistant',
+            content: ms.map((m: EventMessage) => m.content).join(' '),
+          });
+        }
+      }
+    }
+
+    return res;
+  }, [eventMessages]);
+
+  const isAssistantSpeeching = useMemo(() => {
+    if (eventMessages.length === 0) {
+      return false;
+    }
+
+    const lastEventMessages = eventMessages[eventMessages.length - 1];
+
+    if (lastEventMessages[0].role === 'assistant') {
+      const hasSpeculative =
+        lastEventMessages.filter(
+          (e: EventMessage) => e.generationStage === 'SPECULATIVE'
+        ).length > 0;
+      return hasSpeculative;
+    }
+
+    return false;
+  }, [eventMessages]);
 
   return {
     clear,
@@ -101,6 +181,7 @@ const useChatHistory = () => {
     onTextOutput,
     onTextStop,
     isAssistantSpeeching,
+    eventMessages,
   };
 };
 

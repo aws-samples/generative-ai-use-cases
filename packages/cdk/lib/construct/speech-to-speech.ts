@@ -10,10 +10,10 @@ import { ModelConfiguration } from 'generative-ai-use-cases';
 import { BEDROCK_SPEECH_TO_SPEECH_MODELS } from '@generative-ai-use-cases/common';
 
 export interface SpeechToSpeechProps {
-  envSuffix: string;
-  userPool: cognito.UserPool;
-  api: agw.RestApi;
-  speechToSpeechModelIds: ModelConfiguration[];
+  readonly envSuffix: string;
+  readonly userPool: cognito.UserPool;
+  readonly api: agw.RestApi;
+  readonly speechToSpeechModelIds: ModelConfiguration[];
 }
 
 export class SpeechToSpeech extends Construct {

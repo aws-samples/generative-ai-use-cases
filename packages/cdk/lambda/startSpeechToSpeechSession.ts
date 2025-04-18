@@ -8,7 +8,6 @@ import {
 export const handler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
-  console.log(event.body); // TODO: delete
   try {
     const { channel, model } = JSON.parse(event.body!);
     const lambda = new LambdaClient({});

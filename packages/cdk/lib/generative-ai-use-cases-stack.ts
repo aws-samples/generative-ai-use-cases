@@ -19,21 +19,21 @@ import { UseCaseBuilder } from './construct/use-case-builder';
 import { ProcessedStackInput } from './stack-input';
 
 export interface GenerativeAiUseCasesStackProps extends StackProps {
-  params: ProcessedStackInput;
+  readonly params: ProcessedStackInput;
   // RAG Knowledge Base
-  knowledgeBaseId?: string;
-  knowledgeBaseDataSourceBucketName?: string;
+  readonly knowledgeBaseId?: string;
+  readonly knowledgeBaseDataSourceBucketName?: string;
   // Agent
-  agents?: Agent[];
+  readonly agents?: Agent[];
   // Video Generation
-  videoBucketRegionMap: Record<string, string>;
+  readonly videoBucketRegionMap: Record<string, string>;
   // Guardrail
-  guardrailIdentifier?: string;
-  guardrailVersion?: string;
+  readonly guardrailIdentifier?: string;
+  readonly guardrailVersion?: string;
   // WAF
-  webAclId?: string;
+  readonly webAclId?: string;
   // Custom Domain
-  cert?: ICertificate;
+  readonly cert?: ICertificate;
 }
 
 export class GenerativeAiUseCasesStack extends Stack {
