@@ -285,6 +285,23 @@ claude:
         * コード内に日本語を使用しないでください。
         </rule>
       title: コードを書かせる
+    queryWriting:
+      prompt: |-
+        <language>エクセルのマクロ</language>
+        <instruction>
+        Sheet1 シートのセルA1の値を二乗して円周率をかけた値をセルA2に格納する。
+        </instruction>
+      systemContext: |-
+        あなたは優秀な
+        AI はユーザーの指示をよく理解できるプログラマーです。
+        <language></language> の xml タグ内に与えられた言語で、<instruction></instruction> の指示に沿ってコードを出力してください。
+        コードを出力する際、<rule></rule> の xml タグ内で与えたルールは厳守してください。例外はありません。
+        <rule>
+        * 出力は<output>\`\`\`{code}\`\`\`</output> の形式でコードのみを出力してください。
+        * コピー＆ペーストで動くように、コードは完全なものを記述してください。
+        * コード内に日本語を使用しないでください。
+        </rule>
+      title: SQL を書かせる
     title: プログラミング
   rolePlay:
     careerCoach:
@@ -830,6 +847,101 @@ useCaseBuilder:
         </instruction>
       title: コード作成
     name: プログラミング
+    queryGeneration:
+      description: 様々なデータベースに向けたクエリを生成します。
+      inputExample1:
+        parameters:
+          key1: データベースの種類
+          key2: 使用するテーブルに関する情報
+          key3: 実行したいクエリの自然言語による説明
+          value1: Athena
+          value2: |-
+            describe cloudtrail_logs_aws_cloudtrail_logs_XXXXXXXXXXXX_XXXXXXXX;
+
+            eventversion        	string
+            useridentity        	struct<type:string,principalid:string,arn:string,accountid:string,invokedby:string,accesskeyid:string,username:string,sessioncontext:struct<attributes:struct<mfaauthenticated:string,creationdate:string>,sessionissuer:struct<type:string,principalid:string,arn:string,accountid:string,username:string>,ec2roledelivery:string,webidfederationdata:map<string,string>>>
+            eventtime           	string
+            eventsource         	string
+            eventname           	string
+            awsregion           	string
+            sourceipaddress     	string
+            useragent           	string
+            errorcode           	string
+            errormessage        	string
+            requestparameters   	string
+            responseelements    	string
+            additionaleventdata 	string
+            requestid           	string
+            eventid             	string
+            resources           	array<struct<arn:string,accountid:string,type:string>>
+            eventtype           	string
+            apiversion          	string
+            readonly            	string
+            recipientaccountid  	string
+            serviceeventdetails 	string
+            sharedeventid       	string
+            vpcendpointid       	string
+            tlsdetails          	struct<tlsversion:string,ciphersuite:string,clientprovidedhostheader:string>
+          value3: この一ヶ月で一番 API を叩いている identity トップ 10 を回数と共に出力して
+        title: Athena
+      inputExample2:
+        parameters:
+          key1: データベースの種類
+          key2: 使用するテーブルに関する情報
+          key3: 実行したいクエリの自然言語による説明
+          value1: Redshift
+          value2: |-
+            CREATE TABLE customers (
+              customer_id INTEGER,
+              first_name VARCHAR(50) NOT NULL,
+              last_name VARCHAR(50) NOT NULL,
+              email VARCHAR(100) NOT NULL,
+              birth_date DATE,
+              phone VARCHAR(20),
+              address VARCHAR(200),
+              city VARCHAR(50),
+              state VARCHAR(25),
+              postal_code VARCHAR(10),
+              country VARCHAR(50),
+              created_at TIMESTAMP DEFAULT GETDATE(),
+              CONSTRAINT pk_customers PRIMARY KEY (customer_id),
+              CONSTRAINT uq_customer_email UNIQUE (email)
+            )
+            CREATE TABLE orders (
+              order_id INTEGER IDENTITY(1,1),
+              customer_id INTEGER NOT NULL,
+              order_date TIMESTAMP DEFAULT GETDATE() NOT NULL,
+              status VARCHAR(20) NOT NULL,
+              total_amount DECIMAL(10,2) NOT NULL,
+              payment_method VARCHAR(50),
+              shipping_address VARCHAR(200),
+              shipping_city VARCHAR(50),
+              shipping_state VARCHAR(25),
+              shipping_postal_code VARCHAR(10),
+              shipping_country VARCHAR(50),
+              CONSTRAINT pk_orders PRIMARY KEY (order_id),
+              CONSTRAINT fk_orders_customers FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+            );
+          value3: 年齢層ごとの平均売上を出して。年齢層は 21-30, 31-40 など 10 で区切り、20歳以下は 20 歳以下、80 歳以上は 80 歳以上でまとめて
+        title: Redshift
+      inputExample3:
+        parameters:
+          key1: データベースの種類
+          key2: 使用するテーブルに関する情報
+          key3: 実行したいクエリの自然言語による説明
+          value1: PostgreSQL
+          value2: なし
+          value3: レコード数が 1 以上の全テーブルの 1 レコードあたりの平均容量(KB単位)を調べるクエリ
+        title: PostgreSQL
+      promptTemplate: |-
+        あなたはデータベーススペシャリスト AI です。ユーザーは <database>タグでクエリを投げるデータベースを、<schema> タグで使用するテーブルに関する情報を、<query> で実行したいクエリを自然言語で説明した文章を与えます。
+        あなたは与えられた情報から <database> に配慮した効率的なクエリを生成してください。
+        <database>{{select:データベースの種類:Athena,Redshift,PostgreSQL,Oracle,MySQL}}</database>
+        <schema>{{text:使用するテーブルに関する情報}}</schema>
+        <query>{{text:実行したいクエリの自然言語による説明}}</query>
+        AI はまず、ユーザーの希望をどうすれば叶えられるのかとユーザーがわかりやすい SQL(なるべくベタ書きが好ましい)、について考えたあと、```sql{実行すべきクエリ}```の形で出力してください。
+        ただし、With 句や、Case 句を使う場合は必ず全てのテーブル名及び列名の別名を付与し、別名経由でアクセスしてください。
+      title: SQL 生成
   textAnalysis:
     name: テキスト分析
     qaPair:
