@@ -1,0 +1,15 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - npm ci
+  build:
+    commands:
+      - npm run cdk:deploy:quick
+      - npm run extension:ci
+      - npm run extension:build
+artifacts:
+  files:
+    - '**/*'
+  directories:
+    - 'generative-ai-use-cases-jp/browser-extension/dist/**/*'  # 成果物のパス[2][5]
