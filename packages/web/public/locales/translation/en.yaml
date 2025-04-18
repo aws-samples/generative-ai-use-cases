@@ -843,6 +843,10 @@ useCaseBuilder:
     rag_knowledge_base_not_enabled: >-
       {{retrieveKnowledgeBase}} is specified in the prompt template, but RAG
       Chat (Knowledge Base) is not enabled in GenU.
+    spaces_in_label: >-
+      Remove any white spaces before and after {{label}}.
+    spaces_in_value: >-
+      Remove any white spaces before and after options of {{label}}.
   favorites: Favorites
   fileUploadDescription: Users can upload files for the LLM to reference the content.
   fileUploadDisabled: Disable file upload
