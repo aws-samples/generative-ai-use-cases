@@ -674,6 +674,7 @@ export class Api extends Construct {
         allowMethods: Cors.ALL_METHODS,
       },
       cloudWatchRole: true,
+      defaultMethodOptions: commonAuthorizerProps,
     });
 
     api.addGatewayResponse('Api4XX', {
