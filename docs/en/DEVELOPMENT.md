@@ -54,10 +54,22 @@ If executed successfully, it will start at http://localhost:5173, so please try 
 
 ## When Submitting a Pull Request
 
-We welcome Pull Requests for bug fixes and feature improvements. Before committing, please run the lint tool:
+We welcome Pull Requests for bug fixes and feature improvements :tada:
+
+When `git commit` is executed, `npm run lint` is executed. But if it fails, the commit causes an error like the following:
 
 ```bash
-npm run lint
+⚠ Running tasks for staged files...
+  ❯ package.json — 1 file
+    ❯ **/* — 1 file
+      ✖ sh -c 'npm run lint' [FAILED]
+      ...
+```
+
+If you want to ignore this error and create a Draft PR, add the `--no-verify` option as shown below.
+
+```bash
+git commit -m "xxx" --no-verify
 ```
 
 Also, if there are changes to the CDK, check the snapshots with the following command and update them:
