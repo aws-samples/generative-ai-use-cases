@@ -118,29 +118,31 @@ const VoiceChatPage: React.FC = () => {
           </div>
         )}
 
-        <div ref={scrollableContainer}>
-          {showingMessages.map((m, idx) => {
-            return (
-              <div key={showSystemPrompt ? idx : idx + 1}>
-                {idx === 0 && (
+        {!isEmpty && (
+          <div ref={scrollableContainer}>
+            {showingMessages.map((m, idx) => {
+              return (
+                <div key={showSystemPrompt ? idx : idx + 1}>
+                  {idx === 0 && (
+                    <div className="w-full border-b border-gray-300"></div>
+                  )}
+                  <ChatMessage
+                    chatContent={m}
+                    hideFeedback={true}
+                    hideSaveSystemContext={true}
+                    loading={
+                      m.role === 'assistant' &&
+                      idx === showingMessages.length - 1 &&
+                      isAssistantSpeeching &&
+                      isActive
+                    }
+                  />
                   <div className="w-full border-b border-gray-300"></div>
-                )}
-                <ChatMessage
-                  chatContent={m}
-                  hideFeedback={true}
-                  hideSaveSystemContext={true}
-                  loading={
-                    m.role === 'assistant' &&
-                    idx === showingMessages.length - 1 &&
-                    isAssistantSpeeching &&
-                    isActive
-                  }
-                />
-                <div className="w-full border-b border-gray-300"></div>
-              </div>
-            );
-          })}
-        </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         <div className="fixed right-4 top-[calc(50vh-2rem)] z-0 lg:right-8">
           <ScrollTopBottom />
