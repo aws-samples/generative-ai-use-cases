@@ -27,7 +27,7 @@ import OptimizePromptPage from './pages/OptimizePromptPage';
 import TranscribePage from './pages/TranscribePage';
 import AgentChatPage from './pages/AgentChatPage.tsx';
 import FlowChatPage from './pages/FlowChatPage';
-import SpeechToSpeechPage from './pages/SpeechToSpeechPage';
+import VoiceChatPage from './pages/VoiceChatPage';
 import { MODELS } from './hooks/useModel';
 import { Authenticator } from '@aws-amplify/ui-react';
 import UseCaseBuilderEditPage from './pages/useCaseBuilder/UseCaseBuilderEditPage.tsx';
@@ -173,10 +173,10 @@ const routes: RouteObject[] = [
         element: <AgentChatPage />,
       }
     : null,
-  speechToSpeechModelIds.length > 0 && enabled('speechToSpeech')
+  speechToSpeechModelIds.length > 0 && enabled('voiceChat')
     ? {
-        path: '/speech-to-speech',
-        element: <SpeechToSpeechPage />,
+        path: '/voice-chat',
+        element: <VoiceChatPage />,
       }
     : null,
   {

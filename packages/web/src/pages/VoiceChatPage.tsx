@@ -20,7 +20,7 @@ import BedrockIcon from '../assets/bedrock.svg?react';
 import { toast } from 'sonner';
 import { MODELS } from '../hooks/useModel';
 
-const SpeechToSpeech: React.FC = () => {
+const VoiceChatPage: React.FC = () => {
   const { t } = useTranslation();
   const {
     messages,
@@ -33,7 +33,7 @@ const SpeechToSpeech: React.FC = () => {
   } = useSpeechToSpeech();
   const [showSystemPrompt, setShowSystemPrompt] = useState(false);
   const [systemPrompt, setSystemPrompt] = useState(
-    t('speechToSpeech.default_system_prompt')
+    t('voiceChat.default_system_prompt')
   );
   const [inputSystemPrompt, setInputSystemPrompt] = useState(systemPrompt);
   const { scrollableContainer, setFollowing } = useFollow();
@@ -66,7 +66,7 @@ const SpeechToSpeech: React.FC = () => {
     <>
       <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-          {t('speechToSpeech.title')}
+          {t('voiceChat.title')}
         </div>
 
         {isEmpty && !isLoading && !isActive && (
@@ -84,10 +84,10 @@ const SpeechToSpeech: React.FC = () => {
         {isEmpty && !isLoading && !isActive && (
           <div className="flex h-[calc(100vh-9rem)] flex-col items-center justify-center">
             <Alert
-              title={t('speechToSpeech.experimental_warning_title')}
+              title={t('voiceChat.experimental_warning_title')}
               severity="warning"
               className="w-11/12 md:w-10/12 lg:w-4/6 xl:w-3/6">
-              {t('speechToSpeech.experimental_warning')}
+              {t('voiceChat.experimental_warning')}
             </Alert>
             <div className="relative flex h-full flex-col items-center justify-center">
               <BedrockIcon className="fill-gray-400" />
@@ -104,9 +104,7 @@ const SpeechToSpeech: React.FC = () => {
         {isEmpty && !isLoading && isActive && (
           <div className="flex h-[calc(100vh-9rem)] animate-pulse flex-col items-center justify-center">
             <PiEar className="size-32" />
-            <div className="mt-5 text-lg">
-              {t('speechToSpeech.im_listening')}
-            </div>
+            <div className="mt-5 text-lg">{t('voiceChat.im_listening')}</div>
           </div>
         )}
 
@@ -160,11 +158,9 @@ const SpeechToSpeech: React.FC = () => {
                     className="text-xs"
                     onClick={() => {
                       setInputSystemPrompt(
-                        t('speechToSpeech.default_system_prompt')
+                        t('voiceChat.default_system_prompt')
                       );
-                      setSystemPrompt(
-                        t('speechToSpeech.default_system_prompt')
-                      );
+                      setSystemPrompt(t('voiceChat.default_system_prompt'));
                     }}>
                     {t('chat.initialize')}
                   </Button>
@@ -202,7 +198,7 @@ const SpeechToSpeech: React.FC = () => {
               {!isLoading ? (
                 <>
                   <PiMicrophoneBold className="mr-2 size-5" />{' '}
-                  {t('speechToSpeech.start')}
+                  {t('voiceChat.start')}
                 </>
               ) : (
                 <span className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></span>
@@ -216,7 +212,7 @@ const SpeechToSpeech: React.FC = () => {
               {!isLoading ? (
                 <>
                   <PiStopCircleBold className="mr-2 size-5" />{' '}
-                  {t('speechToSpeech.close')}
+                  {t('voiceChat.close')}
                 </>
               ) : (
                 <span className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></span>
@@ -229,4 +225,4 @@ const SpeechToSpeech: React.FC = () => {
   );
 };
 
-export default SpeechToSpeech;
+export default VoiceChatPage;

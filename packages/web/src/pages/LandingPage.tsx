@@ -95,8 +95,8 @@ const LandingPage: React.FC = () => {
     }
   };
 
-  const demoSpeechToSpeech = () => {
-    navigate('/speech-to-speech');
+  const demoVoiceChat = () => {
+    navigate('/voice-chat');
   };
 
   const demoGenerate = () => {
@@ -318,12 +318,12 @@ const LandingPage: React.FC = () => {
             description={t('landing.use_cases.flow_chat.description')}
           />
         )}
-        {speechToSpeechModelIds.length > 0 && enabled('speechToSpeech') && (
+        {speechToSpeechModelIds.length > 0 && enabled('voiceChat') && (
           <CardDemo
-            label={t('landing.use_cases.speech_to_speech.title')}
-            onClickDemo={demoSpeechToSpeech}
+            label={t('landing.use_cases.voice_chat.title')}
+            onClickDemo={demoVoiceChat}
             icon={<PiMicrophoneBold />}
-            description={t('landing.use_cases.speech_to_speech.description')}
+            description={t('landing.use_cases.voice_chat.description')}
           />
         )}
         {enabled('generate') && (

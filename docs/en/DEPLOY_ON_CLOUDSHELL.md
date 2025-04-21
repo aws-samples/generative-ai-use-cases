@@ -79,4 +79,4 @@ When deployment is complete, the CloudFront URL will be displayed. You can acces
 2. cdk.json settings are applied next
 
 Note that to execute these steps, you also need to enable the models from [Amazon Bedrock Model access](https://console.aws.amazon.com/bedrock/home#/modelaccess).
-Confirm that the models specified in modelIds, imageGenerationModelIds, and videoGenerationModelIds in the modelRegion of the configuration file (parameter.ts or cdk.json) are enabled.
+Confirm that the models specified in modelIds, imageGenerationModelIds, videoGenerationModelIds, and speechToSpeechModelIds in the modelRegion of the configuration file (parameter.ts or cdk.json) are enabled.

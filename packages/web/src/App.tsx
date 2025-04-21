@@ -133,10 +133,10 @@ const App: React.FC = () => {
           display: 'usecase' as const,
         }
       : null,
-    speechToSpeechModelIds.length > 0 && enabled('speechToSpeech')
+    speechToSpeechModelIds.length > 0 && enabled('voiceChat')
       ? {
-          label: t('navigation.speechToSpeech'),
-          to: '/speech-to-speech',
+          label: t('navigation.voiceChat'),
+          to: '/voice-chat',
           icon: <PiMicrophoneBold />,
           display: 'usecase' as const,
         }

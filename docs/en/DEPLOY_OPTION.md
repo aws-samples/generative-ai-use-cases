@@ -611,6 +611,12 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### Enabling Voice Chat Use Case
+
+This is enabled when you define one or more models in `speechToSpeechModelIds`.
+For `speechToSpeechModelIds`, please refer to [Changing Amazon Bedrock Models](#change-amazon-bedrock-models).
+For default values, please refer to [packages/cdk/lib/stack-input.ts](/packages/cdk/lib/stack-input.ts).
+
 ### Enabling Image Generation Use Case
 
 This is enabled when you define one or more models in `imageGenerationModelIds`.
@@ -717,6 +723,7 @@ const envs: Record<string, Partial<StackInput>> = {
       video: true, // Hide video generation
       videoAnalyzer: true, // Hide video analysis
       diagram: true, // Hide diagram generation
+      voiceChat: true, // Hide voice chat
     },
   },
 };
@@ -737,7 +744,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "image": true,
       "video": true,
       "videoAnalyzer": true,
-      "diagram": true
+      "diagram": true,
+      "voiceChat": true
     }
   }
 }
@@ -771,7 +779,7 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ## Change Amazon Bedrock Models
 
-Specify the model region and models in `parameter.ts` or `cdk.json` using `modelRegion`, `modelIds`, `imageGenerationModelIds`, and `videoGenerationModelIds`. For `modelIds`, `imageGenerationModelIds`, and `videoGenerationModelIds`, specify a list of models you want to use from those available in the specified region. AWS documentation provides a [list of models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-ids.html) and [model support by region](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html).
+Specify the model region and models in `parameter.ts` or `cdk.json` using `modelRegion`, `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, and `speechToSpeechModelIds`. For `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, and `speechToSpeechModelIds`, specify a list of models you want to use from those available in the specified region. AWS documentation provides a [list of models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-ids.html) and [model support by region](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html).
 
 The solution also supports [cross-region inference](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference-support.html) models. Cross-region inference models are represented as `{us|eu|apac}.{model-provider}.{model-name}` and must match the `{us|eu|apac}` prefix with the region specified in modelRegion.
 
@@ -838,6 +846,12 @@ This solution supports the following text generation models:
 "apac.amazon.nova-micro-v1:0"
 ```
 
+This solution supports the following speech-to-speech models:
+
+```
+amazon.nova-sonic-v1:0
+```
+
 This solution supports the following image generation models:
 
 ```
@@ -865,7 +879,7 @@ This solution supports the following video generation models:
 
 ### Using Models from Multiple Regions Simultaneously
 
-By default, GenU uses models from the `modelRegion`. If you want to use the latest models that are only available in certain regions, you can specify `{modelId: '<model name>', region: '<region code>'}` in `modelIds`, `imageGenerationModelIds`, or `videoGenerationModelIds` to call that specific model from the specified region.
+By default, GenU uses models from the `modelRegion`. If you want to use the latest models that are only available in certain regions, you can specify `{modelId: '<model name>', region: '<region code>'}` in `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, or `speechToSpeechModelIds` to call that specific model from the specified region.
 
 > [!NOTE]
 > When using both the [monitoring dashboard](#enabling-monitoring-dashboard) and models from multiple regions, the default dashboard settings will not display prompt logs for models outside the primary region (`modelRegion`).
@@ -912,6 +926,9 @@ const envs: Record<string, Partial<StackInput>> = {
     videoGenerationModelIds: [
       'amazon.nova-reel-v1:0',
       { modelId: 'luma.ray-v2:0', region: 'us-west-2' },
+    ],
+    speechToSpeechModelIds: [
+      { modelId: 'amazon.nova-sonic-v1:0', region: 'us-east-1' },
     ],
   },
 };
@@ -976,6 +993,12 @@ const envs: Record<string, Partial<StackInput>> = {
         "region": "us-west-2"
       }
     ]
+    "speechToSpeechModelIds": [
+      {
+        "modelId": "amazon.nova-sonic-v1:0",
+        "region": "us-east-1"
+      }
+    ]
   }
 }
 ```
@@ -1011,6 +1034,7 @@ const envs: Record<string, Partial<StackInput>> = {
       'stability.stable-diffusion-xl-v1',
     ],
     videoGenerationModelIds: ['amazon.nova-reel-v1:1'],
+    speechToSpeechModelIds: ['amazon.nova-sonic-v1:0'],
   },
 };
 ```
@@ -1042,7 +1066,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "amazon.titan-image-generator-v1",
       "stability.stable-diffusion-xl-v1"
     ],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:1"]
+    "videoGenerationModelIds": ["amazon.nova-reel-v1:1"],
+    "speechToSpeechModelIds": ["amazon.nova-sonic-v1:0"]
   }
 }
 ```
