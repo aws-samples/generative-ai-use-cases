@@ -66,7 +66,7 @@ const AuthWithSAML: React.FC<Props> = (props) => {
     API: {
       Events: {
         endpoint: speechToSpeechEventApiEndpoint,
-        region: process.env.AWS_DEFAULT_REGION!,
+        region: process.env.VITE_APP_REGION!,
         defaultAuthMode: 'userPool',
       },
     },
