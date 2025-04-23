@@ -15594,6 +15594,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "AccessLogs/*",
           "logs*",
           "docs/bedrock-ug.pdf.metadata.json",
+          "docs/nova-ug.pdf.metadata.json",
         ],
         "OutputObjectKeys": true,
         "Prune": true,
