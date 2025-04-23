@@ -103,6 +103,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 After making changes, redeploy with `npm run cdk:deploy` to apply the changes. Data stored in `/packages/cdk/rag-docs/docs` will be automatically uploaded to the S3 bucket for Kendra data source. (Note that files starting with `logs` will not be synchronized.)
 
+> [!NOTE]
+> By default, the Amazon Bedrock User Guide (Japanese) and Amazon Nova User Guide (English) are stored in `/packages/cdk/rag-docs/docs` as sample data.
+
 Next, perform Kendra Data source Sync with the following steps:
 
 1. Open the [Amazon Kendra console](https://console.aws.amazon.com/kendra/home)
@@ -232,7 +235,12 @@ After making changes, redeploy with `npm run cdk:deploy` to apply the changes. T
 npx -w packages/cdk cdk bootstrap --region us-east-1
 ```
 
-During deployment, data stored in `/packages/cdk/rag-docs/docs` will be automatically uploaded to the S3 bucket for Knowledge Base data source. (Note that files starting with `logs` will not be synchronized.) After deployment is complete, follow these steps to sync the Knowledge Base Data source:
+During deployment, data stored in `/packages/cdk/rag-docs/docs` will be automatically uploaded to the S3 bucket for Knowledge Base data source. (Note that files starting with `logs` will not be synchronized.)
+
+> [!NOTE]
+> By default, the Amazon Bedrock User Guide (Japanese) and Amazon Nova User Guide (English) are stored in `/packages/cdk/rag-docs/docs` as sample data.
+
+After deployment is complete, follow these steps to sync the Knowledge Base Data source:
 
 1. Open the [Knowledge Base console](https://console.aws.amazon.com/bedrock/home#/knowledge-bases)
 2. Click on generative-ai-use-cases-jp

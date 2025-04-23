@@ -103,6 +103,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 変更後に `npm run cdk:deploy` で再度デプロイして反映させます。また、`/packages/cdk/rag-docs/docs` に保存されているデータが、自動で Kendra データソース用の S3 バケットにアップロードされます。(ただし `logs` から始まる名前のファイルは同期されませんので注意してください。)
 
+> [!NOTE]
+> デフォルトでは、Amazon Bedrock ユーザーガイド (日本語) と Amazon Nova ユーザーガイド (英語) がサンプルデータとして `/packages/cdk/rag-docs/docs` に格納されています。
+
 続いて、Kendra の Data source の Sync を以下の手順で行ってください。
 
 1. [Amazon Kendra のコンソール画面](https://console.aws.amazon.com/kendra/home) を開く
@@ -234,7 +237,12 @@ const envs: Record<string, Partial<StackInput>> = {
 npx -w packages/cdk cdk bootstrap --region us-east-1
 ```
 
-デプロイ時に `/packages/cdk/rag-docs/docs` に保存されているデータが、自動で Knowledge Base データソース用の S3 バケットにアップロードされます。(ただし `logs` から始まる名前のファイルは同期されませんので注意してください。) デプロイ完了後、以下の手順で Knowledge Base の Data source を Sync してください。
+デプロイ時に `/packages/cdk/rag-docs/docs` に保存されているデータが、自動で Knowledge Base データソース用の S3 バケットにアップロードされます。(ただし `logs` から始まる名前のファイルは同期されませんので注意してください。)
+
+> [!NOTE]
+> デフォルトでは、Amazon Bedrock ユーザーガイド (日本語) と Amazon Nova ユーザーガイド (英語) がサンプルデータとして `/packages/cdk/rag-docs/docs` に格納されています。
+
+デプロイ完了後、以下の手順で Knowledge Base の Data source を Sync してください。
 
 1. [Knowledge Base のコンソール画面](https://console.aws.amazon.com/bedrock/home#/knowledge-bases) を開く
 1. generative-ai-use-cases-jp をクリック

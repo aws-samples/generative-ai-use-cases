@@ -142,7 +142,7 @@ GenU は OSS ですので、カスタマイズして独自のユースケース�
 GenU のデプロイには [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/)（以降 CDK）を利用します。CDK の実行環境が用意できない場合は、以下のデプロイ方法を参照してください。
 
 - [AWS CloudShell を利用したデプロイ方法 (手元の環境を用意することが難しい場合)](docs/ja/DEPLOY_ON_CLOUDSHELL.md)
-- [Workshop](https://catalog.workshops.aws/generative-ai-use-cases-jp)
+- Workshop ([日本語](https://catalog.workshops.aws/generative-ai-use-cases-jp) / [英語](https://catalog.us-east-1.prod.workshops.aws/workshops/58088ef5-d47c-441d-ae65-e44ff1d6a92b))
 
 まず、以下のコマンドを実行してください。全てのコマンドはリポジトリのルートで実行してください。
 
