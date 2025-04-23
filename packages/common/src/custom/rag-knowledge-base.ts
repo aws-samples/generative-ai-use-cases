@@ -130,5 +130,16 @@ export const userDefinedExplicitFilters: ExplicitFilterConfiguration[] = [
     description: 'Public',
   },
 
+  // Example 5: Filter by language (string match)
+  {
+    key: 'language',
+    type: 'STRING',
+    options: [
+      { value: 'en', label: 'English' },
+      { value: 'ja', label: 'Japanese' },
+    ],
+    description: 'Language',
+  },
+
   // Customize Here
 ];

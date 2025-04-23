@@ -498,7 +498,7 @@ landing:
         Cute, stylish, easy to use, POP culture, friendly, youth-oriented,
         music, photography, trendy smartphone, city background
     rag:
-      content: Please explain Claude's parameters and how to set them.
+      content: Please provide an overview of Amazon Nova Canvas and explain its key features.
     summarize:
       sentence: >-
         Amazon Bedrock is a fully managed service that makes foundation models

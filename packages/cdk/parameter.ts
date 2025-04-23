@@ -22,6 +22,7 @@ const envs: Record<string, Partial<StackInput>> = {
   // },
   dev: {
     // Parameters for development environment
+    ragKnowledgeBaseEnabled: true,
   },
   staging: {
     // Parameters for staging environment

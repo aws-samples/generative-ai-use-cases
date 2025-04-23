@@ -181,7 +181,12 @@ export class Rag extends Construct {
         sources: [s3Deploy.Source.asset('./rag-docs')],
         destinationBucket: dataSourceBucket,
         // There is a possibility that access logs are left in the same Bucket in the previous configuration, so this setting is left
-        exclude: ['AccessLogs/*', 'logs*', 'docs/bedrock-ug.pdf.metadata.json'],
+        exclude: [
+          'AccessLogs/*',
+          'logs*',
+          'docs/bedrock-ug.pdf.metadata.json',
+          'docs/nova-ug.pdf.metadata.json',
+        ],
       });
 
       let index: kendra.CfnIndex;
