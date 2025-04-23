@@ -240,7 +240,7 @@ npx -w packages/cdk cdk bootstrap --region us-east-1
 デプロイ時に `/packages/cdk/rag-docs/docs` に保存されているデータが、自動で Knowledge Base データソース用の S3 バケットにアップロードされます。(ただし `logs` から始まる名前のファイルは同期されませんので注意してください。)
 
 > [!NOTE]
-> デフォルトでは、Amazon Bedrock ユーザーガイド (日本語) と Amazon Nova ユーザーガイド (英語) がサンプルデータとして `/packages/cdk/rag-docs/docs` に格納されています。
+> デフォルトでは、Amazon Bedrock ユーザーガイド (日本語) と Amazon Nova ユーザーガイド (英語) が、サンプルデータとして `/packages/cdk/rag-docs/docs` に格納されています。
 
 デプロイ完了後、以下の手順で Knowledge Base の Data source を Sync してください。
 
