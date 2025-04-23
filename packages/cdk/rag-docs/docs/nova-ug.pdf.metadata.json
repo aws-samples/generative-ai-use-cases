@@ -1,0 +1,11 @@
+{
+  "metadataAttributes": {
+    "group": ["IT"],
+    "year": 2025,
+    "tag": ["AWS", "Amazon Bedrock"],
+    "category": "AWS",
+    "is_public": true,
+    "title": "Amazon Nova User Guide",
+    "language": "en"
+  }
+}
