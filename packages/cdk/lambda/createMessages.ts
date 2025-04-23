@@ -5,7 +5,7 @@ import { batchCreateMessages, findChatById } from './repository';
 const FILE_UPLOAD_BUCKET_NAME = process.env.BUCKET_NAME!;
 
 const isValidExtraData = (extra: ExtraData, bucketName: string): boolean => {
-  return extra.source.data.startsWith(`https://${bucketName}`);
+  return extra.source.data.startsWith(`https://${bucketName}/`);
 };
 
 export const handler = async (
