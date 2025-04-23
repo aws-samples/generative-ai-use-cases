@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSpeechToSpeech } from '../hooks/useSpeechToSpeech';
 import { useTranslation } from 'react-i18next';
 import {
@@ -39,6 +39,9 @@ const VoiceChatPage: React.FC = () => {
   const { scrollableContainer, setFollowing } = useFollow();
   const { speechToSpeechModelIds, speechToSpeechModels } = MODELS;
   const [modelId, setModelId] = useState(speechToSpeechModelIds[0]);
+  // Define useRef for the cleanup function when leaving the page.
+  // To get the latest value without including isActive in the dependency array.
+  const isActiveRef = useRef(isActive);
 
   const messagesWithoutSystemPrompt = useMemo(() => {
     return messages.filter((m) => m.role !== 'system');
@@ -61,6 +64,20 @@ const VoiceChatPage: React.FC = () => {
       toast.error(errorMessages[errorMessages.length - 1]);
     }
   }, [errorMessages]);
+
+  useEffect(() => {
+    isActiveRef.current = isActive;
+  }, [isActive]);
+
+  // Cleanup function
+  useEffect(() => {
+    return () => {
+      if (isActiveRef.current) {
+        closeSession();
+      }
+    };
+    // eslint-disable-next-line  react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>

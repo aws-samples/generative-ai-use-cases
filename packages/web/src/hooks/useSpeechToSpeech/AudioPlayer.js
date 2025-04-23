@@ -1,3 +1,4 @@
+// This file is copied from https://github.com/aws-samples/amazon-nova-samples/blob/main/speech-to-speech/sample-codes/websocket-nodejs/public/src/lib/play/AudioPlayer.js
 import { ObjectExt } from './ObjectsExt.js';
 const AudioPlayerWorkletUrl = new URL(
   './AudioPlayerProcessor.worklet.js',

@@ -36,6 +36,10 @@ const useChatHistory = () => {
     ]);
   };
 
+  // Since AppSync Events are not FIFO, the order of events may be switched.
+  // For example, onTextOutput might come before onTextStart.
+  // This is a process where if a new message has the same role as the previous message, the messages are combined.
+  // Otherwise (if it's a different role), it's added as a new message.
   const tryUpdateEventMessage = (tmpEventMessage: EventMessageCacheEntity) => {
     const currentCacheEntity = eventMessageCache.current[tmpEventMessage.id];
 
@@ -116,6 +120,10 @@ const useChatHistory = () => {
     tryUpdateEventMessage({ id: data.id, stopReason: data.stopReason });
   };
 
+  // This is where the interruption processing is inserted.
+  // When an interruption occurs:
+  // 1) If interruptedIndex === 0, the assistant's entire utterance is canceled, so we connect the user's statements before and after.
+  // 2) If interruptedIndex > 0, the assistant was interrupted after speaking partially, so we display up to the point where the utterance was completed in the UI.
   const messages: UnrecordedMessage[] = useMemo(() => {
     let interrupted: boolean = false;
 
