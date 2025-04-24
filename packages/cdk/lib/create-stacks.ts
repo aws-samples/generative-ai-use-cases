@@ -76,9 +76,9 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
 
   // Create S3 Bucket for each unique region for StartAsyncInvoke in video generation
   // because the S3 Bucket must be in the same region as Bedrock Runtime
-  const videoModelRegions = params.videoGenerationModelIds
-    .map((model) => model.region)
-    .filter((elem, index, self) => self.indexOf(elem) === index);
+  const videoModelRegions = [
+    ...new Set(params.videoGenerationModelIds.map((model) => model.region)),
+  ];
   const videoBucketRegionMap: Record<string, string> = {};
 
   for (const region of videoModelRegions) {
