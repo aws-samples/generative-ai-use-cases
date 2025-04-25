@@ -628,6 +628,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ### 音声チャットユースケースの有効化
 
+> [!NOTE]
+> 音声チャットの反応速度はアプリケーションのリージョン (GenerativeAiUseCasesStack がデプロイされたリージョン) に大きく影響を受けます。反応が遅延する場合は、ユーザーがアプリケーションのリージョンと物理的に近い距離にいるかを確認してください。
+
 `speechToSpeechModelIds` にモデルを 1 つ以上定義すると有効化されます。
 `speechToSpeechModelIds` に関しては [Amazon Bedrock のモデルを変更する](#amazon-bedrock-のモデルを変更する) をご参照ください。
 デフォルト値は [packages/cdk/lib/stack-input.ts](/packages/cdk/lib/stack-input.ts) をご参照ください。

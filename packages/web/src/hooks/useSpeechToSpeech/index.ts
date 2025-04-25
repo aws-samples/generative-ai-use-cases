@@ -174,9 +174,7 @@ export const useSpeechToSpeech = () => {
               setIsLoading(false);
             });
           } else if (event.event === 'end') {
-            if (isActive) {
-              closeSession();
-            }
+            closeSession();
           } else if (event.event === 'audioOutput' && audioPlayerRef.current) {
             const chunks: string[] = event.data;
 

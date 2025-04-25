@@ -613,6 +613,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ### Enabling Voice Chat Use Case
 
+> [!NOTE]
+> The response speed of voice chat is greatly affected by the application's region (the region where GenerativeAiUseCasesStack is deployed). If there is a delay in response, please check if the user is physically located close to the application's region.
+
 This is enabled when you define one or more models in `speechToSpeechModelIds`.
 For `speechToSpeechModelIds`, please refer to [Changing Amazon Bedrock Models](#change-amazon-bedrock-models).
 For default values, please refer to [packages/cdk/lib/stack-input.ts](/packages/cdk/lib/stack-input.ts).

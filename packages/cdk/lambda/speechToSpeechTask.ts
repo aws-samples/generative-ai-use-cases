@@ -7,6 +7,7 @@ import {
   InvokeModelWithBidirectionalStreamCommand,
   InvokeModelWithBidirectionalStreamInput,
   InvokeModelWithBidirectionalStreamCommandOutput,
+  ModelStreamErrorException,
 } from '@aws-sdk/client-bedrock-runtime';
 import { NodeHttp2Handler } from '@smithy/node-http-handler';
 import {
@@ -332,6 +333,7 @@ const processAudioQueue = async () => {
   if (isAudioStarted && isActive) {
     setTimeout(() => processAudioQueue(), 0);
   } else {
+    console.log('Processing audio is ended.');
     isProcessingAudio = false;
   }
 };
@@ -344,8 +346,8 @@ const processResponseStream = async (
     throw new Error('Response body is null');
   }
 
-  try {
-    for await (const event of response.body) {
+  for await (const event of response.body) {
+    try {
       if (event.chunk?.bytes) {
         const textResponse = new TextDecoder().decode(event.chunk.bytes);
         const jsonResponse = JSON.parse(textResponse);
@@ -394,9 +396,15 @@ const processResponseStream = async (
           });
         }
       }
+    } catch (e) {
+      console.error('Error in processResponseStream', e);
+
+      if (e instanceof ModelStreamErrorException) {
+        console.log('Retrying...');
+      } else {
+        break;
+      }
     }
-  } catch (e) {
-    console.error('Error in processResponseStream', e);
   }
 };
 
@@ -520,19 +528,19 @@ export const handler = async (event: { channelId: string; model: Model }) => {
   } catch (e) {
     console.error('Error in main process', e);
   } finally {
-    if (channel) {
-      try {
-        dispatchEvent(channel, 'end').then(() => {
-          if (channel) {
-            channel.close();
-          }
-        });
-      } catch (e) {
-        console.error('Error during finalization', e);
-      }
-    }
+    try {
+      if (channel) {
+        console.log('Sending "end" event...');
+        await dispatchEvent(channel, 'end');
 
-    initialize();
-    console.log('Session ended. Every parameters are initialized.');
+        console.log('Close the channel');
+        channel.close();
+      }
+
+      initialize();
+      console.log('Session ended. Every parameters are initialized.');
+    } catch (e) {
+      console.error('Error during finalization', e);
+    }
   }
 };
