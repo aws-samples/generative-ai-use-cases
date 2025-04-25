@@ -113,7 +113,7 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
       // RAG Knowledge Base
       knowledgeBaseId: ragKnowledgeBaseStack?.knowledgeBaseId,
       knowledgeBaseDataSourceBucketName:
-        ragKnowledgeBaseStack?.dataSourceBucketName,
+        "generativeaiusecasesstack-datasource-bucket",
       // Agent
       agents: agentStack?.agents,
       // Video Generation
