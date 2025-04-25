@@ -447,6 +447,7 @@ export class RagKnowledgeBaseStack extends Stack {
       destinationBucket: dataSourceBucket,
       // There is a possibility that access logs are still in the same Bucket from the previous configuration, so this setting is left.
       exclude: ['AccessLogs/*', 'logs*'],
+      memoryLimit: 1024,
     });
 
     this.knowledgeBaseId = knowledgeBase.ref;

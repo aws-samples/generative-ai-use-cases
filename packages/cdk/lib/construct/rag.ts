@@ -187,6 +187,7 @@ export class Rag extends Construct {
           'docs/bedrock-ug.pdf.metadata.json',
           'docs/nova-ug.pdf.metadata.json',
         ],
+        memoryLimit: 1024,
       });
 
       let index: kendra.CfnIndex;
