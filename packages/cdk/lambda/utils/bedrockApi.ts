@@ -1,5 +1,4 @@
 import {
-  BedrockRuntimeClient,
   InvokeModelCommand,
   ConverseCommand,
   ConverseCommandInput,
@@ -26,71 +25,8 @@ import {
   BEDROCK_IMAGE_GEN_MODELS,
   BEDROCK_VIDEO_GEN_MODELS,
 } from './models';
-import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts';
 import { streamingChunk } from './streamingChunk';
-
-const defaultRegion = process.env.MODEL_REGION as string;
-
-// Function to get temporary credentials from STS
-const assumeRole = async (crossAccountBedrockRoleArn: string) => {
-  const stsClient = new STSClient({ region: defaultRegion });
-  const command = new AssumeRoleCommand({
-    RoleArn: crossAccountBedrockRoleArn,
-    RoleSessionName: 'BedrockApiAccess',
-  });
-
-  try {
-    const response = await stsClient.send(command);
-    if (response.Credentials) {
-      return {
-        accessKeyId: response.Credentials?.AccessKeyId,
-        secretAccessKey: response.Credentials?.SecretAccessKey,
-        sessionToken: response.Credentials?.SessionToken,
-      };
-    } else {
-      throw new Error('Failed to get credentials.');
-    }
-  } catch (error) {
-    console.error('Error assuming role: ', error);
-    throw error;
-  }
-};
-
-// Initialize BedrockRuntimeClient. This function normally initializes the BedrockRuntimeClient in the region specified by the environment variable.
-// There is a special case where you want to use Bedrock resources in a different AWS account.
-// In that case, check if the CROSS_ACCOUNT_BEDROCK_ROLE_ARN environment variable is set. (It is set as an environment variable if crossAccountBedrockRoleArn is set in cdk.json)
-// If it is set, assume the specified role and initialize the BedrockRuntimeClient using the temporary credentials obtained.
-// This allows access to Bedrock resources in a different AWS account.
-export const initBedrockClient = async (region: string) => {
-  if (process.env.CROSS_ACCOUNT_BEDROCK_ROLE_ARN) {
-    // Get temporary credentials from STS and initialize the client
-    const tempCredentials = await assumeRole(
-      process.env.CROSS_ACCOUNT_BEDROCK_ROLE_ARN
-    );
-
-    if (
-      !tempCredentials.accessKeyId ||
-      !tempCredentials.secretAccessKey ||
-      !tempCredentials.sessionToken
-    ) {
-      throw new Error('The temporary credentials from STS are incomplete.');
-    }
-
-    return new BedrockRuntimeClient({
-      region,
-      credentials: {
-        accessKeyId: tempCredentials.accessKeyId,
-        secretAccessKey: tempCredentials.secretAccessKey,
-        sessionToken: tempCredentials.sessionToken,
-      },
-    });
-  } else {
-    // Initialize the client without using STS
-    return new BedrockRuntimeClient({
-      region,
-    });
-  }
-};
+import { defaultRegion, initBedrockRuntimeClient } from './bedrockClient';
 
 const createConverseCommandInput = (
   model: Model,
@@ -159,7 +95,7 @@ const createBodyVideo = (model: Model, params: GenerateVideoParams) => {
 const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
   invoke: async (model, messages, id) => {
     const region = model.region || defaultRegion;
-    const client = await initBedrockClient(region);
+    const client = await initBedrockRuntimeClient(region);
 
     const converseCommandInput = createConverseCommandInput(
       model,
@@ -173,7 +109,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
   },
   invokeStream: async function* (model, messages, id) {
     const region = model.region || defaultRegion;
-    const client = await initBedrockClient(region);
+    const client = await initBedrockRuntimeClient(region);
     try {
       const converseStreamCommandInput = createConverseStreamCommandInput(
         model,
@@ -236,7 +172,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
   },
   generateImage: async (model, params) => {
     const region = model.region || defaultRegion;
-    const client = await initBedrockClient(region);
+    const client = await initBedrockRuntimeClient(region);
 
     // Image generation using Stable Diffusion or Titan Image Generator is not supported for the Converse API, so InvokeModelCommand is used.
     const command = new InvokeModelCommand({
@@ -254,7 +190,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
       process.env.VIDEO_BUCKET_REGION_MAP ?? '{}'
     );
     const region = model.region || defaultRegion;
-    const client = await initBedrockClient(region);
+    const client = await initBedrockRuntimeClient(region);
     const tmpOutputBucket = videoBucketRegionMap[region];
 
     if (!tmpOutputBucket || tmpOutputBucket.length === 0) {

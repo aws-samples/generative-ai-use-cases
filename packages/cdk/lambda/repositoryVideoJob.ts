@@ -15,13 +15,13 @@ import {
   GetAsyncInvokeCommand,
   ValidationException,
 } from '@aws-sdk/client-bedrock-runtime';
-import { initBedrockClient } from './utils/bedrockApi';
 import { CopyVideoJobParams } from './copyVideoJob';
 import {
   LambdaClient,
   InvokeCommand,
   InvocationType,
 } from '@aws-sdk/client-lambda';
+import { initBedrockRuntimeClient } from './utils/bedrockClient';
 
 const BUCKET_NAME: string = process.env.BUCKET_NAME!;
 const TABLE_NAME: string = process.env.TABLE_NAME!;
@@ -90,7 +90,7 @@ const checkAndUpdateJob = async (
   job: VideoJob
 ): Promise<'InProgress' | 'Completed' | 'Failed' | 'Finalizing'> => {
   try {
-    const client = await initBedrockClient(job.region);
+    const client = await initBedrockRuntimeClient(job.region);
     const command = new GetAsyncInvokeCommand({
       invocationArn: job.invocationArn,
     });
