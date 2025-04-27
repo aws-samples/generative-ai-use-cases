@@ -71,7 +71,7 @@ const LinkRenderer = (props: any) => {
     return isS3Url(props.href);
   }, [isS3Url, props.href]);
 
-  // For Knowledge Base, we pass s3FileType as a parameter
+  // For Knowledge Base, we pass s3Type as a parameter
   // since it may need to reference S3 from a different account
   const location = useLocation();
   const isKnowledgeBase = useMemo(() => {

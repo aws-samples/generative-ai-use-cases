@@ -131,14 +131,14 @@ export type RetrieveKnowledgeBaseRequest = {
 
 export type RetrieveKnowledgeBaseResponse = RetrieveCommandOutputKnowledgeBase;
 
-export type S3FileType = 'default' | 'knowledgeBase';
+export type S3Type = 'default' | 'knowledgeBase';
 
 export type GetFileDownloadSignedUrlRequest = {
   bucketName: string;
   filePrefix: string;
   region?: string;
   contentType?: string;
-  s3FileType?: S3FileType;
+  s3Type?: S3Type;
 };
 
 export type GetFileDownloadSignedUrlResponse = string;
