@@ -11117,6 +11117,11 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
           "S3Key": "HASH-REPLACED.zip",
         },
+        "Environment": {
+          "Variables": {
+            "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
+          },
+        },
         "Handler": "index.handler",
         "Role": {
           "Fn::GetAtt": [
