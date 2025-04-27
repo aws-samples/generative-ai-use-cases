@@ -260,6 +260,7 @@ export class Api extends Construct {
         MODEL_IDS: JSON.stringify(modelIds),
         IMAGE_GENERATION_MODEL_IDS: JSON.stringify(imageGenerationModelIds),
         VIDEO_GENERATION_MODEL_IDS: JSON.stringify(videoGenerationModelIds),
+        VIDEO_BUCKET_OWNER: Stack.of(this).account,
         VIDEO_BUCKET_REGION_MAP: JSON.stringify(props.videoBucketRegionMap),
         CROSS_ACCOUNT_BEDROCK_ROLE_ARN: crossAccountBedrockRoleArn ?? '',
         BUCKET_NAME: fileBucket.bucketName,

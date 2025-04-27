@@ -203,6 +203,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
       outputDataConfig: {
         s3OutputDataConfig: {
           s3Uri: `s3://${tmpOutputBucket}`,
+          bucketOwner: process.env.VIDEO_BUCKET_OWNER, // Required for cross-account access
         },
       },
     });

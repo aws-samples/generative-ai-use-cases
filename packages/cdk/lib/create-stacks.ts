@@ -90,6 +90,7 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
           account: params.account,
           region,
         },
+        params,
       }
     );
 
