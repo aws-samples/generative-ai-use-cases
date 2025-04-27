@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import useFileApi from './useFileApi';
+import { S3FileType } from 'generative-ai-use-cases';
 
 const useRagFile = () => {
   const { getFileDownloadSignedUrl } = useFileApi();
@@ -13,12 +14,11 @@ const useRagFile = () => {
         ? true
         : false;
     },
-    downloadDoc: async (url: string) => {
+    downloadDoc: async (url: string, s3FileType?: S3FileType) => {
       setDownloading(true);
 
       try {
-        const signedUrl = await getFileDownloadSignedUrl(url);
-
+        const signedUrl = await getFileDownloadSignedUrl(url, s3FileType);
         window.open(signedUrl, '_blank', 'noopener,noreferrer');
       } catch (e) {
         console.error(e);

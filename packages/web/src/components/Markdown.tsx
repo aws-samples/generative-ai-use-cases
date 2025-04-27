@@ -33,6 +33,7 @@ import typescript from 'react-syntax-highlighter/dist/esm/languages/prism/typesc
 import tsx from 'react-syntax-highlighter/dist/esm/languages/prism/tsx';
 import xmlDoc from 'react-syntax-highlighter/dist/esm/languages/prism/xml-doc';
 import yaml from 'react-syntax-highlighter/dist/esm/languages/prism/yaml';
+import { useLocation } from 'react-router-dom';
 
 SyntaxHighlighter.registerLanguage('bash', bash);
 SyntaxHighlighter.registerLanguage('c', c);
@@ -70,6 +71,13 @@ const LinkRenderer = (props: any) => {
     return isS3Url(props.href);
   }, [isS3Url, props.href]);
 
+  // For Knowledge Base, we pass s3FileType as a parameter
+  // since it may need to reference S3 from a different account
+  const location = useLocation();
+  const isKnowledgeBase = useMemo(() => {
+    return location.pathname.includes('/rag-knowledge-base');
+  }, [location.pathname]);
+
   return (
     <>
       {isS3 ? (
@@ -77,7 +85,10 @@ const LinkRenderer = (props: any) => {
           id={props.id}
           onClick={() => {
             if (!downloading) {
-              downloadDoc(props.href);
+              downloadDoc(
+                props.href,
+                isKnowledgeBase ? 'knowledgeBase' : 'default'
+              );
             }
           }}
           className={`cursor-pointer ${downloading ? 'text-gray-400' : ''}`}>

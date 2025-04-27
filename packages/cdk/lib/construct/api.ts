@@ -371,6 +371,30 @@ export class Api extends Construct {
     );
     optimizePromptFunction.grantInvoke(idPool.authenticatedRole);
 
+    const getSignedUrlFunction = new NodejsFunction(this, 'GetSignedUrl', {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: './lambda/getFileUploadSignedUrl.ts',
+      timeout: Duration.minutes(15),
+      environment: {
+        BUCKET_NAME: fileBucket.bucketName,
+      },
+    });
+    fileBucket.grantWrite(getSignedUrlFunction);
+
+    const getFileDownloadSignedUrlFunction = new NodejsFunction(
+      this,
+      'GetFileDownloadSignedUrlFunction',
+      {
+        runtime: Runtime.NODEJS_LATEST,
+        entry: './lambda/getFileDownloadSignedUrl.ts',
+        timeout: Duration.minutes(15),
+        environment: {
+          CROSS_ACCOUNT_BEDROCK_ROLE_ARN: crossAccountBedrockRoleArn ?? '',
+        },
+      }
+    );
+    fileBucket.grantRead(getFileDownloadSignedUrlFunction);
+
     // If SageMaker Endpoint exists, grant permission
     if (endpointNames.length > 0) {
       // SageMaker Policy
@@ -436,6 +460,10 @@ export class Api extends Construct {
       generateImageFunction.role?.addToPrincipalPolicy(assumeRolePolicy);
       generateVideoFunction.role?.addToPrincipalPolicy(assumeRolePolicy);
       listVideoJobs.role?.addToPrincipalPolicy(assumeRolePolicy);
+      // To get pre-signed URL from S3 in different account
+      getFileDownloadSignedUrlFunction.role?.addToPrincipalPolicy(
+        assumeRolePolicy
+      );
     }
 
     const createChatFunction = new NodejsFunction(this, 'CreateChat', {
@@ -623,27 +651,6 @@ export class Api extends Construct {
       }
     );
     table.grantReadWriteData(deleteSystemContextFunction);
-
-    const getSignedUrlFunction = new NodejsFunction(this, 'GetSignedUrl', {
-      runtime: Runtime.NODEJS_LATEST,
-      entry: './lambda/getFileUploadSignedUrl.ts',
-      timeout: Duration.minutes(15),
-      environment: {
-        BUCKET_NAME: fileBucket.bucketName,
-      },
-    });
-    fileBucket.grantWrite(getSignedUrlFunction);
-
-    const getFileDownloadSignedUrlFunction = new NodejsFunction(
-      this,
-      'GetFileDownloadSignedUrlFunction',
-      {
-        runtime: Runtime.NODEJS_LATEST,
-        entry: './lambda/getFileDownloadSignedUrl.ts',
-        timeout: Duration.minutes(15),
-      }
-    );
-    fileBucket.grantRead(getFileDownloadSignedUrlFunction);
 
     const deleteFileFunction = new NodejsFunction(this, 'DeleteFileFunction', {
       runtime: Runtime.NODEJS_LATEST,

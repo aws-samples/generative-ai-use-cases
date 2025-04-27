@@ -5,6 +5,7 @@ import {
   GetFileDownloadSignedUrlRequest,
   GetFileDownloadSignedUrlResponse,
   DeleteFileResponse,
+  S3FileType,
 } from 'generative-ai-use-cases';
 import useHttp from './useHttp';
 import axios from 'axios';
@@ -46,16 +47,20 @@ const useFileApi = () => {
         data: req.file,
       });
     },
-    getFileDownloadSignedUrl: async (s3Url: string) => {
+    getFileDownloadSignedUrl: async (
+      s3Url: string,
+      s3FileType?: S3FileType
+    ) => {
       const { bucketName, prefix, region } = parseS3Url(s3Url);
 
       const [filePrefix, anchorLink] = prefix.split('#');
 
       // Get the signed URL
       const params: GetFileDownloadSignedUrlRequest = {
-        bucketName: bucketName,
+        bucketName,
         filePrefix: decodeURIComponent(filePrefix),
-        region: region,
+        region,
+        s3FileType,
       };
       const { data: url } =
         await http.api.get<GetFileDownloadSignedUrlResponse>('/file/url', {
