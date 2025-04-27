@@ -1733,6 +1733,8 @@ To use Bedrock from a different AWS account, you need to create one IAM role in 
 - `GenerativeAiUseCasesStack-APIPredictService`
 - `GenerativeAiUseCasesStack-APIPredictStreamService`
 - `GenerativeAiUseCasesStack-APIGenerateImageService`
+- `GenerativeAiUseCasesStack-APIGenerateVideoService`
+- `GenerativeAiUseCasesStack-APIGetFileDownloadSigned` (Only when using Knowledge Base)
 
 For details on how to specify Principals, refer to: [AWS JSON Policy Elements: Principal](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html)
 
@@ -1749,7 +1751,9 @@ Principal configuration example (set in the different account)
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIPredictTitleServiceXXX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIPredictServiceXXXXXXXX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIPredictStreamServiceXX-XXXXXXXXXXXX",
-          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateImageServiceXX-XXXXXXXXXXXX"
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateImageServiceXX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateVideoServiceXX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGetFileDownloadSignedU-XXXXXXXXXXXX"
         ]
       },
       "Action": "sts:AssumeRole",
@@ -1763,6 +1767,12 @@ Set the following parameter:
 
 - `crossAccountBedrockRoleArn` ... The ARN of the IAM role created in advance in the different account
 
+When using Knowledge Base, you'll need to include these additional parameters:
+
+- `ragKnowledgeBaseEnabled` ... Set to `true` to enable Knowledge Base
+- `ragKnowledgeBaseId` ... Knowledge Base ID created in advance in the different account
+  - Knowledge Base must exist in the `modelRegion`
+
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
 ```typescript
@@ -1771,6 +1781,8 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     crossAccountBedrockRoleArn:
       'arn:aws:iam::AccountID:role/PreCreatedRoleName',
+    ragKnowledgeBaseEnabled: true, // Only when using Knowledge Base
+    ragKnowledgeBaseId: 'XXXXXXXXXX', // Only when using Knowledge Base
   },
 };
 ```
@@ -1781,7 +1793,9 @@ const envs: Record<string, Partial<StackInput>> = {
 // cdk.json
 {
   "context": {
-    "crossAccountBedrockRoleArn": "arn:aws:iam::AccountID:role/PreCreatedRoleName"
+    "crossAccountBedrockRoleArn": "arn:aws:iam::AccountID:role/PreCreatedRoleName",
+    "ragKnowledgeBaseEnabled": true, // Only when using Knowledge Base
+    "ragKnowledgeBaseId": "XXXXXXXXXX" // Only when using Knowledge Base
   }
 }
 ```
