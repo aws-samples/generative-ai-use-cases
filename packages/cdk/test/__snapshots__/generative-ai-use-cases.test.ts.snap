@@ -10958,6 +10958,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
             },
+            "VIDEO_BUCKET_OWNER": "123456890123",
             "VIDEO_BUCKET_REGION_MAP": {
               "Fn::Join": [
                 "",
