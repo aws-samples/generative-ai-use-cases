@@ -1,12 +1,13 @@
 import * as lambda from 'aws-lambda';
-import {
-  BedrockAgentRuntimeClient,
-  RetrieveCommand,
-} from '@aws-sdk/client-bedrock-agent-runtime';
+import { RetrieveCommand } from '@aws-sdk/client-bedrock-agent-runtime';
 import { RetrieveKnowledgeBaseRequest } from 'generative-ai-use-cases';
+import {
+  defaultRegion,
+  initBedrockAgentRuntimeClient,
+} from './utils/bedrockClient';
 
 const KNOWLEDGE_BASE_ID = process.env.KNOWLEDGE_BASE_ID;
-const MODEL_REGION = process.env.MODEL_REGION;
+const MODEL_REGION = process.env.MODEL_REGION ?? defaultRegion;
 
 exports.handler = async (
   event: lambda.APIGatewayProxyEvent
@@ -25,14 +26,10 @@ exports.handler = async (
     };
   }
 
-  const kb = new BedrockAgentRuntimeClient({
-    region: MODEL_REGION,
-  });
+  const client = await initBedrockAgentRuntimeClient(MODEL_REGION);
   const retrieveCommand = new RetrieveCommand({
     knowledgeBaseId: KNOWLEDGE_BASE_ID,
-    retrievalQuery: {
-      text: query,
-    },
+    retrievalQuery: { text: query },
     retrievalConfiguration: {
       vectorSearchConfiguration: {
         numberOfResults: 10,
@@ -40,8 +37,7 @@ exports.handler = async (
       },
     },
   });
-
-  const retrieveRes = await kb.send(retrieveCommand);
+  const retrieveRes = await client.send(retrieveCommand);
 
   return {
     statusCode: 200,

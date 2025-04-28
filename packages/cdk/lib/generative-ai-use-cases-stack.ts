@@ -173,6 +173,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       if (knowledgeBaseId) {
         new RagKnowledgeBase(this, 'RagKnowledgeBase', {
           modelRegion: params.modelRegion,
+          crossAccountBedrockRoleArn: params.crossAccountBedrockRoleArn,
           knowledgeBaseId: knowledgeBaseId,
           userPool: auth.userPool,
           api: api.api,

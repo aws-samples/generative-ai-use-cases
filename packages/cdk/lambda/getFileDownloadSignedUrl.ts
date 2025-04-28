@@ -10,7 +10,7 @@ export const handler = async (
   try {
     const req = event.queryStringParameters as GetFileDownloadSignedUrlRequest;
 
-    // We pass s3Type since Knowledge Base may need to reference S3 from a different account
+    // We pass `s3Type` parameter since Knowledge Base may need to reference S3 in a different account
     const client =
       req.s3Type === 'knowledgeBase'
         ? await initKbS3Client(req.region ?? defaultRegion)

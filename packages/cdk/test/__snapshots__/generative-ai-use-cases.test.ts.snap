@@ -15751,6 +15751,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         },
         "Environment": {
           "Variables": {
+            "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
