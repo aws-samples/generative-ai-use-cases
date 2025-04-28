@@ -824,6 +824,8 @@ const envs: Record<string, Partial<StackInput>> = {
 "apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
 "us.deepseek.r1-v1:0",
+"us.writer.palmyra-x5-v1:0",
+"us.writer.palmyra-x4-v1:0",
 "amazon.titan-text-premier-v1:0",
 "us.meta.llama3-3-70b-instruct-v1:0",
 "us.meta.llama3-2-90b-instruct-v1:0",
@@ -921,6 +923,7 @@ const envs: Record<string, Partial<StackInput>> = {
       'apac.amazon.nova-lite-v1:0',
       'apac.amazon.nova-micro-v1:0',
       { modelId: 'us.deepseek.r1-v1:0', region: 'us-east-1' },
+      { modelId: 'us.writer.palmyra-x5-v1:0', region: 'us-west-2' }
       { modelId: 'us.meta.llama3-3-70b-instruct-v1:0', region: 'us-east-1' },
       { modelId: 'us.meta.llama3-2-90b-instruct-v1:0', region: 'us-east-1' },
       { modelId: 'us.mistral.pixtral-large-2502-v1:0', region: 'us-east-1' },
@@ -962,6 +965,10 @@ const envs: Record<string, Partial<StackInput>> = {
       {
         "modelId": "us.deepseek.r1-v1:0",
         "region": "us-east-1"
+      },
+      { 
+        "modelId": "us.writer.palmyra-x5-v1:0", 
+        "region": "us-west-2" 
       },
       {
         "modelId": "us.meta.llama3-3-70b-instruct-v1:0",
@@ -1144,7 +1151,7 @@ const envs: Record<string, Partial<StackInput>> = {
 // parameter.ts
 const envs: Record<string, Partial<StackInput>> = {
   dev: {
-    modelRegion: 'us-east-2',
+    modelRegion: 'us-west-2',
     modelIds: [
       "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
       "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
@@ -1154,6 +1161,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "us.anthropic.claude-3-sonnet-20240229-v1:0",
       "us.anthropic.claude-3-haiku-20240307-v1:0",
       "us.deepseek.r1-v1:0",
+      "us.writer.palmyra-x5-v1:0",
+      "us.writer.palmyra-x4-v1:0",
       "us.meta.llama3-3-70b-instruct-v1:0",
       "us.meta.llama3-2-90b-instruct-v1:0",
       "us.meta.llama3-2-11b-instruct-v1:0",
@@ -1197,6 +1206,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "us.anthropic.claude-3-sonnet-20240229-v1:0",
       "us.anthropic.claude-3-haiku-20240307-v1:0",
       "us.deepseek.r1-v1:0",
+      "us.writer.palmyra-x5-v1:0",
+      "us.writer.palmyra-x4-v1:0",
       "us.meta.llama3-3-70b-instruct-v1:0",
       "us.meta.llama3-2-90b-instruct-v1:0",
       "us.meta.llama3-2-11b-instruct-v1:0",

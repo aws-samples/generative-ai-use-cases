@@ -177,6 +177,12 @@ const DEEPSEEK_DEFAULT_PARAMS: ConverseInferenceParams = {
   topP: 0.95,
 };
 
+const PALMYRA_DEFAULT_PARAMS: ConverseInferenceParams = {
+  maxTokens: 8192,
+  temperature: 1,
+  topP: 0.9,
+};
+
 const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
   '/rag': {
     temperature: 0.0,
@@ -1243,6 +1249,22 @@ export const BEDROCK_TEXT_GEN_MODELS: {
   },
   'us.deepseek.r1-v1:0': {
     defaultParams: DEEPSEEK_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.writer.palmyra-x4-v1:0': {
+    defaultParams: PALMYRA_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.writer.palmyra-x5-v1:0': {
+    defaultParams: PALMYRA_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
     createConverseStreamCommandInput: createConverseStreamCommandInput,

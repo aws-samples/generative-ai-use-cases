@@ -144,6 +144,9 @@ export const modelFeatureFlags: Record<string, FeatureFlags> = {
   'cohere.command-r-plus-v1:0': MODEL_FEATURE.TEXT_DOC,
   // DeepSeek
   'us.deepseek.r1-v1:0': MODEL_FEATURE.TEXT_DOC,
+  // Writer
+  'us.writer.palmyra-x4-v1:0': MODEL_FEATURE.TEXT_DOC,
+  'us.writer.palmyra-x5-v1:0': MODEL_FEATURE.TEXT_DOC,
 
   // === Image ===
 
