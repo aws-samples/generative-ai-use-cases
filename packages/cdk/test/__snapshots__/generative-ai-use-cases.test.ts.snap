@@ -717,7 +717,7 @@ exports[`GenerativeAiUseCases matches the snapshot 2`] = `
           "logs*",
         ],
         "OutputObjectKeys": true,
-        "Prune": true,
+        "Prune": false,
         "ServiceToken": {
           "Fn::GetAtt": [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1024MiBB049752D",
@@ -15605,7 +15605,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "docs/nova-ug.pdf.metadata.json",
         ],
         "OutputObjectKeys": true,
-        "Prune": true,
+        "Prune": false,
         "ServiceToken": {
           "Fn::GetAtt": [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1024MiBB049752D",
