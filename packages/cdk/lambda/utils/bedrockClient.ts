@@ -4,8 +4,6 @@ import { BedrockAgentRuntimeClient } from '@aws-sdk/client-bedrock-agent-runtime
 import { BedrockAgentClient } from '@aws-sdk/client-bedrock-agent';
 import { S3Client } from '@aws-sdk/client-s3';
 
-export const defaultRegion = process.env.MODEL_REGION as string;
-
 // Temporary credentials for cross-account access
 const stsClient = new STSClient();
 let temporaryCredentials: Credentials | undefined;

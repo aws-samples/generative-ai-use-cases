@@ -26,7 +26,9 @@ import {
   BEDROCK_VIDEO_GEN_MODELS,
 } from './models';
 import { streamingChunk } from './streamingChunk';
-import { defaultRegion, initBedrockRuntimeClient } from './bedrockClient';
+import { initBedrockRuntimeClient } from './bedrockClient';
+
+const MODEL_REGION = process.env.MODEL_REGION as string;
 
 const createConverseCommandInput = (
   model: Model,
@@ -94,7 +96,7 @@ const createBodyVideo = (model: Model, params: GenerateVideoParams) => {
 
 const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
   invoke: async (model, messages, id) => {
-    const region = model.region || defaultRegion;
+    const region = model.region || MODEL_REGION;
     const client = await initBedrockRuntimeClient(region);
 
     const converseCommandInput = createConverseCommandInput(
@@ -108,7 +110,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
     return extractConverseOutput(model, output).text;
   },
   invokeStream: async function* (model, messages, id) {
-    const region = model.region || defaultRegion;
+    const region = model.region || MODEL_REGION;
     const client = await initBedrockRuntimeClient(region);
     try {
       const converseStreamCommandInput = createConverseStreamCommandInput(
@@ -171,7 +173,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
     }
   },
   generateImage: async (model, params) => {
-    const region = model.region || defaultRegion;
+    const region = model.region || MODEL_REGION;
     const client = await initBedrockRuntimeClient(region);
 
     // Image generation using Stable Diffusion or Titan Image Generator is not supported for the Converse API, so InvokeModelCommand is used.
@@ -189,7 +191,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
     const videoBucketRegionMap = JSON.parse(
       process.env.VIDEO_BUCKET_REGION_MAP ?? '{}'
     );
-    const region = model.region || defaultRegion;
+    const region = model.region || MODEL_REGION;
     const client = await initBedrockRuntimeClient(region);
     const tmpOutputBucket = videoBucketRegionMap[region];
 

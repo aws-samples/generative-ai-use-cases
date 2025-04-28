@@ -1,13 +1,10 @@
 import * as lambda from 'aws-lambda';
 import { RetrieveCommand } from '@aws-sdk/client-bedrock-agent-runtime';
 import { RetrieveKnowledgeBaseRequest } from 'generative-ai-use-cases';
-import {
-  defaultRegion,
-  initBedrockAgentRuntimeClient,
-} from './utils/bedrockClient';
+import { initBedrockAgentRuntimeClient } from './utils/bedrockClient';
 
 const KNOWLEDGE_BASE_ID = process.env.KNOWLEDGE_BASE_ID;
-const MODEL_REGION = process.env.MODEL_REGION ?? defaultRegion;
+const MODEL_REGION = process.env.MODEL_REGION as string;
 
 exports.handler = async (
   event: lambda.APIGatewayProxyEvent

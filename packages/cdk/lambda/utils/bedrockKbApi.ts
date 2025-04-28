@@ -22,7 +22,9 @@ import {
 } from '@generative-ai-use-cases/common';
 import { streamingChunk } from './streamingChunk';
 import { verifyToken } from './auth';
-import { defaultRegion, initBedrockAgentRuntimeClient } from './bedrockClient';
+import { initBedrockAgentRuntimeClient } from './bedrockClient';
+
+const MODEL_REGION = process.env.MODEL_REGION as string;
 
 // Convert s3://<BUCKET>/<PREFIX> to https://s3.<REGION>.amazonaws.com/<BUCKET>/<PREFIX>
 const convertS3UriToUrl = (s3Uri: string, region: string): string => {
@@ -164,7 +166,7 @@ const bedrockKbApi: ApiInterface = {
         },
       });
 
-      const client = await initBedrockAgentRuntimeClient(defaultRegion);
+      const client = await initBedrockAgentRuntimeClient(MODEL_REGION);
       const res = await client.send(command);
 
       if (res.sessionId) {
