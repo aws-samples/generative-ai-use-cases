@@ -1788,13 +1788,13 @@ For details on how to specify Principals, refer to: [AWS JSON Policy Elements: P
       "Resource": ["*"]
     },
     {
-      "Sid": "AllowS3AccessVideTempBucket",
+      "Sid": "AllowS3PutObjectToVideoTempBucket",
       "Effect": "Allow",
       "Action": ["s3:PutObject"],
       "Resource": ["arn:aws:s3:::<video-temp-bucket-name>/*"]
     },
     {
-      "Sid": "AllowKnowledgeBaseRetrieve",
+      "Sid": "AllowBedrockRetrieveFromKnowledgeBase",
       "Effect": "Allow",
       "Action": ["bedrock:RetrieveAndGenerate*", "bedrock:Retrieve*"],
       "Resource": [

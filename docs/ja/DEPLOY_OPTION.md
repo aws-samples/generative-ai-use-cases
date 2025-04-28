@@ -1797,13 +1797,13 @@ Principal の指定方法について詳細を確認したい場合はこちら�
       "Resource": ["*"]
     },
     {
-      "Sid": "AllowS3AccessVideTempBucket",
+      "Sid": "AllowS3PutObjectToVideoTempBucket",
       "Effect": "Allow",
       "Action": ["s3:PutObject"],
       "Resource": ["arn:aws:s3:::<video-temp-bucket-name>/*"]
     },
     {
-      "Sid": "AllowKnowledgeBaseRetrieve",
+      "Sid": "AllowBedrockRetrieveFromKnowledgeBase",
       "Effect": "Allow",
       "Action": ["bedrock:RetrieveAndGenerate*", "bedrock:Retrieve*"],
       "Resource": [
