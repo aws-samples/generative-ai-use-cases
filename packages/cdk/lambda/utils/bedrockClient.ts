@@ -29,7 +29,10 @@ const assumeRole = async (crossAccountBedrockRoleArn: string) => {
 
 // Check if the temporary credentials will expire within 1 minute
 const isCredentialRefreshRequired = () => {
-  return temporaryCredentials?.Expiration?.getTime() ?? 0 + 60_000 < Date.now();
+  return (
+    !temporaryCredentials?.Expiration || // expiration is undefined
+    temporaryCredentials.Expiration.getTime() - Date.now() < 60_000 // expiration is less than 1 minute
+  );
 };
 
 // Get Bedrock client params. By default, we initializes the Bedrock client in the region specified by the environment variable.
