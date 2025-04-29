@@ -1244,10 +1244,11 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  // Although Palmyra supports system context, the model seems work best without it.
   'us.writer.palmyra-x4-v1:0': {
     defaultParams: PALMYRA_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
-    createConverseCommandInput: createConverseCommandInput,
+    createConverseCommandInput: createConverseCommandInputWithoutSystemContext,
     createConverseStreamCommandInput:
       createConverseStreamCommandInputWithoutSystemContext,
     extractConverseOutput: extractConverseOutput,
@@ -1256,7 +1257,7 @@ export const BEDROCK_TEXT_GEN_MODELS: {
   'us.writer.palmyra-x5-v1:0': {
     defaultParams: PALMYRA_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
-    createConverseCommandInput: createConverseCommandInput,
+    createConverseCommandInput: createConverseCommandInputWithoutSystemContext,
     createConverseStreamCommandInput:
       createConverseStreamCommandInputWithoutSystemContext,
     extractConverseOutput: extractConverseOutput,
