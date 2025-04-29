@@ -369,29 +369,13 @@ const createConverseCommandInputWithoutSystemContext = (
     messages[0].content = system?.content + messages[0].content;
   }
 
-  const conversation = messages.map((message) => ({
-    role:
-      message.role === 'user' || message.role === 'system'
-        ? ConversationRole.USER
-        : ConversationRole.ASSISTANT,
-    content: [{ text: message.content }],
-  }));
-
-  const usecaseParams = usecaseConverseInferenceParams[normalizeId(id)];
-  const inferenceConfig = usecaseParams
-    ? { ...defaultConverseInferenceParams, ...usecaseParams }
-    : defaultConverseInferenceParams;
-
-  const guardrailConfig = createGuardrailConfig();
-
-  const converseCommandInput: ConverseCommandInput = {
-    modelId: model.modelId,
-    messages: conversation,
-    inferenceConfig: inferenceConfig,
-    guardrailConfig: guardrailConfig,
-  };
-
-  return converseCommandInput;
+  return createConverseCommandInput(
+    messages,
+    id,
+    model,
+    defaultConverseInferenceParams,
+    usecaseConverseInferenceParams
+  );
 };
 
 // ConverseStreamCommandInput has the same structure as ConverseCommandInput, so the input created by "createConverseCommandInput" can be used as is.
