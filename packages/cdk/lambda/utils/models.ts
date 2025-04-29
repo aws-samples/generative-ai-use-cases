@@ -363,7 +363,12 @@ const createConverseCommandInputWithoutSystemContext = (
   usecaseConverseInferenceParams: UsecaseConverseInferenceParams
 ) => {
   // Since system is not available, system is also included as user.
+  const system = messages.find((message) => message.role === 'system');
   messages = messages.filter((message) => message.role !== 'system');
+  if (messages.length > 0 && messages[0].role === 'user') {
+    messages[0].content = system?.content + messages[0].content;
+  }
+
   const conversation = messages.map((message) => ({
     role:
       message.role === 'user' || message.role === 'system'
@@ -1259,7 +1264,8 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     defaultParams: PALMYRA_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
-    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    createConverseStreamCommandInput:
+      createConverseStreamCommandInputWithoutSystemContext,
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
@@ -1267,7 +1273,8 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     defaultParams: PALMYRA_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
-    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    createConverseStreamCommandInput:
+      createConverseStreamCommandInputWithoutSystemContext,
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },

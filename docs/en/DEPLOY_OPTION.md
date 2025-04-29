@@ -952,9 +952,9 @@ const envs: Record<string, Partial<StackInput>> = {
         "modelId": "us.deepseek.r1-v1:0",
         "region": "us-east-1"
       },
-      { 
-        "modelId": "us.writer.palmyra-x5-v1:0", 
-        "region": "us-west-2" 
+      {
+        "modelId": "us.writer.palmyra-x5-v1:0",
+        "region": "us-west-2"
       },
       {
         "modelId": "us.meta.llama3-3-70b-instruct-v1:0",
@@ -1198,7 +1198,7 @@ const envs: Record<string, Partial<StackInput>> = {
       "us.anthropic.claude-3-haiku-20240307-v1:0",
       "us.deepseek.r1-v1:0",
       "us.writer.palmyra-x5-v1:0",
-      "us.writer.palmyra-x4-v1:0",      
+      "us.writer.palmyra-x4-v1:0",
       "us.meta.llama3-3-70b-instruct-v1:0",
       "us.meta.llama3-2-90b-instruct-v1:0",
       "us.meta.llama3-2-11b-instruct-v1:0",
