@@ -80,27 +80,6 @@ const envs: Record<string, Partial<StackInput>> = {
     // samlCognitoFederatedIdentityProviderName: "ADFS",
   },
   staging: {
-    // selfSignUpEnabled: false,
-    // modelRegion: "us-west-2",
-    // modelIds: [
-    //   "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
-    //   "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-    //   "us.anthropic.claude-3-sonnet-20240229-v1:0",
-    //   "us.anthropic.claude-3-haiku-20240307-v1:0",
-    //   "us.amazon.nova-pro-v1:0",
-    //   "us.amazon.nova-lite-v1:0",
-    //   "us.amazon.nova-micro-v1:0"
-    // ],
-    // ragKnowledgeBaseEnabled: true,
-    // ragKnowledgeBaseStandbyReplicas: false,
-    // ragKnowledgeBaseAdvancedParsing: true,
-    // ragKnowledgeBaseAdvancedParsingModelId: 'anthropic.claude-3-sonnet-20240229-v1:0',
-    // embeddingModelId: 'amazon.titan-embed-text-v2:0',
-    // rerankingModelId: "amazon.rerank-v1:0",
-    // queryDecompositionEnabled: true,
-    // Parameters for development environment
-  },
-  staging: {
     // Parameters for staging environment
   },
   prod: {
