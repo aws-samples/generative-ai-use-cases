@@ -131,6 +131,8 @@ export const modelFeatureFlags: Record<string, FeatureFlags> = {
   'us.meta.llama3-2-11b-instruct-v1:0': MODEL_FEATURE.TEXT_DOC_IMAGE,
   'us.meta.llama3-2-90b-instruct-v1:0': MODEL_FEATURE.TEXT_DOC_IMAGE,
   'us.meta.llama3-3-70b-instruct-v1:0': MODEL_FEATURE.TEXT_DOC,
+  'us.meta.llama4-maverick-17b-instruct-v1:0': MODEL_FEATURE.TEXT_DOC_IMAGE,
+  'us.meta.llama4-scout-17b-instruct-v1:0': MODEL_FEATURE.TEXT_DOC_IMAGE,
   // Mistral
   'mistral.mistral-7b-instruct-v0:2': MODEL_FEATURE.TEXT_DOC,
   'mistral.mixtral-8x7b-instruct-v0:1': MODEL_FEATURE.TEXT_DOC,
