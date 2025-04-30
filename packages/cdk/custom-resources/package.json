@@ -2,6 +2,6 @@
   "private": true,
   "dependencies": {
     "@aws-sdk/credential-provider-node": "^3.565.0",
-    "@opensearch-project/opensearch": "^2.7.0"
+    "@opensearch-project/opensearch": "^3.4.0"
   }
 }

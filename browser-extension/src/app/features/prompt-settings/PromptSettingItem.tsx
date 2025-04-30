@@ -6,6 +6,7 @@ import InputText from '../common/components/InputText';
 import ButtonIcon from '../common/components/ButtonIcon';
 import { PiTrash } from 'react-icons/pi';
 import Button from '../common/components/Button';
+import { IconWrapper } from '../../components/IconWrapper';
 
 import Checkbox from '../common/components/Checkbox';
 import { produce } from 'immer';
@@ -129,7 +130,7 @@ const PromptSettingItem: React.FC<Props> = (props) => {
                         : null;
                     }}
                   >
-                    <PiTrash />
+                    <IconWrapper icon={PiTrash} />
                   </ButtonIcon>
                 )}
               </div>

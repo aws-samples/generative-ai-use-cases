@@ -1,8 +1,8 @@
 import useUseCaseBuilderApi from './useUseCaseBuilderApi';
-import { UseCaseInputExample } from 'generative-ai-use-cases-jp';
+import { UseCaseInputExample } from 'generative-ai-use-cases';
 import usePagination from '../usePagination';
 import { produce } from 'immer';
-import { Pagination } from 'generative-ai-use-cases-jp';
+import { Pagination } from 'generative-ai-use-cases';
 
 const useMyUseCases = () => {
   const {
@@ -65,7 +65,7 @@ const useMyUseCases = () => {
       }
     }
 
-    // 該当するものがない場合は -1 を返す
+    // If there is no corresponding item, return -1
     return { page: -1, idx: -1 };
   };
 
@@ -106,7 +106,7 @@ const useMyUseCases = () => {
       fixedModelId?: string;
       fileUpload?: boolean;
     }) => {
-      // 更新時に影響があるものだけ楽観的処理を入れる
+      // Only do optimistic processing for items that are affected by the update
       const { page: pageFavorite, idx: idxFavorite } = findIndex(
         favoriteUseCasesRaw,
         params.useCaseId
@@ -205,7 +205,7 @@ const useMyUseCases = () => {
       });
     },
     toggleFavorite: (useCaseId: string) => {
-      // 更新時に影響があるものだけ楽観的処理を入れる
+      // Only do optimistic processing for items that are affected by the update
       const { page: pageMy, idx: idxMy } = findIndex(myUseCasesRaw, useCaseId);
       if (pageMy >= 0 && idxMy >= 0) {
         mutateMyUseCases(
@@ -219,7 +219,7 @@ const useMyUseCases = () => {
         );
       }
 
-      // お気に入り一覧への表示・追加は処理が複雑なため楽観的処理をいれない
+      // The display and addition to the favorite list are complex, so do not do optimistic processing
 
       return toggleFavorite(useCaseId).finally(() => {
         mutateMyUseCases();
@@ -228,7 +228,7 @@ const useMyUseCases = () => {
       });
     },
     toggleShared: (useCaseId: string) => {
-      // 更新時に影響があるものだけ楽観的処理を入れる
+      // Only do optimistic processing for items that are affected by the update
       const { page: pageMy, idx: idxMy } = findIndex(myUseCasesRaw, useCaseId);
       if (pageMy >= 0 && idxMy >= 0) {
         mutateMyUseCases(

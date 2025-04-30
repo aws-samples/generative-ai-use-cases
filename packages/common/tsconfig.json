@@ -1,12 +1,12 @@
 {
-    "compilerOptions": {
-      "rootDir": "src",
-      "composite": true,
-      "declaration": true,
-      "declarationMap": true,
-      "esModuleInterop": true,
-      "skipLibCheck": true
-    },
-    "include": ["src"],
-    "exclude": ["node_modules", "dist"]
+  "compilerOptions": {
+    "rootDir": "src",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

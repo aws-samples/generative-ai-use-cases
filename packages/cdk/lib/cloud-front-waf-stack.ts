@@ -7,10 +7,10 @@ import {
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 import { CommonWebAcl } from './construct/common-web-acl';
-import { StackInput } from './stack-input';
+import { ProcessedStackInput } from './stack-input';
 
 interface CloudFrontWafStackProps extends StackProps {
-  params: StackInput;
+  readonly params: ProcessedStackInput;
 }
 
 export class CloudFrontWafStack extends Stack {

@@ -1,12 +1,16 @@
 import { create } from 'zustand';
 import useFileApi from './useFileApi';
-import { FileLimit, UploadedFileType } from 'generative-ai-use-cases-jp';
+import { FileLimit, UploadedFileType } from 'generative-ai-use-cases';
 import { produce } from 'immer';
-import { fileTypeFromStream } from 'file-type';
+import { fileTypeFromBuffer, fileTypeFromStream, MimeType } from 'file-type';
 import { useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import i18next from 'i18next';
+
 export const extractBaseURL = (url: string) => {
   return url.split(/[?#]/)[0];
 };
+
 const useFilesState = create<{
   uploadFiles: (
     id: string,
@@ -23,7 +27,7 @@ const useFilesState = create<{
   errorMessagesDict: Record<string, string[]>;
   deleteUploadedFile: (
     id: string,
-    fileUrl: string,
+    fileId: string,
     fileLimit: FileLimit,
     accept: string[]
   ) => Promise<boolean>;
@@ -54,13 +58,48 @@ const useFilesState = create<{
       if (fileType.includes('video')) return 'video';
       return 'file';
     };
+    const fileId = uuidv4();
     return {
+      id: fileId,
       file,
       name: file.name,
       type: getFileType(file.type),
       uploading: true,
       errorMessages: [],
     } as UploadedFileType;
+  };
+
+  const getImageDimensions = (
+    file: File
+  ): Promise<{ width: number; height: number }> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const img = new Image();
+
+        img.onload = () => {
+          resolve({
+            width: img.width,
+            height: img.height,
+          });
+        };
+
+        img.onerror = () => {
+          reject(new Error('Failed to load image'));
+        };
+
+        if (e.target?.result) {
+          img.src = e.target.result as string;
+        }
+      };
+
+      reader.onerror = () => {
+        reject(new Error('Failed to read file'));
+      };
+
+      reader.readAsDataURL(file);
+    });
   };
 
   // Validated given uploadedFiles, return updated uploadedFiles (no side effect) and errorMessages
@@ -73,13 +112,23 @@ const useFilesState = create<{
     let imageFileCount = 0;
     let videoFileCount = 0;
 
-    // filter は非同期関数が利用できないため先に評価を行う
+    // filter is not available for async functions, so evaluate it first
     const isMimeSpoofedResults = await Promise.all(
       uploadedFiles.map(async (uploadedFile) => {
-        // file.type は拡張子ベースで MIME を取得する一方、fileTypeFromStream はファイルヘッダの Signature を確認する
-        const realMimeType = (
-          await fileTypeFromStream(uploadedFile.file.stream())
-        )?.mime;
+        // file.type is based on the extension, while fileTypeFromStream checks the file header signature
+        let realMimeType: MimeType | undefined;
+        try {
+          realMimeType = (await fileTypeFromStream(uploadedFile.file.stream()))
+            ?.mime;
+        } catch (error) {
+          realMimeType = (
+            await fileTypeFromBuffer(await uploadedFile.file.arrayBuffer())
+          )?.mime;
+        }
+        if (!realMimeType) {
+          console.error('Failed to get file type:', uploadedFile.file.name);
+          return false;
+        }
         // exception when file is doc or xls
         const isDocOrXls =
           ['application/msword', 'application/vnd.ms-excel'].includes(
@@ -94,31 +143,36 @@ const useFilesState = create<{
       })
     );
 
-    // アップロードされたファイルの検証
-    const updatedFiles: UploadedFileType[] = uploadedFiles.map(
-      (uploadedFile, idx) => {
+    // Validate uploaded files
+    const updatedFiles: UploadedFileType[] = await Promise.all(
+      uploadedFiles.map(async (uploadedFile, idx) => {
         const errorMessages: string[] = [];
 
-        // ファイルの拡張子が間違っている場合はフィルタリング
+        // If the file extension is incorrect, filter it
         if (isMimeSpoofedResults[idx]) {
           errorMessages.push(
-            `${uploadedFile.file.name} はファイルタイプと拡張子が合致しないファイルです。`
+            i18next.t('files.error.mimeMismatch', {
+              fileName: uploadedFile.file.name,
+            })
           );
         }
 
-        // 許可されたファイルタイプをフィルタリング
+        // Filter allowed file types
         const mediaFormat = ('.' +
           uploadedFile.file.name.split('.').pop()) as string;
         const isFileTypeAllowed = accept.includes(mediaFormat);
         if (accept && accept.length === 0) {
-          errorMessages.push(`このモデルはファイルに対応していません。`);
+          errorMessages.push(i18next.t('files.error.modelNotSupported'));
         } else if (!isFileTypeAllowed) {
           errorMessages.push(
-            `${uploadedFile.file.name} は許可されていない拡張子です。利用できる拡張子は ${accept.join(', ')} です`
+            i18next.t('files.error.invalidExtension', {
+              fileName: uploadedFile.file.name,
+              acceptedExtensions: accept.join(', '),
+            })
           );
         }
 
-        // ファイルサイズによるフィルタリング
+        // Filter by file size
         const getMaxFileSizeMB = (fileType: string) => {
           if (fileType.includes('image')) return fileLimit.maxImageFileSizeMB;
           if (fileType.includes('video')) return fileLimit.maxVideoFileSizeMB;
@@ -128,11 +182,14 @@ const useFilesState = create<{
         const isFileSizeAllowed = uploadedFile.file.size <= maxSizeMB * 1e6;
         if (!isFileSizeAllowed) {
           errorMessages.push(
-            `${uploadedFile.file.name} は最大ファイルサイズ ${maxSizeMB} MB を超えています。`
+            i18next.t('files.error.fileSizeExceeded', {
+              fileName: uploadedFile.file.name,
+              maxSize: maxSizeMB,
+            })
           );
         }
 
-        // ファイル数によるフィルタリング
+        // Filter by file count
         let isFileNumberAllowed = false;
         if (uploadedFile.file.type.includes('image')) {
           imageFileCount += 1;
@@ -140,8 +197,32 @@ const useFilesState = create<{
             imageFileCount <= (fileLimit.maxImageFileCount || 0);
           if (!isFileNumberAllowed) {
             errorMessages.push(
-              `画像ファイルは ${fileLimit.maxImageFileCount} 個以下にしてください`
+              i18next.t('files.error.imageCountExceeded', {
+                maxCount: fileLimit.maxImageFileCount,
+              })
             );
+          }
+          if (fileLimit.strictImageDimensions) {
+            const dimension = await getImageDimensions(uploadedFile.file);
+            const isAcceptableDimension = fileLimit.strictImageDimensions.some(
+              (d) => {
+                return (
+                  d.width === dimension.width && d.height === dimension.height
+                );
+              }
+            );
+
+            if (!isAcceptableDimension) {
+              const humanReadableDimensions = fileLimit.strictImageDimensions
+                .map((d) => `${d.width}x${d.height}`)
+                .join(', ');
+              errorMessages.push(
+                i18next.t('files.error.invalidImageDimension', {
+                  allowedDimensions: humanReadableDimensions,
+                  uploadedDimension: `${dimension.width}x${dimension.height}`,
+                })
+              );
+            }
           }
         } else if (uploadedFile.file.type.includes('video')) {
           videoFileCount += 1;
@@ -149,7 +230,9 @@ const useFilesState = create<{
             videoFileCount <= (fileLimit.maxVideoFileCount || 0);
           if (!isFileNumberAllowed) {
             errorMessages.push(
-              `動画ファイルは ${fileLimit.maxVideoFileCount} 個以下にしてください`
+              i18next.t('files.error.videoCountExceeded', {
+                maxCount: fileLimit.maxVideoFileCount,
+              })
             );
           }
         } else {
@@ -157,7 +240,9 @@ const useFilesState = create<{
           isFileNumberAllowed = fileCount <= (fileLimit.maxFileCount || 0);
           if (!isFileNumberAllowed) {
             errorMessages.push(
-              `ファイルは ${fileLimit.maxFileCount} 個以下にしてください`
+              i18next.t('files.error.fileCountExceeded', {
+                maxCount: fileLimit.maxFileCount,
+              })
             );
           }
         }
@@ -166,7 +251,7 @@ const useFilesState = create<{
           ...uploadedFile,
           errorMessages: errorMessages,
         } as UploadedFileType;
-      }
+      })
     );
 
     return {
@@ -230,8 +315,7 @@ const useFilesState = create<{
     get().uploadedFilesDict[id].forEach((uploadedFile, idx) => {
       if (!uploadedFile.uploading) return;
 
-      // 「画像アップロード => 署名付きURL取得 => 画像ダウンロード」だと、画像が画面に表示されるまでに時間がかかるため、
-      // 選択した画像をローカルでBASE64エンコーディングし、そのまま画面に表示する（UX改善のため）
+      // "Upload image => Get signed URL => Download image" takes time to display the image on the screen, so select the image and display it immediately (UX improvement)
       const reader = new FileReader();
       reader.readAsDataURL(uploadedFile.file);
       reader.onload = () => {
@@ -245,7 +329,7 @@ const useFilesState = create<{
 
       const mediaFormat = uploadedFile.file.name.split('.').pop() as string;
 
-      // 署名付き URL の取得（並列実行させるために、await せずに実行）
+      // Get signed URL (execute in parallel without await to improve UX)
       api
         .getSignedUrl({
           filename: uploadedFile.file.name,
@@ -253,13 +337,16 @@ const useFilesState = create<{
         })
         .then(async (signedUrlRes) => {
           const signedUrl = signedUrlRes.data;
-          const fileUrl = extractBaseURL(signedUrl); // 署名付き url からクエリパラメータを除外
-          // ファイルのアップロード
+          const fileUrl = extractBaseURL(signedUrl); // Remove query parameters from signed URL
+          // Upload file
           api.uploadFile(signedUrl, { file: uploadedFile.file }).then(() => {
+            const currentIdx = get().uploadedFilesDict[id].findIndex(
+              (file) => file.id === uploadedFile.id
+            ); // If the previous file is deleted during upload, the idx changes
             set(
               produce((state) => {
-                state.uploadedFilesDict[id][idx].uploading = false;
-                state.uploadedFilesDict[id][idx].s3Url = fileUrl;
+                state.uploadedFilesDict[id][currentIdx].uploading = false;
+                state.uploadedFilesDict[id][currentIdx].s3Url = fileUrl;
                 state.base64Cache = {
                   ...state.base64Cache,
                   [fileUrl]: reader.result?.toString() ?? '',
@@ -274,17 +361,16 @@ const useFilesState = create<{
   // Delete Uploaded File
   const deleteUploadedFile = async (
     id: string,
-    fileUrl: string,
+    fileId: string,
     fileLimit: FileLimit,
     accept: string[]
   ) => {
-    const baseUrl = extractBaseURL(fileUrl);
     const findTargetIndex = () =>
-      get().uploadedFilesDict[id].findIndex((file) => file.s3Url === baseUrl);
+      get().uploadedFilesDict[id].findIndex((file) => file.id === fileId);
 
     let targetIndex = findTargetIndex();
     if (targetIndex > -1) {
-      // "https://BUCKET_NAME.s3.REGION.amazonaws.com/FILENAME"の形式で設定されている
+      // "https://BUCKET_NAME.s3.REGION.amazonaws.com/FILENAME" format is set
       const result = /https:\/\/.+\/(?<fileName>.+)/.exec(
         get().uploadedFilesDict[id][targetIndex].s3Url ?? ''
       );
@@ -300,7 +386,7 @@ const useFilesState = create<{
 
         await api.deleteUploadedFile(fileName);
 
-        // 削除処理中に他の画像も削除された場合に、Indexがズレるため再取得する
+        // If other images are deleted during deletion processing, the index shifts, so get it again
         targetIndex = findTargetIndex();
         set(
           produce((state) => {
@@ -317,14 +403,14 @@ const useFilesState = create<{
     return false;
   };
 
-  // getFileDownloadSignedUrl を useFileApi から移動し、Base64 キャッシュ機能を追加
+  // Move getFileDownloadSignedUrl to useFileApi and add Base64 cache functionality
   const getFileDownloadSignedUrl = async (
     s3Url: string,
     cacheBase64?: boolean
   ) => {
     const url = await api.getFileDownloadSignedUrl(s3Url);
 
-    // Base64 キャッシュが要求された場合
+    // If Base64 cache is requested
     if (cacheBase64) {
       try {
         const response = await fetch(url);
@@ -336,7 +422,7 @@ const useFilesState = create<{
           reader.readAsDataURL(blob);
         });
 
-        // キャッシュを更新
+        // Update cache
         set((state) => ({
           base64Cache: {
             ...state.base64Cache,
@@ -374,6 +460,7 @@ const useFiles = (id: string) => {
     base64Cache,
     getFileDownloadSignedUrl,
   } = useFilesState();
+
   return {
     uploadFiles: (files: File[], fileLimit: FileLimit, accept: string[]) =>
       uploadFiles(id, files, fileLimit, accept),
@@ -386,10 +473,10 @@ const useFiles = (id: string) => {
     clear: () => clear(id),
     uploadedFiles: uploadedFilesDict[id] ?? [],
     deleteUploadedFile: (
-      fileUrl: string,
+      fileId: string,
       fileLimit: FileLimit,
       accept: string[]
-    ) => deleteUploadedFile(id, fileUrl, fileLimit, accept),
+    ) => deleteUploadedFile(id, fileId, fileLimit, accept),
     uploading:
       uploadedFilesDict[id]?.some((uploadedFile) => uploadedFile.uploading) ??
       false,
@@ -397,4 +484,5 @@ const useFiles = (id: string) => {
     getFileDownloadSignedUrl,
   };
 };
+
 export default useFiles;

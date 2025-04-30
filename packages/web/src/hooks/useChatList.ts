@@ -1,6 +1,6 @@
 import { produce } from 'immer';
 import useChatApi from './useChatApi';
-import { Chat } from 'generative-ai-use-cases-jp';
+import { Chat } from 'generative-ai-use-cases';
 import usePagination from './usePagination';
 
 const useChatList = () => {

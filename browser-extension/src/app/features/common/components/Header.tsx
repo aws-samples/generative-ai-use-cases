@@ -1,6 +1,7 @@
 import React from 'react';
 import { PiGear, PiListPlus, PiX } from 'react-icons/pi';
 import ButtonIcon from './ButtonIcon';
+import { IconWrapper } from '../../../components/IconWrapper';
 
 type Props = {
   onClickPromptSettings: () => void;
@@ -15,13 +16,13 @@ const Header: React.FC<Props> = (props) => {
         <div className="text-lg font-bold ml-3">GenU 拡張機能</div>
         <div className="flex items-center">
           <ButtonIcon onClick={props.onClickPromptSettings}>
-            <PiListPlus />
+            <IconWrapper icon={PiListPlus} />
           </ButtonIcon>
           <ButtonIcon onClick={props.onClickSettings}>
-            <PiGear />
+            <IconWrapper icon={PiGear} />
           </ButtonIcon>
           <ButtonIcon onClick={props.onClickClose}>
-            <PiX />
+            <IconWrapper icon={PiX} />
           </ButtonIcon>
         </div>
       </div>

@@ -22,9 +22,10 @@ const Content = () => {
         onOpenChat={(content, systemContext) => {
           setIsOpenChat(true);
 
-          // Contentからはruntimeのメッセージしか利用できないため、すべてのTABにブロードキャストでメッセージが送信される（ContentからはBrowser.tabsは使えない）
-          // 複数画面を立ち上げていると、すべての画面に値が設定されてしまう
-          // 拡張機能のメッセージではなく、iframeのメッセージを使い特定のタブのみにメッセージを送る
+          // Because Content can only use runtime messages, all TABs will receive a broadcast message (Content cannot use Browser.tabs)
+          // If multiple screens are launched, all screens will be set to the value
+          // Use the iframe message to send a message to a specific tab instead of the extension message
+          // Instead of the extension message, use the iframe message to send a message to a specific tab
           iframe.current?.contentWindow?.postMessage(
             {
               type: 'CONTENT',

@@ -9,6 +9,7 @@ import { PiCaretDown, PiDesktopTower, PiDotsSix, PiX } from 'react-icons/pi';
 import ButtonIcon from '../common/components/ButtonIcon';
 import { PromptSetting } from '../../../@types/settings';
 import PromptSettingItem from './PromptSettingItem';
+import { IconWrapper } from '../../components/IconWrapper';
 
 type Props = BaseProps & {
   type: ItemTypeValues;
@@ -35,7 +36,7 @@ export type DragPromptItem = {
 };
 
 const DraggablePromptItem: React.FC<Props> = (props) => {
-  // React DnDのExampleを参考に実装
+  // Implement based on the React DnD example
   // https://react-dnd.github.io/react-dnd/examples/sortable/simple
   const ref = useRef<HTMLDivElement>(null);
   const [{ handlerId }, drop] = useDrop<DragPromptItem, void, { handlerId: Identifier | null }>({
@@ -131,7 +132,7 @@ const DraggablePromptItem: React.FC<Props> = (props) => {
       <div className="flex items-center gap-2">
         {isPromptSetting && (
           <div ref={ref} className="pl-2 cursor-grab">
-            <PiDotsSix />
+            <IconWrapper icon={PiDotsSix} />
           </div>
         )}
         <div
@@ -146,15 +147,18 @@ const DraggablePromptItem: React.FC<Props> = (props) => {
           }}
         >
           {isPromptSetting && (
-            <PiCaretDown className={twMerge('transition', isOpenSettings ? '' : 'rotate-180')} />
+            <IconWrapper
+              icon={PiCaretDown}
+              className={twMerge('transition', isOpenSettings ? '' : 'rotate-180')}
+            />
           )}
           {props.prompt.systemContextTitle}
-          {props.isPreset && <PiDesktopTower />}
+          {props.isPreset && <IconWrapper icon={PiDesktopTower} />}
         </div>
 
         {props.onDelete && (
           <ButtonIcon className="block ml-auto" onClick={props.onDelete}>
-            <PiX />
+            <IconWrapper icon={PiX} />
           </ButtonIcon>
         )}
       </div>

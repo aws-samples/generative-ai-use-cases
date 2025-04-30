@@ -1,11 +1,14 @@
 import { PrimaryKey } from './base';
+import { AdditionalModelRequestFields } from './text';
 
 export type Role = 'system' | 'user' | 'assistant';
 
 export type Model = {
   type: 'bedrock' | 'bedrockAgent' | 'bedrockKb' | 'sagemaker';
   modelId: string;
+  modelParameters?: AdditionalModelRequestFields;
   sessionId?: string;
+  region?: string;
 };
 
 export type Agent = {
@@ -32,9 +35,9 @@ export type MessageAttributes = {
 
 export type UnrecordedMessage = {
   role: Role;
-  // テキスト
+  // Text
   content: string;
-  // 追加データ（画像など）
+  // Additional data (image, etc.)
   trace?: string;
   extraData?: ExtraData[];
   llmType?: string;
@@ -51,6 +54,7 @@ export type ExtraData = {
 };
 
 export type UploadedFileType = {
+  id: string;
   file: File;
   name: string;
   type: 'image' | 'video' | 'file';
@@ -73,6 +77,7 @@ export type FileLimit = {
   maxImageFileSizeMB: number;
   maxVideoFileCount: number;
   maxVideoFileSizeMB: number;
+  strictImageDimensions?: { width: number; height: number }[];
 };
 
 export type RecordedMessage = PrimaryKey &

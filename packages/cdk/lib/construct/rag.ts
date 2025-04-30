@@ -23,23 +23,24 @@ const KENDRA_STATE_CFN_PARAMETER_NAME = 'kendraState';
 
 export interface RagProps {
   // Context Params
-  envSuffix: string;
-  kendraIndexArnInCdkContext?: string | null;
-  kendraDataSourceBucketName?: string | null;
-  kendraIndexScheduleEnabled: boolean;
-  kendraIndexScheduleCreateCron?: IndexScheduleCron | null;
-  kendraIndexScheduleDeleteCron?: IndexScheduleCron | null;
+  readonly envSuffix: string;
+  readonly kendraIndexLanguage: string;
+  readonly kendraIndexArnInCdkContext?: string | null;
+  readonly kendraDataSourceBucketName?: string | null;
+  readonly kendraIndexScheduleEnabled: boolean;
+  readonly kendraIndexScheduleCreateCron?: IndexScheduleCron | null;
+  readonly kendraIndexScheduleDeleteCron?: IndexScheduleCron | null;
 
   // Resource
-  userPool: UserPool;
-  api: RestApi;
+  readonly userPool: UserPool;
+  readonly api: RestApi;
 }
 
 export interface IndexScheduleCron {
-  minute: string;
-  hour: string;
-  month: string;
-  weekDay: string;
+  readonly minute: string;
+  readonly hour: string;
+  readonly month: string;
+  readonly weekDay: string;
 }
 
 class KendraIndexWithCfnParameter extends kendra.CfnIndex {
@@ -56,14 +57,14 @@ class KendraIndexWithCfnParameter extends kendra.CfnIndex {
 
     this.attrId = cdk.Fn.conditionIf(
       kendraSwitchCfnCondition.logicalId,
-      this.attrId, // kendraがオンの場合は、attrIdをそのまま返す
-      `` // kendraがオフの場合は、空文字列を設定しておく
+      this.attrId, // If kendra is on, return attrId
+      `` // If kendra is off, set empty string
     ).toString();
 
     this.attrArn = cdk.Fn.conditionIf(
       kendraSwitchCfnCondition.logicalId,
-      this.attrArn, // kendraがオンの場合は、attrArnをそのまま返す
-      `arn:aws:kendra:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:index/` // kendraがオフの場合は、index/以降を空文字列にする（IAMの許可をさせない）
+      this.attrArn, // If kendra is on, return attrArn
+      `arn:aws:kendra:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:index/` // If kendra is off, set empty string (Do not allow IAM)
     ).toString();
   }
 }
@@ -82,20 +83,20 @@ class KendraDataSourceWithCfnParameter extends kendra.CfnDataSource {
 
     this.attrId = cdk.Fn.conditionIf(
       kendraSwitchCfnCondition.logicalId,
-      this.attrId, // kendraがオンの場合は、attrIdをそのまま返す
-      `` // kendraがオフの場合は、空文字列を設定しておく
+      this.attrId, // If kendra is on, return attrId
+      `` // If kendra is off, set empty string
     ).toString();
 
     this.attrArn = cdk.Fn.conditionIf(
       kendraSwitchCfnCondition.logicalId,
-      this.attrArn, // kendraがオンの場合は、attrArnをそのまま返す
-      `arn:aws:kendra:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:index/*/data-source/` // kendraがオフの場合は、index/以降を空文字列にする（IAMの許可をさせない）
+      this.attrArn, // If kendra is on, return attrArn
+      `arn:aws:kendra:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:index/*/data-source/` // If kendra is off, set empty string (Do not allow IAM)
     ).toString();
   }
 }
 
 /**
- * RAG を実行するためのリソースを作成する
+ * Create resources for RAG
  */
 export class Rag extends Construct {
   public readonly dataSourceBucketName?: string;
@@ -105,6 +106,7 @@ export class Rag extends Construct {
 
     const {
       envSuffix,
+      kendraIndexLanguage,
       kendraIndexArnInCdkContext,
       kendraDataSourceBucketName,
       kendraIndexScheduleEnabled,
@@ -117,13 +119,13 @@ export class Rag extends Construct {
     let dataSourceBucket: s3.IBucket | null = null;
 
     if (kendraIndexArnInCdkContext) {
-      // 既存の Kendra Index を利用する場合
+      // Use existing Kendra Index
       kendraIndexArn = kendraIndexArnInCdkContext!;
       kendraIndexId = Arn.extractResourceName(
         kendraIndexArnInCdkContext,
         'index'
       );
-      // 既存の S3 データソースを利用する場合は、バケット名からオブジェクトを生成
+      // If you use existing S3 data source, generate object from bucket name
       if (kendraDataSourceBucketName) {
         dataSourceBucket = s3.Bucket.fromBucketName(
           this,
@@ -132,7 +134,7 @@ export class Rag extends Construct {
         );
       }
     } else {
-      // 新規に Kendra Index を作成する場合
+      // Create new Kendra Index
       const indexRole = new iam.Role(this, 'KendraIndexRole', {
         assumedBy: new iam.ServicePrincipal('kendra.amazonaws.com'),
       });
@@ -162,7 +164,7 @@ export class Rag extends Construct {
         }
       );
 
-      // .pdf や .txt などのドキュメントを格納する S3 Bucket
+      // S3 Bucket to store .pdf and .txt documents
       dataSourceBucket = new s3.Bucket(this, 'DataSourceBucket', {
         blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
         encryption: s3.BucketEncryption.S3_MANAGED,
@@ -174,12 +176,19 @@ export class Rag extends Construct {
         enforceSSL: true,
       });
 
-      // /kendra/docs ディレクトリを Bucket にアップロードする
+      // Upload /kendra/docs directory to Bucket
       new s3Deploy.BucketDeployment(this, 'DeployDocs', {
         sources: [s3Deploy.Source.asset('./rag-docs')],
         destinationBucket: dataSourceBucket,
-        // 以前の設定で同 Bucket にアクセスログが残っている可能性があるため、この設定は残す
-        exclude: ['AccessLogs/*', 'logs*'],
+        // There is a possibility that access logs are left in the same Bucket in the previous configuration, so this setting is left
+        exclude: [
+          'AccessLogs/*',
+          'logs*',
+          'docs/bedrock-ug.pdf.metadata.json',
+          'docs/nova-ug.pdf.metadata.json',
+        ],
+        prune: false,
+        memoryLimit: 1024,
       });
 
       let index: kendra.CfnIndex;
@@ -188,11 +197,11 @@ export class Rag extends Construct {
         edition: 'DEVELOPER_EDITION',
         roleArn: indexRole.roleArn,
 
-        // トークンベースのアクセス制御を実施
-        // 参考: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-kendra-index.html#cfn-kendra-index-usercontextpolicy
+        // Implement token-based access control
+        // Reference: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-kendra-index.html#cfn-kendra-index-usercontextpolicy
         userContextPolicy: 'USER_TOKEN',
 
-        // 認可に利用する Cognito の情報を設定
+        // Set information about the Cognito used for authorization
         userTokenConfigurations: [
           {
             jwtTokenTypeConfiguration: {
@@ -207,12 +216,12 @@ export class Rag extends Construct {
 
       let kendraIsOnCfnCondition;
       if (kendraIndexScheduleEnabled) {
-        // Cloudfomation Parameterの読み込み
+        // Load Cloudfomation Parameter
         const kendraStateCfnParameter = new cdk.CfnParameter(
           scope,
           KENDRA_STATE_CFN_PARAMETER_NAME,
           {
-            // NOTE contructの名前が付加されないように、thisではなくscopeを指定する
+            // NOTE Do not use this, use scope
             type: 'String',
             description:
               'parameter to create kendra index. on: create kendra index, off: delete kendra index.',
@@ -237,7 +246,7 @@ export class Rag extends Construct {
           indexProps,
           kendraIsOnCfnCondition
         );
-        index.cfnOptions.condition = kendraIsOnCfnCondition; // Cfn Parameterに応じて、リソースをオンオフする
+        index.cfnOptions.condition = kendraIsOnCfnCondition; // According to Cfn Parameter, turn on/off resources
 
         kendraIndexArn = index.attrArn;
         kendraIndexId = index.attrId;
@@ -282,7 +291,7 @@ export class Rag extends Construct {
         type: 'S3',
         name: 's3-data-source',
         roleArn: s3DataSourceRole.roleArn,
-        languageCode: 'ja',
+        languageCode: kendraIndexLanguage,
         dataSourceConfiguration: {
           s3Configuration: {
             bucketName: dataSourceBucket.bucketName,
@@ -297,7 +306,7 @@ export class Rag extends Construct {
           dataSourceProps,
           kendraIsOnCfnCondition as cdk.CfnCondition
         );
-        dataSource.cfnOptions.condition = kendraIsOnCfnCondition; // Cfn Parameterに応じて、リソースをオンオフする
+        dataSource.cfnOptions.condition = kendraIsOnCfnCondition; // Toggle resources according to Cfn Parameter
       } else {
         dataSource = new kendra.CfnDataSource(
           this,
@@ -321,7 +330,7 @@ export class Rag extends Construct {
                   Id: dataSource.attrId,
                 },
                 iamResources: [
-                  // NOTE インデックス・データソースの両方に対する権限が必要
+                  // NOTE Both index and data source are required
                   index.attrArn,
                   dataSource.attrArn,
                 ],
@@ -344,7 +353,7 @@ export class Rag extends Construct {
               }
             );
 
-          // Kendra On用のStep Functions
+          // Step Functions for Kendra On
           const taskUpdateCloudformationStackWithKendraOn =
             new stepfunctionsTasks.CallAwsService(
               this,
@@ -404,16 +413,16 @@ export class Rag extends Construct {
                   stepfunctions.Condition.stringEquals(
                     '$.Stacks[0].StackStatus',
                     'UPDATE_IN_PROGRESS'
-                  ), // 完了するまでループ
+                  ), // Loop until completion
                   new stepfunctions.Wait(this, 'TaskWaitCloudformationChange', {
                     time: stepfunctions.WaitTime.duration(
                       cdk.Duration.minutes(5)
                     ),
-                  }).next(taskCheckCloudformationState) // ループ
+                  }).next(taskCheckCloudformationState) // Loop
                 )
                 .otherwise(
-                  // 完了したら、次ステップ
-                  // データソースSyncのStateMachineを呼び出す
+                  // When completed, call the next step
+                  // Call the StateMachine of data source sync
                   taskCallStartDataSourceSyncJob
                 )
             );
@@ -435,13 +444,13 @@ export class Rag extends Construct {
               hour: kendraIndexScheduleCreateCron.hour,
               month: kendraIndexScheduleCreateCron.month,
               weekDay: kendraIndexScheduleCreateCron.weekDay,
-            }), // NOTE UTC時間で指定
+            }), // UTC
             targets: [new targets.SfnStateMachine(stateMachineKendraOn, {})],
           });
         }
 
         if (kendraIndexScheduleDeleteCron) {
-          // Kendra Off用のStep Function
+          // Step Functions for Kendra Off
           const taskUpdateCloudformationStackWithKendraOff =
             new stepfunctionsTasks.CallAwsService(
               this,
@@ -485,25 +494,26 @@ export class Rag extends Construct {
               hour: kendraIndexScheduleDeleteCron.hour,
               month: kendraIndexScheduleDeleteCron.month,
               weekDay: kendraIndexScheduleDeleteCron.weekDay,
-            }), // NOTE UTC時間で指定
+            }), // NOTE Specify UTC time
             targets: [new targets.SfnStateMachine(stateMachineKendraOff, {})],
           });
         }
       }
     }
 
-    // RAG 関連の API を追加する
+    // Add RAG related APIs
     // Lambda
     const queryFunction = new NodejsFunction(this, 'Query', {
       runtime: Runtime.NODEJS_LATEST,
       entry: './lambda/queryKendra.ts',
       timeout: Duration.minutes(15),
       bundling: {
-        // 新しい Kendra の機能を使うため、AWS SDK を明示的にバンドルする
+        // Use new Kendra features, so explicitly bundle AWS SDK
         externalModules: [],
       },
       environment: {
         INDEX_ID: kendraIndexId,
+        LANGUAGE: kendraIndexLanguage,
       },
     });
     queryFunction.role?.addToPrincipalPolicy(
@@ -519,11 +529,12 @@ export class Rag extends Construct {
       entry: './lambda/retrieveKendra.ts',
       timeout: Duration.minutes(15),
       bundling: {
-        // 新しい Kendra の機能を使うため、AWS SDK を明示的にバンドルする
+        // Use new Kendra features, so explicitly bundle AWS SDK
         externalModules: [],
       },
       environment: {
         INDEX_ID: kendraIndexId,
+        LANGUAGE: kendraIndexLanguage,
       },
     });
     retrieveFunction.role?.addToPrincipalPolicy(

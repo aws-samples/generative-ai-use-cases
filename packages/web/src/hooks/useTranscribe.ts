@@ -42,17 +42,17 @@ const useTranscribeState = create<{
 
     const mediaFormat = get().file?.name.split('.').pop() as MediaFormat;
 
-    // 署名付き URL の取得
+    // Get the signed URL
     const signedUrlRes = await api.getSignedUrl({
       mediaFormat: mediaFormat,
     });
     const signedUrl = signedUrlRes.data;
-    const audioUrl = signedUrl.split(/[?#]/)[0]; // 署名付き url からクエリパラメータを除外
+    const audioUrl = signedUrl.split(/[?#]/)[0]; // Exclude the query parameters from the signed URL
 
-    // 音声のアップロード
+    // Upload the audio
     await api.uploadAudio(signedUrl, { file: get().file! });
 
-    // 音声認識
+    // Start the transcription
     const startTranscriptionRes = await api.startTranscription({
       audioUrl: audioUrl,
       speakerLabel: speakerLabel,

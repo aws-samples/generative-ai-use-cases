@@ -71,21 +71,21 @@ const useScreen = () => {
 
   const screen = useRef<HTMLDivElement>(null);
 
-  // スクリーンのサイズや位置が変わったことを通知する関数
-  // 初期時、スクロール時に呼ばれる
-  // チャットの要素読み込み完了時には自動で下までスクロールされるため、そこでも呼ばれる
+  // A function to notify when the screen size or position changes
+  // It is called when the screen is initially loaded and when scrolling
+  // When the chat elements are loaded, the screen is automatically scrolled to the bottom, so it is also called there
   const notifyScreen = useCallback(
     (div: HTMLDivElement) => {
-      // 最下部に到達している時に isAtBottom を true に
-      // 小数点が省略されることがあるため、1.0 の余裕を設ける
+      // When the bottom is reached, set isAtBottom to true
+      // Because the decimal point may be omitted, 1.0 is provided as a margin
       if (div.clientHeight + div.scrollTop + 1.0 >= div.scrollHeight) {
         setIsAtBottom(true);
       } else {
         setIsAtBottom(false);
       }
 
-      // 最上部に到達している時に isAtTop を true に
-      // 小数点が省略されることがあるため、1.0 の余裕を設ける
+      // When the top is reached, set isAtTop to true
+      // Because the decimal point may be omitted, 1.0 is provided as a margin
       if (div.scrollTop <= 1.0) {
         setIsAtTop(true);
       } else {
@@ -95,7 +95,7 @@ const useScreen = () => {
     [setIsAtBottom, setIsAtTop]
   );
 
-  // screen (App.tsx に定義されている) が設定された際に scroll イベントの listener を設定する
+  // When the screen (defined in App.tsx) is set, set the scroll event listener
   useEffect(() => {
     const current = screen.current;
 

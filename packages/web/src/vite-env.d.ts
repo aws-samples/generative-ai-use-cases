@@ -17,6 +17,7 @@ interface ImportMetaEnv {
   readonly VITE_APP_MODEL_REGION: string;
   readonly VITE_APP_MODEL_IDS: string;
   readonly VITE_APP_IMAGE_MODEL_IDS: string;
+  readonly VITE_APP_VIDEO_MODEL_IDS: string;
   readonly VITE_APP_ENDPOINT_NAMES: string;
   readonly VITE_APP_SAMLAUTH_ENABLED: string;
   readonly VITE_APP_SAML_COGNITO_DOMAIN_NAME: string;

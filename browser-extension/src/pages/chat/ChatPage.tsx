@@ -31,7 +31,7 @@ const ChatPage: React.FC = () => {
     systemContext: '',
   });
 
-  // backgroundからは拡張機能の機能でメッセージを受け取る
+  // Receive a message from the background using the extension function
   Browser.runtime.onMessage.addListener((message: MessagePayload) => {
     if (message.type === 'CONTENT') {
       setContent(message.content);
@@ -40,7 +40,7 @@ const ChatPage: React.FC = () => {
     }
   });
 
-  // Content（親ウインドウ）からは、iframeを通じてメッセージを受け取る
+  // Receive a message from Content (parent window) through the iframe
   window.addEventListener('message', (event: MessageEvent<MessagePayload>) => {
     const message = event.data;
     if (message.type === 'CONTENT') {

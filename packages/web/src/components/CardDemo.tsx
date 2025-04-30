@@ -2,6 +2,7 @@ import React from 'react';
 import { BaseProps } from '../@types/common';
 import Card from './Card';
 import Button from './Button';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   label: string;
@@ -12,6 +13,8 @@ type Props = BaseProps & {
 };
 
 const CardDemo: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
+
   return (
     <Card
       label={props.label}
@@ -22,7 +25,7 @@ const CardDemo: React.FC<Props> = (props) => {
         <div className="text-sm">{props.description}</div>
       </div>
       <div className="flex items-end justify-end">
-        <Button onClick={props.onClickDemo}>試す</Button>
+        <Button onClick={props.onClickDemo}>{t('common.try')}</Button>
       </div>
     </Card>
   );

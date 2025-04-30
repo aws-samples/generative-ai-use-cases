@@ -7,13 +7,12 @@ import * as oss from 'aws-cdk-lib/aws-opensearchserverless';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3Deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import { StackInput } from './stack-input';
+import { ProcessedStackInput } from './stack-input';
 
 const UUID = '339C5FED-A1B5-43B6-B40A-5E8E59E5734D';
 
-// 以下が現状 Embedding model としてサポートされているモデル ID
-// Dimension は最終的に Custom resource の props として渡すが
-// 勝手に型が変換されてしまう Issue があるため、number ではなく string にしておく
+// Embedding models supported by Bedrock
+// Dimension is passed as a prop of the Custom resource, but there is an issue that the type is automatically converted, so it is set to string instead of number.
 // https://github.com/aws-cloudformation/cloudformation-coverage-roadmap/issues/1037
 const MODEL_VECTOR_MAPPING: { [key: string]: string } = {
   'amazon.titan-embed-text-v1': '1536',
@@ -22,66 +21,68 @@ const MODEL_VECTOR_MAPPING: { [key: string]: string } = {
   'cohere.embed-english-v3': '1024',
 };
 
-// parsingConfiguration で PDF ファイルの中に埋め込まれている画像やグラフや表を読み取る機能がある。
-// 読み取る際のプロンプトは任意のものが定義できる。以下に const として定義する。利用環境によってプロンプトを変更することで、より高い精度を期待できる。
+// The parsingConfiguration has a feature to read images, graphs, and tables embedded in PDF files.
+// The prompt for reading can be defined arbitrarily. The following is defined as a const. By changing the prompt according to the environment, you can expect higher accuracy.
 // https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking-parsing.html#kb-advanced-parsing
-const PARSING_PROMPT = `ドキュメントに含まれる画像やグラフや表などの Image コンテンツからテキストを書き写して、コードブロックではないMarkdown構文で出力してください。以下の手順に従ってください：
+const PARSING_PROMPT = `Write the text from the image, graph, and table content in the document, and output it in Markdown syntax, not a code block. Follow the following steps:
 
-1. 提供されたページを注意深く調べてください。
+1. Carefully examine the provided page.
 
-2. ページに存在するすべての要素を特定してください。これには見出し、本文、脚注、表、視覚化、キャプション、ページ番号などが含まれます。
+2. Identify all elements on the page. This includes headings, body text, footnotes, tables, visualizations, captions, and page numbers.
 
-3. Markdown構文のフォーマットを使用して出力してください : 
-- 見出し：主見出しには#、セクションには##、サブセクションには###など
-- リスト：箇条書きには* または -、番号付きリストには1. 2. 3.
-- 繰り返しは避けてください
+3. Output using Markdown syntax:
+- Headings: Use # for main headings, ## for sections, ### for sub-sections, etc.
+- Lists: Use * or - for bullet points, and 1. 2. 3. for numbered lists.
+- Avoid repetition.
+- IMPORTANT:Output in same language as the document.
 
-4. 要素が Visualization の場合：
-- 自然言語で詳細な説明を提供してください
-- 説明を提供した後、Visualization 内のテキストは転写しないでください
+4. If the element is a Visualization:
+- Provide a detailed description in natural language.
+- Do not transcribe the text in the Visualization after providing the description.
 
-5. 要素が表の場合：
-- Markdownの表を作成し、すべての行が同じ列数を持つようにしてください
-- セルの配置をできるだけ忠実に維持してください
-- 表を複数の表に分割しないでください
-- 結合されたセルが複数の行や列にまたがる場合、テキストを左上のセルに配置し、他のセルには ' ' を出力してください
-- 列の区切りには | を使用し、ヘッダー行の区切りには |-|-| を使用してください
-- セルに複数の項目がある場合、別々の行にリストしてください
-- 表にサブヘッダーがある場合、サブヘッダーをヘッダーから別の行で分離してください
+5. If the element is a Table:
+- Create a Markdown table with all rows having the same number of columns.
+- Keep the cell placement as faithful as possible.
+- Do not split the table into multiple tables.
+- If a combined cell spans multiple rows or columns, place the text in the top-left cell and output ' ' for other cells.
+- Use | for column separators and |-|-| for header row separators.
+- If a cell contains multiple items, list them in separate rows.
+- If a table has a sub-header, separate the sub-header from the header on a different row.
 
-6. 要素が段落の場合：
-- 各テキスト要素を表示されているとおりに正確に転写してください
+6. If the element is a Paragraph:
+- Transcribe the text elements as they appear.
 
-7. 要素がヘッダー、フッター、脚注、ページ番号の場合：
-- 各テキスト要素を表示されているとおりに正確に転写してください
+7. If the element is a Header, Footer, Footnote, or Page Number:
+- Transcribe the text elements as they appear.
 
-出力例：
+Output Example:
 
-Y軸に「売上高（$百万）」、X軸に「年」とラベル付けされた年間売上高を示す棒グラフ。グラフには2018年（$12M）、2019年（$18M）、2020年（$8M）、2021年（$22M）の棒がある。
-図3：このグラフは年間売上高を百万ドル単位で示しています。2020年はCOVID-19パンデミックの影響で大幅に減少しました。
+A bar chart showing annual sales with the Y-axis labeled "Sales ($million)" and the X-axis labeled "Year". The chart has bars for 2018 ($12M), 2019 ($18M), 2020 ($8M), and 2021 ($22M).
+Figure 3: This chart shows annual sales in millions of dollars. 2020 was significantly reduced due to the COVID-19 pandemic.
 
-年次報告書
-財務ハイライト
-収益：$40M
-利益：$12M
-EPS：$1.25
-| | 12月31日終了年度 | |
+Annual Report
+Financial Highlights
+Revenue: $40M
+Profit: $12M
+EPS: $1.25
+| | 12/31 ended year | |
 
 2021	2022
-キャッシュフロー：		
-営業活動	$ 46,327	$ 46,752
-投資活動	(58,154)	(37,601)
-財務活動	6,291	9,718`;
+Cash Flow:		
+Operating Activity	$ 46,327	$ 46,752
+Investing Activity	(58,154)	(37,601)
+Financial Activity	6,291	9,718`;
 
 const EMBEDDING_MODELS = Object.keys(MODEL_VECTOR_MAPPING);
 
 interface OpenSearchServerlessIndexProps {
-  collectionId: string;
-  vectorIndexName: string;
-  vectorField: string;
-  metadataField: string;
-  textField: string;
-  vectorDimension: string;
+  readonly collectionId: string;
+  readonly vectorIndexName: string;
+  readonly vectorField: string;
+  readonly metadataField: string;
+  readonly textField: string;
+  readonly vectorDimension: string;
+  readonly ragKnowledgeBaseBinaryVector: boolean;
 }
 
 class OpenSearchServerlessIndex extends Construct {
@@ -120,7 +121,7 @@ class OpenSearchServerlessIndex extends Construct {
 }
 
 export interface RagKnowledgeBaseStackProps extends StackProps {
-  params: StackInput;
+  params: ProcessedStackInput;
   collectionName?: string;
   vectorIndexName?: string;
   vectorField?: string;
@@ -141,17 +142,18 @@ export class RagKnowledgeBaseStack extends Stack {
       ragKnowledgeBaseStandbyReplicas,
       ragKnowledgeBaseAdvancedParsing,
       ragKnowledgeBaseAdvancedParsingModelId,
+      ragKnowledgeBaseBinaryVector,
     } = props.params;
 
     if (typeof embeddingModelId !== 'string') {
       throw new Error(
-        'Knowledge Base RAG が有効になっていますが、embeddingModelId が指定されていません'
+        'Knowledge Base RAG is enabled, but embeddingModelId is not specified'
       );
     }
 
     if (!EMBEDDING_MODELS.includes(embeddingModelId)) {
       throw new Error(
-        `embeddingModelId が無効な値です (有効な embeddingModelId ${EMBEDDING_MODELS})`
+        `embeddingModelId is invalid (valid embeddingModelId: ${EMBEDDING_MODELS})`
       );
     }
 
@@ -173,7 +175,7 @@ export class RagKnowledgeBaseStack extends Stack {
       typeof ragKnowledgeBaseAdvancedParsingModelId !== 'string'
     ) {
       throw new Error(
-        'Knowledge Base RAG の Advanced Parsing が有効ですが、ragKnowledgeBaseAdvancedParsingModelId が指定されていないか、文字列ではありません'
+        'Knowledge Base RAG Advanced Parsing is enabled, but ragKnowledgeBaseAdvancedParsingModelId is not specified or is not a string'
       );
     }
 
@@ -191,6 +193,7 @@ export class RagKnowledgeBaseStack extends Stack {
       textField,
       metadataField,
       vectorDimension: MODEL_VECTOR_MAPPING[embeddingModelId],
+      ragKnowledgeBaseBinaryVector,
     });
 
     ossIndex.customResourceHandler.addToRolePolicy(
@@ -339,6 +342,15 @@ export class RagKnowledgeBaseStack extends Stack {
         type: 'VECTOR',
         vectorKnowledgeBaseConfiguration: {
           embeddingModelArn: `arn:aws:bedrock:${this.region}::foundation-model/${embeddingModelId}`,
+          ...(ragKnowledgeBaseBinaryVector
+            ? {
+                embeddingModelConfiguration: {
+                  bedrockEmbeddingModelConfiguration: {
+                    embeddingDataType: 'BINARY',
+                  },
+                },
+              }
+            : {}),
         },
       },
       storageConfiguration: {
@@ -366,7 +378,7 @@ export class RagKnowledgeBaseStack extends Stack {
       vectorIngestionConfiguration: {
         ...(ragKnowledgeBaseAdvancedParsing
           ? {
-              // Advanced Parsing を有効化する場合のみ、parsingConfiguration を構成する
+              // Enable Advanced Parsing only if it is enabled
               parsingConfiguration: {
                 parsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
                 bedrockFoundationModelConfiguration: {
@@ -378,17 +390,17 @@ export class RagKnowledgeBaseStack extends Stack {
               },
             }
           : {}),
-        // チャンク戦略を変更したい場合は、以下のコメントアウトを外して、各種パラメータを調整することで、環境に合わせた環境構築が可能です。
-        // 以下の 4 種類のチャンク戦略が選択可能です。
-        // - デフォルト (何も指定しない)
-        // - セマンティックチャンク
-        // - 階層チャンク
-        // - 標準チャンク
-        // 詳細は以下の Document を参照ください。
+        // If you want to change the chunking strategy, uncomment the following and adjust the various parameters to build an environment suitable for your needs.
+        // The following 4 types of chunking strategies are available.
+        // - Default (no specification)
+        // - Semantic Chunk
+        // - Hierarchical Chunk
+        // - Standard Chunk
+        // Please refer to the following Document for details.
         // https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking-parsing.html
         // https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_bedrock.CfnDataSource.ChunkingConfigurationProperty.html
         //
-        // セマンティックチャンク
+        // Semantic Chunk
         // chunkingConfiguration: {
         //   chunkingStrategy: 'SEMANTIC',
         //   semanticChunkingConfiguration: {
@@ -398,23 +410,23 @@ export class RagKnowledgeBaseStack extends Stack {
         //   },
         // },
         //
-        // 階層チャンク
+        // Hierarchical Chunk
         // chunkingConfiguration: {
         //   chunkingStrategy: 'HIERARCHICAL',
         //   hierarchicalChunkingConfiguration: {
         //     levelConfigurations: [
         //       {
-        //         maxTokens: 1500, // 親チャンクの Max Token サイズ
+        //         maxTokens: 1500, // Max Token size of the parent chunk
         //       },
         //       {
-        //         maxTokens: 300, // 子チャンクの Max Token サイズ
+        //         maxTokens: 300, // Max Token size of the child chunk
         //       },
         //     ],
         //     overlapTokens: 60,
         //   },
         // },
         //
-        // 標準チャンク
+        // Standard Chunk
         // chunkingConfiguration: {
         //   chunkingStrategy: 'FIXED_SIZE',
         //   fixedSizeChunkingConfiguration: {
@@ -433,8 +445,10 @@ export class RagKnowledgeBaseStack extends Stack {
     new s3Deploy.BucketDeployment(this, 'DeployDocs', {
       sources: [s3Deploy.Source.asset('./rag-docs')],
       destinationBucket: dataSourceBucket,
-      // 以前の設定で同 Bucket にアクセスログが残っている可能性があるため、この設定は残す
+      // There is a possibility that access logs are still in the same Bucket from the previous configuration, so this setting is left.
       exclude: ['AccessLogs/*', 'logs*'],
+      prune: false,
+      memoryLimit: 1024,
     });
 
     this.knowledgeBaseId = knowledgeBase.ref;

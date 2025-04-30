@@ -15,7 +15,7 @@ type Props = BaseProps & {
 const DrawerBase: React.FC<Props> = (props) => {
   const { getHasUpdate } = useVersion();
 
-  // 第一引数は不要だが、ないとリクエストされないため 'user' 文字列を入れる
+  // The first argument is not required, but if it is not included, the request will not be made, so 'user' string is entered
   const { data } = useSWR('user', () => {
     return fetchAuthSession();
   });

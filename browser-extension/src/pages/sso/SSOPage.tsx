@@ -6,6 +6,7 @@ import { signInWithRedirect } from 'aws-amplify/auth';
 import { PiCircleNotchBold, PiWarningFill } from 'react-icons/pi';
 import Button from '../../app/features/common/components/Button';
 import useAuth from '../../app/features/common/hooks/useAuth';
+import { IconWrapper } from '../../app/components/IconWrapper';
 
 const SSOPage: React.FC = () => {
   const { authenticate, loading, hasAuthenticated } = useAuth();
@@ -54,7 +55,7 @@ const SSOPage: React.FC = () => {
           {loading ? (
             <div>
               <div className="italic">Loading...</div>
-              <PiCircleNotchBold className="text-6xl animate-spin" />
+              <IconWrapper icon={PiCircleNotchBold} className="text-6xl animate-spin" />
             </div>
           ) : !hasAuthenticated ? (
             <div>
@@ -82,7 +83,7 @@ const SSOPage: React.FC = () => {
       {!settings?.enabledSamlAuth && (
         <>
           <div className="border rounded p-2 flex items-center gap-2">
-            <PiWarningFill />
+            <IconWrapper icon={PiWarningFill} />
             SAML認証が有効化されていないため、SSOは利用できません。
           </div>
           <Button

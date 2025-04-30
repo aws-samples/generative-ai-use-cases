@@ -1,100 +1,100 @@
 export const TimelinePrompt = `<instruction>
-以下のウェブサイトの情報を参考に、Mermaid.jsのタイムライン図の記法を使ってシステムプロンプトを作成してください。以下の制約に従ってください:
+Please create a system prompt using Mermaid.js timeline diagram notation, referring to the information on the following website. Follow these constraints:
 
-1. 出力は必ずMermaid.jsのタイムライン図の記法に従ってください。
-2. 挨拶やその他の前置きは一切出力しないでください。
-3. 生成するタイムライン図の詳しい説明や解説は<Description></Description>タグの中に出力してください。
-4. Mermaidの図のコードは \`\`\`mermaid から初めて \`\`\` で終わるように出力してください。
-5. 次の<Information></Information>を参考に出力してください。
+1. The output must strictly follow Mermaid.js timeline diagram notation.
+2. Do not output any greetings or other preambles.
+3. Output detailed explanations or descriptions of the generated timeline diagram within <Description></Description> tags.
+4. Output the Mermaid diagram code starting with \`\`\`mermaid and ending with \`\`\`.
+5. Please refer to the following <Information></Information> for your output.
 
 <Information>
-構文
-タイムライン図を作成するための構文を説明します: 
-1. まず「timeline」キーワードで始めて、mermaidにタイムライン図を作成することを伝えます。
-2. その後、タイムラインにタイトルを追加することができます。これは「title」キーワードの後にタイトルテキストを記述することで行います。
-3. 次に、タイムラインのデータを追加します: 
-   - 常に時間期間から始まり
-   - コロン（:）が続き
-   - その後にイベントのテキストを記述します
-   - オプションで2つ目のコロンとイベントのテキストを追加できます
-   - 1つの時期に対して1つまたは複数のイベントを設定できます
+Syntax
+Syntax for creating a timeline diagram: 
+1. Start with the "timeline" keyword to tell mermaid to create a timeline diagram.
+2. You can add a title to the timeline by writing the title text after the "title" keyword.
+3. Next, add the timeline data: 
+   - Always start with a time period
+   - Followed by a colon (:)
+   - Then write the text of the event
+   - Optionally add a second colon and the text of the event
+   - You can set one or more events for a time period
 
 {time period} : {event}
-もしくは
+Or
 {time period} : {event} : {event}
-もしくは
+Or
 {time period} : {event}
               : {event}
               : {event}
 
-注意: 時間期間もイベントも単純なテキストで、数字に限定されません。
-上記の例の構文を見てみましょう。
-（注: 前の例が提示されていないため、具体的な例を参照することはできませんが、時間期間とイベントは任意のテキストを使用できるということが重要なポイントです。例えば、「2023年」だけでなく「江戸時代」や「春」なども時間期間として使用できます。）
+Note: Time periods and events are simple text, not limited to numbers.
+Let's look at the syntax example above.
+(Note: Although the previous example is not provided, the important point is that time periods and events can use any text, not just numbers. For example, "2023" can be used as a time period, not just "2023".)
 timeline
-    title ソーシャルメディアプラットフォームの歴史
-    2002年 : LinkedInの登場
-    2004年 : Facebookの登場 : Googleの登場
-    2005年 : Youtubeの登場
-    2006年 : Twitterの登場
+    title The history of social media platforms
+    2002 : The launch of LinkedIn
+    2004 : The launch of Facebook : The launch of Google
+    2005 : The launch of Youtube
+    2006 : The launch of Twitter
 
-このように、テキストアウトラインを使用してタイムライン図を生成することができます。時間期間とイベントの順序は、次の理由で重要です: 
-タイムラインの水平方向の配置: 
-- 最初の時間期間はタイムラインの左側に配置
-- 最後の時間期間はタイムラインの右側に配置
-特定の時間期間内での垂直方向の配置: 
-- 最初のイベントはその時間期間の上部に配置
-- 最後のイベントはその時間期間の下部に配置
-このように、入力する順序がそのまま視覚的な配置に反映されます。
+This way, you can generate a timeline diagram using text outlines. The order of time periods and events is important for the following reasons: 
+Horizontal placement of the timeline: 
+- The first time period is placed on the left side of the timeline
+- The last time period is placed on the right side of the timeline
+Vertical placement within a specific time period: 
+- The first event is placed at the top of the time period
+- The last event is placed at the bottom of the time period
+This way, the order of input is reflected in the visual placement.
 
 Grouping of time periods in sections/ages
-時間期間をセクション/時代でグループ化することができます。これは「section」キーワードの後にセクション名を記述することで実現できます。
-新しいセクションが定義されるまで、それ以降のすべての時間期間は、そのセクションに配置されます。
-セクションが定義されていない場合、すべての時間期間はデフォルトセクションに配置されます。
-セクションでグループ化された時間期間の例を見てみましょう。
+You can group time periods in sections/ages by writing the section name after the "section" keyword.
+Until a new section is defined, all subsequent time periods are placed in that section.
+If a section is not defined, all time periods are placed in the default section.
+Let's look at the example of time periods grouped in sections.
 timeline
-    title 産業革命のタイムライン
-    section 17〜20世紀 セクション
-        産業 1.0 : 機械水力、蒸気力
-        産業 2.0 : 電気<br>内燃機関<br>大量生産
-        産業 3.0 : 電子機器<br>コンピュータ<br>自動化
-    section 21世紀 セクション
-        産業 4.0 : インターネット<br>ロボット工学<br>モノのインターネット
-        産業 5.0 : 人工知能<br>ビッグデータ<br>3Dプリンティング
+    title The timeline of the Industrial Revolution
+    section 17-20th century section
+        Industry 1.0 : Mechanical water power, steam power
+        Industry 2.0 : Electricity<br>Internal combustion engine<br>Mass production
+        Industry 3.0 : Electronic devices<br>Computers<br>Automation
+    section 21st century section
+        Industry 4.0 : Internet<br>Robotics<br>Internet of Things
+        Industry 5.0 : Artificial intelligence<br>Big data<br>3D printing
 
-ご覧のように、期間は各セクションに配置され、セクションは定義された順序で配置されています。
-特定のセクション内のすべての期間とイベントは、同様の配色に従っています。これは、期間とイベントの関係性をより分かりやすくするために行われています。
+As you can see, time periods are placed in each section, and sections are placed in the order defined.
+All time periods and events in a specific section follow the same color scheme. This is done to make the relationship between time periods and events clearer.
 
 Wrapping of text for long time-periods or events
-デフォルトでは、期間やイベントのテキストが長すぎる場合は折り返されます。これは、テキストが図の外にはみ出すのを避けるために行われています。
-また、<br>を使用して強制的に改行することもできます。以下の〇ぐらいの感覚で<br>を入れてください。
-長い期間と長いイベントがある別の例を見てみましょう。
+By default, if the text of a time period or event is too long, it will be wrapped. This is done to avoid the text from overflowing the diagram.
+You can also force a line break using the <br> tag. Use the following approximate guideline for the <br> tag:
+Let's look at another example with longer time periods and events.
 timeline
-title イギリスの歴史タイムライン
-section 石器時代
-紀元前7600年 : イギリスで最古の家が<br>スコットランドの<br>オークニーに建てられる
-紀元前6000年 : 海面が上昇し、<br>イギリスが島となる。<br>この地に住む人々は<br>狩猟採集民族だった。
-section 青銅器時代
-紀元前2300年 : ヨーロッパから人々が<br>到来しイギリスに定住。<br>彼らは農業と金属加工の<br>技術をもたらした。
-: 新しい様式の陶器や<br>埋葬方法が出現。
-紀元前2200年 : ストーンヘンジでの<br>主要な建造工事が完了。<br>人々は石の環状列石に<br>死者を埋葬するようになる。
-: イギリスで最初の<br>金属製品が作られる。<br>その他の素晴らしい<br>出来事が起こる。<br>生きるのに<br>良い時代となる。
+    title The history of the United Kingdom
+    section Stone Age
+        BC 7600 : The oldest house in the United Kingdom was built in Scotland at the Orkney Islands.
+        BC 6000 : The sea level rose, and the United Kingdom became an island. The people living on this land were hunter-gatherer tribes.
+    section Bronze Age
+        BC 2300 : People from Europe came to the United Kingdom and settled. They brought agricultural and metalworking technologies.
+        BC 2200 : New styles of pottery and burial methods appeared.
+        BC 2200 : The main construction project at Stonehenge was completed. People started burying their dead in stone circles.
+        BC 2200 : The first metal products were made in the United Kingdom. Other great things happened. It was a good time to live.
 
-例: 
+Example: 
 timeline
-        title MermaidChart 2023 Timeline
-        section 2023 Q1 <br> Release Personal Tier
-          Bullet 1 : sub-point 1a : sub-point 1b
-               : sub-point 1c
-          Bullet 2 : sub-point 2a : sub-point 2b
-        section 2023 Q2 <br> Release XYZ Tier
-          Bullet 3 : sub-point <br> 3a : sub-point 3b
-               : sub-point 3c
-          Bullet 4 : sub-point 4a : sub-point 4b
+    title MermaidChart 2023 Timeline
+    section 2023 Q1 <br> Release Personal Tier
+        Bullet 1 : sub-point 1a : sub-point 1b
+            : sub-point 1c
+        Bullet 2 : sub-point 2a : sub-point 2b
+    section 2023 Q2 <br> Release XYZ Tier
+        Bullet 3 : sub-point <br> 3a : sub-point 3b
+            : sub-point 3c
+        Bullet 4 : sub-point 4a : sub-point 4b
 
 Styling of time periods and events
-先ほど説明したように、各セクションには配色があり、セクション内の各期間とイベントは同様の配色に従います。
-ただし、セクションが定義されていない場合、以下の2つの可能性があります:
-期間を個別にスタイル設定する、つまり、各期間（および対応するイベント）がそれぞれ独自の配色を持つことになります。これがデフォルトの動作です。
+As explained earlier, each section has a color scheme, and the time periods and events in each section follow the same color scheme.
+However, if a section is not defined, there are two possibilities:
+- Style each period individually, meaning each period (and its corresponding event) will have its own unique color. This is the default behavior.
 %%{init: { 'logLevel': 'debug', 'theme': 'base', 'timeline': {'disableMulticolor': true}}}%%
 timeline
     title History of Social Media Platform
@@ -103,11 +103,14 @@ timeline
         ...
 
 Customizing Color scheme
-cScale0からcScale11のテーマ変数を使用して配色をカスタマイズできます。これにより背景色が変更されます。Mermaidでは最大12のセクションに対して固有の色を設定できます。cScale0変数は最初のセクションまたは期間の値を制御し、cScale1は2番目のセクションの値を制御、といった具合です。12以上のセクションがある場合、配色は繰り返し使用されます。
-セクションの前景色（文字色）も変更したい場合は、cScaleLabel0からcScaleLabel11までの対応するテーマ変数を使用して変更できます。
-注意: これらのテーマ変数のデフォルト値は、選択されたテーマから取得されます。デフォルト値を上書きしたい場合は、initialize呼び出しを使用してカスタムテーマ変数の値を追加できます。
-例: 
-cScale0からcScale2までの変数のデフォルト値を上書きしてみましょう:
+You can customize the color scheme using theme variables from cScale0 to cScale11. This changes the background color. Mermaid allows you to set unique colors for up to 12 sections. The cScale0 variable controls the value for the first section or period, cScale1 controls the value for the second section, and so on. If there are more than 12 sections, the color scheme will be reused.
+
+If you also want to change the foreground color (text color) of sections, you can use the corresponding theme variables from cScaleLabel0 to cScaleLabel11.
+
+Note: The default values for these theme variables are taken from the selected theme. If you want to override the default values, you can add values for custom theme variables using the initialize call.
+
+Example:
+Let's override the default values for variables from cScale0 to cScale2:
 %%{init: { 'logLevel': 'debug', 'theme': 'default' , 'themeVariables': {
             'cScale0': '#ff0000', 'cScaleLabel0': '#ffffff',
             'cScale1': '#00ff00',
@@ -120,32 +123,34 @@ cScale0からcScale2までの変数のデフォルト値を上書きしてみま
         ...
 
 Themes
-Mermaidには多数の事前定義されたテーマが用意されており、お好みのものを選んで使用できます。補足: 実際には、既存のテーマ変数を上書きして、独自のカスタムテーマを作成することもできます。図のテーマ設定についての詳細は、こちらで学ぶことができます。
-以下が、事前定義された異なるテーマオプションです: 
+Mermaid has many pre-defined themes, and you can choose the one you like.
+Note: Actually, you can also override the existing theme variables to create your own custom theme. For more details on the theme settings, please refer to the following link.
+Here are the different theme options: 
 - base
 - forest
 - dark
 - default
 - neutral
-例:
+
+Example:
 %%{init: { 'logLevel': 'debug', 'theme': 'base' } }%%
-もしくは
+Or
 %%{init: { 'logLevel': 'debug', 'theme': 'forest' } }%%
-もしくは
+Or
 %%{init: { 'logLevel': 'debug', 'theme': 'dark' } }%%
-もしくは
+Or
 %%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
-もしくは
+Or
 %%{init: { 'logLevel': 'debug', 'theme': 'neutral' } }%%
 </Information>
 
-出力フォーマット:
+Output format:
 <Description>
-[生成するタイムライン図の詳しい説明や解説]
+[Detailed explanation or description of the timeline diagram to be generated]
 </Description>
 
 \`\`\`mermaid
-[Mermaid.jsのタイムライン図の記法]
+[Mermaid.js timeline diagram notation]
 \`\`\`
 
 </instruction>`;

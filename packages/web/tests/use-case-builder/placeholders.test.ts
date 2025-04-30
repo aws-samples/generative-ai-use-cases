@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import { extractPlaceholdersFromPromptTemplate } from '../../src/utils/UseCaseBuilderUtils';
 
-describe('単一の placeholder を正しく抽出できる', () => {
-  test('無ラベル', () => {
+describe('Can extract a single placeholder correctly', () => {
+  test('No label', () => {
     expect(extractPlaceholdersFromPromptTemplate('{{text}}')).toEqual([
       '{{text}}',
     ]);
@@ -18,7 +18,7 @@ hoge`)
     ).toEqual(['{{text}}']);
   });
 
-  test('有ラベル', () => {
+  test('With label', () => {
     expect(extractPlaceholdersFromPromptTemplate('{{text:xxx}}')).toEqual([
       '{{text:xxx}}',
     ]);
@@ -35,8 +35,8 @@ hoge`)
   });
 });
 
-describe('複数の placeholder を正しく抽出できる', () => {
-  test('無ラベル', () => {
+describe('Can extract multiple placeholders correctly', () => {
+  test('No label', () => {
     expect(extractPlaceholdersFromPromptTemplate('{{text}} {{text}}')).toEqual([
       '{{text}}',
       '{{text}}',
@@ -53,7 +53,7 @@ hoge {{text}} hoge`)
     ).toEqual(['{{text}}', '{{text}}']);
   });
 
-  test('有ラベル', () => {
+  test('With label', () => {
     expect(
       extractPlaceholdersFromPromptTemplate('{{text:xxx}} {{text:xxx}}')
     ).toEqual(['{{text:xxx}}', '{{text:xxx}}']);
@@ -69,7 +69,7 @@ hoge {{text:xxx}} hoge`)
     ).toEqual(['{{text:xxx}}', '{{text:xxx}}']);
   });
 
-  test('複合', () => {
+  test('Compound', () => {
     expect(
       extractPlaceholdersFromPromptTemplate('{{text}} {{text:xxx}}')
     ).toEqual(['{{text}}', '{{text:xxx}}']);

@@ -79,7 +79,7 @@ const useSettings = () => {
         federatedIdentityProviderName: federatedIdentityProviderName ?? '',
       });
 
-      // SAML認証の有無によって必須項目が異なる
+      // The required items differ depending on whether SAML authentication is enabled
       if (enabledSamlAuth) {
         if (!!cognitoDomain && !!federatedIdentityProviderName) {
           setHasConfiguredSettings(true);

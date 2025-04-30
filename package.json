@@ -1,21 +1,25 @@
 {
-  "name": "generative-ai-use-cases-jp",
+  "name": "generative-ai-use-cases",
   "private": true,
-  "version": "3.0.0",
+  "version": "4.1.2",
   "scripts": {
-    "lint": "run-s root:lint web:lint cdk:lint",
+    "lint": "run-s custom-lint:build root:lint web:lint:fix cdk:lint cdk:lambda-build-dryrun",
     "test": "run-s web:test",
     "root:lint": "npx prettier --write .",
     "web:devw": "source ./setup-env.sh ${npm_config_env} && VITE_APP_VERSION=${npm_package_version} npm -w packages/web run dev",
+    "web:devww": "powershell ./web_devw_win.ps1",
     "web:dev": "VITE_APP_VERSION=${npm_package_version} npm -w packages/web run dev",
-    "web:build": "VITE_APP_VERSION=${npm_package_version} npm -w packages/web run build",
+    "web:build": "VITE_APP_VERSION=${npm_package_version} npm -w packages/web run build --",
+    "web:build:analyze": "VITE_APP_VERSION=${npm_package_version} npm -w packages/web run build -- --mode analyze",
     "web:lint": "npm -w packages/web run lint",
+    "web:lint:fix": "npm -w packages/web run lint:fix",
     "web:test": "npm -w packages/web run test",
     "cdk:deploy": "npm -w packages/cdk run cdk deploy -- --all",
     "cdk:deploy:quick": "npm -w packages/cdk run cdk deploy -- --all --asset-parallelism --asset-prebuild=false --concurrency 3 --method=direct --require-approval never --force",
     "cdk:deploy:quick:hotswap": "npm -w packages/cdk run cdk deploy -- --all --asset-parallelism --asset-prebuild=false --concurrency 3 --method=direct --require-approval never --force --hotswap",
     "cdk:destroy": "npm -w packages/cdk run cdk destroy --",
     "cdk:lint": "npm -w packages/cdk run lint",
+    "cdk:lambda-build-dryrun": "npm -w packages/cdk run lambda-build-dryrun",
     "cdk:test": "npm -w packages/cdk run test",
     "cdk:test:update-snapshot": "npm -w packages/cdk run test -- --update-snapshot",
     "extension:ci": "cd browser-extension && npm ci",
@@ -23,20 +27,25 @@
     "extension:devw": "source ./setup-env.sh && cd browser-extension && npm run dev",
     "extension:build": "cd browser-extension && npm run build",
     "extension:buildw": "source ./setup-env.sh && cd browser-extension && npm run build",
-    "extension:lint": "npx prettier --write browser-extension/. && cd browser-extension && npm run lint",
+    "extension:lint": "npx prettier --write browser-extension/. && cd browser-extension",
+    "custom-lint:build": "npm -w packages/eslint-plugin-i18nhelper run build",
     "docs:dev": "mkdocs serve",
     "docs:build": "mkdocs build",
-    "docs:gh-deploy": "mkdocs gh-deploy --"
+    "docs:gh-deploy": "mkdocs gh-deploy --",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.5.7",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
     "npm-run-all": "^4.1.5",
-    "prettier": "^3.2.5",
-    "prettier-plugin-tailwindcss": "^0.5.13",
-    "tailwind-scrollbar": "^3.1.0",
-    "vite-plugin-pwa": "^0.19.8"
+    "prettier": "^3.2.5"
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "lint-staged": {
+    "**/*": [
+      "sh -c 'npm run lint'"
+    ]
+  }
 }

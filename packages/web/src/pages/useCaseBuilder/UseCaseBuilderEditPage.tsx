@@ -21,7 +21,7 @@ import useUseCase from '../../hooks/useCaseBuilder/useUseCase';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import ModalDialogDeleteUseCase from '../../components/useCaseBuilder/ModalDialogDeleteUseCase';
 import UseCaseBuilderHelp from '../../components/useCaseBuilder/UseCaseBuilderHelp';
-import { UseCaseInputExample } from 'generative-ai-use-cases-jp';
+import { UseCaseInputExample } from 'generative-ai-use-cases';
 import { produce } from 'immer';
 import {
   NOLABEL,
@@ -33,6 +33,7 @@ import usePageTitle from '../../hooks/usePageTitle';
 import Select from '../../components/Select';
 import Switch from '../../components/Switch';
 import { MODELS } from '../../hooks/useModel';
+import { useTranslation } from 'react-i18next';
 
 type ErrorWithMenu = {
   message: string;
@@ -43,11 +44,12 @@ const ErrorMesage: React.FC<{
   message: string;
   onClick: () => void;
 }> = (props: { message: string; onClick: () => void }) => {
+  const { t } = useTranslation();
   return (
     <li
       className="text-aws-smile cursor-pointer text-xs font-bold leading-6 underline"
       onClick={props.onClick}>
-      {props.message}
+      {t(props.message)}
     </li>
   );
 };
@@ -151,6 +153,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
   const navigate = useNavigate();
   const { useCaseId: useCaseIdPathParam } = useParams();
   const { state } = useLocation();
+  const { t } = useTranslation();
 
   const {
     title,
@@ -189,11 +192,11 @@ const UseCaseBuilderEditPage: React.FC = () => {
   const [isPosting, setIsPosting] = useState(false);
   const [isPreview, setIsPreview] = useState(true);
 
-  // 作成条件を満たしていない場合のエラーメッセージ
+  // Error messages when the creation conditions are not met
   const [createErrorMessages, setCreateErrorMessages] = useState<
     ErrorWithMenu[]
   >([]);
-  // 更新条件を満たしていない場合のエラーメッセージ
+  // Error messages when the update conditions are not met
   const [updateErrorMessages, setUpdateErrorMessages] = useState<
     ErrorWithMenu[]
   >([]);
@@ -201,12 +204,12 @@ const UseCaseBuilderEditPage: React.FC = () => {
   const { modelIds: availableModels } = MODELS;
 
   useEffect(() => {
-    // 初期表示時にIDを設定する
+    // Set the ID when the initial display is set
     setUseCaseId(useCaseIdPathParam ?? null);
   }, [setUseCaseId, useCaseIdPathParam]);
 
   useEffect(() => {
-    // DBからデータを取得した場合
+    // When data is fetched from DB
     if (useCaseId) {
       setTitle(useCase?.title ?? '');
       setPromptTemplate(useCase?.promptTemplate ?? '');
@@ -215,7 +218,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
       setFixedModelId(useCase?.fixedModelId ?? '');
       setFileUpload(!!useCase?.fileUpload);
 
-      // サンプル集から遷移した場合（RouterのStateから設定）
+      // If you transition from the sample collection (set from the Router's State)
     } else if (state) {
       setTitle(state.title ?? '');
       setPromptTemplate(state.promptTemplate ?? '');
@@ -227,7 +230,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
       clear();
     }
 
-    // 初期表示時は、更新ボタンをdisabledにする
+    // When the initial display is set, disable the update button
     setIsDisabledUpdate(true);
   }, [
     useCaseId,
@@ -243,12 +246,12 @@ const UseCaseBuilderEditPage: React.FC = () => {
     setIsDisabledUpdate,
   ]);
 
-  // プロンプトテンプレート中にあるプレースホルダ
+  // Placeholders in the prompt template
   const placeholders = useMemo(() => {
     return extractPlaceholdersFromPromptTemplate(promptTemplate);
   }, [promptTemplate]);
 
-  // プレースホルダをObjectに変換
+  // Convert placeholders to an Object
   const items = useMemo(() => {
     return getItemsFromPlaceholders(placeholders);
   }, [placeholders]);
@@ -263,18 +266,22 @@ const UseCaseBuilderEditPage: React.FC = () => {
 
   const menu = useMemo(() => {
     const base: string[] = [
-      'アプリ定義',
-      '入力例',
-      'モデル選択',
-      'ファイル添付',
+      t('useCaseBuilder.menuUseCaseDefinition'),
+      t('useCaseBuilder.menuInputExamples'),
+      t('useCaseBuilder.menuModelSelection'),
+      t('useCaseBuilder.menuFileAttachment'),
     ];
 
     if (isUpdate) {
-      return [...base, '更新', '削除'];
+      return [
+        ...base,
+        t('useCaseBuilder.menuUpdate'),
+        t('useCaseBuilder.menuDelete'),
+      ];
     } else {
-      return [...base, '作成'];
+      return [...base, t('useCaseBuilder.menuCreate')];
     }
-  }, [isUpdate]);
+  }, [isUpdate, t]);
 
   const [currentMenu, setCurrentMenu] = useState(menu[0]);
 
@@ -286,19 +293,21 @@ const UseCaseBuilderEditPage: React.FC = () => {
     if (errorMenu.length > 0) {
       return errorMenu;
     } else {
-      // エラーがない場合は「更新」「作成」にドットを表示
+      // If there is no error, display a dot on "Update" or "Create"
       if (isUpdate) {
-        return ['更新'];
+        return [t('useCaseBuilder.update')];
       } else {
-        return ['作成'];
+        return [t('useCaseBuilder.create')];
       }
     }
-  }, [createErrorMessages, updateErrorMessages, isUpdate]);
+  }, [createErrorMessages, updateErrorMessages, isUpdate, t]);
 
-  // ページタイトルの設定
+  // Set the page title
   useEffect(() => {
-    setPageTitle(isUpdate ? 'ユースケース編集' : 'ユースケース新規作成');
-  }, [isUpdate, setPageTitle]);
+    setPageTitle(
+      isUpdate ? t('useCaseBuilder.edit') : t('useCaseBuilder.createNew')
+    );
+  }, [isUpdate, setPageTitle, t]);
 
   useEffect(() => {
     const tmp = [];
@@ -306,24 +315,23 @@ const UseCaseBuilderEditPage: React.FC = () => {
     // eslint-disable-next-line no-irregular-whitespace
     if (title.replace(/[ 　]/g, '') === '') {
       tmp.push({
-        menu: 'アプリ定義',
-        message: 'タイトルを入力してください',
+        menu: t('useCaseBuilder.menuUseCaseDefinition'),
+        message: t('useCaseBuilder.enterTitle'),
       });
     }
 
     // eslint-disable-next-line no-irregular-whitespace
     if (promptTemplate.replace(/[ 　]/g, '') === '') {
       tmp.push({
-        menu: 'アプリ定義',
-        message: 'プロンプトテンプレートを入力してください',
+        menu: t('useCaseBuilder.menuUseCaseDefinition'),
+        message: t('useCaseBuilder.enterPromptTemplate'),
       });
     }
 
     if (placeholders.length === 0 && !fileUpload) {
       tmp.push({
-        menu: 'アプリ定義',
-        message:
-          'ユースケースがユーザーの入力を受け付けていません。プロンプトテンプレートに placeholder を追加するか、ファイル添付を ON にしてください。',
+        menu: t('useCaseBuilder.menuUseCaseDefinition'),
+        message: t('useCaseBuilder.noUserInput'),
       });
     }
 
@@ -334,6 +342,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
     title,
     fileUpload,
     setCreateErrorMessages,
+    t,
   ]);
 
   useEffect(() => {
@@ -341,15 +350,15 @@ const UseCaseBuilderEditPage: React.FC = () => {
 
     if (isDisabledUpdate) {
       tmp.push({
-        menu: 'アプリ定義',
-        message: '更新内容がありません',
+        menu: t('useCaseBuilder.menuUseCaseDefinition'),
+        message: t('useCaseBuilder.noUpdateContent'),
       });
     }
 
     setUpdateErrorMessages(tmp);
-  }, [isDisabledUpdate, setUpdateErrorMessages]);
+  }, [isDisabledUpdate, setUpdateErrorMessages, t]);
 
-  // ページ遷移時に存在しないメニューが表示されないようにする
+  // When transitioning to a page, prevent the non-existent menu from being displayed
   useEffect(() => {
     const idx = menu.indexOf(currentMenu);
 
@@ -380,7 +389,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
         fileUpload,
       })
         .then(() => {
-          // DB変更直後は更新ボタンをDisabledにする
+          // After updating the DB, disable the update button
           setIsDisabledUpdate(true);
           setCurrentMenu(menu[0]);
         })
@@ -399,10 +408,10 @@ const UseCaseBuilderEditPage: React.FC = () => {
         .then(async (res) => {
           setUseCaseId(res.useCaseId);
 
-          // 新規登録したら利用履歴に表示する（Drawerに表示する目的）
+          // When registering a new use case, display it in the usage history (for the purpose of displaying in the Drawer)
           await updateRecentUseUseCase(res.useCaseId);
 
-          // 実行画面に遷移
+          // Transition to the execution screen
           navigate(`/use-case-builder/execute/${res.useCaseId}`);
         })
         .finally(() => {
@@ -454,12 +463,12 @@ const UseCaseBuilderEditPage: React.FC = () => {
         <div className="absolute left-0 top-0">
           <LoadingOverlay>
             {isLoading
-              ? '読み込み中...'
+              ? t('common.loading')
               : isDeleting
-                ? '削除中...'
+                ? t('useCaseBuilder.deleting')
                 : isUpdate
-                  ? '更新中...'
-                  : '作成中...'}
+                  ? t('useCaseBuilder.updating')
+                  : t('useCaseBuilder.creating')}
           </LoadingOverlay>
         </div>
       )}
@@ -467,7 +476,9 @@ const UseCaseBuilderEditPage: React.FC = () => {
       <div className="grid h-screen grid-cols-12 gap-4 p-4">
         <div className="invisible col-span-12 my-0 flex h-0 items-center justify-center lg:visible lg:h-min print:visible print:h-min">
           <div className=" text-xl font-semibold">
-            {isUpdate ? 'ユースケース編集' : 'ユースケース新規作成'}
+            {isUpdate
+              ? t('useCaseBuilder.edit')
+              : t('useCaseBuilder.createNew')}
           </div>
         </div>
 
@@ -510,12 +521,12 @@ const UseCaseBuilderEditPage: React.FC = () => {
         </div>
 
         <div className="col-span-12 lg:col-span-5">
-          <Card label={currentMenu} className="relative">
-            {currentMenu === 'アプリ定義' && (
+          <Card label={t(`${currentMenu}`)} className="relative">
+            {currentMenu === t('useCaseBuilder.menuUseCaseDefinition') && (
               <>
                 <RowItem>
                   <InputText
-                    label="タイトル"
+                    label={t('useCaseBuilder.title')}
                     value={title}
                     onChange={(v) => {
                       setTitle(v);
@@ -527,7 +538,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
 
                 <RowItem>
                   <Textarea
-                    label="概要"
+                    label={t('useCaseBuilder.description')}
                     rows={1}
                     value={description}
                     onChange={(v) => {
@@ -538,7 +549,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
                 </RowItem>
                 <RowItem>
                   <Textarea
-                    label="プロンプトテンプレート"
+                    label={t('useCaseBuilder.promptTemplate')}
                     rows={30}
                     maxHeight={500}
                     value={promptTemplate}
@@ -546,15 +557,15 @@ const UseCaseBuilderEditPage: React.FC = () => {
                       setPromptTemplate(v);
                       setIsDisabledUpdate(false);
                     }}
-                    placeholder="プロントテンプレートの書き方については、「ヘルプ」か「サンプル集」をご覧ください。"
-                    hint="ユーザーの入力を受け付けないユースケースは作成できません。プロンプトテンプレートに Placeholder を定義するか、ファイル添付を ON にしてください。"
+                    placeholder={t('useCaseBuilder.promptTemplatePlaceholder')}
+                    hint={t('useCaseBuilder.promptTemplateHint')}
                     required
                   />
                 </RowItem>
               </>
             )}
 
-            {currentMenu === '入力例' && (
+            {currentMenu === t('useCaseBuilder.menuInputExamples') && (
               <div className="mt-2 flex flex-col gap-2">
                 {inputExamples.map((inputExample, idx) => {
                   return (
@@ -562,7 +573,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
                       <div className="flex flex-col">
                         <div className="relative mb-4">
                           <InputText
-                            label="タイトル"
+                            label={t('useCaseBuilder.title')}
                             value={inputExample.title}
                             onChange={(v) => {
                               setInputExample(idx, {
@@ -626,19 +637,19 @@ const UseCaseBuilderEditPage: React.FC = () => {
                     });
                   }}>
                   <PiPlus className="pr-2 text-xl" />
-                  入力例を追加
+                  {t('useCaseBuilder.addInputExample')}
                 </Button>
               </div>
             )}
 
-            {currentMenu === 'モデル選択' && (
+            {currentMenu === t('useCaseBuilder.menuModelSelection') && (
               <div className="mt-4 flex flex-col gap-y-2">
                 <Switch
                   checked={fixedModelId !== ''}
                   label={
                     fixedModelId !== ''
-                      ? 'モデルが固定化されています。'
-                      : 'モデルは固定化されていません。'
+                      ? t('useCaseBuilder.modelFixed')
+                      : t('useCaseBuilder.modelNotFixed')
                   }
                   onSwitch={() => {
                     if (fixedModelId !== '') {
@@ -665,28 +676,22 @@ const UseCaseBuilderEditPage: React.FC = () => {
 
                 <div className="text-xs text-gray-800">
                   {fixedModelId !== '' ? (
-                    <>
-                      モデル選択の UI が表示されないため、ユーザーは生成 AI
-                      の存在を意識せずにユースケースを利用できます
-                    </>
+                    <>{t('useCaseBuilder.modelFixedDescription')}</>
                   ) : (
-                    <>
-                      モデル選択の UI
-                      が表示され、ユーザーは自由にモデルを選択できます。
-                    </>
+                    <>{t('useCaseBuilder.modelNotFixedDescription')}</>
                   )}
                 </div>
               </div>
             )}
 
-            {currentMenu === 'ファイル添付' && (
+            {currentMenu === t('useCaseBuilder.menuFileAttachment') && (
               <div className="mt-4 flex flex-col gap-y-2">
                 <Switch
                   checked={fileUpload}
                   label={
                     fileUpload
-                      ? 'ファイルを添付できます'
-                      : 'ファイルは添付できません'
+                      ? t('useCaseBuilder.fileUploadEnabled')
+                      : t('useCaseBuilder.fileUploadDisabled')
                   }
                   onSwitch={() => {
                     setFileUpload(!fileUpload);
@@ -695,20 +700,20 @@ const UseCaseBuilderEditPage: React.FC = () => {
                 />
 
                 <div className="text-xs text-gray-800">
-                  添付可能なファイルはモデルによって異なります
+                  {t('useCaseBuilder.fileUploadDescription')}
                 </div>
               </div>
             )}
 
-            {currentMenu === '作成' && (
+            {currentMenu === t('useCaseBuilder.menuCreate') && (
               <div className="mt-4 flex flex-col gap-y-2">
                 <div className="text-xs text-gray-800">
-                  ユースケースを作成します。プレビューで動作確認してから作成してください。作成後に編集することも可能です。
+                  {t('useCaseBuilder.createDescription')}
                 </div>
                 {createErrorMessages.length > 0 && (
                   <div className="my-2 flex flex-col gap-y-2">
                     <div className="text-aws-smile text-xs font-bold">
-                      作成可能なユースケースの条件を満たしていません。以下条件を全て満たしてください。
+                      {t('useCaseBuilder.createErrorCondition')}
                     </div>
                     <ul className="list-inside list-disc">
                       {createErrorMessages.map((m, idx) => (
@@ -724,21 +729,21 @@ const UseCaseBuilderEditPage: React.FC = () => {
                   </div>
                 )}
                 <Button disabled={!canCreate} onClick={onClickRegister}>
-                  作成
+                  {t('useCaseBuilder.create')}
                 </Button>
               </div>
             )}
 
-            {currentMenu === '更新' && (
+            {currentMenu === t('useCaseBuilder.menuUpdate') && (
               <div className="mt-4 flex flex-col gap-y-2">
                 <div className="text-xs text-gray-800">
-                  ユースケースを更新します。ユースケースが共有され他ユーザーも利用している場合、その内容も更新されます。
+                  {t('useCaseBuilder.updateDescription')}
                 </div>
                 {(createErrorMessages.length > 0 ||
                   updateErrorMessages.length > 0) && (
                   <div className="my-2 flex flex-col gap-y-2">
                     <div className="text-aws-smile text-xs font-bold">
-                      更新するためには、以下条件を全て満たしてください。
+                      {t('useCaseBuilder.updateErrorCondition')}
                     </div>
                     <ul className="list-disc pl-4">
                       {[...createErrorMessages, ...updateErrorMessages].map(
@@ -756,15 +761,15 @@ const UseCaseBuilderEditPage: React.FC = () => {
                   </div>
                 )}
                 <Button disabled={!canUpdate} onClick={onClickRegister}>
-                  更新
+                  {t('useCaseBuilder.update')}
                 </Button>
               </div>
             )}
 
-            {currentMenu === '削除' && (
+            {currentMenu === t('useCaseBuilder.menuDelete') && (
               <div className="mt-4 flex flex-col gap-y-2">
                 <div className="text-xs text-gray-800">
-                  ユースケースを削除します。共有されている場合、他のユーザーからもアクセスできなくなります。
+                  {t('useCaseBuilder.deleteDescription')}
                 </div>
                 <Button
                   className="bg-red-600"
@@ -772,7 +777,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
                     setIsOpenDeleteDialog(true);
                   }}>
                   <PiTrash className="mr-2" />
-                  削除
+                  {t('useCaseBuilder.delete')}
                 </Button>
               </div>
             )}
@@ -780,7 +785,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
         </div>
         <div className="col-span-12 min-h-[calc(100vh-2rem)] lg:col-span-5 2xl:col-span-6">
           <Card
-            label={`${isPreview ? 'プレビュー' : 'ヘルプ'}`}
+            label={`${isPreview ? t('useCaseBuilder.preview') : t('useCaseBuilder.helpTitle')}`}
             className="relative">
             <div className="absolute right-3 top-3 flex rounded border text-xs font-bold">
               <div
@@ -789,7 +794,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
                   setIsPreview(true);
                 }}>
                 <PiEye className="mr-1 text-base" />
-                プレビュー
+                {t('useCaseBuilder.preview')}
               </div>
               <div
                 className={`my-1 mr-1 flex cursor-pointer items-center rounded px-4 py-1.5 ${isPreview ? 'text-gray-600' : 'bg-gray-600 text-white'}`}
@@ -797,7 +802,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
                   setIsPreview(false);
                 }}>
                 <PiQuestion className="mr-1 text-base" />
-                ヘルプ
+                {t('useCaseBuilder.helpTitle')}
               </div>
             </div>
 

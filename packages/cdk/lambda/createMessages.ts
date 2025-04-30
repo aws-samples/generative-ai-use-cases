@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { CreateMessagesRequest } from 'generative-ai-use-cases-jp';
+import { CreateMessagesRequest } from 'generative-ai-use-cases';
 import { batchCreateMessages } from './repository';
 
 export const handler = async (

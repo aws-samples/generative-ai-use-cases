@@ -1,6 +1,6 @@
-// === 注意 ===
-// useRagKnowledgeBase.ts は #802 対応に伴い、deprecation となりました。
-// 現在 main ブランチのコードはこちらの hook を利用しておりません。
+// === Attention ===
+// useRagKnowledgeBase.ts is deprecated due to #802.
+// The code in the main branch is not using this hook.
 // ============
 
 import { useMemo } from 'react';
@@ -8,11 +8,12 @@ import useChat from './useChat';
 import useRagKnowledgeBaseApi from './useRagKnowledgeBaseApi';
 import { getPrompter } from '../prompts';
 import { RetrieveResultItem } from '@aws-sdk/client-kendra';
-import { ShownMessage } from 'generative-ai-use-cases-jp';
+import { ShownMessage } from 'generative-ai-use-cases';
 import { cleanEncode } from '../utils/URLUtils';
 import { arrangeItems } from './useRag';
+import { useTranslation } from 'react-i18next';
 
-// s3://<BUCKET>/<PREFIX> から https://s3.<REGION>.amazonaws.com/<BUCKET>/<PREFIX> に変換する
+// Convert s3://<BUCKET>/<PREFIX> to https://s3.<REGION>.amazonaws.com/<BUCKET>/<PREFIX>
 const convertS3UriToUrl = (s3Uri: string, region: string): string => {
   const result = /^s3:\/\/(?<bucketName>.+?)\/(?<prefix>.+)/.exec(s3Uri);
 
@@ -29,6 +30,8 @@ const convertS3UriToUrl = (s3Uri: string, region: string): string => {
 };
 
 const useRagKnowledgeBase = (id: string) => {
+  const { t } = useTranslation();
+
   const {
     getModelId,
     messages,
@@ -61,10 +64,7 @@ const useRagKnowledgeBase = (id: string) => {
       const modelRegion = import.meta.env.VITE_APP_MODEL_REGION!;
 
       pushMessage('user', content);
-      pushMessage(
-        'assistant',
-        'Knowledge Base から参考ドキュメントを取得中...'
-      );
+      pushMessage('assistant', t('rag.knowledgeBase.retrieving'));
 
       let retrievedItems = null;
 
@@ -75,8 +75,7 @@ const useRagKnowledgeBase = (id: string) => {
         popMessage();
         pushMessage(
           'assistant',
-          `Retrieve 時にエラーになりました。次の対応を検討してください。
-- cdk.json で指定した embeddingModelId のモデルが Amazon Bedrock (${modelRegion}) で有効になっているか確認`
+          t('rag.knowledgeBase.retrieveError', { region: modelRegion })
         );
         setLoading(false);
         return;
@@ -88,19 +87,13 @@ const useRagKnowledgeBase = (id: string) => {
         retrievedItems.data.retrievalResults.length === 0
       ) {
         popMessage();
-        pushMessage(
-          'assistant',
-          `参考ドキュメントが見つかりませんでした。次の対応を検討してください。
-- Knowledge Base のデータソースに対象のドキュメントが追加されているか確認する
-- Knowledge Base のデータソースが同期されているか確認する
-- 入力の表現を変更する`
-        );
+        pushMessage('assistant', t('rag.knowledgeBase.noDocuments'));
         setLoading(false);
         return;
       }
 
-      // Prompt を使いまわすために Amazon Kendra の retrieve item と同じ形式にする
-      // Knowledge Base のみを利用する場合は本来不要な処理
+      // For reusing the prompt, convert the format to the same as the Amazon Kendra retrieve item
+      // This processing is not needed for using only the Knowledge Base
       const retrievedItemsKendraFormat: RetrieveResultItem[] =
         retrievedItems.data.retrievalResults!.map((r, idx) => {
           const sourceUri =
@@ -138,27 +131,27 @@ const useRagKnowledgeBase = (id: string) => {
         content,
         false,
         (messages: ShownMessage[]) => {
-          // 前処理：Few-shot で参考にされてしまうため、過去ログから footnote を削除
+          // Preprocessing: Few-shot is used, so delete the footnote from the past logs
           return messages.map((message) => ({
             ...message,
             content: message.content
-              .replace(/\[\^0\]:[\s\S]*/s, '') // 文末の脚注を削除
-              .replace(/\[\^(\d+)\]/g, '') // 文中の脚注アンカーを削除
-              .trim(), // 前後の空白を削除
+              .replace(/\[\^0\]:[\s\S]*/s, '') // Delete the footnote at the end of the sentence
+              .replace(/\[\^(\d+)\]/g, '') // Delete the footnote anchor in the sentence
+              .trim(), // Delete the leading and trailing spaces
           }));
         },
         (message: string) => {
-          // 後処理：Footnote の付与
+          // Postprocessing: Add the footnote
           const footnote = items
             .map((item, idx) => {
-              // 参考にしたページ番号がある場合は、アンカーリンクとして設定する
+              // If there is a reference page number, set it as an anchor link
               const _excerpt_page_number = item.DocumentAttributes?.find(
                 (attr) => attr.Key === '_excerpt_page_number'
               )?.Value?.LongValue;
               return message.includes(`[^${idx}]`)
                 ? `[^${idx}]: [${item.DocumentTitle}${
                     _excerpt_page_number
-                      ? `(${_excerpt_page_number} ページ)`
+                      ? `(${_excerpt_page_number} ${t('rag.page')})`
                       : ''
                   }](
                   ${item.DocumentURI ? cleanEncode(item.DocumentURI) : ''}${

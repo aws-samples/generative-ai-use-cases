@@ -1,7 +1,7 @@
 import {
   RetrieveKnowledgeBaseRequest,
   RetrieveKnowledgeBaseResponse,
-} from 'generative-ai-use-cases-jp';
+} from 'generative-ai-use-cases';
 import useHttp from './useHttp';
 
 const useRagKnowledgeBaseApi = () => {

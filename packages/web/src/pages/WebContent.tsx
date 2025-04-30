@@ -18,6 +18,7 @@ import { MODELS } from '../hooks/useModel';
 import { getPrompter } from '../prompts';
 import queryString from 'query-string';
 import InputText from '../components/InputText';
+import { useTranslation } from 'react-i18next';
 
 type StateType = {
   url: string;
@@ -75,6 +76,7 @@ const useWebContentPageState = create<StateType>((set) => {
 });
 
 const WebContent: React.FC = () => {
+  const { t } = useTranslation();
   const {
     url,
     setUrl,
@@ -205,7 +207,7 @@ const WebContent: React.FC = () => {
   return (
     <div className="grid grid-cols-12">
       <div className="invisible col-span-12 my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-        Web コンテンツ抽出
+        {t('webcontent.title')}
       </div>
 
       <div className="col-span-12 col-start-1 mx-2 lg:col-span-10 lg:col-start-2 xl:col-span-10 xl:col-start-2">
@@ -213,18 +215,15 @@ const WebContent: React.FC = () => {
           <Alert
             severity="error"
             className="mb-3"
-            title="エラー"
+            title={t('common.error')}
             onDissmiss={() => {
               setShowError(false);
             }}>
-            指定した URL
-            にアクセスした際にエラーが発生しました。スクレイピングが禁止されているか
-            URL
-            が間違っている可能性があります。一時的な問題と思われる場合は、再実行してください。
+            {t('webcontent.error_message')}
           </Alert>
         )}
 
-        <Card label="コンテンツを抽出したい Web サイト">
+        <Card label={t('webcontent.website_to_extract')}>
           <div className="mb-2 flex w-full">
             <Select
               value={modelId}
@@ -236,13 +235,12 @@ const WebContent: React.FC = () => {
           </div>
 
           <div className="text-xs text-black/50">
-            ブログ、記事、ドキュメント等、テキストがメインコンテンツである Web
-            サイトを指定してください。そうでない場合、正常に出力されないことがあります。
+            {t('webcontent.instruction')}
           </div>
 
           <RowItem>
             <InputText
-              placeholder="URL を入力してください"
+              placeholder={t('webcontent.enter_url')}
               value={url}
               onChange={(value) => {
                 setUrl(value);
@@ -250,9 +248,9 @@ const WebContent: React.FC = () => {
             />
           </RowItem>
 
-          <ExpandableField label="追加コンテキスト" optional>
+          <ExpandableField label={t('webcontent.additional_context')} optional>
             <Textarea
-              placeholder="追加で考慮してほしい点を入力することができます（例: 要約して）"
+              placeholder={t('webcontent.additional_context_placeholder')}
               value={context}
               onChange={setContext}
             />
@@ -260,15 +258,17 @@ const WebContent: React.FC = () => {
 
           <div className="flex justify-end gap-3">
             {stopReason === 'max_tokens' && (
-              <Button onClick={continueGeneration}>続きを出力</Button>
+              <Button onClick={continueGeneration}>
+                {t('translate.continue_output')}
+              </Button>
             )}
 
             <Button outlined onClick={onClickClear} disabled={disabledExec}>
-              クリア
+              {t('common.clear')}
             </Button>
 
             <Button disabled={disabledExec} onClick={onClickExec}>
-              実行
+              {t('common.execute')}
             </Button>
           </div>
 
@@ -276,7 +276,7 @@ const WebContent: React.FC = () => {
             <Markdown>{typingTextOutput}</Markdown>
             {!loading && !fetching && content === '' && (
               <div className="text-gray-500">
-                抽出された文章がここに表示されます
+                {t('webcontent.result_placeholder')}
               </div>
             )}
             {(loading || fetching) && (
@@ -290,14 +290,18 @@ const WebContent: React.FC = () => {
           </div>
 
           <ExpandableField
-            label={`抽出前のテキスト (${
-              fetching ? '読み込み中...' : text === '' ? '未取得' : '取得済'
-            })`}
+            label={t('webcontent.original_text', {
+              status: fetching
+                ? t('webcontent.loading')
+                : text === ''
+                  ? t('webcontent.not_fetched')
+                  : t('webcontent.fetched'),
+            })}
             className="mt-2">
             <div className="rounded border border-black/30 p-1.5">
               {text === '' && (
                 <div className="text-gray-500">
-                  未取得です。URL を入力して実行ボタンを押してください。
+                  {t('webcontent.not_fetched_instruction')}
                 </div>
               )}
               {text}

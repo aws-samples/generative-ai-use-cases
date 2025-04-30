@@ -1,35 +1,37 @@
 {
   "compilerOptions": {
+    // Basic JavaScript output settings
     "target": "ES2020",
     "module": "commonjs",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "declaration": true,
+
+    // Strict type checking settings
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
+    "strictPropertyInitialization": false,
+
+    // Code quality and error checking
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": false,
+
+    // Source map settings
     "inlineSourceMap": true,
     "inlineSources": true,
+
+    // Other settings
     "experimentalDecorators": true,
-    "strictPropertyInitialization": false,
-    "typeRoots": [
-      "../../node_modules/@types"
-    ],
-    "types": [
-      "jest",
-      "node"
-    ]
+    "esModuleInterop": true,
+
+    // Type definition file settings
+    "typeRoots": ["../../node_modules/@types"],
+    "types": ["jest", "node"]
   },
-  "exclude": [
-    "node_modules",
-    "cdk.out"
-  ]
+  // Exclude files and directories
+  "exclude": ["node_modules", "cdk.out"]
 }

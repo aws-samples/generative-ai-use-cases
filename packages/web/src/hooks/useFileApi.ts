@@ -5,7 +5,7 @@ import {
   GetFileDownloadSignedUrlRequest,
   GetFileDownloadSignedUrlResponse,
   DeleteFileResponse,
-} from 'generative-ai-use-cases-jp';
+} from 'generative-ai-use-cases';
 import useHttp from './useHttp';
 import axios from 'axios';
 
@@ -51,7 +51,7 @@ const useFileApi = () => {
 
       const [filePrefix, anchorLink] = prefix.split('#');
 
-      // Signed URL を取得
+      // Get the signed URL
       const params: GetFileDownloadSignedUrlRequest = {
         bucketName: bucketName,
         filePrefix: decodeURIComponent(filePrefix),

@@ -18,7 +18,7 @@ import {
   CreateShareIdResponse,
   FindShareIdResponse,
   GetSharedChatResponse,
-} from 'generative-ai-use-cases-jp';
+} from 'generative-ai-use-cases';
 import {
   LambdaClient,
   InvokeWithResponseStreamCommand,
@@ -88,7 +88,7 @@ const useChatApi = () => {
       const res = await http.post(`chats/${chatId}/feedbacks`, req);
       return res.data;
     },
-    // Buffered Response (useTextToJson で利用)
+    // Buffered Response (used in useTextToJson)
     predict: async (req: PredictRequest): Promise<string> => {
       const res = await http.post<PredictResponse>('predict', req);
       return res.data;
@@ -97,7 +97,7 @@ const useChatApi = () => {
     predictStream: async function* (req: PredictRequest) {
       const token = (await fetchAuthSession()).tokens?.idToken?.toString();
       if (!token) {
-        throw new Error('認証されていません。');
+        throw new Error('Not authenticated');
       }
 
       const region = import.meta.env.VITE_APP_REGION;

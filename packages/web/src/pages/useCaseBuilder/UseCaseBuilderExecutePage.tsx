@@ -9,6 +9,7 @@ import { produce } from 'immer';
 import ModalDialog from '../../components/ModalDialog';
 import Button from '../../components/Button';
 import usePageTitle from '../../hooks/usePageTitle';
+import { useTranslation } from 'react-i18next';
 
 const UseCaseBuilderExecutePage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const UseCaseBuilderExecutePage: React.FC = () => {
   const [isOpenShareDialog, setIsOpenShareDialog] = useState(false);
   const [isOpenErrorDialog, setIsOpenErrorDialog] = useState(false);
   const { setPageTitle } = usePageTitle();
+  const { t } = useTranslation();
 
   const {
     useCase,
@@ -25,7 +27,7 @@ const UseCaseBuilderExecutePage: React.FC = () => {
   } = useUseCase(useCaseId);
   const { toggleFavorite, toggleShared } = useMyUseCases();
 
-  // ページタイトルの設定
+  // Set the page title
   useEffect(() => {
     setPageTitle(useCase?.title ?? '');
   }, [setPageTitle, useCase?.title]);
@@ -83,18 +85,16 @@ const UseCaseBuilderExecutePage: React.FC = () => {
       />
       <ModalDialog
         isOpen={isOpenErrorDialog}
-        title="アクセスエラー"
+        title={t('useCaseBuilder.accessError')}
         onClose={() => {}}>
         <div className="flex flex-col gap-2">
-          <div>
-            このユースケースは存在しないか、共有されていないユースケースです。
-          </div>
+          <div>{t('useCaseBuilder.notExistOrNotShared')}</div>
           <div className="flex justify-end gap-2">
             <Button
               onClick={() => {
                 navigate(`/use-case-builder`);
               }}>
-              TOP画面に戻る
+              {t('useCaseBuilder.returnToTop')}
             </Button>
           </div>
         </div>

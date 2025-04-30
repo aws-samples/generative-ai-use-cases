@@ -2,19 +2,20 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { IoIosClose, IoMdDownload } from 'react-icons/io';
 import { VscCode } from 'react-icons/vsc';
 import { LuNetwork } from 'react-icons/lu';
-import Markdown from './Markdown';
+import EditableMarkdown from './EditableMarkdown';
 import Button from './Button';
 import mermaid, { MermaidConfig } from 'mermaid';
 import { TbSvg, TbPng } from 'react-icons/tb';
+import { useTranslation } from 'react-i18next';
 
 const defaultConfig: MermaidConfig = {
-  // syntax error が dom node に勝手に追加されないようにする
+  // Prevent syntax error from being added to the dom node
   // https://github.com/mermaid-js/mermaid/pull/4359
   suppressErrorRendering: true,
-  securityLevel: 'loose', // SVGのレンダリングを許可
-  fontFamily: 'monospace', // フォントファミリーを指定
-  fontSize: 16, // フォントサイズを指定
-  htmlLabels: true, // HTMLラベルを許可
+  securityLevel: 'loose', // Allow SVG rendering
+  fontFamily: 'monospace', // Specify the font family
+  fontSize: 16, // Specify the font size
+  htmlLabels: true, // Allow HTML labels
 };
 mermaid.initialize(defaultConfig);
 interface MermaidProps {
@@ -23,31 +24,32 @@ interface MermaidProps {
 }
 
 export const Mermaid: React.FC<MermaidProps> = (props) => {
+  const { t } = useTranslation();
   const { code } = props;
   const [svgContent, setSvgContent] = useState<string>('');
 
   const render = useCallback(async () => {
     if (code) {
       try {
-        // 一意な ID を指定する必要あり
+        // It is necessary to specify a unique ID
         const { svg } = await mermaid.render(`m${crypto.randomUUID()}`, code);
-        // SVG文字列をパースしてDOMオブジェクトに変換
+        // Parse the SVG string to convert it to a DOM object
         const parser = new DOMParser();
         const doc = parser.parseFromString(svg, 'image/svg+xml');
         const svgElement = doc.querySelector('svg');
 
         if (svgElement) {
-          // SVG要素に必要な属性を設定
+          // Set the necessary attributes to the SVG element
           svgElement.setAttribute('width', '100%');
           svgElement.setAttribute('height', '100%');
           setSvgContent(svgElement.outerHTML);
         }
       } catch (error) {
         console.error(error);
-        setSvgContent('<div>Invalid syntax</div>');
+        setSvgContent(`<div>${t('diagram.invalid_syntax')}</div>`);
       }
     }
-  }, [code]);
+  }, [code, t]);
 
   useEffect(() => {
     render();
@@ -67,9 +69,14 @@ export const Mermaid: React.FC<MermaidProps> = (props) => {
 
 interface DiagramRendererProps {
   code: string;
+  handleMarkdownChange: (markdown: string) => void;
 }
 
-const DiagramRenderer: React.FC<DiagramRendererProps> = ({ code }) => {
+const DiagramRenderer: React.FC<DiagramRendererProps> = ({
+  code,
+  handleMarkdownChange,
+}) => {
+  const { t } = useTranslation();
   const [zoom, setZoom] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'diagram' | 'code'>('diagram');
 
@@ -99,7 +106,7 @@ const DiagramRenderer: React.FC<DiagramRendererProps> = ({ code }) => {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('SVG出力エラー: ', error);
+      console.error(t('diagram.svg_error'), error);
     }
   };
 
@@ -153,7 +160,7 @@ const DiagramRenderer: React.FC<DiagramRendererProps> = ({ code }) => {
       link.href = canvas.toDataURL('image/png', 1.0);
       link.click();
     } catch (error) {
-      console.error('PNG出力エラー: ', error);
+      console.error(t('diagram.png_error'), error);
     }
   };
 
@@ -162,7 +169,11 @@ const DiagramRenderer: React.FC<DiagramRendererProps> = ({ code }) => {
       <Button
         outlined
         onClick={type === 'SVG' ? downloadAsSVG : downloadAsPNG}
-        title={`${type}としてダウンロード`}
+        title={
+          type === 'SVG'
+            ? t('diagram.download_as_svg')
+            : t('diagram.download_as_png')
+        }
         className="cursor-pointer">
         <IoMdDownload className="text-base" />
         {type === 'SVG' ? (
@@ -176,7 +187,7 @@ const DiagramRenderer: React.FC<DiagramRendererProps> = ({ code }) => {
 
   return (
     <div className="relative flex flex-col">
-      {/* ダイアグラム図の上のヘッダー */}
+      {/* The header above the diagram */}
       <div className="mb-[12px] flex flex-row justify-between gap-1">
         <div className="flex gap-1">
           <DownloadButton type="SVG" />
@@ -188,19 +199,19 @@ const DiagramRenderer: React.FC<DiagramRendererProps> = ({ code }) => {
               ${viewMode === 'diagram' ? 'bg-gray-600 text-white' : 'text-gray-600'}`}
             onClick={() => setViewMode('diagram')}>
             <LuNetwork className="mr-1 text-lg" />
-            図を表示
+            {t('diagram.show_diagram')}
           </div>
           <div
             className={`m-1 ml-0 flex items-center rounded p-1
               ${viewMode === 'code' ? 'bg-gray-600 text-white' : 'text-gray-600'}`}
             onClick={() => setViewMode('code')}>
             <VscCode className="mr-1 text-lg" />
-            コードを表示
+            {t('diagram.show_code')}
           </div>
         </div>
       </div>
 
-      {/* ダイアグラム図の描画部分 */}
+      {/* The drawing part of the diagram */}
       <div className="relative">
         <div
           className={`${viewMode === 'diagram' ? 'visible opacity-100' : 'invisible absolute left-0 top-0 opacity-0'}`}>
@@ -208,11 +219,14 @@ const DiagramRenderer: React.FC<DiagramRendererProps> = ({ code }) => {
         </div>
         <div
           className={`${viewMode === 'code' ? 'visible opacity-100' : 'invisible absolute left-0 top-0 opacity-0'}`}>
-          <Markdown>{['```mermaid', code, '```'].join('\n')}</Markdown>
+          <EditableMarkdown
+            code={code}
+            handleMarkdownChange={handleMarkdownChange}
+          />
         </div>
       </div>
 
-      {/* ズーム時 */}
+      {/* When zooming */}
       {zoom && (
         <>
           <div

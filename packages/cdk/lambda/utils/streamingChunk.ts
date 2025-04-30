@@ -1,6 +1,6 @@
-import { StreamingChunk } from 'generative-ai-use-cases-jp';
+import { StreamingChunk } from 'generative-ai-use-cases';
 
-// JSONL 形式
+// JSONL Format
 export const streamingChunk = (chunk: StreamingChunk): string => {
   return JSON.stringify(chunk) + '\n';
 };

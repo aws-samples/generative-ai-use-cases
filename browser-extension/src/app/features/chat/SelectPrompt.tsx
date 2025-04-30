@@ -6,6 +6,7 @@ import Button from '../common/components/Button';
 import { PiCaretUp, PiCaretUpDown } from 'react-icons/pi';
 import { PromptSetting } from '../../../@types/settings';
 import PromptSettingItem from '../prompt-settings/PromptSettingItem';
+import { IconWrapper } from '../../components/IconWrapper';
 
 type Props = BaseProps & {
   selectedPromptId: string;
@@ -32,7 +33,10 @@ const SelectPrompt: React.FC<Props> = (props) => {
               setIsOpenContext(!isOpenContext);
             }}
           >
-            <PiCaretUp className={twMerge('transition', isOpenContext ? 'rotate-180' : '')} />
+            <IconWrapper
+              icon={PiCaretUp}
+              className={twMerge('transition', isOpenContext ? 'rotate-180' : '')}
+            />
             {selectedPrompt.systemContextTitle}
           </div>
         ) : (
@@ -42,7 +46,7 @@ const SelectPrompt: React.FC<Props> = (props) => {
         <Button
           className="m-1"
           outlined
-          icon={<PiCaretUpDown />}
+          icon={<IconWrapper icon={PiCaretUpDown} />}
           onClick={() => {
             setIsOpenSelect(!isOpenSelect);
           }}

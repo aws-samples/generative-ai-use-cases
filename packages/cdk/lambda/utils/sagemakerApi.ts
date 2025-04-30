@@ -4,7 +4,7 @@ import {
   InvokeEndpointWithResponseStreamCommand,
 } from '@aws-sdk/client-sagemaker-runtime';
 import { generatePrompt } from './prompter';
-import { ApiInterface, UnrecordedMessage } from 'generative-ai-use-cases-jp';
+import { ApiInterface, UnrecordedMessage } from 'generative-ai-use-cases';
 import { getSageMakerModelTemplate } from './models';
 import { streamingChunk } from './streamingChunk';
 
@@ -90,6 +90,9 @@ const sagemakerApi: ApiInterface = {
     }
   },
   generateImage: async () => {
+    throw new Error('Not Implemented');
+  },
+  generateVideo: async () => {
     throw new Error('Not Implemented');
   },
 };

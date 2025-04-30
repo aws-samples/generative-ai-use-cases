@@ -7,7 +7,7 @@ import {
   PiThumbsUpFill,
   PiThumbsDownFill,
 } from 'react-icons/pi';
-import { ShownMessage } from 'generative-ai-use-cases-jp';
+import { ShownMessage } from 'generative-ai-use-cases';
 
 type Props = BaseProps & {
   message: ShownMessage;

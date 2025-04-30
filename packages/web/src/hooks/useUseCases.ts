@@ -1,4 +1,4 @@
-import { HiddenUseCases, HiddenUseCasesKeys } from 'generative-ai-use-cases-jp';
+import { HiddenUseCases, HiddenUseCasesKeys } from 'generative-ai-use-cases';
 
 const hiddenUseCases: HiddenUseCases = JSON.parse(
   import.meta.env.VITE_APP_HIDDEN_USE_CASES

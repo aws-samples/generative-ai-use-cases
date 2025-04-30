@@ -7,6 +7,7 @@ import useInterUseCases from '../hooks/useInterUseCases';
 
 type Props = BaseProps & {
   text: string;
+  html?: string;
   interUseCasesKey?: string;
   disabled?: boolean;
 };
@@ -21,8 +22,17 @@ const ButtonCopy: React.FC<Props> = (props) => {
     }
   }, [props.interUseCasesKey, props.text, setCopyTemporary]);
 
-  const copyMessage = useCallback((message: string) => {
-    copy(message);
+  const copyMessage = useCallback((message: string, html?: string) => {
+    // Copy both text and html
+    copy(message, {
+      format: 'text/plain',
+      onCopy: (clipboardData) => {
+        if (html) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (clipboardData as any).setData('text/html', html);
+        }
+      },
+    });
     setshowsCheck(true);
 
     setTimeout(() => {
@@ -35,7 +45,7 @@ const ButtonCopy: React.FC<Props> = (props) => {
       className={`${props.className ?? ''}`}
       disabled={props.disabled}
       onClick={() => {
-        copyMessage(props.text);
+        copyMessage(props.text, props.html);
       }}>
       {showsCheck ? <PiCheck /> : <PiClipboard />}
     </ButtonIcon>

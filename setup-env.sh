@@ -37,6 +37,7 @@ export VITE_APP_SELF_SIGN_UP_ENABLED=$(extract_value "$stack_output" SelfSignUpE
 export VITE_APP_MODEL_REGION=$(extract_value "$stack_output" ModelRegion)
 export VITE_APP_MODEL_IDS=$(extract_value "$stack_output" ModelIds)
 export VITE_APP_IMAGE_MODEL_IDS=$(extract_value "$stack_output" ImageGenerateModelIds)
+export VITE_APP_VIDEO_MODEL_IDS=$(extract_value "$stack_output" VideoGenerateModelIds)
 export VITE_APP_ENDPOINT_NAMES=$(extract_value "$stack_output" EndpointNames)
 export VITE_APP_SAMLAUTH_ENABLED=$(extract_value "$stack_output" SamlAuthEnabled)
 export VITE_APP_SAML_COGNITO_DOMAIN_NAME=$(extract_value "$stack_output" SamlCognitoDomainName)

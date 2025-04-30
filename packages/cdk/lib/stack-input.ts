@@ -18,18 +18,27 @@ export const stackInputSchema = z.object({
     .object({
       generate: z.boolean().optional(),
       summarize: z.boolean().optional(),
-      editorial: z.boolean().optional(),
+      writer: z.boolean().optional(),
       translate: z.boolean().optional(),
       webContent: z.boolean().optional(),
       image: z.boolean().optional(),
       video: z.boolean().optional(),
+      videoAnalyzer: z.boolean().optional(),
       diagram: z.boolean().optional(),
     })
     .default({}),
   // API
   modelRegion: z.string().default('us-east-1'),
   modelIds: z
-    .array(z.string())
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          modelId: z.string(),
+          region: z.string(),
+        }),
+      ])
+    )
     .default([
       'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
       'us.anthropic.claude-3-5-haiku-20241022-v1:0',
@@ -38,12 +47,32 @@ export const stackInputSchema = z.object({
       'us.amazon.nova-micro-v1:0',
     ]),
   imageGenerationModelIds: z
-    .array(z.string())
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          modelId: z.string(),
+          region: z.string(),
+        }),
+      ])
+    )
     .default(['amazon.nova-canvas-v1:0']),
+  videoGenerationModelIds: z
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          modelId: z.string(),
+          region: z.string(),
+        }),
+      ])
+    )
+    .default(['amazon.nova-reel-v1:0']),
   endpointNames: z.array(z.string()).default([]),
   crossAccountBedrockRoleArn: z.string().nullish(),
   // RAG
   ragEnabled: z.boolean().default(false),
+  kendraIndexLanguage: z.string().default('ja'),
   kendraIndexArn: z.string().nullish(),
   kendraDataSourceBucketName: z.string().nullish(),
   kendraIndexScheduleEnabled: z.boolean().default(false),
@@ -65,12 +94,14 @@ export const stackInputSchema = z.object({
     .nullish(),
   // RAG KB
   ragKnowledgeBaseEnabled: z.boolean().default(false),
+  ragKnowledgeBaseId: z.string().nullish(),
   embeddingModelId: z.string().default('amazon.titan-embed-text-v2:0'),
   ragKnowledgeBaseStandbyReplicas: z.boolean().default(false),
   ragKnowledgeBaseAdvancedParsing: z.boolean().default(false),
   ragKnowledgeBaseAdvancedParsingModelId: z
     .string()
     .default('anthropic.claude-3-sonnet-20240229-v1:0'),
+  ragKnowledgeBaseBinaryVector: z.boolean().default(false),
   queryDecompositionEnabled: z.boolean().default(false),
   rerankingModelId: z.string().nullish(),
   // Agent
@@ -114,4 +145,27 @@ export const stackInputSchema = z.object({
   dashboard: z.boolean().default(false),
 });
 
+// schema after conversion
+export const processedStackInputSchema = stackInputSchema.extend({
+  modelIds: z.array(
+    z.object({
+      modelId: z.string(),
+      region: z.string(),
+    })
+  ),
+  imageGenerationModelIds: z.array(
+    z.object({
+      modelId: z.string(),
+      region: z.string(),
+    })
+  ),
+  videoGenerationModelIds: z.array(
+    z.object({
+      modelId: z.string(),
+      region: z.string(),
+    })
+  ),
+});
+
 export type StackInput = z.infer<typeof stackInputSchema>;
+export type ProcessedStackInput = z.infer<typeof processedStackInputSchema>;

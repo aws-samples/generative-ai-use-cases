@@ -3,20 +3,22 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
 import { Polly, SynthesizeSpeechCommand, VoiceId } from '@aws-sdk/client-polly';
+import { useTranslation } from 'react-i18next';
 
-// Engine=neural のものが指定可能
+// Only neural Engine is available
 // https://docs.aws.amazon.com/ja_jp/polly/latest/dg/available-voices.html
 const LanguageVoiceMapping: Record<string, VoiceId> = {
-  英語: 'Joanna',
-  日本語: 'Kazuha',
-  中国語: 'Zhiyu',
-  韓国語: 'Seoyeon',
-  フランス語: 'Lea',
-  スペイン語: 'Lucia',
-  ドイツ語: 'Vicki',
+  en: 'Joanna',
+  ja: 'Kazuha',
+  zh: 'Zhiyu',
+  ko: 'Seoyeon',
+  fr: 'Lea',
+  es: 'Lucia',
+  de: 'Vicki',
 };
 
 const useSpeach = (language: string) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [voiceId, setVoiceId] = useState<VoiceId>('Joanna');
 
@@ -38,7 +40,7 @@ const useSpeach = (language: string) => {
 
       if (!token) {
         setLoading(false);
-        throw new Error('認証されていません。');
+        throw new Error(t('common.notAuthenticated'));
       }
 
       const region = import.meta.env.VITE_APP_REGION;

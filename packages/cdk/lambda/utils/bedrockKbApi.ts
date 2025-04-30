@@ -15,12 +15,12 @@ import {
   ApiInterface,
   Model,
   UnrecordedMessage,
-} from 'generative-ai-use-cases-jp';
+} from 'generative-ai-use-cases';
 import {
   implicitFilters,
   hiddenStaticExplicitFilters,
   getDynamicFilters,
-} from '@generative-ai-use-cases-jp/common';
+} from '@generative-ai-use-cases/common';
 import { streamingChunk } from './streamingChunk';
 import { verifyToken } from './auth';
 
@@ -28,7 +28,7 @@ const agentRuntimeClient = new BedrockAgentRuntimeClient({
   region: process.env.MODEL_REGION,
 });
 
-// s3://<BUCKET>/<PREFIX> から https://s3.<REGION>.amazonaws.com/<BUCKET>/<PREFIX> に変換する
+// Convert s3://<BUCKET>/<PREFIX> to https://s3.<REGION>.amazonaws.com/<BUCKET>/<PREFIX>
 const convertS3UriToUrl = (s3Uri: string, region: string): string => {
   const result = /^s3:\/\/(?<bucketName>.+?)\/(?<prefix>.+)/.exec(s3Uri);
   if (result) {
@@ -41,7 +41,7 @@ const convertS3UriToUrl = (s3Uri: string, region: string): string => {
   return '';
 };
 
-// 文字列をURL-encodeする
+// Encode a string to URL
 const encodeUrlString = (str: string): string => {
   try {
     return encodeURIComponent(str);
@@ -127,7 +127,10 @@ const getOrchestrationConfig = (): OrchestrationConfiguration | undefined => {
   };
 };
 
-const bedrockKbApi: Pick<ApiInterface, 'invokeStream'> = {
+const bedrockKbApi: ApiInterface = {
+  invoke: async () => {
+    throw new Error('Not Implemented');
+  },
   invokeStream: async function* (
     model: Model,
     messages: UnrecordedMessage[],
@@ -184,7 +187,7 @@ const bedrockKbApi: Pick<ApiInterface, 'invokeStream'> = {
         };
       } = {};
 
-      // Citation が数文字あとに渡されることがあるため、10文字ほどバッファを設けて Citation を差し込む余裕を持たせる。
+      // Citation may be passed a few characters after, so provide a buffer of 10 characters to insert Citation.
       let buffer = '';
       let currentPosition = 0;
 
@@ -199,7 +202,7 @@ const bedrockKbApi: Pick<ApiInterface, 'invokeStream'> = {
           });
           currentPosition = newPosition;
         } else if (streamChunk.citation?.citation) {
-          // Citation end までバッファを進める
+          // Move the buffer to the Citation end
           const newPosition =
             (streamChunk.citation.citation.generatedResponsePart
               ?.textResponsePart?.span?.end || 0) + 1;
@@ -210,10 +213,10 @@ const bedrockKbApi: Pick<ApiInterface, 'invokeStream'> = {
             currentPosition = newPosition;
           }
 
-          // Reference を差し込む
+          // Insert Reference
           for (const ref of streamChunk.citation.citation.retrievedReferences ||
             []) {
-            // S3 URI を取得し URL に変換
+            // Get S3 URI and convert to URL
             const s3Uri = ref?.location?.s3Location?.uri || '';
             if (!s3Uri) continue;
             const url = convertS3UriToUrl(
@@ -221,7 +224,7 @@ const bedrockKbApi: Pick<ApiInterface, 'invokeStream'> = {
               process.env.MODEL_REGION || ''
             );
 
-            // ページ番号を取得
+            // Get page number
             const pageNumber = ref?.metadata?.[
               'x-amz-bedrock-kb-document-page-number'
             ] as string | undefined;
@@ -233,7 +236,7 @@ const bedrockKbApi: Pick<ApiInterface, 'invokeStream'> = {
             // Build URL including page number for PDF
             const refUrl = `${url.replace(fileName, encodedFileName)}${pageNumber ? `#page=${pageNumber}` : ''}`;
 
-            // データソースがユニークであれば Reference 追加
+            // If the data source is unique, add Reference
             if (sources[refUrl] === undefined) {
               sources[refUrl] = {
                 refId: Object.keys(sources).length,
@@ -242,23 +245,23 @@ const bedrockKbApi: Pick<ApiInterface, 'invokeStream'> = {
                 pageNumber: pageNumber,
               };
             }
-            // Reference の参照番号を追加
+            // Add Reference number
             const body = `[^${sources[refUrl].refId}]`;
             yield streamingChunk({ text: body });
           }
         }
       }
-      // 最後まで出力
+      // Output to the end
       if (buffer.length > currentPosition) {
         yield streamingChunk({ text: buffer.slice(currentPosition) });
         currentPosition = buffer.length;
       }
-      // 文末に Reference 追加
+      // Add Reference at the end
       for (const [url, { refId, ref, fileName, pageNumber }] of Object.entries(
         sources
       )) {
         const referenceText = `\n[^${refId}]: [${ref.metadata?.['title'] || fileName}${
-          pageNumber ? `(${pageNumber} ページ)` : ''
+          pageNumber ? `(${pageNumber} page)` : ''
         }](${url})`;
 
         yield streamingChunk({ text: referenceText });
@@ -269,25 +272,31 @@ const bedrockKbApi: Pick<ApiInterface, 'invokeStream'> = {
         e instanceof ServiceQuotaExceededException
       ) {
         yield streamingChunk({
-          text: 'ただいまアクセスが集中しているため時間をおいて試してみてください。',
+          text: 'The server is currently experiencing high access. Please try again later.',
           stopReason: 'error',
         });
       } else if (e instanceof DependencyFailedException) {
         const modelAccessURL = `https://${process.env.MODEL_REGION}.console.aws.amazon.com/bedrock/home?region=${process.env.MODEL_REGION}#/modelaccess`;
         yield streamingChunk({
-          text: `選択したモデルが有効化されていないようです。[Bedrock コンソールの Model Access 画面](${modelAccessURL})にて、利用したいモデルを有効化してください。`,
+          text: `The selected model is not enabled. Please enable the model in the [Bedrock console Model Access screen](${modelAccessURL}).`,
           stopReason: 'error',
         });
       } else {
         console.error(e);
         yield streamingChunk({
           text:
-            'エラーが発生しました。管理者に以下のエラーを報告してください。\n' +
+            'An error occurred. Please report the following error to the administrator.\n' +
             e,
           stopReason: 'error',
         });
       }
     }
+  },
+  generateImage: async () => {
+    throw new Error('Not Implemented');
+  },
+  generateVideo: async () => {
+    throw new Error('Not Implemented');
   },
 };
 

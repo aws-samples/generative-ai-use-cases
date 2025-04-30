@@ -14,6 +14,7 @@ import { SummarizePageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import { getPrompter } from '../prompts';
 import queryString from 'query-string';
+import { useTranslation } from 'react-i18next';
 
 type StateType = {
   sentence: string;
@@ -55,6 +56,7 @@ const useSummarizePageState = create<StateType>((set) => {
 });
 
 const SummarizePage: React.FC = () => {
+  const { t } = useTranslation();
   const {
     sentence,
     setSentence,
@@ -121,7 +123,7 @@ const SummarizePage: React.FC = () => {
     );
   };
 
-  // リアルタイムにレスポンスを表示
+  // Display the response in real time
   useEffect(() => {
     if (messages.length === 0) return;
     const _lastMessage = messages[messages.length - 1];
@@ -131,14 +133,14 @@ const SummarizePage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
-  // 要約を実行
+  // Execute summary
   const onClickExec = useCallback(() => {
     if (loading) return;
     getSummary(sentence, additionalContext);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sentence, additionalContext, loading]);
 
-  // リセット
+  // Reset
   const onClickClear = useCallback(() => {
     clear();
     clearChat();
@@ -148,10 +150,10 @@ const SummarizePage: React.FC = () => {
   return (
     <div className="grid grid-cols-12">
       <div className="invisible col-span-12 my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-        要約
+        {t('summarize.title')}
       </div>
       <div className="col-span-12 col-start-1 mx-2 lg:col-span-10 lg:col-start-2 xl:col-span-10 xl:col-start-2">
-        <Card label="要約したい文章">
+        <Card label={t('summarize.text_to_summarize')}>
           <div className="mb-2 flex w-full">
             <Select
               value={modelId}
@@ -163,15 +165,15 @@ const SummarizePage: React.FC = () => {
           </div>
 
           <Textarea
-            placeholder="入力してください"
+            placeholder={t('summarize.enter_text')}
             value={sentence}
             onChange={setSentence}
             maxHeight={-1}
           />
 
-          <ExpandableField label="追加コンテキスト" optional>
+          <ExpandableField label={t('summarize.additional_context')} optional>
             <Textarea
-              placeholder="追加で考慮してほしい点を入力することができます（カジュアルさ等）"
+              placeholder={t('summarize.additional_context_placeholder')}
               value={additionalContext}
               onChange={setAdditionalContext}
             />
@@ -179,11 +181,11 @@ const SummarizePage: React.FC = () => {
 
           <div className="flex justify-end gap-3">
             <Button outlined onClick={onClickClear} disabled={disabledExec}>
-              クリア
+              {t('common.clear')}
             </Button>
 
             <Button disabled={disabledExec} onClick={onClickExec}>
-              実行
+              {t('common.execute')}
             </Button>
           </div>
 
@@ -191,7 +193,7 @@ const SummarizePage: React.FC = () => {
             <Markdown>{typingTextOutput}</Markdown>
             {!loading && summarizedSentence === '' && (
               <div className="text-gray-500">
-                要約された文章がここに表示されます
+                {t('summarize.result_placeholder')}
               </div>
             )}
             {loading && (

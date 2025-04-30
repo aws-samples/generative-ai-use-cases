@@ -9,31 +9,31 @@ const useTyping = (typing?: boolean) => {
 
   useEffect(() => {
     if (typing) {
-      // アニメーション開始時
+      // When the animation starts
       if (!animating) {
         setAnimating(true);
       }
     } else {
-      // アニメーション完了時 or 最初からアニメーションがないと指定された時
+      // When the animation is completed or when the animation is not specified from the beginning
       if (!animating) {
         setCurrentIndex(0);
       }
     }
   }, [typing, animating, setAnimating, setCurrentIndex]);
 
-  // 入力が必要な残りの文字列数
+  // The number of remaining characters that need to be input
   const remainingTextLength = useMemo(() => {
     return typingTextInput.length - currentIndex;
   }, [currentIndex, typingTextInput]);
 
-  // 一度に入力する文字列の単位
+  // The unit of the number of characters to input at a time
   const inputUnit = useMemo(() => {
-    // タイピング中は残りの文字列数に応じて入力文字列数を変化させる
-    // 入力文字数の単位は最大でも 10 文字とする
+    // If typing, change the number of input characters according to the number of remaining characters
+    // The unit of the number of input characters is at most 10 characters
     if (typing) {
       return Math.min(Math.floor(remainingTextLength / 10) + 1, 10);
     } else {
-      // タイピング中ではない場合は 10 文字を 1 単位で入力する (最速で入力する)
+      // If not typing, input 10 characters at a time (the fastest input)
       return 10;
     }
   }, [typing, remainingTextLength]);
@@ -44,7 +44,7 @@ const useTyping = (typing?: boolean) => {
         if (currentIndex < typingTextInput.length + 1) {
           setCurrentIndex(currentIndex + inputUnit);
         } else {
-          // 入力文字列の末尾に追いついた時に typing が false になっていたらアニメーションを終了
+          // When the input string reaches the end, if typing is false, end the animation
           if (!typing) {
             setAnimating(false);
           }
@@ -67,7 +67,7 @@ const useTyping = (typing?: boolean) => {
     if (animating) {
       return typingTextInput.slice(0, currentIndex);
     } else {
-      // animating が false の場合は typingTextInput をそのまま返す
+      // If animating is false, return typingTextInput as is
       return typingTextInput;
     }
   }, [typingTextInput, currentIndex, animating]);

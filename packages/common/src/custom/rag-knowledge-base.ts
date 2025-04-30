@@ -2,29 +2,29 @@ import {
   MetadataAttributeSchema,
   RetrievalFilter,
 } from '@aws-sdk/client-bedrock-agent-runtime';
-import { ExplicitFilterConfiguration } from 'generative-ai-use-cases-jp';
+import { ExplicitFilterConfiguration } from 'generative-ai-use-cases';
 import { CognitoIdTokenPayload } from 'aws-jwt-verify/jwt-model';
 
 /*
  * This file is used to define filters for the knowledge base. Feel free to uncomment the filters and customize them to suit your needs.
- * このファイルは、Knowledge Basesフィルタを定義するために使用されます。フィルタをコメントアウトして、必要に応じてカスタマイズしてください。
  *
- * サンプルのファイル (packages/cdk/rag-docs/docs) の metadata.json を参考にドキュメントのメタデータを事前に定義し、メタデータに合わせたフィルタを以下で定義してください。
+ * Please refer to the metadata.json in the sample file (packages/cdk/rag-docs/docs) and define the document metadata accordingly.
  */
 
 // Dynamic Filter
 // Filter automatically applied by user attribute
-// ユーザー属性によって自動的に適用されるフィルタを定義する
+// The filter automatically applied by the user attribute is defined here.
 export const getDynamicFilters = (
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _idTokenPayload: CognitoIdTokenPayload
 ): RetrievalFilter[] => {
   const dynamicFilters: RetrievalFilter[] = [];
 
   // Example 1: Filter by cognito user group
-  // Cognito のユーザーグループによってフィルタを適用する
+  // Apply the filter by the Cognito user group
 
   // const groups = idTokenPayload['cognito:groups'];
-  // if (!groups) throw new Error('cognito:groups is not set'); // Group が設定されていない場合はアクセスできずにエラーにする
+  // if (!groups) throw new Error('cognito:groups is not set'); // If the group is not set, it will not be accessible and an error will be thrown
   // const groupFilter: RetrievalFilter = {
   //   in: {
   //     key: 'group',
@@ -34,14 +34,14 @@ export const getDynamicFilters = (
   // dynamicFilters.push(groupFilter);
 
   // Example 2: Filter by SAML IdP group custom attribute (Check steps to setup attribute mapping in docs/SAML_WITH_ENTRA_ID.md)
-  // SAML IdP グループのカスタム属性によってフィルタを適用する
-  // カスタム属性の設定方法は docs/SAML_WITH_ENTRA_ID.md を参照してください
+  // Apply the filter by the SAML IdP group custom attribute
+  // Please refer to docs/SAML_WITH_ENTRA_ID.md for the setup method of the custom attribute
 
-  // const groups = (idTokenPayload['custom:idpGroup'] as string) // group を string で保持している (i.e. [group1id, group2id])
-  //   .slice(1, -1) // 先頭と末尾の括弧を削除
-  //   .split(/, ?/) // カンマとスペースで分割
-  //   .filter(Boolean); // 空文字列を除去;
-  // if (!groups) throw new Error('custom:idpGroup is not set'); // Group が設定されていない場合はアクセスできずにエラーにする
+  // const groups = (idTokenPayload['custom:idpGroup'] as string) // group is kept as a string (i.e. [group1id, group2id])
+  //   .slice(1, -1) // Remove the first and last parentheses
+  //   .split(/, ?/) // Split by comma and space
+  //   .filter(Boolean); // Remove empty strings;
+  // if (!groups) throw new Error('custom:idpGroup is not set'); // If the group is not set, it will not be accessible and an error will be thrown
   // const groupFilter: RetrievalFilter = {
   //   in: {
   //     key: 'group',
@@ -55,7 +55,7 @@ export const getDynamicFilters = (
 
 // Implicit Filter
 // Parsed by AI, not shown to user (Claude Sonnet 3.5 is used and may cause throttling error)
-// AI によって解析されリクエストに応じてフィルタを自動で適用します。その際に適用可能なフィルタを定義します。 (Claude Sonnet 3.5 が使用されます。スロットリングエラーが発生する可能性があります)
+// Apply filters automatically by AI based on the request (Claude Sonnet 3.5 is used. It may cause throttling error)
 export const implicitFilters: MetadataAttributeSchema[] = [
   // Example 1: Filter by year
   // {
@@ -68,7 +68,7 @@ export const implicitFilters: MetadataAttributeSchema[] = [
 
 // Hidden Static Explicit Filter
 // Filter not shown to user (i.e. application level permission, pool tenant)
-// ユーザーには表示されないフィルタを定義する (i.e. アプリケーションレベルの権限, プールテナント)
+// Define filters that are not shown to user (i.e. application level permission, pool tenant)
 export const hiddenStaticExplicitFilters: RetrievalFilter[] = [
   // Example 1: Filter by data classification
   // {
@@ -89,15 +89,15 @@ export const hiddenStaticExplicitFilters: RetrievalFilter[] = [
 
 // User Defined Explicit Filter
 // Filter shown to user on application
-// ユーザーが UI 上で選択できるフィルタを定義する
-// サンプルファイル (packages/cdk/rag-docs/docs) で定義されている metadata.json に合わせて定義しています。
+// Define filters that user can select on the application
+// The sample file (packages/cdk/rag-docs/docs) defines the metadata.json accordingly.
 export const userDefinedExplicitFilters: ExplicitFilterConfiguration[] = [
   // Example 1: Filter by category (string match)
   {
     key: 'category',
     type: 'STRING',
     options: [{ value: 'AWS', label: 'AWS' }],
-    description: 'カテゴリ',
+    description: 'Category',
   },
 
   // Example 2: Filter by tag (string list)
@@ -109,14 +109,14 @@ export const userDefinedExplicitFilters: ExplicitFilterConfiguration[] = [
       { value: 'Amazon Bedrock', label: 'Amazon Bedrock' },
       { value: 'Amazon SageMaker', label: 'Amazon SageMaker' },
     ],
-    description: 'タグ',
+    description: 'Tag',
   },
 
   // Example 3: Filter by year (number)
   {
     key: 'year',
     type: 'NUMBER',
-    description: '年',
+    description: 'Year',
   },
 
   // Example 4: Filter by is_public (boolean)
@@ -124,10 +124,21 @@ export const userDefinedExplicitFilters: ExplicitFilterConfiguration[] = [
     key: 'is_public',
     type: 'BOOLEAN',
     options: [
-      { value: 'true', label: '公開' },
-      { value: 'false', label: '非公開' },
+      { value: 'true', label: 'Public' },
+      { value: 'false', label: 'Private' },
     ],
-    description: '公開',
+    description: 'Public',
+  },
+
+  // Example 5: Filter by language (string match)
+  {
+    key: 'language',
+    type: 'STRING',
+    options: [
+      { value: 'en', label: 'English' },
+      { value: 'ja', label: 'Japanese' },
+    ],
+    description: 'Language',
   },
 
   // Customize Here

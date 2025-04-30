@@ -1,8 +1,8 @@
 {
-    "name": "@generative-ai-use-cases-jp/common",
-    "private": true,
-    "main": "src/index.ts",
-    "dependencies": {
-        "aws-jwt-verify": "^4.0.0"
-    }
+  "name": "@generative-ai-use-cases/common",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "aws-jwt-verify": "^4.0.0"
+  }
 }

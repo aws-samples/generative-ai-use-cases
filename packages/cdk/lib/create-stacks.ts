@@ -6,7 +6,8 @@ import { DashboardStack } from './dashboard-stack';
 import { AgentStack } from './agent-stack';
 import { RagKnowledgeBaseStack } from './rag-knowledge-base-stack';
 import { GuardrailStack } from './guardrail-stack';
-import { StackInput } from './stack-input';
+import { ProcessedStackInput } from './stack-input';
+import { VideoTmpBucketStack } from './video-tmp-bucket-stack';
 
 class DeletionPolicySetter implements cdk.IAspect {
   constructor(private readonly policy: cdk.RemovalPolicy) {}
@@ -18,10 +19,10 @@ class DeletionPolicySetter implements cdk.IAspect {
   }
 }
 
-export const createStacks = (app: cdk.App, params: StackInput) => {
+export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
   // CloudFront WAF
-  // IP アドレス範囲(v4もしくはv6のいずれか)か地理的制限が定義されている場合のみ、CloudFrontWafStack をデプロイする
-  // WAF v2 は us-east-1 でのみデプロイ可能なため、Stack を分けている
+  // Only deploy CloudFrontWafStack if IP address range (v4 or v6) or geographic restriction is defined
+  // WAF v2 is only deployable in us-east-1, so the Stack is separated
   const cloudFrontWafStack =
     params.allowedIpV4AddressRanges ||
     params.allowedIpV6AddressRanges ||
@@ -38,16 +39,17 @@ export const createStacks = (app: cdk.App, params: StackInput) => {
       : null;
 
   // RAG Knowledge Base
-  const ragKnowledgeBaseStack = params.ragKnowledgeBaseEnabled
-    ? new RagKnowledgeBaseStack(app, `RagKnowledgeBaseStack${params.env}`, {
-        env: {
-          account: params.account,
-          region: params.modelRegion,
-        },
-        params: params,
-        crossRegionReferences: true,
-      })
-    : null;
+  const ragKnowledgeBaseStack =
+    params.ragKnowledgeBaseEnabled && !params.ragKnowledgeBaseId
+      ? new RagKnowledgeBaseStack(app, `RagKnowledgeBaseStack${params.env}`, {
+          env: {
+            account: params.account,
+            region: params.modelRegion,
+          },
+          params: params,
+          crossRegionReferences: true,
+        })
+      : null;
 
   // Agent
   const agentStack = params.agentEnabled
@@ -72,8 +74,29 @@ export const createStacks = (app: cdk.App, params: StackInput) => {
       })
     : null;
 
-  // GenU Stack
+  // Create S3 Bucket for each unique region for StartAsyncInvoke in video generation
+  // because the S3 Bucket must be in the same region as Bedrock Runtime
+  const videoModelRegions = params.videoGenerationModelIds
+    .map((model) => model.region)
+    .filter((elem, index, self) => self.indexOf(elem) === index);
+  const videoBucketRegionMap: Record<string, string> = {};
 
+  for (const region of videoModelRegions) {
+    const videoTmpBucketStack = new VideoTmpBucketStack(
+      app,
+      `VideoTmpBucketStack${params.env}${region}`,
+      {
+        env: {
+          account: params.account,
+          region,
+        },
+      }
+    );
+
+    videoBucketRegionMap[region] = videoTmpBucketStack.bucketName;
+  }
+
+  // GenU Stack
   const generativeAiUseCasesStack = new GenerativeAiUseCasesStack(
     app,
     `GenerativeAiUseCasesStack${params.env}`,
@@ -83,7 +106,7 @@ export const createStacks = (app: cdk.App, params: StackInput) => {
         region: params.region,
       },
       description: params.anonymousUsageTracking
-        ? 'Generative AI Use Cases JP (uksb-1tupboc48)'
+        ? 'Generative AI Use Cases (uksb-1tupboc48)'
         : undefined,
       params: params,
       crossRegionReferences: true,
@@ -93,6 +116,8 @@ export const createStacks = (app: cdk.App, params: StackInput) => {
         ragKnowledgeBaseStack?.dataSourceBucketName,
       // Agent
       agents: agentStack?.agents,
+      // Video Generation
+      videoBucketRegionMap,
       // Guardrail
       guardrailIdentifier: guardrail?.guardrailIdentifier,
       guardrailVersion: 'DRAFT',

@@ -1,4 +1,4 @@
-import { PromptTemplate, UnrecordedMessage } from 'generative-ai-use-cases-jp';
+import { PromptTemplate, UnrecordedMessage } from 'generative-ai-use-cases';
 
 export const generatePrompt = (
   pt: PromptTemplate,

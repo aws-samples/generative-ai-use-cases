@@ -6,25 +6,40 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
     'plugin:tailwindcss/recommended',
+    'plugin:yml/standard',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh'],
+  overrides: [
+    {
+      files: ['*.yaml', '*.yml'],
+      parser: 'yaml-eslint-parser',
+    },
+  ],
+  plugins: ['react-refresh', 'i18nhelper', '@shopify', 'yml'],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },
     ],
-    // Prettire で実施するので ESLint の Rule は無効化
+    // Disable ESLint rules because Prettier will handle them
     'tailwindcss/classnames-order': ['off'],
-    // x-screen h-screen を size-screen と書くという指示が出るが
-    // size-screen は存在しないというバグがあるためこちらのルールは一時的に無効化する
+    // There is a bug that x-screen h-screen is written as size-screen, but size-screen does not exist.
+    // So this rule is temporarily disabled.
     // https://github.com/francoismassart/eslint-plugin-tailwindcss/issues/307
     'tailwindcss/enforces-shorthand': ['off'],
+    // Detect Japanese strings
+    'i18nhelper/no-jp-string': 'warn',
+    'i18nhelper/no-jp-comment': 'warn',
+    // Apply JSX rules
+    '@shopify/jsx-no-hardcoded-content': 'warn',
+    // Yaml
+    'yml/sort-keys': 'error',
+    'yml/quotes': ['error', { prefer: 'single', avoidEscape: true }],
   },
   settings: {
     tailwindcss: {
-      // 以下の Warning 対策
+      // The following warnings are suppressed
       // Classname 'w-' is not a Tailwind CSS class!
       // Classname 'h-' is not a Tailwind CSS class!
       whitelist: ['w-', 'h-'],

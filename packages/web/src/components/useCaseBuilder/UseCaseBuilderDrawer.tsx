@@ -7,6 +7,7 @@ import ExpandableMenu from '../ExpandableMenu';
 import useMyUseCases from '../../hooks/useCaseBuilder/useMyUseCases';
 import CustomUseCaseDrawerItems from './CustomUseCaseDrawerItems';
 import Switch from '../Switch';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   items: DrawerItemProps[];
@@ -14,6 +15,7 @@ type Props = BaseProps & {
 
 const UseCaseBuilderDrawer: React.FC<Props> = (props) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const {
     favoriteUseCases,
@@ -34,15 +36,17 @@ const UseCaseBuilderDrawer: React.FC<Props> = (props) => {
     <DrawerBase builderMode>
       <div className="flex-none">
         <Switch
-          className="mx-3 mb-1 mt-3"
-          label="ビルダーモード"
+          className="mx-3 my-2"
+          label={t('useCaseBuilder.builderMode')}
           checked
           onSwitch={() => {
             navigate('/');
           }}
         />
         <div className="border-b" />
-        <div className="text-aws-smile mx-3 my-1 text-xs">メインメニュー</div>
+        <div className="text-aws-smile mx-3 my-1 text-xs">
+          {t('useCaseBuilder.mainMenu')}
+        </div>
         {items.map((item, idx) => (
           <DrawerItem
             key={idx}
@@ -56,7 +60,9 @@ const UseCaseBuilderDrawer: React.FC<Props> = (props) => {
         <div className="mt-2 border-b" />
       </div>
 
-      <ExpandableMenu title="お気に入り" className="mx-3 my-2 text-xs">
+      <ExpandableMenu
+        title={t('useCaseBuilder.favorites')}
+        className="mx-3 my-2 text-xs">
         <div className="scrollbar-thin scrollbar-thumb-white ml-2 mr-1 h-full overflow-y-auto">
           <div>
             <CustomUseCaseDrawerItems useCases={favoriteUseCases} />
@@ -73,7 +79,7 @@ const UseCaseBuilderDrawer: React.FC<Props> = (props) => {
                 <button
                   className="text-sm hover:underline"
                   onClick={loadMoreFavoriteUseCases}>
-                  さらに読み込む
+                  {t('useCaseBuilder.loadMore')}
                 </button>
               </div>
             )}
@@ -82,7 +88,9 @@ const UseCaseBuilderDrawer: React.FC<Props> = (props) => {
       </ExpandableMenu>
       <div className="border-b" />
 
-      <ExpandableMenu title="利用履歴" className="mx-3 my-2 text-xs">
+      <ExpandableMenu
+        title={t('useCaseBuilder.recentlyUsed')}
+        className="mx-3 my-2 text-xs">
         <div className="scrollbar-thin scrollbar-thumb-white ml-2 mr-1 h-full overflow-y-auto">
           <div>
             <CustomUseCaseDrawerItems useCases={recentlyUsedUseCases} />
@@ -100,7 +108,7 @@ const UseCaseBuilderDrawer: React.FC<Props> = (props) => {
                   <button
                     className="text-sm hover:underline"
                     onClick={loadMoreRecentlyUsedUseCases}>
-                    さらに読み込む
+                    {t('useCaseBuilder.loadMore')}
                   </button>
                 </div>
               )}

@@ -15,8 +15,10 @@ import PopupInterUseCasesDemo from './components/PopupInterUseCasesDemo';
 import useInterUseCases from './hooks/useInterUseCases';
 import UseCaseBuilderDrawer from './components/useCaseBuilder/UseCaseBuilderDrawer';
 import usePageTitle from './hooks/usePageTitle';
+import { useTranslation } from 'react-i18next';
 
 const UseCaseBuilderRoot: React.FC = () => {
+  const { t } = useTranslation();
   const { switchOpen: switchDrawer, opened: isOpenDrawer } = useDrawer();
   const { isShow } = useInterUseCases();
   const { pathname } = useLocation();
@@ -26,25 +28,25 @@ const UseCaseBuilderRoot: React.FC = () => {
     () =>
       [
         {
-          label: 'サンプル集',
+          label: t('useCaseBuilder.samples'),
           to: '/use-case-builder',
           icon: <PiSwatches />,
           display: 'usecase' as const,
         },
         {
-          label: 'マイユースケース',
+          label: t('useCaseBuilder.myUseCases'),
           to: `/use-case-builder/my-use-case`,
           icon: <PiListDashes />,
           display: 'usecase' as const,
         },
         {
-          label: '新規作成',
+          label: t('useCaseBuilder.createNew'),
           to: `/use-case-builder/new`,
           icon: <PiNotePencil />,
           display: 'usecase' as const,
         },
       ].flatMap((i) => (i !== null ? [i] : [])),
-    []
+    [t]
   );
 
   const label = useMemo(() => {
@@ -71,7 +73,7 @@ const UseCaseBuilderRoot: React.FC = () => {
 
           <div className="line-clamp-1">{label}</div>
 
-          {/* label を真ん中にするためのダミーのブロック */}
+          {/* Dummy block to center the label */}
           <div className="w-10" />
         </header>
 
@@ -95,7 +97,7 @@ const UseCaseBuilderRoot: React.FC = () => {
           </ButtonIcon>
         </div>
         <div className="text-aws-font-color lg:ml-64">
-          {/* ユースケース間連携時に表示 */}
+          {/* Show when inter-use case connection is enabled */}
           {isShow && <PopupInterUseCasesDemo />}
           <Outlet />
         </div>

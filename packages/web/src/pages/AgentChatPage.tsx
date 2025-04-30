@@ -14,7 +14,8 @@ import { getPrompter } from '../prompts';
 import { v4 as uuidv4 } from 'uuid';
 import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
-import { FileLimit } from 'generative-ai-use-cases-jp';
+import { FileLimit } from 'generative-ai-use-cases';
+import { useTranslation } from 'react-i18next';
 
 const fileLimit: FileLimit = {
   accept: {
@@ -67,6 +68,7 @@ const useChatPageState = create<StateType>((set) => {
 });
 
 const AgentChatPage: React.FC = () => {
+  const { t } = useTranslation();
   const { sessionId, content, setContent, setSessionId } = useChatPageState();
   const { pathname, search } = useLocation();
   const { agentName } = useParams();
@@ -107,9 +109,9 @@ const AgentChatPage: React.FC = () => {
     if (agentName) {
       return agentName;
     } else {
-      return 'Agent チャット';
+      return t('agent.title');
     }
-  }, [agentName]);
+  }, [agentName, t]);
 
   useEffect(() => {
     if (agentName) {
@@ -176,23 +178,23 @@ const AgentChatPage: React.FC = () => {
   }, [messages]);
 
   const handleDragOver = (event: React.DragEvent) => {
-    // ファイルドラッグ時にオーバーレイを表示
+    // When a file is dragged, display the overlay
     event.preventDefault();
     setIsOver(true);
   };
 
   const handleDragLeave = (event: React.DragEvent) => {
-    // ファイルドラッグ時にオーバーレイを非表示
+    // When a file is dragged, hide the overlay
     event.preventDefault();
     setIsOver(false);
   };
 
   const handleDrop = (event: React.DragEvent) => {
-    // ファイルドロップ時にファイルを追加
+    // When a file is dropped, add the file
     event.preventDefault();
     setIsOver(false);
     if (event.dataTransfer.files) {
-      // ファイルを反映しアップロード
+      // Reflect the file and upload it
       uploadFiles(
         Array.from(event.dataTransfer.files),
         fileLimit,
@@ -216,9 +218,7 @@ const AgentChatPage: React.FC = () => {
             onDrop={handleDrop}
             className="fixed bottom-0 left-0 right-0 top-0 z-[999] bg-slate-300 p-10 text-center">
             <div className="flex h-full w-full items-center justify-center outline-dashed">
-              <div className="font-bold">
-                ファイルをドロップしてアップロード
-              </div>
+              <div className="font-bold">{t('agent.drop_files')}</div>
             </div>
           </div>
         )}

@@ -8,6 +8,7 @@ import ScrollTopBottom from '../components/ScrollTopBottom';
 import useFollow from '../hooks/useFollow';
 import { create } from 'zustand';
 import BedrockIcon from '../assets/bedrock.svg?react';
+import { useTranslation } from 'react-i18next';
 
 type StateType = {
   content: string;
@@ -26,6 +27,7 @@ const useFlowChatPageState = create<StateType>((set) => {
 });
 
 const FlowChatPage: React.FC = () => {
+  const { t } = useTranslation();
   const { content, setContent } = useFlowChatPageState();
   const { chatId } = useParams();
 
@@ -63,7 +65,7 @@ const FlowChatPage: React.FC = () => {
   return (
     <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
       <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-        Flow チャット
+        {t('flow.title')}
       </div>
 
       <div className="mt-2 flex w-full items-end justify-center lg:mt-0">

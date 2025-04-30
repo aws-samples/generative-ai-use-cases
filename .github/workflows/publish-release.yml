@@ -1,0 +1,53 @@
+name: Publish Release
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  publish-release:
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'new-release'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get and publish latest draft release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: releases } = await github.rest.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const draftRelease = releases.find(release => release.draft === true);
+            if (!draftRelease) {
+              core.setFailed('No draft release found');
+              return;
+            }
+
+            console.log(`Found draft release: ${draftRelease.id}`);
+
+            try {
+              const response = await github.rest.repos.updateRelease({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                release_id: draftRelease.id,
+                draft: false,
+              });
+              console.log('Release published successfully:', response.data.html_url);
+            } catch (error) {
+              console.error('Error publishing release:', error);
+              core.setFailed(error.message);
+            }

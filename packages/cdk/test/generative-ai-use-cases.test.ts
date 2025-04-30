@@ -1,13 +1,13 @@
 import { Template } from 'aws-cdk-lib/assertions';
 import * as cdk from 'aws-cdk-lib';
-import { stackInputSchema } from '../lib/stack-input';
+import { processedStackInputSchema } from '../lib/stack-input';
 import { createStacks } from '../lib/create-stacks';
 
 describe('GenerativeAiUseCases', () => {
   test('matches the snapshot', () => {
     const app = new cdk.App();
 
-    const params = stackInputSchema.parse({
+    const params = processedStackInputSchema.parse({
       account: '123456890123',
       region: 'us-east-1',
       env: '',
@@ -29,8 +29,18 @@ describe('GenerativeAiUseCases', () => {
       samlCognitoDomainName: '',
       samlCognitoFederatedIdentityProviderName: '',
       modelRegion: 'us-east-1',
-      modelIds: ['anthropic.claude-3-sonnet-20240229-v1:0'],
-      imageGenerationModelIds: ['stability.stable-diffusion-xl-v1'],
+      modelIds: [
+        {
+          modelId: 'anthropic.claude-3-sonnet-20240229-v1:0',
+          region: 'us-east-1',
+        },
+      ],
+      imageGenerationModelIds: [
+        { modelId: 'stability.stable-diffusion-xl-v1', region: 'us-east-1' },
+      ],
+      videoGenerationModelIds: [
+        { modelId: 'amazon.nova-reel-v1:0', region: 'us-east-1' },
+      ],
       endpointNames: [],
       agentEnabled: true,
       searchAgentEnabled: true,

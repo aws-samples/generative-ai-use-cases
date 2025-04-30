@@ -3,7 +3,7 @@ import useSWR from 'swr';
 
 const version = import.meta.env.VITE_APP_VERSION;
 const PACKAGE_JSON_URL =
-  'https://raw.githubusercontent.com/aws-samples/generative-ai-use-cases-jp/main/package.json';
+  'https://raw.githubusercontent.com/aws-samples/generative-ai-use-cases/main/package.json';
 
 interface PackageJson {
   version: string;
@@ -17,8 +17,8 @@ const useRemoteVersion = () => {
       return version;
     },
     getHasUpdate: () => {
-      // ローカルのバージョンが参照できない時はアップデートの表示はしない
-      // (アップデートはないものとして扱う)
+      // If the local version is not available, do not display the update
+      // (Treat it as no update)
       if (!version) {
         return false;
       }
@@ -30,7 +30,8 @@ const useRemoteVersion = () => {
       if (!packageJson) {
         return false;
       } else {
-        return version !== packageJson.data.version;
+        // Compare only major versions
+        return version.split('.')[0] !== packageJson.data.version.split('.')[0];
       }
     },
   };

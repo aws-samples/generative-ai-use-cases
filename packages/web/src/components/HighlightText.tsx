@@ -16,8 +16,8 @@ const HighlightText: React.FC<Props> = (props) => {
 
     const nodes: React.ReactNode[] = [];
     for (let i = 0; i < highlights.length; i++) {
-      // start 〜 mid がハイライトしない文字列（1つ前の End と Begin の間）
-      // mid 〜 end がハイライトする文字列（Begin と End の間）
+      // Highlight text between start and mid (between the previous End and Begin)
+      // Highlight text between mid and end (between Begin and End)
       const start = highlights[i - 1]?.EndOffset ?? 0;
       const mid = highlights[i]?.BeginOffset ?? baseText.length;
       const end = highlights[i]?.EndOffset ?? baseText.length;
@@ -30,7 +30,7 @@ const HighlightText: React.FC<Props> = (props) => {
           {baseText.substring(mid, end)}
         </span>
       );
-      // すべてのハイライトを処理したら、残りの文字列をまとめて設定
+      // After processing all highlights, set the remaining string together
       if (i === highlights.length - 1) {
         nodes.push(
           <React.Fragment key={`${i}-3`}>

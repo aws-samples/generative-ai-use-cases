@@ -13,12 +13,12 @@ import { Runtime } from 'aws-cdk-lib/aws-lambda';
 
 export interface RagKnowledgeBaseProps {
   // Context Params
-  modelRegion: string;
+  readonly modelRegion: string;
 
   // Resource
-  knowledgeBaseId: string;
-  userPool: UserPool;
-  api: RestApi;
+  readonly knowledgeBaseId: string;
+  readonly userPool: UserPool;
+  readonly api: RestApi;
 }
 
 export class RagKnowledgeBase extends Construct {

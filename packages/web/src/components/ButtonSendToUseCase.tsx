@@ -5,6 +5,7 @@ import ButtonIcon from './ButtonIcon';
 import { BaseProps } from '../@types/common';
 import { PiPaperPlaneRight } from 'react-icons/pi';
 import ModalDialog from '../components/ModalDialog';
+import { useTranslation } from 'react-i18next';
 
 type UseCaseItemProps = BaseProps & {
   title: string;
@@ -37,6 +38,7 @@ type Props = BaseProps & {
 
 const ButtonSendToUseCase: React.FC<Props> = (props) => {
   const [showModal, setShowModal] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -56,7 +58,7 @@ const ButtonSendToUseCase: React.FC<Props> = (props) => {
           }}>
           <ModalDialog
             isOpen={showModal}
-            title="ユースケースを選択"
+            title={t('common.selectUseCase')}
             onClose={() => {
               setShowModal(false);
             }}>
@@ -65,7 +67,7 @@ const ButtonSendToUseCase: React.FC<Props> = (props) => {
                 path="/chat"
                 queryKey="content"
                 text={props.text}
-                title="チャット"
+                title={t('navigation.chat')}
                 onClose={() => {
                   setShowModal(false);
                 }}
@@ -74,7 +76,7 @@ const ButtonSendToUseCase: React.FC<Props> = (props) => {
                 path="/generate"
                 queryKey="information"
                 text={props.text}
-                title="文章生成"
+                title={t('navigation.textGeneration')}
                 onClose={() => {
                   setShowModal(false);
                 }}
@@ -83,16 +85,16 @@ const ButtonSendToUseCase: React.FC<Props> = (props) => {
                 path="/summarize"
                 queryKey="sentence"
                 text={props.text}
-                title="要約"
+                title={t('navigation.summary')}
                 onClose={() => {
                   setShowModal(false);
                 }}
               />
               <UseCaseItem
-                path="/editorial"
+                path="/writer"
                 queryKey="sentence"
                 text={props.text}
-                title="校正"
+                title={t('navigation.writing')}
                 onClose={() => {
                   setShowModal(false);
                 }}
@@ -101,7 +103,7 @@ const ButtonSendToUseCase: React.FC<Props> = (props) => {
                 path="/translate"
                 queryKey="sentence"
                 text={props.text}
-                title="翻訳"
+                title={t('navigation.translation')}
                 onClose={() => {
                   setShowModal(false);
                 }}

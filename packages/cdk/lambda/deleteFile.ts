@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { DeleteFileRequest } from 'generative-ai-use-cases-jp';
+import { DeleteFileRequest } from 'generative-ai-use-cases';
 
 export const handler = async (
   event: APIGatewayProxyEvent

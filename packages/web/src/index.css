@@ -2,14 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* tailwindの設定で上書きされてしまうので、importantを設定する */
+/* Tailwind's settings override this, so we set important */
 .amplify-button--primary {
   background-color: var(
     --amplify-components-button-primary-background-color
   ) !important;
 }
 
-/* <input type="number"> の spinner を消す*/
+/* Remove the spinner for <input type="number"> */
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {

@@ -3,6 +3,7 @@ import { BaseProps } from '../../../@types/common';
 import { Message } from '../../../@types/chat';
 import { twMerge } from 'tailwind-merge';
 import { PiCaretUp } from 'react-icons/pi';
+import { IconWrapper } from '../../components/IconWrapper';
 
 type Props = BaseProps & {
   message: Message;
@@ -29,7 +30,10 @@ const ChatMessage: React.FC<Props> = (props) => {
             setIsOpen(!isOpen);
           }}
         >
-          <PiCaretUp className={twMerge('transition', isOpen ? 'rotate-180' : '')} />
+          <IconWrapper
+            icon={PiCaretUp}
+            className={twMerge('transition', isOpen ? 'rotate-180' : '')}
+          />
 
           <div>{message.title}</div>
         </div>

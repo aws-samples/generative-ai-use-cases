@@ -11,6 +11,7 @@ import { twMerge } from 'tailwind-merge';
 import Button from '../common/components/Button';
 import useSystemContext from './useSystemContext';
 import { PromptSetting } from '../../../@types/settings';
+import { IconWrapper } from '../../components/IconWrapper';
 
 export const ItemTypes = {
   PROMPT_ITEM: 'promptItem',
@@ -151,7 +152,7 @@ const PromptSettings: React.FC<Props> = (props) => {
               setisSelectedPreset(true);
             }}
           >
-            <PiDesktopTower /> プリセット
+            <IconWrapper icon={PiDesktopTower} /> プリセット
           </div>
         </div>
         <div className="h-full overflow-y-auto bg-white/10 border rounded-b rounded-tr">
@@ -162,7 +163,7 @@ const PromptSettings: React.FC<Props> = (props) => {
       </div>
 
       <div className="flex justify-between">
-        <Button outlined icon={<PiCaretLeft />} onClick={props.onBack}>
+        <Button outlined icon={<IconWrapper icon={PiCaretLeft} />} onClick={props.onBack}>
           戻る
         </Button>
       </div>

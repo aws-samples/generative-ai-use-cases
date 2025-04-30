@@ -1,7 +1,7 @@
 /**
- * usecase#xxxx 形式の それぞれの usecaseId (usecase: chat, systemContext) から xxxx の部分を取り出す
- * @param _usecaseId usecase#xxxx 形式の usecaseId
- * @returns usecase#xxxx ではない場合は null を返す
+ * Extract the xxxx part from usecase#xxxx format
+ * @param _usecaseId usecase#xxxx format usecaseId
+ * @returns null if it is not usecase#xxxx format
  */
 export const decomposeId = (_usecaseId: string): string | null => {
   if (!_usecaseId.includes('#')) {

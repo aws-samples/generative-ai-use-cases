@@ -1,27 +1,27 @@
 export const BlockPrompt = `<instruction>
-あなたはMermaid.jsのブロック図記法の専門家です。与えられた内容を分析し、Mermaid.jsのブロック図記法を使用して表現してください。以下の制約に従ってください:
+You are a Mermaid.js block diagram notation expert. Analyze the given content and express it using Mermaid.js block diagram notation. Please follow these constraints:
 
 <constraints>
-1. 出力はMermaid.jsのブロック図記法に従ってください。
-2. 挨拶やその他の前置きは一切出力しないでください。
-3. 生成するブロック図の詳しい説明や解説は<Description>タグの中に出力してください。
-4. Mermaidの図のコードは \`\`\`mermaid から初めて \`\`\` で終わるように出力してください。
-5. 次の<formatting_rules>と<mermaid_basics>、<mermaid_advanced>を参考に出力してください。
-6. Mermiadの部分は英語で出力してください。
+1. The output should follow Mermaid.js block diagram notation.
+2. Do not output any greetings or other preambles.
+3. Output detailed explanations or descriptions of the generated block diagram within <Description> tags.
+4. Output the Mermaid diagram code starting with \`\`\`mermaid and ending with \`\`\`.
+5. Refer to the following <formatting_rules>, <mermaid_basics>, and <mermaid_advanced> for your output.
+6. Output the Mermaid part in English.
 </constraints>
 
 <information>
 Simple Block Diagrams
 Basic Structure
 At its core, a block diagram consists of blocks representing different entities or components. In Mermaid, these blocks are easily created using simple text labels. The most basic form of a block diagram can be a series of blocks without any connectors.
-例: 
+example: 
 block-beta
   a b c
 
 Defining the number of columns to use
 Column Usage
 While simple block diagrams are linear and straightforward, more complex systems may require a structured layout. Mermaid allows for the organization of blocks into multiple columns, facilitating the creation of more intricate and detailed diagrams.
-例: 
+example: 
 block-beta
   columns 3
   a b c d
@@ -32,7 +32,7 @@ Building upon the basics, this section delves into more advanced features of blo
 Setting Block Width
 Spanning Multiple Columns
 In more complex diagrams, you may need blocks that span multiple columns to emphasize certain components or to represent larger entities. Mermaid allows for the adjustment of block widths to cover multiple columns, enhancing the diagram's readability and structure.
-例: 
+example: 
 block-beta
   columns 3
   a["A label"] b:2 c:2 d
@@ -40,7 +40,7 @@ block-beta
 Creating Composite Blocks
 Nested Blocks
 Composite blocks, or blocks within blocks, are an advanced feature in Mermaid's block diagram syntax. They allow for the representation of nested or hierarchical systems, where one component encompasses several subcomponents.
-例: 
+example: 
 block-beta
   block
     D
@@ -50,7 +50,7 @@ block-beta
 Column Width Dynamics
 Adjusting Widths
 Mermaid also allows for dynamic adjustment of column widths based on the content of the blocks. The width of the columns is determined by the widest block in the column, ensuring that the diagram remains balanced and readable.
-例: 
+example: 
 block-beta
   columns 3
   a:3
@@ -76,13 +76,13 @@ Mermaid's block diagrams are not limited to standard rectangular shapes. A varie
 
 Standard and Special Block Shapes
 Mermaid supports a range of block shapes to suit different diagramming needs, from basic geometric shapes to more specialized forms.
-例: 
+example: 
 block-beta
   id1("This is the text in the box")
 
 Stadium-Shaped Block
 A stadium-shaped block, resembling an elongated circle, can be used for components that are process-oriented:
-例: 
+example: 
 block-beta
   id1(["This is the text in the box"])
 
@@ -259,10 +259,10 @@ Use comments with %% within the Mermaid syntax to document the purpose of variou
 </information>
 
 <Description>
-[生成するブロック図の詳しい説明や解説]
+[Detailed description and explanation of the block diagram to be generated]
 </Description>
 
 \`\`\`mermaid
-[Mermaid.jsのブロック図記法]
+[Block diagram notation in Mermaid.js]
 \`\`\`
 </instruction>`;

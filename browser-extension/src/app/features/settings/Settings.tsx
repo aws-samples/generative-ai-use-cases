@@ -5,6 +5,7 @@ import Button from '../common/components/Button';
 import { PiCaretLeft } from 'react-icons/pi';
 import useAuth from '../common/hooks/useAuth';
 import Switch from '../common/components/Switch';
+import { IconWrapper } from '../../components/IconWrapper';
 
 type Props = {
   onBack: () => void;
@@ -23,7 +24,7 @@ const Settings: React.FC<Props> = (props) => {
       <div className="text-base font-semibold mb-1">設定</div>
       <div className="font-light text-aws-font-color-gray text-xs">
         <div>拡張機能を利用するための設定を行います。</div>
-        <div>この拡張機能を利用するためには、generative-ai-use-cases-jp のデプロイが必要です。</div>
+        <div>この拡張機能を利用するためには、generative-ai-use-cases のデプロイが必要です。</div>
       </div>
 
       <div className="flex flex-col mt-3 gap-2">
@@ -100,7 +101,12 @@ const Settings: React.FC<Props> = (props) => {
         )}
       </div>
       <div className="flex justify-between">
-        <Button className="mt-3" outlined icon={<PiCaretLeft />} onClick={props.onBack}>
+        <Button
+          className="mt-3"
+          outlined
+          icon={<IconWrapper icon={PiCaretLeft} />}
+          onClick={props.onBack}
+        >
           戻る
         </Button>
         <Button className="mt-3" onClick={save}>

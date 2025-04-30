@@ -6,16 +6,16 @@ const ALLOWED_SIGN_UP_EMAIL_DOMAINS: string[] = JSON.parse(
   ALLOWED_SIGN_UP_EMAIL_DOMAINS_STR!
 );
 
-// メールアドレスのドメインを許可するかどうかを判定する
+// Determine if the email domain is allowed
 const checkEmailDomain = (email: string): boolean => {
-  // メールアドレスの中の @ の数が1つでない場合は、常に許可しない
+  // If the number of @ in the email address is not one, always allow it
   if (email.split('@').length !== 2) {
     return false;
   }
 
-  // メールアドレスのドメイン部分が、許可ドメインの"いずれか"と一致すれば許可する
-  // それ以外の場合は、許可しない
-  // (ALLOWED_SIGN_UP_EMAIL_DOMAINSが空の場合は、常に許可しない)
+  // If the domain part of the email address matches any of the allowed domains, allow it
+  // Otherwise, do not allow it
+  // (If ALLOWED_SIGN_UP_EMAIL_DOMAINS is empty, always allow it)
   const domain = email.split('@')[1];
   return ALLOWED_SIGN_UP_EMAIL_DOMAINS.includes(domain);
 };
@@ -37,19 +37,19 @@ exports.handler = async (
 
     const isAllowed = checkEmailDomain(event.request.userAttributes.email);
     if (isAllowed) {
-      // 成功した場合、イベントオブジェクトをそのまま返す
+      // If successful, return the event object as is
       callback(null, event);
     } else {
-      // 失敗した場合、エラーメッセージを返す
+      // If failed, return an error message
       callback(new Error('Invalid email domain'));
     }
   } catch (error) {
     console.log('Error ocurred:', error);
-    // エラーがError型であるか確認し、適切なエラーメッセージを返す
+    // Check if the error is an instance of Error and return an appropriate error message
     if (error instanceof Error) {
       callback(error);
     } else {
-      // エラーがError型ではない場合、一般的なエラーメッセージを返す
+      // If the error is not an instance of Error, return a general error message
       callback(new Error('An unknown error occurred.'));
     }
   }

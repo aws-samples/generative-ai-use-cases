@@ -32,6 +32,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run test
+      - run: npm run custom-lint:build
       - run: npm run web:lint
       - run: npm run cdk:lint
       - run: npm run web:build

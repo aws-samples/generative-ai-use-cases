@@ -1,69 +1,69 @@
-# ブラウザ拡張機能
+# Browser Extension
 
-こちらは、Generative AI Use Cases JP (略称:GenU) をより便利に利用するためのブラウザ拡張機能です。
+This is a browser extension that makes Generative AI Use Cases JP (abbreviated as GenU) more convenient to use.
 
 > [!IMPORTANT]
-> このブラウザ拡張機能を利用するためには、GenU を事前にデプロイする必要があります。まずは、[こちら](https://github.com/aws-samples/generative-ai-use-cases-jp#%E3%83%87%E3%83%97%E3%83%AD%E3%82%A4)を参考にデプロイをしてください。
+> To use this browser extension, you need to deploy GenU in advance. First, please refer to [here](../README.md#deployment) for deployment instructions.
 
-![拡張機能イメージ](../docs/assets/images/extension/extension_demo.png)
+![Extension Image](../docs/assets/images/extension/extension_demo.png)
 
-## Why Use ブラウザ拡張機能 ?
+## Why Use Browser Extension?
 
-標準の GenU の Web アプリは便利に生成 AI を利用できますが、利用するたびに Web アプリを開いてコピペするという使い方は、時には煩わしく感じることもあるでしょう。
-このブラウザ拡張機能を利用すると、ブラウジング中に生成 AI を利用したくなったら画面を切り替えずにそのまま生成 AI を利用できるため、さらに便利に生成 AI を活用することができます。
-[拡張機能紹介記事](https://aws.amazon.com/jp/builders-flash/202405/genai-sorry-message/)もあわせてご参照ください。
+While the standard GenU web app is convenient for using generative AI, having to open the web app and copy-paste content each time can sometimes feel cumbersome.
+By using this browser extension, you can access generative AI without switching screens while browsing, making it even more convenient to utilize generative AI.
+Please also refer to the [extension introduction article](https://aws.amazon.com/jp/builders-flash/202405/genai-sorry-message/).
 
-### 利用シチュエーション
+### Use Cases
 
-- メールなどの返信
-  - Web ブラウザからメーラーやチャットアプリを利用すれば、直接生成 AI に返信文を考えてもらうことができます。
-- 翻訳
-  - 社内情報であっても情報流出を気にすることなく、翻訳することができます。
-- 単語の意味を調べる
-  - 専門用語、英単語、読み方のわからない漢字などを、LLM に質問して意味を調べることができます。
-- 要約
-  - 長文の Web サイトの文章を要約してもらうことで、素早く概要を理解することができます。
-- その他
-  - このブラウザ拡張機能はプロンプトを自由にカスタマイズすることができるで、あなたのアイデア次第でさまざまな使い方が可能です。
+- Email and message replies
+  - When using email or chat applications through a web browser, you can directly ask the generative AI to compose replies for you.
+- Translation
+  - You can translate internal company information without worrying about information leakage.
+- Looking up word meanings
+  - You can ask the LLM about technical terms, English words, or kanji characters whose readings you don't know.
+- Summarization
+  - You can quickly understand the overview of lengthy web content by having it summarized.
+- Others
+  - Since this browser extension allows you to freely customize prompts, various uses are possible depending on your ideas.
 
-## 利用方法
+## How to Use
 
-ブラウザ拡張機能を利用するためには、拡張機能をビルドして、そのビルドしたファイルをブラウザにインストールする必要があります。
+To use the browser extension, you need to build the extension and install the built files in your browser.
 
-詳しくは以下の手順を参照してください。
+Please refer to the following instructions for details:
 
-- [ビルド手順](../docs/EXTENSION_BUILD.md)
-- [インストール手順](../docs/EXTENSION_INSTALL.md)
-- [SAML 認証の利用方法](../docs/EXTENSION_SAML.md)
+- [Build Instructions](../docs/en/EXTENSION_BUILD.md)
+- [Installation Instructions](../docs/en/EXTENSION_INSTALL.md)
+- [How to Use SAML Authentication](../docs/en/EXTENSION_SAML.md)
 
 ## FAQ
 
-- 拡張機能をインストールすると誰でも利用できますか？
-  - GenU でユーザ登録している方は、ログインすることで全員利用可能です。
-  - 各種認証の設定は、GenU に従います。
-  - **ユーザ登録していない方は、一切利用できません。**
-- 社内情報を入れても安全ですか？
-  - Amazon Bedrock は入力データを学習データとして利用しませんので、安心してご利用いただけます（[参考](https://aws.amazon.com/jp/bedrock/faqs/)）。
-  - **社内情報を入力する前に、社内規定は十分に確認するようにしてください。**
-- 拡張機能で送信した内容を見返すことはできますか？
-  - 拡張機能で送信した内容は、一切保存しておりません。
-  - 会話履歴機能の要望がある場合は、Issue へ投稿ください（対応を約束するものではありません）。
-- どのブラウザで利用できますか？
-  - Google Chrome と Microsoft Edge で利用できることは、確認しております。
-- 社内に配布する方法を教えてください
-  - [こちらの方法](../docs/EXTENSION_BUILD.md#配布方法)を参照ください。
-- プリセットのプロンプトを追加したい
-  - `browser-extension/src/app/features/prompt-settings/presetPrompts.ts` にプロンプトを設定して、再度「ビルド + インストール」をしてください。
-- GenU の Web アプリで使っているプロンプトを利用したい
-  - Web アプリから保存したシステムプロンプトを利用できます。
-  - 拡張機能の「プロンプト設定」画面から、利用設定を行なってください。
-- ログインに失敗します
-  - まずは、GenU の Web アプリから正常にログインできるか、ご確認ください。
-  - Web アプリにログインできない場合
-    - ユーザー登録されていない可能性があります。
-  - Web アプリにログインできる場合
-    - 拡張機能の設定が間違っている可能性があります。
-      - 拡張機能の「設定」画面を開き、各設定項目が正しいかご確認ください。
-      - 設定値は、[こちらの方法](../docs/EXTENSION_BUILD.md#その他のユーザー-windows-等)で確認できます。
-    - SAML 連携を利用している場合、Cognito の設定が間違っている可能性があります。
-      - [こちらの手順](../docs/EXTENSION_SAML.md)を参考に、Cognito の設定を確認してください。
+- Can anyone use the extension once it's installed?
+  - Anyone who is registered as a user in GenU can use it after logging in.
+  - Authentication settings follow those of GenU.
+  - **Users who are not registered cannot use it at all.**
+- Is it safe to input internal company information?
+  - Amazon Bedrock does not use input data as training data, so you can use it with confidence ([reference](https://aws.amazon.com/jp/bedrock/faqs/)).
+  - **Please thoroughly check your company's policies before inputting internal information.**
+- Can I review content sent through the extension?
+  - Content sent through the extension is not saved at all.
+  - If you have a request for conversation history functionality, please post it as an Issue (we cannot promise implementation).
+- Which browsers can I use it with?
+  - We have confirmed it works with Google Chrome and Microsoft Edge.
+- How can I distribute it within my company?
+  - Please refer to [this method](../docs/en/EXTENSION_BUILD.md#distribution-method).
+- I want to add preset prompts
+  - Set prompts in `browser-extension/src/app/features/prompt-settings/presetPrompts.ts` and then "build + install" again.
+- I want to use prompts from the GenU web app
+  - You can use system prompts saved from the web app.
+  - Configure usage from the "Prompt Settings" screen in the extension.
+- Login fails
+  - First, please check if you can log in normally to the GenU web app.
+  - If you cannot log in to the web app:
+    - You may not be registered as a user.
+  - If you can log in to the web app:
+    - The extension settings may be incorrect.
+      - Open the "Settings" screen in the extension and check if each setting item is correct.
+      - Setting values can be confirmed using [this method](../docs/en/EXTENSION_BUILD.md#for-other-users-windows-etc).
+    - If you are using SAML integration, the Cognito settings may be incorrect.
+      - Please check the Cognito settings by referring to [these instructions](../docs/en/EXTENSION_SAML.md).

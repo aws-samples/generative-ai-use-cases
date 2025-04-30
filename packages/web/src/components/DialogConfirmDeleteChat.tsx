@@ -2,8 +2,9 @@ import React from 'react';
 import { BaseProps } from '../@types/common';
 import Button from './Button';
 import ModalDialog from './ModalDialog';
-import { Chat } from 'generative-ai-use-cases-jp';
+import { Chat } from 'generative-ai-use-cases';
 import { decomposeId } from '../utils/ChatUtils';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   isOpen: boolean;
@@ -13,24 +14,24 @@ type Props = BaseProps & {
 };
 
 const DialogConfirmDeleteChat: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
+
   return (
-    <ModalDialog {...props} title="削除確認">
+    <ModalDialog {...props} title={t('chat.delete_confirmation')}>
       <div>
-        チャット
-        <span className="font-bold">「{props.target?.title}」</span>
-        を削除しますか？
+        {t('chat.delete_chat_confirmation', { title: props.target?.title })}
       </div>
 
       <div className="mt-4 flex justify-end gap-2">
         <Button outlined onClick={props.onClose} className="p-2">
-          キャンセル
+          {t('common.cancel')}
         </Button>
         <Button
           onClick={() => {
             props.onDelete(decomposeId(props.target?.chatId ?? '') ?? '');
           }}
           className="bg-red-500 p-2 text-white">
-          削除
+          {t('common.delete')}
         </Button>
       </div>
     </ModalDialog>

@@ -3,6 +3,7 @@ import ModalDialog from './ModalDialog';
 import { BaseProps } from '../@types/common';
 import Textarea from './Textarea';
 import Button from './Button';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   showSystemContextModal: boolean;
@@ -15,27 +16,29 @@ type Props = BaseProps & {
 };
 
 const ModalSystemContext: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
+
   return (
     <>
       <ModalDialog
-        title="システムプロンプトの作成"
+        title={t('chat.create_system_prompt')}
         isOpen={props.showSystemContextModal}
         onClose={() => {
           props.setShowSystemContextModal(false);
         }}>
-        <div className="py-2.5">タイトル</div>
+        <div className="py-2.5">{t('common.title')}</div>
 
         <Textarea
-          placeholder="入力してください"
+          placeholder={t('common.enter_text')}
           value={props.saveSystemContextTitle}
           onChange={props.setSaveSystemContextTitle}
           maxHeight={-1}
           className="text-aws-font-color"
         />
 
-        <div className="py-2.5">システムプロンプト</div>
+        <div className="py-2.5">{t('chat.system_prompt')}</div>
         <Textarea
-          placeholder="入力してください"
+          placeholder={t('common.enter_text')}
           value={props.saveSystemContext}
           onChange={props.setSaveSystemContext}
           maxHeight={500}
@@ -47,7 +50,7 @@ const ModalSystemContext: React.FC<Props> = (props) => {
             outlined
             onClick={() => props.setShowSystemContextModal(false)}
             className="p-2">
-            キャンセル
+            {t('common.cancel')}
           </Button>
           <Button
             onClick={() => {
@@ -59,7 +62,7 @@ const ModalSystemContext: React.FC<Props> = (props) => {
               props.saveSystemContext === '' ||
               props.saveSystemContextTitle === ''
             }>
-            作成
+            {t('common.create')}
           </Button>
         </div>
       </ModalDialog>

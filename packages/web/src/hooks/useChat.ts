@@ -13,7 +13,8 @@ import {
   Model,
   UpdateFeedbackRequest,
   ListChatsResponse,
-} from 'generative-ai-use-cases-jp';
+  AdditionalModelRequestFields,
+} from 'generative-ai-use-cases';
 import { useEffect, useMemo } from 'react';
 import { v4 as uuid } from 'uuid';
 import useChatApi from './useChatApi';
@@ -62,7 +63,8 @@ const useChatState = create<{
     extraData: ExtraData[] | undefined,
     overrideModelType: Model['type'] | undefined,
     setSessionId: (sessionId: string) => void,
-    base64Cache: Record<string, string> | undefined
+    base64Cache: Record<string, string> | undefined,
+    overrideModelParameters: AdditionalModelRequestFields | undefined
   ) => void;
   continueGeneration: (
     generationMode: GenerationMode,
@@ -76,7 +78,8 @@ const useChatState = create<{
     extraData: ExtraData[] | undefined,
     overrideModelType: Model['type'] | undefined,
     setSessionId: (sessionId: string) => void,
-    base64Cache: Record<string, string> | undefined
+    base64Cache: Record<string, string> | undefined,
+    overrideModelParameters: AdditionalModelRequestFields | undefined
   ) => void;
   retryGeneration: (
     generationMode: GenerationMode,
@@ -90,7 +93,8 @@ const useChatState = create<{
     extraData: ExtraData[] | undefined,
     overrideModelType: Model['type'] | undefined,
     setSessionId: (sessionId: string) => void,
-    base64Cache: Record<string, string> | undefined
+    base64Cache: Record<string, string> | undefined,
+    overrideModelParameters: AdditionalModelRequestFields | undefined
   ) => void;
   sendFeedback: (
     id: string,
@@ -221,7 +225,7 @@ const useChatState = create<{
             } else {
               m.usecase = id;
             }
-            // 参照が切れるとエラーになるため clone する
+            // If the reference is cut off, an error will occur, so clone it
             toBeRecordedMessages.push(
               JSON.parse(JSON.stringify(m)) as ToBeRecordedMessage
             );
@@ -264,12 +268,12 @@ const useChatState = create<{
     base64Cache?: Record<string, string>
   ): UnrecordedMessage[] => {
     return messages.map((m) => {
-      // LLM で推論する形式に extraData を変換する
+      // Convert extraData to the format for LLM inference
       const convertedFiles: ExtraData[] | undefined = m.extraData
         ?.flatMap((data): ExtraData => {
           if (data.type === 'video') {
             // Send S3 location for video
-            // https:// 形式の S3 URL から s3:// 形式の S3 URI に変換する
+            // Convert https://  format S3 URL to s3:// format S3 URI
             const s3Uri = getS3Uri(data.source.data ?? '');
             return {
               type: data.type,
@@ -282,7 +286,7 @@ const useChatState = create<{
             };
           } else {
             // Otherwise (image and file) send base64 encoded data
-            // 推論する際は"data:image/png..." のといった情報は必要ないため、削除する
+            // When predicting, the information such as "data:image/png..." is not needed, so delete it
             const base64EncodedData =
               uploadedFiles
                 ?.find(
@@ -291,7 +295,7 @@ const useChatState = create<{
                 ?.base64EncodedData?.replace(/^data:(.*,)?/, '') ??
               base64Cache?.[data.source.data]?.replace(/^data:(.*,)?/, '');
 
-            // Base64 エンコードされた画像情報を設定する
+            // Set the base64 encoded image information
             return {
               type: data.type,
               name: data.name,
@@ -341,9 +345,8 @@ const useChatState = create<{
         const newAssistantMessage: UnrecordedMessage = {
           ...oldAssistantMessage,
           role: 'assistant',
-          // 新規モデル追加時は、デフォルトで Claude の prompter が利用されるため
-          // 出力が <output></output> で囲まれる可能性がある
-          // 以下の処理ではそれに対応するため、<output></output> xml タグを削除している
+          // When a new model is added, the default prompter is Claude's, so the output may be enclosed in <output></output>
+          // The following processing is for that, so delete the <output></output> xml tags
           content: (oldAssistantMessage.content + chunk).replace(
             /(<output>|<\/output>)/g,
             ''
@@ -391,7 +394,10 @@ const useChatState = create<{
     extraData: ExtraData[] | undefined = undefined,
     overrideModelType: Model['type'] | undefined = undefined,
     setSessionId: (sessionId: string) => void = () => {},
-    base64Cache: Record<string, string> | undefined = undefined
+    base64Cache: Record<string, string> | undefined = undefined,
+    overrideModelParameters:
+      | AdditionalModelRequestFields
+      | undefined = undefined
   ) => {
     const modelId = get().modelIds[id];
 
@@ -411,32 +417,36 @@ const useChatState = create<{
       model.type = overrideModelType;
     }
 
-    // Agent 用の対応
+    if (overrideModelParameters) {
+      model.modelParameters = overrideModelParameters;
+    }
+
+    // For Agent
     if (sessionId) {
       model.sessionId = sessionId;
     }
 
     setLoading(id, true);
 
-    // 停止理由をリセット
+    // Reset the stop reason
     updateStopReason(id, '');
 
     const chatMessages = get().chats[id].messages;
 
-    // slice の第二引数
-    // - 続きを出力の場合は undefined (最後まで)
-    // - そうでない場合は -1 (Assistant のメッセージはカット)
+    // The second argument of slice
+    // - In the case of continuing to output, undefined (to the end)
+    // - Otherwise, -1 (Assistant's message is cut)
     const sliceEndIndex = generationMode === 'continue' ? undefined : -1;
 
-    // 最後のメッセージはアシスタントのメッセージなので、排除
-    // ignoreHistory が設定されている場合は最後の会話だけ反映（コスト削減）
+    // The last message is an assistant's message, so exclude it
+    // If ignoreHistory is set, only the last conversation is reflected (cost reduction)
     let inputMessages = ignoreHistory
       ? [chatMessages[0], ...chatMessages.slice(-2, sliceEndIndex)]
       : chatMessages.slice(0, sliceEndIndex);
 
-    // 続きを出力でアシスタントのメッセージが trailing whitespace で終了している場合以下のエラーが出る
+    // If the assistant's message ends with trailing whitespace in the case of continuing to output, the following error occurs
     // final assistant content cannot end with trailing whitespace
-    // Assistant のメッセージは trimEnd() で末尾の空白を排除
+    // Assistant's message is trimmed of trailing whitespace
     if (generationMode === 'continue') {
       inputMessages = inputMessages.map((m: UnrecordedMessage, i: number) => {
         if (i === inputMessages.length - 1) {
@@ -450,14 +460,14 @@ const useChatState = create<{
       });
     }
 
-    // リトライの場合は最後のアシスタントメッセージを空白にする
+    // In the case of retrying, set the last assistant's message to blank
     if (generationMode === 'retry') {
       set((state) => {
         const newChats = produce(state.chats, (draft) => {
           const oldAssistantMessage = draft[id].messages.pop()!;
           const newAssistantMessage: UnrecordedMessage = {
             ...oldAssistantMessage,
-            content: ' ', // 空文字の場合再レンダーがされないため空白
+            content: ' ', // If it is empty, re-rendering is not performed, so blank
             trace: '',
             extraData: [],
           };
@@ -469,12 +479,12 @@ const useChatState = create<{
       });
     }
 
-    // メッセージの前処理（例：ログからの footnote の削除）
+    // Preprocessing of messages (example: deletion of footnote from log)
     if (preProcessInput) {
       inputMessages = preProcessInput(inputMessages);
     }
 
-    // LLM へのリクエスト
+    // Request to LLM
     const formattedMessages = formatMessageProperties(
       inputMessages,
       uploadedFiles,
@@ -488,7 +498,7 @@ const useChatState = create<{
       id: id,
     });
 
-    // Assistant の発言を更新
+    // Update the assistant's message
     let tmpChunk = '';
 
     for await (const chunk of stream) {
@@ -518,8 +528,8 @@ const useChatState = create<{
         }
       }
 
-      // chunk は 10 文字以上でまとめて処理する
-      // バッファリングしないと以下のエラーが出る
+      // Process chunks of 10 characters or more
+      // If not buffered, the following error occurs
       // Maximum update depth exceeded
       if (tmpChunk.length >= 10) {
         addChunkToAssistantMessage(id, tmpChunk, undefined, model);
@@ -527,12 +537,12 @@ const useChatState = create<{
       }
     }
 
-    // tmpChunk に文字列が残っている場合は処理する
+    // If there is a string left in tmpChunk, process it
     if (tmpChunk.length > 0) {
       addChunkToAssistantMessage(id, tmpChunk, undefined, model);
     }
 
-    // メッセージの後処理（例：footnote の付与）
+    // Postprocessing of messages (example: addition of footnote)
     if (postProcessOutput) {
       set((state) => {
         const newChats = produce(state.chats, (draft) => {
@@ -556,7 +566,7 @@ const useChatState = create<{
 
     const chatId = await createChatIfNotExist(id, get().chats[id].chat);
 
-    // タイトルが空文字列だった場合、タイトルを予測して設定
+    // If the title is an empty string, predict the title and set it
     if (get().chats[id].chat?.title === '') {
       setPredictedTitle(id).then(() => {
         mutateListChat();
@@ -565,7 +575,7 @@ const useChatState = create<{
 
     const toBeRecordedMessages = addMessageIdsToUnrecordedMessages(id);
 
-    // 続きを出力 もしくはリトライの場合は最後のアシスタントのメッセージを更新する
+    // In the case of continuing to output or retrying, update the last assistant's message
     if (generationMode === 'continue' || generationMode === 'retry') {
       const lastAssistantMessage: ShownMessage =
         get().chats[id].messages[get().chats[id].messages.length - 1];
@@ -677,12 +687,15 @@ const useChatState = create<{
       extraData: ExtraData[] | undefined = undefined,
       overrideModelType: Model['type'] | undefined = undefined,
       setSessionId: (sessionId: string) => void = () => {},
-      base64Cache: Record<string, string> | undefined = undefined
+      base64Cache: Record<string, string> | undefined = undefined,
+      overrideModelParameters:
+        | AdditionalModelRequestFields
+        | undefined = undefined
     ) => {
       const unrecordedUserMessage: UnrecordedMessage = {
         role: 'user',
         content,
-        // DDB に保存する形式で、extraData を設定する
+        // Set extraData in the format to be saved in DDB
         extraData: [
           ...(uploadedFiles?.map(
             (uploadedFile) =>
@@ -705,7 +718,7 @@ const useChatState = create<{
         content: '',
       };
 
-      // User/Assistant の発言を反映
+      // Reflect the User/Assistant message
       set((state) => {
         const newChats = produce(state.chats, (draft) => {
           draft[id].messages.push(unrecordedUserMessage);
@@ -729,7 +742,8 @@ const useChatState = create<{
         extraData,
         overrideModelType,
         setSessionId,
-        base64Cache
+        base64Cache,
+        overrideModelParameters
       );
     },
 
@@ -749,8 +763,8 @@ const useChatState = create<{
 });
 
 /**
- * チャットを操作する Hooks
- * @param id 画面の URI（状態の識別に利用）
+ * Hooks to operate the chat
+ * @param id The URI of the screen (used to identify the state)
  * @param systemContext
  * @param chatId
  * @returns
@@ -782,14 +796,14 @@ const useChat = (id: string, chatId?: string) => {
   const { mutate: mutateChatList } = useChatList();
 
   useEffect(() => {
-    // 新規チャットの場合
+    // In the case of a new chat
     if (!chatId) {
       init(id);
     }
   }, [init, id, chatId]);
 
   useEffect(() => {
-    // 登録済みのチャットの場合
+    // In the case of a registered chat
     if (!isLoadingMessage && messagesData && !isLoadingChat && chatData) {
       restore(id, messagesData.messages, chatData.chat);
     }
@@ -847,7 +861,10 @@ const useChat = (id: string, chatId?: string) => {
       extraData: ExtraData[] | undefined = undefined,
       overrideModelType: Model['type'] | undefined = undefined,
       setSessionId: (sessionId: string) => void = () => {},
-      base64Cache: Record<string, string> | undefined = undefined
+      base64Cache: Record<string, string> | undefined = undefined,
+      overrideModelParameters:
+        | AdditionalModelRequestFields
+        | undefined = undefined
     ) => {
       post(
         id,
@@ -861,7 +878,8 @@ const useChat = (id: string, chatId?: string) => {
         extraData,
         overrideModelType,
         setSessionId,
-        base64Cache
+        base64Cache,
+        overrideModelParameters
       );
     },
     continueGeneration: (
@@ -875,7 +893,10 @@ const useChat = (id: string, chatId?: string) => {
       extraData: ExtraData[] | undefined = undefined,
       overrideModelType: Model['type'] | undefined = undefined,
       setSessionId: (sessionId: string) => void = () => {},
-      base64Cache: Record<string, string> | undefined = undefined
+      base64Cache: Record<string, string> | undefined = undefined,
+      overrideModelParameters:
+        | AdditionalModelRequestFields
+        | undefined = undefined
     ) => {
       continueGeneration(
         'continue',
@@ -889,7 +910,8 @@ const useChat = (id: string, chatId?: string) => {
         extraData,
         overrideModelType,
         setSessionId,
-        base64Cache
+        base64Cache,
+        overrideModelParameters
       );
     },
     retryGeneration: (
@@ -903,7 +925,10 @@ const useChat = (id: string, chatId?: string) => {
       extraData: ExtraData[] | undefined = undefined,
       overrideModelType: Model['type'] | undefined = undefined,
       setSessionId: (sessionId: string) => void = () => {},
-      base64Cache: Record<string, string> | undefined = undefined
+      base64Cache: Record<string, string> | undefined = undefined,
+      overrideModelParameters:
+        | AdditionalModelRequestFields
+        | undefined = undefined
     ) => {
       retryGeneration(
         'retry',
@@ -917,7 +942,8 @@ const useChat = (id: string, chatId?: string) => {
         extraData,
         overrideModelType,
         setSessionId,
-        base64Cache
+        base64Cache,
+        overrideModelParameters
       );
     },
     sendFeedback: async (feedbackData: UpdateFeedbackRequest) => {

@@ -1,4 +1,4 @@
-import { ExplicitFilterConfiguration } from 'generative-ai-use-cases-jp';
+import { ExplicitFilterConfiguration } from 'generative-ai-use-cases';
 import { FilterSelect, SelectValue } from '../components/FilterSelect';
 import { Input } from '@aws-amplify/ui-react';
 import { RetrievalFilter } from '@aws-sdk/client-bedrock-agent-runtime';
@@ -9,12 +9,12 @@ import { Option } from '../components/FilterSelect';
 // https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_RetrievalFilter.html
 type RetrievalFilterOperator = keyof RetrievalFilter;
 type FilterType = ExplicitFilterConfiguration['type'];
-// FilterAttribute に label を付与した型
+// FilterAttribute with label
 export type FilterAttributeLabel = {
   key: string;
   value: SelectValue;
 };
-// RetrievalFilter の FilterAttribute に label を付与した型
+// RetrievalFilter with label
 export type RetrievalFilterLabel = {
   [key in RetrievalFilterOperator]: FilterAttributeLabel;
 };

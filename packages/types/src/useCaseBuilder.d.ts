@@ -3,7 +3,7 @@ export type UseCaseInputExample = {
   examples: Record<string, string>;
 };
 
-// 全てのデータで共通の項目
+// Common items for all data
 // Table: PartitionKey=id, SortKey=dataType
 // Index: PartitionKey=useCaseId, SortKey=dataType
 export type UseCaseCommon = {
@@ -12,7 +12,7 @@ export type UseCaseCommon = {
   useCaseId: string;
 };
 
-// ユースケースの内容 (ユースケース作成やアップデート時のリクエスト型)
+// UseCase content (request type for creating or updating UseCase)
 export type UseCaseContent = {
   title: string;
   description?: string;
@@ -22,25 +22,25 @@ export type UseCaseContent = {
   fileUpload?: boolean;
 };
 
-// Table に記録されている内容
+// Content recorded in Table
 export type UseCaseInTable = UseCaseCommon &
   UseCaseContent & {
     isShared: boolean;
   };
 
-// Frontend に返される内容
-// isFavorite, isMyUseCase は動的に付与
+// Content returned to Frontend
+// isFavorite, isMyUseCase are dynamically added
 export type UseCaseAsOutput = UseCaseInTable & {
   isFavorite: boolean;
   isMyUseCase: boolean;
 };
 
-// お気に入り Toggle のレスポンス用
+// Response for Favorite Toggle
 export type IsFavorite = {
   isFavorite: boolean;
 };
 
-// 共有 Toggle のレスポンス用
+// Response for Shared Toggle
 export type IsShared = {
   isShared: boolean;
 };

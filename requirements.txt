@@ -5,5 +5,6 @@ mkdocs-minify-plugin
 mkdocs-redirects
 mkdocs-rss-plugin
 mkdocs-github-admonitions-plugin
+mkdocs-static-i18n @ git+https://github.com/maekawataiki/mkdocs-static-i18n@feat/default-subdirectory
 pymdown-extensions
-mkdocs-include-markdown-plugin @ git+https://github.com/maekawataiki/mkdocs-include-markdown-plugin@feat/html-image
+mkdocs-include-markdown-plugin>=7.1.5

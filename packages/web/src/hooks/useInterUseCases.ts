@@ -70,9 +70,9 @@ const useInterUseCases = () => {
     Object.entries(usecase.params ?? {}).forEach(([key, { value }]) => {
       let replacedValue = value;
 
-      // 遷移元の画面項目の値を埋め込む処理
-      // value 内の{}で囲われたキー名を取得し、copyTemporary から当該のキー名の値を取得して、置換する
-      // 例) {context} が設定されている場合は、copyTemporary から context の値を取得し、{context} をその値で置換する。
+      // Process to embed the value of the item on the source screen
+      // Get the key name enclosed in {} from value and get the value of the corresponding key from copyTemporary and replace it
+      // Example) If {context} is set, get the value of context from copyTemporary and replace {context} with the value
       const matches = value.match(/\{(.+?)\}/g);
       matches?.forEach((m) => {
         replacedValue = replacedValue.replace(

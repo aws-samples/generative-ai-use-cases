@@ -32,16 +32,9 @@ import { MODELS } from '../hooks/useModel';
 import { getPrompter } from '../prompts';
 import queryString from 'query-string';
 import useSpeach from '../hooks/useSpeach';
+import { useTranslation } from 'react-i18next';
 
-const languages = [
-  '英語',
-  '日本語',
-  '中国語',
-  '韓国語',
-  'フランス語',
-  'スペイン語',
-  'ドイツ語',
-];
+const languages = ['en', 'ja', 'zh', 'ko', 'fr', 'es', 'de'];
 
 type StateType = {
   sentence: string;
@@ -91,6 +84,7 @@ const useTranslatePageState = create<StateType>((set) => {
 });
 
 const TranslatePage: React.FC = () => {
+  const { t } = useTranslation();
   const {
     sentence,
     setSentence,
@@ -130,7 +124,7 @@ const TranslatePage: React.FC = () => {
   }, [modelId]);
   const stopReason = getStopReason();
   const [auto, setAuto] = useLocalStorageBoolean('Auto_Translate', true);
-  const [audio, setAudioInput] = useState(false); // 音声入力フラグ
+  const [audio, setAudioInput] = useState(false); // Audio input flag
   const { synthesizeSpeach, loading: speachIsLoading } = useSpeach(language);
 
   useEffect(() => {
@@ -138,7 +132,7 @@ const TranslatePage: React.FC = () => {
     // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, [prompter]);
 
-  // Memo 変数
+  // Memo variable
   const disabledExec = useMemo(() => {
     return sentence === '' || loading;
   }, [sentence, loading]);
@@ -172,17 +166,17 @@ const TranslatePage: React.FC = () => {
     setTypingTextInput(translatedSentence);
   }, [translatedSentence, setTypingTextInput]);
 
-  // 文章の更新時にコメントを更新
+  // Update the comment when the article is updated
   useEffect(() => {
     if (auto) {
-      // debounce した後翻訳
+      // Translate after debounce
       onSentenceChange(sentence, additionalContext, language, loading);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sentence, language]);
 
-  // debounce した後翻訳
-  // 入力を止めて1秒ほど待ってから翻訳リクエストを送信
+  // Translate after debounce
+  // Wait for 1 second after stopping input and send a translation request
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const onSentenceChange = useCallback(
     debounce(
@@ -204,7 +198,7 @@ const TranslatePage: React.FC = () => {
     [prompter]
   );
 
-  // リアルタイムにレスポンスを表示
+  // Display the response in real time
   useEffect(() => {
     if (messages.length === 0) return;
     const _lastMessage = messages[messages.length - 1];
@@ -214,14 +208,14 @@ const TranslatePage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
-  // 録音機能がエラー終了した時にトグルスイッチをOFFにする
+  // When the recording function fails, turn the toggle switch off
   useEffect(() => {
     if (!recording) {
       setAudioInput(false);
     }
   }, [recording]);
 
-  // transcribeの要素が追加された時の処理. 左のボックスに自動入力する
+  // Process when the transcribe element is added. Automatically input it into the left box
   useEffect(() => {
     const combinedTranscript = transcriptMic
       .map((item) => item.transcript)
@@ -231,7 +225,7 @@ const TranslatePage: React.FC = () => {
     }
   }, [transcriptMic, setSentence]);
 
-  // LLM にリクエスト送信
+  // Send a request to the LLM
   const getTranslation = (
     sentence: string,
     language: string,
@@ -247,14 +241,14 @@ const TranslatePage: React.FC = () => {
     );
   };
 
-  // 翻訳を実行
+  // Execute translation
   const onClickExec = useCallback(() => {
     if (loading) return;
     getTranslation(sentence, language, additionalContext);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sentence, additionalContext, loading, prompter, language]);
 
-  // リセット
+  // Reset
   const onClickClear = useCallback(() => {
     clear();
     clearChat();
@@ -272,7 +266,7 @@ const TranslatePage: React.FC = () => {
   const startOrStopSpeach = useCallback(async () => {
     if (speachIsLoading) return;
 
-    // 再生中の場合は止める
+    // If it is playing, stop it
     if (isSpeachPlaying && audioRef.current) {
       setIsSpeachPlaying(false);
 
@@ -303,10 +297,10 @@ const TranslatePage: React.FC = () => {
   return (
     <div className="grid grid-cols-12">
       <div className="invisible col-span-12 my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-        翻訳
+        {t('translate.title')}
       </div>
       <div className="col-span-12 col-start-1 mx-2 lg:col-span-10 lg:col-start-2 xl:col-span-10 xl:col-start-2">
-        <Card label="翻訳したい文章">
+        <Card label={t('translate.text_to_translate')}>
           <div className="flex w-full flex-col justify-between sm:flex-row">
             <Select
               value={modelId}
@@ -316,13 +310,17 @@ const TranslatePage: React.FC = () => {
               })}
             />
             <div className="col-span-12 col-start-1 mx-2 lg:col-span-10 lg:col-start-2 xl:col-span-10 xl:col-start-2">
-              <Switch label="自動翻訳" checked={auto} onSwitch={setAuto} />
+              <Switch
+                label={t('translate.auto_translate')}
+                checked={auto}
+                onSwitch={setAuto}
+              />
             </div>
           </div>
           <div className="flex w-full flex-col lg:flex-row">
             <div className="w-full lg:w-1/2">
               <div className="flex h-12 items-center">
-                言語を自動検出
+                {t('translate.auto_detect_language')}
                 <div className="ml-2 justify-end">
                   {audio && (
                     <PiStopCircleBold
@@ -344,16 +342,18 @@ const TranslatePage: React.FC = () => {
               </div>
 
               <Textarea
-                placeholder="入力してください"
+                placeholder={t('translate.enter_text')}
                 value={sentence}
                 onChange={setSentence}
                 maxHeight={-1}
                 rows={5}
               />
 
-              <ExpandableField label="追加コンテキスト" optional>
+              <ExpandableField
+                label={t('translate.additional_context')}
+                optional>
                 <Textarea
-                  placeholder="追加で考慮してほしい点を入力することができます（カジュアルさ等）"
+                  placeholder={t('translate.additional_context_placeholder')}
                   value={additionalContext}
                   onChange={setAdditionalContext}
                 />
@@ -365,7 +365,7 @@ const TranslatePage: React.FC = () => {
                   notItem={true}
                   value={language}
                   options={languages.map((l) => {
-                    return { value: l, label: l };
+                    return { value: l, label: t(`language.${l}`) };
                   })}
                   onChange={setLanguage}
                 />
@@ -377,7 +377,7 @@ const TranslatePage: React.FC = () => {
                 )}
                 {!loading && translatedSentence === '' && (
                   <div className="text-gray-500">
-                    翻訳結果がここに表示されます
+                    {t('translate.result_placeholder')}
                   </div>
                 )}
                 <div className="flex w-full justify-end">
@@ -395,15 +395,17 @@ const TranslatePage: React.FC = () => {
               </div>
               <div className="mt-3 flex justify-end gap-3">
                 {stopReason === 'max_tokens' && (
-                  <Button onClick={continueGeneration}>続きを出力</Button>
+                  <Button onClick={continueGeneration}>
+                    {t('translate.continue_output')}
+                  </Button>
                 )}
 
                 <Button outlined onClick={onClickClear} disabled={disabledExec}>
-                  クリア
+                  {t('common.clear')}
                 </Button>
 
                 <Button disabled={disabledExec} onClick={onClickExec}>
-                  実行
+                  {t('common.execute')}
                 </Button>
               </div>
             </div>

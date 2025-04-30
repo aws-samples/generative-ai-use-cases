@@ -10,10 +10,12 @@ import {
 } from 'react-icons/pi';
 import ButtonIcon from './ButtonIcon';
 import useInterUseCases from '../hooks/useInterUseCases';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps;
 
 const PopupInterUseCasesDemo: React.FC<Props> = () => {
+  const { t } = useTranslation();
   const {
     setIsShow,
     title,
@@ -34,7 +36,9 @@ const PopupInterUseCasesDemo: React.FC<Props> = () => {
         <PiCaretDown
           className={`transition ${!isOpen && 'rotate-180'} mr-2 text-lg`}
         />
-        <div className="text-lg font-bold">{title}</div>
+        <div className="text-lg font-bold">
+          {title || t('demo.inter_use_cases')}
+        </div>
         <ButtonIcon
           onClick={() => {
             setIsShow(false);
@@ -101,7 +105,7 @@ const PopupInterUseCasesDemo: React.FC<Props> = () => {
               navigateUseCase(currentIndex - 1);
             }}>
             <PiArrowFatLineLeftLight />
-            <span className="text-sm">前</span>
+            <span className="text-sm">{t('common.previous')}</span>
           </ButtonIcon>
           <div className="mx-5 mt-1 flex grow flex-col justify-center border border-gray-500 p-4 text-xs">
             {useCases[currentIndex].description}
@@ -113,7 +117,7 @@ const PopupInterUseCasesDemo: React.FC<Props> = () => {
               setCurrentIndex(currentIndex + 1);
               navigateUseCase(currentIndex + 1);
             }}>
-            <span className="text-sm">次</span>
+            <span className="text-sm">{t('common.next')}</span>
             <PiArrowFatLineRightLight />
           </ButtonIcon>
         </div>

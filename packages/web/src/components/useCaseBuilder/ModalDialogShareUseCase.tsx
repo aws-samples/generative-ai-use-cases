@@ -4,6 +4,7 @@ import Button from '../Button';
 import { BaseProps } from '../../@types/common';
 import Switch from '../Switch';
 import ButtonCopy from '../ButtonCopy';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   isOpen: boolean;
@@ -14,6 +15,8 @@ type Props = BaseProps & {
 };
 
 const ModalDialogShareUseCase: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
+
   const shareUrl = useMemo(() => {
     return `${window.location.origin}/use-case-builder/execute/${props.useCaseId}`;
   }, [props.useCaseId]);
@@ -21,19 +24,19 @@ const ModalDialogShareUseCase: React.FC<Props> = (props) => {
   return (
     <ModalDialog
       isOpen={props.isOpen}
-      title="共有"
+      title={t('useCaseBuilder.share')}
       onClose={() => {
         props.onClose();
       }}>
       <div className="flex flex-col gap-2">
-        <div className="flex items-start gap-2">
+        <div>
           <Switch
             checked={props.isShared}
             className="text-xl"
             label={
               props.isShared
-                ? 'このユースケースは、このアプリケーションにログインできる全ユーザーが利用できます。'
-                : 'このユースケースは共有されていないため、あなたしか利用できません。'
+                ? t('useCaseBuilder.sharedDescription')
+                : t('useCaseBuilder.notSharedDescription')
             }
             onSwitch={() => {
               props.onToggleShared();
@@ -51,7 +54,7 @@ const ModalDialogShareUseCase: React.FC<Props> = (props) => {
                 </div>
               </div>
               <div className="text-xs text-gray-400">
-                この共有URLにアクセスすることで、他のユーザーもこのユースケースを利用できます。
+                {t('useCaseBuilder.shareUrlDescription')}
               </div>
             </>
           )}
@@ -61,7 +64,7 @@ const ModalDialogShareUseCase: React.FC<Props> = (props) => {
             onClick={() => {
               props.onClose();
             }}>
-            OK
+            {t('useCaseBuilder.ok')}
           </Button>
         </div>
       </div>

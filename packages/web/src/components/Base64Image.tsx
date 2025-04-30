@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { BaseProps } from '../@types/common';
 import { PiFileX, PiImageLight } from 'react-icons/pi';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   imageBase64: string | null;
@@ -12,6 +13,8 @@ type Props = BaseProps & {
 };
 
 const Base64Image: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
+
   const onClick = useCallback(() => {
     if (props.clickable) {
       props.onClick ? props.onClick() : null;
@@ -21,7 +24,7 @@ const Base64Image: React.FC<Props> = (props) => {
   const src = useMemo(() => {
     return props.imageBase64?.startsWith('data')
       ? props.imageBase64
-      : `data:image/jpg;base64,${props.imageBase64}`;
+      : `data:image/png;base64,${props.imageBase64}`;
   }, [props.imageBase64]);
 
   return (
@@ -39,7 +42,7 @@ const Base64Image: React.FC<Props> = (props) => {
               props.errorMessage ? 'size-1/4' : 'size-3/4'
             } text-red-500`}
           />
-          <div className="text-sm text-red-500">ERROR</div>
+          <div className="text-sm text-red-500">{t('common.error')}</div>
 
           {props.errorMessage && (
             <div className="w-full break-words text-sm text-gray-400">

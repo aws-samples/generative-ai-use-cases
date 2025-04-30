@@ -1,21 +1,23 @@
 import React, { useMemo, useState } from 'react';
 import RowItem, { RowItemProps } from './RowItem';
 import { PiCaretRightFill } from 'react-icons/pi';
+import { useTranslation } from 'react-i18next';
 
 type Props = RowItemProps & {
   label: string;
   defaultOpened?: boolean;
   optional?: boolean;
   children: React.ReactNode;
-  // トグル状態を親コンポーネントから制御したい場合のプロパティ
+  // If you want to control the toggle state from the parent component
   overrideExpanded?: boolean;
   setOverrideExpanded?: (overrideExpanded: boolean) => void;
 };
 
 const ExpandableField: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(props.defaultOpened ?? false);
 
-  // トグル状態の上書きに対応するために expanded と overrideExpanded の or をとる
+  // To correspond to the override of the toggle state, take the or of expanded and overrideExpanded
   const expandState = useMemo(
     () => expanded || props.overrideExpanded,
     [expanded, props.overrideExpanded]
@@ -37,8 +39,9 @@ const ExpandableField: React.FC<Props> = (props) => {
         {props.label}
         {props.optional && (
           <>
+            {/* eslint-disable-next-line @shopify/jsx-no-hardcoded-content */}
             <span className="mx-2">-</span>
-            <span className="font-light italic">Optional</span>
+            <span className="font-light italic">{t('common.optional')}</span>
           </>
         )}
       </div>

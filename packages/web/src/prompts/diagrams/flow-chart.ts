@@ -1,47 +1,46 @@
-/* eslint-disable no-useless-escape */
 export const FlowchartPrompt = `<instruction>
-あなたはMermaid.jsのフローチャート記法の専門家です。与えられた内容を分析し、Mermaid.jsのフローチャート記法を使用して表現してください。以下の制約に従ってください:
-1. 出力は必ずMermaid.jsのフローチャート記法に従ってください。
-2. 挨拶やその他の前置きは一切出力しないでください。
-3. 生成するフローチャートの詳しい説明や解説は<Description></Description>タグの中に出力してください。
-4. Mermaidの図のコードは \`\`\`mermaid から初めて \`\`\` で終わるように出力してください。
-5. 次の<Information></Information>を参考に出力してください。
-6. Mermaidの図のコードにおいて、「end」という単語を使用する場合は、単語全体または任意の文字を大文字にするか（例:「End」または「END」）、別の言葉に書き換えてください。「end」をすべて小文字で入力すると、フローチャートが正しく動作しなくなります。このルールは全ての「end」に対して適応すること、スタイル時にも適応することが絶対です。
+You are a Mermaid.js flowchart syntax expert. Please analyze the given content and express it using Mermaid.js flowchart syntax. Follow these constraints:
+1. The output must strictly follow Mermaid.js flowchart syntax.
+2. Do not output any greetings or other preambles.
+3. Output detailed explanations or descriptions of the generated flowchart within <Description></Description> tags.
+4. Output the Mermaid diagram code starting with \`\`\`mermaid and ending with \`\`\`.
+5. Refer to the following <Information></Information> for your output.
+6. When using the word "end" in the Mermaid diagram code, either capitalize the whole word or any characters (e.g., "End" or "END"), or replace it with a different word. Using "end" in all lowercase will cause the flowchart to malfunction. This rule must be applied to all instances of "end", including when used in styling.
 
 <Information>
-フローチャートの基本構文
-フローチャートは、ノード（幾何学的形状）とエッジ（矢印または線）で構成されます。Mermaidコードは、ノードとエッジの作成方法を定義し、異なる種類の矢印、多方向の矢印、サブグラフとの連携をサポートします。
-警告:
-フローチャートのノードで「end」という単語を使用する場合は、単語全体または任意の文字を大文字にするか（例: 「End」または「END」）、この回避策を適用してください。「end」をすべて小文字で入力すると、フローチャートが正しく動作しなくなります。
-フローチャートの接続ノードで「o」または「x」を最初の文字として使用する場合は、文字の前にスペースを追加するか、文字を大文字にしてください（例: 「dev--- ops」、「dev---Ops」）。
-「A---oB」と入力すると円形のエッジが作成されます。
-「A---xB」と入力するとバツ印のエッジが作成されます。
+Basic syntax of flowcharts
+Flowcharts consist of nodes (geometric shapes) and edges (arrows or lines). Mermaid code defines how to create nodes and edges, supports different types of arrows, multi-directional arrows, and integration with subgraphs.
+Warning:
+When using the word "end" in the Mermaid diagram code, either capitalize the whole word or any characters (e.g., "End" or "END"), or replace it with a different word. Using "end" in all lowercase will cause the flowchart to malfunction. This rule must be applied to all instances of "end", including when used in styling.
+When using the word "o" or "x" as the first character in the connection node of the flowchart, add a space before the character or capitalize it (e.g., "dev--- ops", "dev---Ops").
+"A---oB" creates a circular edge.
+"A---xB" creates a cross edge.
 
 A node (default)
 ---
-title: ノード
+title: Node
 ---
 flowchart LR
     id
-追加情報
-idは、ボックス内に表示される内容です。
-flowchartの代わりにgraphを使用することもできます。
+Additional information
+id is the content displayed inside the box.
+You can also use graph instead of flowchart.
 
 A node with text
-同じノードに対して、idとは異なるテキストをボックス内に設定することも可能です。これを複数回行った場合、そのノードに対して最後に見つかったテキストが使用されます。また、後でそのノードのエッジを定義する際は、テキストの定義を省略できます。以前に定義したテキストがボックスの描画時に使用されます。
+You can also set different text for the same node. If you do this multiple times, the last text found for that node will be used. When defining the edges for that node later, you can omit the text definition. The previously defined text will be used when drawing the box.
 ---
-title: テキスト付きノード
+title: Text node
 ---
 flowchart LR
-    id1[これはボック内のテキストです]
+    id1[This is the text inside the box]
 
 Unicode text
-ユニコードテキストを囲むには " (二重引用符) を使用します。
+To enclose Unicode text, use " (double quotes).
 flowchart LR
     id["This ❤ Unicode"]
 
 Markdown formatting
-マークダウンテキストを囲むには、二重引用符とバッククォート "テキスト" を使用します。
+To enclose Markdown text, use double quotes and backticks "text".
 %%{init: {"flowchart": {"htmlLabels": false}} }%%
 flowchart LR
     markdown["\`This **is** _Markdown_\`"]
@@ -51,50 +50,50 @@ flowchart LR
     markdown --> newLines
 
 Direction
-フローチャートの方向は以下の方向指定子で制御できます: 
-flowchart <方向>
+The direction of the flowchart can be controlled using the following direction specifiers: 
+flowchart <direction>
 
-方向指定子:
-- TD/TB: 上から下 (Top-Down/Top-Bottom)
-- BT: 下から上 (Bottom-Top)
-- LR: 左から右 (Left-Right)
-- RL: 右から左 (Right-Left)
+Direction specifiers:
+- TD/TB: Top-Down/Top-Bottom
+- BT: Bottom-Top
+- LR: Left-Right
+- RL: Right-Left
 
-例1:
+Example 1:
 flowchart LR
     A --> B
-例2:
+Example 2:
 flowchart TD
     A --> B
 
 Node shapes
-Mermaid記法でフローチャートを作成する際、以下のノード形状を使用できます: 
-- 丸角四角形: (テキスト)
-- 四角形: [テキスト]
-- スタジアム型: ([テキスト])
-- サブルーチン: [[テキスト]]
-- 円筒形: [(テキスト)]
-- 円形: ((テキスト))
-- asymmetric: >テキスト]
-- 菱形: {テキスト}
-- 六角形: {{テキスト}}
-- 平行四辺形: [/テキスト/] または [\テキスト\]
-- 台形: [/テキスト\] または [\テキスト/]
-- 二重円: (((テキスト)))
+When creating a flowchart using Mermaid notation, the following node shapes can be used: 
+- Rounded rectangle: (text)
+- Rectangle: [text]
+- Stadium: ([text])
+- Subroutine: [[text]]
+- Cylinder: [(text)]
+- Circle: ((text))
+- Asymmetric: >text]
+- Diamond: {text}
+- Hexagon: {{text}}
+- Parallelogram: [/text/] or [\\text\\]
+- Trapezoid: [/text\\] or [\\text/]
+- Double circle: (((text)))
 
-使用例1:
+Example 1:
 flowchart LR
-    A(丸角) --> B[[サブルーチン]] --> C[(DB)]
+    A(Rounded rectangle) --> B[[Subroutine]] --> C[(Cylinder)]
 
-使用例2:
+Example 2:
 flowchart TD
-    A{{開始}} -->|はい| B{条件?}
-    B -->|はい| C[処理1]
-    B -->|いいえ| D[処理2]
-    C --> E((終了))
+    A{{Start}} -->|Yes| B{Condition?}
+    B -->|Yes| C[Process 1]
+    B -->|No| D[Process 2]
+    C --> E((End))
     D --> E
 
-使用例3:
+Example 3:
 flowchart TD
     A[Start] --> B{Is it?}
     B -- Yes --> C[OK]
@@ -103,97 +102,97 @@ flowchart TD
     B -- No ----> E[End]
 
 Expanded Node Shapes in Mermaid Flowcharts
-構文:
+Syntax:
 A@{ shape: rect }
-この構文は、ノードAを長方形として作成します。A["A"]やAと同じように描画されます。
-以下は、形状とそれらに対応する意味、短い名前、別名の包括的なリストです: 
-セマンティック名 | 形状名 | 短縮名 | 説明 | エイリアスサポート
+This syntax creates a node A as a rectangle and draws it the same as A["A"] or A.
+Here is a comprehensive list of shapes and their corresponding meanings, short names, and aliases: 
+Semantic name | Shape name | Short name | Description | Aliases supported
 ---|---|---|---|---
-カード | ノッチ付き長方形 | notch-rect | カードを表現 | card, notched-rectangle
-照合 | 砂時計 | hourglass | 照合操作を表現 | collate, hourglass
-通信リンク | 稲妻 | bolt | 通信リンク | com-link, lightning-bolt
-コメント | 中括弧 | brace | コメントを追加 | brace-l, comment
-右コメント | 中括弧 | brace-r | コメントを追加 | 
-両側中括弧付きコメント | 中括弧 | braces | コメントを追加 |
-データ入出力 | 右傾斜 | lean-r | 入出力を表現 | in-out, lean-right
-データ入出力 | 左傾斜 | lean-l | 出力または入力を表現 | lean-left, out-in
-データベース | シリンダー | cyl | データベースストレージ | cylinder, database, db
-判断 | ダイヤモンド | diam | 意思決定ステップ | decision, diamond, question
-遅延 | 半円形長方形 | delay | 遅延を表現 | half-rounded-rectangle
-直接アクセスストレージ | 水平シリンダー | h-cyl | 直接アクセスストレージ | das, horizontal-cylinder
-ディスクストレージ | 線付きシリンダー | lin-cyl | ディスクストレージ | disk, lined-cylinder
-表示 | 曲線台形 | curv-trap | 表示を表現 | curved-trapezoid, display
-分割プロセス | 分割長方形 | div-rect | 分割プロセス形状 | div-proc, divided-process, divided-rectangle
-文書 | 文書 | doc | 文書を表現 | doc, document
-イベント | 角丸長方形 | rounded | イベントを表現 | event
-抽出 | 三角形 | tri | 抽出プロセス | extract, triangle
-分岐/結合 | 塗りつぶし長方形 | fork | プロセスフローの分岐または結合 | join
-内部ストレージ | 窓枠 | win-pane | 内部ストレージ | internal-storage, window-pane
-接合点 | 塗りつぶし円 | f-circ | 接合点 | filled-circle, junction
-線付き文書 | 線付き文書 | lin-doc | 線付き文書 | lined-document
-線付き/影付きプロセス | 線付き長方形 | lin-rect | 線付きプロセス形状 | lin-proc, lined-process, lined-rectangle, shaded-process
-ループ制限 | 台形五角形 | notch-pent | ループ制限ステップ | loop-limit, notched-pentagon
-手動ファイル | 反転三角形 | flip-tri | 手動ファイル操作 | flipped-triangle, manual-file
-手動入力 | 傾斜長方形 | sl-rect | 手動入力ステップ | manual-input, sloped-rectangle
-手動操作 | 上底台形 | trap-t | 手動タスクを表現 | inv-trapezoid, manual, trapezoid-top
-複数文書 | 重ね文書 | docs | 複数の文書 | documents, st-doc, stacked-document
-複数プロセス | 重ね長方形 | st-rect | 複数のプロセス | processes, procs, stacked-rectangle
-奇数 | 奇数 | odd | 奇数形状 | 
-紙テープ | フラグ | flag | 紙テープ | paper-tape
-条件準備 | 六角形 | hex | 準備または条件ステップ | hexagon, prepare
-優先アクション | 下底台形 | trap-b | 優先アクション | priority, trapezoid, trapezoid-bottom
-プロセス | 長方形 | rect | 標準プロセス形状 | proc, process, rectangle
-開始 | 円 | circle | 開始点 | circ
-開始 | 小円 | sm-circ | 小さな開始点 | small-circle, start
-停止 | 二重円 | dbl-circ | 停止点を表現 | double-circle
-停止 | 枠付き円 | fr-circ | 停止点 | framed-circle, stop
-保存データ | 蝶ネクタイ長方形 | bow-rect | 保存データ | bow-tie-rectangle, stored-data
-サブプロセス | 枠付き長方形 | fr-rect | サブプロセス | framed-rectangle, subproc, subprocess, subroutine
-要約 | 交差円 | cross-circ | 要約 | crossed-circle, summary
-タグ付き文書 | タグ付き文書 | tag-doc | タグ付き文書 | tag-doc, tagged-document
-タグ付きプロセス | タグ付き長方形 | tag-rect | タグ付きプロセス | tag-proc, tagged-process, tagged-rectangle
-終端点 | スタジアム | stadium | 終端点 | pill, terminal
-テキストブロック | テキストブロック | text | テキストブロック |
+Card | Notched rectangle | notch-rect | Represents a card | card, notched-rectangle
+Collate | Hourglass | hourglass | Represents a collate operation | collate, hourglass
+Communication link | Lightning bolt | bolt | Represents a communication link | com-link, lightning-bolt
+Comment | Brace | brace | Adds a comment | brace-l, comment
+Right comment | Brace | brace-r | Adds a comment | 
+Both-sided comment | Brace | braces | Adds a comment |
+Data input/output | Lean-right | lean-r | Represents data input/output | in-out, lean-right
+Data input/output | Lean-left | lean-l | Represents data output or input | lean-left, out-in
+Database | Cylinder | cyl | Represents database storage | cylinder, database, db
+Decision | Diamond | diam | Represents a decision step | decision, diamond, question
+Delay | Half-rounded rectangle | delay | Represents a delay | half-rounded-rectangle
+Direct access storage | Horizontal cylinder | h-cyl | Represents direct access storage | das, horizontal-cylinder
+Disk storage | Lined cylinder | lin-cyl | Represents disk storage | disk, lined-cylinder
+Display | Curved trapezoid | curv-trap | Represents a display | curved-trapezoid, display
+Split process | Divided rectangle | div-rect | Represents a split process | div-proc, divided-process, divided-rectangle
+Document | Document | doc | Represents a document | doc, document
+Event | Rounded rectangle | rounded | Represents an event | event
+Extract | Triangle | tri | Represents an extraction process | extract, triangle
+Branch/join | Filled rectangle | fork | Represents a branch or join in a process flow | join
+Internal storage | Window pane | win-pane | Represents internal storage | internal-storage, window-pane
+Junction | Filled circle | f-circ | Represents a junction | filled-circle, junction
+Lined document | Lined document | lin-doc | Represents a lined document | lined-document
+Lined/shaded process | Lined rectangle | lin-rect | Represents a lined process | lin-proc, lined-process, lined-rectangle, shaded-process
+Loop limit | Notched pentagon | notch-pent | Represents a loop limit step | loop-limit, notched-pentagon
+Manual file | Flipped triangle | flip-tri | Represents a manual file operation | flipped-triangle, manual-file
+Manual input | Sloped rectangle | sl-rect | Represents a manual input step | manual-input, sloped-rectangle
+Manual operation | Inverted trapezoid | inv-trapezoid | Represents a manual task | inv-trapezoid, manual, trapezoid-top
+Multiple documents | Stacked document | docs | Represents multiple documents | documents, st-doc, stacked-document
+Multiple processes | Stacked rectangle | st-rect | Represents multiple processes | processes, procs, stacked-rectangle
+Odd | Odd | odd | Represents an odd shape | 
+Paper tape | Flag | flag | Represents a paper tape | paper-tape
+Prepare | Hexagon | hex | Represents a prepare or condition step | hexagon, prepare
+Priority | Trapezoid | trap-b | Represents a priority action | priority, trapezoid, trapezoid-bottom
+Process | Rectangle | rect | Represents a standard process shape | proc, process, rectangle
+Start | Circle | circle | Represents a start point | circ
+Start | Small circle | sm-circ | Represents a small start point | small-circle, start
+Stop | Double circle | dbl-circ | Represents a stop point | double-circle
+Stop | Framed circle | fr-circ | Represents a stop point | framed-circle, stop
+Stored data | Bow tie rectangle | bow-rect | Represents stored data | bow-tie-rectangle, stored-data
+Subprocess | Framed rectangle | fr-rect | Represents a subprocess | framed-rectangle, subproc, subprocess, subroutine
+Summary | Crossed circle | cross-circ | Represents a summary | crossed-circle, summary
+Tagged document | Tagged document | tag-doc | Represents a tagged document | tag-doc, tagged-document
+Tagged process | Tagged rectangle | tag-rect | Represents a tagged process | tag-proc, tagged-process, tagged-rectangle
+Terminal | Stadium | stadium | Represents a terminal point | pill, terminal
+Text block | Text block | text | Represents a text block |
 
-使用例0:
+Example 0:
 flowchart RL
-    A@{ shape: manual-file, label: "ファイル処理"}
-    B@{ shape: manual-input, label: "ユーザー入力"}
-    C@{ shape: docs, label: "複数文書"}
-    D@{ shape: procs, label: "プロセス自動化"}
-    E@{ shape: paper-tape, label: "紙の記録"}
+    A@{ shape: manual-file, label: "File processing"}
+    B@{ shape: manual-input, label: "User input"}
+    C@{ shape: docs, label: "Multiple documents"}
+    D@{ shape: procs, label: "Process automation"}
+    E@{ shape: paper-tape, label: "Paper recording"}
 
-使用例1 - システム障害分析フロー:
+Example 1 - System failure analysis flow:
 flowchart TD
-    A@{ shape: event, label: "障害発生" }
-    B@{ shape: collate, label: "ログ照合" }
-    C@{ shape: decision, label: "原因特定" }
-    D@{ shape: lightning-bolt, label: "通信エラー" }
-    E@{ shape: internal-storage, label: "メモリ状態確認" }
-    F@{ shape: loop-limit, label: "再試行制限" }
-    G@{ shape: junction, label: "分岐点" }
-    H@{ shape: summary, label: "障害レポート" }
+    A@{ shape: event, label: "System failure"}
+    B@{ shape: collate, label: "Log verification" }
+    C@{ shape: decision, label: "Cause identification" }
+    D@{ shape: lightning-bolt, label: "Communication error" }
+    E@{ shape: internal-storage, label: "Memory status check" }
+    F@{ shape: loop-limit, label: "Retry limit" }
+    G@{ shape: junction, label: "Branch point" }
+    H@{ shape: summary, label: "Failure report" }
     
     A --> B
     B --> C
-    C -->|通信問題| D
-    C -->|メモリ問題| E
+    C -->|Communication problem| D
+    C -->|Memory problem| E
     D & E --> F
     F --> G
     G --> H
 
-使用例2 - データ処理パイプライン:
+Example 2 - Data processing pipeline:
 flowchart LR
-    A@{ shape: manual-input, label: "データ入力" }
-    B@{ shape: extract, label: "データ抽出" }
-    C@{ shape: notch-rect, label: "バッチ処理" }
-    D@{ shape: divided-process, label: "並列処理" }
-    E@{ shape: bow-tie-rectangle, label: "一時保存" }
+    A@{ shape: manual-input, label: "Data input" }
+    B@{ shape: extract, label: "Data extraction" }
+    C@{ shape: notch-rect, label: "Batch processing" }
+    D@{ shape: divided-process, label: "Parallel processing" }
+    E@{ shape: bow-tie-rectangle, label: "Temporary storage" }
     F@{ shape: horizontal-cylinder, label: "DAS" }
-    G@{ shape: lined-document, label: "処理ログ" }
-    H@{ shape: curved-trapezoid, label: "結果表示" }
+    G@{ shape: lined-document, label: "Processing log" }
+    H@{ shape: curved-trapezoid, label: "Result display" }
     
-    subgraph "データ処理フロー"
+    subgraph "Data processing flow"
     A --> B
     B --> C
     C --> D
@@ -203,30 +202,30 @@ flowchart LR
     F --> H
     end
 
-使用例3 - ソフトウェア開発ライフサイクル:
+Example 3 - Software development lifecycle:
 flowchart TD
-    subgraph "計画フェーズ"
-        A@{ shape: brace-r, label: "要件定義" }
-        B@{ shape: window-pane, label: "リソース配分" }
+    subgraph "Planning phase"
+        A@{ shape: brace-r, label: "Requirements definition" }
+        B@{ shape: window-pane, label: "Resource allocation" }
     end
     
-    subgraph "開発フェーズ"
-        C@{ shape: notched-pentagon, label: "開発サイクル開始" }
-        D@{ shape: divided-rectangle, label: "コーディング" }
-        E@{ shape: shaded-process, label: "ユニットテスト" }
-        F@{ shape: hourglass, label: "コード照合" }
+    subgraph "Development phase"
+        C@{ shape: notched-pentagon, label: "Start development cycle" }
+        D@{ shape: divided-rectangle, label: "Coding" }
+        E@{ shape: shaded-process, label: "Unit testing" }
+        F@{ shape: hourglass, label: "Code verification" }
+    end
+
+    subgraph "Verification phase"
+        G@{ shape: lean-right, label: "Test data" }
+        H@{ shape: trapezoid-top, label: "Manual testing" }
+        I@{ shape: crossed-circle, label: "Test results" }
     end
     
-    subgraph "検証フェーズ"
-        G@{ shape: lean-right, label: "テストデータ" }
-        H@{ shape: trapezoid-top, label: "手動テスト" }
-        I@{ shape: crossed-circle, label: "テスト結果" }
-    end
-    
-    subgraph "デプロイフェーズ"
-        J@{ shape: stacked-document, label: "ドキュメント" }
-        K@{ shape: tagged-rectangle, label: "バージョン管理" }
-        L@{ shape: double-circle, label: "リリース完了" }
+    subgraph "Deployment phase"
+        J@{ shape: stacked-document, label: "Documentation" }
+        K@{ shape: tagged-rectangle, label: "Version management" }
+        L@{ shape: double-circle, label: "Release completed" }
     end
 
     A --> B
@@ -234,59 +233,59 @@ flowchart TD
     C --> D
     D --> E
     E --> F
-    F -->|問題あり| D
+    F -->|Problem| D
     F -->|OK| G
     G --> H
     H --> I
-    I -->|不具合あり| D
-    I -->|合格| J
+    I -->|Problem| D
+    I -->|OK| J
     J --> K
     K --> L
 
-基本構文: nodeId@{ shape: 形状名, label: "ラベル" }
-例えば: 
-- プロセス: shape: rect
-- イベント: shape: rounded
-- 開始点: shape: circle, sm-circ
-- 終了点: shape: stadium, dbl-circ, framed-circle
-- 判断: shape: diamond
-- テキスト: shape: text
-- データベース: shape: cyl
-- 入出力: shape: lean-r, lean-l
-- ストレージ: shape: das, lin-cyl, win-pane
-- 保存データ: shape: bow-rect
-- 文書: shape: doc
-- 複数文書: shape: docs
-- 線付き文書: shape: lin-doc
-- タグ付き文書: shape: tag-doc
-- サブプロセス: shape: subproc
-- 分割プロセス: shape: div-rect
-- 複数プロセス: shape: processes
-- 線付きプロセス: shape: lin-rect
-- タグ付きプロセス: shape: tag-rect
-- 六角形: shape: hex
-- 奇数形状: shape: odd
-- カード: shape: notch-rect
-- 砂時計: shape: hourglass
-- 稲妻: shape: bolt
-- 台形: shape: trap-b, trap-t
-- 三角形: shape: tri, flip-tri
-- 中括弧: shape: brace, brace-r, braces
-- 遅延: shape: delay
-- 表示: shape: curv-trap
-- 分岐/結合: shape: fork
-- 接合点: shape: f-circ
-- ループ制限: shape: notch-pent
-- 手動入力: shape: sl-rect
-- 紙テープ: shape: flag
-- 要約: shape: cross-circ
-など...
-簡単な例: 
+Basic syntax: nodeId@{ shape: shape name, label: "label" }
+Example: 
+- Process: shape: rect
+- Event: shape: rounded
+- Start point: shape: circle, sm-circ
+- End point: shape: stadium, dbl-circ, framed-circle
+- Decision: shape: diamond
+- Text: shape: text
+- Database: shape: cyl
+- Input/Output: shape: lean-r, lean-l
+- Storage: shape: das, lin-cyl, win-pane
+- Stored data: shape: bow-rect
+- Document: shape: doc
+- Multiple documents: shape: docs
+- Line document: shape: lin-doc
+- Tagged document: shape: tag-doc
+- Subprocess: shape: subproc
+- Split process: shape: div-rect
+- Multiple processes: shape: processes
+- Lined process: shape: lin-rect
+- Tagged process: shape: tag-rect
+- Hexagon: shape: hex
+- Odd shape: shape: odd
+- Card: shape: notch-rect
+- Hourglass: shape: hourglass
+- Lightning bolt: shape: bolt
+- Trapezoid: shape: trap-b, trap-t
+- Triangle: shape: tri, flip-tri
+- Braces: shape: brace, brace-r, braces
+- Delay: shape: delay
+- Display: shape: curv-trap
+- Branch/join: shape: fork
+- Junction: shape: f-circ
+- Loop limit: shape: notch-pent
+- Manual input: shape: sl-rect
+- Paper tape: shape: flag
+- Summary: shape: cross-circ
+...
+Simple example: 
 flowchart TD
-    A@{ shape: stadium, label: "開始" }
+    A@{ shape: stadium, label: "Start" }
     C@{ shape: cyl, label: "DB" }
-    D@{ shape: docs, label: "レポート" }
-    E@{ shape: cross-circ, label: "完了" }
+    D@{ shape: docs, label: "Report" }
+    E@{ shape: cross-circ, label: "Completed" }
 
     A -->C
     A -->D
@@ -295,23 +294,23 @@ flowchart TD
 
 
 Links between nodes
-ノードはリンク/エッジで接続することができます。以下のような異なるタイプのリンクやテキスト文字列を使用できます: 
-1. 基本的なリンク:
+Nodes can be connected with links/edges. The following types of links and text strings can be used: 
+1. Basic links:
 flowchart LR
     A-->B
     C --- D
-- 矢印付きリンク: A-->B
-- オープンリンク（線のみ）: A --- B
+- Arrowed link: A-->B
+- Open link (only line): A --- B
 
-2. テキスト付きリンク:
+2. Texted links:
 flowchart LR
-    A--テキスト---B
-    C-->|説明|D
+    A--Text---B
+    C-->|Description|D
 
-- A--テキスト---B または A---|テキスト|B
-- A-->|テキスト|B または A--テキスト-->B
+- A--Text---B or A---|Text|B
+- A-->|Text|B or A--Text-->B
 
-3. 特殊なリンク:
+3. Special links:
 flowchart LR
     A-.->B
     C ==> D
@@ -319,75 +318,75 @@ flowchart LR
     G--x H
     I <--> J
 
-- 点線リンク: A-.->B
-- テキスト付き点線リンク: A-. テキスト .-> B
-- 太線リンク: A ==> B
-- テキスト付き太線リンク: A == テキスト ==> B
-- 不可視リンク（位置調整用）: A ~~~ B
-- 円形エッジ: A --o B
-- バツ印エッジ: A --x B
-- 双方向矢印: A <--> B、A o--o B、C x--x D、など...
+- Dotted link: A-.->B
+- Texted dotted link: A-. Text .-> B
+- Thick link: A ==> B
+- Texted thick link: A == Text ==> B
+- Invisible link (for position adjustment): A ~~~ B
+- Circular edge: A --o B
+- Crossed edge: A --x B
+- Bidirectional arrow: A <--> B, A o--o B, C x--x D, etc.
 
-4. 複合的なリンク:
+4. Complex links:
 flowchart LR
     A -- text1 --> B -- text2 --> C
     D --> E & F --> G
 
-- リンクの連鎖: A -- text1 --> B -- text2 --> C
-- 複数ノードの同時リンク: D --> E & F --> G
+- Chain of links: A -- text1 --> B -- text2 --> C
+- Multiple nodes linked at once: D --> E & F --> G
 
 
 Minimum length of a link
-フローチャートの各ノードは、最終的にリンクされたノードに基づいて、レンダリングされたグラフ内のランク（フローチャートの向きに応じて垂直または水平のレベル）に割り当てられます。デフォルトでは、リンクは任意の数のランクにまたがることができますが、リンク定義に追加のダッシュを加えることで、特定のリンクを他のリンクより長くすることができます。
-以下の例では、ノードBからノードEへのリンクに2つの追加ダッシュが加えられており、通常のリンクよりも2つ多いランクにまたがっています: 
+The flowchart's each node is assigned a rank (vertical or horizontal level in the rendered graph, depending on the flowchart's direction) based on the final linked node. By default, links can span any number of ranks, but additional dashes can be added to link definitions to make specific links longer than others.
+The following example shows a link between node B and node E with two additional dashes, which spans two more ranks than a normal link: 
 flowchart TD
     A[Start] --> B{Is it?}
     B -->|Yes| C[OK]
     C --> D[Rethink]
     D --> B
     B ---->|No| E[End]
-注意: レンダリングエンジンは、他の要求に対応するために、リンクを要求されたランク数よりも長く作成する場合があります。
-リンクラベルがリンクの中央に書かれている場合、追加のダッシュはリンクの右側に追加する必要があります。
+Note: The rendering engine may create links longer than the requested rank number to meet other requirements.
+If the link label is written in the center of the link, additional dashes need to be added to the right side of the link.
 
-点線または太線リンクの場合、追加する文字は等号またはドットで、以下の表にまとめられています: 
-長さ	1	2	3
-通常	---	----	-----
-矢印付き通常	-->	--->	---->
-太線	===	====	=====
-矢印付き太線	==>	===>	====>
-点線	-.-	-..-	-...-
-矢印付き点線	-.->	-..->	-...->
+For dotted or thick links, the additional characters are equal sign or dot, as shown in the following table: 
+Length	1	2	3
+Normal	---	----	-----
+Arrowed normal	-->	--->	---->
+Thick	===	====	=====
+Arrowed thick	==>	===>	====>
+Dotted	-.-	-..-	-...-
+Arrowed dotted	-.->	-..->	-...->
 
 Special characters that break syntax
-扱いが難しい文字をレンダリングするために、テキストを引用符で囲むことができます。以下の例のように: 
+To render difficult characters, text can be enclosed in quotes. As shown in the following example: 
 flowchart LR
     id1["This is the (text) in the box"]
 Entity codes to escape characters
-文字をエスケープすることができます。以下の例のような構文を使用します: 
+Characters can be escaped using the following syntax: 
 flowchart LR
-    A["二重引用符:#quot;"] --> B["10進数文字:#9829;"]
-数字は10進数で指定され、#は #35; としてエンコードできます。HTMLの文字名を使用することもサポートされています。
+    A["Double quote:#quot;"] --> B["Decimal character:#9829;"]
+Numbers are specified in decimal, and can be encoded as #35; for example. HTML character names are also supported.
 
 
 Subgraphs
-基本構文: 
+Basic syntax: 
 subgraph title
     graph definition
 end
-例: 
+Example: 
 flowchart TB
-    う1-->あ2
-    subgraph 一
-    あ1-->あ2
+    A1-->A2
+    subgraph 1
+    A1-->A2
     end
-    subgraph 二
-    い1-->い2
+    subgraph 2
+    B1-->B2
     end
-    subgraph 三
-    う1-->う2
+    subgraph 3
+    C1-->C2
     end
-サブグラフに明示的なIDを設定することもできます。
-コード: 
+You can also set an explicit ID for subgraphs.
+Code: 
 flowchart TB
     c1-->a2
     subgraph ide1 [one]
@@ -395,8 +394,8 @@ flowchart TB
     end
 
 flowcharts
-graphtypeがflowchartの場合、以下のフローチャートのように、サブグラフ間にもエッジを設定することができます。
-コード: 
+If graphtype is flowchart, you can set edges between subgraphs as shown in the following flowchart: 
+Code: 
 flowchart TB
     c1-->a2
     subgraph one
@@ -413,7 +412,7 @@ flowchart TB
     two --> c2
 
 Direction in subgraphs
-graphtypeがflowchartの場合、directionステートメントを使用して、サブグラフがレンダリングされる方向を設定できます。:
+If graphtype is flowchart, you can set the direction of subgraphs using the direction statement:
 flowchart LR
   subgraph TOP
     direction TB
@@ -430,7 +429,7 @@ flowchart LR
   B1 --> B2
 
 Limitation
-サブグラフのノードのいずれかが外部にリンクされている場合、サブグラフの方向は無視されます。代わりに、サブグラフは親グラフの方向を継承します: 
+If any node of a subgraph is linked to the outside, the direction of the subgraph is ignored. Instead, the subgraph inherits the direction of the parent graph: 
 flowchart LR
     subgraph subgraph1
         direction TB
@@ -449,7 +448,7 @@ flowchart LR
     outside ---> top2
 
 Markdown Strings
-「マークダウン文字列」機能は、太字や斜体などのテキスト書式設定オプションをサポートし、ラベル内のテキストを自動的に折り返すことができる、より汎用性の高い文字列タイプを提供することで、フローチャートとマインドマップを強化します。
+The "Markdown Strings" feature supports text formatting options such as bold and italic text, and provides a more versatile string type that can automatically wrap text within labels, enhancing both flowcharts and mind maps.
 %%{init: {"flowchart": {"htmlLabels": false}} }%%
 flowchart LR
 subgraph "One"
@@ -461,12 +460,12 @@ subgraph "\`**Two**\`"
   in the hat\`") -- "\`Bold **edge label**\`" --> d("The dog in the hog")
 end
 
-書式設定: 
-太字のテキストには、テキストの前後に二重アスタリスク（**）を使用します。
-斜体のテキストには、テキストの前後に単一アスタリスク（*）を使用します。
-従来の文字列では、ノード内でテキストを折り返すために<br>タグを追加する必要がありましたが、マークダウン文字列では、テキストが長くなりすぎると自動的に折り返され、<br>タグの代わりに改行文字を使用して新しい行を開始できます。
-この機能は、ノードラベル、エッジラベル、サブグラフラベルに適用できます。
-自動折り返しは以下のように無効にすることができます: 
+Formatting: 
+To format bold text, use double asterisks (**) before and after the text.
+To format italic text, use single asterisks (*) before and after the text.
+In traditional strings, you needed to add <br> tags to wrap text within nodes, but with Markdown strings, text automatically wraps when it becomes too long, allowing you to start a new line using a newline character instead of <br> tags.
+This feature can be applied to node labels, edge labels, and subgraph labels.
+Automatic wrapping can be disabled as follows: 
 ---
 config:
   markdownAutoWrap: false
@@ -474,15 +473,15 @@ config:
 graph LR
 
 Interaction
-ノードにクリックイベントをバインドすることができます。クリックすると、JavaScriptのコールバックを実行するか、新しいブラウザタブでリンクを開くことができます。
-注意:
-この機能は、securityLevel='strict'を使用する場合は無効になり、securityLevel='loose'を使用する場合に有効になります。
+You can bind click events to nodes. When clicked, they can either execute a JavaScript callback or open a link in a new browser tab.
+Note:
+This feature is disabled when using securityLevel='strict', but enabled when using securityLevel='loose'.
 click nodeId callback
 click nodeId call callback()
-ノードIDは、ノードの識別子です
-コールバックは、グラフを表示するページで定義されているJavaScript関数の名前で、この関数はノードIDをパラメータとして呼び出されます。
-ツールチップのテキストは二重引用符で囲みます。
-例: 
+The nodeId is the identifier of the node.
+The callback is the name of a JavaScript function defined on the page that displays the graph, which is called with the nodeId as a parameter.
+The tooltip text is enclosed in double quotes.
+Example: 
 flowchart LR
     A-->B
     B-->C
@@ -491,8 +490,8 @@ flowchart LR
     click B "https://www.github.com" "This is a tooltip for a link"
     click C call callback() "Tooltip for a callback"
     click D href "https://www.github.com" "This is a tooltip for a link"
-リンクはデフォルトで同じブラウザのタブ/ウィンドウで開かれます。クリック定義にリンクターゲット（_self、_blank、_parent、_top がサポートされています）を追加することで、この動作を変更できます: 
-例: 
+Links are opened in the same browser tab/window by default. You can change this behavior by adding a link target (supports _self, _blank, _parent, _top) to the click definition: 
+example: 
 flowchart LR
     A-->B
     B-->C
@@ -504,84 +503,84 @@ flowchart LR
     click D href "https://www.github.com" "Open this in a new tab" _blank
 
 Comments
-コメントはフロー図内に入力することができ、これらはパーサーによって無視されます。コメントは独立した行になければならず、%% （二重パーセント記号）で始める必要があります。コメント開始から次の改行までのテキストは、フロー構文を含めすべてコメントとして扱われます。
+Comments can be entered into the flowchart, and these are ignored by the parser. Comments must be on a separate line and must start with %% (double percent sign). The text from the comment start to the next line break will be treated as a comment, including the flowchart syntax.
 flowchart LR
 %% this is a comment A -- text --> B{node}
    A -- text --> B -- text2 --> C
 
 Styling and classes
-リンクのスタイリング: 
-リンクにスタイルを適用することができます。例えば、フローの中で後ろ向きに進むリンクにスタイルを適用したい場合があります。リンクにはノードのようなIDがないため、別の方法でスタイルを適用する必要があります。IDの代わりに、グラフ内でリンクが定義された順番の番号を使用するか、すべてのリンクに適用するdefaultを使用します。以下の例では、linkStyleステートメントで定義されたスタイルはグラフの4番目のリンクに適用されます: 
+Link styling: 
+You can apply styles to links. For example, you may want to apply a style to a link that goes backward in the flow. Since links do not have an ID like nodes, you need to apply styles in a different way. Instead of an ID, use the order number of the link as defined in the graph, or use default to apply to all links. The style defined in the linkStyle statement below will be applied to the fourth link in the graph: 
 linkStyle 3 stroke:#ff3,stroke-width:4px,color:red;
-複数のリンクに一度にスタイルを追加することも可能で、リンク番号をカンマで区切ります: 
+You can also add styles to multiple links at once, separated by commas: 
 linkStyle 1,2,7 color:blue;
 
-線の曲線のスタイリング: 
-デフォルトの方法が要件を満たさない場合、アイテム間の線に使用される曲線の種類をスタイリングすることができます。利用可能な曲線スタイルには、basis、bumpX、bumpY、cardinal、catmullRom、linear、monotoneX、monotoneY、natural、step、stepAfter、stepBeforeがあります。
-以下の例では、左から右へのグラフでstepBefore曲線スタイルを使用しています: 
+Line curve styling: 
+The default method may not meet your requirements, so you can style the type of curve used between items. The available curve styles are basis, bumpX, bumpY, cardinal, catmullRom, linear, monotoneX, monotoneY, natural, step, stepAfter, stepBefore.
+The following example uses the stepBefore curve style in a left-to-right graph: 
 %%{ init: { 'flowchart': { 'curve': 'stepBefore' } } }%%
 graph LR
 
-ノードのスタイリング: 
-ノードに、太い境界線や異なる背景色など、特定のスタイルを適用することができます。
-コード: 
+Node styling: 
+You can apply styles to nodes. For example, you may want to apply a style to a node with a thick border or a different background color.
+Code: 
 flowchart LR
     id1(Start)-->id2(Stop)
     style id1 fill:#f9f,stroke:#333,stroke-width:4px
     style id2 fill:#bbf,stroke:#f66,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
 
 Classes
-スタイルを毎回定義するよりも、スタイルのクラスを定義し、異なる見た目にすべきノードにこのクラスを適用する方が便利です。
-クラス定義は以下のような例になります: 
-classDef クラス名 fill:#f9f,stroke:#333,stroke-width:4px;
-また、1つの文で複数のクラスにスタイルを定義することも可能です: 
-classDef 第1クラス名,第2クラス名 font-size:12pt;
-ノードへのクラスの適用は以下のように行います: 
-class ノードID1 クラス名;
-1つの文で複数のノードにクラスを適用することも可能です: 
-class ノードID1,ノードID2 クラス名;
-クラスを追加するより短い形式として、:::演算子を使用してノードにクラス名を適用することができます: 
+It is more convenient to define style classes and apply them to nodes that should have different appearances.
+The class definition would look like this: 
+classDef className fill:#f9f,stroke:#333,stroke-width:4px;
+You can also define multiple classes in one statement: 
+classDef className1,className2 font-size:12pt;
+The following applies a class to a node: 
+class nodeId1 className;
+You can also apply a class to multiple nodes in one statement: 
+class nodeId1,nodeId2 className;
+As a shorter form to add a class, you can use the ::: operator to apply a class name to a node: 
 flowchart LR
     A:::someclass --> B
     classDef someclass fill:#f96
-この形式は、ノード間に複数のリンクを宣言する際に使用できます: 
+This format can be used when declaring multiple links between nodes: 
 flowchart LR
     A:::foo & B:::bar --> C:::foobar
     classDef foo stroke:#f00
     classDef bar stroke:#0f0
     classDef foobar stroke:#00f
 
-CSSクラス
-以下の例のように、グラフ定義から適用できるCSSスタイルをクラスとして事前に定義することも可能です: 
+CSS classes
+You can also define CSS classes that can be applied to the graph definition: 
 flowchart LR
     A-->B[AAA<span>BBB</span>]
     B-->D
     class A cssClass
 
-【重要】予約語に関する注意
-- "end"は予約語のため使用禁止
-- 代替単語: final, complete, last, finish, done
+Important notes on reserved words
+- "end" is a reserved word, so it is not allowed to be used
+- Alternative words: final, complete, last, finish, done
 
-【使用例】
-❌ 誤った例: 
+Example: 
+❌ Incorrect example: 
 classDef end fill:#d3d3d3,stroke:#333,stroke-width:2px;
 class H end;
 
-✅ 正しい例: 
+✅ Correct example: 
 classDef complete fill:#d3d3d3,stroke:#333,stroke-width:2px;
 class H complete;
 
-デフォルトクラス
-クラスがdefaultという名前の場合、特定のクラス定義を持たないすべてのクラスに割り当てられます。
+Default classes
+If a class is named default, it will be assigned to all classes that do not have a specific class definition.
 classDef default fill:#f9f,stroke:#333,stroke-width:4px;
 </Information>
 
-出力フォーマット:
+Output format:
 <Description>
-生成するフローチャートの説明や解説を記載してください。
+Please describe or explain the flowchart you will generate.
 </Description>
 \`\`\`mermaid
-フローチャートのコードをここに記載
+The flowchart code will be here.
 \`\`\`
 </instruction>
 `;

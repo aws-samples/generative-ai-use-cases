@@ -13,24 +13,26 @@ import {
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
-import { Agent } from 'generative-ai-use-cases-jp';
+import { Agent } from 'generative-ai-use-cases';
 import { UseCaseBuilder } from './construct/use-case-builder';
-import { StackInput } from './stack-input';
+import { ProcessedStackInput } from './stack-input';
 
 export interface GenerativeAiUseCasesStackProps extends StackProps {
-  params: StackInput;
+  readonly params: ProcessedStackInput;
   // RAG Knowledge Base
-  knowledgeBaseId?: string;
-  knowledgeBaseDataSourceBucketName?: string;
+  readonly knowledgeBaseId?: string;
+  readonly knowledgeBaseDataSourceBucketName?: string;
   // Agent
-  agents?: Agent[];
+  readonly agents?: Agent[];
+  // Video Generation
+  readonly videoBucketRegionMap: Record<string, string>;
   // Guardrail
-  guardrailIdentifier?: string;
-  guardrailVersion?: string;
+  readonly guardrailIdentifier?: string;
+  readonly guardrailVersion?: string;
   // WAF
-  webAclId?: string;
+  readonly webAclId?: string;
   // Custom Domain
-  cert?: ICertificate;
+  readonly cert?: ICertificate;
 }
 
 export class GenerativeAiUseCasesStack extends Stack {
@@ -64,6 +66,8 @@ export class GenerativeAiUseCasesStack extends Stack {
       modelRegion: params.modelRegion,
       modelIds: params.modelIds,
       imageGenerationModelIds: params.imageGenerationModelIds,
+      videoGenerationModelIds: params.videoGenerationModelIds,
+      videoBucketRegionMap: props.videoBucketRegionMap,
       endpointNames: params.endpointNames,
       customAgents: params.agents,
       queryDecompositionEnabled: params.queryDecompositionEnabled,
@@ -74,7 +78,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       idPool: auth.idPool,
       userPoolClient: auth.client,
       table: database.table,
-      knowledgeBaseId: props.knowledgeBaseId,
+      knowledgeBaseId: params.ragKnowledgeBaseId || props.knowledgeBaseId,
       agents: props.agents,
       guardrailIdentify: props.guardrailIdentifier,
       guardrailVersion: props.guardrailVersion,
@@ -118,7 +122,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       predictStreamFunctionArn: api.predictStreamFunction.functionArn,
       ragEnabled: params.ragEnabled,
       ragKnowledgeBaseEnabled: params.ragKnowledgeBaseEnabled,
-      agentEnabled: params.agentEnabled,
+      agentEnabled: params.agentEnabled || params.agents.length > 0,
       flows: params.flows,
       flowStreamFunctionArn: api.invokeFlowFunction.functionArn,
       optimizePromptFunctionArn: api.optimizePromptFunction.functionArn,
@@ -126,6 +130,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       modelRegion: api.modelRegion,
       modelIds: api.modelIds,
       imageGenerationModelIds: api.imageGenerationModelIds,
+      videoGenerationModelIds: api.videoGenerationModelIds,
       endpointNames: api.endpointNames,
       agentNames: api.agentNames,
       inlineAgents: params.inlineAgents,
@@ -143,6 +148,7 @@ export class GenerativeAiUseCasesStack extends Stack {
     if (params.ragEnabled) {
       const rag = new Rag(this, 'Rag', {
         envSuffix: params.env,
+        kendraIndexLanguage: params.kendraIndexLanguage,
         kendraIndexArnInCdkContext: params.kendraIndexArn,
         kendraDataSourceBucketName: params.kendraDataSourceBucketName,
         kendraIndexScheduleEnabled: params.kendraIndexScheduleEnabled,
@@ -152,25 +158,29 @@ export class GenerativeAiUseCasesStack extends Stack {
         api: api.api,
       });
 
-      // File API から data source の Bucket のファイルをダウンロードできるようにする
-      // 既存の Kendra を import している場合、data source が S3 ではない可能性がある
-      // その際は rag.dataSourceBucketName が undefined になって権限は付与されない
+      // Allow downloading files from the File API to the data source Bucket
+      // If you are importing existing Kendra, there is a possibility that the data source is not S3
+      // In that case, rag.dataSourceBucketName will be undefined and the permission will not be granted
       if (rag.dataSourceBucketName) {
         api.allowDownloadFile(rag.dataSourceBucketName);
       }
     }
 
     // RAG Knowledge Base
-    if (params.ragKnowledgeBaseEnabled && props.knowledgeBaseId) {
-      new RagKnowledgeBase(this, 'RagKnowledgeBase', {
-        modelRegion: params.modelRegion,
-        knowledgeBaseId: props.knowledgeBaseId,
-        userPool: auth.userPool,
-        api: api.api,
-      });
-      // File API から data source の Bucket のファイルをダウンロードできるようにする
-      if (props.knowledgeBaseDataSourceBucketName) {
-        api.allowDownloadFile(props.knowledgeBaseDataSourceBucketName);
+    if (params.ragKnowledgeBaseEnabled) {
+      const knowledgeBaseId =
+        params.ragKnowledgeBaseId || props.knowledgeBaseId;
+      if (knowledgeBaseId) {
+        new RagKnowledgeBase(this, 'RagKnowledgeBase', {
+          modelRegion: params.modelRegion,
+          knowledgeBaseId: knowledgeBaseId,
+          userPool: auth.userPool,
+          api: api.api,
+        });
+        // Allow downloading files from the File API to the data source Bucket
+        if (props.knowledgeBaseDataSourceBucketName) {
+          api.allowDownloadFile(props.knowledgeBaseDataSourceBucketName);
+        }
       }
     }
 
@@ -241,7 +251,7 @@ export class GenerativeAiUseCasesStack extends Stack {
     });
 
     new CfnOutput(this, 'AgentEnabled', {
-      value: params.agentEnabled.toString(),
+      value: (params.agentEnabled || params.agents.length > 0).toString(),
     });
 
     new CfnOutput(this, 'SelfSignUpEnabled', {
@@ -258,6 +268,10 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     new CfnOutput(this, 'ImageGenerateModelIds', {
       value: JSON.stringify(api.imageGenerationModelIds),
+    });
+
+    new CfnOutput(this, 'VideoGenerateModelIds', {
+      value: JSON.stringify(api.videoGenerationModelIds),
     });
 
     new CfnOutput(this, 'EndpointNames', {

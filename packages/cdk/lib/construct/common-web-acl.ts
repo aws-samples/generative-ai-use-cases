@@ -3,10 +3,10 @@ import { CfnIPSet, CfnWebACL, CfnWebACLProps } from 'aws-cdk-lib/aws-wafv2';
 import { Construct } from 'constructs';
 
 export interface CommonWebAclProps {
-  scope: 'REGIONAL' | 'CLOUDFRONT';
-  allowedIpV4AddressRanges?: string[] | null;
-  allowedIpV6AddressRanges?: string[] | null;
-  allowedCountryCodes?: string[] | null;
+  readonly scope: 'REGIONAL' | 'CLOUDFRONT';
+  readonly allowedIpV4AddressRanges?: string[] | null;
+  readonly allowedIpV6AddressRanges?: string[] | null;
+  readonly allowedCountryCodes?: string[] | null;
 }
 
 export class CommonWebAcl extends Construct {
@@ -52,7 +52,7 @@ export class CommonWebAcl extends Construct {
       priority,
       ...commonRulePropreties(name),
       statement: {
-        // ルール間の条件はOR判定になるので、同一ルール内でAND条件で指定する
+        // The condition between rules is OR, so specify AND condition within the same rule
         andStatement: {
           statements: [
             {
@@ -79,7 +79,7 @@ export class CommonWebAcl extends Construct {
     const hasAllowedCountryCodes =
       props.allowedCountryCodes && props.allowedCountryCodes.length > 0;
 
-    // IP v4 と v6 それぞれでルールを定義する
+    // Define rules for IP v4 and v6 respectively
     if (hasAllowedIpV4) {
       const wafIPv4Set = new CfnIPSet(this, `IPv4Set${id}`, {
         ipAddressVersion: 'IPV4',
@@ -87,7 +87,7 @@ export class CommonWebAcl extends Construct {
         addresses: props.allowedIpV4AddressRanges ?? [],
       });
       if (hasAllowedCountryCodes) {
-        // Geo制限を行う場合は、IP制限とのAND条件にする
+        // If you want to perform Geo restriction, specify AND condition with IP restriction
         rules.push(
           generateIpSetAndGeoMatchRule(
             1,
@@ -110,7 +110,7 @@ export class CommonWebAcl extends Construct {
         addresses: props.allowedIpV6AddressRanges ?? [],
       });
       if (hasAllowedCountryCodes) {
-        // Geo制限を行う場合は、IP制限とのAND条件にする
+        // If you want to perform Geo restriction, specify AND condition with IP restriction
         rules.push(
           generateIpSetAndGeoMatchRule(
             2,
@@ -126,7 +126,7 @@ export class CommonWebAcl extends Construct {
       }
     }
 
-    // IP制限なしのGe制限のみの場合は、Geo制限のルールを定義
+    // If there is no IP restriction and only Geo restriction, define the Geo restriction rule
     if (!hasAllowedIpV4 && !hasAllowedIpV6 && hasAllowedCountryCodes) {
       const name = `GeoMatchRule${id}`;
       rules.push({

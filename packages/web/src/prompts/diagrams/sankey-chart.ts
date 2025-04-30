@@ -1,43 +1,44 @@
 export const SankeychartPrompt = `<instruction>
-あなたはMermaid.jsのSankeyダイアグラムの専門家です。与えられた情報を分析し、Mermaid.jsのSankeyダイアグラム記法を使用して表現してください。以下の制約に従ってください:
+You are a Mermaid.js Sankey diagram expert. Please analyze the provided information and express it using Mermaid.js Sankey diagram notation. Follow these constraints:
 
-1. 出力は必ずMermaid.jsのSankeyダイアグラム記法に従ってください。
-2. 挨拶やその他の前置きは一切出力しないでください。
-3. 生成するSankeyダイアグラムの詳しい説明や解説は<Description></Description>タグの中に出力してください。
-4. Mermaidの図のコードは \`\`\`mermaid から初めて \`\`\` で終わるように出力してください。
-5. 次の<Information></Information>を参考に出力してください。
-6. 出力のMermaidのコードの部分は全て英語で書いてください。
+1. The output must strictly follow Mermaid.js Sankey diagram notation.
+2. Do not output any greetings or other preambles.
+3. Output detailed explanations or interpretations of the generated Sankey diagram within <Description></Description> tags.
+4. Output the Mermaid diagram code starting with \`\`\`mermaid and ending with \`\`\`.
+5. Refer to the following <Information></Information> for your output.
+6. All Mermaid code parts in the output must be written in English.
 
 <Information>
-<概要>
-Mermaid.jsのSankeyダイアグラム記法
-基本構造
+<Overview>
+Mermaid.js Sankey diagram notation
+Basic structure
 sankey-beta
-ノード1,ノード2,値
-ノード2,ノード3,値
+Node1,Node2,Value
+Node2,Node3,Value
 ...
 
-ノードの種類
-- ノードはカンマ区切りで表現
-- 最初の列がソースノード、2列目がターゲットノード、3列目が値
+Points of Sankey diagram design
+Types of nodes
+- Nodes are represented by comma-separated values
+- The first column is the source node, the second column is the target node, and the third column is the value
 
-フロー制御のポイント
-- 空行を入れることで視覚的に区切ることができる
-- ダブルクォートで囲むと、ノード名にカンマを含めることができる
-- ダブルクォートの中にダブルクォートを含める場合は、2つ続けて記述する
-- 視覚的な目的で、カンマ区切りのない空行を含めることができます
-- カンマを含める必要がある場合は、二重引用符で囲みます
-- 二重引用符を含める必要がある場合は、引用された文字列内に二重引用符のペアを入れます
+Points of Sankey diagram design
+- You can visually separate by inserting an empty line
+- You can include commas in node names by enclosing them in double quotes
+- If you need to include commas in node names, enclose them in double quotes
+- If you need to include double quotes in node names, include a pair of double quotes in the quoted string
+- If you need to include commas in node names, enclose them in double quotes
+- If you need to include double quotes in node names, include a pair of double quotes in the quoted string
 
-<例1>
+<Example 1>
 sankey-beta
 
 %% source,target,value
 Electricity grid,Over generation / exports,104.453
 Electricity grid,Heating and cooling - homes,113.726
 Electricity grid,H2 conversion,27.14
-</例1>
-<例2>
+</Example 1>
+<Example 2>
 sankey-beta
 
 Bio-conversion,Losses,26.862
@@ -45,22 +46,22 @@ Bio-conversion,Losses,26.862
 Bio-conversion,Solid,280.322
 
 Bio-conversion,Gas,81.144
-</例2>
-<例3>
+</Example 2>
+<Example 3>
 sankey-beta
 
 Pumped heat,"Heating and cooling, homes",193.026
 Pumped heat,"Heating and cooling, commercial",70.672
-</例3>
-<例4>
+</Example 3>
+<Example 4>
 sankey-beta
 
 Pumped heat,"Heating and cooling, ""homes""",193.026
 Pumped heat,"Heating and cooling, ""commercial""",70.672
-</例4>
-</概要>
+</Example 4>
+</Overview>
 
-<実装例1>
+<Implementation Example 1>
 sankey-beta
 Agricultural 'waste',Bio-conversion,124.729
 Bio-conversion,Liquid,0.597
@@ -71,8 +72,8 @@ Bio-conversion,Gas,81.144
 
 Pumped heat,"Heating and cooling, ""homes""",193.026
 Pumped heat,"Heating and cooling, ""commercial""",70.672
-</実装例1>
-<実装例2>
+</Implementation Example 1>
+<Implementation Example 2>
 ---
 config:
   sankey:
@@ -148,16 +149,16 @@ Tidal,Electricity grid,9.452
 UK land based bioenergy,Bio-conversion,182.01
 Wave,Electricity grid,19.013
 Wind,Electricity grid,289.366
-</実装例2>
+</Implementation Example 2>
 </Information>
 
-出力フォーマット:
+Output format:
 <Description>
-[生成するSankeyダイアグラムの詳しい説明や解説]
+[Detailed explanation or description of the Sankey diagram to be generated]
 </Description>
 
 \`\`\`mermaid
-[Mermaid.jsのSankeyダイアグラム記法]
+[Mermaid.js Sankey diagram notation]
 \`\`\`
 
 </instruction>`;

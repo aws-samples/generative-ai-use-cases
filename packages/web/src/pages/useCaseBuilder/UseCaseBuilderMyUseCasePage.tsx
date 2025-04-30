@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { UseCaseAsOutput } from 'generative-ai-use-cases-jp';
+import { UseCaseAsOutput } from 'generative-ai-use-cases';
 import ButtonIcon from '../../components/ButtonIcon';
 import { PiNotePencil, PiTrash } from 'react-icons/pi';
 import Button from '../../components/Button';
@@ -12,9 +12,11 @@ import ButtonFavorite from '../../components/useCaseBuilder/ButtonFavorite';
 import ButtonShare from '../../components/useCaseBuilder/ButtonShare';
 import ButtonUseCaseEdit from '../../components/useCaseBuilder/ButtonUseCaseEdit';
 import Card from '../../components/Card';
+import { useTranslation } from 'react-i18next';
 
 const UseCaseBuilderMyUseCasePage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const {
     myUseCases,
     isLoadingMyUseCases,
@@ -75,7 +77,7 @@ const UseCaseBuilderMyUseCasePage: React.FC = () => {
         <div className="flex flex-row">
           <div className="flex-1" />
           <div className="hidden flex-row items-center justify-center text-xl font-semibold lg:flex print:flex">
-            マイユースケース
+            {t('useCaseBuilder.myUseCases')}
           </div>
           <div className="flex flex-1 justify-end">
             <Button
@@ -84,7 +86,7 @@ const UseCaseBuilderMyUseCasePage: React.FC = () => {
                 navigate(`/use-case-builder/new`);
               }}>
               <PiNotePencil className="mr-2" />
-              新規作成
+              {t('useCaseBuilder.createNew')}
             </Button>
           </div>
         </div>
@@ -92,7 +94,7 @@ const UseCaseBuilderMyUseCasePage: React.FC = () => {
         <Card>
           {!isLoadingMyUseCases && myUseCases.length === 0 && (
             <div className="flex h-full w-full items-center justify-center py-16 text-sm font-bold text-gray-400">
-              マイユースケースがありません。
+              {t('useCaseBuilder.noMyUseCases')}
             </div>
           )}
           {myUseCases.map((useCase, idx) => {
@@ -151,7 +153,7 @@ const UseCaseBuilderMyUseCasePage: React.FC = () => {
               <button
                 className="text-sm hover:underline"
                 onClick={loadMoreMyUseCases}>
-                さらに読み込む
+                {t('useCaseBuilder.loadMore')}
               </button>
             </div>
           )}

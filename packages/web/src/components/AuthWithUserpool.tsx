@@ -2,6 +2,7 @@ import { Amplify } from 'aws-amplify';
 import { Authenticator, translations } from '@aws-amplify/ui-react';
 import { I18n } from 'aws-amplify/utils';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const selfSignUpEnabled: boolean =
   import.meta.env.VITE_APP_SELF_SIGN_UP_ENABLED === 'true';
@@ -10,6 +11,8 @@ type Props = {
   children: React.ReactNode;
 };
 const AuthWithUserpool: React.FC<Props> = (props) => {
+  const { t, i18n } = useTranslation();
+
   Amplify.configure({
     Auth: {
       Cognito: {
@@ -21,7 +24,7 @@ const AuthWithUserpool: React.FC<Props> = (props) => {
   });
 
   I18n.putVocabularies(translations);
-  I18n.setLanguage('ja');
+  I18n.setLanguage(i18n.language === 'ja' ? 'ja' : 'en');
 
   return (
     <Authenticator
@@ -29,7 +32,7 @@ const AuthWithUserpool: React.FC<Props> = (props) => {
       components={{
         Header: () => (
           <div className="text-aws-font-color mb-5 mt-10 flex justify-center text-3xl">
-            Generative AI Use Cases on AWS
+            {t('auth.title')}
           </div>
         ),
       }}>

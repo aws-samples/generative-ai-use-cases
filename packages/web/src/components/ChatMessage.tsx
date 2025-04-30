@@ -13,16 +13,14 @@ import {
   PiArrowClockwise,
 } from 'react-icons/pi';
 import { BaseProps } from '../@types/common';
-import {
-  ShownMessage,
-  UpdateFeedbackRequest,
-} from 'generative-ai-use-cases-jp';
+import { ShownMessage, UpdateFeedbackRequest } from 'generative-ai-use-cases';
 import BedrockIcon from '../assets/bedrock.svg?react';
 import useChat from '../hooks/useChat';
 import useTyping from '../hooks/useTyping';
 import FileCard from './FileCard';
 import FeedbackForm from './FeedbackForm';
 import useFiles from '../hooks/useFiles';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   idx?: number;
@@ -36,6 +34,7 @@ type Props = BaseProps & {
 };
 
 const ChatMessage: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const chatContent = useMemo(() => {
     return props.chatContent;
   }, [props]);
@@ -61,7 +60,7 @@ const ChatMessage: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (chatContent?.extraData) {
-      // ローディング表示にするために、画像の数だけ要素を用意して、undefinedを初期値として設定する
+      // To display the loading, prepare as many elements as the number of images, and set undefined as the initial value
       setSignedUrls(new Array(chatContent.extraData.length).fill(undefined));
       Promise.all(
         chatContent.extraData.map(async (file) => {
@@ -102,7 +101,7 @@ const ChatMessage: React.FC<Props> = (props) => {
   };
 
   const handleFeedbackClick = (feedback: string) => {
-    // ボタン押した際、ユーザーからの詳細フィードバック前にDBに送る。
+    // When the button is pressed, send the detailed feedback from the user to the DB before it is displayed.
     onSendFeedback({
       createdDate: props.chatContent!.createdDate!,
       feedback: feedback,
@@ -166,7 +165,7 @@ const ChatMessage: React.FC<Props> = (props) => {
               <details className="mb-2 cursor-pointer rounded border p-2">
                 <summary className="text-sm">
                   <div className="inline-flex gap-1">
-                    トレース
+                    {t('common.trace')}
                     {props.loading && !chatContent?.content && (
                       <div className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></div>
                     )}
@@ -177,7 +176,7 @@ const ChatMessage: React.FC<Props> = (props) => {
                 </Markdown>
               </details>
             )}
-            {chatContent?.extraData && (
+            {chatContent?.extraData && chatContent.extraData.length > 0 && (
               <div className="mb-2 flex flex-wrap gap-2">
                 {chatContent.extraData.map((data, idx) => {
                   if (data.type === 'image') {
@@ -224,6 +223,7 @@ const ChatMessage: React.FC<Props> = (props) => {
               <div className="whitespace-pre-wrap">{typingTextOutput}</div>
             )}
             {props.loading && (chatContent?.content ?? '') === '' && (
+              /* eslint-disable-next-line @shopify/jsx-no-hardcoded-content */
               <div className="animate-pulse">▍</div>
             )}
 
@@ -293,7 +293,7 @@ const ChatMessage: React.FC<Props> = (props) => {
           )}
           {showThankYouMessage && (
             <div className="mt-2 rounded-md bg-green-100 p-2 text-center text-green-700">
-              フィードバックを受け付けました。ありがとうございます。
+              {t('common.feedback_received')}
             </div>
           )}
         </div>

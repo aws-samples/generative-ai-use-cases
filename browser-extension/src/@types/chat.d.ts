@@ -22,12 +22,12 @@ export type SystemContext = {
 
 export type Message = {
   role: Role;
-  // テキスト
+  // Text
   content: string;
-  // 追加データ（画像など）
+  // Additional data (image, etc.)
   extraData?: ExtraData[];
   llmType?: string;
-  // プロンプトのタイトル
+  // Prompt title
   title?: string;
 };
 

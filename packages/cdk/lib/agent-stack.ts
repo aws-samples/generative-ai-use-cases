@@ -1,11 +1,11 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Agent } from './construct';
-import { Agent as AgentType } from 'generative-ai-use-cases-jp';
-import { StackInput } from './stack-input';
+import { Agent as AgentType } from 'generative-ai-use-cases';
+import { ProcessedStackInput } from './stack-input';
 
 export interface AgentStackProps extends StackProps {
-  params: StackInput;
+  readonly params: ProcessedStackInput;
 }
 
 export class AgentStack extends Stack {

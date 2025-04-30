@@ -23,13 +23,14 @@ import { GenerateImagePageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import { getPrompter } from '../prompts';
 import queryString from 'query-string';
-import { GenerateImageParams } from 'generative-ai-use-cases-jp';
+import { GenerateImageParams } from 'generative-ai-use-cases';
 import {
   AmazonBaseImageGenerationMode,
   AmazonUIImageGenerationMode,
   ControlMode,
-} from 'generative-ai-use-cases-jp';
+} from 'generative-ai-use-cases';
 import InputText from '../components/InputText';
+import { useTranslation } from 'react-i18next';
 
 const MAX_SAMPLE = 7;
 
@@ -83,6 +84,11 @@ const stabilityAi2024ModelPresets = [
   { value: '3:2', label: '1216 x 832' },
   { value: '16:9', label: '1344 x 768' },
   { value: '21:9', label: '1536 x 640' },
+];
+// Add the following image size for Nova Reel 1st frame image generation to Nova Canvas
+const novaCanvasPresets = [
+  ...defaultModelPresets,
+  { value: '1280 x 720', label: '1280 x 720' },
 ];
 const modelInfo: Record<string, ModelInfo<'base' | 'advanced'>> = {
   [STABILITY_AI_MODELS.STABLE_DIFFUSION_XL]: {
@@ -155,7 +161,7 @@ const modelInfo: Record<string, ModelInfo<'base' | 'advanced'>> = {
       AMAZON_ADVANCED_GENERATION_MODE.COLOR_GUIDED_GENERATION,
       AMAZON_ADVANCED_GENERATION_MODE.BACKGROUND_REMOVAL,
     ],
-    resolutionPresets: defaultModelPresets,
+    resolutionPresets: novaCanvasPresets,
   },
 };
 
@@ -462,8 +468,8 @@ const useGenerateImagePageState = create<StateType>((set, get) => {
   };
 });
 
-// StableDiffusion の StylePreset
-// 一覧は、以下の style_preset を参照
+// StylePreset for StableDiffusion
+// See the list below for the style_preset
 // https://platform.stability.ai/docs/api-reference#tag/v1generation/operation/textToImage
 const stylePresetOptions = [
   '3d-model',
@@ -488,13 +494,14 @@ const stylePresetOptions = [
   label: s,
 }));
 
-// Titan Image Generator v2のImage Conditioning適用時のControl Mode
+// Control Mode for Image Conditioning when using Titan Image Generator v2
 // https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-titan-image.html
 const controlModeOptions = ['CANNY_EDGE', 'SEGMENTATION'].map((s) => ({
   value: s as ControlMode,
   label: s as ControlMode,
 }));
 const GenerateImagePage: React.FC = () => {
+  const { t } = useTranslation();
   const {
     imageGenModelId,
     setImageGenModelId,
@@ -617,7 +624,7 @@ const GenerateImagePage: React.FC = () => {
     // eslint-disable-next-line  react-hooks/exhaustive-deps
   }, [prompter]);
 
-  // LandingPage のデモデータ設定
+  // Setting the demo data for LandingPage
   useEffect(() => {
     const _modelId = !modelId ? modelIds[0] : modelId;
     const _imageGenModelId = !imageGenModelId
@@ -740,7 +747,7 @@ const GenerateImagePage: React.FC = () => {
           };
         }
 
-        // 解像度の設定
+        // Setting the resolution
         if (modelConfig.resolutionPresets[0].value.includes(':')) {
           params = {
             ...params,
@@ -862,9 +869,9 @@ const GenerateImagePage: React.FC = () => {
     <div className="grid h-screen grid-cols-12 gap-4 p-4">
       <ModalDialog
         isOpen={isOpenSketch}
-        title="初期画像の設定"
+        title={t('generateImage.init_image')}
         className="w-[530px]"
-        help="画像生成の初期状態として使われます。指定した画像に近い画像が生成されます。"
+        help={t('generateImage.help.init_image')}
         onClose={() => {
           setIsOpenSketch(false);
         }}>
@@ -880,9 +887,9 @@ const GenerateImagePage: React.FC = () => {
       </ModalDialog>
       <ModalDialog
         isOpen={isOpenMask}
-        title="マスク画像の設定"
+        title={t('generateImage.mask_image')}
         className="w-[530px]"
-        help="画像生成のマスクとして使われます。マスクした範囲（Inpaint）もしくは外側（Outpaint）が生成されます。"
+        help={t('generateImage.help.mask_image')}
         onClose={() => {
           setIsOpenMask(false);
         }}>
@@ -908,7 +915,7 @@ const GenerateImagePage: React.FC = () => {
           onChangeContent={setChatContent}
           isGeneratingImage={generating}
           onGenerate={async (p, np, sp) => {
-            // 設定に変更があった場合のみ生成する
+            // Generate only if there is a change in the settings
             if (
               p !== prompt ||
               np !== negativePrompt ||
@@ -971,16 +978,16 @@ const GenerateImagePage: React.FC = () => {
           {generationMode !== 'BACKGROUND_REMOVAL' && (
             <>
               <Textarea
-                label="プロンプト"
-                help="生成したい画像の説明を記載してください。文章ではなく、単語の羅列で記載します。"
+                label={t('generateImage.prompt')}
+                help={t('generateImage.help.prompt')}
                 value={prompt}
                 onChange={setPrompt}
                 maxHeight={60}
                 rows={2}
               />
               <Textarea
-                label="ネガティブプロンプト"
-                help="生成したくない要素、排除したい要素を記載してください。文章ではなく、単語の羅列で記載します。"
+                label={t('generateImage.negative_prompt')}
+                help={t('generateImage.help.negative_prompt')}
                 value={negativePrompt}
                 onChange={setNegativePrompt}
                 maxHeight={60}
@@ -991,16 +998,17 @@ const GenerateImagePage: React.FC = () => {
 
           <div className="grid w-full grid-cols-2 gap-2">
             <Select
-              label="モデル"
+              label={t('generateImage.model')}
               value={imageGenModelId}
               onChange={setImageGenModelId}
               options={imageGenModelIds.map((m) => {
                 return { value: m, label: m };
               })}
+              fullWidth
             />
             {generationMode !== 'BACKGROUND_REMOVAL' && (
               <Select
-                label="サイズ"
+                label={t('generateImage.resolution')}
                 value={resolution.value}
                 onChange={(value: string) => {
                   const selectedResolution = resolutionPresets.find(
@@ -1021,14 +1029,14 @@ const GenerateImagePage: React.FC = () => {
               <div className="relative col-span-2 flex flex-row items-center lg:col-span-1">
                 <RangeSlider
                   className="w-full"
-                  label="Seed"
+                  label={t('generateImage.seed')}
                   min={0}
                   max={4294967295}
                   value={seed[selectedImageIndex]}
                   onChange={(n) => {
                     setSeed(n, selectedImageIndex);
                   }}
-                  help="乱数のシード値です。同じシード値を指定すると同じ画像が生成されます。"
+                  help={t('generateImage.help.seed')}
                 />
                 <ButtonIcon
                   className="absolute -top-0.5 right-[8.2rem]"
@@ -1039,41 +1047,41 @@ const GenerateImagePage: React.FC = () => {
 
               <RangeSlider
                 className="col-span-2 lg:col-span-1"
-                label="画像生成数"
+                label={t('generateImage.image_samples')}
                 min={1}
                 max={7}
                 value={imageSample}
                 onChange={setImageSample}
-                help="Seed をランダム設定しながら画像を指定の数だけ同時に生成します。"
+                help={t('generateImage.help.image_samples')}
               />
             </div>
           )}
 
           <ExpandableField
-            label="詳細なパラメータ"
+            label={t('generateImage.detail_parameters')}
             overrideExpanded={detailExpanded}
             setOverrideExpanded={setDetailExpanded}>
             <div className="grid grid-cols-2 gap-2 pt-4">
               <div className="col-span-2 flex flex-col items-stretch justify-start lg:col-span-1">
                 <Select
-                  label="GenerationMode"
+                  label={t('generateImage.generation_mode')}
                   options={modeOptions}
                   value={generationMode}
                   onChange={(v) =>
                     setGenerationMode(v as AmazonUIImageGenerationMode)
                   }
                   fullWidth
-                  help="TEXT_IMAGE:テキストから画像を生成します。IMAGE_VARIATION:参照画像から類似画像を生成します。INPAINTING:画像の一部を編集します。OUTPAINTING:画像を拡張します。IMAGE_CONDITIONING:構図を反映します。COLOR_GUIDED_GENERATION:配色指定で生成します。BACKGROUND_REMOVAL:背景を除去します"
+                  help={t('generateImage.help.generation_mode')}
                 />
                 <div className="mb-2 flex flex-row justify-center gap-2 lg:flex-col xl:flex-row">
                   {generationMode !== GENERATION_MODES.TEXT_IMAGE && (
                     <div className="flex flex-col items-center">
                       <div className="mb-1 flex items-center text-sm font-bold">
-                        初期画像
+                        {t('generateImage.init_image')}
                         <Help
                           className="ml-1"
                           position="center"
-                          message="画像生成の初期状態となる画像を設定できます。初期画像を設定することで、初期画像に近い画像を生成するように誘導できます。"
+                          message={t('generateImage.help.init_image')}
                         />
                       </div>
                       <Base64Image
@@ -1086,18 +1094,18 @@ const GenerateImagePage: React.FC = () => {
                           setIsOpenSketch(true);
                         }}>
                         <PiFileArrowUp className="mr-2" />
-                        設定
+                        {t('generateImage.set')}
                       </Button>
                     </div>
                   )}
                   {maskMode && (
                     <div className="flex flex-col items-center">
                       <div className="mb-1 flex items-center text-sm font-bold">
-                        マスク画像
+                        {t('generateImage.mask_image')}
                         <Help
                           className="ml-1"
                           position="center"
-                          message="画像のマスクを設定できます。マスク画像を設定することで、マスクされた領域（Inpaint）もしくは外側の領域（Outpaint)を生成できます。マスクプロンプトと併用はできません。"
+                          message={t('generateImage.help.mask_image')}
                         />
                       </div>
                       <Base64Image
@@ -1111,15 +1119,15 @@ const GenerateImagePage: React.FC = () => {
                           setIsOpenMask(true);
                         }}>
                         <PiFileArrowUp className="mr-2" />
-                        設定
+                        {t('generateImage.set')}
                       </Button>
                     </div>
                   )}
                 </div>
                 {maskMode && maskPromptSupported && (
                   <Textarea
-                    label="マスクプロンプト"
-                    help="マスクしたい/排除したい要素（Inpaint）、マスクしたくない/残したい要素（Outpaint）を記載してください。文章ではなく、単語の羅列で記載します。マスク画像と併用はできません。"
+                    label={t('generateImage.mask_prompt')}
+                    help={t('generateImage.help.mask_prompt')}
                     value={maskPrompt}
                     onChange={setMaskPrompt}
                     maxHeight={60}
@@ -1132,8 +1140,8 @@ const GenerateImagePage: React.FC = () => {
                   <div className="space-y-4">
                     <div>
                       <Select
-                        label="プリセットパレット"
-                        help="プリセットのカラーパレットから選択できます"
+                        label={t('generateImage.colors')}
+                        help={t('generateImage.help.colors')}
                         options={colorsOptions}
                         value={
                           colorsOptions.find(
@@ -1154,7 +1162,7 @@ const GenerateImagePage: React.FC = () => {
 
                     <div>
                       <label className="text-sm font-bold">
-                        カスタムカラー
+                        {t('generateImage.custom_colors')}
                       </label>
                       <div className="mt-2 space-y-2">
                         {colorList.map((color, index) => (
@@ -1201,7 +1209,7 @@ const GenerateImagePage: React.FC = () => {
                           }}
                           className="mt-2"
                           disabled={colorList.length >= 5}>
-                          カラーを追加
+                          {t('generateImage.add_color')}
                         </Button>
                       </div>
                     </div>
@@ -1209,8 +1217,8 @@ const GenerateImagePage: React.FC = () => {
                 )}
                 {generationMode === 'IMAGE_CONDITIONING' && (
                   <Select
-                    label="コントロールモード"
-                    help="CANNY_EDGE:参照画像のエッジを抽出します。詳細な模様などを反映したい場合に最適です。SEGMENTATION:参照画像内を領域に区切ります。複数の物体の位置関係を反映したい場合に最適です。"
+                    label={t('generateImage.control_mode')}
+                    help={t('generateImage.help.control_mode')}
                     options={controlModeOptions}
                     value={controlMode}
                     onChange={(v) => setControlMode(v as ControlMode)}
@@ -1223,7 +1231,7 @@ const GenerateImagePage: React.FC = () => {
                 <div className="col-span-2 flex flex-col items-center justify-start lg:col-span-1">
                   <div className="mb-2 w-full">
                     <Select
-                      label="StylePreset"
+                      label={t('generateImage.style_preset')}
                       options={stylePresetOptions}
                       value={stylePreset}
                       onChange={setStylePreset}
@@ -1234,46 +1242,46 @@ const GenerateImagePage: React.FC = () => {
 
                   <RangeSlider
                     className="w-full"
-                    label="CFG Scale"
+                    label={t('generateImage.cfg_scale')}
                     min={0}
                     max={30}
                     value={cfgScale}
                     onChange={setCfgScale}
-                    help="この値が高いほどプロンプトに対して忠実な画像を生成します。"
+                    help={t('generateImage.help.cfg_scale')}
                   />
 
                   <RangeSlider
                     className="w-full"
-                    label="Step"
+                    label={t('generateImage.steps')}
                     min={10}
                     max={50}
                     value={step}
                     onChange={setStep}
-                    help="画像生成の反復回数です。Step 数が多いほど画像が洗練されますが、生成に時間がかかります。"
+                    help={t('generateImage.help.steps')}
                   />
 
                   {generationMode === GENERATION_MODES.IMAGE_VARIATION && (
                     <RangeSlider
                       className="w-full"
-                      label="ImageStrength"
+                      label={t('generateImage.image_strength')}
                       min={0}
                       max={1}
                       step={0.01}
                       value={imageStrength}
                       onChange={setImageStrength}
-                      help="1に近いほど「初期画像」に近い画像が生成され、0に近いほど「初期画像」とは異なる画像が生成されます。"
+                      help={t('generateImage.help.image_strength')}
                     />
                   )}
                   {generationMode === 'IMAGE_CONDITIONING' && (
                     <RangeSlider
                       className="w-full"
-                      label="ControlStrength"
+                      label={t('generateImage.control_strength')}
                       min={0}
                       max={1}
                       step={0.01}
                       value={controlStrength}
                       onChange={setControlStrength}
-                      help="1に近いほど「参照画像」の構図に基づいた画像が生成され、0に近いほど「参照画像」の構図とは異なる画像が生成されます。"
+                      help={t('generateImage.help.control_strength')}
                     />
                   )}
                 </div>
@@ -1305,7 +1313,7 @@ const GenerateImagePage: React.FC = () => {
                   AMAZON_ADVANCED_GENERATION_MODE.COLOR_GUIDED_GENERATION &&
                   !colors)
               }>
-              生成
+              {t('generateImage.generate')}
             </Button>
 
             <Button
@@ -1315,7 +1323,7 @@ const GenerateImagePage: React.FC = () => {
                 clearAll();
               }}
               disabled={generating || loadingChat}>
-              クリア
+              {t('generateImage.clear')}
             </Button>
           </div>
         </Card>

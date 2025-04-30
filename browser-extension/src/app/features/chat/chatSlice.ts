@@ -4,7 +4,7 @@ import { AppThunk, RootState } from '../../store';
 import { Message } from '../../../@types/chat';
 import { produce } from 'immer';
 
-// 複数画面で立ち上げることがあるのでタブごとに状態を管理
+// Keep the state for each tab because it can be launched in multiple screens
 export type ChatState = {
   [tabId: number]: {
     messages: Message[];

@@ -7,6 +7,7 @@ import { I18n } from 'aws-amplify/utils';
 import { Authenticator, translations } from '@aws-amplify/ui-react';
 import Browser from 'webextension-polyfill';
 import Button from './Button';
+import { IconWrapper } from '../../../components/IconWrapper';
 
 type Props = {
   children: React.ReactNode;
@@ -18,7 +19,7 @@ const RequiresAuth: React.FC<Props> = (props) => {
   useEffect(() => {
     if (settings) {
       if (settings.enabledSamlAuth) {
-        // SAML用の設定
+        // SAML configuration
         Amplify.configure({
           Auth: {
             Cognito: {
@@ -38,7 +39,7 @@ const RequiresAuth: React.FC<Props> = (props) => {
           },
         });
       } else {
-        // UserPool用の設定
+        // UserPool configuration
         Amplify.configure({
           Auth: {
             Cognito: {
@@ -51,7 +52,7 @@ const RequiresAuth: React.FC<Props> = (props) => {
         I18n.putVocabularies(translations);
         I18n.setLanguage('ja');
       }
-      // 認証の設定をしたら認証を実行
+      // If the authentication configuration is set, authenticate
       authenticate();
     }
   }, [authenticate, settings]);
@@ -66,7 +67,7 @@ const RequiresAuth: React.FC<Props> = (props) => {
       {!settings || loading ? (
         <div className="flex flex-col items-center">
           <div className="italic">Loading...</div>
-          <PiCircleNotchBold className="text-6xl animate-spin" />
+          <IconWrapper icon={PiCircleNotchBold} className="text-6xl animate-spin" />
         </div>
       ) : (
         <>

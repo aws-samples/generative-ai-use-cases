@@ -9,6 +9,8 @@ import { PiGithubLogoFill, PiArrowSquareOut } from 'react-icons/pi';
 import { useAuthenticator } from '@aws-amplify/ui-react';
 import { useCallback } from 'react';
 import { useSWRConfig } from 'swr';
+import { useTranslation, Trans } from 'react-i18next';
+import { supportedLngs } from '../i18n/config';
 
 const ragEnabled: boolean = import.meta.env.VITE_APP_RAG_ENABLED === 'true';
 const ragKnowledgeBaseEnabled: boolean =
@@ -17,7 +19,7 @@ const agentEnabled: boolean = import.meta.env.VITE_APP_AGENT_ENABLED === 'true';
 
 const SettingItem = (props: {
   name: string;
-  value: string;
+  value: string | React.ReactNode;
   helpMessage?: string;
 }) => {
   return (
@@ -34,18 +36,25 @@ const SettingItem = (props: {
 };
 
 const Setting = () => {
-  const { modelRegion, modelIds, imageGenModelIds, agentNames } = MODELS;
+  const {
+    modelRegion,
+    modelIds,
+    imageGenModelIds,
+    videoGenModelIds,
+    agentNames,
+  } = MODELS;
   const { cache } = useSWRConfig();
   const { getLocalVersion, getHasUpdate } = useVersion();
   const { getClosedPullRequests } = useGitHub();
   const { signOut } = useAuthenticator();
+  const { i18n, t } = useTranslation();
 
   const localVersion = getLocalVersion();
   const hasUpdate = getHasUpdate();
   const closedPullRequests = getClosedPullRequests();
 
   const onClickSignout = useCallback(() => {
-    // SWRのキャッシュを全て削除する
+    // Delete all SWR cache
     for (const key of cache.keys()) {
       cache.delete(key);
     }
@@ -55,80 +64,114 @@ const Setting = () => {
   return (
     <div>
       <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-        設定情報
+        {t('setting.title')}
       </div>
 
       {hasUpdate && (
         <div className="mt-5 flex w-full justify-center">
           <Alert severity="info" className="flex w-fit items-center">
-            GitHub にアップデートがあります。最新の機能を利用したい場合は
-            <Link
-              className="text-aws-smile"
-              to="https://github.com/aws-samples/generative-ai-use-cases-jp"
-              target="_blank">
-              generative-ai-use-cases-jp
-            </Link>
-            の main ブランチを pull して再度デプロイしてください。
+            <Trans
+              i18nKey="setting.update.message"
+              components={[
+                <Link
+                  className="text-aws-smile"
+                  to="https://github.com/aws-samples/generative-ai-use-cases"
+                  target="_blank"
+                />,
+              ]}
+            />
           </Alert>
         </div>
       )}
 
-      <div className="my-3 flex justify-center font-semibold">全般</div>
+      <div className="my-3 flex justify-center font-semibold">
+        {t('setting.general')}
+      </div>
 
       <div className="flex w-full flex-col items-center text-sm">
         <SettingItem
-          name="バージョン"
-          value={localVersion || '取得できませんでした'}
-          helpMessage="generative-ai-use-cases-jp の package.json の version を参照しています"
+          name={t('setting.items.version')}
+          value={localVersion || t('common.not_available')}
+          helpMessage={t('setting.items.version_help')}
         />
         <SettingItem
-          name="RAG (Amazon Kendra) 有効"
+          name={t('setting.items.rag_enabled')}
           value={ragEnabled.toString()}
         />
         <SettingItem
-          name="RAG (Knowledge Base) 有効"
+          name={t('setting.items.rag_kb_enabled')}
           value={ragKnowledgeBaseEnabled.toString()}
         />
-        <SettingItem name="Agent 有効" value={agentEnabled.toString()} />
+        <SettingItem
+          name={t('setting.items.agent_enabled')}
+          value={agentEnabled.toString()}
+        />
+        <SettingItem
+          name={t('setting.items.language')}
+          value={
+            <select
+              value={i18n.resolvedLanguage}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+              className="rounded border border-gray-300 py-1 pr-8 focus:border-gray-300 focus:outline-none focus:ring-0">
+              {Object.entries(supportedLngs).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          }
+          helpMessage={t('setting.items.language_help')}
+        />
       </div>
 
-      <div className="my-3 flex justify-center font-semibold">生成 AI</div>
+      <div className="my-3 flex justify-center font-semibold">
+        {t('setting.ai')}
+      </div>
 
       <div className="flex w-full flex-col items-center text-sm">
-        <SettingItem name="LLM モデル名" value={modelIds.join(', ')} />
         <SettingItem
-          name="画像生成 モデル名"
+          name={t('setting.ai_items.llm_model')}
+          value={modelIds.join(', ')}
+        />
+        <SettingItem
+          name={t('setting.ai_items.image_gen_model')}
           value={imageGenModelIds.join(', ')}
         />
-        <SettingItem name="Agent 名" value={agentNames.join(', ')} />
         <SettingItem
-          name="LLM & 画像生成 モデルリージョン"
+          name={t('setting.ai_items.video_gen_model')}
+          value={videoGenModelIds.join(', ')}
+        />
+        <SettingItem
+          name={t('setting.ai_items.agent_name')}
+          value={agentNames.join(', ')}
+        />
+        <SettingItem
+          name={t('setting.ai_items.model_region')}
           value={modelRegion}
         />
         <div className="mt-5 w-2/3 text-xs lg:w-1/2">
-          設定の変更はこの画面ではなく
-          <Link
-            className="text-aws-smile"
-            to="https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/home.html"
-            target="_blank">
-            AWS CDK
-          </Link>
-          で行います。 また、ユースケース実行時にエラーになる場合は、必ず
-          <span className="font-bold">{modelRegion}</span> にて指定したモデル
-          を有効化しているか確認してください。それぞれのやり方については
-          <Link
-            className="text-aws-smile"
-            to="https://github.com/aws-samples/generative-ai-use-cases-jp"
-            target="_blank">
-            generative-ai-use-cases-jp
-          </Link>
-          をご参照ください。
+          <Trans
+            i18nKey="setting.config_message"
+            values={{ region: modelRegion }}
+            components={[
+              <Link
+                className="text-aws-smile"
+                to="https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/home.html"
+                target="_blank"
+              />,
+              <Link
+                className="text-aws-smile"
+                to="https://github.com/aws-samples/generative-ai-use-cases"
+                target="_blank"
+              />,
+            ]}
+          />
         </div>
       </div>
 
       <div className="mb-3 mt-8 flex items-center justify-center font-semibold">
         <PiGithubLogoFill className="mr-2 text-lg" />
-        最近のアップデート
+        {t('setting.recent_updates')}
       </div>
 
       <div className="flex flex-col items-center text-sm">
@@ -151,18 +194,18 @@ const Setting = () => {
 
         <div className="mt-1 flex w-2/3 justify-end text-xs lg:w-1/2">
           <a
-            href="https://github.com/aws-samples/generative-ai-use-cases-jp/pulls?q=is%3Apr+is%3Aclosed"
+            href="https://github.com/aws-samples/generative-ai-use-cases/pulls?q=is%3Apr+is%3Aclosed"
             className="flex items-center hover:underline"
             target="_blank">
             <PiArrowSquareOut className="mr-1 text-base" />
-            全てのアップデートを見る
+            {t('setting.view_all_updates')}
           </a>
         </div>
       </div>
 
       <div className="my-10 flex w-full justify-center">
         <Button onClick={onClickSignout} className="text-lg">
-          サインアウト
+          {t('setting.signout')}
         </Button>
       </div>
     </div>

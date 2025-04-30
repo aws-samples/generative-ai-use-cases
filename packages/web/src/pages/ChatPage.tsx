@@ -24,7 +24,13 @@ import { MODELS } from '../hooks/useModel';
 import { getPrompter } from '../prompts';
 import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
-import { FileLimit, SystemContext } from 'generative-ai-use-cases-jp';
+import {
+  AdditionalModelRequestFields,
+  FileLimit,
+  SystemContext,
+} from 'generative-ai-use-cases';
+import ModelParameters from '../components/ModelParameters';
+import { useTranslation } from 'react-i18next';
 
 const fileLimit: FileLimit = {
   accept: {
@@ -146,9 +152,14 @@ const ChatPage: React.FC = () => {
   const prompter = useMemo(() => {
     return getPrompter(modelId);
   }, [modelId]);
+  const [overrideModelParameters, setOverrideModelParameters] = useState<
+    AdditionalModelRequestFields | undefined
+  >(undefined);
+  const [showSetting, setShowSetting] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
-    // 会話履歴のページではモデルを変更してもシステムプロンプトを変更しない
+    // On the conversation history page, do not change the system prompt even if the model is changed
     if (!chatId) {
       updateSystemContextByModel();
     }
@@ -157,11 +168,11 @@ const ChatPage: React.FC = () => {
 
   const title = useMemo(() => {
     if (chatId) {
-      return getChatTitle(chatId) || 'チャット';
+      return getChatTitle(chatId) || t('chat.title');
     } else {
-      return 'チャット';
+      return t('chat.title');
     }
-  }, [chatId, getChatTitle]);
+  }, [chatId, getChatTitle, t]);
 
   const accept = useMemo(() => {
     if (!modelId) return [];
@@ -175,6 +186,9 @@ const ChatPage: React.FC = () => {
   const fileUpload = useMemo(() => {
     return accept.length > 0;
   }, [accept]);
+  const setting = useMemo(() => {
+    return MODELS.modelFeatureFlags[modelId]?.reasoning ?? false;
+  }, [modelId]);
 
   useEffect(() => {
     const _modelId = !modelId ? availableModels[0] : modelId;
@@ -211,12 +225,13 @@ const ChatPage: React.FC = () => {
       undefined,
       undefined,
       undefined,
-      base64Cache
+      base64Cache,
+      overrideModelParameters
     );
     setContent('');
     clearFiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, base64Cache, fileUpload, setFollowing]);
+  }, [content, base64Cache, fileUpload, setFollowing, overrideModelParameters]);
 
   const onRetry = useCallback(() => {
     retryGeneration(
@@ -228,15 +243,15 @@ const ChatPage: React.FC = () => {
       undefined,
       undefined,
       undefined,
-      base64Cache
+      base64Cache,
+      overrideModelParameters
     );
-  }, [retryGeneration, base64Cache]);
+  }, [retryGeneration, base64Cache, overrideModelParameters]);
 
   const onReset = useCallback(() => {
     clear();
     setContent('');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [clear]);
+  }, [clear, setContent]);
 
   const [creatingShareId, setCreatingShareId] = useState(false);
   const [deletingShareId, setDeletingShareId] = useState(false);
@@ -366,23 +381,23 @@ const ChatPage: React.FC = () => {
   };
 
   const handleDragOver = (event: React.DragEvent) => {
-    // ファイルドラッグ時にオーバーレイを表示
+    // When a file is dragged, display the overlay
     event.preventDefault();
     setIsOver(true);
   };
 
   const handleDragLeave = (event: React.DragEvent) => {
-    // ファイルドラッグ時にオーバーレイを非表示
+    // When a file is dragged, hide the overlay
     event.preventDefault();
     setIsOver(false);
   };
 
   const handleDrop = (event: React.DragEvent) => {
-    // ファイルドロップ時にファイルを追加
+    // When a file is dropped, add the file
     event.preventDefault();
     setIsOver(false);
     if (event.dataTransfer.files) {
-      // ファイルを反映しアップロード
+      // Reflect the file and upload it
       uploadFiles(Array.from(event.dataTransfer.files), fileLimit, accept);
     }
   };
@@ -402,9 +417,7 @@ const ChatPage: React.FC = () => {
             onDrop={handleDrop}
             className="fixed bottom-0 left-0 right-0 top-0 z-[999] bg-slate-300 p-10 text-center">
             <div className="flex h-full w-full items-center justify-center outline-dashed">
-              <div className="font-bold">
-                ファイルをドロップしてアップロード
-              </div>
+              <div className="font-bold">{t('chat.drop_files')}</div>
             </div>
           </div>
         )}
@@ -439,14 +452,14 @@ const ChatPage: React.FC = () => {
                     setShowShareIdModal(true);
                   }}>
                   <PiShareFatFill className="mr-1" />
-                  {share ? <>シェア中</> : <>シェアする</>}
+                  {share ? <>{t('chat.sharing')}</> : <>{t('chat.share')}</>}
                 </button>
               </div>
             )}
             <Switch
               checked={showSystemContext}
               onSwitch={setShowSystemContext}
-              label="システムプロンプトの表示"
+              label={t('chat.show_system_prompt')}
             />
           </div>
         )}
@@ -478,7 +491,7 @@ const ChatPage: React.FC = () => {
         <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden">
           {isEmpty && !loadingMessages && !chatId && (
             <ExpandableField
-              label="システムプロンプト"
+              label={t('chat.system_prompt')}
               className="relative w-11/12 md:w-10/12 lg:w-4/6 xl:w-3/6">
               <>
                 <div className="absolute -top-2 right-0 mb-2 flex justify-end">
@@ -489,7 +502,7 @@ const ChatPage: React.FC = () => {
                       clear();
                       setInputSystemContext(currentSystemContext);
                     }}>
-                    初期化
+                    {t('chat.initialize')}
                   </Button>
                   <Button
                     outlined
@@ -498,7 +511,7 @@ const ChatPage: React.FC = () => {
                       setSaveSystemContext(inputSystemContext);
                       setShowSystemContextModal(true);
                     }}>
-                    保存
+                    {t('chat.save')}
                   </Button>
                 </div>
 
@@ -530,6 +543,10 @@ const ChatPage: React.FC = () => {
             fileUpload={fileUpload}
             fileLimit={fileLimit}
             accept={accept}
+            setting={setting}
+            onSetting={() => {
+              setShowSetting(true);
+            }}
           />
         </div>
       </div>
@@ -555,17 +572,15 @@ const ChatPage: React.FC = () => {
 
       <ModalDialog
         isOpen={showShareIdModal}
-        title="会話履歴のシェア"
+        title={t('chat.share_conversation')}
         onClose={() => {
           setShowShareIdModal(false);
         }}>
         <div className="py-3 text-xs text-gray-600">
           {share ? (
-            <>リンクを削除することで、会話履歴の公開を停止できます。</>
+            <>{t('chat.delete_link_message')}</>
           ) : (
-            <>
-              リンクを作成することで、このアプリケーションにログイン可能な全ユーザーに対して会話履歴を公開します。
-            </>
+            <>{t('chat.create_link_message')}</>
           )}
         </div>
         {shareLink && (
@@ -584,20 +599,49 @@ const ChatPage: React.FC = () => {
                 outlined
                 className="mr-1"
                 loading={deletingShareId}>
-                リンクを開く
+                {t('chat.open_link')}
               </Button>
               <Button
                 onClick={onDeleteShareId}
                 loading={deletingShareId}
                 className="bg-red-500">
-                リンクの削除
+                {t('chat.delete_link')}
               </Button>
             </div>
           ) : (
             <Button onClick={onCreateShareId} loading={creatingShareId}>
-              リンクの作成
+              {t('chat.create_link')}
             </Button>
           )}
+        </div>
+      </ModalDialog>
+      <ModalDialog
+        isOpen={showSetting}
+        onClose={() => {
+          setShowSetting(false);
+        }}
+        title={t('chat.advanced_options')}>
+        {setting && (
+          <ExpandableField
+            label={t('chat.model_parameters')}
+            className="relative w-full"
+            defaultOpened={true}>
+            <div className="">
+              <ModelParameters
+                modelFeatureFlags={MODELS.modelFeatureFlags[modelId]}
+                overrideModelParameters={overrideModelParameters}
+                setOverrideModelParameters={setOverrideModelParameters}
+              />
+            </div>
+          </ExpandableField>
+        )}
+        <div className="mt-4 flex justify-end">
+          <Button
+            onClick={() => {
+              setShowSetting(false);
+            }}>
+            {t('chat.settings')}
+          </Button>
         </div>
       </ModalDialog>
     </>

@@ -3,6 +3,7 @@ import { Button, Text, Loader, useAuthenticator } from '@aws-amplify/ui-react';
 import { Amplify } from 'aws-amplify';
 import '@aws-amplify/ui-react/styles.css';
 import { signInWithRedirect } from 'aws-amplify/auth';
+import { useTranslation } from 'react-i18next';
 
 const samlCognitoDomainName: string = import.meta.env
   .VITE_APP_SAML_COGNITO_DOMAIN_NAME;
@@ -14,13 +15,14 @@ type Props = {
 };
 
 const AuthWithSAML: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const { authStatus } = useAuthenticator((context) => [context.authStatus]);
 
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 認証状態の検証
+    // Verify the authentication status
     if (authStatus === 'configuring') {
       setLoading(true);
       setAuthenticated(false);
@@ -49,9 +51,9 @@ const AuthWithSAML: React.FC<Props> = (props) => {
         identityPoolId: import.meta.env.VITE_APP_IDENTITY_POOL_ID,
         loginWith: {
           oauth: {
-            domain: samlCognitoDomainName, // cdk.json の値を指定
+            domain: samlCognitoDomainName, // Specify the value in cdk.json
             scopes: ['openid', 'email', 'profile'],
-            // CloudFront で展開している Web ページを動的に取得
+            // Get the Web page deployed with CloudFront dynamically
             redirectSignIn: [window.location.origin],
             redirectSignOut: [window.location.origin],
             responseType: 'code',
@@ -65,19 +67,17 @@ const AuthWithSAML: React.FC<Props> = (props) => {
     <>
       {loading ? (
         <div className="grid grid-cols-1 justify-items-center gap-4">
-          <Text className="mt-12 text-center">Loading...</Text>
+          <Text className="mt-12 text-center">{t('auth.loading')}</Text>
           <Loader width="5rem" height="5rem" />
         </div>
       ) : !authenticated ? (
         <div className="grid grid-cols-1 justify-items-center gap-4">
-          <Text className="mt-12 text-center text-3xl">
-            Generative AI Use Cases on AWS
-          </Text>
+          <Text className="mt-12 text-center text-3xl">{t('auth.title')}</Text>
           <Button
             variation="primary"
             onClick={() => signIn()}
             className="mt-6 w-60">
-            ログイン
+            {t('auth.login')}
           </Button>
         </div>
       ) : (

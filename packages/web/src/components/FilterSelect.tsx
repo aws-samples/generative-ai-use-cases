@@ -11,6 +11,7 @@ import React, {
 import useOnClickOutside from '../hooks/useOnClickOutside';
 
 import { PiMagnifyingGlass, PiPlusCircle, PiX } from 'react-icons/pi';
+import { useTranslation } from 'react-i18next';
 
 export type Option = {
   value: string;
@@ -40,7 +41,7 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
   options = [],
   value = null,
   onChange,
-  placeholder = '選択されていません',
+  placeholder,
   isMultiple = false,
   isClearable = false,
   isSearchable = false,
@@ -48,6 +49,9 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
   allowOther = false,
   className,
 }) => {
+  const { t } = useTranslation();
+  const defaultPlaceholder = t('common.not_selected');
+
   const [open, setOpen] = useState<boolean>(false);
   const [list, setList] = useState<Options>(options);
   const [inputValue, setInputValue] = useState<string>('');
@@ -211,11 +215,13 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
         <div className="flex grow flex-wrap gap-1 py-2 pl-2.5 pr-2">
           {!isMultiple ? (
             <p className="cursor-default select-none truncate">
-              {value && !Array.isArray(value) ? value.label : placeholder}
+              {value && !Array.isArray(value)
+                ? value.label
+                : placeholder || defaultPlaceholder}
             </p>
           ) : (
             <>
-              {value === null && placeholder}
+              {value === null && (placeholder || defaultPlaceholder)}
 
               {Array.isArray(value) &&
                 value.map((item, index) => (
@@ -258,7 +264,7 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
                 ref={searchBoxRef}
                 className="w-full rounded border border-gray-200 bg-gray-100 py-2 pl-8 text-sm text-gray-500 focus:border-gray-200 focus:outline-none focus:ring-0"
                 type="text"
-                placeholder={placeholder}
+                placeholder={placeholder || defaultPlaceholder}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
               />
@@ -305,7 +311,7 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
 
             {filterResult.length === 0 && (
               <div className="cursor-not-allowed select-none truncate px-2 py-2 text-gray-400">
-                No options found
+                {t('common.no_options_found')}
               </div>
             )}
           </div>

@@ -1,4 +1,4 @@
-import { GenerateImageParams, Model } from 'generative-ai-use-cases-jp';
+import { GenerateImageParams, Model } from 'generative-ai-use-cases';
 import useImageApi from './useImageApi';
 
 const useImage = () => {

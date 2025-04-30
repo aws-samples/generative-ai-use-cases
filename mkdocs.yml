@@ -1,19 +1,18 @@
-site_name: Generative AI Use Cases JP (GenU)
-site_url: https://aws-samples.github.io/generative-ai-use-cases-jp/
-site_description: すぐに業務活用できるビジネスユースケース集付きの安全な生成AIアプリ実装
+site_name: Generative AI Use Cases (GenU)
+site_url: https://aws-samples.github.io/generative-ai-use-cases/
 
-repo_url: https://github.com/aws-samples/generative-ai-use-cases-jp
-repo_name: aws-samples/generative-ai-use-cases-jp
+repo_url: https://github.com/aws-samples/generative-ai-use-cases
+repo_name: aws-samples/generative-ai-use-cases
 edit_uri: blob/main/docs
 
 watch: [mkdocs.yml, README.md, browser-extension/README.md]
 use_directory_urls: false
 
-copyright: Copyright &copy; 2025 Amazon Web Services
+copyright: © 2025, Amazon Web Services, Inc. or its affiliates. All rights reserved.
 
 theme:
   name: material
-  custom_dir: docs/mkdocs/material/overrides
+  custom_dir: docs/overrides
   features:
     - announce.dismiss
     - content.action.edit
@@ -40,36 +39,39 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
-  favicon: assets/favicon.svg
-  logo: assets/favicon.svg
-  language: ja
+  language: en
 extra_css:
   - assets/stylesheets/custom/custom.css
 
 nav:
-  - 概要: index.md
+  - Overview: index.md
   - Getting started:
-      - デプロイ方法:
-          - クイックスタート: ABOUT.md
-          - (オプション) AWS CloudShell でデプロイする: DEPLOY_ON_CLOUDSHELL.md
-          - デプロイオプション: DEPLOY_OPTION.md
-      - 認証:
-          - Google Workspace で認証する: SAML_WITH_GOOGLE_WORKSPACE.md
-          - Microsoft Entra ID で認証する: SAML_WITH_ENTRA_ID.md
-      - ブラウザ拡張機能:
-          - 概要: EXTENSION.md
-          - ビルド: EXTENSION_BUILD.md
-          - インストール: EXTENSION_INSTALL.md
-          - SAML 認証: EXTENSION_SAML.md
-      - その他:
-          - アップデート方法: UPDATE.md
-          - ローカル開発環境構築手順: DEVELOPMENT.md
-          - リソースの削除方法: DESTROY.md
-          - ネイティブアプリのように利用する方法: PWA.md
+      - Deploy:
+          - Quick Start: ABOUT.md
+          - (Optional) Deploy with AWS CloudShell: DEPLOY_ON_CLOUDSHELL.md
+          - Deploy Options: DEPLOY_OPTION.md
+      - Authentication:
+          - Authenticate with Google Workspace: SAML_WITH_GOOGLE_WORKSPACE.md
+          - Authenticate with Microsoft Entra ID: SAML_WITH_ENTRA_ID.md
+      - Browser Extension:
+          - Overview: EXTENSION.md
+          - Build: EXTENSION_BUILD.md
+          - Install: EXTENSION_INSTALL.md
+          - SAML Authentication: EXTENSION_SAML.md
+      - Other:
+          - Update: UPDATE.md
+          - Local Development Environment: DEVELOPMENT.md
+          - Delete Resources: DESTROY.md
+          - Use as a Native App: PWA.md
 
 extra:
   # Used in custom hook anchors.py
-  absolute_path_replace_uri: https://github.com/aws-samples/generative-ai-use-cases-jp/blob/main/
+  absolute_path_replace_uri: https://github.com/aws-samples/generative-ai-use-cases/blob/main/
+  replace_dict:
+    '../../README.md': '../en/ABOUT.html'
+    '../../README_ja.md': '../ja/ABOUT.html'
+    '../../README.md#deployment': '../en/ABOUT.html#deployment'
+    '../../README_ja.md#デプロイ': '../ja/ABOUT.html#デプロイ'
 
 plugins:
   - include-markdown:
@@ -77,9 +79,36 @@ plugins:
   - gh-admonitions
   - search
   - social
-
+  - i18n:
+      docs_structure: folder
+      force_default_in_subdirectory: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          name: English
+          default: true
+        - locale: ja
+          name: 日本語
+          nav_translations:
+            Overview: 概要
+            Deploy: デプロイ方法
+            Quick Start: クイックスタート
+            (Optional) Deploy with AWS CloudShell: (オプション) AWS CloudShell でデプロイする
+            Deploy Options: デプロイオプション
+            Authentication: 認証
+            Authenticate with Google Workspace: Google Workspace で認証する
+            Authenticate with Microsoft Entra ID: Microsoft Entra ID で認証する
+            Browser Extension: ブラウザ拡張機能
+            Build: ビルド
+            Install: インストール
+            SAML Authentication: SAML 認証
+            Other: その他
+            Update: アップデート方法
+            Local Development Environment: ローカル開発環境構築手順
+            Delete Resources: リソースの削除方法
+            Use as a Native App: ネイティブアプリのように利用する方法
 hooks:
-  - docs/mkdocs/material/overrides/hooks/anchors.py
+  - docs/overrides/hooks/anchors.py
 
 markdown_extensions:
   # Python Markdown

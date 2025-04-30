@@ -20,7 +20,7 @@ type Props = BaseProps & {
 const HighlightMenu: React.FC<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Floating UIのExampleを参考に実装
+  // Implement based on the Floating UI example
   // https://floating-ui.com/docs/react-examples
   const { refs, floatingStyles, context } = useFloating({
     placement: 'bottom',
@@ -124,7 +124,7 @@ const HighlightMenu: React.FC<Props> = (props) => {
                   setIsOpenContextList(true);
                 }}
               >
-                {/* Integration先のフォント設置に影響を受けるのでピクセル指定 */}
+                {/* The font setting of the integration target affects the pixel, so specify the pixel */}
                 <div className="flex items-center">
                   <div className="rounded">
                     <AwsLogo className="h-[13px]" />

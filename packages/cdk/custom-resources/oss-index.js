@@ -25,13 +25,13 @@ const updateStatus = async (event, status, reason, physicalResourceId) => {
     },
   });
 
-  // 失敗時の記録のために残す
+  // For recording failures
   console.log(res);
   console.log(await res.text());
 };
 
 exports.handler = async (event, context) => {
-  // 失敗時の記録のために残す
+  // For recording failures
   console.log(event);
 
   const props = event.ResourceProperties;
@@ -52,6 +52,10 @@ exports.handler = async (event, context) => {
   try {
     switch (event.RequestType) {
       case 'Create':
+        // parse number/boolean props
+        const vectorDimension = Number(props.vectorDimension);
+        const ragKnowledgeBaseBinaryVector =
+          props.ragKnowledgeBaseBinaryVector.toLowerCase() === 'true';
         await client.indices.create({
           index: props.vectorIndexName,
           body: {
@@ -67,10 +71,13 @@ exports.handler = async (event, context) => {
                 },
                 [props.vectorField]: {
                   type: 'knn_vector',
-                  dimension: Number(props.vectorDimension),
+                  dimension: vectorDimension,
+                  ...(ragKnowledgeBaseBinaryVector
+                    ? { data_type: 'binary' }
+                    : {}),
                   method: {
                     engine: 'faiss',
-                    space_type: 'l2',
+                    space_type: ragKnowledgeBaseBinaryVector ? 'hamming' : 'l2',
                     name: 'hnsw',
                     parameters: {},
                   },

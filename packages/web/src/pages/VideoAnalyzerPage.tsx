@@ -6,10 +6,11 @@ import React, {
   useMemo,
 } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import useChat from '../hooks/useChat';
 import useTyping from '../hooks/useTyping';
 import useFileApi from '../hooks/useFileApi';
-import { UploadedFileType } from 'generative-ai-use-cases-jp';
+import { UploadedFileType } from 'generative-ai-use-cases';
 import { extractBaseURL } from '../hooks/useFiles';
 import { create } from 'zustand';
 import { getPrompter } from '../prompts';
@@ -21,6 +22,7 @@ import InputChatContent from '../components/InputChatContent';
 import Card from '../components/Card';
 import Select from '../components/Select';
 import queryString from 'query-string';
+import { v4 as uuidv4 } from 'uuid';
 
 type StateType = {
   content: string;
@@ -54,6 +56,7 @@ const useVideoAnalyzerPageState = create<StateType>((set) => {
 });
 
 const VideoAnalyzerPage: React.FC = () => {
+  const { t } = useTranslation();
   const { content, setContent, analysis, setAnalysis, clear } =
     useVideoAnalyzerPageState();
   const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
@@ -104,14 +107,14 @@ const VideoAnalyzerPage: React.FC = () => {
 
   useEffect(() => {
     const getDevices = async () => {
-      // 新規で画面を開いたユーザーにカメラの利用を要求する (ダミーのリクエスト)
+      // Request camera access for users who open the page for the first time (dummy request)
       const dummyStream = await navigator.mediaDevices.getUserMedia({
         audio: false,
         video: true,
       });
 
       if (dummyStream) {
-        // 録画ボタンがついてしまうため消す
+        // The recording button is added, so we remove it
         dummyStream.getTracks().forEach((track) => track.stop());
 
         const devices = await navigator.mediaDevices.enumerateDevices();
@@ -159,9 +162,9 @@ const VideoAnalyzerPage: React.FC = () => {
     canvas.height = videoElement.current.videoHeight;
     const context = canvas.getContext('2d');
     context!.drawImage(videoElement.current, 0, 0, canvas.width, canvas.height);
-    // toDataURL() で返す値は以下の形式 (;base64, 以降のみを使う)
+    // The value returned by toDataURL() is in the following format (only the ;base64, part)
     // ```
-    // data:image/png;base64,<以下base64...>
+    // data:image/png;base64,<base64...>
     // ```
     const imageBase64 = canvas.toDataURL('image/png').split(';base64,')[1];
 
@@ -170,8 +173,10 @@ const VideoAnalyzerPage: React.FC = () => {
       const signedUrl = (await getSignedUrl({ mediaFormat: 'png' })).data;
       await uploadFile(signedUrl, { file });
       const baseUrl = extractBaseURL(signedUrl);
+      const fileId = uuidv4();
       const uploadedFiles: UploadedFileType[] = [
         {
+          id: fileId,
           file,
           name: file.name,
           type: 'image',
@@ -216,11 +221,11 @@ const VideoAnalyzerPage: React.FC = () => {
         setMediaStream(stream);
       }
     } catch (e) {
-      console.error('ウェブカメラにアクセスできませんでした:', e);
+      console.error(t('videoAnalyzer.errors.cameraAccessFailed'), e);
     }
-  }, [setRecording, videoElement, deviceId]);
+  }, [setRecording, videoElement, deviceId, t]);
 
-  // ビデオの停止
+  // Stop video
   const stopRecording = useCallback(() => {
     if (mediaStream) {
       mediaStream.getTracks().forEach((track) => track.stop());
@@ -228,12 +233,12 @@ const VideoAnalyzerPage: React.FC = () => {
     setRecording(false);
   }, [mediaStream]);
 
-  // Callback 関数を常に最新にしておく
+  // Keep the callback function always up to date
   useEffect(() => {
     callbackRef.current = stopRecording;
   }, [stopRecording]);
 
-  // Unmount 時 (画面を離れた時) の処理
+  // Process when unmounting (when leaving the screen)
   useEffect(() => {
     return () => {
       if (callbackRef.current) {
@@ -246,41 +251,42 @@ const VideoAnalyzerPage: React.FC = () => {
   return (
     <div className="grid grid-cols-12">
       <div className="invisible col-span-12 my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-        映像分析
+        {t('videoAnalyzer.title')}
       </div>
       <div className="col-span-12 col-start-1 mx-2 lg:col-span-10 lg:col-start-2 xl:col-span-10 xl:col-start-2">
-        <Card label="映像をニアリアルタイムに分析する">
+        <Card label={t('videoAnalyzer.label')}>
           <div className="flex flex-col gap-x-4 xl:flex-row">
-            <div className="w-fit">
-              <div className="flex w-full items-end">
+            <div className="">
+              <div className="mb-3 flex w-full flex-col lg:flex-row lg:items-end">
                 <Select
                   value={deviceId}
                   options={devices}
                   clearable={false}
                   onChange={setDeviceId}
-                  label="カメラ"
+                  label={t('videoAnalyzer.camera')}
+                  fullWidth
                 />
 
                 {recording ? (
                   <>
                     <Button
                       onClick={stopRecording}
-                      className="mb-3 ml-3 h-fit w-16">
-                      停止
+                      className="mb-3 h-fit w-16 lg:ml-3">
+                      {t('videoAnalyzer.stop')}
                     </Button>
                   </>
                 ) : (
                   <>
                     <Button
                       onClick={startRecording}
-                      className="mb-3 ml-3 h-fit w-16">
-                      開始
+                      className="mb-3 h-fit w-16 lg:ml-3">
+                      {t('videoAnalyzer.start')}
                     </Button>
                   </>
                 )}
               </div>
 
-              <div className="w-96">
+              <div className="w-48 sm:w-64 lg:w-96">
                 <video ref={videoElement} />
               </div>
             </div>
@@ -292,7 +298,7 @@ const VideoAnalyzerPage: React.FC = () => {
                 options={visionModelIds.map((m) => {
                   return { value: m, label: m };
                 })}
-                label="モデル"
+                label={t('videoAnalyzer.model')}
               />
 
               <div className="relative h-48 overflow-y-scroll rounded border border-black/30 p-1.5 xl:h-96">
@@ -306,7 +312,7 @@ const VideoAnalyzerPage: React.FC = () => {
                     outlined
                     onClick={onClickClear}
                     disabled={loading || sending || content.length === 0}>
-                    クリア
+                    {t('videoAnalyzer.clear')}
                   </Button>
                 </div>
               </div>

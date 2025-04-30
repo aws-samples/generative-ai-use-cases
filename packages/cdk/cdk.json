@@ -1,9 +1,7 @@
 {
   "app": "npx ts-node --prefer-ts-exts bin/generative-ai-use-cases.ts",
   "watch": {
-    "include": [
-      "**"
-    ],
+    "include": ["**"],
     "exclude": [
       "README.md",
       "cdk*.json",
@@ -20,14 +18,17 @@
     "env": "dev",
     "ragEnabled": false,
     "kendraIndexArn": null,
+    "kendraIndexLanguage": "ja",
     "kendraDataSourceBucketName": null,
     "kendraIndexScheduleEnabled": false,
     "kendraIndexScheduleCreateCron": null,
     "kendraIndexScheduleDeleteCron": null,
     "ragKnowledgeBaseEnabled": false,
+    "ragKnowledgeBaseId": null,
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": false,
     "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseBinaryVector": false,
     "embeddingModelId": "amazon.titan-embed-text-v2:0",
     "rerankingModelId": null,
     "queryDecompositionEnabled": false,
@@ -45,9 +46,8 @@
       "us.amazon.nova-lite-v1:0",
       "us.amazon.nova-micro-v1:0"
     ],
-    "imageGenerationModelIds": [
-      "amazon.nova-canvas-v1:0"
-    ],
+    "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
+    "videoGenerationModelIds": ["amazon.nova-reel-v1:0"],
     "endpointNames": [],
     "agentEnabled": false,
     "searchAgentEnabled": false,
@@ -63,15 +63,12 @@
     "hostedZoneId": null,
     "dashboard": false,
     "anonymousUsageTracking": true,
-    "guardrailEnabled" : false,
+    "guardrailEnabled": false,
     "crossAccountBedrockRoleArn": "",
     "useCaseBuilderEnabled": true,
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
     "@aws-cdk/core:checkSecretUsage": true,
-    "@aws-cdk/core:target-partitions": [
-      "aws",
-      "aws-cn"
-    ],
+    "@aws-cdk/core:target-partitions": ["aws", "aws-cn"],
     "@aws-cdk-containers/ecs-service-extensions:enableDefaultLogDriver": true,
     "@aws-cdk/aws-ec2:uniqueImdsv2TemplateName": true,
     "@aws-cdk/aws-ecs:arnFormatIncludesClusterName": true,

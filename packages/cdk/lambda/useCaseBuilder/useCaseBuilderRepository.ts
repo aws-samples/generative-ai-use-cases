@@ -8,7 +8,7 @@ import {
   ListUseCasesResponse,
   ListFavoriteUseCasesResponse,
   ListRecentlyUsedUseCasesResponse,
-} from 'generative-ai-use-cases-jp';
+} from 'generative-ai-use-cases';
 import {
   DeleteCommand,
   DynamoDBDocumentClient,
@@ -26,16 +26,16 @@ const USECASE_ID_INDEX_NAME: string = process.env.USECASE_ID_INDEX_NAME!;
 const dynamoDb = new DynamoDBClient({});
 const dynamoDbDocument = DynamoDBDocumentClient.from(dynamoDb);
 
-// 利用履歴の最大保存数
-// 正確には RECENTLY_USED_SAVE_LIMIT + 1 になるケースがある
-// 詳細は updateRecentlyUsedUseCase 関数を参照
+// Max number of recently used use cases
+// Actually, it becomes RECENTLY_USED_SAVE_LIMIT + 1 in some cases
+// See the updateRecentlyUsedUseCase function for details
 const RECENTLY_USED_SAVE_LIMIT = 100;
 
 const getUserIdFromKey = (key: string): string => {
   return key.split('#').slice(1).join('#');
 };
 
-// useCaseId のユースケースを取得
+// Get use case by useCaseId
 const innerFindUseCaseByUseCaseId = async (
   useCaseId: string
 ): Promise<UseCaseInTable | null> => {
@@ -63,7 +63,7 @@ const innerFindUseCaseByUseCaseId = async (
   }
 };
 
-// userId のユースケース一覧を取得
+// Get use case list by userId
 const innerFindUseCasesByUserId = async (
   userId: string,
   _exclusiveStartKey?: string
@@ -85,7 +85,7 @@ const innerFindUseCasesByUserId = async (
         ':dataTypePrefix': 'useCase',
       },
       ScanIndexForward: false,
-      Limit: 30, // マイユースケースのページあたりの取得件数
+      Limit: 30, // Number of my use cases per page
       ExclusiveStartKey: exclusiveStartKey,
     })
   );
@@ -100,7 +100,7 @@ const innerFindUseCasesByUserId = async (
   };
 };
 
-// useCaseId の配列からユースケース一覧を取得
+// Get use case list from useCaseId array
 const innerFindUseCasesByUseCaseIds = async (
   useCaseIds: string[]
 ): Promise<UseCaseInTable[]> => {
@@ -117,7 +117,7 @@ const innerFindUseCasesByUseCaseIds = async (
   return useCasesInTable;
 };
 
-// userId の特定のデータタイプ (お気に入り・利用履歴) 一覧を取得 (全取得)
+// Get list of specific data type (favorite, recently used) by userId (all)
 const innerFindCommonsByUserIdAndDataType = async (
   userId: string,
   dataTypePrefix: string
@@ -142,7 +142,7 @@ const innerFindCommonsByUserIdAndDataType = async (
   return (commons.Items || []) as UseCaseCommon[];
 };
 
-// userId の特定のデータタイプ (お気に入り・利用履歴) 一覧を取得 (ページネーション対応)
+// Get list of specific data type (favorite, recently used) by userId (pagination supported)
 const innerFindCommonsByUserIdAndDataTypePagniation = async (
   userId: string,
   dataTypePrefix: string,
@@ -165,7 +165,7 @@ const innerFindCommonsByUserIdAndDataTypePagniation = async (
         ':dataTypePrefix': dataTypePrefix,
       },
       ScanIndexForward: false,
-      Limit: 20, // お気に入り・利用履歴のページあたりの取得件数
+      Limit: 20, // Number of favorites/recently used per page
       ExclusiveStartKey: exclusiveStartKey,
     })
   );
@@ -178,7 +178,7 @@ const innerFindCommonsByUserIdAndDataTypePagniation = async (
   };
 };
 
-// useCaseId に関連する全てのデータ (本体・お気に入り・利用履歴) 一覧を取得
+// Get all data (body, favorite, recently used) related to useCaseId
 const innerFindCommonsByUseCaseId = async (
   useCaseId: string
 ): Promise<UseCaseCommon[]> => {
@@ -247,7 +247,7 @@ export const getUseCase = async (
   const isMyUseCase = getUserIdFromKey(useCaseInTable.id) === userId;
   const isShared = useCaseInTable.isShared;
 
-  // 自分のユースケースではない & シェアされていないものは取得させない
+  // If it is not my use case and not shared, do not get it
   if (!isMyUseCase && !isShared) {
     return null;
   }
@@ -368,7 +368,7 @@ export const deleteUseCase = async (
     };
   });
 
-  // 本体・お気に入り・利用履歴をまとめて削除
+  // Delete body, favorite, recently used at once
   await dynamoDbDocument.send(
     new BatchWriteCommand({
       RequestItems: {
@@ -398,7 +398,7 @@ export const listFavoriteUseCases = async (
     };
   });
 
-  // 自分のもの or シェアされているもののみ
+  // My use case or shared
   const useCasesAsOutputFiltered = useCasesAsOutput.filter((u) => {
     return u.isMyUseCase || u.isShared;
   });
@@ -413,14 +413,14 @@ export const toggleFavorite = async (
   userId: string,
   useCaseId: string
 ): Promise<IsFavorite> => {
-  // 自分のお気に入り一覧を取得してすでに登録されているかを確認する
-  // MEMO: お気に入りの数が膨大になった場合リストから溢れる可能性あり
+  // Get my favorite list and check if it is already registered
+  // MEMO: If the number of favorites is large, it may overflow from the list
   const commons = await innerFindCommonsByUserIdAndDataType(userId, 'favorite');
   const useCaseIds = commons.map((c) => c.useCaseId);
   const index = useCaseIds.indexOf(useCaseId);
 
   if (index >= 0) {
-    // お気に入りを解除
+    // Unfavorite
     const common = commons[index];
 
     await dynamoDbDocument.send(
@@ -435,7 +435,7 @@ export const toggleFavorite = async (
 
     return { isFavorite: false };
   } else {
-    // お気に入りに登録
+    // Register favorite
     await dynamoDbDocument.send(
       new PutCommand({
         TableName: USECASE_TABLE_NAME,
@@ -515,7 +515,7 @@ export const listRecentlyUsedUseCases = async (
     };
   });
 
-  // 自分のもの or シェアされているもののみ
+  // Own or shared
   const useCasesAsOutputFiltered = useCasesAsOutput.filter((u) => {
     return u.isMyUseCase || u.isShared;
   });
@@ -532,13 +532,13 @@ export const updateRecentlyUsedUseCase = async (
 ): Promise<void> => {
   const itemsToDelete: UseCaseCommon[] = [];
 
-  // 最近使ったユースーケースのデータに対してスキャンが走っている
+  // Scan is running for recently used use case data
   const commons = await innerFindCommonsByUserIdAndDataType(
     userId,
     'recentlyUsed'
   );
 
-  // 最近使ったユースケースの保存件数のリミット
+  // Max number of recently used use cases
   if (commons.length > RECENTLY_USED_SAVE_LIMIT) {
     itemsToDelete.push(...commons.slice(RECENTLY_USED_SAVE_LIMIT));
   }
@@ -546,14 +546,13 @@ export const updateRecentlyUsedUseCase = async (
   const useCaseIds = commons.map((c) => c.useCaseId);
   const index = useCaseIds.indexOf(useCaseId);
 
-  // 同じユースケースに対して古い利用履歴があれば削除対象
+  // If there is an older history for the same use case, it is a deletion target
   if (0 <= index && index <= RECENTLY_USED_SAVE_LIMIT - 1) {
     itemsToDelete.push(commons[index]);
   }
 
-  // 削除と追加を同時に行う
-  // 履歴の新規追加の場合 (既存の履歴がない場合) 保存数が
-  // RECENTLY_USED_SAVE_LIMIT + 1 になるが、それは許容する
+  // Delete and add at the same time
+  // If a new history is added (no existing history), the number of histories will be RECENTLY_USED_SAVE_LIMIT + 1, but this is acceptable
   await dynamoDbDocument.send(
     new TransactWriteCommand({
       TransactItems: [

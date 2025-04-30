@@ -3,13 +3,14 @@ import { Construct } from 'constructs';
 import * as cw from 'aws-cdk-lib/aws-cloudwatch';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
-import { StackInput } from './stack-input';
+import { ProcessedStackInput } from './stack-input';
+import { ModelConfiguration } from 'generative-ai-use-cases';
 
 export interface DashboardStackProps extends StackProps {
-  params: StackInput;
-  userPool: cognito.UserPool;
-  userPoolClient: cognito.UserPoolClient;
-  appRegion: string;
+  readonly params: ProcessedStackInput;
+  readonly userPool: cognito.UserPool;
+  readonly userPoolClient: cognito.UserPoolClient;
+  readonly appRegion: string;
 }
 
 export class DashboardStack extends Stack {
@@ -21,46 +22,53 @@ export class DashboardStack extends Stack {
 
     const params = props.params;
 
-    // Bedrock のログの出力先として設定する LogGroup
+    // LogGroup for Bedrock logs
     const logGroup = new logs.LogGroup(this, 'LogGroup', {
-      // 1 年でリテンションする設定
+      // Retain logs for 1 year
       retention: logs.RetentionDays.ONE_YEAR,
     });
 
-    const inputTokenCounts = params.modelIds.map((modelId: string) => {
-      return new cw.Metric({
-        namespace: 'AWS/Bedrock',
-        metricName: 'InputTokenCount',
-        dimensionsMap: {
-          ModelId: modelId,
-        },
-        period: Duration.days(1),
-        statistic: 'Sum',
-      });
-    });
+    const inputTokenCounts = params.modelIds.map(
+      (model: ModelConfiguration) => {
+        return new cw.Metric({
+          namespace: 'AWS/Bedrock',
+          metricName: 'InputTokenCount',
+          dimensionsMap: {
+            ModelId: model.modelId,
+          },
+          region: model.region,
+          period: Duration.days(1),
+          statistic: 'Sum',
+        });
+      }
+    );
 
-    const outputTokenCounts = params.modelIds.map((modelId: string) => {
-      return new cw.Metric({
-        namespace: 'AWS/Bedrock',
-        metricName: 'OutputTokenCount',
-        dimensionsMap: {
-          ModelId: modelId,
-        },
-        period: Duration.days(1),
-        statistic: 'Sum',
-      });
-    });
+    const outputTokenCounts = params.modelIds.map(
+      (model: ModelConfiguration) => {
+        return new cw.Metric({
+          namespace: 'AWS/Bedrock',
+          metricName: 'OutputTokenCount',
+          dimensionsMap: {
+            ModelId: model.modelId,
+          },
+          region: model.region,
+          period: Duration.days(1),
+          statistic: 'Sum',
+        });
+      }
+    );
 
     const invocations = [
       ...params.modelIds,
       ...params.imageGenerationModelIds,
-    ].map((modelId: string) => {
+    ].map((model: ModelConfiguration) => {
       return new cw.Metric({
         namespace: 'AWS/Bedrock',
         metricName: 'Invocations',
         dimensionsMap: {
-          ModelId: modelId,
+          ModelId: model.modelId,
         },
+        region: model.region,
         period: Duration.days(1),
         statistic: 'Sum',
       });
@@ -136,7 +144,7 @@ export class DashboardStack extends Stack {
       })
     );
 
-    // ログの出力から抜き出す
+    // Extract logs from the output
     dashboard.addWidgets(
       new cw.LogQueryWidget({
         title: 'Prompt Logs',

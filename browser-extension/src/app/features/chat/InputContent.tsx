@@ -8,6 +8,7 @@ import TextareaChatContent from './TextareaChatContent';
 import SelectPrompt from './SelectPrompt';
 import { PromptSetting } from '../../../@types/settings';
 import { produce } from 'immer';
+import { IconWrapper } from '../../components/IconWrapper';
 
 type Props = BaseProps & {
   initContent: string;
@@ -90,7 +91,12 @@ ${formValues[idx]}
             }}
           />
         ) : (
-          <Button className="" outlined icon={<PiArrowsCounterClockwise />} onClick={clearMessages}>
+          <Button
+            className=""
+            outlined
+            icon={<IconWrapper icon={PiArrowsCounterClockwise} />}
+            onClick={clearMessages}
+          >
             最初からやり直す
           </Button>
         )}
@@ -134,7 +140,11 @@ ${formValues[idx]}
           send();
         }}
       >
-        {isLoading ? <PiSpinner className="animate-spin" /> : <PiPaperPlaneRightFill />}
+        {isLoading ? (
+          <IconWrapper icon={PiSpinner} className="animate-spin" />
+        ) : (
+          <IconWrapper icon={PiPaperPlaneRightFill} />
+        )}
       </button>
     </div>
   );

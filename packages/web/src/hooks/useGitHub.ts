@@ -35,7 +35,7 @@ const useGitHub = () => {
     getClosedPullRequests: () => {
       // eslint-disable-next-line react-hooks/rules-of-hooks
       const { data } = useSWR(
-        '/repos/aws-samples/generative-ai-use-cases-jp/pulls?state=close',
+        '/repos/aws-samples/generative-ai-use-cases/pulls?state=close',
         fetcher
       );
 

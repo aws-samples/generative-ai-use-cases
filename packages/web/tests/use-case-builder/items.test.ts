@@ -6,7 +6,7 @@ import {
   NOLABEL,
 } from '../../src/utils/UseCaseBuilderUtils';
 
-describe('入力タイプを正しくパースできる', () => {
+describe('Can parse input type correctly', () => {
   test('text', () => {
     expect(getItemsFromPlaceholders(['{{text:xxx}}'])).toEqual([
       {
@@ -36,15 +36,15 @@ describe('入力タイプを正しくパースできる', () => {
     );
   });
 
-  test('不正なタイプ', () => {
+  test('Invalid type', () => {
     expect(getItemsFromPlaceholders(['{{hoge:xxx}}'])).toEqual([]);
 
     expect(getItemsFromPlaceholders(['{{hoge}}'])).toEqual([]);
   });
 });
 
-describe('単一のラベルを正しくパースできる', () => {
-  test('無ラベル', () => {
+describe('Can parse a single label correctly', () => {
+  test('No label', () => {
     expect(getItemsFromPlaceholders(['{{text}}'])).toEqual([
       {
         inputType: 'text',
@@ -53,7 +53,16 @@ describe('単一のラベルを正しくパースできる', () => {
     ]);
   });
 
-  test('{} が含まれる', () => {
+  test('Empty label', () => {
+    expect(getItemsFromPlaceholders(['{{text:}}'])).toEqual([
+      {
+        inputType: 'text',
+        label: '',
+      },
+    ]);
+  });
+
+  test('{} is included', () => {
     expect(getItemsFromPlaceholders(['{{text:x{x}x}}'])).toEqual([
       {
         inputType: 'text',
@@ -62,8 +71,7 @@ describe('単一のラベルを正しくパースできる', () => {
     ]);
   });
 
-  // これは将来的に仕様が変更される可能性あり
-  test(': が含まれる', () => {
+  test('The label of an input type that does not allow options contains :', () => {
     expect(getItemsFromPlaceholders(['{{text:x:x:x}}'])).toEqual([
       {
         inputType: 'text',
@@ -72,7 +80,7 @@ describe('単一のラベルを正しくパースできる', () => {
     ]);
   });
 
-  test('スペースが含まれる', () => {
+  test('Contains a space', () => {
     expect(getItemsFromPlaceholders(['{{text: xxx }}'])).toEqual([
       {
         inputType: 'text',
@@ -82,8 +90,62 @@ describe('単一のラベルを正しくパースできる', () => {
   });
 });
 
-describe('複数のラベルを正しくパースできる', () => {
-  test('無ラベルが重複している', () => {
+describe('Can parse options correctly', () => {
+  test('No options', () => {
+    expect(getItemsFromPlaceholders(['{{select}}'])).toEqual([
+      {
+        inputType: 'select',
+        label: NOLABEL,
+        options: undefined,
+      },
+    ]);
+
+    expect(getItemsFromPlaceholders(['{{select:}}'])).toEqual([
+      {
+        inputType: 'select',
+        label: '',
+        options: undefined,
+      },
+    ]);
+
+    expect(getItemsFromPlaceholders(['{{select:hoge}}'])).toEqual([
+      {
+        inputType: 'select',
+        label: 'hoge',
+        options: undefined,
+      },
+    ]);
+  });
+
+  test('Options specified', () => {
+    expect(getItemsFromPlaceholders(['{{select:hoge:}}'])).toEqual([
+      {
+        inputType: 'select',
+        label: 'hoge',
+        options: '',
+      },
+    ]);
+
+    expect(getItemsFromPlaceholders(['{{select::hoge}}'])).toEqual([
+      {
+        inputType: 'select',
+        label: '',
+        options: 'hoge',
+      },
+    ]);
+
+    expect(getItemsFromPlaceholders(['{{select:hoge:fuga,hage}}'])).toEqual([
+      {
+        inputType: 'select',
+        label: 'hoge',
+        options: 'fuga,hage',
+      },
+    ]);
+  });
+});
+
+describe('Can parse multiple labels correctly', () => {
+  test('No label is duplicated', () => {
     expect(getItemsFromPlaceholders(['{{text}}', '{{text}}'])).toEqual([
       {
         inputType: 'text',
@@ -92,7 +154,7 @@ describe('複数のラベルを正しくパースできる', () => {
     ]);
   });
 
-  test('有ラベルが重複している', () => {
+  test('Label is duplicated', () => {
     expect(getItemsFromPlaceholders(['{{text:xxx}}', '{{text:xxx}}'])).toEqual([
       {
         inputType: 'text',
@@ -101,7 +163,7 @@ describe('複数のラベルを正しくパースできる', () => {
     ]);
   });
 
-  test('無・有ラベルが混在している', () => {
+  test('No label and with label are mixed', () => {
     expect(
       getItemsFromPlaceholders([
         '{{text}}',
@@ -127,7 +189,7 @@ describe('複数のラベルを正しくパースできる', () => {
     ]);
   });
 
-  test('異なる入力タイプで同じラベルの時正しくパースできる', () => {
+  test('Different input types have the same label', () => {
     expect(
       getItemsFromPlaceholders([
         '{{text}}',
@@ -165,7 +227,7 @@ describe('複数のラベルを正しくパースできる', () => {
     ]);
   });
 
-  test('TEXT_FORM_TYPES だけを正しく抽出できる', () => {
+  test('Can extract TEXT_FORM_TYPES correctly', () => {
     expect(
       getTextFormItemsFromItems([
         {
@@ -197,7 +259,7 @@ describe('複数のラベルを正しくパースできる', () => {
     ]);
   });
 
-  test('ユニークな label を抽出できる', () => {
+  test('Can extract unique labels', () => {
     expect(
       getTextFormUniqueLabels([
         {

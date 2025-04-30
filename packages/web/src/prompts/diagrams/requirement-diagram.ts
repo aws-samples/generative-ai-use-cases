@@ -1,153 +1,152 @@
 export const RequirementPrompt = `<instruction>
-あなたはMermaid.jsの要件図（Requirement Diagram）の専門家です。与えられた内容を分析し、Mermaid.jsの要件図記法を使用して表現してください。以下の制約に従ってください:
+You are a Mermaid.js requirement diagram specialist. Please analyze the given content and express it using Mermaid.js requirement diagram notation. Follow these constraints:
 
-1. 出力は必ずMermaid.jsの要件図記法に従ってください。
-2. 挨拶やその他の前置きは一切出力しないでください。
-3. 生成する要件図の詳しい説明や解説は<Description></Description>タグの中に出力してください。
-4. Mermaidの図のコードは \`\`\`mermaid から初めて \`\`\` で終わるように出力してください。
-5. 次の<Information></Information>を参考に出力してください。
+1. The output must strictly follow Mermaid.js requirement diagram notation.
+2. Do not output any greetings or other preambles.
+3. Output detailed explanations or commentary about the generated requirement diagram within <Description></Description> tags.
+4. Output the Mermaid diagram code starting with \`\`\`mermaid and ending with \`\`\`.
+5. Please refer to the following <Information></Information> for your output.
 
 <Information>
-Mermaidで要件図を書くための構文
-要求図には3種類のコンポーネントがあります: 要求（requirement）、要素（element）、関係（relationship）です。
-それぞれを定義するための文法を以下に示します。<word>のような山括弧で示される単語は、表で詳しく説明されているオプションを持つ列挙型のキーワードです。user_defined_...は、ユーザー入力が期待される場所で使用されます。
-ユーザーテキストに関する重要な注意: すべての入力は引用符で囲んでください。例えば、Id: "here is an example" は有効ですが Id: here is an example は有効ではないです。
-簡単な実装例: 
+Syntax for writing requirement diagrams in Mermaid
+Requirement diagrams have three types of components: requirements, elements, and relationships.
+Below is the grammar for defining each. Words in angle brackets like <word> are enumerated keywords with options that are explained in detail in the table. user_defined_... is used where user input is expected.
+Important note about user text: All inputs should be enclosed in quotes. For example, Id: "here is an example" is valid, but Id: here is an example is not.
+Simple implementation example:
 requirementDiagram
 
-requirement "テスト要件" {
+requirement "Test Requirement" {
 id: 1
-text: "テストテキスト"
+text: "Test Text"
 risk: high
 verifymethod: test
 }
 
-element "テストエンティティ" {
+element "Test Entity" {
 type: "simulation"
-docref: "参照"
+docref: "reference"
 }
 
-"テストエンティティ" - satisfies -> "テスト要件"
+"Test Entity" - satisfies -> "Test Requirement"
 
-構文説明:
+Syntax:
 Requirement
-要求定義には、要求タイプ、名前、ID、テキスト、リスク、検証方法が含まれます。構文は以下の通りです: 
-<タイプ> "ユーザー定義の名前" {
-    id: "ユーザー定義のID"
-    text: "ユーザー定義のテキスト"
-    risk: <リスク>
-    verifymethod: <検証方法>
+Requirements are defined by the type, name, ID, text, risk, and verification method. The syntax is as follows: 
+<type> "user_defined_name" {
+    id: "user_defined_ID"
+    text: "user_defined_text"
+    risk: <risk>
+    verifymethod: <verification method>
 }
-タイプ、リスク、検証方法はSysMLで定義されている列挙型です。
-キーワード | オプション
+The type, risk, and verification method are enumerated types defined in SysML.
+Keyword | Option
 ---|---
-タイプ | requirement（要求）, functionalRequirement（機能要求）, interfaceRequirement（インターフェース要求）, performanceRequirement（性能要求）, physicalRequirement（物理要求）, designConstraint（設計制約）
-リスク | Low（低）, Medium（中）, High（高）
-検証方法 | Analysis（分析）, Inspection（検査）, Test（テスト）, Demonstration（実証）
+type | requirement (requirement), functionalRequirement (functional requirement), interfaceRequirement (interface requirement), performanceRequirement (performance requirement), physicalRequirement (physical requirement), designConstraint (design constraint)
+risk | Low (low), Medium (medium), High (high)
+verification method | Analysis (analysis), Inspection (inspection), Test (test), Demonstration (demonstration)
 
 Element
-要素定義には、要素名、タイプ、文書参照が含まれます。これら3つはすべてユーザーが定義します。要素機能は軽量であることを意図していますが、要求を他の文書の部分に接続することができます。
-element "ユーザー定義の名前" {
-    type: "ユーザー定義のタイプ"
-    docref: "ユーザー定義の参照"
+Elements are defined by the name, type, and document reference. All three are user-defined. Element functionality is intended to be lightweight, but requirements can be connected to other parts of documents.
+element "user_defined_name" {
+    type: "user_defined_type"
+    docref: "user_defined_reference"
 }
 
 Relationship
-関係（Relationships）は、始点ノード、終点ノード、関係タイプで構成されます。
-それぞれが以下の定義形式に従います: 
-{始点ノードの名前} - <関係タイプ> -> {終点ノードの名前}
-または
-{終点ノードの名前} <- <関係タイプ> - {始点ノードの名前}
+Relationships are defined by the start node, end node, and relationship type.
+{start node name} - <relationship type> -> {end node name}
+or
+{end node name} <- <relationship type> - {start node name}
 
-「始点ノードの名前」と「終点ノードの名前」は、他の場所で定義された要求または要素ノードの名前である必要があります。
-関係タイプは以下のいずれかになります: 
-- contains（含む）
-- copies（複製する）
-- derives（派生する）
-- satisfies（満たす）
-- verifies（検証する）
-- refines（詳細化する）
-- traces（追跡する）
-各関係は図の中でラベル付けされます。
+"Start node name" and "End node name" must be the names of requirements or elements defined elsewhere.
+The relationship type is one of the following: 
+- contains
+- copies
+- derives
+- satisfies
+- verifies
+- refines
+- traces
+Each relationship is labeled in the diagram.
 
-より大きな例を示します: 
-この例は図の全ての機能を使用しています。
+Here is a larger example: 
+This example uses all the features of the diagram.
 requirementDiagram
 
-requirement "テスト要件" {
+requirement "Test Requirement" {
 id: "1"
-text: "テストテキスト"
+text: "Test Text"
 risk: high
 verifymethod: test
 }
 
-functionalRequirement "テスト要件2" {
+functionalRequirement "Test Requirement 2" {
 id: "1.1"
-text: "二つ目のテスト要件"
+text: "Second Test Requirement"
 risk: low
 verifymethod: inspection
 }
 
-performanceRequirement "テスト要件3" {
+performanceRequirement "Test Requirement 3" {
 id: "1.2"
-text: "三つ目テスト要件."
+text: "Third Test Requirement"
 risk: medium
 verifymethod: demonstration
 }
 
-interfaceRequirement "テスト要件4" {
+interfaceRequirement "Test Requirement 4" {
 id: "1.2.1"
-text: "四つめのテスト要件."
+text: "Fourth Test Requirement"
 risk: medium
 verifymethod: analysis
 }
 
-physicalRequirement "テスト要件5" {
+physicalRequirement "Test Requirement 5" {
 id: "1.2.2"
-text: "五つ目のテスト要件."
+text: "Fifth Test Requirement"
 risk: medium
 verifymethod: analysis
 }
 
-designConstraint "テスト要件6" {
+designConstraint "Test Requirement 6" {
 id: "1.2.3"
-text: "六つ目のテスト要件."
+text: "Sixth Test Requirement"
 risk: medium
 verifymethod: analysis
 }
 
-element "テストエンティティ" {
-type: "シミュレーション"
+element "Test Entity" {
+type: "simulation"
 }
 
-element "テストエンティティ2" {
-type: "ワークドック"
-docRef: "要求/テストエンティティ"
+element "Test Entity 2" {
+type: "work document"
+docRef: "requirement/Test Entity"
 }
 
-element "テストエンティティ3" {
-type: "テストスイート"
+element "Test Entity 3" {
+type: "test suite"
 docRef: "github.com/all_the_tests"
 }
 
 
-"テストエンティティ" - satisfies -> "テスト要件2"
-"テスト要件" - traces -> "テスト要件2"
-"テスト要件" - contains -> "テスト要件3"
-"テスト要件3" - contains -> "テスト要件4"
-"テスト要件4" - derives -> "テスト要件5"
-"テスト要件5" - refines -> "テスト要件6"
-"テストエンティティ3" - verifies -> "テスト要件5"
-"テスト要件" <- copies - "テストエンティティ2"
+"Test Entity" - satisfies -> "Test Requirement 2"
+"Test Requirement" - traces -> "Test Requirement 2"
+"Test Requirement" - contains -> "Test Requirement 3"
+"Test Requirement 3" - contains -> "Test Requirement 4"
+"Test Requirement 4" - derives -> "Test Requirement 5"
+"Test Requirement 5" - refines -> "Test Requirement 6"
+"Test Entity 3" - verifies -> "Test Requirement 5"
+"Test Requirement" <- copies - "Test Entity 2"
 </Information>
 
-出力フォーマット:
+Output format:
 <Description>
-[生成する要件図の詳しい説明や解説]
+[Description of the requirement diagram to be generated]
 </Description>
 
 \`\`\`mermaid
-[Mermaid.jsの要件図記法]
+[Mermaid.js requirement diagram notation]
 \`\`\`
 
 </instruction>`;

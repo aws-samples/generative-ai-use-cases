@@ -14,7 +14,7 @@ import { PromptSetting } from '../../../@types/settings';
 import { StreamingChunk } from '../../../@types/backend-api';
 
 const useChat = () => {
-  // 複数のタブで起動する場合があるので、タブごとに状態を管理する
+  // Keep the state for each tab because it can be launched in multiple screens
   const [tabId, setTabId] = useState<number>(-1);
   Browser.tabs?.getCurrent().then((tab) => {
     if (tab) {
@@ -50,7 +50,7 @@ const useChat = () => {
             content: content,
           },
         ];
-        // ignoreHistoryの場合は一問一答形式とする
+        // If ignoreHistory is true, use the one-question-one-answer format
         if (isEmptyMessages || promptSetting.ignoreHistory) {
           sendingMessage.unshift({
             role: 'system',
@@ -87,11 +87,11 @@ const useChat = () => {
               ]),
         );
 
-        // Assistant の発言を更新
+        // Update the Assistant message
         let tmpChunk = '';
 
         for await (const chunks of stream) {
-          // チャンクデータは改行コード区切りで送信されてくるので、分割して処理する
+          // The chunk data is sent with the newline code, so split and process it
           for (const chunk_ of chunks.split('\n')) {
             if (chunk_) {
               const chunk: StreamingChunk = JSON.parse(chunk_);
@@ -99,8 +99,8 @@ const useChat = () => {
             }
           }
 
-          // chunk は 10 文字以上でまとめて処理する
-          // バッファリングしないと以下のエラーが出る
+          // chunk is processed together if it is 10 characters or more
+          // If not buffering, the following error occurs
           // Maximum update depth exceeded
           if (tmpChunk.length >= 10) {
             dispatch(overwriteLatestMessage(tabId, tmpChunk + '▍'));

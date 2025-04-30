@@ -14,7 +14,7 @@ const DrawerItem: React.FC<DrawerItemProps> = (props) => {
   const location = useLocation();
   const { switchOpen } = useDrawer();
 
-  // 狭い画面の場合は、クリックしたらDrawerを閉じる
+  // If the screen is narrow, close the Drawer when clicked
   const onClick = useCallback(() => {
     if (
       document

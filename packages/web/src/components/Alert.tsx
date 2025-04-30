@@ -3,7 +3,7 @@ import { BaseProps } from '../@types/common';
 import { PiInfo, PiXCircle, PiX, PiWarning } from 'react-icons/pi';
 import ButtonIcon from './ButtonIcon';
 
-// MEMO: 現在は Error しか実装していない
+// MEMO: Only Error is implemented currently
 type Props = BaseProps & {
   title?: string;
   severity: 'info' | 'error' | 'warning';

@@ -2,6 +2,7 @@ import React from 'react';
 import { BaseProps } from '../../@types/common';
 import { PiLinkBold, PiLockKey } from 'react-icons/pi';
 import Button from '../Button';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   isShared: boolean;
@@ -10,6 +11,7 @@ type Props = BaseProps & {
 };
 
 const ButtonShare: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   return (
     <Button
       outlined
@@ -21,12 +23,12 @@ const ButtonShare: React.FC<Props> = (props) => {
       {props.isShared ? (
         <>
           <PiLinkBold className="mr-2" />
-          共有中
+          {t('useCaseBuilder.shared')}
         </>
       ) : (
         <>
           <PiLockKey className="mr-2" />
-          非公開
+          {t('useCaseBuilder.private')}
         </>
       )}
     </Button>

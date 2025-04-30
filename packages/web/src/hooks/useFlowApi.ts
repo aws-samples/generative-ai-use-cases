@@ -5,7 +5,8 @@ import {
 } from '@aws-sdk/client-lambda';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
-import { FlowRequest } from 'generative-ai-use-cases-jp';
+import { FlowRequest } from 'generative-ai-use-cases';
+import { useTranslation } from 'react-i18next';
 
 export type DocumentType =
   | null
@@ -22,11 +23,13 @@ export type FlowResponse = {
 };
 
 const useFlowApi = () => {
+  const { t } = useTranslation();
+
   return {
     invokeFlowStream: async function* (req: FlowRequest) {
       const token = (await fetchAuthSession()).tokens?.idToken?.toString();
       if (!token) {
-        throw new Error('認証されていません。');
+        throw new Error(t('common.error.notAuthenticated'));
       }
 
       const region = import.meta.env.VITE_APP_REGION;

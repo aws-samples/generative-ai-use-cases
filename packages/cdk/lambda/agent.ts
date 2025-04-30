@@ -2,7 +2,7 @@ import {
   AgentInput,
   AgentOutput,
   BraveSearchResult,
-} from 'generative-ai-use-cases-jp';
+} from 'generative-ai-use-cases';
 
 export const handler = async (event: AgentInput): Promise<AgentOutput> => {
   try {

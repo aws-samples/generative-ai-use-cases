@@ -1,12 +1,14 @@
-## 変更内容の説明
-変更内容を詳細に説明して下さい。
-既存ユーザーへの影響がある場合 (互換性・デグレ・破壊的変更など) は必ず説明に含めてください。
+## Description of Changes
 
-## チェック項目
-- [ ] `npm run lint` を実行した
-- [ ] 関連するドキュメントを修正した
-- [ ] 手元の環境で動作確認済み
-- [ ] `npm run cdk:test` を実行しスナップショット差分がある場合は `npm run cdk:test:update-snapshot` を実行してスナップショットを更新した
+Please explain the changes in detail.
+If there is any impact on existing users (compatibility, degradation, breaking changes, etc.), be sure to include it in the explanation.
 
-## 関連する Issue
-関連する Issue を可能な限り挙げてください。
+## Checklist
+
+- [ ] Modified relevant documentation
+- [ ] Verified operation in local environment
+- [ ] Executed `npm run cdk:test` and if there are snapshot differences, execute `npm run cdk:test:update-snapshot` to update snapshots
+
+## Related Issues
+
+Please list related issues as much as possible.

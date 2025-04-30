@@ -11,13 +11,13 @@ export class Guardrail extends Construct {
 
     const cfnGuardrail = new bedrock.CfnGuardrail(this, `guardrail`, {
       blockedInputMessaging:
-        '禁止された入力を検出しました。会話を最初からやり直すか、管理者にお問い合わせください。',
+        'Detected blocked input. Please start the conversation from the beginning or contact the administrator.',
       blockedOutputsMessaging:
-        'システムが禁じている内容の出力を検出しました。会話を最初からやり直すか、管理者にお問い合わせください。',
+        'Detected output that is prohibited. Please start the conversation from the beginning or contact the administrator.',
       name: `Guardrail-${suffix}`,
       sensitiveInformationPolicyConfig: {
-        // NAME, DRIVER_ID は日本のものが機能しないので設定しない
-        // CA_*, US_*, UK_* はそれぞれの国固有のものなので設定しない
+        // NAME, DRIVER_ID is not working in Japan, so do not set it
+        // CA_*, US_*, UK_* are country-specific, so do not set it
         piiEntitiesConfig: [
           { action: 'BLOCK', type: 'AGE' },
           { action: 'BLOCK', type: 'AWS_ACCESS_KEY' },

@@ -6,8 +6,10 @@ import ChatMessage from '../components/ChatMessage';
 import BedrockIcon from '../assets/bedrock.svg?react';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import ModalSystemContext from '../components/ModalSystemContext';
+import { useTranslation } from 'react-i18next';
 
 const SharedChatPage: React.FC = () => {
+  const { t } = useTranslation();
   const { shareId } = useParams();
   const { getSharedChat } = useChatApi();
   const { data: chatAndMessages, isLoading, error } = getSharedChat(shareId!);
@@ -91,7 +93,7 @@ const SharedChatPage: React.FC = () => {
                 />
                 <div className="peer-checked:bg-aws-smile peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:start-[2px] after:top-[2px] after:size-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full"></div>
                 <span className="ml-1 text-xs font-medium">
-                  システムプロンプトの表示
+                  {t('chat.show_system_prompt')}
                 </span>
               </label>
             </div>
@@ -130,13 +132,13 @@ const SharedChatPage: React.FC = () => {
 
         {!isLoading && error && (
           <div className="flex h-[calc(100vh-13rem)] flex-col items-center justify-center text-lg font-bold">
-            Error {error.response.status}
+            {t('shared.error')} {error.response.status}
             {error.response.status === 404 ? (
               <div className="mt-2 text-sm">
-                ページが見つかりませんでした。会話履歴がシェアされていないか、削除された可能性があります。
+                {t('shared.not_found_message')}
               </div>
             ) : (
-              <div className="mt-2 text-sm">管理者に問い合わせてください。</div>
+              <div className="mt-2 text-sm">{t('shared.contact_admin')}</div>
             )}
           </div>
         )}

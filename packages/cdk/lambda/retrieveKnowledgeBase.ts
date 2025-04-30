@@ -3,7 +3,7 @@ import {
   BedrockAgentRuntimeClient,
   RetrieveCommand,
 } from '@aws-sdk/client-bedrock-agent-runtime';
-import { RetrieveKnowledgeBaseRequest } from 'generative-ai-use-cases-jp';
+import { RetrieveKnowledgeBaseRequest } from 'generative-ai-use-cases';
 
 const KNOWLEDGE_BASE_ID = process.env.KNOWLEDGE_BASE_ID;
 const MODEL_REGION = process.env.MODEL_REGION;

@@ -1,12 +1,12 @@
 :root {
-  --md-primary-fg-color: #141f2e;
-  --md-primary-fg-color--light: #141f2e;
-  --md-primary-fg-color--dark: #141f2e;
+  --md-primary-fg-color: #232f3e;
+  --md-primary-fg-color--light: #232f3e;
+  --md-primary-fg-color--dark: #232f3e;
 }
 
 .md-header {
   color: white;
-  background-color: #141f2e;
+  background-color: #232f3e;
 }
 
 .md-tabs {

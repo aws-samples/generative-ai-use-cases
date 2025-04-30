@@ -4,7 +4,7 @@ import {
   TranscribeClient,
   StartTranscriptionJobCommand,
 } from '@aws-sdk/client-transcribe';
-import { StartTranscriptionRequest } from 'generative-ai-use-cases-jp';
+import { StartTranscriptionRequest } from 'generative-ai-use-cases';
 
 export const handler = async (
   event: APIGatewayProxyEvent

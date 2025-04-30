@@ -6,7 +6,7 @@ import {
   OptimizePromptCommandInput,
   OptimizePromptCommand,
 } from '@aws-sdk/client-bedrock-agent-runtime';
-import { OptimizePromptRequest } from 'generative-ai-use-cases-jp';
+import { OptimizePromptRequest } from 'generative-ai-use-cases';
 
 const client = new BedrockAgentRuntimeClient({
   region: process.env.MODEL_REGION,
@@ -41,7 +41,7 @@ const bedrockOptimizePrompt = {
           }
 
           if (event.analyzePromptEvent?.message) {
-            // 現状何もしない
+            // Do nothing for now
           }
         }
       }
@@ -50,17 +50,17 @@ const bedrockOptimizePrompt = {
         e instanceof ThrottlingException ||
         e instanceof ServiceQuotaExceededException
       ) {
-        // 以下全て OptimizePrompt のレスポンスに合わせて JSON.stringify する
+        // All of the following are JSON.stringify according to the OptimizePrompt response
         yield JSON.stringify(
-          'ただいまアクセスが集中しているため時間をおいて試してみてください。'
+          'The server is currently experiencing high access. Please try again later.'
         );
       } else if (e instanceof ValidationException) {
-        yield JSON.stringify(`利用上限に達したか不正なリクエストです \n ${e}`);
+        yield JSON.stringify(
+          `The usage limit has been exceeded or the request is invalid. \n ${e}`
+        );
       } else {
         console.error(e);
-        yield JSON.stringify(
-          'エラーが発生しました。時間をおいて試してみてください。'
-        );
+        yield JSON.stringify('An error occurred. Please try again later.');
       }
     }
   },

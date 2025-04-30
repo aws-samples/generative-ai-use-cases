@@ -16,6 +16,7 @@ import {
   RetrieveCommandOutput as RetrieveCommandOutputKnowledgeBase,
 } from '@aws-sdk/client-bedrock-agent-runtime';
 import { GenerateImageParams } from './image';
+import { GenerateVideoParams, VideoJob } from './video';
 import { ShareId, UserIdAndChatId } from './share';
 
 export type StreamingChunk = {
@@ -144,6 +145,15 @@ export type GenerateImageRequest = {
   params: GenerateImageParams;
 };
 export type GenerateImageResponse = string;
+
+export type GenerateVideoRequest = {
+  model?: Model;
+  params: GenerateVideoParams;
+};
+
+export type GenerateVideoResponse = VideoJob;
+
+export type ListVideoJobsResponse = Pagination<VideoJob>;
 
 export type DeleteFileRequest = {
   fileName: string;

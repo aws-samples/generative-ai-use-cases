@@ -11,6 +11,13 @@ export type UsecaseConverseInferenceParams = {
   [key: string]: ConverseInferenceParams;
 };
 
+export type AdditionalModelRequestFields = {
+  reasoningConfig?: {
+    type: 'enabled' | 'disabled';
+    budgetTokens?: number;
+  };
+};
+
 export type BaseGuardrailConfigParams = {
   guardrailIdentifier: string;
   guardrailVersion: string;
@@ -88,9 +95,19 @@ export type MistralParams = {
   top_p?: number;
 };
 
+// DeepSeel
+// https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-deepseek.html
+export type DeepSeekParams = {
+  prompt?: string;
+  max_tokens?: number;
+  stop?: string[];
+  temperature?: number;
+  top_p?: number;
+};
+
 // Cohere Command R / Command R+
 // https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-cohere-command-r-plus.html
-// stream, tools, tools_results は2024/05現在Bedrockで対応していないため、コメントアウトしています。
+// stream, tools, tools_results is not supported in Bedrock yet, so commented out.
 export type CommandRParams = {
   message?: string;
   chat_history?: {
@@ -174,4 +191,8 @@ export type BedrockResponse = {
   }[];
   // CommandR
   text: string;
+  // DeepSeek
+  choices: {
+    text: string;
+  }[];
 };

@@ -4,21 +4,21 @@ import useScreen from './useScreen';
 const useFollow = () => {
   const { isAtBottom, scrollToBottom } = useScreen();
 
-  // スクロールされる要素が含まれる要素
-  // サイズが動的に変更されることが想定される
-  // チャットのページであればメッセージを wrap した要素
+  // The element that contains the scrollable element
+  // The size is expected to be dynamic
+  // In the case of the chat page, it is an element that wraps the message
   const scrollableContainer = useRef<HTMLDivElement>(null);
 
-  // フォローするか否か
-  // ページ最下部まで到達している場合はフォローする
-  // そうでない場合 (手動で上にスクロールした場合) はフォローしないようにする
+  // Whether to follow or not
+  // If the page is at the bottom, follow
+  // Otherwise (if manually scrolled up), do not follow
   const [following, setFollowing] = useState(true);
 
-  // scrollableContainer のサイズ変更を監視
+  // Monitor the size change of scrollableContainer
   useEffect(() => {
     if (scrollableContainer.current) {
       const observer = new ResizeObserver(() => {
-        // 画面サイズ変更されたらフォローする
+        // If the screen size changes, follow
         if (following) {
           scrollToBottom();
         }
@@ -32,8 +32,8 @@ const useFollow = () => {
     }
   }, [following, scrollToBottom]);
 
-  // ページ最下部に到達した場合は following を true に
-  // 手動で上にスクロールした場合は following を false にする
+  // If the page is at the bottom, set following to true
+  // If manually scrolled up, set following to false
   useEffect(() => {
     setFollowing(isAtBottom);
   }, [isAtBottom, setFollowing]);

@@ -19,6 +19,7 @@ const Card: React.FC<Props> = (props) => {
       {props.label && (
         <RowItem className="flex items-center">
           <span className="font-semibold">{props.label}</span>
+          {/* eslint-disable-next-line @shopify/jsx-no-hardcoded-content */}
           {props.sub && <span className="ml-2 text-sm">({props.sub})</span>}
           {props.help && <Help className="ml-1" message={props.help} />}
         </RowItem>

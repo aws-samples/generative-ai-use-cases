@@ -1,0 +1,33 @@
+{
+  "name": "eslint-plugin-i18nhelper",
+  "version": "1.0.0",
+  "description": "Detect non-i18n strings",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build"
+  },
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "i18n",
+    "i18nhelper"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.6.0",
+    "@typescript-eslint/parser": "^7.6.0",
+    "@typescript-eslint/utils": "^7.6.0",
+    "@types/eslint": "^8.44.0",
+    "@types/node": "^20.12.5",
+    "eslint": "^8.44.0",
+    "typescript": "^5.4.5"
+  },
+  "peerDependencies": {
+    "eslint": ">=6.0.0"
+  }
+}

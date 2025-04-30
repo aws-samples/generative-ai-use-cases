@@ -20,7 +20,7 @@ import {
   Model,
   UnrecordedMessage,
   BraveSearchResult,
-} from 'generative-ai-use-cases-jp';
+} from 'generative-ai-use-cases';
 import { streamingChunk } from './streamingChunk';
 
 const agentClient = new BedrockAgentClient({
@@ -31,14 +31,14 @@ const agentRuntimeClient = new BedrockAgentRuntimeClient({
 });
 const s3Client = new S3Client({});
 
-// Agent の情報
+// Agent information
 const agentMap: AgentMap = JSON.parse(process.env.AGENT_MAP || '{}');
 type AgentInfo = {
   codeInterpreterEnabled: boolean;
 };
 const agentInfoMap: { [aliasId: string]: AgentInfo } = {};
 
-// s3://<BUCKET>/<PREFIX> から https://s3.<REGION>.amazonaws.com/<BUCKET>/<PREFIX> に変換する
+// Convert s3://<BUCKET>/<PREFIX> to https://s3.<REGION>.amazonaws.com/<BUCKET>/<PREFIX>
 const convertS3UriToUrl = (s3Uri: string, region: string): string => {
   const result = /^s3:\/\/(?<bucketName>.+?)\/(?<prefix>.+)/.exec(s3Uri);
   if (result) {
@@ -51,7 +51,7 @@ const convertS3UriToUrl = (s3Uri: string, region: string): string => {
   return '';
 };
 
-// 文字列をURL-encodeする
+// Encode a string to URL
 const encodeUrlString = (str: string): string => {
   try {
     return encodeURIComponent(str);
@@ -91,7 +91,10 @@ const getAgentInfo = async (agentId: string, agentAliasId: string) => {
   return agentInfoMap[agentAliasId];
 };
 
-const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
+const bedrockAgentApi: ApiInterface = {
+  invoke: async () => {
+    throw new Error('Not Implemented');
+  },
   invokeStream: async function* (model: Model, messages: UnrecordedMessage[]) {
     try {
       // Get Agent
@@ -107,7 +110,7 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
         sessionState: {
           files:
             messages[messages.length - 1].extraData?.map((file) => ({
-              name: file.name.replace(/[^a-zA-Z0-9\s\-()[\].]/g, 'X'), // ファイル名に日本語などが入っていると認識されないため置き換え
+              name: file.name.replace(/[^a-zA-Z0-9\s\-()[\].]/g, 'X'), // If the file name contains Japanese, it is not recognized, so replace it
               source: {
                 sourceType: 'BYTE_CONTENT',
                 byteContent: {
@@ -139,13 +142,13 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
         if (streamChunk.chunk) {
           let body = new TextDecoder('utf-8').decode(streamChunk.chunk?.bytes);
 
-          // Attribution の追加
+          // Add Attribution
           const sources: { [key: string]: number } = {};
           let offset = 0;
           for (const citation of streamChunk.chunk?.attribution?.citations ||
             []) {
             for (const ref of citation.retrievedReferences || []) {
-              // S3 URI を取得し URL に変換
+              // Convert S3 URI to URL
               const s3Uri = ref?.location?.s3Location?.uri || '';
               if (!s3Uri) continue;
               const url = convertS3UriToUrl(
@@ -153,24 +156,24 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
                 process.env.MODEL_REGION || ''
               );
 
-              // ページ番号を取得
+              // Get the page number
               const pageNumber =
                 ref?.metadata?.['x-amz-bedrock-kb-document-page-number'];
 
-              // ファイル名を取得してエンコード
+              // Get the file name and encode it
               const fileName = url.split('/').pop() || '';
               const encodedFileName = encodeUrlString(fileName);
 
-              // データソースがユニークであれば文末に Reference 追加
+              // If the data source is unique, add Reference to the end
               if (sources[url] === undefined) {
                 sources[url] = Object.keys(sources).length;
                 body += `\n[^${sources[url]}]: [${fileName}${
-                  pageNumber ? `(${pageNumber} ページ)` : ''
+                  pageNumber ? `(p.${pageNumber})` : ''
                 }](${url.replace(fileName, encodedFileName)}${pageNumber ? `#page=${pageNumber}` : ''})`;
               }
               const referenceId = sources[url];
 
-              // 文中に Reference 追加
+              // Add Reference to the middle of the text
               const position =
                 (citation.generatedResponsePart?.textResponsePart?.span?.end ||
                   0) +
@@ -189,17 +192,17 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
         }
 
         // File
-        // 画像は S3 にアップロードし画像として表示
-        // ファイルは S3 にアップロードしリンクを表示
+        // Images are uploaded to S3 and displayed as images
+        // Files are uploaded to S3 and displayed as links
         if (streamChunk.files) {
           for (const file of streamChunk.files.files || []) {
-            // 同じファイルが何度か出現することがあるため初出のみ表示
+            // The same file may appear multiple times, so only display the first occurrence
             if (existingFiles.has(file.name || '')) {
               continue;
             }
             existingFiles.add(file.name || '');
 
-            // ファイルを S3 にアップロード
+            // Upload the file to S3
             const uuid = uuidv4();
             const bucket = process.env.BUCKET_NAME;
             const key = `${uuid}/${file.name}`;
@@ -231,12 +234,12 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
             streamChunk.trace.trace?.orchestrationTrace.observation;
 
           if (rationale?.text) {
-            // 思考過程はそのまま表示
+            // The thought process is displayed as is
             trace = rationale.text;
           } else if (invocationInput) {
-            // Action への入力
+            // Action input
             if (invocationInput.codeInterpreterInvocationInput?.code) {
-              // CodeInterpreter への入力は Python コードをブロックで表示
+              // The input to CodeInterpreter is displayed as a block of Python code
               trace =
                 '```python' +
                 invocationInput.codeInterpreterInvocationInput.code +
@@ -244,13 +247,13 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
             } else if (
               invocationInput.actionGroupInvocationInput?.actionGroupName
             ) {
-              // カスタムアクション
-              // 自前のアクションを呼び出す時は必要に応じてここを編集
+              // Custom Action
+              // Edit this if you are calling your own action
               if (
                 invocationInput.actionGroupInvocationInput.actionGroupName ===
                 'Search'
               ) {
-                // 検索エージェントは検索キーワードを表示
+                // The search agent displays the search keyword
                 const content =
                   invocationInput.actionGroupInvocationInput.requestBody
                     ?.content || {};
@@ -261,27 +264,27 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
                   ': ' +
                   parameters?.map((item) => item.value).join(' ');
               } else {
-                // それ以外は Action Group 名のみ表示。
+                // Display only the Action Group name otherwise
                 trace =
                   invocationInput.actionGroupInvocationInput.actionGroupName;
               }
             } else if (invocationInput.knowledgeBaseLookupInput?.text) {
-              // Knowledge Base は検索キーワードを表示
+              // Knowledge Base displays the search keyword
               trace =
                 'Search: ' + invocationInput.knowledgeBaseLookupInput.text;
             }
           } else if (observation) {
-            // Action からの出力
+            // Action output
             if (observation.codeInterpreterInvocationOutput?.executionOutput) {
-              // CodeInterpreter の出力（Python の stdout）はそのまま表示
+              // The output of CodeInterpreter (Python stdout) is displayed as is
               trace =
                 observation.codeInterpreterInvocationOutput.executionOutput;
             } else if (observation.actionGroupInvocationOutput?.text) {
-              // カスタムアクション
-              // 自前のアクションを呼び出す時は必要に応じてここを編集
+              // Custom Action
+              // Edit this if you are calling your own action
               const output = observation.actionGroupInvocationOutput.text;
               if (output.startsWith('<search_results>')) {
-                // 検索エージェントはタイトルと URL を表示
+                // The search agent displays the title and URL
                 const searchResult: BraveSearchResult[] = JSON.parse(
                   output
                     .replace('<search_results>', '')
@@ -291,14 +294,14 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
                   .map((item) => `- [${item.title}](${item.url})`)
                   .join('\n');
               } else {
-                // それ以外は出力の冒頭1000文字を表示
+                // Display the first 1000 characters of the output otherwise
                 trace =
                   output.length > 1000 ? output.slice(0, 1000) + '...' : output;
               }
             } else if (
               observation.knowledgeBaseLookupOutput?.retrievedReferences
             ) {
-              // Knowledge Base はソース URL を表示
+              // Knowledge Base displays the source URL
               const refs =
                 observation.knowledgeBaseLookupOutput.retrievedReferences?.flatMap(
                   (ref) => {
@@ -320,7 +323,7 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
                         ];
 
                       return `- [${fileName}${
-                        pageNumber ? `(${pageNumber} ページ)` : ''
+                        pageNumber ? `(p.${pageNumber})` : ''
                       }](${url.replace(fileName, encodedFileName)}${pageNumber ? `#page=${pageNumber}` : ''})`;
                     }
                     return [];
@@ -329,7 +332,7 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
               trace = Array.from(new Set(refs)).join('\n');
             }
           }
-          // Markdown を正しく動作させるための改行
+          // Add a newline to ensure Markdown works correctly
           yield streamingChunk({ text: '', trace: trace + '\n' });
         }
       }
@@ -339,25 +342,31 @@ const bedrockAgentApi: Pick<ApiInterface, 'invokeStream'> = {
         e instanceof ServiceQuotaExceededException
       ) {
         yield streamingChunk({
-          text: 'ただいまアクセスが集中しているため時間をおいて試してみてください。',
+          text: 'The server is currently experiencing high access. Please try again later.',
           stopReason: 'error',
         });
       } else if (e instanceof DependencyFailedException) {
         const modelAccessURL = `https://${process.env.MODEL_REGION}.console.aws.amazon.com/bedrock/home?region=${process.env.MODEL_REGION}#/modelaccess`;
         yield streamingChunk({
-          text: `選択したモデルが有効化されていないようです。[Bedrock コンソールの Model Access 画面](${modelAccessURL})にて、利用したいモデルを有効化してください。`,
+          text: `The selected model is not enabled. Please enable the model in the [Bedrock console Model Access screen](${modelAccessURL}).`,
           stopReason: 'error',
         });
       } else {
         console.error(e);
         yield streamingChunk({
           text:
-            'エラーが発生しました。管理者に以下のエラーを報告してください。\n' +
+            'An error occurred. Please report the following error to the administrator.\n' +
             e,
           stopReason: 'error',
         });
       }
     }
+  },
+  generateImage: async () => {
+    throw new Error('Not Implemented');
+  },
+  generateVideo: async () => {
+    throw new Error('Not Implemented');
   },
 };
 

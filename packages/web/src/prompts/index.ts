@@ -1,16 +1,17 @@
-import { UnrecordedMessage } from 'generative-ai-use-cases-jp';
+import { UnrecordedMessage } from 'generative-ai-use-cases';
 import { RetrieveResultItem } from '@aws-sdk/client-kendra';
 import { claudePrompter } from './claude';
+import { TFunction } from 'i18next';
 
-// 現状 prompter は Claude 用のものしか存在しない
+// Currently, prompter is only for Claude
 export const getPrompter = (modelId: string) => {
   if (modelId.includes('claude')) {
     return claudePrompter;
   } else {
-    // デフォルトでは Claude の prompter を返す
-    // modelId は初期時に空文字が入っているため
-    // 初期モデルが Claude ではない場合も、一時的に claudePrompter が選択されている状態になるが
-    // modelId が更新されると適切なモデルが選択されるため、その状態を許容する
+    // Default returns Claude's prompter
+    // modelId is initially empty, so even if the initial model is not Claude,
+    // claudePrompter is temporarily selected, but
+    // When modelId is updated, the appropriate model will be selected, so we allow that state
     return claudePrompter;
   }
 };
@@ -24,7 +25,7 @@ export type SummarizeParams = {
   context?: string;
 };
 
-export type EditorialParams = {
+export type WriterParams = {
   sentence: string;
   context?: string;
 };
@@ -81,13 +82,13 @@ export interface Prompter {
   systemContext(pathname: string): string;
   chatPrompt(params: ChatParams): string;
   summarizePrompt(params: SummarizeParams): string;
-  editorialPrompt(params: EditorialParams): string;
+  writerPrompt(params: WriterParams): string;
   generateTextPrompt(params: GenerateTextParams): string;
   translatePrompt(params: TranslateParams): string;
   webContentPrompt(params: WebContentParams): string;
   ragPrompt(params: RagParams): string;
   videoAnalyzerPrompt(params: VideoAnalyzerParams): string;
   setTitlePrompt(params: SetTitleParams): string;
-  promptList(): PromptList;
+  promptList(t: TFunction): PromptList;
   diagramPrompt(params: DiagramParams): string;
 }

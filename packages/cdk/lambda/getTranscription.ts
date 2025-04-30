@@ -4,10 +4,7 @@ import {
   GetTranscriptionJobCommand,
 } from '@aws-sdk/client-transcribe';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import {
-  GetTranscriptionResponse,
-  Transcript,
-} from 'generative-ai-use-cases-jp';
+import { GetTranscriptionResponse, Transcript } from 'generative-ai-use-cases';
 
 function parseS3Url(s3Url: string) {
   const url = new URL(s3Url);
@@ -34,7 +31,7 @@ export const handler = async (
     const res = await transcribeClient.send(command);
 
     if (
-      // job を start した時のユーザーと異なる場合は Forbidden エラーを返却
+      // Return Forbidden error if the user who started the job is different
       res.TranscriptionJob?.Tags!.find(
         (tag) => tag.Key === 'userId' && tag.Value !== userId
       )
@@ -61,14 +58,14 @@ export const handler = async (
       );
       const output = JSON.parse(await s3Result.Body!.transformToString());
 
-      // 文字起こしをフォーマット
+      // Format the transcription
       const rawTranscripts: Transcript[] = output.results.audio_segments.map(
         (item: { transcript: string; speaker_label?: string }) => ({
           speakerLabel: item.speaker_label,
           transcript: item.transcript,
         })
       );
-      // 話者が連続する場合はマージ
+      // If the speaker is continuous, merge them
       const transcripts = rawTranscripts
         .reduce((prev, item) => {
           if (
@@ -86,7 +83,7 @@ export const handler = async (
         }, [] as Transcript[])
         .map((item) => ({
           ...item,
-          // フレーズの間にスペースが入るため日本語の場合はスペースを除去
+          // There is a space between phrases, so remove it for Japanese
           transcript:
             output.results.language_code === 'ja-JP'
               ? item.transcript.replace(/ /g, '')

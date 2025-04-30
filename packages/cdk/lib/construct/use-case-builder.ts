@@ -15,8 +15,8 @@ import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import * as ddb from 'aws-cdk-lib/aws-dynamodb';
 
 export interface UseCaseBuilderProps {
-  userPool: UserPool;
-  api: RestApi;
+  readonly userPool: UserPool;
+  readonly api: RestApi;
 }
 export class UseCaseBuilder extends Construct {
   constructor(scope: Construct, id: string, props: UseCaseBuilderProps) {
@@ -61,7 +61,7 @@ export class UseCaseBuilder extends Construct {
 
     const commonPath = './lambda/useCaseBuilder';
 
-    // UseCaseBuilder 関連の API を追加する
+    // Add UseCaseBuilder related APIs
     const listUseCasesFunction = new NodejsFunction(this, 'ListUseCases', {
       ...commonProperty,
       entry: `${commonPath}/listUseCases.ts`,

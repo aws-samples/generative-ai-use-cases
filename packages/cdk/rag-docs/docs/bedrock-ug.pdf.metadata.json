@@ -5,6 +5,7 @@
     "tag": ["AWS", "Amazon Bedrock"],
     "category": "AWS",
     "is_public": true,
-    "title": "Amazon Bedrock ユーザーガイド"
+    "title": "Amazon Bedrock User Guide",
+    "language": "ja"
   }
 }

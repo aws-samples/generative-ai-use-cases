@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { listSystemContexts } from './repository';
-import { SystemContext } from 'generative-ai-use-cases-jp';
+import { SystemContext } from 'generative-ai-use-cases';
 
 export const handler = async (
   event: APIGatewayProxyEvent

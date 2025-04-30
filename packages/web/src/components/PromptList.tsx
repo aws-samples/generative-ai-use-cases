@@ -21,7 +21,8 @@ import useChat from '../hooks/useChat';
 import { getPrompter, PromptListItem } from '../prompts';
 import type { PromptList } from '../prompts';
 import ButtonIcon from './ButtonIcon';
-import { SystemContext } from 'generative-ai-use-cases-jp';
+import { SystemContext } from 'generative-ai-use-cases';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   onClick: (params: ChatPageQueryParams) => void;
@@ -34,10 +35,11 @@ type Props = BaseProps & {
 };
 
 const PromptList: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const { onClick, onClickDeleteSystemContext, onClickUpdateSystemContext } =
     props;
   const [expanded, setExpanded] = useState(false);
-  // PromptList はチャットのページでの利用に固定
+  // PromptList is fixed for use on the chat page
   const { getModelId } = useChat('/chat');
   const modelId = getModelId();
 
@@ -45,7 +47,7 @@ const PromptList: React.FC<Props> = (props) => {
     return getPrompter(modelId);
   }, [modelId]);
 
-  // 上位の setExpanded にアクセスするためにコンポーネントをネストする
+  // To access the upper setExpanded, nest the component
   const Item: React.FC<PromptListItem> = (props) => {
     const onClickPrompt = useCallback(() => {
       onClick({
@@ -182,7 +184,7 @@ const PromptList: React.FC<Props> = (props) => {
           expanded ? 'right-0 z-50' : '-right-64 z-30'
         } pointer-events-none flex h-full justify-center`}>
         <div
-          className="bg-aws-smile pointer-events-auto mt-16 flex size-12 cursor-pointer items-center justify-center rounded-l-full"
+          className="bg-aws-smile pointer-events-auto mt-24 flex size-12 cursor-pointer items-center justify-center rounded-l-full transition-all lg:mt-16"
           onClick={() => {
             setExpanded(!expanded);
           }}>
@@ -192,11 +194,11 @@ const PromptList: React.FC<Props> = (props) => {
         <div className="bg-aws-squid-ink scrollbar-thin scrollbar-thumb-white pointer-events-auto h-full w-64 overflow-y-scroll break-words p-3 text-sm text-white">
           <div className="my-2 flex items-center text-sm font-semibold">
             <PiBookOpenText className="mr-1.5 text-lg" />
-            保存したシステムプロンプト
+            {t('chat.saved_system_prompts')}
           </div>
           <ul className="pl-6">
             {props.systemContextList.length == 0 && (
-              <li className="text-gray-400">ありません</li>
+              <li className="text-gray-400">{t('common.none')}</li>
             )}
             {props.systemContextList.length > 0 &&
               props.systemContextList.map((item, i) => {
@@ -213,10 +215,10 @@ const PromptList: React.FC<Props> = (props) => {
 
           <div className="mb-2 mt-4 flex items-center text-sm font-semibold">
             <PiBookOpenText className="mr-1.5 text-lg" />
-            プロンプト例
+            {t('chat.prompt_examples')}
           </div>
 
-          {prompter.promptList().map((category, i) => {
+          {prompter.promptList(t).map((category, i) => {
             return (
               <ExpandableMenu
                 title={category.title}

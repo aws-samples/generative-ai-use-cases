@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import RowItem, { RowItemProps } from './RowItem';
 import Help from './Help';
+import { useTranslation } from 'react-i18next';
 
 type Props = RowItemProps & {
   value?: string;
@@ -22,6 +23,7 @@ type Props = RowItemProps & {
 const MAX_HEIGHT = 300;
 
 const Textarea: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const ref = useRef<HTMLTextAreaElement>(null);
   const [isMax, setIsMax] = useState(false);
   const _maxHeight = props.maxHeight || MAX_HEIGHT;
@@ -73,12 +75,16 @@ const Textarea: React.FC<Props> = (props) => {
           <span className="text-sm">{props.label}</span>
           {props.help && <Help className="ml-1" message={props.help} />}
           {props.optional && (
+            /* eslint-disable-next-line @shopify/jsx-no-hardcoded-content */
             <span className="ml-2 text-xs italic text-gray-500">
-              - Optional
+              - {t('common.optional')}
             </span>
           )}
           {props.required && (
-            <span className="ml-2 text-xs font-bold text-gray-800">* 必須</span>
+            /* eslint-disable-next-line @shopify/jsx-no-hardcoded-content */
+            <span className="ml-2 text-xs font-bold text-gray-800">
+              * {t('common.required')}
+            </span>
           )}
         </div>
       )}
@@ -92,7 +98,7 @@ const Textarea: React.FC<Props> = (props) => {
           props.noBorder ? 'border-0 focus:ring-0 ' : 'border border-black/30'
         } ${props.disabled ? 'bg-gray-200 ' : ''}`}
         rows={props.rows ?? 1}
-        placeholder={props.placeholder}
+        placeholder={props.placeholder || t('common.enter_text')}
         value={props.value}
         onChange={(e) => {
           props.onChange(e.target.value);

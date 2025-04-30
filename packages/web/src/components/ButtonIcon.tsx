@@ -7,6 +7,7 @@ type Props = BaseProps & {
   loading?: boolean;
   onClick: () => void;
   children: React.ReactNode;
+  title?: string;
 };
 
 const ButtonIcon: React.FC<Props> = (props) => {
@@ -26,7 +27,8 @@ const ButtonIcon: React.FC<Props> = (props) => {
         props.disabled || props.loading ? 'opacity-30' : 'hover:brightness-75'
       }`}
       onClick={onClick}
-      disabled={props.disabled}>
+      disabled={props.disabled}
+      title={props.title}>
       {props.loading ? (
         <PiSpinnerGap className="animate-spin" />
       ) : (

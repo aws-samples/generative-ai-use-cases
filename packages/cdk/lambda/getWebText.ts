@@ -21,9 +21,9 @@ export const handler = async (
 
     const res = await fetch(url);
     const html = await res.text();
-    // 不正なタグなどを補完
+    // Fix invalid tags
     const cleanHtml = sanitizeHtml(html, {
-      // body と html がデフォルトで消えるため、それを防止するオプション
+      // body and html are removed by default, so this option prevents that
       allowedTags: [...sanitizeHtml.defaults.allowedTags, 'body', 'html'],
     });
     const root = parse(cleanHtml, {
@@ -35,7 +35,7 @@ export const handler = async (
         pre: false,
       },
     });
-    const text = root!.querySelector('body').removeWhitespace().text;
+    const text = root?.querySelector('body')?.removeWhitespace().text;
 
     return {
       statusCode: 200,

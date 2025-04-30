@@ -1,5 +1,5 @@
 import { Handler, Context } from 'aws-lambda';
-import { OptimizePromptRequest } from 'generative-ai-use-cases-jp';
+import { OptimizePromptRequest } from 'generative-ai-use-cases';
 import bedrockOptimizePrompt from './utils/bedrockOptimizePrompt';
 
 declare global {

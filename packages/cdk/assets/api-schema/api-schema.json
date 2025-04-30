@@ -1,54 +1,52 @@
 {
-    "openapi": "3.0.0",
-    "info": {
-        "title": "Research Assisstant Agent API",
-        "version": "1.0.0",
-        "description": "API to search information from internet."
-    },
-    "paths": {
-        "/search": {
-            "get": {
-                "summary": "Get information from search engine",
-                "description": "キーワードで検索し情報を取得します。調査、調べる、Xについて教える、まとめるといったタスクで利用できます。会話から検索キーワードを推測してください。検索結果には関連度の低い内容も含まれているため関連度の高い内容のみを参考に回答してください。複数回実行可能です。",
-                "operationId": "Search",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "keyword": {
-                                        "type": "string",
-                                        "description": "検索キーワード"
-                                    }
-                                },
-                                "required": [
-                                    "keyword"
-                                ]
-                            }
-                        }
-                    }
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Research Assisstant Agent API",
+    "version": "1.0.0",
+    "description": "API to search information from internet."
+  },
+  "paths": {
+    "/search": {
+      "get": {
+        "summary": "Get information from search engine",
+        "description": "Search for information from the keyword. This can be used for tasks such as research, research, teach about X, summarize, etc. Guess the search keyword from the conversation and execute multiple times.",
+        "operationId": "Search",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "keyword": {
+                    "type": "string",
+                    "description": "Search keyword"
+                  }
                 },
-                "responses": {
-                    "200": {
-                        "description": "検索結果",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "results": {
-                                            "type": "string",
-                                            "description": "検索結果"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                "required": ["keyword"]
+              }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "string",
+                      "description": "Search results"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
+      }
     }
+  }
 }

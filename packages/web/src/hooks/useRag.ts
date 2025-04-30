@@ -2,13 +2,14 @@ import { useMemo } from 'react';
 import useChat from './useChat';
 import useChatApi from './useChatApi';
 import useRagApi from './useRagApi';
-import { ShownMessage } from 'generative-ai-use-cases-jp';
+import { ShownMessage } from 'generative-ai-use-cases';
 import { findModelByModelId } from './useModel';
 import { getPrompter } from '../prompts';
 import { RetrieveResultItem, DocumentAttribute } from '@aws-sdk/client-kendra';
 import { cleanEncode } from '../utils/URLUtils';
+import { useTranslation } from 'react-i18next';
 
-// 同一のドキュメントとみなす Key 値
+// Key value to consider the same document
 const uniqueKeyOfItem = (item: RetrieveResultItem): string => {
   const pageNumber =
     item.DocumentAttributes?.find(
@@ -27,7 +28,7 @@ export const arrangeItems = (
     const key = uniqueKeyOfItem(item);
 
     if (res[key]) {
-      // 同じソースの Content は ... で接続する
+      // Content of the same source is connected with ...
       res[key].Content += ' ... ' + item.Content;
     } else {
       res[key] = item;
@@ -38,6 +39,8 @@ export const arrangeItems = (
 };
 
 const useRag = (id: string) => {
+  const { t } = useTranslation();
+
   const {
     getModelId,
     messages,
@@ -74,10 +77,10 @@ const useRag = (id: string) => {
         .filter((m) => m.role === 'user')
         .map((m) => m.content);
 
-      // Kendra から Retrieve する際に、ローディング表示する
+      // When retrieving from Kendra, display the loading
       setLoading(true);
       pushMessage('user', content);
-      pushMessage('assistant', 'Kendra から参照ドキュメントを取得中...');
+      pushMessage('assistant', t('rag.retrieving'));
 
       const query = await predict({
         model: model,
@@ -93,32 +96,21 @@ const useRag = (id: string) => {
         id: id,
       });
 
-      // Kendra から 参考ドキュメントを Retrieve してシステムプロンプトとして設定する
+      // Retrieve reference documents from Kendra and set them as the system prompt
       let items: RetrieveResultItem[] = [];
       try {
         const retrievedItems = await retrieve(query);
         items = arrangeItems(retrievedItems.data.ResultItems ?? []);
       } catch (error) {
         popMessage();
-        pushMessage(
-          'assistant',
-          `Kendra から参照ドキュメントを取得できませんでした。次の対応を検討してください。
-- Amazon Kendraインデックス作成としてスケジュールした時刻と、その時刻からインデックス作成に必要な時間が経ったかを確認する
-- Amazon Kendraインデックス削除としてスケジュールした時刻を過ぎていないか確認する`
-        );
+        pushMessage('assistant', t('rag.errorRetrieval'));
         setLoading(false);
         return;
       }
 
       if (items.length == 0) {
         popMessage();
-        pushMessage(
-          'assistant',
-          `参考ドキュメントが見つかりませんでした。次の対応を検討してください。
-- Amazon Kendra の data source に対象のドキュメントが追加されているか確認する
-- Amazon Kendra の data source が sync されているか確認する
-- 入力の表現を変更する`
-        );
+        pushMessage('assistant', t('rag.noDocuments'));
         setLoading(false);
         return;
       }
@@ -130,34 +122,34 @@ const useRag = (id: string) => {
         })
       );
 
-      // ローディング表示を消してから通常のチャットの POST 処理を実行する
+      // After hiding the loading, execute the POST processing of the normal chat
       popMessage();
       popMessage();
       postChat(
         content,
         false,
         (messages: ShownMessage[]) => {
-          // 前処理：Few-shot で参考にされてしまうため、過去ログから footnote を削除
+          // Preprocessing: Few-shot is used, so delete the footnote from the past logs
           return messages.map((message) => ({
             ...message,
             content: message.content
-              .replace(/\[\^0\]:[\s\S]*/s, '') // 文末の脚注を削除
-              .replace(/\[\^(\d+)\]/g, '') // 文中の脚注アンカーを削除
-              .trim(), // 前後の空白を削除
+              .replace(/\[\^0\]:[\s\S]*/s, '') // Delete the footnote at the end of the sentence
+              .replace(/\[\^(\d+)\]/g, '') // Delete the footnote anchor in the sentence
+              .trim(), // Delete the leading and trailing spaces
           }));
         },
         (message: string) => {
-          // 後処理：Footnote の付与
+          // Postprocessing: Add the footnote
           const footnote = items
             .map((item, idx) => {
-              // 参考にしたページ番号がある場合は、アンカーリンクとして設定する
+              // If there is a reference page number, set it as an anchor link
               const _excerpt_page_number = item.DocumentAttributes?.find(
                 (attr) => attr.Key === '_excerpt_page_number'
               )?.Value?.LongValue;
               return message.includes(`[^${idx}]`)
                 ? `[^${idx}]: [${item.DocumentTitle}${
                     _excerpt_page_number
-                      ? `(${_excerpt_page_number} ページ)`
+                      ? `(${_excerpt_page_number} ${t('rag.page')})`
                       : ''
                   }](
                   ${item.DocumentURI ? cleanEncode(item.DocumentURI) : ''}${
