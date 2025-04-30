@@ -2,11 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { create } from 'zustand';
 import { v4 as uuid } from 'uuid';
 import useFlowApi from './useFlowApi';
-<<<<<<< HEAD
 import { Flow, ShownMessage, UploadedFileType, ExtraData } from 'generative-ai-use-cases-jp';
-=======
-import { Flow, ShownMessage } from 'generative-ai-use-cases';
->>>>>>> 99c31f602d72ec1ec0ddeb547fc327e12d9fab78
 import { MODELS } from './useModel';
 import useFileApi from './useFileApi';
 import useFiles from './useFiles';
