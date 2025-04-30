@@ -38,7 +38,8 @@ const FlowChatPage: React.FC = () => {
     sendMessage,
     setFlow,
     clear: clearChat,
-  } = useFlowChat();
+    fileLimit
+  } = useFlowChat('/flow-chat' + (chatId ? `/${chatId}` : ''));
 
   const { scrollableContainer, setFollowing } = useFollow();
 
@@ -115,7 +116,9 @@ const FlowChatPage: React.FC = () => {
           resetDisabled={!!chatId}
           onSend={onSend}
           onReset={onReset}
-          fileUpload={false}
+          fileUpload={true}
+          fileLimit={fileLimit}
+          accept={fileLimit.accept.image}
         />
       </div>
 

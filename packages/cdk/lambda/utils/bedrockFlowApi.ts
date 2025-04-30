@@ -7,6 +7,7 @@ import {
   ThrottlingException,
   ValidationException,
 } from '@aws-sdk/client-bedrock-agent-runtime';
+import { inspect } from 'node:util';
 
 const client = new BedrockAgentRuntimeClient({
   region: process.env.MODEL_REGION,
@@ -32,6 +33,7 @@ const bedrockFlowApi = {
           },
         },
       ],
+      enableTrace: true,
     };
 
     const command = new InvokeFlowCommand(input);
@@ -41,6 +43,22 @@ const bedrockFlowApi = {
 
       if (response.responseStream) {
         for await (const event of response.responseStream) {
+
+          // FlowOutput / FlowCompletion をログ
+          if (event.flowOutputEvent) {
+            console.log('Flow output event:', event.flowOutputEvent);
+          }
+          if (event.flowCompletionEvent) {
+            console.log('Flow completion event:', event.flowCompletionEvent);
+          }
+          // Trace ログ
+          if (event.flowTraceEvent) {
+            console.log(
+              'Flow trace event:', 
+              inspect(event.flowTraceEvent, { depth: null, maxArrayLength: null })
+            );
+          }
+
           if (event.flowOutputEvent?.content?.document) {
             const chunk =
               event.flowOutputEvent.content.document.toString() + '\n';
