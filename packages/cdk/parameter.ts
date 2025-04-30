@@ -21,7 +21,6 @@ const envs: Record<string, Partial<StackInput>> = {
   //   // If you want to override the default settings, add the following
   // },
   dev: {
-<<<<<<< HEAD
     selfSignUpEnabled: false,
     modelRegion: "us-west-2",
     modelIds: [
@@ -99,12 +98,10 @@ const envs: Record<string, Partial<StackInput>> = {
     // embeddingModelId: 'amazon.titan-embed-text-v2:0',
     // rerankingModelId: "amazon.rerank-v1:0",
     // queryDecompositionEnabled: true,
-=======
     // Parameters for development environment
   },
   staging: {
     // Parameters for staging environment
->>>>>>> 99c31f602d72ec1ec0ddeb547fc327e12d9fab78
   },
   prod: {
     // Parameters for production environment
