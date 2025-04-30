@@ -143,8 +143,9 @@ const TITAN_TEXT_DEFAULT_PARAMS: ConverseInferenceParams = {
 
 const LLAMA_DEFAULT_PARAMS: ConverseInferenceParams = {
   maxTokens: 2048,
-  temperature: 0.6,
-  topP: 0.99,
+  temperature: 0.5,
+  topP: 0.9,
+  stopSequences: ['<|eot_id|>'],
 };
 
 const MISTRAL_DEFAULT_PARAMS: ConverseInferenceParams = {
@@ -1058,6 +1059,22 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
   'us.meta.llama3-3-70b-instruct-v1:0': {
+    defaultParams: LLAMA_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.meta.llama4-scout-17b-instruct-v1:0': {
+    defaultParams: LLAMA_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.meta.llama4-maverick-17b-instruct-v1:0': {
     defaultParams: LLAMA_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
