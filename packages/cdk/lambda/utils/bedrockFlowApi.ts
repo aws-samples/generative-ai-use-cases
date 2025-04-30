@@ -43,19 +43,21 @@ const bedrockFlowApi = {
 
       if (response.responseStream) {
         for await (const event of response.responseStream) {
-
-          // FlowOutput / FlowCompletion をログ
+          // FlowOutput / FlowCompletion log
           if (event.flowOutputEvent) {
             console.log('Flow output event:', event.flowOutputEvent);
           }
           if (event.flowCompletionEvent) {
             console.log('Flow completion event:', event.flowCompletionEvent);
           }
-          // Trace ログ
+          // Trace log
           if (event.flowTraceEvent) {
             console.log(
-              'Flow trace event:', 
-              inspect(event.flowTraceEvent, { depth: null, maxArrayLength: null })
+              'Flow trace event:',
+              inspect(event.flowTraceEvent, {
+                depth: null,
+                maxArrayLength: null,
+              })
             );
           }
 
