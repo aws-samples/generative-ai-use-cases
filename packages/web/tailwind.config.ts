@@ -11,7 +11,7 @@ export default {
       },
     },
     fontFamily: {
-      body: ['"Noto Sans JP"'],
+      body: ['"Noto Sans JP"', 'Sarabun'],
     },
     extend: {
       transitionProperty: {

@@ -1,0 +1,1082 @@
+agent:
+  drop_files: วางไฟล์เพื่ออัปโหลด
+  title: Agent Chat
+auth:
+  loading: กำลังโหลด...
+  login: เข้าสู่ระบบ
+  title: Generative AI Use Cases on AWS
+chat:
+  advanced_options: ตัวเลือกขั้นสูง
+  create_link: สร้างลิงก์
+  create_link_message: การสร้างลิงก์จะแชร์ประวัติการสนทนากับผู้ใช้ทุกคนที่สามารถเข้าสู่ระบบแอปพลิเคชันนี้ได้
+  create_system_prompt: สร้าง System Prompt
+  delete_chat_confirmation: 'คุณแน่ใจหรือไม่ว่าต้องการลบแชท "{{title}}"?'
+  delete_confirmation: ยืนยันการลบ
+  delete_link: ลบลิงก์
+  delete_link_message: คุณสามารถหยุดการแชร์ประวัติการสนทนาโดยการลบลิงก์
+  drop_files: วางไฟล์ที่นี่
+  history: ประวัติการสนทนา
+  initialize: เริ่มต้นใหม่
+  model_parameters: พารามิเตอร์โมเดล
+  open_link: เปิดลิงก์
+  prompt_examples: ตัวอย่าง prompt
+  save: บันทึก
+  saved_system_prompts: System Prompts ที่บันทึกไว้
+  search_by_title: ค้นหาตามชื่อเรื่อง
+  settings: การตั้งค่า
+  share: แชร์
+  share_conversation: แชร์ประวัติการสนทนา
+  sharing: กำลังแชร์
+  show_system_prompt: แสดง system prompt
+  system_prompt: System Prompt
+  title: Chat
+common:
+  cancel: ยกเลิก
+  clear: ล้าง
+  close: ปิด
+  complete: เสร็จสิ้น
+  create: สร้าง
+  delete: ลบ
+  enter_text: ป้อนข้อความ
+  error: เกิดข้อผิดพลาด
+  errorNoSuggestions: ไม่พบคำแนะนำ
+  execute: ดำเนินการ
+  feedback_received: ได้รับข้อเสนอแนะแล้ว ขอบคุณ
+  here: ที่นี่
+  load_more: โหลดเพิ่มเติม
+  loading: กำลังโหลด...
+  next: ถัดไป
+  no_options_found: ไม่พบตัวเลือก
+  none: ไม่มี
+  notAuthenticated: คุณยังไม่ได้รับการยืนยันตัวตน
+  not_available: ไม่พร้อมใช้งาน
+  not_selected: ไม่ได้เลือก
+  optional: ไม่บังคับ
+  previous: ก่อนหน้า
+  required: จำเป็น
+  reviewComplete: การตรวจสอบเสร็จสิ้น
+  save: บันทึก
+  selectUseCase: เลือก Use Case
+  start_over: เริ่มใหม่
+  submit: ส่ง
+  title: ชื่อเรื่อง
+  trace: ติดตาม
+  try: ลอง
+demo:
+  inter_use_cases: การบูรณาการ Use Case
+diagram:
+  answer: คำตอบ
+  chart: แผนภูมิ
+  clear: ล้าง
+  diagram_type: เลือกประเภทแผนภาพ
+  diagram_will_appear: แผนภาพจะแสดงที่นี่
+  download_as_png: ดาวน์โหลดเป็น PNG
+  download_as_svg: ดาวน์โหลดเป็น SVG
+  generate: สร้าง
+  input_example: ตัวอย่างอินพุต
+  input_label: ข้อความสำหรับการสร้างแผนภาพ
+  input_placeholder: ป้อนข้อความสำหรับการสร้างแผนภาพ
+  invalid_syntax: ไวยากรณ์ไม่ถูกต้อง
+  markdown_edit: แก้ไข Markdown
+  mermaid_syntax: ไวยากรณ์ Mermaid ที่นี่
+  model: โมเดล
+  other_diagram_types: ดูประเภทแผนภาพอื่นๆ
+  png_error: 'ข้อผิดพลาดในการสร้าง PNG: '
+  result: ผลลัพธ์
+  serverBusy: เซิร์ฟเวอร์กำลังทำงานหนัก โปรดลองอีกครั้งในภายหลัง
+  show_code: แสดงโค้ด
+  show_diagram: แสดงแผนภาพ
+  step1_complete: 'ขั้นตอนที่ 1: เสร็จสิ้น'
+  step1_loading: 'ขั้นตอนที่ 1: กำลังเลือกแผนภาพที่เหมาะสมที่สุด'
+  step1_selected: เลือกแล้ว
+  step2_loading: 'ขั้นตอนที่ 2: กำลังสร้างแผนภาพ'
+  svg_error: 'ข้อผิดพลาดในการสร้าง SVG: '
+  title: สร้างแผนภาพ
+  types:
+    AI:
+      content: โปรดแสดงภาพขั้นตอนการผลิตค่าใช้จ่ายของบริษัททั่วไปพร้อมสี
+      description: ให้ AI เลือกแผนภาพที่เหมาะสมที่สุด
+      exampleTitle: ตัวอย่างขั้นตอนค่าใช้จ่าย
+    architecture:
+      content: >-
+        สร้าง architecture diagram สำหรับเว็บแอปพลิเคชันบนคลาวด์
+
+        รวมองค์ประกอบเหล่านี้:
+        Frontend
+        Backend
+        Database
+        แคช
+        Load Balancer
+        CDN
+      desc: architecture diagram แสดงโครงสร้างของระบบ
+      exampleTitle: ตัวอย่างสถาปัตยกรรมเว็บแอป
+      title: Architecture Diagram
+    blockdiagram:
+      content: >-
+        สร้าง block diagram ที่แสดงส่วนประกอบฮาร์ดแวร์ของสมาร์ทโฟน
+
+        รวมองค์ประกอบเหล่านี้:
+        โปรเซสเซอร์
+        หน่วยความจำ
+        พื้นที่จัดเก็บข้อมูล
+        จอแสดงผล
+        กล้อง
+        เซ็นเซอร์ต่างๆ
+      desc: block diagram แสดงส่วนประกอบของระบบ
+      exampleTitle: ตัวอย่างส่วนประกอบสมาร์ทโฟน
+      title: Block Diagram
+    classdiagram:
+      content: >-
+        สร้างโมเดลโดเมนสำหรับเว็บไซต์อีคอมเมิร์ซ
+
+        รวมคลาสเหล่านี้:
+        ผู้ใช้
+        สินค้า
+        คำสั่งซื้อ
+        รายการในตะกร้า
+
+        แต่ละคลาสควรมีคุณสมบัติและเมธอดที่เหมาะสม
+      desc: class diagram แสดงโครงสร้างคลาสในการเขียนโปรแกรม
+      exampleTitle: ตัวอย่างโมเดลอีคอมเมิร์ซ
+      title: Class Diagram
+    erdiagram:
+      content: >-
+        แสดงการออกแบบ database สำหรับระบบบล็อก
+
+        รวมตารางเหล่านี้พร้อมความสัมพันธ์ที่เหมาะสมระหว่างกัน:
+        posts
+        users
+        comments
+        categories
+        tags
+      desc: ER diagrams แสดงเอนทิตีและความสัมพันธ์ของ database
+      exampleTitle: ตัวอย่างการออกแบบ database สำหรับระบบบล็อก
+      title: ER Diagram
+    flowchart:
+      content: >-
+        ฉันต้องการสร้าง flowchart สำหรับกิจวัตรยามเช้า โปรดรวมขั้นตอนเหล่านี้:
+
+        ตื่นนอน ลุกจากเตียง ล้างหน้า แปรงฟัน รับประทานอาหารเช้า แต่งตัว ออกจากบ้าน
+
+        รวมจุดตัดสินใจ 'ฉันมีเวลาเหลือไหม?' ซึ่งถ้ามีเวลา ให้เพิ่มขั้นตอน 'ดื่มกาแฟ' ก่อนออกจากบ้าน ถ้าไม่มีเวลาเหลือ ให้ดำเนินการ 'ออกจากบ้าน' โดยตรง
+
+        โปรดทำให้กระชับและอ่านง่าย
+      desc: flowchart แสดงขั้นตอนการทำงาน
+      exampleTitle: ตัวอย่างกิจวัตรยามเช้า
+      title: Flowchart
+    ganttchart:
+      content: >-
+        สร้าง Gantt chart ที่แสดงกำหนดการสำหรับโครงการพัฒนาเว็บแอปพลิเคชัน
+        รวมระยะสำหรับการรวบรวมความต้องการ การออกแบบ การพัฒนา การทดสอบ และการปรับใช้
+      desc: Gantt chart แสดงกำหนดการโครงการ
+      exampleTitle: ตัวอย่างกำหนดการพัฒนา
+      title: Gantt Chart
+    gitgraph:
+      content: >-
+        สร้างกราฟ git ที่แสดงขั้นตอนการพัฒนาที่มีสองสาขาคุณลักษณะ (คุณลักษณะการเข้าสู่ระบบและคุณลักษณะการแก้ไขโปรไฟล์) แยกออกจากสาขาหลัก
+
+        การพัฒนาคุณลักษณะการเข้าสู่ระบบรวมถึงการคอมมิตหลายครั้ง เช่น การใช้งานแบบฟอร์มและการตรวจสอบความถูกต้องก่อนที่จะรวมเข้ากับสาขาหลักผ่าน Pull Request
+
+        ในขณะเดียวกัน ระหว่างการพัฒนาคุณลักษณะการแก้ไขโปรไฟล์ จำเป็นต้องรวมการเปลี่ยนแปลงล่าสุดที่ทำกับสาขาหลัก
+
+        ที่แต่ละจุดรวม ให้รวมข้อความคอมมิตที่เหมือนกับขั้นตอนการทำงานของโครงการจริง เช่น 'ตรวจสอบและรวมคุณลักษณะการเข้าสู่ระบบ #123'
+      desc: Git graph แสดงประวัติการแยกและรวมโค้ด
+      exampleTitle: ตัวอย่างขั้นตอนการพัฒนา
+      title: Git Graph
+    mindmap:
+      content: >-
+        โปรดสร้าง mindmap ที่แสดง use cases ต่างๆ สำหรับ Generative AI
+      desc: mindmap จัดระเบียบแนวคิดหรือข้อมูลเป็นลำดับชั้น
+      exampleTitle: ตัวอย่าง use cases Generative AI
+      title: Mind Map
+    networkpacket:
+      content: >-
+        สร้างแผนภาพที่แสดงโครงสร้างของ packet คำขอ HTTP
+        รวมส่วนประกอบหลักของ header และ body
+      desc: แผนภาพแพ็กเก็ตเครือข่ายแสดงโครงสร้างข้อมูล
+      exampleTitle: ตัวอย่าง HTTP packet
+      title: Network Packet Diagram
+    piechart:
+      content: >-
+        ฉันต้องการสร้าง pie chart ที่แสดงวิธีการเดินทางของคนในช่วงอายุ 20-30 ปีในโตเกียว
+
+        โปรดกำหนดเปอร์เซ็นต์ที่เหมาะสมสำหรับวิธีการทั้งห้านี้: รถไฟ จักรยาน การเดิน รถยนต์ และรถบัส
+
+        ชื่อเรื่องควรเป็น 'วิธีการเดินทางสำหรับคนอายุ 20-30 ปีในโตเกียว'
+      desc: pie chart แสดงสัดส่วนของทั้งหมด
+      exampleTitle: ตัวอย่างวิธีการเดินทาง
+      title: Pie Chart
+    quadrantchart:
+      content: >-
+        สร้าง Quadrant chart เปรียบเทียบแพลตฟอร์มโซเชียลมีเดีย
+        ชื่อเรื่องควรเป็น 'การวิเคราะห์แพลตฟอร์มโซเชียลมีเดีย'
+        แกน X มีช่วงจาก 'เน้นข้อความ' ถึง 'เน้นภาพ'
+        และแกน Y มีช่วงจาก 'มืออาชีพ' ถึง 'ไม่เป็นทางการ'
+
+        ติดป้ายควอดแรนท์ดังนี้:
+        บนขวา: 'ภาพไม่เป็นทางการ'
+        บนซ้าย: 'ข้อความไม่เป็นทางการ'
+        ล่างซ้าย: 'ข้อความมืออาชีพ'
+        ล่างขวา: 'ภาพมืออาชีพ'
+
+        พล็อตแพลตฟอร์มโซเชียลมีเดียเหล่านี้:
+        Twitter: ค่อนข้างเน้นข้อความและค่อนข้างไม่เป็นทางการ
+        Instagram: เน้นภาพมากและค่อนข้างไม่เป็นทางการ
+        LinkedIn: เน้นข้อความและเป็นมืออาชีพมาก
+        TikTok: เน้นภาพมากและไม่เป็นทางการที่สุด
+        Facebook: อยู่ประมาณกลางของทั้งสองแกน
+
+        หากเป็นไปได้ ใช้สีที่แตกต่างกันสำหรับแต่ละแพลตฟอร์ม
+      desc: 'Quadrant chart : จัดกลุ่มข้อมูลตามแกน X และ Y'
+      exampleTitle: ตัวอย่างการวิเคราะห์โซเชียลมีเดีย
+      title: Quadrant Chart
+    requirementdiagram:
+      content: >-
+        แสดงข้อกำหนดหลักด้านฟังก์ชันสำหรับระบบบ้านอัจฉริยะ
+
+        รวมข้อกำหนดสำหรับการควบคุมแสงสว่าง การจัดการอุณหภูมิ ความปลอดภัย และประสิทธิภาพพลังงาน
+      desc: Requirement diagram แสดงข้อกำหนดของระบบและความสัมพันธ์
+      exampleTitle: ตัวอย่างข้อกำหนดบ้านอัจฉริยะ
+      title: Requirement Diagram
+    sankeychart:
+      content: >-
+        สร้าง Sankey chart ที่แสดง flow ของผู้ใช้ผ่านเว็บไซต์
+        เริ่มจากหน้าแรกและแสดงการเปลี่ยนหน้าและอัตราการปิดหน้าเว็บไซต์
+      desc: Sankey chart แสดง flow ด้วยความกว้างตามสัดส่วน
+      exampleTitle: ตัวอย่าง flow ของผู้ใช้
+      title: Sankey Chart
+    sequencediagram:
+      content: >-
+        สร้าง sequence diagram สำหรับเว็บแอปพลิเคชันที่แสดงขั้นตอนตั้งแต่ผู้ใช้คลิกปุ่มเข้าสู่ระบบจนถึงเมื่อการยืนยันตัวตนเสร็จสมบูรณ์
+
+        รวมองค์ประกอบทั้งสามนี้: Frontend, เซิร์ฟเวอร์ยืนยันตัวตน และ database
+      desc: sequence diagram แสดงการโต้ตอบระหว่า components ตามเวลา
+      exampleTitle: ตัวอย่างขั้นตอนการเข้าสู่ระบบ
+      title: Sequence Diagram
+    statediagram:
+      content: >-
+        สร้าง state diagram สำหรับตะกร้าสินค้าออนไลน์
+
+        รวมสถานะเช่น 'ว่าง', 'เพิ่มสินค้าแล้ว', 'กำลังชำระเงิน' และ 'ชำระเงินเสร็จสมบูรณ์'
+      desc: state diagram แสดงการเปลี่ยนแปลงสถานะของระบบ
+      exampleTitle: ตัวอย่างสถานะตะกร้า
+      title: State Diagram
+    timeline:
+      content: >-
+        สร้าง timeline ที่แสดงพัฒนาการสำคัญและจุดเปลี่ยนในโซเชียลมีเดียตั้งแต่ปี 2000 ถึง 2020
+
+        รวมองค์ประกอบเหล่านี้:
+        การเติบโตของการเขียนบล็อก
+        การเกิดขึ้นของแพลตฟอร์มแชร์รูปภาพ
+        การแนะนำไมโครบล็อกกิ้ง
+        การพัฒนาบริการแชร์วิดีโอ
+        การแพร่กระจายของเครือข่ายโซเชียลที่เน้นมือถือ
+        การเติบโตของแพลตฟอร์มวิดีโอสั้น
+
+        สำหรับแต่ละจุดเปลี่ยน เพิ่มนวัตกรรมทางเทคโนโลยีหรือการเปลี่ยนแปลงทางสังคมที่สำคัญ 1-2 อย่าง (เช่น การใช้สมาร์ทโฟน อินเทอร์เน็ตมือถือความเร็วสูง) ที่เกิดขึ้นในช่วงเวลานั้น
+      desc: timeline แสดงเหตุการณ์ตามลำดับเวลา
+      exampleTitle: ตัวอย่างวิวัฒนาการโซเชียลมีเดีย
+      title: Timeline
+    userjourney:
+      content: >-
+        สร้างแผนภาพ user journey สำหรับประสบการณ์ลูกค้าบนเว็บไซต์ช็อปปิ้งออนไลน์
+
+        รวมขั้นตอนเหล่านี้:
+        การค้นหาสินค้า
+        การดูสินค้า
+        การเพิ่มลงตะกร้า
+        การชำระเงิน
+        การชำระเงิน
+        การติดตามการจัดส่ง
+      desc: user journey แสดงขั้นตอนประสบการณ์ลูกค้า
+      exampleTitle: ตัวอย่างประสบการณ์การซื้อ
+      title: User Journey
+    xychart:
+      content: >-
+        สร้าง XY chart ที่แสดงความสัมพันธ์ระหว่างเวลานอนเฉลี่ยและชั่วโมงทำงานในญี่ปุ่นในช่วง 10 ปีที่ผ่านมา
+
+        ใช้แกน X สำหรับชั่วโมงทำงานเฉลี่ยต่อวันและแกน Y สำหรับชั่วโมงนอนเฉลี่ยต่อวัน โดยพล็อตจุดข้อมูลสำหรับแต่ละปี
+      desc: XY chart แสดงความสัมพันธ์ระหว่างตัวแปรสองตัว
+      exampleTitle: ตัวอย่างชั่วโมงนอนเทียบกับชั่วโมงทำงาน
+      title: XY Chart
+drawer:
+  ai_services: บริการ AI
+  builder_mode: Builder Mode
+  generative_ai: Generative AI
+  tools: เครื่องมือ
+  use_cases: Use cases
+feedback:
+  additional_feedback: หากคุณมีข้อเสนอแนะเพิ่มเติม โปรดป้อนที่นี่ (ไม่บังคับ)
+  reason_error: โปรดเลือกเหตุผล
+  reason_title: โปรดบอกเราว่าทำไมคุณจึงให้คะแนนการตอบสนองนี้
+  reasons:
+    harmful: เป็นอันตรายหรือน่ารังเกียจ
+    inaccurate: ไม่ถูกต้อง
+    other: อื่นๆ
+    outdated: ข้อมูลล้าสมัย
+files:
+  error:
+    fileCountExceeded: 'โปรดจำกัดไฟล์ไม่เกิน {{maxCount}} ไฟล์'
+    fileSizeExceeded: '{{fileName}} เกินขนาดไฟล์สูงสุดที่ {{maxSize}} MB'
+    imageCountExceeded: 'โปรดจำกัดไฟล์รูปภาพไม่เกิน {{maxCount}} ไฟล์'
+    invalidExtension: >-
+      {{fileName}} มีนามสกุลที่ไม่รองรับ นามสกุลที่อนุญาตคือ
+      {{acceptedExtensions}}
+    invalidImageDimension: >-
+      ขนาดไฟล์รูปภาพที่อนุญาตคือ {{allowedDimensions}} (ขนาดรูปภาพที่อัปโหลดคือ {{uploadedDimension}})
+    mimeMismatch: '{{fileName}} มีประเภทไฟล์ที่ไม่ตรงกับนามสกุล'
+    modelNotSupported: โมเดลนี้ไม่รองรับไฟล์
+    videoCountExceeded: 'โปรดจำกัดไฟล์วิดีโอไม่เกิน {{maxCount}} ไฟล์'
+flow:
+  title: Flow Chat
+generateImage:
+  add_color: เพิ่มสี
+  assistant:
+    error_message: ไม่สามารถสร้าง prompt ได้ โปรดลองอีกครั้ง
+    error_title: เกิดข้อผิดพลาด
+    generating_image: กำลังสร้างภาพ...
+    generating_prompt: กำลังสร้าง prompt...
+    help: >-
+      สร้าง prompt สำหรับการสร้างภาพ บอกผู้ช่วยว่าคุณต้องการอะไร และ AI จะสร้าง prompt และ negative prompt เพื่อสร้างภาพ
+    hint_1: เริ่มด้วยคำสั่งง่ายๆ เช่น 'สร้างภาพแมวน่ารัก'
+    hint_2: การระบุสไตล์เช่น 'ในสไตล์สีน้ำ' หรือ 'สมจริง'
+    hint_3: >-
+      อธิบายรายละเอียดองค์ประกอบที่คุณต้องการ เช่น 'ภูเขาในฉากหลัง' หรือ 'ท้องฟ้าสีฟ้า'
+    hint_4: >-
+      คำสั่งเกี่ยวกับคุณภาพ เช่น 'ความละเอียดสูง' หรือ 'มีรายละเอียด'
+    hint_5: >-
+      คุณยังสามารถระบุสไตล์ศิลปะเฉพาะ เช่น 'สไตล์อนิเมะ' หรือ 'สไตล์ภาพวาดสีน้ำมัน'
+    hint_6: >-
+      สำหรับฉากที่ซับซ้อน ให้ระบุคำสั่งเฉพาะเกี่ยวกับองค์ประกอบนั้นๆ เช่น โทนสี ฯลฯ
+    hint_title: คำแนะนำ
+    input_placeholder: คุณต้องการสร้างภาพแบบไหน?
+    no_style: ไม่มีสไตล์
+    prompt_completed: การสร้าง prompt เสร็จสมบูรณ์
+    recommended_style: สไตล์ที่แนะนำ
+    retry: ลองใหม่
+    title: ผู้ช่วยสร้างภาพ
+  cfg_scale: สเกล CFG
+  clear: ล้าง
+  colors: สี
+  control_mode: โหมดควบคุม
+  control_strength: ความแรงของการควบคุม
+  custom_colors: สีที่กำหนดเอง
+  detail_parameters: ตั้งค่าขั้นสูงแบบกำหนดเอง
+  generate: สร้าง
+  generation_mode: โหมดการสร้าง
+  help:
+    cfg_scale: ค่าที่สูงขึ้นจะสร้างภาพที่ตรงกับ prompt มากขึ้น
+    colors: คุณสามารถเลือกจากชุดสีที่กำหนดไว้ล่วงหน้า
+    control_mode: >-
+      CANNY_EDGE: สกัดขอบจากภาพอ้างอิง เหมาะสำหรับการสะท้อนรูปแบบที่มีรายละเอียด SEGMENTATION: แบ่งภาพอ้างอิงเป็นภูมิภาค เหมาะสำหรับการสะท้อนความสัมพันธ์ตำแหน่งของวัตถุหลายชิ้น
+    control_strength: >-
+      ค่าที่ใกล้เคียง 1 จะสร้างภาพตามองค์ประกอบของภาพอ้างอิงมากขึ้น ในขณะที่ค่าที่ใกล้เคียง 0 จะสร้างภาพที่มีองค์ประกอบแตกต่างจากภาพอ้างอิงมากขึ้น
+    generation_mode: >-
+      TEXT_IMAGE: สร้างภาพจากข้อความ 
+      IMAGE_VARIATION: สร้างภาพที่คล้ายกันจากภาพอ้างอิง 
+      INPAINTING: แก้ไขบางส่วนของภาพ 
+      OUTPAINTING: ขยายภาพ
+      IMAGE_CONDITIONING: สะท้อนองค์ประกอบ
+      COLOR_GUIDED_GENERATION: สร้างด้วยการระบุสี
+      BACKGROUND_REMOVAL: ลบพื้นหลัง
+    image_samples: >-
+      สร้างภาพตามจำนวนที่ระบุพร้อมกันโดยการตั้งค่า seed แบบสุ่ม
+    image_strength: >-
+      ค่าที่ใกล้เคียง 1 จะสร้างภาพที่คล้ายกับภาพเริ่มต้นมากขึ้น ในขณะที่ค่าที่ใกล้เคียง 0 จะสร้างภาพที่แตกต่างจากภาพเริ่มต้นมากขึ้น
+    init_image: >-
+      ตั้งค่าภาพเป็นสถานะเริ่มต้นสำหรับการสร้าง การตั้งค่าภาพเริ่มต้นจะช่วยให้การสร้างผลิตภาพที่คล้ายกับภาพนั้น
+    mask_image: >-
+      ตั้งค่ามาสก์สำหรับภาพ การตั้งค่าภาพมาสก์ช่วยให้คุณสามารถสร้างได้ทั้งพื้นที่ที่มีมาสก์ (Inpaint) หรือพื้นที่นอกมาสก์ (Outpaint) ไม่สามารถใช้กับ prompt mask ได้
+    mask_prompt: >-
+      อธิบายองค์ประกอบที่คุณต้องการมาสก์/ยกเว้น (Inpaint) หรือองค์ประกอบที่คุณไม่ต้องการมาสก์/ต้องการเก็บไว้ (Outpaint) ใช้คำสำคัญแทนประโยค ไม่สามารถใช้กับภาพมาสก์ได้
+    negative_prompt: >-
+      อธิบายองค์ประกอบที่คุณไม่ต้องการในภาพที่สร้าง ใช้คำสำคัญแทนประโยค
+    prompt: >-
+      อธิบายภาพที่คุณต้องการสร้าง ใช้คำสำคัญแทนประโยค
+    seed: ค่า seed แบบสุ่ม การใช้ seed เดียวกันจะสร้างภาพเดียวกัน
+    steps: >-
+      จำนวนรอบสำหรับการสร้างภาพ ขั้นตอนที่มากขึ้นจะปรับแต่งภาพแต่ใช้เวลาในการสร้างนานขึ้น
+  image_samples: ตัวอย่างภาพ
+  image_strength: ความแรงของภาพ
+  init_image: ภาพเริ่มต้น
+  mask_image: ภาพมาสก์
+  mask_prompt: Prompt Mask
+  model: โมเดล
+  negative_prompt: Negative Prompt
+  prompt: Prompt
+  resolution: ความละเอียด
+  seed: Seed
+  set: ตั้งค่า
+  steps: ขั้นตอน
+  style_preset: พรีเซ็ตสไตล์
+  title: การสร้างภาพ
+generateText:
+  clear: ล้าง
+  continue_output: ดำเนินการต่อ
+  execute: ดำเนินการ
+  format_placeholder: 'ระบุรูปแบบข้อความ (markdown, บล็อก, อีเมลธุรกิจ ฯลฯ)'
+  input_placeholder: ป้อนข้อความ
+  result_placeholder: ข้อความที่สร้างจะแสดงที่นี่
+  source_info: ข้อมูลแหล่งที่มาสำหรับข้อความ
+  title: สร้างข้อความ
+landing:
+  demo:
+    agent:
+      content: วาดแผนภูมิการกระจายด้วยข้อมูลจำลอง
+    chat:
+      content: >-
+        โปรดเขียนฟังก์ชัน Python ที่ส่งคืนจำนวนฟีโบนัชชี และอธิบายการใช้งาน
+
+        อาร์กิวเมนต์ควรเป็นเทอม และการประมวลผลควรเขียนแบบเรียกซ้ำ โปรดแสดงผลในรูปแบบ markdown
+    diagram:
+      content: โปรดแสดงภาพขั้นตอนการผลิตค่าใช้จ่ายของบริษัททั่วไปพร้อมสี
+    generate:
+      context: >-
+        สำหรับการนำเสนอ โปรดจัดระเบียบในรูปแบบ markdown ด้วยบทต่างๆ แต่ละบทมีคำอธิบายที่กระชับ
+      information: >-
+        Amazon Bedrock เป็นบริการที่มีการจัดการเต็มรูปแบบซึ่งช่วยให้คุณสามารถเลือกโมเดลพื้นฐาน (FMs) ประสิทธิภาพสูงจากบริษัท AI ชั้นนำเช่น AI21 Labs, Anthropic, Cohere, Meta, Stability AI และ Amazon ผ่าน API เดียว
+        นอกจากนี้ยังมีความสามารถที่หลากหลายที่จำเป็นสำหรับการสร้างแอปพลิเคชัน Generative AI ช่วยให้การพัฒนาง่ายขึ้นในขณะที่ยังคงรักษาความเป็นส่วนตัวและความปลอดภัย
+        ด้วยการใช้คุณสมบัติที่ครอบคลุมของ Amazon Bedrock คุณสามารถทดลองใช้ FMs ชั้นนำต่างๆ ได้อย่างง่ายดาย ปรับแต่งข้อมูลเป็นการส่วนตัวโดยใช้เทคนิคเช่นการปรับแต่งละเอียดและการสร้างที่เสริมด้วยการค้นคืน (RAG) และสร้างตัวแทนที่มีการจัดการซึ่งทำงานทางธุรกิจที่ซับซ้อนตั้งแต่การจองการเดินทางและการประมวลผลการเรียกร้องประกันภัยไปจนถึงการสร้างแคมเปญโฆษณาและการจัดการสินค้าคงคลัง
+        ทั้งหมดนี้สามารถทำได้โดยไม่ต้องเขียนโค้ดใดๆ เนื่องจาก Amazon Bedrock เป็นแบบไร้เซิร์ฟเวอร์ คุณไม่จำเป็นต้องจัดการโครงสร้างพื้นฐาน
+        นอกจากนี้ คุณสามารถรวมและปรับใช้ความสามารถของ Generative AI ในแอปพลิเคชันของคุณได้อย่างปลอดภัยโดยใช้บริการ AWS ที่คุ้นเคย
+    image:
+      content: >-
+        โปรดแสดงแนวคิดการออกแบบโฆษณาสมาร์ทโฟน
+
+        น่ารัก มีสไตล์ ใช้งานง่าย วัฒนธรรมป๊อป เป็นมิตร สำหรับเยาวชน ดนตรี การถ่ายภาพ สมาร์ทโฟนทันสมัย พื้นหลังเป็นเมือง
+    rag:
+      content: โปรดอธิบายภาพรวมและอธิบายฟังก์ชันหลักของ Amazon Nova Canvas
+    summarize:
+      sentence: >-
+        Amazon Bedrock เป็นบริการที่มีการจัดการเต็มรูปแบบที่ทำให้โมเดลพื้นฐาน (FMs) จาก Amazon และสตาร์ทอัพ AI ชั้นนำพร้อมใช้งานผ่าน API ช่วยให้คุณสามารถเลือกจาก FMs ที่หลากหลายเพื่อค้นหาโมเดลที่เหมาะสมที่สุดสำหรับ use cases ของคุณ ประสบการณ์แบบไร้เซิร์ฟเวอร์ของ Amazon Bedrock ช่วยให้คุณเริ่มต้นใช้งาน FMs ได้อย่างรวดเร็ว ทดลองใช้ FMs ได้อย่างง่ายดาย ปรับแต่ง FMs เป็นการส่วนตัวด้วยข้อมูลของคุณเอง และรวมและปรับใช้ FMs ในแอปพลิเคชันของคุณได้อย่างราบรื่นโดยใช้เครื่องมือและความสามารถของ AWS Amazon Bedrock Agents เป็นความสามารถที่มีการจัดการเต็มรูปแบบที่ช่วยให้นักพัฒนาสามารถสร้างแอปพลิเคชัน Generative AI ที่สามารถให้คำตอบที่ทันสมัยตามแหล่งความรู้ของตนเองและทำงานได้สำเร็จใน use cases ที่หลากหลาย ประสบการณ์แบบไร้เซิร์ฟเวอร์ของ Bedrock ช่วยให้คุณเริ่มต้นได้อย่างรวดเร็ว ปรับแต่ง FMs เป็นการส่วนตัวด้วยข้อมูลของคุณเอง และรวมและปรับใช้ FMs ในแอปพลิเคชันของคุณได้อย่างง่ายดายโดยใช้เครื่องมือ AWS ที่คุ้นเคย (รวมถึงการบูรณาการกับความสามารถ Amazon SageMaker ML เช่นการทดลองสำหรับการทดสอบโมเดลที่แตกต่างกันและไปป์ไลน์สำหรับการจัดการ FMs ในขนาดใหญ่)
+    translate:
+      language: en
+      sentence: >-
+        สวัสดี ฉันเป็นผู้ช่วย AI ที่ช่วยในการแปลภาษา โปรดป้อนข้อความใดๆ ที่คุณต้องการ
+    video:
+      content: >-
+        โปรดอธิบายสิ่งที่แสดงในวิดีโอ หากมีข้อความใดๆ ปรากฏ โปรดอ่านด้วย
+    web_content:
+      url: 'https://aws.amazon.com/bedrock/'
+  title: แอปพลิเคชันตัวอย่าง AWS Generative AI
+  try: ลองใช้
+  try_message: แอปพลิเคชันนี้เป็นแอปพลิเคชันตัวอย่างที่ใช้บริการ AWS generative AI
+  use_cases:
+    agent_chat:
+      description: >-
+        ใน Agent Chat คุณสามารถใช้ Agents สำหรับ Amazon Bedrock เพื่อดำเนินการหรืออ้างอิง vector database ของ Knowledge Bases สำหรับ Amazon Bedrock
+      title: Agent Chat
+    chat:
+      description: >-
+        คุณสามารถมีบทสนทนาโต้ตอบกับ LLM ในรูปแบบแชท สามารถตอบสนองต่อ use cases ที่ซับซ้อนและ use cases ใหม่ได้อย่างรวดเร็ว นอกจากนี้ยังมีประสิทธิภาพในฐานะ environment สำหรับตรวจสอบ prompt engineering
+      title: Chat
+    diagram:
+      description: >-
+        สร้างแผนภาพต่างๆ เช่น แผนผัง แผนภาพลำดับ และแผนผังความคิดโดยอัตโนมัติจากคำอธิบายภาษาธรรมชาติ เอกสาร หรือโค้ด แสดงและทำความเข้าใจความสัมพันธ์ที่ซับซ้อนในการออกแบบระบบ ขั้นตอนทางธุรกิจ และการวางแผนโครงการได้อย่างมีประสิทธิภาพ
+      title: การสร้างแผนภาพ
+    flow_chat:
+      description: >-
+        ใช้ Flow เพื่อสร้างขั้นตอนการแชทแบบโต้ตอบที่มีหลายขั้นตอน กำหนดขั้นตอนถัดไปตามอินพุตของผู้ใช้แบบไดนามิกเพื่อทำให้เกิดสถานการณ์การสนทนาที่ซับซ้อนมากขึ้น
+      title: Flow Chat
+    generate_text:
+      description: >-
+        การสร้างข้อความในบริบทใดๆ เป็นหนึ่งในงานที่ LLMs ทำได้ดี รองรับบริบทต่างๆ เช่น บทความ รายงาน และอีเมล
+      title: การสร้างข้อความ
+    image:
+      description: >-
+        AI สร้างภาพสามารถสร้างภาพใหม่ตามข้อความหรือภาพ ช่วยให้สามารถแสดงแนวคิดได้ทันทีและคาดว่าจะช่วยปรับปรุงประสิทธิภาพในงานออกแบบ ในคุณสมบัตินี้ คุณสามารถรับความช่วยเหลือจาก LLM ในการสร้าง prompt
+      title: การสร้างภาพ
+    rag_chat:
+      description_kb: >-
+        RAG (Retrieval Augmented Generation) เป็นวิธีที่รวมการค้นคืนข้อมูลและการสร้างข้อความ LLM ช่วยให้สามารถเข้าถึงข้อมูลได้อย่างมีประสิทธิภาพ
+        เอกสารอ้างอิงจะถูกค้นคืนโดยใช้ Hybrid Search ของ Knowledge Base และ LLM จะสร้างการตอบสนอง
+      description_kendra: >-
+        RAG (Retrieval Augmented Generation) เป็นวิธีที่รวมการค้นคืนข้อมูลและการสร้างข้อความ LLM ช่วยให้สามารถเข้าถึงข้อมูลได้อย่างมีประสิทธิภาพ
+        โดยการสร้างการตอบสนองตามเอกสารอ้างอิงที่ค้นคืนจาก Amazon Kendra จึงง่ายที่จะทำให้เกิด "แชท LLM ที่สอดคล้องกับข้อมูลภายใน"
+      sub_kb: Knowledge Base
+      sub_kendra: Amazon Kendra
+      title: RAG Chat
+    summarize:
+      description: >-
+        LLMs เก่งในการสรุปข้อความจำนวนมาก คุณสามารถระบุรูปแบบที่ต้องการให้สรุป เช่น "สรุปในหนึ่งบรรทัด" หรือ "สรุปเป็นข้อความที่เด็กสามารถเข้าใจได้"
+      title: การสรุป
+    translate:
+      description: >-
+        LLMs ที่ได้รับการฝึกฝนในหลายภาษาสามารถทำการแปลได้ นอกจากนี้ พวกมันไม่เพียงแต่สามารถแปล แต่ยังสามารถสะท้อนข้อมูลบริบทที่ระบุต่างๆ เช่น ความไม่เป็นทางการและกลุ่มเป้าหมายในการแปลด้วย
+      title: การแปล
+    video-analysis:
+      description: >-
+        ด้วยโมเดลหลายรูปแบบ ตอนนี้สามารถป้อนได้ทั้งข้อความและรูปภาพ ในคุณสมบัตินี้ คุณขอให้ LLM วิเคราะห์เฟรมภาพวิดีโออินพุตและข้อความ
+      title: การวิเคราะห์วิดีโอ
+    video-generation:
+      description: >-
+        AI สร้างวิดีโอสามารถสร้างวิดีโอสั้นๆ ตามข้อความหรือรูปภาพ วิดีโอที่สร้างขึ้นสามารถใช้เป็นวัสดุในฉากต่างๆ ได้
+      title: การสร้างวิดีโอ
+    web_content:
+      description: >-
+        ดึงเนื้อหาเว็บเช่นบล็อกและเอกสาร LLMs ลบข้อมูลที่ไม่จำเป็นและจัดรูปแบบเป็นข้อความที่สอดคล้องกัน เนื้อหาที่ดึงมาสามารถใช้ใน use cases อื่นๆ เช่น การสรุปและการแปล
+      title: การดึงเนื้อหาเว็บ
+    writer:
+      description: >-
+        LLMs ที่ได้รับการฝึกฝนในหลายภาษาสามารถทำการแปลได้ นอกจากนี้ พวกมันไม่เพียงแต่สามารถแปล แต่ยังสามารถสะท้อนข้อมูลบริบทที่ระบุต่างๆ เช่น ความไม่เป็นทางการและกลุ่มเป้าหมายในการแปลด้วย
+      title: การเขียน
+  use_cases_integration:
+    blog:
+      description: >-
+        สร้างบทความบล็อกโดยรวม use cases หลายอย่าง การสร้างภาพรวมบทความและภาพขนาดย่อโดยอัตโนมัติทำให้การตั้งค่า OGP ง่ายขึ้น เป็นตัวอย่าง สร้างบทความบล็อกแนะนำ Generative AI ตามข้อมูลจากเว็บไซต์ทางการของ AWS
+      title: การสร้างบทความบล็อก
+    meeting:
+      description: >-
+        รวม use cases หลายอย่างเพื่อสร้างรายงานการประชุมโดยอัตโนมัติจากข้อมูลการบันทึกเสียง สามารถถอดความ จัดรูปแบบการถอดความ และสร้างรายงานการประชุมโดยไม่ต้องเสียค่าใช้จ่ายด้านบุคลากร
+      title: การสร้างรายงานการประชุม
+    title: การบูรณาการ Use Case
+  use_cases_title: Use cases
+language:
+  de: ภาษาเยอรมัน
+  en: ภาษาอังกฤษ
+  es: ภาษาสเปน
+  fr: ภาษาฝรั่งเศส
+  ja: ภาษาญี่ปุ่น
+  ko: ภาษาเกาหลี
+  th: ภาษาไทย
+  zh: ภาษาจีน
+model:
+  parameters:
+    reasoning: การให้เหตุผล
+    reasoning_budget: งบประมาณการให้เหตุผล
+navigation:
+  agentChat: Agent Chat
+  chat: Chat
+  diagramGeneration: การสร้างแผนภาพ
+  flowChat: Flow Chat
+  home: Home (หน้าหลัก)
+  imageGeneration: การสร้างภาพ
+  promptOptimization: ปรับแต่ง Prompt ให้ตรงความต้องการ
+  ragChat: RAG Chat
+  settings: ตั้งค่า
+  speechRecognition: แปลงเสียงพูดเป็นข้อความ
+  summary: สรุป
+  textGeneration: การสร้างข้อความ
+  translation: การแปล
+  videoAnalysis: การวิเคราะห์วิดีโอ
+  videoGeneration: การสร้างวิดีโอ
+  webContentExtraction: การดึงเนื้อหาเว็บ
+  writing: การเขียน
+notfound:
+  title: ไม่พบ
+optimizePrompt:
+  clear: ล้าง
+  execute: ดำเนินการ
+  input_placeholder: >-
+    ป้อน Prompt ของคุณ หากต้องการผลลัพธ์เป็นภาษาอื่น เพิ่มคำสั่ง "กรุณาตอบเป็นภาษา..."
+  result_placeholder: ผลลัพธ์จะแสดงที่นี่
+  title: ปรับแต่ง Prompt ให้ตรงความต้องการ
+rag:
+  can_add_filters: .
+  errorRetrieval: >-
+    ไม่สามารถค้นคืนเอกสารอ้างอิงจาก Kendra โปรดพิจารณาดำเนินการดังต่อไปนี้:
+
+    - ตรวจสอบว่าเวลาที่กำหนดสำหรับการสร้างดัชนี Amazon Kendra ได้ผ่านไปแล้วและมีเวลาผ่านไปเพียงพอสำหรับการทำดัชนี
+
+    - ตรวจสอบว่าเวลาที่กำหนดสำหรับการลบดัชนี Amazon Kendra ยังไม่ผ่านไป
+  filter: ตัวกรอง
+  filter_settings: สำหรับการตั้งค่าตัวกรอง โปรดดูที่
+  here: ที่นี่
+  knowledgeBase:
+    noDocuments: >-
+      ไม่พบเอกสารอ้างอิง โปรดพิจารณาดำเนินการดังต่อไปนี้:
+
+      - ตรวจสอบว่าเอกสารเป้าหมายได้ถูกเพิ่มลงในแหล่งข้อมูล Knowledge Base แล้ว
+
+      - ตรวจสอบว่าแหล่งข้อมูล Knowledge Base ได้รับการซิงโครไนซ์แล้ว
+
+      - ลองเปลี่ยนการแสดงออกของอินพุตของคุณ
+    retrieveError: >-
+      เกิดข้อผิดพลาดระหว่างการค้นคืน โปรดพิจารณาดำเนินการดังต่อไปนี้:
+
+      - ตรวจสอบว่า embeddingModelId ที่ระบุใน cdk.json เปิดใช้งานใน Amazon Bedrock ({{region}})
+    retrieving: กำลังค้นคืนเอกสารอ้างอิงจาก Knowledge Base...
+  noDocuments: >-
+    ไม่พบเอกสารอ้างอิง โปรดพิจารณาดำเนินการดังต่อไปนี้:
+
+    - ตรวจสอบว่าเอกสารเป้าหมายได้ถูกเพิ่มลงในแหล่งข้อมูล Amazon Kendra แล้ว
+
+    - ตรวจสอบว่าแหล่งข้อมูล Amazon Kendra ได้รับการซิงค์แล้ว
+
+    - ลองเปลี่ยนการแสดงออกของอินพุตของคุณ
+  no_settings_found: 'ไม่พบการตั้งค่า คุณสามารถเพิ่มตัวกรองโดยการปรับแต่ง '
+  page: หน้า
+  please_refer: .
+  retrieving: กำลังค้นคืนเอกสารอ้างอิงจาก Kendra...
+  title: RAG Chat
+setting:
+  ai: Generative AI
+  ai_items:
+    agent_name: Agent Name
+    image_gen_model: Image Generation Model Name
+    llm_model: LLM Model Name
+    model_region: LLM & Image Generation Model Region
+    video_gen_model: Video Generation Model Name
+  config_message: >-
+    การตั้งค่าสามารถเปลี่ยนแปลงได้โดยใช้ <0>AWS CDK</0> ไม่ใช่บนหน้าจอนี้ หากคุณพบข้อผิดพลาดเมื่อใช้ use cases โปรดตรวจสอบว่าคุณได้เปิดใช้งานโมเดลที่ระบุใน {{region}} สำหรับรายละเอียดเกี่ยวกับวิธีการทำเช่นนี้ โปรดดูที่ <1>generative-ai-use-cases</1>
+  general: ทั่วไป
+  items:
+    agent_enabled: เปิดใช้งานตัวแทน
+    language: ภาษา
+    language_help: เปลี่ยนภาษาที่แสดง
+    rag_enabled: เปิดใช้งาน RAG (Amazon Kendra)
+    rag_kb_enabled: เปิดใช้งาน RAG (Knowledge Base)
+    version: เวอร์ชัน
+    version_help: อ้างอิงเวอร์ชันใน package.json ของ generative-ai-use-cases
+  recent_updates: การอัปเดตล่าสุด
+  signout: ออกจากระบบ
+  title: ตั้งค่า
+  update:
+    message: >-
+      มีการอัปเดตบน GitHub หากคุณต้องการใช้คุณสมบัติล่าสุด โปรดดึงสาขาหลักของ <0>generative-ai-use-cases</0> และปรับใช้ใหม่
+  view_all_updates: ดูการอัปเดตทั้งหมด
+shared:
+  contact_admin: โปรดติดต่อผู้ดูแลระบบ
+  error: ข้อผิดพลาด
+  not_found_message: >-
+    ไม่พบหน้า ประวัติการสนทนาอาจไม่ได้รับการแชร์หรือถูกลบไปแล้ว
+sketch:
+  clear: ล้าง
+  pen_size: ขนาดปากกา
+  upload_image: อัปโหลดรูปภาพ
+summarize:
+  additional_context: บริบทเพิ่มเติม
+  additional_context_placeholder: คุณสามารถป้อนประเด็นเพิ่มเติมที่ต้องการพิจารณา (เช่น ความไม่เป็นทางการ ฯลฯ)
+  enter_text: ป้อนข้อความ
+  result_placeholder: ข้อความที่สรุปจะแสดงที่นี่
+  text_to_summarize: ข้อความที่จะสรุป
+  title: สรุป
+transcribe:
+  detailed_parameters: ตั้งค่าขั้นสูงแบบกำหนดเอง
+  file_upload: อัปโหลดไฟล์
+  max_speakers: จำนวนผู้พูดสูงสุด
+  max_speakers_help: จำนวนผู้พูดสูงสุดในบทสนทนาที่ต้องการแยกแยะ
+  mic_input: อินพุตไมโครโฟน
+  result_placeholder: ข้อความที่แปลงจากเสียงของคุณ
+  select_input_method: โปรดเลือกจากอินพุตไมโครโฟนหรืออัปโหลดไฟล์
+  speaker_names: ชื่อผู้พูด (คั่นด้วยเครื่องหมายจุลภาค)
+  speaker_recognition: การแยกแยะผู้พูด
+  start_recording: เริ่มการบันทึก
+  stop_recording: หยุดการบันทึก
+  supported_files: 'ไฟล์ mp3, mp4, wav, flac, ogg, amr, webm, m4a สามารถใช้ได้'
+  title: แปลงเสียงพูดเป็นข้อความ
+translate:
+  additional_context: บริบทเพิ่มเติม
+  additional_context_placeholder: คุณสามารถป้อนประเด็นเพิ่มเติมที่ต้องการพิจารณา (เช่น ความไม่เป็นทางการ ฯลฯ)
+  auto_detect_language: ตรวจจับภาษาอัตโนมัติ
+  auto_translate: แปลอัตโนมัติ
+  continue_output: ดำเนินการต่อ
+  enter_text: ป้อนข้อความ
+  result_placeholder: ผลการแปลจะแสดงที่นี่
+  text_to_translate: ข้อความที่จะแปล
+  title: แปล
+useCaseBuilder:
+  accessError: ข้อผิดพลาดในการเข้าถึง
+  addInputExample: เพิ่มตัวอย่างอินพุต
+  attach_file: แนบไฟล์
+  blog:
+    generate_article: สร้างบทความ
+    generate_article_context: >-
+      โปรดสร้างบทความบล็อกที่อธิบายกลไกของ Generative AI และประโยชน์ของการใช้ Generative AI บน AWS เมื่อสร้างบทความ โปรดปฏิบัติตาม <rules></rules>
+      <rules>
+      - เขียนในรูปแบบ markdown ด้วยบทต่างๆ
+      - กำหนดเป้าหมายบทความสำหรับผู้เริ่มต้นของ Generative AI และ AWS
+      - อย่าใช้คำศัพท์ที่ผู้เริ่มต้นด้าน IT ไม่เข้าใจ หรือแทนที่ด้วยคำที่เข้าใจง่าย
+      - ทำให้เป็นบทความที่อธิบายว่าสามารถทำอะไรได้บ้างกับ Generative AI
+      - ผู้อ่านจะไม่พอใจกับปริมาณข้อความที่น้อย ดังนั้นโปรดเพิ่มปริมาณข้อความโดยเสริมด้วยข้อมูลทั่วไป
+      - ทำให้ข้อความน่าสนใจสำหรับผู้อ่าน
+      </rules>
+    generate_article_description: >-
+      สร้างบทความบล็อกโดยอัตโนมัติตามข้อมูลอ้างอิง การตั้งค่าบริบทโดยละเอียดจะช่วยให้ง่ายขึ้นในการสร้างเนื้อหาที่ตรงกับความตั้งใจของคุณ
+    generate_thumbnail: สร้างภาพขนาดย่อของบทความ
+    generate_thumbnail_content: >-
+      โปรดสร้างภาพขนาดย่อสำหรับ OGP ของบทความบล็อก ทำให้เป็นภาพที่แสดงอย่างชัดเจนว่าเป็นบทความเกี่ยวกับคลาวด์และ AI เมื่อมองเห็นได้ทันที
+      สรุปบทความบล็อกถูกตั้งค่าใน <article></article>
+      <article>
+      {{summarizedSentence}}
+      </article>
+    generate_thumbnail_description: >-
+      สร้างภาพขนาดย่อสำหรับ OGP (ตัวอย่างบทความที่แสดงเมื่อแชร์ลิงก์บทความ) การตั้งค่าภาพขนาดย่อที่น่าสนใจสำหรับ OGP อาจดึงดูดความสนใจของผู้อ่าน
+    reference_info: รับข้อมูลอ้างอิง
+    reference_info_context: >-
+      โปรดดึงเฉพาะส่วนที่อธิบายภาพรวมของ Generative AI วิธีการทำงาน และส่วนที่อธิบาย AWS
+    reference_info_description: >-
+      ดึงข้อมูลโดยอัตโนมัติเป็นข้อมูลอ้างอิงสำหรับบทความของคุณโดยระบุ URL
+
+      การตั้งค่าบริบทเพิ่มเติมช่วยให้คุณสามารถดึงเฉพาะข้อมูลที่คุณต้องการ
+    summarize_article: สรุปบทความ
+    summarize_article_description: >-
+      สรุปบทความสำหรับ OGP (ตัวอย่างบทความที่แสดงเมื่อแชร์ลิงก์บทความ) การตั้งค่า OGP อย่างเหมาะสมช่วยให้สามารถสื่อสารภาพรวมของบทความได้อย่างถูกต้องเมื่อมีการแชร์
+  builderMode: Builder Mode
+  cancel: ยกเลิก
+  create: สร้าง
+  createDescription: สร้าง use cases โปรดตรวจสอบฟังก์ชันในตัวอย่างก่อนสร้าง คุณยังสามารถแก้ไขหลังจากสร้างได้
+  createErrorCondition: 'ต้องมีเงื่อนไขต่อไปนี้:'
+  createNew: สร้างใหม่
+  creating: กำลังสร้าง...
+  delete: ลบ
+  deleteConfirmation: ยืนยันการลบ
+  deleteDescription: ลบ use cases นี้ทั้งหมด การกระทำนี้ไม่สามารถย้อนกลับได้
+  deleteSharedWarning: คำเตือนการลบที่แชร์
+  deleteUseCaseTitle: ลบชื่อ use cases
+  deleting: กำลังลบ...
+  description: คำอธิบาย
+  edit: แก้ไข use cases
+  enterPromptTemplate: โปรดป้อน prompt template
+  enterTitle: โปรดป้อนชื่อเรื่อง
+  error:
+    duplicate_select_options: '{{select:{{label}}}} มีตัวเลือกซ้ำกัน'
+    empty_select_options: '{{select:{{label}}}} มีตัวเลือกว่างเปล่า'
+    missing_kb_text_form: >-
+      โปรดรวมแบบฟอร์ม {{text{{label}}}} ใน prompt template เพื่อป้อนคำค้นหาสำหรับ Knowledge Base
+    missing_select_options: >-
+      ไม่มีตัวเลือกที่ตั้งไว้สำหรับ {{select}} โปรดตั้งค่าเช่น
+      {{select:label:option1,option2}}
+    missing_text_form: >-
+      โปรดรวมแบบฟอร์ม {{text{{label}}}} ใน prompt template เพื่อป้อนคำค้นหาสำหรับ Amazon Kendra
+    rag_kendra_not_enabled: >-
+      {{retrieveKendra}} ถูกระบุใน prompt template แต่ RAG Chat (Amazon Kendra) ไม่ได้เปิดใช้งานใน GenU
+    rag_knowledge_base_not_enabled: >-
+      {{retrieveKnowledgeBase}} ถูกระบุใน prompt template แต่ RAG Chat (Knowledge Base) ไม่ได้เปิดใช้งานใน GenU
+  favorites: รายการโปรด
+  fileUploadDescription: ผู้ใช้สามารถอัปโหลดไฟล์เพื่อให้ LLM อ้างอิงเนื้อหา
+  fileUploadDisabled: ปิดใช้งานการอัปโหลดไฟล์
+  fileUploadEnabled: เปิดใช้งานการอัปโหลดไฟล์
+  help:
+    emailReplyExample: ตอบอีเมล
+    emailReplyPrompt: |-
+      คุณรับผิดชอบการตอบอีเมล
+      โปรดสร้างอีเมลตอบกลับตามกฎเหล่านี้:
+      <Rules>
+      - นี่เป็นอีเมลถึงพาร์ทเนอร์ทางธุรกิจ คุณต้องใช้ภาษาสุภาพ แต่เนื่องจากมีความสัมพันธ์ที่สร้างขึ้นแล้ว ข้อความไม่จำเป็นต้องเป็นทางการมากเกินไป
+      - เข้าใจเนื้อหาของอีเมลที่กำลังตอบกลับและสร้างอีเมลตอบกลับที่สอดคล้องกับเนื้อหาการตอบสนอง
+      - อย่ารวมสิ่งใดในข้อความอีเมลที่ไม่สามารถเข้าใจได้จากอีเมลต้นฉบับและเนื้อหาการตอบสนอง
+      </Rules>
+      <Original Email>
+      {{text:เนื้อหาอีเมลต้นฉบับ}}
+      </Original Email>
+      <Response Content>
+      {{text:เนื้อหาการตอบสนอง}}
+      </Response Content>
+    example: ตัวอย่าง
+    formPlaceholderDescription: >-
+      {{form}} เป็น placeholder สำหรับกำหนดแบบฟอร์มอินพุต
+      เขียนเป็น {{form}} หรือ {{form:label}}
+      {{form}} สร้างแบบฟอร์มที่รับอินพุตข้อความแต่ไม่ฝังอินพุตลงใน prompt template
+      ใช้ใน use cases ที่คุณต้องการสอบถามแหล่งข้อมูลเช่น RAG แต่ไม่ต้องการฝังคำค้นหาเองลงใน prompt
+    formPlaceholderExample:
+      prompt: |-
+        คุณเป็นผู้ช่วย AI ที่สร้างควิซตามข้อมูลที่ให้
+
+        {{form:ค้นหาข้อมูลเพื่อใช้เป็นพื้นฐานสำหรับควิซ}}
+
+        โปรดอ่านข้อมูลต่อไปนี้และสร้างควิซแบบตัวเลือก
+        โปรดให้คำตอบที่ถูกต้องด้วย
+
+        <information>
+        {{retrieveKendra:ค้นหาข้อมูลเพื่อใช้เป็นพื้นฐานสำหรับควิซ}}
+        </information>
+      title: การสร้างควิซ
+    placeholder: Placeholder
+    placeholderDescription: >-
+      placeholder เขียนเป็น {{inputType:label}} เนื่องจากป้ายกำกับเป็นตัวระบุ placeholder ที่มีป้ายกำกับเดียวกันจะถือว่าเป็นอินพุตเดียวกัน นอกจากนี้ยังสามารถละป้ายกำกับและเขียนเป็น {{inputType}} ในกรณีนี้ placeholder ที่ไม่มีป้ายกำกับจะถือว่าเป็นอินพุตเดียวกัน prompt ที่ดำเนินการจริงสามารถยืนยันได้จากประวัติการสนทนาของ GenU
+    placeholderList: ประเภทของ placeholder
+    promptTemplateDescription: >-
+      เป็นชนิดของ "เทมเพลต" สำหรับให้คำสั่งกับ Generative AI ขึ้นอยู่กับวัตถุประสงค์ คุณสามารถเตรียมเทมเพลตคำสั่งที่กำหนดไว้ล่วงหน้า prompt template สามารถกำหนด placeholder สำหรับแทรกข้อความระหว่างการดำเนินการ
+    promptTemplateTitle: prompt template คืออะไร?
+    retrieveKendraDescription: >-
+      {{retrieveKendra}} ฝังผลลัพธ์ที่ค้นคืนจาก Amazon Kendra ลงใน prompt template
+      เขียนเป็น {{retrieveKendra}} หรือ {{retrieveKendra:label}}
+      {{retrieveKendra}} ต้องการ placeholder แยกต่างหาก ({{text}}) สำหรับการป้อนคำค้นหา
+      พวกเขาต้องมีป้ายกำกับเดียวกัน
+      ในการใช้คุณสมบัตินี้ ต้องเปิดใช้งาน RAG chat (Amazon Kendra) ใน GenU
+      หากไม่ได้เปิดใช้งาน โปรดติดต่อผู้ดูแลระบบ
+    retrieveKendraExample:
+      prompt: |-
+        คุณเป็นผู้ช่วย AI ที่ตอบคำถามของผู้ใช้
+        โปรดอ่านข้อมูลต่อไปนี้:
+
+        <Information>
+        {{retrieveKendra:คำถาม}}
+        </Information>
+
+        จากข้อมูลข้างต้น โปรดตอบคำถามต่อไปนี้:
+
+        <Question>
+        {{text:คำถาม}}
+        </Question>
+      title: RAG อย่างง่าย
+    retrieveKnowledgeBaseDescription: >-
+      {{retrieveKnowledgeBase}} ฝังผลลัพธ์ที่ค้นคืนจาก Knowledge Base ลงใน prompt template
+      สามารถเขียนเป็น {{retrieveKnowledgeBase}} หรือ {{retrieveKnowledgeBase:label}}
+      {{retrieveKnowledgeBase}} ต้องการ placeholder แยกต่างหาก ({{text}}) สำหรับการป้อนคำค้นหา
+      เหล่านี้ต้องมีป้ายกำกับเดียวกัน
+      ในการใช้คุณสมบัตินี้ ต้องเปิดใช้งาน RAG chat (Knowledge Base) ใน GenU
+      หากไม่ได้เปิดใช้งาน โปรดติดต่อผู้ดูแลระบบ
+    retrieveKnowledgeBaseExample:
+      prompt: |-
+        คุณเป็นผู้ช่วย AI ที่ตอบคำถามของผู้ใช้
+        โปรดอ่านข้อมูลต่อไปนี้:
+
+        <Information>
+        {{retrieveKnowledgeBase:คำถาม}}
+        </Information>
+
+        จากข้อมูลข้างต้น โปรดตอบคำถามต่อไปนี้:
+
+        <Question>
+        {{text:คำถาม}}
+        </Question>
+      title: RAG อย่างง่าย
+    selectPlaceholderDescription: |-
+      คุณเป็นผู้เชี่ยวชาญที่มีความเชี่ยวชาญในบริการ AWS
+
+      โปรดตอบคำถามเกี่ยวกับบริการต่อไปนี้:
+      {{select:บริการ AWS:Amazon Bedrock,Amazon S3,AWS Lambda}}
+
+      คำถามมีดังนี้:
+      {{text:คำถาม}}
+    selectPlaceholderExample:
+      prompt: >-
+        คุณเป็นผู้เชี่ยวชาญบริการ AWS
+
+        โปรดตอบคำถามเกี่ยวกับบริการต่อไปนี้:
+        {{select:บริการ AWS:Amazon Bedrock,Amazon S3,AWS Lambda}}
+
+        คำถามมีดังนี้:
+        {{text:คำถาม}}
+      title: คำถามเกี่ยวกับบริการ AWS
+    textPlaceholderDescription: >-
+      {{text}} เป็น placeholder พื้นฐานที่สุด สามารถเขียนเป็น {{text}} หรือ {{text:label}}
+      {{text}} สร้างแบบฟอร์มที่รับอินพุตข้อความและฝังค่าที่ป้อนโดยตรงลงใน prompt template
+  helpTitle: ช่วยเหลือ
+  inputExamples: ตัวอย่างอินพุต
+  loadMore: โหลดเพิ่มเติม
+  mainMenu: เมนูหลัก
+  meeting:
+    create_minutes: สร้างรายงานการประชุม
+    create_minutes_context: >-
+      โปรดสร้างรายงานการประชุมในรูปแบบ markdown ตามคำพูดในการประชุม
+
+      โปรดจัดระเบียบตามหัวข้อที่พูดคุยในการประชุม สรุปเนื้อหาของการสนทนา การตัดสินใจ และรายการงานที่ต้องทำ
+    create_minutes_description: >-
+      ใช้คุณสมบัติ "การสร้างข้อความ" เพื่อสร้างรายงานการประชุม การระบุบริบทโดยละเอียดช่วยให้คุณสามารถกำหนดรูปแบบของรายงานการประชุมและความละเอียดของคำอธิบาย
+    formatting: การจัดรูปแบบ
+    formatting_context: >-
+      ผลการถอดความของข้อมูลการบันทึกถูกป้อนเข้ามา โปรดจัดรูปแบบตาม <rules></rules>
+
+      <rules>
+      - ลบคำเสริมที่ไม่จำเป็น
+      - เขียนเนื้อหาที่ดูเหมือนจะถูกตีความผิดจากการถอดความให้เป็นเนื้อหาที่ถูกต้อง
+      - หากมีการละคำเชื่อม ฯลฯ โปรดเสริมให้อ่านง่ายขึ้น
+      - อย่าละเว้นคำถามและคำตอบ โปรดรวมไว้ด้วย
+      </rules>
+    formatting_description: >-
+      ใช้คุณสมบัติ "การสร้างข้อความ" เพื่อจัดรูปแบบไฟล์การถอดความ แก้ไขคำเสริมและส่วนที่ไม่ได้รับการแปลงอย่างถูกต้องโดยการแปลงเสียงพูดเป็นข้อความ ทำให้มนุษย์เข้าใจได้ง่ายขึ้น
+    transcription: การถอดความ
+    transcription_description: >-
+      ใช้คุณสมบัติ "แปลงเสียงพูดเป็นข้อความ" เพื่อถอดความบทสนทนาจากข้อมูลการบันทึก โปรดเรียกใช้กับไฟล์เสียงใดๆ
+
+      หลังจากการแปลงเสียงพูดเป็นข้อความเสร็จสิ้น กดปุ่ม "จัดรูปแบบ" (ผลการแปลงเสียงพูดเป็นข้อความจะถูกคัดลอกโดยอัตโนมัติ)
+  menuCreate: สร้าง
+  menuDelete: ลบ
+  menuFileAttachment: การแนบไฟล์
+  menuInputExamples: ตัวอย่างอินพุต
+  menuModelSelection: การเลือกโมเดล
+  menuUpdate: อัปเดต
+  menuUseCaseDefinition: คำจำกัดความของ use cases
+  modelFixed: โมเดลถูกกำหนดไว้
+  modelFixedDescription: ผู้ใช้สามารถใช้โมเดลที่กำหนดไว้เท่านั้นใน use cases นี้
+  modelNotFixed: โมเดลไม่ได้ถูกกำหนดไว้
+  modelNotFixedDescription: ผู้ใช้สามารถเลือกโมเดลที่จะใช้ใน use cases นี้
+  myUseCases: Use cases ของฉัน
+  noMyUseCases: ไม่มี use cases
+  noUpdateContent: ไม่มีการอัปเดตที่พร้อมใช้งาน
+  noUserInput: Use cases ไม่ได้รับอินพุตจากผู้ใช้ โปรดเพิ่ม placeholder ใน prompt template หรือเปิดการแนบไฟล์
+  notExistOrNotShared: ไม่มีอยู่หรือไม่ได้แชร์
+  notSharedDescription: ไม่มี use cases ที่กำลังแชร์อยู่
+  ok: ตกลง
+  preview: ตัวอย่าง
+  private: ส่วนตัว
+  promptTemplate: Prompt Template
+  promptTemplateHint: >-
+    ต้องระบุว่าผู้ใช้จะป้อนข้อมูลอะไรบ้าง เพื่อสร้าง use cases กรุณาใส่ placeholders ใน Prompt Template หรือเปิดให้แนบไฟล์ได้
+  promptTemplatePlaceholder: >-
+    ป้อน prompt template
+    สำหรับวิธีการเขียน prompt template โปรดดูที่ "ช่วยเหลือ" หรือ "คอลเลกชันตัวอย่าง"
+  recentlyUsed: ใช้ล่าสุด
+  resultPlaceholder: ผลลัพธ์จะแสดงที่นี่
+  returnToTop: กลับไปด้านบน
+  samples: คอลเลกชันตัวอย่าง
+  share: แชร์
+  shareUrlDescription: แชร์ use cases ด้วย URL ข้างต้น
+  shared: แชร์แล้ว
+  sharedDescription: Use cases ได้รับการแชร์
+  title: ชื่อเรื่อง
+  untitled: ไม่มีชื่อ
+  untitledUseCase: Use cases ที่ไม่มีชื่อ
+  update: อัปเดต
+  updateDescription: อัปเดต use cases ด้วยเนื้อหาข้างต้น
+  updateErrorCondition: 'ต้องมีเงื่อนไขต่อไปนี้:'
+  updating: กำลังอัปเดต...
+video:
+  aspectRatio: อัตราส่วนภาพ
+  clear: ล้าง
+  dimension: ขนาดหน้าจอ
+  duration: ระยะเวลา (วินาที)
+  error:
+    empty_prompt: โปรดป้อน prompt
+    invalid_parameters: พารามิเตอร์ไม่ถูกต้อง
+    model_not_selected: ไม่ได้เลือกโมเดล
+  fps: FPS
+  generate: สร้าง
+  generation:
+    failed: ไม่สามารถสร้างวิดีโอ ({{error}})
+    started: งานสร้างวิดีโอได้เริ่มต้นแล้ว คุณสามารถออกจากหน้านี้ระหว่างการสร้าง
+  job:
+    delete_confirm: คุณแน่ใจหรือไม่ว่าต้องการลบงานนี้?
+    delete_failed: ไม่สามารถลบงาน
+    delete_success: ลบงานสำเร็จ
+    list: รายการงาน
+    no_jobs: ไม่มีงานสร้างที่พร้อมใช้งาน
+  load:
+    more: โหลดเพิ่มเติม
+  loading: กำลังโหลด...
+  loop: วนซ้ำ
+  model: โมเดล
+  no_preview: ไม่มีตัวอย่างพร้อมใช้งาน
+  press:
+    play: กดปุ่มเล่น
+  preview_loading: กำลังโหลดตัวอย่าง...
+  prompt:
+    display: prompt จะแสดงที่นี่
+    placeholder: เด็กๆ กำลังเล่นกับลูกบอลหลายลูก
+    title: Prompt
+  resolution: ความละเอียด
+  seed:
+    help: ค่า seed แบบสุ่ม วิดีโอเดียวกันจะถูกสร้างด้วยค่า seed เดียวกัน
+    title: Seed
+  status:
+    completed: เสร็จสมบูรณ์
+    failed: ล้มเหลว
+    finalizing: กำลังสรุปผล
+    inprogress: อยู่ระหว่างดำเนินการ
+  supportedExtensions: 'นามสกุลที่รองรับ: {{acceptedExtensions}}'
+  supportedImageDimensions: 'ขนาดภาพที่รองรับ: {{supportedDimensions}}'
+  table:
+    date: วันที่
+    delete: ลบ
+    download: ดาวน์โหลด
+    model: โมเดล
+    play: เล่น
+    prompt: Prompt
+    status: สถานะ
+  taskType: ประเภท task
+  upload: อัปโหลด
+  uploadImage: อัปโหลดรูปภาพ
+  uploadImageHelp: ระบุภาพที่ใช้ในเฟรมแรกของวิดีโอ
+videoAnalyzer:
+  camera: กล้อง
+  clear: ล้าง
+  errors:
+    cameraAccessFailed: 'ไม่สามารถเข้าถึงเว็บแคม:'
+  label: วิเคราะห์วิดีโอแบบเรียลไทม์
+  model: โมเดล
+  start: เริ่ม
+  stop: หยุด
+  title: การวิเคราะห์วิดีโอ
+webcontent:
+  additional_context: บริบทเพิ่มเติม
+  additional_context_placeholder: คุณสามารถป้อนประเด็นเพิ่มเติมที่ต้องการพิจารณา (เช่น สรุป)
+  enter_url: ป้อน URL
+  error_message: >-
+    เกิดข้อผิดพลาดเมื่อเข้าถึง URL ที่ระบุ ไซต์อาจห้ามการสกัดข้อมูลหรือ URL อาจไม่ถูกต้อง หากคุณคิดว่านี่เป็นปัญหาชั่วคราว โปรดลองอีกครั้ง
+  fetched: ดึงแล้ว
+  instruction: >-
+    โปรดระบุเว็บไซต์ที่ข้อความเป็นเนื้อหาหลัก เช่น บล็อก บทความ หรือเอกสาร มิฉะนั้น อาจไม่แสดงผลอย่างถูกต้อง
+  loading: กำลังโหลด...
+  not_fetched: ยังไม่ได้ดึง
+  not_fetched_instruction: ยังไม่ได้ดึง โปรดป้อน URL และกดปุ่มดำเนินการ
+  original_text: 'ข้อความต้นฉบับ ({{status}})'
+  result_placeholder: ข้อความที่ดึงจะแสดงที่นี่
+  title: การดึงเนื้อหาเว็บ
+  website_to_extract: เว็บไซต์ที่จะดึงเนื้อหา
+writer:
+  ai:
+    ask_ai: ถาม AI
+    continue_instruct: ดำเนินการสั่ง AI ต่อ
+    discard: ทิ้ง
+    edit_selection: แก้ไขส่วนที่เลือก
+    error: เกิดข้อผิดพลาด
+    generate: สร้าง
+    insert_below: แทรกด้านล่างส่วนที่เลือก
+    instruct_ai: สั่ง AI
+    options:
+      collect_data: ค้นคว้าและเพิ่มข้อมูลสนับสนุน
+      continue: ดำเนินการต่อ
+      fact_check: ตรวจสอบข้อเท็จจริง
+      fix: แก้ไข
+      improve: ปรับปรุง
+      longer: ทำให้ยาวขึ้น
+      search: ค้นหาและเขียน...
+      shorter: ทำให้สั้นลง
+    replace_selection: แทนที่ส่วนที่เลือก
+    search_instruct: สั่ง AI ให้ค้นหา
+    thinking: กำลังคิด
+    trace: ติดตาม
+    use_search_engine: ใช้เครื่องมือค้นหา
+  amazonBedrockDescription: >-
+    Amazon Bedrock เป็นบริการที่มีการจัดการเต็มรูปแบบที่นำเสนอตัวเลือกของโมเดลพื้นฐาน (FMs) ประสิทธิภาพสูงจากบริษัท AI ชั้นนำเช่น AI21 Labs, Anthropic, Cohere, Meta, Stability AI และ Amazon ผ่าน API เดียว พร้อมด้วยชุดความสามารถที่หลากหลายที่คุณต้องการเพื่อสร้างแอปพลิเคชัน Generative AI ด้วยความปลอดภัย ความเป็นส่วนตัว และ AI ที่รับผิดชอบ
+  appearance: รูปลักษณ์
+  autoCompleteDescription: >-
+    คุณสามารถป้อนคำสั่งให้กับ AI ได้ เช่น การดำเนินการ 'ปรับปรุง', 'ตรวจทาน', 'ทำให้สั้นลง', 'ทำให้ยาวขึ้น' หรือคำสั่งที่กำหนดเอง
+  autoCompleteFeature: คุณสมบัติ AI เติมข้อความอัตโนมัติ
+  background: พื้นหลัง
+  characters: ตัวอักษร
+  clear: ล้าง
+  clear_comments: ล้างความคิดเห็น
+  clear_success: ล้างเครื่องมือแก้ไขแล้ว
+  color: สี
+  colors:
+    blue: น้ำเงิน
+    default: ค่าเริ่มต้น
+    gray: เทา
+    green: เขียว
+    orange: ส้ม
+    pink: ชมพู
+    purple: ม่วง
+    red: แดง
+    yellow: เหลือง
+  dark: มืด
+  description: >-
+    เครื่องมือสำหรับช่วยเหลือการเขียน การปรับแต่งข้อความ และการตรวจทาน คุณสามารถเขียนได้อย่างมีประสิทธิภาพด้วยความช่วยเหลือจาก AI
+  example1: 'ตัวอย่างเช่น คุณสามารถให้ AI ช่วยจัดการย่อหน้าต่อไปนี้ได้:'
+  example2: >-
+    คุณยังสามารถตรวจสอบข้อเท็จจริงในข้อความของคุณ เลือกข้อความต่อไปนี้และเลือก 'ตรวจสอบข้อเท็จจริง':
+  factCheckExample: >-
+    บารัค โอบามาเป็นประธานาธิบดีคนที่ 43 ของสหรัฐอเมริกา เขาดำรงตำแหน่งประธานาธิบดีตั้งแต่ปี 2001 ถึง 2009
+  incorrectTextExample: ฉันได้ไปญี่ปุ่นแล้ว โตเกียวเป็นเมืองที่สวยงามมาก
+  light: สว่าง
+  link: ลิงก์
+  no_issues: ไม่พบปัญหา
+  no_results: ไม่มีผลลัพธ์
+  paste_link: วางลิงก์
+  replace: แทนที่
+  review: ตรวจสอบ
+  reviewDescription: >-
+    คุณสามารถตรวจสอบเอกสารทั้งหมดของคุณได้ ไม่ว่าจะเป็นการตรวจคำผิด ความผิดพลาดทางไวยากรณ์ ไปจนถึงแนะนำการแก้ไข
+  reviewFeature: คุณสมบัติการตรวจสอบ
+  saved: บันทึกแล้ว
+  saving: กำลังบันทึก...
+  system: ระบบ
+  textEditorDescription: >-
+    สามารถแก้ไข และจัดรูปแบบข้อความทั่วไปได้ เช่น ตัวหนา ตัวเอียง หรือหัวข้อ รวมถึงสามารถแสดงจำนวนตัวอักษรระหว่างการเขียนได้
+  title: การเขียน
+  tutorial: บทเรียน
+  tutorial_success: โหลดบทเรียนแล้ว
+  useAsTextEditor: ใช้เป็นเครื่องมือแก้ไขข้อความ
