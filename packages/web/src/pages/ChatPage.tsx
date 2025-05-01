@@ -488,7 +488,7 @@ const ChatPage: React.FC = () => {
           <ScrollTopBottom />
         </div>
 
-        <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden">
+        <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center pr-64 print:hidden">
           {isEmpty && !loadingMessages && !chatId && (
             <ExpandableField
               label={t('chat.system_prompt')}
@@ -551,14 +551,12 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
 
-      {isEmpty && !loadingMessages && (
-        <PromptList
-          onClick={onClickSamplePrompt}
-          systemContextList={systemContextList as SystemContext[]}
-          onClickDeleteSystemContext={onClickDeleteSystemContext}
-          onClickUpdateSystemContext={onClickUpdateSystemContext}
-        />
-      )}
+      <PromptList
+        onClick={onClickSamplePrompt}
+        systemContextList={systemContextList as SystemContext[]}
+        onClickDeleteSystemContext={onClickDeleteSystemContext}
+        onClickUpdateSystemContext={onClickUpdateSystemContext}
+      />
 
       <ModalSystemContext
         showSystemContextModal={showSystemContextModal}

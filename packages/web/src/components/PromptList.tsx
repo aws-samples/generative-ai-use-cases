@@ -15,6 +15,8 @@ import {
   PiPencilLine,
   PiCheck,
   PiX,
+  PiCaretLeft,
+  PiCaretRight,
 } from 'react-icons/pi';
 import { ChatPageQueryParams } from '../@types/navigate';
 import useChat from '../hooks/useChat';
@@ -38,7 +40,27 @@ const PromptList: React.FC<Props> = (props) => {
   const { t } = useTranslation();
   const { onClick, onClickDeleteSystemContext, onClickUpdateSystemContext } =
     props;
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  // Monitoring screen size
+  useEffect(() => {
+    const checkWindowSize = () => {
+      setIsMobileView(window.innerWidth < 640);
+    };
+
+    // initial check
+    checkWindowSize();
+
+    // Add a listener for the resize event
+    window.addEventListener('resize', checkWindowSize);
+
+    // cleanup function
+    return () => {
+      window.removeEventListener('resize', checkWindowSize);
+    };
+  }, []);
+
   // PromptList is fixed for use on the chat page
   const { getModelId } = useChat('/chat');
   const modelId = getModelId();
@@ -170,7 +192,8 @@ const PromptList: React.FC<Props> = (props) => {
 
   return (
     <>
-      {expanded && (
+      {/* Control overlay display: Display only on mobile devices */}
+      {expanded && isMobileView && (
         <div
           className={`${props.className} fixed left-0 top-0 z-20 h-screen w-screen bg-gray-900/90`}
           onClick={() => {
@@ -179,19 +202,32 @@ const PromptList: React.FC<Props> = (props) => {
         />
       )}
 
+      {/* Open/Close button */}
       <div
-        className={`fixed top-0 transition-all ${
-          expanded ? 'right-0 z-50' : '-right-64 z-30'
-        } pointer-events-none flex h-full justify-center`}>
+        className={`fixed top-0 z-50 transition-all ${
+          expanded ? 'right-64' : 'right-0'
+        }`}>
         <div
-          className="bg-aws-smile pointer-events-auto mt-24 flex size-12 cursor-pointer items-center justify-center rounded-l-full transition-all lg:mt-16"
+          className="bg-aws-smile mt-24 flex size-12 cursor-pointer items-center justify-center rounded-l-full transition-all lg:mt-16"
           onClick={() => {
             setExpanded(!expanded);
           }}>
-          <PiBookOpenText className="text-aws-squid-ink size-6" />
+          {expanded ? (
+            <PiCaretRight className="text-aws-squid-ink size-6" />
+          ) : (
+            <PiCaretLeft className="text-aws-squid-ink size-6" />
+          )}
         </div>
+      </div>
 
-        <div className="bg-aws-squid-ink scrollbar-thin scrollbar-thumb-white pointer-events-auto h-full w-64 overflow-y-scroll break-words p-3 text-sm text-white">
+      {/* sidebar panel */}
+      <div
+        className={`fixed top-0 h-full transition-all ${
+          expanded ? 'right-0 z-40' : '-right-64 z-30'
+        }`}>
+        {/* sidebar contents */}
+
+        <div className="bg-aws-squid-ink scrollbar-thin scrollbar-thumb-white h-full w-64 overflow-y-scroll break-words p-3 text-sm text-white">
           <div className="my-2 flex items-center text-sm font-semibold">
             <PiBookOpenText className="mr-1.5 text-lg" />
             {t('chat.saved_system_prompts')}
