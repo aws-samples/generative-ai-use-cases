@@ -93,6 +93,7 @@ export const modelFeatureFlags: Record<string, FeatureFlags> = {
   // S3 Video Upload only supports us-east-1.
   // If you want to use Video, please use amazon.nova-pro-v1:0 in us-east-1.
   // (Note: If RAG is enabled, it will be deleted when the region is changed)
+  'us.amazon.nova-premier-v1:0': MODEL_FEATURE.TEXT_DOC_IMAGE,
   'us.amazon.nova-pro-v1:0': MODEL_FEATURE.TEXT_DOC_IMAGE,
   'us.amazon.nova-lite-v1:0': {
     ...MODEL_FEATURE.TEXT_DOC_IMAGE, // Same as above
