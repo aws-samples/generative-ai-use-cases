@@ -40,11 +40,13 @@ export const stackInputSchema = z.object({
       ])
     )
     .default([
-      'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
+      'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
       'us.anthropic.claude-3-5-haiku-20241022-v1:0',
+      'us.amazon.nova-premier-v1:0',
       'us.amazon.nova-pro-v1:0',
       'us.amazon.nova-lite-v1:0',
       'us.amazon.nova-micro-v1:0',
+      'us.deepseek.r1-v1:0',
     ]),
   imageGenerationModelIds: z
     .array(
@@ -100,7 +102,7 @@ export const stackInputSchema = z.object({
   ragKnowledgeBaseAdvancedParsing: z.boolean().default(false),
   ragKnowledgeBaseAdvancedParsingModelId: z
     .string()
-    .default('anthropic.claude-3-sonnet-20240229-v1:0'),
+    .default('us.anthropic.claude-3-5-sonnet-20241022-v2:0'),
   ragKnowledgeBaseBinaryVector: z.boolean().default(false),
   queryDecompositionEnabled: z.boolean().default(false),
   rerankingModelId: z.string().nullish(),

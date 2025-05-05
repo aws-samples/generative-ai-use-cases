@@ -159,7 +159,7 @@ Automatically detect the language of the user's request and think and answer in 
       idleSessionTtlInSeconds: 3600,
       autoPrepare: true,
       description: 'Code Interpreter',
-      foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
+      foundationModel: 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
       instruction: `You are an advanced AI agent with the ability to execute code, generate charts, and perform complex data analysis. 
 Your main function is to solve problems and meet user requests by utilizing these capabilities.
 Your main characteristics and instructions are as follows.
