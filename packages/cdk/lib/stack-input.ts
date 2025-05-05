@@ -102,7 +102,7 @@ export const stackInputSchema = z.object({
   ragKnowledgeBaseAdvancedParsing: z.boolean().default(false),
   ragKnowledgeBaseAdvancedParsingModelId: z
     .string()
-    .default('us.anthropic.claude-3-5-sonnet-20241022-v2:0'),
+    .default('anthropic.claude-3-sonnet-20240229-v1:0'),
   ragKnowledgeBaseBinaryVector: z.boolean().default(false),
   queryDecompositionEnabled: z.boolean().default(false),
   rerankingModelId: z.string().nullish(),
