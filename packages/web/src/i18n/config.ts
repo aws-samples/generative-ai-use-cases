@@ -14,6 +14,7 @@ import yaml from 'js-yaml';
 export const supportedLngs = {
   en: 'English',
   ja: '日本語',
+  th: 'ไทย',
   // zh: '中文',
   // ko: '한국어',
 };
