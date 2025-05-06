@@ -1387,7 +1387,7 @@ exports[`GenerativeAiUseCases matches the snapshot 3`] = `
         },
         "AutoPrepare": true,
         "Description": "Code Interpreter",
-        "FoundationModel": "anthropic.claude-3-sonnet-20240229-v1:0",
+        "FoundationModel": "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
         "IdleSessionTTLInSeconds": 3600,
         "Instruction": "You are an advanced AI agent with the ability to execute code, generate charts, and perform complex data analysis. 
 Your main function is to solve problems and meet user requests by utilizing these capabilities.

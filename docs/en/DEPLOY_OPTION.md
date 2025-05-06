@@ -916,8 +916,14 @@ const envs: Record<string, Partial<StackInput>> = {
       'apac.amazon.nova-micro-v1:0',
       { modelId: 'us.deepseek.r1-v1:0', region: 'us-east-1' },
       { modelId: 'us.writer.palmyra-x5-v1:0', region: 'us-west-2' },
-      { modelId: 'us.meta.llama4-maverick-17b-instruct-v1:0', region: 'us-east-1' },
-      { modelId: 'us.meta.llama4-scout-17b-instruct-v1:0', region: 'us-east-1' },
+      {
+        modelId: 'us.meta.llama4-maverick-17b-instruct-v1:0',
+        region: 'us-east-1',
+      },
+      {
+        modelId: 'us.meta.llama4-scout-17b-instruct-v1:0',
+        region: 'us-east-1',
+      },
       { modelId: 'us.mistral.pixtral-large-2502-v1:0', region: 'us-east-1' },
     ],
     imageGenerationModelIds: [
