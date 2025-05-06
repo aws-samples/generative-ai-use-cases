@@ -1790,6 +1790,7 @@ Principal の指定方法について詳細を確認したい場合はこちら�
       "Effect": "Allow",
       "Action": [
         "bedrock:InvokeModel*",
+        "bedrock:Rerank",
         "bedrock:GetInferenceProfile",
         "bedrock:GetAsyncInvoke",
         "bedrock:ListAsyncInvokes"

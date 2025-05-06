@@ -1781,6 +1781,7 @@ For details on how to specify Principals, refer to: [AWS JSON Policy Elements: P
       "Effect": "Allow",
       "Action": [
         "bedrock:InvokeModel*",
+        "bedrock:Rerank",
         "bedrock:GetInferenceProfile",
         "bedrock:GetAsyncInvoke",
         "bedrock:ListAsyncInvokes"
