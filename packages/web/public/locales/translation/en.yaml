@@ -528,9 +528,9 @@ landing:
         visible, please read that as well.
     web_content:
       url: 'https://aws.amazon.com/bedrock/'
-  title: AWS Generative AI Sample Application
+  title: AWS Generative AI Application
   try: Try it
-  try_message: This application is a sample application using AWS generative AI services.
+  try_message: This application is an application using AWS generative AI services.
   use_cases:
     agent_chat:
       description: >-
