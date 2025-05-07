@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { GetFileDownloadSignedUrlRequest } from 'generative-ai-use-cases';
-import { initKbS3Client } from './utils/bedrockClient';
+import { initKnowledgeBaseS3Client } from './utils/bedrockClient';
 
 const MODEL_REGION = process.env.MODEL_REGION as string;
 
@@ -15,7 +15,7 @@ export const handler = async (
     // We pass `s3Type` parameter since Knowledge Base may need to reference S3 in a different account
     const client =
       req.s3Type === 'knowledgeBase'
-        ? await initKbS3Client(req.region ?? MODEL_REGION)
+        ? await initKnowledgeBaseS3Client(req.region ?? MODEL_REGION)
         : new S3Client({ region: req.region });
     const command = new GetObjectCommand({
       Bucket: req.bucketName,
