@@ -1,7 +1,13 @@
 import { STSClient, AssumeRoleCommand, Credentials } from '@aws-sdk/client-sts';
-import { BedrockRuntimeClient } from '@aws-sdk/client-bedrock-runtime';
-import { BedrockAgentRuntimeClient } from '@aws-sdk/client-bedrock-agent-runtime';
-import { S3Client } from '@aws-sdk/client-s3';
+import {
+  BedrockRuntimeClient,
+  BedrockRuntimeClientConfig,
+} from '@aws-sdk/client-bedrock-runtime';
+import {
+  BedrockAgentRuntimeClient,
+  BedrockAgentRuntimeClientConfig,
+} from '@aws-sdk/client-bedrock-agent-runtime';
+import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
 
 // Temporary credentials for cross-account access
 const stsClient = new STSClient();
@@ -39,11 +45,10 @@ const isCredentialRefreshRequired = () => {
   );
 };
 
-// Get AWS client params for cross account access.
+// Get AWS credentials for cross account access.
 // Assume the specified role and check if the obtained temporary credentials are valid.
 // This allows access to AWS resources in a different AWS account.
-const getCrossAccountClientParams = async (
-  region: string,
+const getCrossAccountCredentials = async (
   crossAccountBedrockRoleArn: string
 ) => {
   // Get temporary credentials from STS and initialize the client
@@ -59,7 +64,6 @@ const getCrossAccountClientParams = async (
     throw new Error('The temporary credentials from STS are incomplete.');
   }
   return {
-    region,
     credentials: {
       accessKeyId: temporaryCredentials.AccessKeyId,
       secretAccessKey: temporaryCredentials.SecretAccessKey,
@@ -68,53 +72,59 @@ const getCrossAccountClientParams = async (
   };
 };
 
-export const initBedrockRuntimeClient = async (region: string) => {
+export const initBedrockRuntimeClient = async (
+  config: BedrockRuntimeClientConfig & { region: string }
+) => {
   // Use cross-account role
   if (process.env.CROSS_ACCOUNT_BEDROCK_ROLE_ARN) {
-    return new BedrockRuntimeClient(
-      await getCrossAccountClientParams(
-        region,
+    return new BedrockRuntimeClient({
+      ...(await getCrossAccountCredentials(
         process.env.CROSS_ACCOUNT_BEDROCK_ROLE_ARN
-      )
-    );
+      )),
+      ...config,
+    });
   }
   // Use Lambda execution role
   if (!bedrockRuntimeClient) {
-    bedrockRuntimeClient = new BedrockRuntimeClient({ region });
+    bedrockRuntimeClient = new BedrockRuntimeClient(config);
   }
   return bedrockRuntimeClient;
 };
 
-export const initBedrockAgentRuntimeClient = async (region: string) => {
+export const initBedrockAgentRuntimeClient = async (
+  config: BedrockAgentRuntimeClientConfig & { region: string }
+) => {
   // Use cross-account role
   if (process.env.CROSS_ACCOUNT_BEDROCK_ROLE_ARN) {
-    return new BedrockAgentRuntimeClient(
-      await getCrossAccountClientParams(
-        region,
+    return new BedrockAgentRuntimeClient({
+      ...(await getCrossAccountCredentials(
         process.env.CROSS_ACCOUNT_BEDROCK_ROLE_ARN
-      )
-    );
+      )),
+      ...config,
+    });
   }
   // Use Lambda execution role
   if (!bedrockAgentRuntimeClient) {
-    bedrockAgentRuntimeClient = new BedrockAgentRuntimeClient({ region });
+    bedrockAgentRuntimeClient = new BedrockAgentRuntimeClient(config);
   }
   return bedrockAgentRuntimeClient;
 };
 
-export const initKnowledgeBaseS3Client = async (region: string) => {
+export const initKnowledgeBaseS3Client = async (
+  config: S3ClientConfig & { region: string }
+) => {
   // Use cross-account role (to get pre-signed URLs for S3 objects in a different account)
   if (process.env.CROSS_ACCOUNT_BEDROCK_ROLE_ARN) {
-    return new S3Client(
-      await getCrossAccountClientParams(
-        region,
+    return new S3Client({
+      ...(await getCrossAccountCredentials(
         process.env.CROSS_ACCOUNT_BEDROCK_ROLE_ARN
-      )
-    );
+      )),
+      ...config,
+    });
   }
   // Use Lambda execution role
   if (!knowledgeBaseS3Client) {
-    knowledgeBaseS3Client = new S3Client({ region });
+    knowledgeBaseS3Client = new S3Client(config);
   }
   return knowledgeBaseS3Client;
 };

@@ -14,6 +14,7 @@ export interface SpeechToSpeechProps {
   readonly userPool: cognito.UserPool;
   readonly api: agw.RestApi;
   readonly speechToSpeechModelIds: ModelConfiguration[];
+  readonly crossAccountBedrockRoleArn?: string | null;
 }
 
 export class SpeechToSpeech extends Construct {
@@ -75,6 +76,7 @@ export class SpeechToSpeech extends Construct {
       environment: {
         EVENT_API_ENDPOINT: eventApiEndpoint,
         NAMESPACE: channelNamespaceName,
+        CROSS_ACCOUNT_BEDROCK_ROLE_ARN: props.crossAccountBedrockRoleArn ?? '',
       },
       bundling: {
         nodeModules: ['@aws-sdk/client-bedrock-runtime'],
@@ -85,13 +87,28 @@ export class SpeechToSpeech extends Construct {
     eventApi.grantConnect(speechToSpeechTask);
     namespace.grantPublishAndSubscribe(speechToSpeechTask);
 
-    speechToSpeechTask.role?.addToPrincipalPolicy(
-      new PolicyStatement({
+    if (!props.crossAccountBedrockRoleArn) {
+      speechToSpeechTask.role?.addToPrincipalPolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          resources: ['*'],
+          actions: ['bedrock:*'],
+        })
+      );
+    } else {
+      const logsPolicy = new PolicyStatement({
         effect: Effect.ALLOW,
+        actions: ['logs:*'],
         resources: ['*'],
-        actions: ['bedrock:*'],
-      })
-    );
+      });
+      const assumeRolePolicy = new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['sts:AssumeRole'],
+        resources: [props.crossAccountBedrockRoleArn],
+      });
+      speechToSpeechTask.role?.addToPrincipalPolicy(logsPolicy);
+      speechToSpeechTask.role?.addToPrincipalPolicy(assumeRolePolicy);
+    }
 
     const startSpeechToSpeechSession = new NodejsFunction(
       this,

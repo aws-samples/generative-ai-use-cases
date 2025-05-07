@@ -113,6 +113,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       api: api.api,
       userPool: auth.userPool,
       speechToSpeechModelIds: params.speechToSpeechModelIds,
+      crossAccountBedrockRoleArn: params.crossAccountBedrockRoleArn,
     });
 
     // Web Frontend

@@ -97,7 +97,7 @@ const createBodyVideo = (model: Model, params: GenerateVideoParams) => {
 const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
   invoke: async (model, messages, id) => {
     const region = model.region || MODEL_REGION;
-    const client = await initBedrockRuntimeClient(region);
+    const client = await initBedrockRuntimeClient({ region });
 
     const converseCommandInput = createConverseCommandInput(
       model,
@@ -111,7 +111,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
   },
   invokeStream: async function* (model, messages, id) {
     const region = model.region || MODEL_REGION;
-    const client = await initBedrockRuntimeClient(region);
+    const client = await initBedrockRuntimeClient({ region });
     try {
       const converseStreamCommandInput = createConverseStreamCommandInput(
         model,
@@ -174,7 +174,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
   },
   generateImage: async (model, params) => {
     const region = model.region || MODEL_REGION;
-    const client = await initBedrockRuntimeClient(region);
+    const client = await initBedrockRuntimeClient({ region });
 
     // Image generation using Stable Diffusion or Titan Image Generator is not supported for the Converse API, so InvokeModelCommand is used.
     const command = new InvokeModelCommand({
@@ -192,7 +192,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
       process.env.VIDEO_BUCKET_REGION_MAP ?? '{}'
     );
     const region = model.region || MODEL_REGION;
-    const client = await initBedrockRuntimeClient(region);
+    const client = await initBedrockRuntimeClient({ region });
     const tmpOutputBucket = videoBucketRegionMap[region];
 
     if (!tmpOutputBucket || tmpOutputBucket.length === 0) {

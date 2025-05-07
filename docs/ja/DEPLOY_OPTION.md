@@ -1787,6 +1787,7 @@ const envs: Record<string, Partial<StackInput>> = {
 - `GenerativeAiUseCasesStack-APIGenerateImageService`
 - `GenerativeAiUseCasesStack-APIGenerateVideoService`
 - `GenerativeAiUseCasesStack-APIListVideoJobsService`
+- `GenerativeAiUseCasesStack-SpeechToSpeechTaskService`
 - `GenerativeAiUseCasesStack-RagKnowledgeBaseRetrieve` (Knowledge Base 利用時のみ)
 - `GenerativeAiUseCasesStack-APIGetFileDownloadSigned` (Knowledge Base 利用時のみ)
 
@@ -1809,6 +1810,7 @@ Principal の指定方法について詳細を確認したい場合はこちら�
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateImageServiceXX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateVideoServiceXX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIListVideoJobsServiceXX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-SpeechToSpeechTaskService-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-RagKnowledgeBaseRetrieveX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGetFileDownloadSignedU-XXXXXXXXXXXX"
         ]

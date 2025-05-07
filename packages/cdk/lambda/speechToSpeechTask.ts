@@ -3,7 +3,6 @@ import { events, EventsChannel } from 'aws-amplify/data';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { randomUUID } from 'crypto';
 import {
-  BedrockRuntimeClient,
   InvokeModelWithBidirectionalStreamCommand,
   InvokeModelWithBidirectionalStreamInput,
   InvokeModelWithBidirectionalStreamCommandOutput,
@@ -15,8 +14,11 @@ import {
   SpeechToSpeechEvent,
   Model,
 } from 'generative-ai-use-cases';
+import { initBedrockRuntimeClient } from './utils/bedrockClient';
 
 Object.assign(global, { WebSocket: require('ws') });
+
+const MODEL_REGION = process.env.MODEL_REGION as string;
 
 const MAX_AUDIO_INPUT_QUEUE_SIZE = 200;
 const MIN_AUDIO_OUTPUT_QUEUE_SIZE = 10;
@@ -422,8 +424,8 @@ export const handler = async (event: { channelId: string; model: Model }) => {
 
     console.log('promptName', promptName);
 
-    const bedrock = new BedrockRuntimeClient({
-      region: event.model.region,
+    const bedrockRuntimeClient = await initBedrockRuntimeClient({
+      region: event.model.region ?? MODEL_REGION,
       requestHandler: new NodeHttp2Handler({
         requestTimeout: 300000,
         sessionTimeout: 300000,
@@ -514,7 +516,7 @@ export const handler = async (event: { channelId: string; model: Model }) => {
 
     console.log('Async iterator created');
 
-    const response = await bedrock.send(
+    const response = await bedrockRuntimeClient.send(
       new InvokeModelWithBidirectionalStreamCommand({
         modelId: event.model.modelId,
         body: asyncIterator,

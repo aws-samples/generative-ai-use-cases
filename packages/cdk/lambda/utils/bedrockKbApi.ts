@@ -166,7 +166,9 @@ const bedrockKbApi: ApiInterface = {
         },
       });
 
-      const client = await initBedrockAgentRuntimeClient(MODEL_REGION);
+      const client = await initBedrockAgentRuntimeClient({
+        region: MODEL_REGION,
+      });
       const res = await client.send(command);
 
       if (res.sessionId) {

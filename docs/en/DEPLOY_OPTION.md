@@ -1780,6 +1780,7 @@ To use Bedrock from a different AWS account, you need to create one IAM role in 
 - `GenerativeAiUseCasesStack-APIGenerateImageService`
 - `GenerativeAiUseCasesStack-APIGenerateVideoService`
 - `GenerativeAiUseCasesStack-APIListVideoJobsService`
+- `GenerativeAiUseCasesStack-SpeechToSpeechTaskService`
 - `GenerativeAiUseCasesStack-RagKnowledgeBaseRetrieve` (Only when using Knowledge Base)
 - `GenerativeAiUseCasesStack-APIGetFileDownloadSigned` (Only when using Knowledge Base)
 
@@ -1802,6 +1803,7 @@ For details on how to specify Principals, refer to: [AWS JSON Policy Elements: P
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateImageServiceXX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateVideoServiceXX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIListVideoJobsServiceXX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-SpeechToSpeechTaskService-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-RagKnowledgeBaseRetrieveX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGetFileDownloadSignedU-XXXXXXXXXXXX"
         ]

@@ -90,7 +90,7 @@ const checkAndUpdateJob = async (
   job: VideoJob
 ): Promise<'InProgress' | 'Completed' | 'Failed' | 'Finalizing'> => {
   try {
-    const client = await initBedrockRuntimeClient(job.region);
+    const client = await initBedrockRuntimeClient({ region: job.region });
     const command = new GetAsyncInvokeCommand({
       invocationArn: job.invocationArn,
     });

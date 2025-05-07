@@ -16512,6 +16512,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         },
         "Environment": {
           "Variables": {
+            "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
             "EVENT_API_ENDPOINT": {
               "Fn::Join": [
                 "",

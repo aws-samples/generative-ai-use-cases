@@ -15,7 +15,9 @@ export const handler = async (
     // We pass `s3Type` parameter since Knowledge Base may need to reference S3 in a different account
     const client =
       req.s3Type === 'knowledgeBase'
-        ? await initKnowledgeBaseS3Client(req.region ?? MODEL_REGION)
+        ? await initKnowledgeBaseS3Client({
+            region: req.region ?? MODEL_REGION,
+          })
         : new S3Client({ region: req.region });
     const command = new GetObjectCommand({
       Bucket: req.bucketName,

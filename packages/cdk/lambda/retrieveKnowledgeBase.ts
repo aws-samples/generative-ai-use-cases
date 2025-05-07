@@ -23,7 +23,7 @@ exports.handler = async (
     };
   }
 
-  const client = await initBedrockAgentRuntimeClient(MODEL_REGION);
+  const client = await initBedrockAgentRuntimeClient({ region: MODEL_REGION });
   const retrieveCommand = new RetrieveCommand({
     knowledgeBaseId: KNOWLEDGE_BASE_ID,
     retrievalQuery: { text: query },
