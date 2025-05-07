@@ -27,6 +27,9 @@ interface ImportMetaEnv {
   readonly VITE_APP_USE_CASE_BUILDER_ENABLED: string;
   readonly VITE_APP_OPTIMIZE_PROMPT_FUNCTION_ARN: string;
   readonly VITE_APP_HIDDEN_USE_CASES: string;
+  readonly VITE_APP_SPEECH_TO_SPEECH_NAMESPACE: string;
+  readonly VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT: string;
+  readonly VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS: string;
 }
 
 interface ImportMeta {

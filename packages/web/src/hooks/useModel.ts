@@ -57,6 +57,21 @@ const videoModelConfigs = (
 const videoGenModelIds: string[] = videoModelConfigs.map(
   (model) => model.modelId
 );
+const speechToSpeechModelConfigs = (
+  JSON.parse(
+    import.meta.env.VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS
+  ) as ModelConfiguration[]
+)
+  .map(
+    (model: ModelConfiguration): ModelConfiguration => ({
+      modelId: model.modelId.trim(),
+      region: model.region.trim(),
+    })
+  )
+  .filter((model) => model.modelId);
+const speechToSpeechModelIds: string[] = speechToSpeechModelConfigs.map(
+  (model) => model.modelId
+);
 
 const agentNames: string[] = JSON.parse(import.meta.env.VITE_APP_AGENT_NAMES)
   .map((name: string) => name.trim())
@@ -98,6 +113,16 @@ const imageGenModels = [
 ];
 const videoGenModels = [
   ...videoModelConfigs.map(
+    (model) =>
+      ({
+        modelId: model.modelId,
+        type: 'bedrock',
+        region: model.region,
+      }) as Model
+  ),
+];
+const speechToSpeechModels = [
+  ...speechToSpeechModelConfigs.map(
     (model) =>
       ({
         modelId: model.modelId,
@@ -148,4 +173,6 @@ export const MODELS = {
   searchAgent: searchAgent,
   flows,
   flowChatEnabled: flows.length > 0,
+  speechToSpeechModelIds: speechToSpeechModelIds,
+  speechToSpeechModels: speechToSpeechModels,
 };
