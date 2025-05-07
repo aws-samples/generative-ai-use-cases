@@ -118,7 +118,7 @@ export class Agent extends Construct {
         idleSessionTtlInSeconds: 3600,
         autoPrepare: true,
         description: 'Search Agent',
-        foundationModel: 'anthropic.claude-3-haiku-20240307-v1:0',
+        foundationModel: 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
         instruction: `You are an advanced assistant with the ability to search and retrieve information from the web to perform complex research tasks.
 Your main function is to solve problems and meet user requests by utilizing these capabilities.
 Your main characteristics and instructions are as follows.
