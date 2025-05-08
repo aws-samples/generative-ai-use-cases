@@ -530,7 +530,7 @@ landing:
       url: 'https://aws.amazon.com/bedrock/'
   title: AWS Generative AI Application
   try: Try it
-  try_message: This application is an application using AWS generative AI services.
+  try_message: This application is a web application using AWS generative AI services.
   use_cases:
     agent_chat:
       description: >-
