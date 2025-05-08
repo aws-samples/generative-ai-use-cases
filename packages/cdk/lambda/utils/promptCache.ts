@@ -22,10 +22,10 @@ const CACHE_POINT = {
 const getSupportedCacheFields = (modelId: string) => {
   // Remove CRI prifix
   const baseModelId = modelId.replace(/^(us|eu|apac)\./, '');
-  return SUPPORTED_CACHE_FIELDS[baseModelId] ?? [];
+  return SUPPORTED_CACHE_FIELDS[baseModelId] || [];
 };
 
-export const convertTextToContentBlock = (
+export const convertTextToContentBlocks = (
   text: string,
   modelId: string,
   field: PromptCacheField
@@ -80,7 +80,7 @@ export const applyAutoCacheToMessages = (
     return {
       ...message,
       content: [
-        ...(message.content ?? []),
+        ...(message.content || []),
         CACHE_POINT as ContentBlock.CachePointMember,
       ],
     };

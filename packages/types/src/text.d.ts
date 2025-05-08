@@ -5,8 +5,6 @@ export type ConverseInferenceParams = {
   stopSequences?: string[];
   temperature?: number;
   topP?: number;
-  // for prompt caching
-  promptCachingConfig?: PromptCachingConfig;
 };
 
 export type PromptCacheField = 'messages' | 'system' | 'tools';
@@ -15,7 +13,9 @@ export type PromptCachingConfig = {
 };
 
 export type UsecaseConverseInferenceParams = {
-  [key: string]: ConverseInferenceParams;
+  [key: string]:
+    | (ConverseInferenceParams & { promptCachingConfig?: PromptCachingConfig })
+    | undefined;
 };
 
 export type AdditionalModelRequestFields = {

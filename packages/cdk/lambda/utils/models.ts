@@ -30,7 +30,7 @@ import { modelFeatureFlags } from '@generative-ai-use-cases/common';
 import {
   applyAutoCacheToMessages,
   applyAutoCacheToSystem,
-  convertTextToContentBlock,
+  convertTextToContentBlocks,
 } from './promptCache';
 
 // Default Models
@@ -261,13 +261,13 @@ const createConverseCommandInput = (
   // Set the string passed in the system role to the system prompt
   const system = messages.find((message) => message.role === 'system');
   const systemContext: SystemContentBlock[] = system
-    ? convertTextToContentBlock(system.content, model.modelId, 'system')
+    ? convertTextToContentBlocks(system.content, model.modelId, 'system')
     : [];
 
   // Add the string of user role and assistant role other than the system role to the conversation
   messages = messages.filter((message) => message.role !== 'system');
   const conversation = messages.map((message) => {
-    const contentBlocks: ContentBlock[] = convertTextToContentBlock(
+    const contentBlocks: ContentBlock[] = convertTextToContentBlocks(
       message.content,
       model.modelId,
       'messages'
@@ -330,12 +330,11 @@ const createConverseCommandInput = (
   });
 
   // Get usecase-specific parameters
-  const usecaseParams: ConverseInferenceParams | undefined =
-    usecaseConverseInferenceParams[normalizeId(id)];
+  const { promptCachingConfig, ...usecaseParams } =
+    usecaseConverseInferenceParams[normalizeId(id)] || {};
 
   // Apply prompt caching
-  const autoCacheFields =
-    usecaseParams?.promptCachingConfig?.autoCacheFields ?? [];
+  const autoCacheFields = promptCachingConfig?.autoCacheFields || [];
   const conversationWithCache = autoCacheFields.includes('messages')
     ? applyAutoCacheToMessages(conversation, model.modelId)
     : conversation;
@@ -353,8 +352,8 @@ const createConverseCommandInput = (
     modelId: model.modelId,
     messages: conversationWithCache,
     system: systemContextWithCache,
-    inferenceConfig: inferenceConfig,
-    guardrailConfig: guardrailConfig,
+    inferenceConfig,
+    guardrailConfig,
   };
 
   if (
