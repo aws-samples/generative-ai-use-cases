@@ -194,20 +194,11 @@ const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
   '/chat': {
     promptCachingConfig: { autoCacheFields: ['system', 'messages'] },
   },
-  '/generate': {
-    promptCachingConfig: { autoCacheFields: ['system'] },
-  },
-  '/summarize': {
-    promptCachingConfig: { autoCacheFields: ['system'] },
-  },
-  '/web-content': {
-    promptCachingConfig: { autoCacheFields: ['system'] },
-  },
-  '/writer': {
-    promptCachingConfig: { autoCacheFields: ['system'] },
-  },
   '/rag': {
     temperature: 0.0,
+  },
+  '/diagram': {
+    promptCachingConfig: { autoCacheFields: ['system'] },
   },
 };
 
