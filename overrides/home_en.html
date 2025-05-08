@@ -1,0 +1,596 @@
+<!--
+  Based on https://github.com/squidfunk/mkdocs-material/blob/master/src/overrides/home.html
+-->
+
+{% extends "main.html" %}
+
+<!-- Render hero under tabs -->
+{% block tabs %} {{ super() }}
+
+<!-- Additional styles for landing page -->
+<style>
+  /* Application header should be static for the landing page */
+  .md-header {
+    position: initial;
+  }
+
+  /* Remove spacing, as we cannot hide it completely */
+  .md-main__inner {
+    margin: 0;
+  }
+
+  /* Hide main content for now */
+  .md-content {
+    display: none;
+  }
+
+  /* Hide table of contents */
+  @media screen and (min-width: 60em) {
+    .md-sidebar--secondary {
+      display: none;
+    }
+  }
+
+  /* Hide navigation */
+  @media screen and (min-width: 76.25em) {
+    .md-sidebar--primary {
+      display: none;
+    }
+  }
+</style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+<header
+  class="bg-gradient-to-r from-gray-900 to-cyan-700 pb-20 pt-32 text-white">
+  <div class="container mx-auto px-6">
+    <div class="flex flex-col items-center gap-10 md:flex-row">
+      <div class="mb-10 md:mb-0 md:w-1/2">
+        <h1 class="mb-6 text-4xl font-bold md:text-6xl">
+          Generative AI Use Cases (GenU)
+        </h1>
+        <p class="mb-8 text-xl">
+          A collection of business use cases for using generative AI safely
+        </p>
+        <div class="flex gap-4">
+          <a
+            href="ABOUT.html"
+            class="inline-flex items-center rounded-full bg-orange-500 px-8 py-3 text-sm hover:bg-orange-600">
+            Get Started
+          </a>
+          <a
+            href="https://github.com/aws-samples/generative-ai-use-cases"
+            class="inline-flex items-center rounded-full border border-orange-500 px-8 py-3 text-sm text-orange-500 hover:bg-orange-600 hover:text-white">
+            <i class="fab fa-github mr-2"></i>GitHub
+          </a>
+        </div>
+      </div>
+      <div class="md:w-1/2">
+        <img
+          src="../assets/images/sc_lp_en.png"
+          alt="GenU Screenshot"
+          class="rounded-lg shadow-xl" />
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="features" class="py-20">
+  <div class="container mx-auto px-6">
+    <h2 class="mb-16 text-center text-3xl font-bold">Main Features</h2>
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-3">
+      <div class="text-center">
+        <div
+          class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
+          <i class="fas fa-robot text-2xl text-orange-500"></i>
+        </div>
+        <h3 class="mb-4 text-xl font-semibold">Multiple Use Cases</h3>
+        <p class="text-sm text-gray-600">
+          Chat, RAG, text generation, and more, covering various business
+          scenarios
+        </p>
+      </div>
+      <div class="text-center">
+        <div
+          class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
+          <i class="fas fa-shield-alt text-2xl text-orange-500"></i>
+        </div>
+        <h3 class="mb-4 text-xl font-semibold">Secure Implementation</h3>
+        <p class="text-sm text-gray-600">
+          Secure AI use base using Amazon Bedrock
+        </p>
+      </div>
+      <div class="text-center">
+        <div
+          class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
+          <i class="fas fa-code text-2xl text-orange-500"></i>
+        </div>
+        <h3 class="mb-4 text-xl font-semibold">Customizable</h3>
+        <p class="text-sm text-gray-600">
+          Add custom features with the use case builder
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="usecases" class="bg-gray-50 py-20">
+  <div class="container mx-auto px-6">
+    <h2 class="mb-16 text-center text-3xl font-bold">Use Cases</h2>
+    <div class="swiper usecase-swiper">
+      <div class="swiper-wrapper pb-10">
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_chat.gif"
+              alt="Chat"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Chat</h3>
+            <p class="text-sm text-gray-600">
+              Large language models (LLM) can interact with each other in a chat
+              format. Thanks to the platform that allows LLM to directly
+              interact with each other, we can quickly respond to new use cases
+              and detailed use cases. It is also effective as a verification
+              environment for prompt engineering.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_usecase_builder.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Use Case Builder</h3>
+            <p class="text-sm text-gray-600">
+              This feature allows you to create your own use cases by describing
+              prompt templates in natural language. Since the use case screen is
+              automatically generated from the prompt template, there is no need
+              to change code or customize it.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_rag.gif"
+              alt="RAG Chat"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">RAG Chat</h3>
+            <p class="text-sm text-gray-600">
+              RAG is a technique that allows LLM to generate answers based on
+              evidence by providing the latest information or domain knowledge
+              that LLM is not good at. For example, if you pass in internal
+              documents to LLM, you can automate internal inquiries. This
+              repository uses Amazon Kendra or Knowledge Bases to get
+              information.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_agent.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Agent Chat</h3>
+            <p class="text-sm text-gray-600">
+              Agent is a technique that allows LLM to perform various tasks by
+              connecting to API. This solution implements an Agent that searches
+              for and answers necessary information using a search engine as a
+              sample implementation.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_flow_chat.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Flow Chat</h3>
+            <p class="text-sm text-gray-600">
+              Amazon Bedrock Flows allows you to create workflows by connecting
+              prompts, foundation models, and other AWS services. The Flow chat
+              use case allows you to use a chat that selects and executes a
+              pre-created flow.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_voice_chat.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Voice Chat</h3>
+            <p class="text-sm text-gray-600">
+              In Voice Chat, you can have a bidirectional voice chat with
+              generative AI. Similar to natural conversation, you can also
+              interrupt and speak while the AI is talking. Also, by setting a
+              system prompt, you can have voice conversations with AI that has
+              specific roles.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_summarize.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Summarize</h3>
+            <p class="text-sm text-gray-600">
+              LLM is good at summarizing large amounts of text. Not only can it
+              summarize text, but it can also retrieve necessary information in
+              an interactive form by providing the text as context. For example,
+              you can retrieve information such as "What are the conditions for
+              XXX?" and "What is the amount for YYY?" by reading a contract.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_writer.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Writing</h3>
+            <p class="text-sm text-gray-600">
+              LLM can assist with writing and proofreading articles. In addition
+              to checking for typos and errors, it can suggest improvements in
+              the flow and content of the article, and provide an objective view
+              from a more neutral perspective. It is expected to improve the
+              quality by checking points that the user may not have noticed
+              themselves before showing it to others.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_translate.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Translation</h3>
+            <p class="text-sm text-gray-600">
+              LLM that has learned multiple languages can also translate. In
+              addition to just translating, it is possible to reflect various
+              specified context information such as casualness and target layer
+              into translation. For example, if you translate a contract, you
+              can translate it into multiple languages.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_web_content.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Web Content Extraction</h3>
+            <p class="text-sm text-gray-600">
+              LLM can extract web content such as blogs and documents. It
+              removes unnecessary information and formats it as a complete
+              article. The extracted content can be used in other use cases such
+              as summarizing and translating.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_generate_image.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Image Generation</h3>
+            <p class="text-sm text-gray-600">
+              LLM can generate images based on text and images. It can help you
+              visualize your ideas and improve your design work.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_generate_video.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Video Generation</h3>
+            <p class="text-sm text-gray-600">
+              LLM can generate videos based on text. It can help you visualize
+              your ideas and improve your design work.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_video_analyzer.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Video Analysis</h3>
+            <p class="text-sm text-gray-600">
+              LLM can analyze videos by inputting not only text but also images.
+              This feature allows you to analyze videos by inputting the image
+              frames and text as input.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_generate_diagram.gif"
+              alt="Diagram Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Diagram Generation</h3>
+            <p class="text-sm text-gray-600">
+              LLM can generate diagrams such as flowcharts, sequence diagrams,
+              and mind maps from natural language descriptions, documents, and
+              code. It can help you visualize complex relationships and
+              understand them more efficiently.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<section id="customers" class="py-20">
+  <div class="container mx-auto px-6">
+    <h2 class="mb-16 text-center text-3xl font-bold">Customers</h2>
+    <div class="swiper customer-swiper">
+      <div class="swiper-wrapper pb-10">
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/yasashii-te/">
+            <img
+              src="../assets/images/cases/yasashiite_logo.png"
+              alt="やさしい手"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU helped us achieve value-added to users and improved the
+              efficiency of our employees. We will continue to evolve from
+              "Sukisuku to Wakuwaku" as our employees' "everyday work" becomes
+              more enjoyable.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/takihyo/">
+            <img
+              src="../assets/images/cases/TAKIHYO_logo.png"
+              alt="タキヒヨー"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU helped us achieve value-added to users and improved the
+              efficiency of our employees. We will continue to evolve from
+              "Sukisuku to Wakuwaku" as our employees' "everyday work" becomes
+              more enjoyable.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/salsonido_case.png">
+            <img
+              src="../assets/images/cases/salsonido_logo.png"
+              alt="サルソニード"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU helped us achieve value-added to users and improved the
+              efficiency of our employees. We will continue to evolve from
+              "Sukisuku to Wakuwaku" as our employees' "everyday work" becomes
+              more enjoyable.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/tamura-ss_case.png">
+            <img
+              src="../assets/images/cases/tamura-ss_logo.png"
+              alt="タムラ製作所"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              The application samples published by AWS on Github are rich in
+              immediately testable functions, so it was easy to select the
+              functions that fit our needs, and we were able to shorten the
+              development time of the final system.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/jdsc_case.png">
+            <img
+              src="../assets/images/cases/jdsc_logo.png"
+              alt="JDSC"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Bedrock allows us to use data securely and LLM. In
+              addition, we were able to improve speed and accuracy while
+              reducing costs by switching to the optimal model for our needs.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://cloudpack.jp/casestudy/302.html?_gl=1*17hkazh*_gcl_au*ODA5MDk3NzI0LjE3MTM0MTQ2MDU">
+            <img
+              src="../assets/images/cases/iret_logo.png"
+              alt="アイレット株式会社"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              To accumulate and systematize the knowledge of the company for the
+              use of generative AI, we developed a use case site using the
+              Generative AI Use Cases published by AWS. The company Iret
+              supported the design, construction, and development of this
+              project.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/idealog_case.png">
+            <img
+              src="../assets/images/cases/idealog_logo.jpg"
+              alt="アイデアログ"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              We feel that we can improve business efficiency even more than
+              traditional generative AI tools. Since we are using Amazon
+              Bedrock, we are also secure in terms of security.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/estyle_case.png">
+            <img
+              src="../assets/images/cases/estyle_logo.png"
+              alt="エスタイル"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU helped us build a generative AI environment in a short period
+              of time and promote knowledge sharing within the company.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/meidensha_case.png">
+            <img
+              src="../assets/images/cases/meidensha_logo.svg"
+              alt="明電舎"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Bedrock and Amazon Kendra allowed us to build a generative
+              AI environment quickly and securely. We are also contributing to
+              improving the efficiency of our employees by automatically
+              generating meeting minutes and searching for internal information.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/st-grp_case.png">
+            <img
+              src="../assets/images/cases/st-grp_logo.jpg"
+              alt="三協立山株式会社"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Kendra allowed us to quickly search for information buried
+              in the company. GenU helped us quickly provide the features we
+              wanted, such as automatically generating meeting minutes.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/oisix/">
+            <img
+              src="../assets/images/cases/oisixradaichi_logo.png"
+              alt="オイシックス・ラ・大地株式会社"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU helped us structure resources, project structure, external
+              support, and talent development. This helped us understand the
+              image of generative AI in the company.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/san-a/">
+            <img
+              src="../assets/images/cases/san-a_logo.png"
+              alt="株式会社サンエー"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Bedrock helped us accelerate the migration of our
+              company-specific environment to the cloud.
+            </p>
+          </a>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  new Swiper('.usecase-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+
+  new Swiper('.customer-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+</script>
+
+<footer class="text-center text-gray-600">
+  このページは、GenU summit-2024
+  ブランチのウェブサイト作成ユースケースで作成されました。
+</footer>
+
+{% endblock %}
+
+<!-- Content -->
+{% block content %}{% endblock %}
