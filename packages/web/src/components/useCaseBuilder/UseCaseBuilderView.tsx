@@ -280,6 +280,14 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
       }
     }
 
+    for (const item of items) {
+      if (item.label != item.label.trim()) {
+        tmpErrorMessages.push(
+          t('useCaseBuilder.error.spaces_in_label', {label: item.label})
+        );
+      }
+    }
+
     for (const item of selectItems) {
       if (!item.options || item.options.length === 0) {
         tmpErrorMessages.push(t('useCaseBuilder.error.missing_select_options'));
@@ -291,6 +299,16 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
           tmpErrorMessages.push(
             t('useCaseBuilder.error.empty_select_options', {
               label: item.label,
+            })
+          );
+        }
+
+        // Check for options with leading/trailing spaces
+        const spacedOptions = options.filter((o) => o !== o.trim());
+        if (spacedOptions.length > 0) {
+          tmpErrorMessages.push(
+            t('useCaseBuilder.error.spaces_in_value', {
+              label: item.label
             })
           );
         }
