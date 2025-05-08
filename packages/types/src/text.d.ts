@@ -11,10 +11,15 @@ export type UsecaseConverseInferenceParams = {
   [key: string]: ConverseInferenceParams;
 };
 
+export type PromptCacheField = 'messages' | 'system' | 'tools';
+
 export type AdditionalModelRequestFields = {
   reasoningConfig?: {
     type: 'enabled' | 'disabled';
     budgetTokens?: number;
+  };
+  promptCacheConfig?: {
+    autoCacheFields: PromptCacheField[];
   };
 };
 

@@ -24,8 +24,14 @@ import {
   ConverseStreamOutput,
   ConversationRole,
   ContentBlock,
+  SystemContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
 import { modelFeatureFlags } from '@generative-ai-use-cases/common';
+import {
+  applyAutoCacheToMessages,
+  applyAutoCacheToSystem,
+  convertTextToContentBlock,
+} from './promptCache';
 
 // Default Models
 
@@ -248,14 +254,18 @@ const createConverseCommandInput = (
 ) => {
   // Set the string passed in the system role to the system prompt
   const system = messages.find((message) => message.role === 'system');
-  const systemContext = system ? [{ text: system.content }] : [];
+  const systemContext: SystemContentBlock[] = system
+    ? convertTextToContentBlock(system.content, model.modelId, 'system')
+    : [];
 
   // Add the string of user role and assistant role other than the system role to the conversation
   messages = messages.filter((message) => message.role !== 'system');
   const conversation = messages.map((message) => {
-    const contentBlocks: ContentBlock[] = [
-      { text: message.content } as ContentBlock.TextMember,
-    ];
+    const contentBlocks: ContentBlock[] = convertTextToContentBlock(
+      message.content,
+      model.modelId,
+      'messages'
+    );
 
     if (message.extraData) {
       message.extraData.forEach((extra) => {
@@ -313,6 +323,16 @@ const createConverseCommandInput = (
     };
   });
 
+  // Apply prompt caching
+  const autoCacheFields =
+    model.modelParameters?.promptCacheConfig?.autoCacheFields ?? [];
+  const conversationWithCache = autoCacheFields.includes('messages')
+    ? applyAutoCacheToMessages(conversation, model.modelId)
+    : conversation;
+  const systemContextWithCache = autoCacheFields.includes('system')
+    ? applyAutoCacheToSystem(systemContext, model.modelId)
+    : systemContext;
+
   const usecaseParams = usecaseConverseInferenceParams[normalizeId(id)];
   const inferenceConfig = usecaseParams
     ? { ...defaultConverseInferenceParams, ...usecaseParams }
@@ -322,8 +342,8 @@ const createConverseCommandInput = (
 
   const converseCommandInput: ConverseCommandInput = {
     modelId: model.modelId,
-    messages: conversation,
-    system: systemContext,
+    messages: conversationWithCache,
+    system: systemContextWithCache,
     inferenceConfig: inferenceConfig,
     guardrailConfig: guardrailConfig,
   };
