@@ -493,9 +493,10 @@ export class Api extends Construct {
       timeout: Duration.minutes(15),
       environment: {
         TABLE_NAME: table.tableName,
+        BUCKET_NAME: fileBucket.bucketName,
       },
     });
-    table.grantWriteData(createMessagesFunction);
+    table.grantReadWriteData(createMessagesFunction);
 
     const updateChatTitleFunction = new NodejsFunction(
       this,
@@ -549,7 +550,7 @@ export class Api extends Construct {
         TABLE_NAME: table.tableName,
       },
     });
-    table.grantWriteData(updateFeedbackFunction);
+    table.grantReadWriteData(updateFeedbackFunction);
 
     const getWebTextFunction = new NodejsFunction(this, 'GetWebText', {
       runtime: Runtime.NODEJS_LATEST,
@@ -565,7 +566,7 @@ export class Api extends Construct {
         TABLE_NAME: table.tableName,
       },
     });
-    table.grantWriteData(createShareId);
+    table.grantReadWriteData(createShareId);
 
     const getSharedChat = new NodejsFunction(this, 'GetSharedChat', {
       runtime: Runtime.NODEJS_LATEST,
