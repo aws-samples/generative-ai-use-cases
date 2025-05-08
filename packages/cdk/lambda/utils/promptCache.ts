@@ -41,7 +41,7 @@ export const convertTextToContentBlock = (
       // Map string to the content block
       .map((text) => ({ text }))
       // Insert cachePoint between text blocks
-      .flatMap((block, index) => (index !== 0 ? [block, CACHE_POINT] : [block]))
+      .flatMap((block, index) => (index === 0 ? [block] : [CACHE_POINT, block]))
       // Remove empty text blocks
       .filter((block) => block.text === undefined || block.text.trim() !== '')
   );

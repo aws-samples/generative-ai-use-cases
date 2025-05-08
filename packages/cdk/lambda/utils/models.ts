@@ -191,6 +191,21 @@ const PALMYRA_DEFAULT_PARAMS: ConverseInferenceParams = {
 };
 
 const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
+  '/chat': {
+    promptCachingConfig: { autoCacheFields: ['system', 'messages'] },
+  },
+  '/generate': {
+    promptCachingConfig: { autoCacheFields: ['system'] },
+  },
+  '/summarize': {
+    promptCachingConfig: { autoCacheFields: ['system'] },
+  },
+  '/web-content': {
+    promptCachingConfig: { autoCacheFields: ['system'] },
+  },
+  '/writer': {
+    promptCachingConfig: { autoCacheFields: ['system'] },
+  },
   '/rag': {
     temperature: 0.0,
   },
@@ -323,9 +338,13 @@ const createConverseCommandInput = (
     };
   });
 
+  // Get usecase-specific parameters
+  const usecaseParams: ConverseInferenceParams | undefined =
+    usecaseConverseInferenceParams[normalizeId(id)];
+
   // Apply prompt caching
   const autoCacheFields =
-    model.modelParameters?.promptCacheConfig?.autoCacheFields ?? [];
+    usecaseParams?.promptCachingConfig?.autoCacheFields ?? [];
   const conversationWithCache = autoCacheFields.includes('messages')
     ? applyAutoCacheToMessages(conversation, model.modelId)
     : conversation;
@@ -333,7 +352,6 @@ const createConverseCommandInput = (
     ? applyAutoCacheToSystem(systemContext, model.modelId)
     : systemContext;
 
-  const usecaseParams = usecaseConverseInferenceParams[normalizeId(id)];
   const inferenceConfig = usecaseParams
     ? { ...defaultConverseInferenceParams, ...usecaseParams }
     : defaultConverseInferenceParams;

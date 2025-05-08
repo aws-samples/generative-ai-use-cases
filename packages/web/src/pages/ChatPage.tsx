@@ -154,9 +154,7 @@ const ChatPage: React.FC = () => {
   }, [modelId]);
   const [overrideModelParameters, setOverrideModelParameters] = useState<
     AdditionalModelRequestFields | undefined
-  >({
-    promptCacheConfig: { autoCacheFields: ['system', 'messages'] },
-  });
+  >(undefined);
   const [showSetting, setShowSetting] = useState(false);
   const { t } = useTranslation();
 

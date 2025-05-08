@@ -727,6 +727,8 @@ useCaseBuilder:
     rag_knowledge_base_not_enabled: >-
       プロンプトテンプレート内で {{retrieveKnowledgeBase}} が指定されていますが GenU で RAG チャット
       (Knowledge Base) が有効になっていません。
+    too_many_cache_points: >-
+      キャッシュポイントの数が制限を超えています。{{cachePoint}} プレースホルダーの数を減らしてください。
   favorites: お気に入り
   fileUploadDescription: 添付可能なファイルはモデルによって異なります
   fileUploadDisabled: ファイルは添付できません

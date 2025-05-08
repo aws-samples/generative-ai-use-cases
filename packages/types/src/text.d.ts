@@ -5,21 +5,23 @@ export type ConverseInferenceParams = {
   stopSequences?: string[];
   temperature?: number;
   topP?: number;
+  // for prompt caching
+  promptCachingConfig?: PromptCachingConfig;
+};
+
+export type PromptCacheField = 'messages' | 'system' | 'tools';
+export type PromptCachingConfig = {
+  autoCacheFields: PromptCacheField[];
 };
 
 export type UsecaseConverseInferenceParams = {
   [key: string]: ConverseInferenceParams;
 };
 
-export type PromptCacheField = 'messages' | 'system' | 'tools';
-
 export type AdditionalModelRequestFields = {
   reasoningConfig?: {
     type: 'enabled' | 'disabled';
     budgetTokens?: number;
-  };
-  promptCacheConfig?: {
-    autoCacheFields: PromptCacheField[];
   };
 };
 
