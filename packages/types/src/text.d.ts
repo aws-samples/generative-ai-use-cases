@@ -7,8 +7,15 @@ export type ConverseInferenceParams = {
   topP?: number;
 };
 
+export type PromptCacheField = 'messages' | 'system' | 'tools';
+export type PromptCachingConfig = {
+  autoCacheFields: PromptCacheField[];
+};
+
 export type UsecaseConverseInferenceParams = {
-  [key: string]: ConverseInferenceParams;
+  [key: string]:
+    | (ConverseInferenceParams & { promptCachingConfig?: PromptCachingConfig })
+    | undefined;
 };
 
 export type AdditionalModelRequestFields = {

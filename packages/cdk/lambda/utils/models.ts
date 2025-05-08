@@ -24,8 +24,14 @@ import {
   ConverseStreamOutput,
   ConversationRole,
   ContentBlock,
+  SystemContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
 import { modelFeatureFlags } from '@generative-ai-use-cases/common';
+import {
+  applyAutoCacheToMessages,
+  applyAutoCacheToSystem,
+  convertTextToContentBlocks,
+} from './promptCache';
 
 // Default Models
 
@@ -185,8 +191,14 @@ const PALMYRA_DEFAULT_PARAMS: ConverseInferenceParams = {
 };
 
 const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
+  '/chat': {
+    promptCachingConfig: { autoCacheFields: ['system', 'messages'] },
+  },
   '/rag': {
     temperature: 0.0,
+  },
+  '/diagram': {
+    promptCachingConfig: { autoCacheFields: ['system'] },
   },
 };
 
@@ -248,14 +260,18 @@ const createConverseCommandInput = (
 ) => {
   // Set the string passed in the system role to the system prompt
   const system = messages.find((message) => message.role === 'system');
-  const systemContext = system ? [{ text: system.content }] : [];
+  const systemContext: SystemContentBlock[] = system
+    ? convertTextToContentBlocks(system.content, model.modelId, 'system')
+    : [];
 
   // Add the string of user role and assistant role other than the system role to the conversation
   messages = messages.filter((message) => message.role !== 'system');
   const conversation = messages.map((message) => {
-    const contentBlocks: ContentBlock[] = [
-      { text: message.content } as ContentBlock.TextMember,
-    ];
+    const contentBlocks: ContentBlock[] = convertTextToContentBlocks(
+      message.content,
+      model.modelId,
+      'messages'
+    );
 
     if (message.extraData) {
       message.extraData.forEach((extra) => {
@@ -313,7 +329,19 @@ const createConverseCommandInput = (
     };
   });
 
-  const usecaseParams = usecaseConverseInferenceParams[normalizeId(id)];
+  // Get usecase-specific parameters
+  const { promptCachingConfig, ...usecaseParams } =
+    usecaseConverseInferenceParams[normalizeId(id)] || {};
+
+  // Apply prompt caching
+  const autoCacheFields = promptCachingConfig?.autoCacheFields || [];
+  const conversationWithCache = autoCacheFields.includes('messages')
+    ? applyAutoCacheToMessages(conversation, model.modelId)
+    : conversation;
+  const systemContextWithCache = autoCacheFields.includes('system')
+    ? applyAutoCacheToSystem(systemContext, model.modelId)
+    : systemContext;
+
   const inferenceConfig = usecaseParams
     ? { ...defaultConverseInferenceParams, ...usecaseParams }
     : defaultConverseInferenceParams;
@@ -322,10 +350,10 @@ const createConverseCommandInput = (
 
   const converseCommandInput: ConverseCommandInput = {
     modelId: model.modelId,
-    messages: conversation,
-    system: systemContext,
-    inferenceConfig: inferenceConfig,
-    guardrailConfig: guardrailConfig,
+    messages: conversationWithCache,
+    system: systemContextWithCache,
+    inferenceConfig,
+    guardrailConfig,
   };
 
   if (
