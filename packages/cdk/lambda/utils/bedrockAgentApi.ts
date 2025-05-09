@@ -1,10 +1,8 @@
 import {
-  BedrockAgentClient,
   GetAgentAliasCommand,
   ListAgentActionGroupsCommand,
 } from '@aws-sdk/client-bedrock-agent';
 import {
-  BedrockAgentRuntimeClient,
   DependencyFailedException,
   InvokeAgentCommand,
   Parameter,
@@ -22,13 +20,12 @@ import {
   BraveSearchResult,
 } from 'generative-ai-use-cases';
 import { streamingChunk } from './streamingChunk';
+import {
+  initBedrockAgentClient,
+  initBedrockAgentRuntimeClient,
+} from './bedrockClient';
 
-const agentClient = new BedrockAgentClient({
-  region: process.env.MODEL_REGION,
-});
-const agentRuntimeClient = new BedrockAgentRuntimeClient({
-  region: process.env.MODEL_REGION,
-});
+const MODEL_REGION = process.env.MODEL_REGION as string;
 const s3Client = new S3Client({});
 
 // Agent information
@@ -64,8 +61,11 @@ const encodeUrlString = (str: string): string => {
 const getAgentInfo = async (agentId: string, agentAliasId: string) => {
   // Get Agent Info if not cached
   if (!agentInfoMap[agentAliasId]) {
+    const bedrockAgentClient = await initBedrockAgentClient({
+      region: MODEL_REGION,
+    });
     // Get Agent Version
-    const agentAliasInfoRes = await agentClient.send(
+    const agentAliasInfoRes = await bedrockAgentClient.send(
       new GetAgentAliasCommand({
         agentId: agentId,
         agentAliasId: agentAliasId,
@@ -75,7 +75,7 @@ const getAgentInfo = async (agentId: string, agentAliasId: string) => {
       agentAliasInfoRes.agentAlias?.routingConfiguration?.pop()?.agentVersion ??
       '1';
     // List Action Group
-    const actionGroups = await agentClient.send(
+    const actionGroups = await bedrockAgentClient.send(
       new ListAgentActionGroupsCommand({
         agentId: agentId,
         agentVersion: agentVersion,
@@ -129,7 +129,11 @@ const bedrockAgentApi: ApiInterface = {
         enableTrace: true,
         inputText: messages[messages.length - 1].content,
       });
-      const res = await agentRuntimeClient.send(command);
+
+      const bedrockAgentRuntimeClient = await initBedrockAgentRuntimeClient({
+        region: MODEL_REGION,
+      });
+      const res = await bedrockAgentRuntimeClient.send(command);
 
       if (!res.completion) {
         return;

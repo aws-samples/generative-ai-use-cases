@@ -8,6 +8,10 @@ import {
   BedrockAgentRuntimeClientConfig,
 } from '@aws-sdk/client-bedrock-agent-runtime';
 import { S3Client, S3ClientConfig } from '@aws-sdk/client-s3';
+import {
+  BedrockAgentClient,
+  BedrockAgentClientConfig,
+} from '@aws-sdk/client-bedrock-agent';
 
 // Temporary credentials for cross-account access
 const stsClient = new STSClient();
@@ -15,6 +19,7 @@ let temporaryCredentials: Credentials | undefined;
 
 // Store Bedrock clients
 let bedrockRuntimeClient: BedrockRuntimeClient | undefined;
+let bedrockAgentClient: BedrockAgentClient | undefined;
 let bedrockAgentRuntimeClient: BedrockAgentRuntimeClient | undefined;
 let knowledgeBaseS3Client: S3Client | undefined;
 
@@ -89,6 +94,25 @@ export const initBedrockRuntimeClient = async (
     bedrockRuntimeClient = new BedrockRuntimeClient(config);
   }
   return bedrockRuntimeClient;
+};
+
+export const initBedrockAgentClient = async (
+  config: BedrockAgentClientConfig & { region: string }
+) => {
+  // Use cross-account role
+  if (process.env.CROSS_ACCOUNT_BEDROCK_ROLE_ARN) {
+    return new BedrockAgentClient({
+      ...(await getCrossAccountCredentials(
+        process.env.CROSS_ACCOUNT_BEDROCK_ROLE_ARN
+      )),
+      ...config,
+    });
+  }
+  // Use Lambda execution role
+  if (!bedrockAgentClient) {
+    bedrockAgentClient = new BedrockAgentClient(config);
+  }
+  return bedrockAgentClient;
 };
 
 export const initBedrockAgentRuntimeClient = async (

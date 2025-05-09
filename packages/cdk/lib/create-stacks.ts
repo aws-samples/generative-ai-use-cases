@@ -52,16 +52,29 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
       : null;
 
   // Agent
-  const agentStack = params.agentEnabled
-    ? new AgentStack(app, `WebSearchAgentStack${params.env}`, {
-        env: {
-          account: params.account,
-          region: params.modelRegion,
-        },
-        params: params,
-        crossRegionReferences: true,
-      })
-    : null;
+  if (params.crossAccountBedrockRoleArn && params.agentEnabled) {
+    if (params.searchApiKey) {
+      throw new Error(
+        'When `agentEnabled` is set to true with cross-account configuration, the `searchApiKey` parameter is not supported. Please create agents in the other account and specify them in the `agents` parameter.'
+      );
+    }
+    if (params.agents.length === 0) {
+      throw new Error(
+        'When `agentEnabled` is set to true with cross-account configuration, the `agents` parameter must be specified.'
+      );
+    }
+  }
+  const agentStack =
+    params.agentEnabled && !params.crossAccountBedrockRoleArn
+      ? new AgentStack(app, `WebSearchAgentStack${params.env}`, {
+          env: {
+            account: params.account,
+            region: params.modelRegion,
+          },
+          params: params,
+          crossRegionReferences: true,
+        })
+      : null;
 
   // Guardrail
   const guardrail = params.guardrailEnabled
