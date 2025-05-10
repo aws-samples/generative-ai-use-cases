@@ -17,6 +17,7 @@ import {
   UpdateCommand,
   BatchWriteCommand,
   TransactWriteCommand,
+  QueryCommandOutput,
 } from '@aws-sdk/lib-dynamodb';
 import * as crypto from 'crypto';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
@@ -35,32 +36,30 @@ const getUserIdFromKey = (key: string): string => {
   return key.split('#').slice(1).join('#');
 };
 
+// Create a query command to get use case by useCaseId
+const createFindUseCaseByUseCaseIdCommand = (useCaseId: string) =>
+  new QueryCommand({
+    TableName: USECASE_TABLE_NAME,
+    IndexName: USECASE_ID_INDEX_NAME,
+    KeyConditionExpression:
+      '#useCaseId = :useCaseId and begins_with(#dataType, :dataTypePrefix)',
+    ExpressionAttributeNames: {
+      '#useCaseId': 'useCaseId',
+      '#dataType': 'dataType',
+    },
+    ExpressionAttributeValues: {
+      ':useCaseId': useCaseId,
+      ':dataTypePrefix': 'useCase',
+    },
+  });
+
 // Get use case by useCaseId
 const innerFindUseCaseByUseCaseId = async (
   useCaseId: string
 ): Promise<UseCaseInTable | null> => {
-  const useCaseInTable = await dynamoDbDocument.send(
-    new QueryCommand({
-      TableName: USECASE_TABLE_NAME,
-      IndexName: USECASE_ID_INDEX_NAME,
-      KeyConditionExpression:
-        '#useCaseId = :useCaseId and begins_with(#dataType, :dataTypePrefix)',
-      ExpressionAttributeNames: {
-        '#useCaseId': 'useCaseId',
-        '#dataType': 'dataType',
-      },
-      ExpressionAttributeValues: {
-        ':useCaseId': useCaseId,
-        ':dataTypePrefix': 'useCase',
-      },
-    })
-  );
-
-  if (useCaseInTable.Items && useCaseInTable.Items.length > 0) {
-    return useCaseInTable.Items[0] as UseCaseInTable;
-  } else {
-    return null;
-  }
+  const command = createFindUseCaseByUseCaseIdCommand(useCaseId);
+  const useCaseInTable = await dynamoDbDocument.send(command);
+  return (useCaseInTable.Items?.[0] as UseCaseInTable) || null;
 };
 
 // Get use case list by userId
@@ -104,17 +103,16 @@ const innerFindUseCasesByUserId = async (
 const innerFindUseCasesByUseCaseIds = async (
   useCaseIds: string[]
 ): Promise<UseCaseInTable[]> => {
-  const useCasesInTable: UseCaseInTable[] = [];
-
-  for (const useCaseId of useCaseIds) {
-    const useCaseInTable = await innerFindUseCaseByUseCaseId(useCaseId);
-
-    if (useCaseInTable) {
-      useCasesInTable.push(useCaseInTable);
-    }
-  }
-
-  return useCasesInTable;
+  // Run multiple queries in parallel
+  const useCasesInTable: QueryCommandOutput[] = await Promise.all(
+    useCaseIds.map((useCaseId) =>
+      dynamoDb.send(createFindUseCaseByUseCaseIdCommand(useCaseId))
+    )
+  );
+  return useCasesInTable.flatMap(
+    (useCaseInTable) =>
+      (useCaseInTable.Items?.slice(0, 1) || []) as UseCaseInTable[]
+  );
 };
 
 // Get list of specific data type (favorite, recently used) by userId (all)
