@@ -24,6 +24,8 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
 const USECASE_TABLE_NAME: string = process.env.USECASE_TABLE_NAME!;
 const USECASE_ID_INDEX_NAME: string = process.env.USECASE_ID_INDEX_NAME!;
+const USE_CASE_COMPACT_ATTRIBUTES =
+  'id,dataType,useCaseId,title,description,isShared';
 const dynamoDb = new DynamoDBClient({});
 const dynamoDbDocument = DynamoDBDocumentClient.from(dynamoDb);
 
@@ -37,7 +39,10 @@ const getUserIdFromKey = (key: string): string => {
 };
 
 // Create a query command to get use case by useCaseId
-const createFindUseCaseByUseCaseIdCommand = (useCaseId: string) =>
+const createFindUseCaseByUseCaseIdCommand = (
+  useCaseId: string,
+  projectionExpression?: string
+) =>
   new QueryCommand({
     TableName: USECASE_TABLE_NAME,
     IndexName: USECASE_ID_INDEX_NAME,
@@ -51,6 +56,7 @@ const createFindUseCaseByUseCaseIdCommand = (useCaseId: string) =>
       ':useCaseId': useCaseId,
       ':dataTypePrefix': 'useCase',
     },
+    ProjectionExpression: projectionExpression,
   });
 
 // Get use case by useCaseId
@@ -65,7 +71,8 @@ const innerFindUseCaseByUseCaseId = async (
 // Get use case list by userId
 const innerFindUseCasesByUserId = async (
   userId: string,
-  _exclusiveStartKey?: string
+  _exclusiveStartKey?: string,
+  projectionExpression?: string
 ): Promise<{ useCases: UseCaseInTable[]; lastEvaluatedKey?: string }> => {
   const exclusiveStartKey = _exclusiveStartKey
     ? JSON.parse(Buffer.from(_exclusiveStartKey, 'base64').toString())
@@ -86,6 +93,7 @@ const innerFindUseCasesByUserId = async (
       ScanIndexForward: false,
       Limit: 30, // Number of my use cases per page
       ExclusiveStartKey: exclusiveStartKey,
+      ProjectionExpression: projectionExpression,
     })
   );
 
@@ -101,12 +109,15 @@ const innerFindUseCasesByUserId = async (
 
 // Get use case list from useCaseId array
 const innerFindUseCasesByUseCaseIds = async (
-  useCaseIds: string[]
+  useCaseIds: string[],
+  projectionExpression?: string
 ): Promise<UseCaseInTable[]> => {
   // Run multiple queries in parallel
   const useCasesInTable: QueryCommandOutput[] = await Promise.all(
     useCaseIds.map((useCaseId) =>
-      dynamoDb.send(createFindUseCaseByUseCaseIdCommand(useCaseId))
+      dynamoDb.send(
+        createFindUseCaseByUseCaseIdCommand(useCaseId, projectionExpression)
+      )
     )
   );
   return useCasesInTable.flatMap(
@@ -270,7 +281,11 @@ export const listUseCases = async (
   exclusiveStartKey?: string
 ): Promise<ListUseCasesResponse> => {
   const { useCases: useCasesInTable, lastEvaluatedKey } =
-    await innerFindUseCasesByUserId(userId, exclusiveStartKey);
+    await innerFindUseCasesByUserId(
+      userId,
+      exclusiveStartKey,
+      USE_CASE_COMPACT_ATTRIBUTES
+    );
 
   const favorites = await innerFindCommonsByUserIdAndDataType(
     userId,
@@ -387,7 +402,10 @@ export const listFavoriteUseCases = async (
       exclusiveStartKey
     );
   const useCaseIds = commons.map((c) => c.useCaseId);
-  const useCasesInTable = await innerFindUseCasesByUseCaseIds(useCaseIds);
+  const useCasesInTable = await innerFindUseCasesByUseCaseIds(
+    useCaseIds,
+    USE_CASE_COMPACT_ATTRIBUTES
+  );
   const useCasesAsOutput: UseCaseAsOutput[] = useCasesInTable.map((u) => {
     return {
       ...u,
@@ -497,18 +515,13 @@ export const listRecentlyUsedUseCases = async (
       exclusiveStartKey
     );
   const useCaseIds = commons.map((c) => c.useCaseId);
-  const useCasesInTable = await innerFindUseCasesByUseCaseIds(useCaseIds);
-
-  const favorites = await innerFindCommonsByUserIdAndDataType(
-    userId,
-    'favorite'
+  const useCasesInTable = await innerFindUseCasesByUseCaseIds(
+    useCaseIds,
+    USE_CASE_COMPACT_ATTRIBUTES
   );
-  const favoritesUseCaseIds = favorites.map((f) => f.useCaseId);
-
   const useCasesAsOutput: UseCaseAsOutput[] = useCasesInTable.map((u) => {
     return {
       ...u,
-      isFavorite: favoritesUseCaseIds.includes(u.useCaseId),
       isMyUseCase: getUserIdFromKey(u.id) === userId,
     };
   });

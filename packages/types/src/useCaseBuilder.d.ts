@@ -31,7 +31,7 @@ export type UseCaseInTable = UseCaseCommon &
 // Content returned to Frontend
 // isFavorite, isMyUseCase are dynamically added
 export type UseCaseAsOutput = UseCaseInTable & {
-  isFavorite: boolean;
+  isFavorite?: boolean;
   isMyUseCase: boolean;
 };
 
