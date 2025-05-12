@@ -17635,6 +17635,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
         },
         "Handler": "index.handler",
+        "MemorySize": 256,
         "Role": {
           "Fn::GetAtt": [
             "UseCaseBuilderGetUseCaseServiceRoleF32AAC5F",
@@ -17753,6 +17754,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
         },
         "Handler": "index.handler",
+        "MemorySize": 512,
         "Role": {
           "Fn::GetAtt": [
             "UseCaseBuilderListFavoriteUseCasesServiceRole5BCFD9A7",
@@ -17871,6 +17873,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
         },
         "Handler": "index.handler",
+        "MemorySize": 512,
         "Role": {
           "Fn::GetAtt": [
             "UseCaseBuilderListRecentlyUsedUseCasesServiceRole977F8D35",
@@ -17989,6 +17992,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
         },
         "Handler": "index.handler",
+        "MemorySize": 512,
         "Role": {
           "Fn::GetAtt": [
             "UseCaseBuilderListUseCasesServiceRoleDE660444",
