@@ -14,7 +14,6 @@ export const SUPPORTED_TYPES: string[] = [
   'retrieveKendra',
   'retrieveKnowledgeBase',
   'select',
-  'cachePoint',
 ];
 
 export const TEXT_FORM_TYPES: string[] = ['text', 'form', 'select'];
@@ -64,7 +63,6 @@ export const getItemsFromPlaceholders = (
       .filter((item) => SUPPORTED_TYPES.includes(item.inputType))
       .filter(
         (elem, idx, self) =>
-          elem.inputType === 'cachePoint' || // label is not considered for cachePoint
           self.findIndex(
             (e) => e.inputType === elem.inputType && e.label === elem.label
           ) === idx

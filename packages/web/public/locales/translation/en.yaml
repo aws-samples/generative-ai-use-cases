@@ -850,9 +850,6 @@ useCaseBuilder:
     rag_knowledge_base_not_enabled: >-
       {{retrieveKnowledgeBase}} is specified in the prompt template, but RAG
       Chat (Knowledge Base) is not enabled in GenU.
-    too_many_cache_points: >-
-      The number of cache points exceeds the limit. Please reduce the number of
-      {{cachePoint}} placeholders.
   favorites: Favorites
   fileUploadDescription: Users can upload files for the LLM to reference the content.
   fileUploadDisabled: Disable file upload

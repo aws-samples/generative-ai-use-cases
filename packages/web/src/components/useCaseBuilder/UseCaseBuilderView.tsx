@@ -236,7 +236,6 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
   }, [messages]);
 
   useEffect(() => {
-    const cachePointItems = items.filter((i) => i.inputType === 'cachePoint');
     const retrieveKendraItems = items.filter(
       (i) => i.inputType === 'retrieveKendra'
     );
@@ -246,10 +245,6 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
     const hasKendra = retrieveKendraItems.length > 0;
     const hasKnowledgeBase = retrieveKnowledgeBaseItems.length > 0;
     const tmpErrorMessages = [];
-
-    if (cachePointItems.length > 4) {
-      tmpErrorMessages.push(t('useCaseBuilder.error.too_many_cache_points'));
-    }
 
     if (hasKendra && !ragEnabled) {
       tmpErrorMessages.push(t('useCaseBuilder.error.rag_kendra_not_enabled'));
@@ -333,10 +328,6 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
     setText('');
 
     let prompt = props.promptTemplate;
-
-    // Remove the label from the cache point placeholder.
-    // '{{cachePoint}}' will be replaced with the cache point in the backend.
-    prompt = prompt.replace(/{{cachePoint:[^}]*}}/g, '{{cachePoint}}');
 
     for (const textFormItem of textFormItems) {
       const sameLabelItems = items.filter(

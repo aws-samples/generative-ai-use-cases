@@ -24,13 +24,11 @@ import {
   ConverseStreamOutput,
   ConversationRole,
   ContentBlock,
-  SystemContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
 import { modelFeatureFlags } from '@generative-ai-use-cases/common';
 import {
   applyAutoCacheToMessages,
   applyAutoCacheToSystem,
-  convertTextToContentBlocks,
 } from './promptCache';
 
 // Default Models
@@ -260,18 +258,14 @@ const createConverseCommandInput = (
 ) => {
   // Set the string passed in the system role to the system prompt
   const system = messages.find((message) => message.role === 'system');
-  const systemContext: SystemContentBlock[] = system
-    ? convertTextToContentBlocks(system.content, model.modelId, 'system')
-    : [];
+  const systemContext = system ? [{ text: system.content }] : [];
 
   // Add the string of user role and assistant role other than the system role to the conversation
   messages = messages.filter((message) => message.role !== 'system');
   const conversation = messages.map((message) => {
-    const contentBlocks: ContentBlock[] = convertTextToContentBlocks(
-      message.content,
-      model.modelId,
-      'messages'
-    );
+    const contentBlocks: ContentBlock[] = [
+      { text: message.content } as ContentBlock.TextMember,
+    ];
 
     if (message.extraData) {
       message.extraData.forEach((extra) => {

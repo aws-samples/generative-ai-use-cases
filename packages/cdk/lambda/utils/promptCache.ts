@@ -14,7 +14,6 @@ const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
   'amazon.nova-micro-v1:0': ['messages', 'system'],
 };
 
-const CACHE_POINT_PLACEHOLDER = '{{cachePoint}}';
 const CACHE_POINT = {
   cachePoint: { type: 'default' },
 } as ContentBlock.CachePointMember | SystemContentBlock.CachePointMember;
@@ -23,28 +22,6 @@ const getSupportedCacheFields = (modelId: string) => {
   // Remove CRI prifix
   const baseModelId = modelId.replace(/^(us|eu|apac)\./, '');
   return SUPPORTED_CACHE_FIELDS[baseModelId] || [];
-};
-
-export const convertTextToContentBlocks = (
-  text: string,
-  modelId: string,
-  field: PromptCacheField
-) => {
-  // Ignore the placeholder if caching is not supported for the field
-  if (!getSupportedCacheFields(modelId).includes(field)) {
-    return [{ text: text.replace(CACHE_POINT_PLACEHOLDER, '') }];
-  }
-  // Split the prompt by the placeholder
-  const texts = text.split(CACHE_POINT_PLACEHOLDER);
-  return (
-    texts
-      // Map string to the content block
-      .map((text) => ({ text }))
-      // Insert cachePoint between text blocks
-      .flatMap((block, index) => (index === 0 ? [block] : [CACHE_POINT, block]))
-      // Remove empty text blocks
-      .filter((block) => block.text === undefined || block.text.trim() !== '')
-  );
 };
 
 export const applyAutoCacheToMessages = (

@@ -743,8 +743,6 @@ useCaseBuilder:
       {{retrieveKendra}} ถูกระบุใน prompt template แต่ RAG Chat (Amazon Kendra) ไม่ได้เปิดใช้งานใน GenU
     rag_knowledge_base_not_enabled: >-
       {{retrieveKnowledgeBase}} ถูกระบุใน prompt template แต่ RAG Chat (Knowledge Base) ไม่ได้เปิดใช้งานใน GenU
-    too_many_cache_points: >-
-      จำนวนจุดแคชเกินขีดจำกัด โปรดลดจำนวนตัวยึดตำแหน่ง {{cachePoint}}
   favorites: รายการโปรด
   fileUploadDescription: ผู้ใช้สามารถอัปโหลดไฟล์เพื่อให้ LLM อ้างอิงเนื้อหา
   fileUploadDisabled: ปิดใช้งานการอัปโหลดไฟล์
