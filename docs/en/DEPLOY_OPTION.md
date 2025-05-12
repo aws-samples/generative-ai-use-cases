@@ -1875,7 +1875,6 @@ When using Knowledge Base, you'll need to include these additional parameters:
 
 When using Agent Chat use case, you'll need to include these additional parameters:
 
-- `agentEnabled` ... Set to `true` to enable Agent Chat
 - `agents` ... a list of Bedrock Agent configurations, which has following properties:
   - `displayName` ... Display name of the agent
   - `agentId` ... Agent ID created in advance in the different account
@@ -1893,7 +1892,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseEnabled: true,
     ragKnowledgeBaseId: 'YOUR_KNOWLEDGE_BASE_ID',
     // Only when using agents
-    agentEnabled: true,
     agents: [
       {
         displayName: 'YOUR AGENT NAME',
@@ -1916,7 +1914,6 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseEnabled": true,
     "ragKnowledgeBaseId": "YOUR_KNOWLEDGE_BASE_ID",
     // Only when using agents
-    "agentEnabled": true,
     "agents": [
       {
         "displayName": "YOUR AGENT NAME",

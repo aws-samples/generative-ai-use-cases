@@ -1882,7 +1882,6 @@ Knowledge Base を利用する場合は、下記パラメーターも指定し�
 
 Agent Chat ユースケースを使用する場合、下記パラメーターも指定します。
 
-- `agentEnabled` ... Agent Chat を有効化する場合は `true` とします
 - `agents` ... 以下の属性を持つ Bedrock Agent の設定のリストです
   - `displayName` ... エージェントの表示名
   - `agentId` ... 別アカウントに事前構築したエージェントの ID
@@ -1900,7 +1899,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseEnabled: true,
     ragKnowledgeBaseId: 'YOUR_KNOWLEDGE_BASE_ID',
     // Bedrock エージェントを利用する場合のみ
-    agentEnabled: true,
     agents: [
       {
         displayName: 'YOUR AGENT NAME',
@@ -1923,7 +1921,6 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseEnabled": true,
     "ragKnowledgeBaseId": "YOUR_KNOWLEDGE_BASE_ID",
     // Bedrock エージェントを利用する場合のみ
-    "agentEnabled": true,
     "agents": [
       {
         "displayName": "YOUR AGENT NAME",
