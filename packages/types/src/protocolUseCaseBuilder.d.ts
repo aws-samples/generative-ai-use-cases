@@ -13,7 +13,7 @@ export type ListRecentlyUsedUseCasesResponse = Pagination<UseCaseAsOutput>;
 export type GetUseCaseResponse = UseCaseAsOutput;
 
 export type CreateUseCaseRequest = UseCaseContent;
-export type CreateUseCaseRespose = UseCaseAsOutput;
+export type CreateUseCaseResponse = UseCaseAsOutput;
 
 export type UpdateUseCaseRequest = UseCaseContent;
 

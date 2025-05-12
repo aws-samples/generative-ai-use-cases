@@ -1,6 +1,6 @@
 import {
   CreateUseCaseRequest,
-  CreateUseCaseRespose,
+  CreateUseCaseResponse,
   GetUseCaseResponse,
   ListFavoriteUseCasesResponse,
   ListRecentlyUsedUseCasesResponse,
@@ -62,7 +62,7 @@ const useUseCaseBuilderApi = () => {
     },
     createUseCase: async (params: CreateUseCaseRequest) => {
       return http
-        .post<CreateUseCaseRespose, CreateUseCaseRequest>('/usecases', params)
+        .post<CreateUseCaseResponse, CreateUseCaseRequest>('/usecases', params)
         .then((res) => {
           return res.data;
         });
