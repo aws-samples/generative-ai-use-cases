@@ -1,4 +1,4 @@
-import { FeatureFlags } from 'generative-ai-use-cases';
+import { FeatureFlags, PromptCacheField } from 'generative-ai-use-cases';
 
 // Manage Model Feature
 // https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference-supported-models-features.html
@@ -214,3 +214,13 @@ export const BEDROCK_RERANKING_MODELS = Object.keys(modelFeatureFlags).filter(
 export const BEDROCK_SPEECH_TO_SPEECH_MODELS = Object.keys(
   modelFeatureFlags
 ).filter((model) => modelFeatureFlags[model].speechToSpeech);
+
+// Prompt caching
+// https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html
+export const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
+  'anthropic.claude-3-7-sonnet-20250219-v1:0': ['messages', 'system', 'tools'],
+  'anthropic.claude-3-5-haiku-20241022-v1:0': ['messages', 'system', 'tools'],
+  'amazon.nova-pro-v1:0': ['messages', 'system'],
+  'amazon.nova-lite-v1:0': ['messages', 'system'],
+  'amazon.nova-micro-v1:0': ['messages', 'system'],
+};
