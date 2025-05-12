@@ -52,6 +52,13 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
       : null;
 
   // Agent
+  if (params.crossAccountBedrockRoleArn) {
+    if (params.agentEnabled || params.searchApiKey) {
+      throw new Error(
+        'When `crossAccountBedrockRoleArn` is specified, the `agentEnabled` and `searchApiKey` parameters are not supported. Please create agents in the other account and specify them in the `agents` parameter.'
+      );
+    }
+  }
   const agentStack = params.agentEnabled
     ? new AgentStack(app, `WebSearchAgentStack${params.env}`, {
         env: {

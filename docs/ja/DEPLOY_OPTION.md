@@ -1775,7 +1775,7 @@ const envs: Record<string, Partial<StackInput>> = {
 ## 別 AWS アカウントの Bedrock を利用したい場合
 
 > [!NOTE]
-> Agent 系のタスク (Agent, Flow, プロンプト最適化ツール) に関しては別 AWS アカウントの利用をサポートしていないため、実行時にエラーになる可能性があります。
+> 「Flow チャットユースケース」および「プロンプト最適化ツール」は別 AWS アカウントの利用をサポートしていないため、実行時にエラーになる可能性があります。
 
 別 AWS アカウントの Bedrock を利用することができます。前提条件として、GenU の初回デプロイは完了済みとします。
 
@@ -1834,11 +1834,13 @@ Principal の指定方法について詳細を確認したい場合はこちら�
       "Sid": "AllowBedrockInvokeModel",
       "Effect": "Allow",
       "Action": [
-        "bedrock:InvokeModel*",
+        "bedrock:Invoke*",
         "bedrock:Rerank",
         "bedrock:GetInferenceProfile",
         "bedrock:GetAsyncInvoke",
-        "bedrock:ListAsyncInvokes"
+        "bedrock:ListAsyncInvokes",
+        "bedrock:GetAgent*",
+        "bedrock:ListAgent*"
       ],
       "Resource": ["*"]
     },
@@ -1878,6 +1880,13 @@ Knowledge Base を利用する場合は、下記パラメーターも指定し�
 - `ragKnowledgeBaseId` ... 別アカウントに事前構築した Knowledge Base の ID です
   - Knowledge Base は `modelRegion` に存在する必要があります
 
+Agent Chat ユースケースを使用する場合、下記パラメーターも指定します。
+
+- `agents` ... 以下の属性を持つ Bedrock Agent の設定のリストです
+  - `displayName` ... エージェントの表示名
+  - `agentId` ... 別アカウントに事前構築したエージェントの ID
+  - `aliasId` ... 別アカウントに事前構築したエージェントのエイリアス ID
+
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
 ```typescript
@@ -1886,8 +1895,17 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     crossAccountBedrockRoleArn:
       'arn:aws:iam::アカウントID:role/事前に作成したロール名',
-    ragKnowledgeBaseEnabled: true, // Knowledge Base を利用する場合のみ
-    ragKnowledgeBaseId: 'XXXXXXXXXX', // Knowledge Base を利用する場合のみ
+    // Knowledge Base を利用する場合のみ
+    ragKnowledgeBaseEnabled: true,
+    ragKnowledgeBaseId: 'YOUR_KNOWLEDGE_BASE_ID',
+    // Bedrock エージェントを利用する場合のみ
+    agents: [
+      {
+        displayName: 'YOUR AGENT NAME',
+        agentId: 'YOUR_AGENT_ID',
+        aliasId: 'YOUR_AGENT_ALIAS_ID',
+      },
+    ],
   },
 };
 ```
@@ -1899,8 +1917,17 @@ const envs: Record<string, Partial<StackInput>> = {
 {
   "context": {
     "crossAccountBedrockRoleArn": "arn:aws:iam::アカウントID:role/事前に作成したロール名",
-    "ragKnowledgeBaseEnabled": true, // Knowledge Base を利用する場合のみ
-    "ragKnowledgeBaseId": "XXXXXXXXXX" // Knowledge Base を利用する場合のみ
+    // Knowledge Base を利用する場合のみ
+    "ragKnowledgeBaseEnabled": true,
+    "ragKnowledgeBaseId": "YOUR_KNOWLEDGE_BASE_ID",
+    // Bedrock エージェントを利用する場合のみ
+    "agents": [
+      {
+        "displayName": "YOUR AGENT NAME",
+        "agentId": "YOUR_AGENT_ID",
+        "aliasId": "YOUR_AGENT_ALIAS_ID"
+      }
+    ]
   }
 }
 ```
