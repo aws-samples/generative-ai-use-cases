@@ -84,7 +84,7 @@ npm run cdk:deploy
 const envs: Record<string, Partial<StackInput>> = {
   dev: {
     ragEnabled: true,
-    kendraIndexLanguage: 'jp',
+    kendraIndexLanguage: 'ja',
   },
 };
 ```
@@ -96,7 +96,7 @@ const envs: Record<string, Partial<StackInput>> = {
 {
   "context": {
     "ragEnabled": true,
-    "kendraIndexLanguage": "jp"
+    "kendraIndexLanguage": "ja"
   }
 }
 ```
