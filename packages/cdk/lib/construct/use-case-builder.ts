@@ -86,7 +86,7 @@ export class UseCaseBuilder extends Construct {
 
     const getUseCaseFunction = new NodejsFunction(this, 'GetUseCase', {
       ...commonProperty,
-      memorySize: 256,
+      memorySize: 512,
       entry: `${commonPath}/getUseCase.ts`,
     });
     useCaseBuilderTable.grantReadData(getUseCaseFunction);
