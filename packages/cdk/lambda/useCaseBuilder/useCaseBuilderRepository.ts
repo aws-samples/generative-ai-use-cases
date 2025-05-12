@@ -497,18 +497,19 @@ export const listRecentlyUsedUseCases = async (
       exclusiveStartKey
     );
   const useCaseIds = commons.map((c) => c.useCaseId);
-  const useCasesInTable = await innerFindUseCasesByUseCaseIds(useCaseIds);
 
-  const favorites = await innerFindCommonsByUserIdAndDataType(
-    userId,
-    'favorite'
-  );
-  const favoritesUseCaseIds = favorites.map((f) => f.useCaseId);
+  const [useCasesInTable, favorites] = await Promise.all([
+    // List user's use cases
+    innerFindUseCasesByUseCaseIds(useCaseIds),
+    // List user's favorites
+    innerFindCommonsByUserIdAndDataType(userId, 'favorite'),
+  ]);
+  const favoritesUseCaseIds = new Set(favorites.map((f) => f.useCaseId));
 
   const useCasesAsOutput: UseCaseAsOutput[] = useCasesInTable.map((u) => {
     return {
       ...u,
-      isFavorite: favoritesUseCaseIds.includes(u.useCaseId),
+      isFavorite: favoritesUseCaseIds.has(u.useCaseId),
       isMyUseCase: getUserIdFromKey(u.id) === userId,
     };
   });
