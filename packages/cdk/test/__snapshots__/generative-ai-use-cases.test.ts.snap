@@ -17635,7 +17635,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
         },
         "Handler": "index.handler",
-        "MemorySize": 256,
+        "MemorySize": 512,
         "Role": {
           "Fn::GetAtt": [
             "UseCaseBuilderGetUseCaseServiceRoleF32AAC5F",
