@@ -16,7 +16,11 @@ const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
 
 const CACHE_POINT = {
   cachePoint: { type: 'default' },
-} as ContentBlock.CachePointMember | SystemContentBlock.CachePointMember;
+} as ContentBlock.CachePointMember;
+
+const SYSTEM_CACHE_POINT = {
+  cachePoint: { type: 'default' },
+} as SystemContentBlock.CachePointMember;
 
 const getSupportedCacheFields = (modelId: string) => {
   // Remove CRI prifix
@@ -56,10 +60,7 @@ export const applyAutoCacheToMessages = (
     }
     return {
       ...message,
-      content: [
-        ...(message.content || []),
-        CACHE_POINT as ContentBlock.CachePointMember,
-      ],
+      content: [...(message.content || []), CACHE_POINT],
     };
   });
 };
@@ -76,5 +77,5 @@ export const applyAutoCacheToSystem = (
   ) {
     return system;
   }
-  return [...system, CACHE_POINT as SystemContentBlock.CachePointMember];
+  return [...system, SYSTEM_CACHE_POINT];
 };
