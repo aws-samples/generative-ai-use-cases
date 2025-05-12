@@ -209,6 +209,7 @@ Please generate a query following the <Query generation steps></Query generation
 * Do not use the suffixes "About 〜", "Tell me about 〜", "Explain 〜" in the query.
 * If there is no output query, output "No Query".
 * Output only the generated query. Do not output any other text. There are no exceptions.
+* Automatically detect the language of the user's request and think and answer in the same language.
 </Query generation steps>
 
 <Query history>
