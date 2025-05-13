@@ -14,7 +14,7 @@ const SYSTEM_CACHE_POINT = {
 } as SystemContentBlock.CachePointMember;
 
 const getSupportedCacheFields = (modelId: string) => {
-  // Remove CRI prifix
+  // Remove CRI prefix
   const baseModelId = modelId.replace(/^(us|eu|apac)\./, '');
   return SUPPORTED_CACHE_FIELDS[baseModelId] || [];
 };
