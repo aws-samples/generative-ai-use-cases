@@ -16335,6 +16335,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
             "ApiId",
           ],
         },
+        "HandlerConfigs": {},
         "Name": "speech-to-speech",
       },
       "Type": "AWS::AppSync::ChannelNamespace",
