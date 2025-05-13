@@ -1,21 +1,20 @@
 // ConverseAPI
-// https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html#API_runtime_Converse_RequestSyntax
-export type ConverseInferenceParams = {
-  maxTokens?: number;
-  stopSequences?: string[];
-  temperature?: number;
-  topP?: number;
-};
+
+import { InferenceConfiguration } from '@aws-sdk/client-bedrock-runtime';
 
 export type PromptCacheField = 'messages' | 'system' | 'tools';
 export type PromptCachingConfig = {
   autoCacheFields: PromptCacheField[];
 };
 
+// https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html#API_runtime_Converse_RequestSyntax
+export type ConverseInferenceParams = {
+  inferenceConfig?: InferenceConfiguration;
+  promptCachingConfig?: PromptCachingConfig;
+};
+
 export type UsecaseConverseInferenceParams = {
-  [key: string]:
-    | (ConverseInferenceParams & { promptCachingConfig?: PromptCachingConfig })
-    | undefined;
+  [key: string]: ConverseInferenceParams;
 };
 
 export type AdditionalModelRequestFields = {
