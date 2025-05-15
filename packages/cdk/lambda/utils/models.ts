@@ -232,7 +232,13 @@ const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
     promptCachingConfig: {
       autoCacheFields: {
         system: false,
-        messages: true,
+      },
+    },
+  },
+  '/rag-knowledge-base': {
+    promptCachingConfig: {
+      autoCacheFields: {
+        system: false,
       },
     },
   },
@@ -240,6 +246,13 @@ const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
     promptCachingConfig: {
       autoCacheFields: {
         system: true,
+      },
+    },
+  },
+  '/use-case-builder': {
+    promptCachingConfig: {
+      autoCacheFields: {
+        messages: false,
       },
     },
   },
@@ -282,6 +295,11 @@ const createGuardrailStreamConfig = ():
 const idTransformationRules = [
   // Chat history -> Chat
   { pattern: /^\/chat\/.+/, replacement: '/chat' },
+  // Use case builder (/new and /execute/*)
+  {
+    pattern: /^\/use-case-builder\/.+/,
+    replacement: '/use-case-builder',
+  },
 ];
 
 // ID conversion
