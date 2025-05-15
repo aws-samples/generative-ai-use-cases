@@ -191,7 +191,7 @@ const NOVA_DEFAULT_PARAMS: ConverseInferenceParams = {
     temperature: 0.7,
     topP: 0.9,
   },
-  // There are no additional costs for cache writes with Amazon Nova models.
+  // There are no additional costs for cache writes with Amazon Nova models
   promptCachingConfig: {
     autoCacheFields: {
       system: true,
@@ -229,13 +229,6 @@ const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
     inferenceConfig: {
       temperature: 0.0,
     },
-    promptCachingConfig: {
-      autoCacheFields: {
-        system: false,
-      },
-    },
-  },
-  '/rag-knowledge-base': {
     promptCachingConfig: {
       autoCacheFields: {
         system: false,
