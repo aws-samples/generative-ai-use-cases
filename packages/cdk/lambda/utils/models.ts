@@ -25,6 +25,7 @@ import {
   ConversationRole,
   ContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
+import deepmerge from 'deepmerge';
 import { modelFeatureFlags } from '@generative-ai-use-cases/common';
 import {
   applyAutoCacheToMessages,
@@ -190,6 +191,13 @@ const NOVA_DEFAULT_PARAMS: ConverseInferenceParams = {
     temperature: 0.7,
     topP: 0.9,
   },
+  // There are no additional costs for cache writes with Amazon Nova models.
+  promptCachingConfig: {
+    autoCacheFields: {
+      system: true,
+      messages: true,
+    },
+  },
 };
 
 const DEEPSEEK_DEFAULT_PARAMS: ConverseInferenceParams = {
@@ -211,17 +219,28 @@ const PALMYRA_DEFAULT_PARAMS: ConverseInferenceParams = {
 const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
   '/chat': {
     promptCachingConfig: {
-      autoCacheFields: ['system', 'messages'],
+      autoCacheFields: {
+        system: true,
+        messages: true,
+      },
     },
   },
   '/rag': {
     inferenceConfig: {
       temperature: 0.0,
     },
+    promptCachingConfig: {
+      autoCacheFields: {
+        system: false,
+        messages: true,
+      },
+    },
   },
   '/diagram': {
     promptCachingConfig: {
-      autoCacheFields: ['system'],
+      autoCacheFields: {
+        system: true,
+      },
     },
   },
 };
@@ -351,14 +370,17 @@ const createConverseCommandInput = (
 
   // Merge model's default params with use-case specific ones
   const usecaseParams = usecaseConverseInferenceParams[normalizeId(id)] || {};
-  const params = { ...defaultConverseInferenceParams, ...usecaseParams };
+  const params: ConverseInferenceParams = deepmerge(
+    defaultConverseInferenceParams,
+    usecaseParams
+  );
 
   // Apply prompt caching
-  const autoCacheFields = params.promptCachingConfig?.autoCacheFields || [];
-  const conversationWithCache = autoCacheFields.includes('messages')
+  const autoCacheFields = params.promptCachingConfig?.autoCacheFields || {};
+  const conversationWithCache = autoCacheFields['messages']
     ? applyAutoCacheToMessages(conversation, model.modelId)
     : conversation;
-  const systemContextWithCache = autoCacheFields.includes('system')
+  const systemContextWithCache = autoCacheFields['system']
     ? applyAutoCacheToSystem(systemContext, model.modelId)
     : systemContext;
 
@@ -377,7 +399,7 @@ const createConverseCommandInput = (
     model.modelParameters?.reasoningConfig?.type === 'enabled'
   ) {
     converseCommandInput.inferenceConfig = {
-      ...(params.inferenceConfig || {}),
+      ...params.inferenceConfig,
       temperature: 1, // reasoning requires temperature to be 1
       topP: undefined, // reasoning does not require topP
       maxTokens:

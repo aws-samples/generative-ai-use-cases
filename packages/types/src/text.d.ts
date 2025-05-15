@@ -4,7 +4,9 @@ import { InferenceConfiguration } from '@aws-sdk/client-bedrock-runtime';
 
 export type PromptCacheField = 'messages' | 'system' | 'tools';
 export type PromptCachingConfig = {
-  autoCacheFields: PromptCacheField[];
+  autoCacheFields: {
+    [key in PromptCacheField]?: boolean;
+  };
 };
 
 // https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html#API_runtime_Converse_RequestSyntax
