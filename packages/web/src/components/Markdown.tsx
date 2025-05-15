@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, memo } from 'react';
 import { BaseProps } from '../@types/common';
 import { default as ReactMarkdown } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -109,6 +109,7 @@ const LinkRenderer = (props: any) => {
     </>
   );
 };
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ImageRenderer = (props: any) => {
   const { isS3Url } = useRagFile();
@@ -124,7 +125,58 @@ const ImageRenderer = (props: any) => {
   return <img id={props.id} src={src} />;
 };
 
-const Markdown = React.memo(({ className, prefix, children }: Props) => {
+const CodeRenderer = memo(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (props: any) => {
+    const language = /language-(\w+)/.exec(props.className || '')?.[1];
+    const codeText = String(props.children).replace(/\n$/, '');
+    const isCodeBlock = codeText.includes('\n');
+    return (
+      <>
+        {language ? (
+          // Code block with language
+          <>
+            <div className="flex">
+              <span className="flex-auto">{language}</span>
+              <ButtonCopy
+                className="mr-2 justify-end text-gray-400"
+                text={codeText}
+              />
+            </div>
+            <SyntaxHighlighter
+              style={vscDarkPlus}
+              language={language || 'plaintext'}>
+              {codeText}
+            </SyntaxHighlighter>
+          </>
+        ) : isCodeBlock ? (
+          // Code block without language
+          <code className="block rounded-md py-1">
+            {codeText.split('\n').map((line, index) => (
+              <span key={`line-${index}`} className="block px-1 py-0">
+                {line}
+              </span>
+            ))}
+          </code>
+        ) : (
+          // Inline code
+          <span className="bg-aws-squid-ink/10 border-aws-squid-ink/30 inline rounded-md border px-1 py-0.5">
+            {codeText}
+          </span>
+        )}
+      </>
+    );
+  },
+  (prevProps, nextProps) => {
+    // Only re-render if the code content or language changes
+    return (
+      String(prevProps.children) === String(nextProps.children) &&
+      prevProps.className === nextProps.className
+    );
+  }
+);
+
+const Markdown = memo(({ className, prefix, children }: Props) => {
   return (
     <ReactMarkdown
       className={`${className ?? ''} prose max-w-full`}
@@ -137,36 +189,7 @@ const Markdown = React.memo(({ className, prefix, children }: Props) => {
         sup: ({ children }) => (
           <sup className="m-0.5 rounded-full bg-gray-200 px-1">{children}</sup>
         ),
-        code({ className, children }) {
-          const language = /language-(\w+)/.exec(className || '')?.[1];
-          const isCodeBlock = !!language;
-          const codeText = String(children).replace(/\n$/, '');
-
-          return (
-            <>
-              {isCodeBlock ? (
-                <>
-                  <div className="flex">
-                    <span className="flex-auto">{language} </span>
-                    <ButtonCopy
-                      className="mr-2 justify-end text-gray-400"
-                      text={codeText} // Specify the source code part to be copied to the clipboard as the target, and pass it to SyntaxHighlighter
-                    />
-                  </div>
-                  <SyntaxHighlighter
-                    children={codeText}
-                    style={vscDarkPlus}
-                    language={isCodeBlock ? language : 'plaintext'}
-                  />
-                </>
-              ) : (
-                <span className="bg-aws-squid-ink/10 border-aws-squid-ink/30 inline rounded-md border px-1 py-0.5">
-                  {codeText}
-                </span>
-              )}
-            </>
-          );
-        },
+        code: CodeRenderer,
       }}
     />
   );
