@@ -32,12 +32,16 @@ export const applyAutoCacheToMessages = (
   const isToolsSupported = cacheFields.includes('tools');
   const cachableIndices = messages
     .map((message, index) => ({ message, index }))
-    .filter(({ message }) => message.role === 'user')
+    .filter(
+      ({ message }) =>
+        message.role === 'user' &&
+        !message.content?.some((block) => block.document || block.video)
+    )
     .filter(
       ({ message }) =>
         isToolsSupported ||
         // For Amazon Nova, placing cachePoint after toolResult is not supported
-        !message.content?.some((content) => content.toolResult)
+        !message.content?.some((block) => block.toolResult)
     )
     .slice(-2)
     .map(({ index }) => index);
