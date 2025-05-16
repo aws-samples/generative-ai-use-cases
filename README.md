@@ -5,9 +5,9 @@
 
 English | [日本語](./README_ja.md)
 
-Application implementation with business use cases for safely utilizing generative AI in business operations
+Well-architected application implementation with business use cases for utilizing generative AI in business operations
 
-  <img src="./docs/assets/images/sc_lp_en.png" alt="Application implementation with business use cases for safely utilizing generative AI in business operations" width="68%">
+  <img src="./docs/assets/images/sc_lp_en.png" alt="Well-architected application implementation with business use cases for utilizing generative AI in business operations" width="68%">
 </div>
 
 > [!IMPORTANT]
