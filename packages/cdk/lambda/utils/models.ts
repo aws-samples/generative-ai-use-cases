@@ -25,7 +25,6 @@ import {
   ConversationRole,
   ContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
-import deepmerge from 'deepmerge';
 import { modelFeatureFlags } from '@generative-ai-use-cases/common';
 import {
   applyAutoCacheToMessages,
@@ -303,6 +302,23 @@ function normalizeId(id: string): string {
   return ret;
 }
 
+const mergeConverseInferenceParams = (
+  a: ConverseInferenceParams,
+  b: ConverseInferenceParams
+) =>
+  ({
+    inferenceConfig: {
+      ...a.inferenceConfig,
+      ...b.inferenceConfig,
+    },
+    promptCachingConfig: {
+      autoCacheFields: {
+        ...a.promptCachingConfig?.autoCacheFields,
+        ...b.promptCachingConfig?.autoCacheFields,
+      },
+    },
+  }) as ConverseInferenceParams;
+
 // API call, extract string from output, etc.
 
 const createConverseCommandInput = (
@@ -381,7 +397,7 @@ const createConverseCommandInput = (
 
   // Merge model's default params with use-case specific ones
   const usecaseParams = usecaseConverseInferenceParams[normalizeId(id)] || {};
-  const params: ConverseInferenceParams = deepmerge(
+  const params = mergeConverseInferenceParams(
     defaultConverseInferenceParams,
     usecaseParams
   );
