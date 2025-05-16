@@ -248,6 +248,14 @@ const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
       },
     },
   },
+  '/title': {
+    promptCachingConfig: {
+      autoCacheFields: {
+        system: false,
+        messages: false,
+      },
+    },
+  },
 };
 
 // Guardrail Settings
