@@ -458,7 +458,7 @@ landing:
         โปรดอธิบายสิ่งที่แสดงในวิดีโอ หากมีข้อความใดๆ ปรากฏ โปรดอ่านด้วย
     web_content:
       url: 'https://aws.amazon.com/bedrock/'
-  title: แอปพลิเคชันตัวอย่าง AWS Generative AI
+  title: AWS Generative AI Application
   try: ลองใช้
   try_message: แอปพลิเคชันนี้เป็นแอปพลิเคชันตัวอย่างที่ใช้บริการ AWS generative AI
   use_cases:
@@ -512,6 +512,12 @@ landing:
       description: >-
         AI สร้างวิดีโอสามารถสร้างวิดีโอสั้นๆ ตามข้อความหรือรูปภาพ วิดีโอที่สร้างขึ้นสามารถใช้เป็นวัสดุในฉากต่างๆ ได้
       title: การสร้างวิดีโอ
+    voice_chat:
+      description: >-
+        ใน Voice Chat คุณสามารถสนทนาด้วยเสียงแบบสองทางกับ AI ที่สร้างเนื้อหาได้
+        เหมือนกับการสนทนาตามธรรมชาติ คุณสามารถขัดจังหวะและพูดในขณะที่ AI กำลังพูดได้
+        นอกจากนี้ โดยการตั้งค่าคำสั่งระบบ คุณสามารถสนทนาด้วยเสียงกับ AI ที่มีบทบาทเฉพาะได้
+      title: Voice Chat
     web_content:
       description: >-
         ดึงเนื้อหาเว็บเช่นบล็อกและเอกสาร LLMs ลบข้อมูลที่ไม่จำเป็นและจัดรูปแบบเป็นข้อความที่สอดคล้องกัน เนื้อหาที่ดึงมาสามารถใช้ใน use cases อื่นๆ เช่น การสรุปและการแปล
@@ -560,6 +566,7 @@ navigation:
   translation: การแปล
   videoAnalysis: การวิเคราะห์วิดีโอ
   videoGeneration: การสร้างวิดีโอ
+  voiceChat: Voice Chat
   webContentExtraction: การดึงเนื้อหาเว็บ
   writing: การเขียน
 notfound:
@@ -990,6 +997,15 @@ videoAnalyzer:
   start: เริ่ม
   stop: หยุด
   title: การวิเคราะห์วิดีโอ
+voiceChat:
+  close: ปิดเซสชั่น
+  default_system_prompt: You are an AI assistant.
+  experimental_warning: >-
+    Voice Chat ยังอยู่ในระยะทดลอง สถาปัตยกรรมและอื่นๆ อาจมีการเปลี่ยนแปลงในอนาคต ประวัติการสนทนาจะไม่ได้รับการบันทึก ภาษาที่รองรับคือภาษาอังกฤษเท่านั้น
+  experimental_warning_title: เกี่ยวกับ Voice Chat
+  im_listening: กำลังฟัง...
+  start: เริ่มเซสชันใหม่
+  title: Voice Chat
 webcontent:
   additional_context: บริบทเพิ่มเติม
   additional_context_placeholder: คุณสามารถป้อนประเด็นเพิ่มเติมที่ต้องการพิจารณา (เช่น สรุป)
