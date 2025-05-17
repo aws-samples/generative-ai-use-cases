@@ -26,6 +26,7 @@ export const stackInputSchema = z.object({
       videoAnalyzer: z.boolean().optional(),
       diagram: z.boolean().optional(),
       speechToSpeech: z.boolean().optional(),
+      voiceChat: z.boolean().optional(),
     })
     .default({}),
   // API
