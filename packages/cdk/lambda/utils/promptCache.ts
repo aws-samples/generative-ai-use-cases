@@ -32,11 +32,7 @@ export const applyAutoCacheToMessages = (
   const isToolsSupported = cacheFields.includes('tools');
   const cachableIndices = messages
     .map((message, index) => ({ message, index }))
-    .filter(
-      ({ message }) =>
-        message.role === 'user' &&
-        !message.content?.some((block) => block.document || block.video)
-    )
+    .filter(({ message }) => message.role === 'user')
     .filter(
       ({ message }) =>
         isToolsSupported ||

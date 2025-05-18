@@ -343,10 +343,9 @@ const createConverseCommandInput = (
   // Add the string of user role and assistant role other than the system role to the conversation
   messages = messages.filter((message) => message.role !== 'system');
   const conversation = messages.map((message) => {
-    const contentBlocks: ContentBlock[] = [
-      { text: message.content } as ContentBlock.TextMember,
-    ];
+    const contentBlocks: ContentBlock[] = [];
 
+    // Put images, videos, and documents before the task, instruction, and user query
     if (message.extraData) {
       message.extraData.forEach((extra) => {
         if (extra.type === 'image' && extra.source.type === 'base64') {
@@ -394,6 +393,7 @@ const createConverseCommandInput = (
       });
     }
 
+    contentBlocks.push({ text: message.content });
     return {
       role:
         message.role === 'user'
