@@ -533,6 +533,7 @@ language:
   fr: フランス語
   ja: 日本語
   ko: 韓国語
+  th: タイ語
   zh: 中国語
 model:
   parameters:

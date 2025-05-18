@@ -614,6 +614,7 @@ language:
   fr: French
   ja: Japanese
   ko: Korean
+  th: Thai
   zh: Chinese
 model:
   parameters:
