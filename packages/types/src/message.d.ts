@@ -58,6 +58,7 @@ export type UploadedFileType = {
   file: File;
   name: string;
   type: 'image' | 'video' | 'file';
+  mimeType: string;
   base64EncodedData?: string;
   s3Url?: string;
   uploading: boolean;

@@ -2,10 +2,14 @@ import { create } from 'zustand';
 import useFileApi from './useFileApi';
 import { FileLimit, UploadedFileType } from 'generative-ai-use-cases';
 import { produce } from 'immer';
-import { fileTypeFromBuffer, fileTypeFromStream, MimeType } from 'file-type';
 import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import i18next from 'i18next';
+import {
+  getFileTypeFromMimeType,
+  getMimeTypeFromFileHeader,
+  validateMimeTypeAndExtension,
+} from '../utils/MediaUtils';
 
 export const extractBaseURL = (url: string) => {
   return url.split(/[?#]/)[0];
@@ -52,18 +56,16 @@ const useFilesState = create<{
   };
 
   // Convert JS File Object to UploadedFileType to handle file upload status
-  const convertFile2UploadedFileType = (file: File): UploadedFileType => {
-    const getFileType = (fileType: string) => {
-      if (fileType.includes('image')) return 'image';
-      if (fileType.includes('video')) return 'video';
-      return 'file';
-    };
+  const convertFile2UploadedFileType = async (file: File) => {
+    const mimeType = await getMimeTypeFromFileHeader(file);
+    const fileType = getFileTypeFromMimeType(mimeType);
     const fileId = uuidv4();
     return {
       id: fileId,
       file,
       name: file.name,
-      type: getFileType(file.type),
+      type: fileType,
+      mimeType,
       uploading: true,
       errorMessages: [],
     } as UploadedFileType;
@@ -112,62 +114,32 @@ const useFilesState = create<{
     let imageFileCount = 0;
     let videoFileCount = 0;
 
-    // filter is not available for async functions, so evaluate it first
-    const isMimeSpoofedResults = await Promise.all(
-      uploadedFiles.map(async (uploadedFile) => {
-        // file.type is based on the extension, while fileTypeFromStream checks the file header signature
-        let realMimeType: MimeType | undefined;
-        try {
-          realMimeType = (await fileTypeFromStream(uploadedFile.file.stream()))
-            ?.mime;
-        } catch (error) {
-          realMimeType = (
-            await fileTypeFromBuffer(await uploadedFile.file.arrayBuffer())
-          )?.mime;
-        }
-        if (!realMimeType) {
-          console.error('Failed to get file type:', uploadedFile.file.name);
-          return false;
-        }
-        // exception when file is doc or xls
-        const isDocOrXls =
-          ['application/msword', 'application/vnd.ms-excel'].includes(
-            uploadedFile.file.type || ''
-          ) && realMimeType === 'application/x-cfb';
-        const isMimeSpoofed =
-          uploadedFile.file.type &&
-          realMimeType &&
-          uploadedFile.file.type != realMimeType &&
-          !isDocOrXls;
-        return isMimeSpoofed;
-      })
-    );
-
     // Validate uploaded files
     const updatedFiles: UploadedFileType[] = await Promise.all(
-      uploadedFiles.map(async (uploadedFile, idx) => {
+      uploadedFiles.map(async (uploadedFile) => {
         const errorMessages: string[] = [];
+        const extension = uploadedFile.file.name.split('.').pop() as string;
+        const mediaFormat = `.${extension}`;
 
-        // If the file extension is incorrect, filter it
-        if (isMimeSpoofedResults[idx]) {
-          errorMessages.push(
-            i18next.t('files.error.mimeMismatch', {
-              fileName: uploadedFile.file.name,
-            })
-          );
-        }
-
-        // Filter allowed file types
-        const mediaFormat = ('.' +
-          uploadedFile.file.name.split('.').pop()) as string;
-        const isFileTypeAllowed = accept.includes(mediaFormat);
+        // Validate file extension and MIME type
+        const isFileExtensionAccepted = accept.includes(mediaFormat);
+        const isFileExtensionValid = validateMimeTypeAndExtension(
+          uploadedFile.mimeType,
+          mediaFormat
+        );
         if (accept && accept.length === 0) {
           errorMessages.push(i18next.t('files.error.modelNotSupported'));
-        } else if (!isFileTypeAllowed) {
+        } else if (!isFileExtensionAccepted) {
           errorMessages.push(
             i18next.t('files.error.invalidExtension', {
               fileName: uploadedFile.file.name,
               acceptedExtensions: accept.join(', '),
+            })
+          );
+        } else if (!isFileExtensionValid) {
+          errorMessages.push(
+            i18next.t('files.error.mimeMismatch', {
+              fileName: uploadedFile.file.name,
             })
           );
         }
@@ -294,9 +266,12 @@ const useFilesState = create<{
   ) => {
     // Get File
     const currentUploadedFiles = get().uploadedFilesDict[id] ?? [];
+    const uploadedFiles = await Promise.all(
+      files.map((f) => convertFile2UploadedFileType(f))
+    );
     const newUploadedFiles: UploadedFileType[] = [
       ...currentUploadedFiles,
-      ...files.map(convertFile2UploadedFileType),
+      ...uploadedFiles,
     ];
 
     // Validate File
