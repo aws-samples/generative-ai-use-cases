@@ -79,4 +79,4 @@ deploy.sh は以下のオプションをサポートしています：
 2. cdk.json の設定が次に適用されます
 
 なお、これらの手順を実行する場合も [Amazon Bedrock の Model access](https://console.aws.amazon.com/bedrock/home#/modelaccess) から利用するモデルの有効化が必要です。
-使用する設定ファイル（parameter.ts または cdk.json）の modelRegion において modelIds と imageGenerationModelIds と videoGenerationModelIds で指定されたモデルが有効化されているかを確認してください。
+使用する設定ファイル（parameter.ts または cdk.json）の modelRegion において modelIds と imageGenerationModelIds と videoGenerationModelIds と speechToSpeechModelIds で指定されたモデルが有効化されているかを確認してください。

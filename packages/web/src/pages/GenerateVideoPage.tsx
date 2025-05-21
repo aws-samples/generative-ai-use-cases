@@ -28,34 +28,77 @@ import queryString from 'query-string';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const MODEL_PARAMS: Record<string, any> = {
-  'amazon.nova-reel-v1:0': {
-    dimension: ['1280x720'],
-    durationSeconds: [6],
-    fps: [24],
-    seed: 0,
-    // type of the images below: FileLimit & { label: string }
-    images: {
-      accept: {
-        image: ['.jpg', '.jpeg', '.png'],
+const TASK_TYPES = (modelId: string): string[] => {
+  if (modelId === 'amazon.nova-reel-v1:1') {
+    return ['TEXT_VIDEO', 'MULTI_SHOT_AUTOMATED'];
+  }
+
+  return [];
+};
+
+const MODEL_PARAMS = (
+  modelId: string,
+  taskType: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Record<string, any> => {
+  if (modelId === 'amazon.nova-reel-v1:0') {
+    return {
+      dimension: ['1280x720'],
+      durationSeconds: [6],
+      fps: [24],
+      seed: 0,
+      images: {
+        accept: {
+          image: ['.jpg', '.jpeg', '.png'],
+        },
+        maxImageFileCount: 1,
+        maxImageFileSizeMB: 10,
+        strictImageDimensions: [{ width: 1280, height: 720 }],
       },
-      maxImageFileCount: 1,
-      maxImageFileSizeMB: 10,
-      strictImageDimensions: [{ width: 1280, height: 720 }],
-    },
-  },
-  'luma.ray-v2:0': {
-    resolution: ['540p', '720p'],
-    durationSeconds: [5, 9],
-    aspectRatio: ['1:1', '16:9', '9:16', '4:3', '3:4', '21:9', '9:21'],
-    loop: false,
-  },
+    };
+  } else if (modelId === 'amazon.nova-reel-v1:1') {
+    if (taskType === 'TEXT_VIDEO') {
+      return {
+        dimension: ['1280x720'],
+        durationSeconds: [6],
+        fps: [24],
+        seed: 0,
+        images: {
+          accept: {
+            image: ['.jpg', '.jpeg', '.png'],
+          },
+          maxImageFileCount: 1,
+          maxImageFileSizeMB: 10,
+          strictImageDimensions: [{ width: 1280, height: 720 }],
+        },
+      };
+    } else if (taskType === 'MULTI_SHOT_AUTOMATED') {
+      return {
+        dimension: ['1280x720'],
+        durationSeconds: [
+          12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 96, 102, 108,
+          114, 120,
+        ],
+        fps: [24],
+        seed: 0,
+      };
+    }
+  } else if (modelId === 'luma.ray-v2:0') {
+    return {
+      resolution: ['540p', '720p'],
+      durationSeconds: [5, 9],
+      aspectRatio: ['1:1', '16:9', '9:16', '4:3', '3:4', '21:9', '9:21'],
+      loop: false,
+    };
+  }
+
+  return {};
 };
 
 type StateType = Omit<Required<GenerateVideoParams>, 'images'> & {
   videoGenModelId: string;
   setVideoGenModelId: (s: string) => void;
+  setTaskType: (s: string) => void;
   setPrompt: (s: string) => void;
   setDimension: (s: string) => void;
   setDurationSeconds: (n: number) => void;
@@ -70,6 +113,7 @@ type StateType = Omit<Required<GenerateVideoParams>, 'images'> & {
 const useGenerateVideoPageState = create<StateType>((set) => {
   const INIT_STATE = {
     videoGenModelId: '',
+    taskType: '',
     prompt: '',
     dimension: '',
     durationSeconds: 0,
@@ -84,6 +128,11 @@ const useGenerateVideoPageState = create<StateType>((set) => {
     setVideoGenModelId: (s: string) => {
       set(() => ({
         videoGenModelId: s,
+      }));
+    },
+    setTaskType: (s: string) => {
+      set(() => ({
+        taskType: s,
       }));
     },
     setPrompt: (s: string) => {
@@ -137,6 +186,8 @@ const GenerateVideoPage: React.FC = () => {
   const {
     videoGenModelId,
     setVideoGenModelId,
+    taskType,
+    setTaskType,
     prompt,
     setPrompt,
     dimension,
@@ -188,16 +239,18 @@ const GenerateVideoPage: React.FC = () => {
   const onChangeFiles = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const files = e.target.files;
-      const fileLimit = MODEL_PARAMS[videoGenModelId]!.images;
-      const accept =
-        MODEL_PARAMS[videoGenModelId].images?.accept?.image?.join(',');
+      const fileLimit = MODEL_PARAMS(videoGenModelId, taskType).images;
+      const accept = MODEL_PARAMS(
+        videoGenModelId,
+        taskType
+      ).images?.accept?.image?.join(',');
 
       if (files) {
         // Reflect the files and upload
         uploadFiles(Array.from(files), fileLimit, accept);
       }
     },
-    [videoGenModelId, uploadFiles]
+    [videoGenModelId, uploadFiles, taskType]
   );
 
   useEffect(() => {
@@ -222,37 +275,45 @@ const GenerateVideoPage: React.FC = () => {
     if (videoGenModelId === '') {
       setVideoGenModelId(videoGenModelIds[0]);
     } else {
-      if (MODEL_PARAMS[videoGenModelId].dimension) {
-        setDimension(MODEL_PARAMS[videoGenModelId].dimension[0]);
+      if (!TASK_TYPES(videoGenModelId).includes(taskType)) {
+        setTaskType(TASK_TYPES(videoGenModelId)[0] ?? '');
       }
 
-      if (MODEL_PARAMS[videoGenModelId].durationSeconds) {
-        setDurationSeconds(MODEL_PARAMS[videoGenModelId].durationSeconds[0]!);
+      if (MODEL_PARAMS(videoGenModelId, taskType).dimension) {
+        setDimension(MODEL_PARAMS(videoGenModelId, taskType).dimension[0]);
       }
 
-      if (MODEL_PARAMS[videoGenModelId].fps) {
-        setFps(MODEL_PARAMS[videoGenModelId].fps[0]!);
+      if (MODEL_PARAMS(videoGenModelId, taskType).durationSeconds) {
+        setDurationSeconds(
+          MODEL_PARAMS(videoGenModelId, taskType).durationSeconds[0]
+        );
       }
 
-      if (MODEL_PARAMS[videoGenModelId].seed !== undefined) {
-        setSeed(MODEL_PARAMS[videoGenModelId].seed);
+      if (MODEL_PARAMS(videoGenModelId, taskType).fps) {
+        setFps(MODEL_PARAMS(videoGenModelId, taskType).fps[0]!);
       }
 
-      if (MODEL_PARAMS[videoGenModelId].resolution) {
-        setResolution(MODEL_PARAMS[videoGenModelId].resolution[0]!);
+      if (MODEL_PARAMS(videoGenModelId, taskType).seed !== undefined) {
+        setSeed(MODEL_PARAMS(videoGenModelId, taskType).seed);
       }
 
-      if (MODEL_PARAMS[videoGenModelId].aspectRatio) {
-        setAspectRatio(MODEL_PARAMS[videoGenModelId].aspectRatio[0]!);
+      if (MODEL_PARAMS(videoGenModelId, taskType).resolution) {
+        setResolution(MODEL_PARAMS(videoGenModelId, taskType).resolution[0]!);
       }
 
-      if (MODEL_PARAMS[videoGenModelId].loop !== undefined) {
-        setLoop(MODEL_PARAMS[videoGenModelId].loop);
+      if (MODEL_PARAMS(videoGenModelId, taskType).aspectRatio) {
+        setAspectRatio(MODEL_PARAMS(videoGenModelId, taskType).aspectRatio[0]!);
+      }
+
+      if (MODEL_PARAMS(videoGenModelId, taskType).loop !== undefined) {
+        setLoop(MODEL_PARAMS(videoGenModelId, taskType).loop);
       }
     }
   }, [
     videoGenModelId,
+    taskType,
     setVideoGenModelId,
+    setTaskType,
     setDimension,
     setDurationSeconds,
     setFps,
@@ -268,6 +329,7 @@ const GenerateVideoPage: React.FC = () => {
 
     try {
       const params: GenerateVideoParams = {
+        taskType,
         prompt,
         durationSeconds,
         dimension,
@@ -277,7 +339,8 @@ const GenerateVideoPage: React.FC = () => {
         aspectRatio,
         loop,
         images:
-          MODEL_PARAMS[videoGenModelId].images && uploadedFiles.length > 0
+          MODEL_PARAMS(videoGenModelId, taskType).images &&
+          uploadedFiles.length > 0
             ? uploadedFiles.map((f) => {
                 return {
                   format: f.base64EncodedData!.includes('data:image/png')
@@ -290,8 +353,6 @@ const GenerateVideoPage: React.FC = () => {
               })
             : undefined,
       };
-
-      console.log(params);
 
       await generate(
         params,
@@ -311,6 +372,7 @@ const GenerateVideoPage: React.FC = () => {
 
     setIsGenerating(false);
   }, [
+    taskType,
     generate,
     prompt,
     durationSeconds,
@@ -393,7 +455,19 @@ const GenerateVideoPage: React.FC = () => {
             fullWidth
           />
 
-          {MODEL_PARAMS[videoGenModelId] && (
+          {TASK_TYPES(videoGenModelId).length > 0 && (
+            <Select
+              label={t('video.taskType')}
+              value={taskType}
+              onChange={setTaskType}
+              options={TASK_TYPES(videoGenModelId).map((m: string) => {
+                return { value: m, label: m };
+              })}
+              fullWidth
+            />
+          )}
+
+          {MODEL_PARAMS(videoGenModelId, taskType) && (
             <>
               <Textarea
                 value={prompt}
@@ -404,72 +478,76 @@ const GenerateVideoPage: React.FC = () => {
                 required
               />
 
-              {MODEL_PARAMS[videoGenModelId].dimension && (
+              {MODEL_PARAMS(videoGenModelId, taskType).dimension && (
                 <Select
                   label={t('video.dimension')}
                   value={dimension}
                   onChange={setDimension}
-                  options={MODEL_PARAMS[videoGenModelId].dimension.map(
-                    (m: string) => {
-                      return { value: m, label: m };
-                    }
-                  )}
+                  options={MODEL_PARAMS(
+                    videoGenModelId,
+                    taskType
+                  ).dimension.map((m: string) => {
+                    return { value: m, label: m };
+                  })}
                   fullWidth
                 />
               )}
 
-              {MODEL_PARAMS[videoGenModelId].resolution && (
+              {MODEL_PARAMS(videoGenModelId, taskType).resolution && (
                 <Select
                   label={t('video.resolution')}
                   value={resolution}
                   onChange={setResolution}
-                  options={MODEL_PARAMS[videoGenModelId].resolution.map(
-                    (m: string) => {
-                      return { value: m, label: m };
-                    }
-                  )}
+                  options={MODEL_PARAMS(
+                    videoGenModelId,
+                    taskType
+                  ).resolution.map((m: string) => {
+                    return { value: m, label: m };
+                  })}
                   fullWidth
                 />
               )}
 
-              {MODEL_PARAMS[videoGenModelId].aspectRatio && (
+              {MODEL_PARAMS(videoGenModelId, taskType).aspectRatio && (
                 <Select
                   label={t('video.aspectRatio')}
                   value={aspectRatio}
                   onChange={setAspectRatio}
-                  options={MODEL_PARAMS[videoGenModelId].aspectRatio.map(
-                    (m: string) => {
-                      return { value: m, label: m };
-                    }
-                  )}
+                  options={MODEL_PARAMS(
+                    videoGenModelId,
+                    taskType
+                  ).aspectRatio.map((m: string) => {
+                    return { value: m, label: m };
+                  })}
                   fullWidth
                 />
               )}
 
-              {MODEL_PARAMS[videoGenModelId].durationSeconds && (
+              {MODEL_PARAMS(videoGenModelId, taskType).durationSeconds && (
                 <Select
                   label={t('video.duration')}
                   value={`${durationSeconds}`}
                   onChange={(n: string) => {
                     setDurationSeconds(Number(n));
                   }}
-                  options={MODEL_PARAMS[videoGenModelId].durationSeconds.map(
-                    (m: number) => {
-                      return { value: `${m}`, label: `${m}` };
-                    }
-                  )}
+                  options={MODEL_PARAMS(
+                    videoGenModelId,
+                    taskType
+                  ).durationSeconds.map((m: number) => {
+                    return { value: `${m}`, label: `${m}` };
+                  })}
                   fullWidth
                 />
               )}
 
-              {MODEL_PARAMS[videoGenModelId].fps && (
+              {MODEL_PARAMS(videoGenModelId, taskType).fps && (
                 <Select
                   label={t('video.fps')}
                   value={`${fps}`}
                   onChange={(n: string) => {
                     setFps(Number(n));
                   }}
-                  options={MODEL_PARAMS[videoGenModelId].fps.map(
+                  options={MODEL_PARAMS(videoGenModelId, taskType).fps.map(
                     (m: number) => {
                       return { value: `${m}`, label: `${m}` };
                     }
@@ -478,7 +556,7 @@ const GenerateVideoPage: React.FC = () => {
                 />
               )}
 
-              {MODEL_PARAMS[videoGenModelId].seed !== undefined && (
+              {MODEL_PARAMS(videoGenModelId, taskType).seed !== undefined && (
                 <RangeSlider
                   className="w-full"
                   label={t('video.seed.title')}
@@ -492,7 +570,7 @@ const GenerateVideoPage: React.FC = () => {
                 />
               )}
 
-              {MODEL_PARAMS[videoGenModelId].loop !== undefined && (
+              {MODEL_PARAMS(videoGenModelId, taskType).loop !== undefined && (
                 <Switch
                   className="w-full"
                   label={t('video.loop')}
@@ -503,7 +581,7 @@ const GenerateVideoPage: React.FC = () => {
                 />
               )}
 
-              {MODEL_PARAMS[videoGenModelId]!.images && (
+              {MODEL_PARAMS(videoGenModelId, taskType).images && (
                 <div>
                   <div className="text-sm">{t('video.uploadImage')}</div>
 
@@ -513,9 +591,10 @@ const GenerateVideoPage: React.FC = () => {
                       hidden
                       onChange={onChangeFiles}
                       type="file"
-                      accept={MODEL_PARAMS[
-                        videoGenModelId
-                      ]!.images!.accept.image.join(',')}
+                      accept={MODEL_PARAMS(
+                        videoGenModelId,
+                        taskType
+                      ).images!.accept.image.join(',')}
                       multiple
                       value={[]}
                     />
@@ -529,23 +608,26 @@ const GenerateVideoPage: React.FC = () => {
 
                   <p className="my-1 text-xs text-gray-400">
                     {t('video.supportedExtensions', {
-                      acceptedExtensions:
-                        MODEL_PARAMS[
-                          videoGenModelId
-                        ]!.images!.accept.image.join(', '),
+                      acceptedExtensions: MODEL_PARAMS(
+                        videoGenModelId,
+                        taskType
+                      ).images!.accept.image.join(', '),
                     })}
                   </p>
 
-                  {MODEL_PARAMS[videoGenModelId]!.images!
+                  {MODEL_PARAMS(videoGenModelId, taskType).images!
                     .strictImageDimensions && (
                     <p className="my-1 text-xs text-gray-400">
                       {t('video.supportedImageDimensions', {
-                        supportedDimensions: MODEL_PARAMS[
-                          videoGenModelId
-                        ]!.images!.strictImageDimensions.map(
-                          (d: { width: number; height: number }) =>
-                            `${d.width}x${d.height}`
-                        ).join(', '),
+                        supportedDimensions: MODEL_PARAMS(
+                          videoGenModelId,
+                          taskType
+                        )
+                          .images!.strictImageDimensions.map(
+                            (d: { width: number; height: number }) =>
+                              `${d.width}x${d.height}`
+                          )
+                          .join(', '),
                       })}
                     </p>
                   )}
@@ -574,9 +656,9 @@ const GenerateVideoPage: React.FC = () => {
                             onDelete={() => {
                               deleteUploadedFile(
                                 uploadedFile.id ?? '',
-                                MODEL_PARAMS[videoGenModelId]!.images!,
-                                MODEL_PARAMS[videoGenModelId]!.images!.accept
-                                  .image
+                                MODEL_PARAMS(videoGenModelId, taskType).images!,
+                                MODEL_PARAMS(videoGenModelId, taskType).images!
+                                  .accept.image
                               );
                             }}
                           />
@@ -722,7 +804,7 @@ const GenerateVideoPage: React.FC = () => {
                             onClick={() => {
                               setPreview(job);
                             }}
-                            disabled={job.status === 'InProgress'}>
+                            disabled={job.status !== 'Completed'}>
                             <PiPlayFill className="text-aws-smile" />
                           </ButtonIcon>
                         </td>
@@ -753,7 +835,7 @@ const GenerateVideoPage: React.FC = () => {
                             onClick={() => {
                               downloadFile(job);
                             }}
-                            disabled={job.status === 'InProgress'}
+                            disabled={job.status !== 'Completed'}
                             loading={downloadingJobIds[job.createdDate]}>
                             <PiDownload className="text-aws-smile" />
                           </ButtonIcon>

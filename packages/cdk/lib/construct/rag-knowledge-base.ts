@@ -13,12 +13,13 @@ import { Runtime } from 'aws-cdk-lib/aws-lambda';
 
 export interface RagKnowledgeBaseProps {
   // Context Params
-  modelRegion: string;
+  readonly modelRegion: string;
+  readonly crossAccountBedrockRoleArn?: string | null;
 
   // Resource
-  knowledgeBaseId: string;
-  userPool: UserPool;
-  api: RestApi;
+  readonly knowledgeBaseId: string;
+  readonly userPool: UserPool;
+  readonly api: RestApi;
 }
 
 export class RagKnowledgeBase extends Construct {
@@ -34,18 +35,28 @@ export class RagKnowledgeBase extends Construct {
       environment: {
         KNOWLEDGE_BASE_ID: props.knowledgeBaseId,
         MODEL_REGION: modelRegion,
+        CROSS_ACCOUNT_BEDROCK_ROLE_ARN: props.crossAccountBedrockRoleArn ?? '',
       },
     });
 
-    retrieveFunction.role?.addToPrincipalPolicy(
-      new iam.PolicyStatement({
+    if (!props.crossAccountBedrockRoleArn) {
+      retrieveFunction.role?.addToPrincipalPolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          resources: [
+            `arn:aws:bedrock:${modelRegion}:${cdk.Stack.of(this).account}:knowledge-base/${props.knowledgeBaseId ?? ''}`,
+          ],
+          actions: ['bedrock:Retrieve'],
+        })
+      );
+    } else {
+      const assumeRolePolicy = new iam.PolicyStatement({
         effect: iam.Effect.ALLOW,
-        resources: [
-          `arn:aws:bedrock:${modelRegion}:${cdk.Stack.of(this).account}:knowledge-base/${props.knowledgeBaseId ?? ''}`,
-        ],
-        actions: ['bedrock:Retrieve'],
-      })
-    );
+        actions: ['sts:AssumeRole'],
+        resources: [props.crossAccountBedrockRoleArn],
+      });
+      retrieveFunction.role?.addToPrincipalPolicy(assumeRolePolicy);
+    }
 
     const authorizer = new CognitoUserPoolsAuthorizer(this, 'Authorizer', {
       cognitoUserPools: [props.userPool],

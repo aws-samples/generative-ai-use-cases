@@ -14,6 +14,7 @@ import yaml from 'js-yaml';
 export const supportedLngs = {
   en: 'English',
   ja: '日本語',
+  th: 'ไทย',
   // zh: '中文',
   // ko: '한국어',
 };
@@ -39,6 +40,11 @@ i18n
     // React does this escape for us, so we turn it off this time.
     interpolation: {
       escapeValue: false,
+      format: (value, format) => {
+        if (format === 'uppercase') return value.toUpperCase();
+        if (format === 'lowercase') return value.toLowerCase();
+        return value;
+      },
     },
     react: {
       transKeepBasicHtmlNodesFor: ['wbr'],

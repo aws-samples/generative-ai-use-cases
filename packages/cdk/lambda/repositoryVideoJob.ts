@@ -15,20 +15,20 @@ import {
   GetAsyncInvokeCommand,
   ValidationException,
 } from '@aws-sdk/client-bedrock-runtime';
+import { CopyVideoJobParams } from './copyVideoJob';
 import {
-  S3Client,
-  GetObjectCommand,
-  PutObjectCommand,
-  DeleteObjectsCommand,
-  ListObjectsV2Command,
-} from '@aws-sdk/client-s3';
-import { initBedrockClient } from './utils/bedrockApi';
-import { Readable } from 'stream';
+  LambdaClient,
+  InvokeCommand,
+  InvocationType,
+} from '@aws-sdk/client-lambda';
+import { initBedrockRuntimeClient } from './utils/bedrockClient';
 
 const BUCKET_NAME: string = process.env.BUCKET_NAME!;
 const TABLE_NAME: string = process.env.TABLE_NAME!;
+const COPY_VIDEO_JOB_FUNCTION_ARN = process.env.COPY_VIDEO_JOB_FUNCTION_ARN!;
 const dynamoDb = new DynamoDBClient({});
 const dynamoDbDocument = DynamoDBDocumentClient.from(dynamoDb);
+const lambda = new LambdaClient({});
 
 export const createJob = async (
   _userId: string,
@@ -67,65 +67,30 @@ export const createJob = async (
   return item;
 };
 
-const copyAndDeleteObject = async (
-  jobId: string,
-  srcBucket: string,
-  srcRegion: string,
-  dstBucket: string,
-  dstRegion: string
-) => {
-  const srcS3 = new S3Client({ region: srcRegion });
-  const dstS3 = new S3Client({ region: dstRegion });
+export const updateJobStatus = async (job: VideoJob, status: string) => {
+  const updateCommand = new UpdateCommand({
+    TableName: TABLE_NAME,
+    Key: {
+      id: job.id,
+      createdDate: job.createdDate,
+    },
+    UpdateExpression: 'set #status = :status',
+    ExpressionAttributeNames: {
+      '#status': 'status',
+    },
+    ExpressionAttributeValues: {
+      ':status': status,
+    },
+  });
 
-  const { Body, ContentType, ContentLength } = await srcS3.send(
-    new GetObjectCommand({
-      Bucket: srcBucket,
-      Key: `${jobId}/output.mp4`,
-    })
-  );
-
-  const chunks = [];
-  for await (const chunk of Body as Readable) {
-    chunks.push(chunk);
-  }
-  const fileBuffer = Buffer.concat(chunks);
-
-  await dstS3.send(
-    new PutObjectCommand({
-      Bucket: dstBucket,
-      Key: `${jobId}/output.mp4`,
-      Body: fileBuffer,
-      ContentType,
-      ContentLength,
-    })
-  );
-
-  const listRes = await srcS3.send(
-    new ListObjectsV2Command({
-      Bucket: srcBucket,
-      Prefix: jobId,
-    })
-  );
-
-  const objects = listRes.Contents?.map((object) => ({
-    Key: object.Key,
-  }));
-
-  await srcS3.send(
-    new DeleteObjectsCommand({
-      Bucket: srcBucket,
-      Delete: {
-        Objects: objects,
-      },
-    })
-  );
+  await dynamoDbDocument.send(updateCommand);
 };
 
 const checkAndUpdateJob = async (
   job: VideoJob
-): Promise<'InProgress' | 'Completed' | 'Failed'> => {
+): Promise<'InProgress' | 'Completed' | 'Failed' | 'Finalizing'> => {
   try {
-    const client = await initBedrockClient(job.region);
+    const client = await initBedrockRuntimeClient({ region: job.region });
     const command = new GetAsyncInvokeCommand({
       invocationArn: job.invocationArn,
     });
@@ -145,45 +110,29 @@ const checkAndUpdateJob = async (
       }
     }
 
-    if (res.status !== 'InProgress') {
-      if (res.status === 'Completed') {
-        const jobId = job.jobId;
-        const dstBucket = BUCKET_NAME;
-        const dstRegion = process.env.AWS_DEFAULT_REGION!;
-        const srcRegion = job.region;
-        const videoBucketRegionMap = JSON.parse(
-          process.env.VIDEO_BUCKET_REGION_MAP ?? '{}'
-        );
-        const srcBucket = videoBucketRegionMap[srcRegion];
+    // Video generation is complete, but the video copying is not finished.
+    // We will run the copy job to set the status to "Finalizing".
+    if (res.status === 'Completed') {
+      const params: CopyVideoJobParams = { job };
 
-        await copyAndDeleteObject(
-          jobId,
-          srcBucket,
-          srcRegion,
-          dstBucket,
-          dstRegion
-        );
-      }
+      await lambda.send(
+        new InvokeCommand({
+          FunctionName: COPY_VIDEO_JOB_FUNCTION_ARN,
+          InvocationType: InvocationType.Event,
+          Payload: JSON.stringify(params),
+        })
+      );
 
-      const updateCommand = new UpdateCommand({
-        TableName: TABLE_NAME,
-        Key: {
-          id: job.id,
-          createdDate: job.createdDate,
-        },
-        UpdateExpression: 'set #status = :status',
-        ExpressionAttributeNames: {
-          '#status': 'status',
-        },
-        ExpressionAttributeValues: {
-          ':status': res.status,
-        },
-      });
-
-      await dynamoDbDocument.send(updateCommand);
+      await updateJobStatus(job, 'Finalizing');
+      return 'Finalizing';
+    } else if (res.status === 'Failed') {
+      // Since video generation has failed, we will not copy the video and will terminate with a Failed status.
+      await updateJobStatus(job, 'Failed');
+      return 'Failed';
+    } else {
+      // This res.status will be InProgress only.
+      return res.status!;
     }
-
-    return res.status!;
   } catch (e) {
     console.error(e);
     return job.status;

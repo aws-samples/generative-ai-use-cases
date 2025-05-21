@@ -19,6 +19,7 @@ import {
   PiVideoCamera,
   PiFlowArrow,
   PiMagicWand,
+  PiMicrophoneBold,
   PiTreeStructure,
 } from 'react-icons/pi';
 import { Outlet } from 'react-router-dom';
@@ -44,6 +45,7 @@ const {
   visionEnabled,
   imageGenModelIds,
   videoGenModelIds,
+  speechToSpeechModelIds,
   agentNames,
   flowChatEnabled,
 } = MODELS;
@@ -128,6 +130,14 @@ const App: React.FC = () => {
           label: t('navigation.flowChat'),
           to: '/flow-chat',
           icon: <PiFlowArrow />,
+          display: 'usecase' as const,
+        }
+      : null,
+    speechToSpeechModelIds.length > 0 && enabled('voiceChat')
+      ? {
+          label: t('navigation.voiceChat'),
+          to: '/voice-chat',
+          icon: <PiMicrophoneBold />,
           display: 'usecase' as const,
         }
       : null,

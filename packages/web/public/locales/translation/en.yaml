@@ -498,7 +498,7 @@ landing:
         Cute, stylish, easy to use, POP culture, friendly, youth-oriented,
         music, photography, trendy smartphone, city background
     rag:
-      content: Please explain Claude's parameters and how to set them.
+      content: Please provide an overview of Amazon Nova Canvas and explain its key features.
     summarize:
       sentence: >-
         Amazon Bedrock is a fully managed service that makes foundation models
@@ -528,9 +528,9 @@ landing:
         visible, please read that as well.
     web_content:
       url: 'https://aws.amazon.com/bedrock/'
-  title: AWS Generative AI Sample Application
+  title: AWS Generative AI Application
   try: Try it
-  try_message: This application is a sample application using AWS generative AI services.
+  try_message: This is a web application using AWS generative AI services.
   use_cases:
     agent_chat:
       description: >-
@@ -582,13 +582,19 @@ landing:
       description: >-
         Video generation AI can create short videos based on text or images. The generated videos can be used as material in various scenes.
       title: Video Generation
+    voice_chat:
+      description: >-
+        In Voice Chat, you can have a bidirectional voice chat with generative AI.
+        Similar to natural conversation, you can also interrupt and speak while the AI is talking.
+        Also, by setting a system prompt, you can have voice conversations with AI that has specific roles.
+      title: Voice Chat
     web_content:
       description: >-
         Extract web content such as blogs and documents. LLMs remove unnecessary information and format it into a coherent text. The extracted content can be used in other use cases such as summarization and translation.
       title: Web Content Extraction
     writer:
       description: >-
-        LLMs trained in multiple languages can perform translation. Moreover, not only can they translate, but they can also reflect various specified context information such as casualness and target audience in the translation.
+        A tool for writing assistance, text refinement, and proofreading. You can write efficiently with AI assistance.
       title: Writing
   use_cases_integration:
     blog:
@@ -608,6 +614,7 @@ language:
   fr: French
   ja: Japanese
   ko: Korean
+  th: Thai
   zh: Chinese
 model:
   parameters:
@@ -629,6 +636,7 @@ navigation:
   translation: Translation
   videoAnalysis: Video Analysis
   videoGeneration: Video Generation
+  voiceChat: Voice Chat
   webContentExtraction: Web Content Extraction
   writing: Writing
 notfound:
@@ -1075,6 +1083,7 @@ video:
   status:
     completed: Completed
     failed: Failed
+    finalizing: Finalizing
     inprogress: In Progress
   supportedExtensions: 'Supported Extensions: {{acceptedExtensions}}'
   supportedImageDimensions: 'Supported Image Dimensions: {{supportedDimensions}}'
@@ -1086,6 +1095,7 @@ video:
     play: Play
     prompt: Prompt
     status: Status
+  taskType: Task Type
   upload: Upload
   uploadImage: Upload Image
   uploadImageHelp: Specify the image used in the first frame of the video.
@@ -1099,6 +1109,15 @@ videoAnalyzer:
   start: Start
   stop: Stop
   title: Video Analysis
+voiceChat:
+  close: Close session
+  default_system_prompt: You are an AI assistant.
+  experimental_warning: >-
+    Voice Chat is still in an experimental stage. The architecture, etc. may be changed in the future. Conversation history will not be saved. The supported language is English only.
+  experimental_warning_title: About Voice Chat
+  im_listening: I'm listening...
+  start: Start new session
+  title: Voice Chat
 webcontent:
   additional_context: Additional context
   additional_context_placeholder: 'You can enter additional points to consider (e.g., summarize)'
@@ -1172,8 +1191,7 @@ writer:
     yellow: Yellow
   dark: Dark
   description: >-
-    A tool for writing assistance, text refinement, and proofreading. You can
-    write efficiently with AI assistance.
+    A tool for writing assistance, text refinement, and proofreading. You can write efficiently with AI assistance.
   example1: 'For example, you can have the AI continue this paragraph:'
   example2: >-
     You can also check facts in your text. Select the following text and choose

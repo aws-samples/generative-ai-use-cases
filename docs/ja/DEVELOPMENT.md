@@ -55,13 +55,25 @@ npm run web:dev
 
 ## Pull Request を出す場合
 
-バグ修正や機能改善などの Pull Request は歓迎しております。コミットする前に、lint ツールを実行してください。
+バグ修正や機能改善などの Pull Request は歓迎しております :tada:
+
+`git commit`が実行された際、`npm run lint`が実行されます。しかし、失敗すると、以下のようなエラーが発生します。
 
 ```bash
-npm run lint
+⚠ Running tasks for staged files...
+  ❯ package.json — 1 file
+    ❯ **/* — 1 file
+      ✖ sh -c 'npm run lint' [FAILED]
+      ...
 ```
 
-また、CDK に変更があれば以下のコマンドでスナップショットの確認を行いスナップショットを更新してください。
+もし、このエラーを無視してDraft PR を作成したい場合は、以下のように `--no-verify` オプションを付けてください。
+
+```bash
+git commit -m "xxx" --no-verify
+```
+
+もしCDK に変更があれば以下のコマンドでスナップショットの確認を行いスナップショットを更新してください。
 
 ```bash
 # 差分を確認

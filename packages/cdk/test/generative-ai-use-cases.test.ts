@@ -41,6 +41,9 @@ describe('GenerativeAiUseCases', () => {
       videoGenerationModelIds: [
         { modelId: 'amazon.nova-reel-v1:0', region: 'us-east-1' },
       ],
+      speechToSpeechModelIds: [
+        { modelId: 'amazon.nova-sonic-v1:0', region: 'us-east-1' },
+      ],
       endpointNames: [],
       agentEnabled: true,
       searchAgentEnabled: true,

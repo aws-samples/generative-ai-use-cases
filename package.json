@@ -1,7 +1,7 @@
 {
   "name": "generative-ai-use-cases",
   "private": true,
-  "version": "4.0.1",
+  "version": "4.2.3",
   "scripts": {
     "lint": "run-s custom-lint:build root:lint web:lint:fix cdk:lint cdk:lambda-build-dryrun",
     "test": "run-s web:test",
@@ -27,17 +27,25 @@
     "extension:devw": "source ./setup-env.sh && cd browser-extension && npm run dev",
     "extension:build": "cd browser-extension && npm run build",
     "extension:buildw": "source ./setup-env.sh && cd browser-extension && npm run build",
-    "extension:lint": "npx prettier --write browser-extension/. && cd browser-extension && npm run lint",
+    "extension:lint": "npx prettier --write browser-extension/. && cd browser-extension",
     "custom-lint:build": "npm -w packages/eslint-plugin-i18nhelper run build",
     "docs:dev": "mkdocs serve",
     "docs:build": "mkdocs build",
-    "docs:gh-deploy": "mkdocs gh-deploy --"
+    "docs:gh-deploy": "mkdocs gh-deploy --",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.2.5"
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "lint-staged": {
+    "**/*": [
+      "sh -c 'npm run lint'"
+    ]
+  }
 }

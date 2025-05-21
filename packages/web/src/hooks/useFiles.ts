@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import useFileApi from './useFileApi';
 import { FileLimit, UploadedFileType } from 'generative-ai-use-cases';
 import { produce } from 'immer';
-import { fileTypeFromStream } from 'file-type';
+import { fileTypeFromBuffer, fileTypeFromStream, MimeType } from 'file-type';
 import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import i18next from 'i18next';
@@ -116,9 +116,19 @@ const useFilesState = create<{
     const isMimeSpoofedResults = await Promise.all(
       uploadedFiles.map(async (uploadedFile) => {
         // file.type is based on the extension, while fileTypeFromStream checks the file header signature
-        const realMimeType = (
-          await fileTypeFromStream(uploadedFile.file.stream())
-        )?.mime;
+        let realMimeType: MimeType | undefined;
+        try {
+          realMimeType = (await fileTypeFromStream(uploadedFile.file.stream()))
+            ?.mime;
+        } catch (error) {
+          realMimeType = (
+            await fileTypeFromBuffer(await uploadedFile.file.arrayBuffer())
+          )?.mime;
+        }
+        if (!realMimeType) {
+          console.error('Failed to get file type:', uploadedFile.file.name);
+          return false;
+        }
         // exception when file is doc or xls
         const isDocOrXls =
           ['application/msword', 'application/vnd.ms-excel'].includes(

@@ -5,7 +5,7 @@ import { Agent as AgentType } from 'generative-ai-use-cases';
 import { ProcessedStackInput } from './stack-input';
 
 export interface AgentStackProps extends StackProps {
-  params: ProcessedStackInput;
+  readonly params: ProcessedStackInput;
 }
 
 export class AgentStack extends Stack {

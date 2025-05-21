@@ -587,4 +587,221 @@ export const getUseCaseBuilderSamplePrompts = (
     icon: <PiFlaskBold />,
     color: 'gray',
   },
+  {
+    category: t('useCaseBuilder.contentGeneration.name', { ns: 'prompts' }),
+    title: t('useCaseBuilder.contentGeneration.questionnaire.title', {
+      ns: 'prompts',
+    }),
+    description: t(
+      'useCaseBuilder.contentGeneration.questionnaire.description',
+      { ns: 'prompts' }
+    ),
+    promptTemplate: t(
+      'useCaseBuilder.contentGeneration.questionnaire.promptTemplate',
+      { ns: 'prompts' }
+    ),
+    inputExamples: [
+      {
+        title: t(
+          'useCaseBuilder.contentGeneration.questionnaire.inputExample1.title',
+          { ns: 'prompts' }
+        ),
+        examples: {
+          [t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample1.parameters.key1',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample1.parameters.value1',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample1.parameters.key2',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample1.parameters.value2',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample1.parameters.key3',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample1.parameters.value3',
+            { ns: 'prompts' }
+          ),
+        },
+      },
+      {
+        title: t(
+          'useCaseBuilder.contentGeneration.questionnaire.inputExample2.title',
+          { ns: 'prompts' }
+        ),
+        examples: {
+          [t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample2.parameters.key1',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample2.parameters.value1',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample2.parameters.key2',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample2.parameters.value2',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample2.parameters.key3',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample2.parameters.value3',
+            { ns: 'prompts' }
+          ),
+        },
+      },
+      {
+        title: t(
+          'useCaseBuilder.contentGeneration.questionnaire.inputExample3.title',
+          { ns: 'prompts' }
+        ),
+        examples: {
+          [t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample3.parameters.key1',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample3.parameters.value1',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample3.parameters.key2',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample3.parameters.value2',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample3.parameters.key3',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.contentGeneration.questionnaire.inputExample3.parameters.value3',
+            { ns: 'prompts' }
+          ),
+        },
+      },
+    ],
+    icon: <PiNotePencilBold />,
+    color: 'blue',
+  },
+  {
+    category: t('useCaseBuilder.programming.name', { ns: 'prompts' }),
+    title: t('useCaseBuilder.programming.queryGeneration.title', {
+      ns: 'prompts',
+    }),
+    description: t('useCaseBuilder.programming.queryGeneration.description', {
+      ns: 'prompts',
+    }),
+    promptTemplate: t(
+      'useCaseBuilder.programming.queryGeneration.promptTemplate',
+      {
+        ns: 'prompts',
+      }
+    ),
+    inputExamples: [
+      {
+        title: t(
+          'useCaseBuilder.programming.queryGeneration.inputExample1.title',
+          {
+            ns: 'prompts',
+          }
+        ),
+        examples: {
+          [t(
+            'useCaseBuilder.programming.queryGeneration.inputExample1.parameters.key1',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.programming.queryGeneration.inputExample1.parameters.value1',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.programming.queryGeneration.inputExample1.parameters.key2',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.programming.queryGeneration.inputExample1.parameters.value2',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.programming.queryGeneration.inputExample1.parameters.key3',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.programming.queryGeneration.inputExample1.parameters.value3',
+            { ns: 'prompts' }
+          ),
+        },
+      },
+      {
+        title: t(
+          'useCaseBuilder.programming.queryGeneration.inputExample2.title',
+          {
+            ns: 'prompts',
+          }
+        ),
+        examples: {
+          [t(
+            'useCaseBuilder.programming.queryGeneration.inputExample2.parameters.key1',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.programming.queryGeneration.inputExample2.parameters.value1',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.programming.queryGeneration.inputExample2.parameters.key2',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.programming.queryGeneration.inputExample2.parameters.value2',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.programming.queryGeneration.inputExample2.parameters.key3',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.programming.queryGeneration.inputExample2.parameters.value3',
+            { ns: 'prompts' }
+          ),
+        },
+      },
+      {
+        title: t(
+          'useCaseBuilder.programming.queryGeneration.inputExample3.title',
+          {
+            ns: 'prompts',
+          }
+        ),
+        examples: {
+          [t(
+            'useCaseBuilder.programming.queryGeneration.inputExample3.parameters.key1',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.programming.queryGeneration.inputExample3.parameters.value1',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.programming.queryGeneration.inputExample3.parameters.key2',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.programming.queryGeneration.inputExample3.parameters.value2',
+            { ns: 'prompts' }
+          ),
+          [t(
+            'useCaseBuilder.programming.queryGeneration.inputExample3.parameters.key3',
+            { ns: 'prompts' }
+          )]: t(
+            'useCaseBuilder.programming.queryGeneration.inputExample3.parameters.value3',
+            { ns: 'prompts' }
+          ),
+        },
+      },
+    ],
+    icon: <PiCodeBold />,
+    color: 'cyan',
+  },
 ];

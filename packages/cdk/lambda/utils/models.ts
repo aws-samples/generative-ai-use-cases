@@ -26,6 +26,10 @@ import {
   ContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
 import { modelFeatureFlags } from '@generative-ai-use-cases/common';
+import {
+  applyAutoCacheToMessages,
+  applyAutoCacheToSystem,
+} from './promptCache';
 
 // Default Models
 
@@ -121,65 +125,136 @@ const RINNA_PROMPT: PromptTemplate = {
 // Model Params
 
 const CLAUDE_3_5_DEFAULT_PARAMS: ConverseInferenceParams = {
-  maxTokens: 8192,
-  temperature: 0.6,
-  topP: 0.8,
+  inferenceConfig: {
+    maxTokens: 8192,
+    temperature: 0.6,
+    topP: 0.8,
+  },
 };
 
 const CLAUDE_DEFAULT_PARAMS: ConverseInferenceParams = {
-  maxTokens: 4096,
-  temperature: 0.6,
-  topP: 0.8,
+  inferenceConfig: {
+    maxTokens: 4096,
+    temperature: 0.6,
+    topP: 0.8,
+  },
 };
 
 const TITAN_TEXT_DEFAULT_PARAMS: ConverseInferenceParams = {
   // Converse API only accepts 3000, instead of 3072, which is described in the doc.
   // If 3072 is accepted, revert to 3072.
   // https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-titan-text.html
-  maxTokens: 3000,
-  temperature: 0.7,
-  topP: 1.0,
+  inferenceConfig: {
+    maxTokens: 3000,
+    temperature: 0.7,
+    topP: 1.0,
+  },
 };
 
 const LLAMA_DEFAULT_PARAMS: ConverseInferenceParams = {
-  maxTokens: 2048,
-  temperature: 0.6,
-  topP: 0.99,
+  inferenceConfig: {
+    maxTokens: 2048,
+    temperature: 0.5,
+    topP: 0.9,
+    stopSequences: ['<|eot_id|>'],
+  },
 };
 
 const MISTRAL_DEFAULT_PARAMS: ConverseInferenceParams = {
-  maxTokens: 8192,
-  temperature: 0.6,
-  topP: 0.99,
+  inferenceConfig: {
+    maxTokens: 8192,
+    temperature: 0.6,
+    topP: 0.99,
+  },
 };
 
 const MIXTRAL_DEFAULT_PARAMS: ConverseInferenceParams = {
-  maxTokens: 4096,
-  temperature: 0.6,
-  topP: 0.99,
+  inferenceConfig: {
+    maxTokens: 4096,
+    temperature: 0.6,
+    topP: 0.99,
+  },
 };
 
 const COMMANDR_DEFAULT_PARAMS: ConverseInferenceParams = {
-  maxTokens: 4000,
-  temperature: 0.3,
-  topP: 0.75,
+  inferenceConfig: {
+    maxTokens: 4000,
+    temperature: 0.3,
+    topP: 0.75,
+  },
 };
 
 const NOVA_DEFAULT_PARAMS: ConverseInferenceParams = {
-  maxTokens: 5120,
-  temperature: 0.7,
-  topP: 0.9,
+  inferenceConfig: {
+    maxTokens: 5120,
+    temperature: 0.7,
+    topP: 0.9,
+  },
+  // There are no additional costs for cache writes with Amazon Nova models
+  promptCachingConfig: {
+    autoCacheFields: {
+      system: true,
+      messages: true,
+    },
+  },
 };
 
 const DEEPSEEK_DEFAULT_PARAMS: ConverseInferenceParams = {
-  maxTokens: 32768,
-  temperature: 0.6,
-  topP: 0.95,
+  inferenceConfig: {
+    maxTokens: 32768,
+    temperature: 0.6,
+    topP: 0.95,
+  },
+};
+
+const PALMYRA_DEFAULT_PARAMS: ConverseInferenceParams = {
+  inferenceConfig: {
+    maxTokens: 8192,
+    temperature: 1,
+    topP: 0.9,
+  },
 };
 
 const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
+  '/chat': {
+    promptCachingConfig: {
+      autoCacheFields: {
+        system: true,
+        messages: true,
+      },
+    },
+  },
   '/rag': {
-    temperature: 0.0,
+    inferenceConfig: {
+      temperature: 0.0,
+    },
+    promptCachingConfig: {
+      autoCacheFields: {
+        system: false,
+      },
+    },
+  },
+  '/diagram': {
+    promptCachingConfig: {
+      autoCacheFields: {
+        system: true,
+      },
+    },
+  },
+  '/use-case-builder': {
+    promptCachingConfig: {
+      autoCacheFields: {
+        messages: false,
+      },
+    },
+  },
+  '/title': {
+    promptCachingConfig: {
+      autoCacheFields: {
+        system: false,
+        messages: false,
+      },
+    },
   },
 };
 
@@ -220,6 +295,11 @@ const createGuardrailStreamConfig = ():
 const idTransformationRules = [
   // Chat history -> Chat
   { pattern: /^\/chat\/.+/, replacement: '/chat' },
+  // Use case builder (/new and /execute/*)
+  {
+    pattern: /^\/use-case-builder\/.+/,
+    replacement: '/use-case-builder',
+  },
 ];
 
 // ID conversion
@@ -229,6 +309,23 @@ function normalizeId(id: string): string {
   const ret = rule ? rule.replacement : id;
   return ret;
 }
+
+const mergeConverseInferenceParams = (
+  a: ConverseInferenceParams,
+  b: ConverseInferenceParams
+) =>
+  ({
+    inferenceConfig: {
+      ...a.inferenceConfig,
+      ...b.inferenceConfig,
+    },
+    promptCachingConfig: {
+      autoCacheFields: {
+        ...a.promptCachingConfig?.autoCacheFields,
+        ...b.promptCachingConfig?.autoCacheFields,
+      },
+    },
+  }) as ConverseInferenceParams;
 
 // API call, extract string from output, etc.
 
@@ -246,10 +343,9 @@ const createConverseCommandInput = (
   // Add the string of user role and assistant role other than the system role to the conversation
   messages = messages.filter((message) => message.role !== 'system');
   const conversation = messages.map((message) => {
-    const contentBlocks: ContentBlock[] = [
-      { text: message.content } as ContentBlock.TextMember,
-    ];
+    const contentBlocks: ContentBlock[] = [];
 
+    // Put images, videos, and documents before the task, instruction, and user query
     if (message.extraData) {
       message.extraData.forEach((extra) => {
         if (extra.type === 'image' && extra.source.type === 'base64') {
@@ -297,6 +393,7 @@ const createConverseCommandInput = (
       });
     }
 
+    contentBlocks.push({ text: message.content });
     return {
       role:
         message.role === 'user'
@@ -306,19 +403,30 @@ const createConverseCommandInput = (
     };
   });
 
-  const usecaseParams = usecaseConverseInferenceParams[normalizeId(id)];
-  const inferenceConfig = usecaseParams
-    ? { ...defaultConverseInferenceParams, ...usecaseParams }
-    : defaultConverseInferenceParams;
+  // Merge model's default params with use-case specific ones
+  const usecaseParams = usecaseConverseInferenceParams[normalizeId(id)] || {};
+  const params = mergeConverseInferenceParams(
+    defaultConverseInferenceParams,
+    usecaseParams
+  );
+
+  // Apply prompt caching
+  const autoCacheFields = params.promptCachingConfig?.autoCacheFields || {};
+  const conversationWithCache = autoCacheFields['messages']
+    ? applyAutoCacheToMessages(conversation, model.modelId)
+    : conversation;
+  const systemContextWithCache = autoCacheFields['system']
+    ? applyAutoCacheToSystem(systemContext, model.modelId)
+    : systemContext;
 
   const guardrailConfig = createGuardrailConfig();
 
   const converseCommandInput: ConverseCommandInput = {
     modelId: model.modelId,
-    messages: conversation,
-    system: systemContext,
-    inferenceConfig: inferenceConfig,
-    guardrailConfig: guardrailConfig,
+    messages: conversationWithCache,
+    system: systemContextWithCache,
+    inferenceConfig: params.inferenceConfig,
+    guardrailConfig,
   };
 
   if (
@@ -326,12 +434,12 @@ const createConverseCommandInput = (
     model.modelParameters?.reasoningConfig?.type === 'enabled'
   ) {
     converseCommandInput.inferenceConfig = {
-      ...inferenceConfig,
+      ...params.inferenceConfig,
       temperature: 1, // reasoning requires temperature to be 1
       topP: undefined, // reasoning does not require topP
       maxTokens:
         (model.modelParameters?.reasoningConfig?.budgetTokens || 0) +
-        (inferenceConfig?.maxTokens || 0),
+        (params.inferenceConfig?.maxTokens || 0),
     };
     converseCommandInput.additionalModelRequestFields = {
       reasoning_config: {
@@ -357,30 +465,19 @@ const createConverseCommandInputWithoutSystemContext = (
   usecaseConverseInferenceParams: UsecaseConverseInferenceParams
 ) => {
   // Since system is not available, system is also included as user.
+  const system = messages.find((message) => message.role === 'system');
   messages = messages.filter((message) => message.role !== 'system');
-  const conversation = messages.map((message) => ({
-    role:
-      message.role === 'user' || message.role === 'system'
-        ? ConversationRole.USER
-        : ConversationRole.ASSISTANT,
-    content: [{ text: message.content }],
-  }));
+  if (messages.length > 0 && messages[0].role === 'user') {
+    messages[0].content = system?.content + messages[0].content;
+  }
 
-  const usecaseParams = usecaseConverseInferenceParams[normalizeId(id)];
-  const inferenceConfig = usecaseParams
-    ? { ...defaultConverseInferenceParams, ...usecaseParams }
-    : defaultConverseInferenceParams;
-
-  const guardrailConfig = createGuardrailConfig();
-
-  const converseCommandInput: ConverseCommandInput = {
-    modelId: model.modelId,
-    messages: conversation,
-    inferenceConfig: inferenceConfig,
-    guardrailConfig: guardrailConfig,
-  };
-
-  return converseCommandInput;
+  return createConverseCommandInput(
+    messages,
+    id,
+    model,
+    defaultConverseInferenceParams,
+    usecaseConverseInferenceParams
+  );
 };
 
 // ConverseStreamCommandInput has the same structure as ConverseCommandInput, so the input created by "createConverseCommandInput" can be used as is.
@@ -719,6 +816,41 @@ const createBodyVideoNovaReel = (params: GenerateVideoParams) => {
   };
 };
 
+const createBodyVideoNovaReelV11 = (params: GenerateVideoParams) => {
+  if (params.taskType === 'TEXT_VIDEO') {
+    return {
+      taskType: 'TEXT_VIDEO',
+      textToVideoParams: {
+        text: params.prompt,
+        images: params.images,
+      },
+      videoGenerationConfig: {
+        durationSeconds: params.durationSeconds,
+        fps: params.fps,
+        dimension: params.dimension,
+        seed: params.seed,
+      },
+    };
+  } else if (params.taskType === 'MULTI_SHOT_AUTOMATED') {
+    return {
+      taskType: 'MULTI_SHOT_AUTOMATED',
+      multiShotAutomatedParams: {
+        text: params.prompt,
+      },
+      videoGenerationConfig: {
+        durationSeconds: params.durationSeconds,
+        fps: params.fps,
+        dimension: params.dimension,
+        seed: params.seed,
+      },
+    };
+  } else if (params.taskType === 'MULTI_SHOT_MANUAL') {
+    throw new Error('Not implemented yet');
+  } else {
+    throw new Error(`Unknown task type ${params.taskType}`);
+  }
+};
+
 const createBodyVideoLumaRayV2 = (params: GenerateVideoParams) => {
   return {
     prompt: params.prompt,
@@ -1035,6 +1167,22 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  'us.meta.llama4-scout-17b-instruct-v1:0': {
+    defaultParams: LLAMA_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.meta.llama4-maverick-17b-instruct-v1:0': {
+    defaultParams: LLAMA_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
   'mistral.mistral-7b-instruct-v0:2': {
     defaultParams: MISTRAL_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
@@ -1077,6 +1225,22 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  'us.mistral.pixtral-large-2502-v1:0': {
+    defaultParams: MISTRAL_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'eu.mistral.pixtral-large-2502-v1:0': {
+    defaultParams: MISTRAL_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
   'cohere.command-r-v1:0': {
     defaultParams: COMMANDR_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
@@ -1111,6 +1275,14 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
   'amazon.nova-micro-v1:0': {
+    defaultParams: NOVA_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.amazon.nova-premier-v1:0': {
     defaultParams: NOVA_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
@@ -1198,6 +1370,25 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  // Although Palmyra supports system context, the model seems work best without it.
+  'us.writer.palmyra-x4-v1:0': {
+    defaultParams: PALMYRA_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInputWithoutSystemContext,
+    createConverseStreamCommandInput:
+      createConverseStreamCommandInputWithoutSystemContext,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.writer.palmyra-x5-v1:0': {
+    defaultParams: PALMYRA_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInputWithoutSystemContext,
+    createConverseStreamCommandInput:
+      createConverseStreamCommandInputWithoutSystemContext,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
 };
 
 // Definition of parameters and functions for each image generation model
@@ -1260,6 +1451,9 @@ export const BEDROCK_VIDEO_GEN_MODELS: {
 } = {
   'amazon.nova-reel-v1:0': {
     createBodyVideo: createBodyVideoNovaReel,
+  },
+  'amazon.nova-reel-v1:1': {
+    createBodyVideo: createBodyVideoNovaReelV11,
   },
   'luma.ray-v2:0': {
     createBodyVideo: createBodyVideoLumaRayV2,

@@ -12,7 +12,7 @@ import { IFunction, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
-import { IdentityPool } from '@aws-cdk/aws-cognito-identitypool-alpha';
+import { IdentityPool } from 'aws-cdk-lib/aws-cognito-identitypool';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
   BlockPublicAccess,
@@ -30,26 +30,26 @@ import {
 
 export interface BackendApiProps {
   // Context Params
-  modelRegion: string;
-  modelIds: ModelConfiguration[];
-  imageGenerationModelIds: ModelConfiguration[];
-  videoGenerationModelIds: ModelConfiguration[];
-  videoBucketRegionMap: Record<string, string>;
-  endpointNames: string[];
-  queryDecompositionEnabled: boolean;
-  rerankingModelId?: string | null;
-  customAgents: Agent[];
-  crossAccountBedrockRoleArn?: string | null;
+  readonly modelRegion: string;
+  readonly modelIds: ModelConfiguration[];
+  readonly imageGenerationModelIds: ModelConfiguration[];
+  readonly videoGenerationModelIds: ModelConfiguration[];
+  readonly videoBucketRegionMap: Record<string, string>;
+  readonly endpointNames: string[];
+  readonly queryDecompositionEnabled: boolean;
+  readonly rerankingModelId?: string | null;
+  readonly customAgents: Agent[];
+  readonly crossAccountBedrockRoleArn?: string | null;
 
   // Resource
-  userPool: UserPool;
-  idPool: IdentityPool;
-  userPoolClient: UserPoolClient;
-  table: Table;
-  knowledgeBaseId?: string;
-  agents?: Agent[];
-  guardrailIdentify?: string;
-  guardrailVersion?: string;
+  readonly userPool: UserPool;
+  readonly idPool: IdentityPool;
+  readonly userPoolClient: UserPoolClient;
+  readonly table: Table;
+  readonly knowledgeBaseId?: string;
+  readonly agents?: Agent[];
+  readonly guardrailIdentify?: string;
+  readonly guardrailVersion?: string;
 }
 
 export class Api extends Construct {
@@ -260,6 +260,7 @@ export class Api extends Construct {
         MODEL_IDS: JSON.stringify(modelIds),
         IMAGE_GENERATION_MODEL_IDS: JSON.stringify(imageGenerationModelIds),
         VIDEO_GENERATION_MODEL_IDS: JSON.stringify(videoGenerationModelIds),
+        VIDEO_BUCKET_OWNER: Stack.of(this).account,
         VIDEO_BUCKET_REGION_MAP: JSON.stringify(props.videoBucketRegionMap),
         CROSS_ACCOUNT_BEDROCK_ROLE_ARN: crossAccountBedrockRoleArn ?? '',
         BUCKET_NAME: fileBucket.bucketName,
@@ -284,10 +285,11 @@ export class Api extends Construct {
     }
     table.grantWriteData(generateVideoFunction);
 
-    const listVideoJobs = new NodejsFunction(this, 'ListVideoJobs', {
+    const copyVideoJob = new NodejsFunction(this, 'CopyVideoJob', {
       runtime: Runtime.NODEJS_LATEST,
-      entry: './lambda/listVideoJobs.ts',
+      entry: './lambda/copyVideoJob.ts',
       timeout: Duration.minutes(15),
+      memorySize: 512,
       environment: {
         MODEL_REGION: modelRegion,
         MODEL_IDS: JSON.stringify(modelIds),
@@ -304,7 +306,7 @@ export class Api extends Construct {
     });
     for (const region of Object.keys(props.videoBucketRegionMap)) {
       const bucketName = props.videoBucketRegionMap[region];
-      listVideoJobs.role?.addToPrincipalPolicy(
+      copyVideoJob.role?.addToPrincipalPolicy(
         new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['s3:GetObject', 's3:DeleteObject', 's3:ListBucket'],
@@ -315,8 +317,30 @@ export class Api extends Construct {
         })
       );
     }
-    fileBucket.grantWrite(listVideoJobs);
+    fileBucket.grantWrite(copyVideoJob);
+    table.grantWriteData(copyVideoJob);
+
+    const listVideoJobs = new NodejsFunction(this, 'ListVideoJobs', {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: './lambda/listVideoJobs.ts',
+      timeout: Duration.minutes(15),
+      environment: {
+        MODEL_REGION: modelRegion,
+        MODEL_IDS: JSON.stringify(modelIds),
+        IMAGE_GENERATION_MODEL_IDS: JSON.stringify(imageGenerationModelIds),
+        VIDEO_GENERATION_MODEL_IDS: JSON.stringify(videoGenerationModelIds),
+        VIDEO_BUCKET_REGION_MAP: JSON.stringify(props.videoBucketRegionMap),
+        CROSS_ACCOUNT_BEDROCK_ROLE_ARN: crossAccountBedrockRoleArn ?? '',
+        BUCKET_NAME: fileBucket.bucketName,
+        TABLE_NAME: table.tableName,
+        COPY_VIDEO_JOB_FUNCTION_ARN: copyVideoJob.functionArn,
+      },
+      bundling: {
+        nodeModules: ['@aws-sdk/client-bedrock-runtime'],
+      },
+    });
     table.grantReadWriteData(listVideoJobs);
+    copyVideoJob.grantInvoke(listVideoJobs);
 
     const deleteVideoJob = new NodejsFunction(this, 'DeleteVideoJob', {
       runtime: Runtime.NODEJS_LATEST,
@@ -347,6 +371,30 @@ export class Api extends Construct {
       }
     );
     optimizePromptFunction.grantInvoke(idPool.authenticatedRole);
+
+    const getSignedUrlFunction = new NodejsFunction(this, 'GetSignedUrl', {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: './lambda/getFileUploadSignedUrl.ts',
+      timeout: Duration.minutes(15),
+      environment: {
+        BUCKET_NAME: fileBucket.bucketName,
+      },
+    });
+    fileBucket.grantWrite(getSignedUrlFunction);
+
+    const getFileDownloadSignedUrlFunction = new NodejsFunction(
+      this,
+      'GetFileDownloadSignedUrlFunction',
+      {
+        runtime: Runtime.NODEJS_LATEST,
+        entry: './lambda/getFileDownloadSignedUrl.ts',
+        timeout: Duration.minutes(15),
+        environment: {
+          CROSS_ACCOUNT_BEDROCK_ROLE_ARN: crossAccountBedrockRoleArn ?? '',
+        },
+      }
+    );
+    fileBucket.grantRead(getFileDownloadSignedUrlFunction);
 
     // If SageMaker Endpoint exists, grant permission
     if (endpointNames.length > 0) {
@@ -413,6 +461,10 @@ export class Api extends Construct {
       generateImageFunction.role?.addToPrincipalPolicy(assumeRolePolicy);
       generateVideoFunction.role?.addToPrincipalPolicy(assumeRolePolicy);
       listVideoJobs.role?.addToPrincipalPolicy(assumeRolePolicy);
+      // To get pre-signed URL from S3 in different account
+      getFileDownloadSignedUrlFunction.role?.addToPrincipalPolicy(
+        assumeRolePolicy
+      );
     }
 
     const createChatFunction = new NodejsFunction(this, 'CreateChat', {
@@ -602,27 +654,6 @@ export class Api extends Construct {
     );
     table.grantReadWriteData(deleteSystemContextFunction);
 
-    const getSignedUrlFunction = new NodejsFunction(this, 'GetSignedUrl', {
-      runtime: Runtime.NODEJS_LATEST,
-      entry: './lambda/getFileUploadSignedUrl.ts',
-      timeout: Duration.minutes(15),
-      environment: {
-        BUCKET_NAME: fileBucket.bucketName,
-      },
-    });
-    fileBucket.grantWrite(getSignedUrlFunction);
-
-    const getFileDownloadSignedUrlFunction = new NodejsFunction(
-      this,
-      'GetFileDownloadSignedUrlFunction',
-      {
-        runtime: Runtime.NODEJS_LATEST,
-        entry: './lambda/getFileDownloadSignedUrl.ts',
-        timeout: Duration.minutes(15),
-      }
-    );
-    fileBucket.grantRead(getFileDownloadSignedUrlFunction);
-
     const deleteFileFunction = new NodejsFunction(this, 'DeleteFileFunction', {
       runtime: Runtime.NODEJS_LATEST,
       entry: './lambda/deleteFile.ts',
@@ -652,6 +683,7 @@ export class Api extends Construct {
         allowMethods: Cors.ALL_METHODS,
       },
       cloudWatchRole: true,
+      defaultMethodOptions: commonAuthorizerProps,
     });
 
     api.addGatewayResponse('Api4XX', {

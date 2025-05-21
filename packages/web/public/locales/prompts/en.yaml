@@ -569,6 +569,50 @@ useCaseBuilder:
         </list>
       title: Add explanation to list
     name: Content Generation
+    questionnaire:
+      description: Create a questionnaire by just inputting the target and the number of questions.
+      inputExample1:
+        parameters:
+          key1: Survey target
+          key2: Number of questions
+          key3: Target information
+          value1: Seminar/Event
+          value2: '20'
+          value3: |-
+            Seminar Title: How to Start an AI App Development Project
+            Overview: In this session, we will cover business & technical aspects of the AI application development journey, including what to consider before starting app development, introduction of useful AWS services for actual app development, and what to keep in mind after app development is completed.
+        title: Seminar Survey
+      inputExample2:
+        parameters:
+          key1: Survey target
+          key2: Number of questions
+          key3: Target information
+          value1: Product/Service
+          value2: '10'
+          value3: Recently, there has been an increase in users suddenly canceling despite no decrease in usage.
+        title: Product/Service Improvement Survey
+      inputExample3:
+        parameters:
+          key1: Survey target
+          key2: Number of questions
+          key3: Target information
+          value1: Employee Satisfaction
+          value2: '20'
+          value3: Recently, there has been an increase in job-seeking and resignations due to mental health issues, especially among young employees.
+        title: Work Engagement Survey
+      promptTemplate: |-
+        As a global company executive, we want to understand what needs customers and employees have, and how the benefits from our events, services, and company systems meet these needs for continuous improvement. For this purpose, we consider surveys as an effective means to gather data necessary for future decision-making by understanding current evaluations and reasons. While gathering data from surveys and making decisions is a simple action, the accumulation of such actions is a step toward transforming your company to make data-driven decisions, and you need to set an example for everyone planning to create surveys. To create effective surveys, please carefully read the survey target (target), target information (info), and number of questions (count).
+        <target>
+        {{select:Survey target:Seminar/Event,Training,Product/Service,Customer Satisfaction,Employee Satisfaction,Market Awareness}}
+        </target>
+        <count>
+        {{select:Number of questions:5,10,15,20}}
+        </count>
+        <info>
+        {{text:Target information}}
+        </info>
+        The survey consists of three parts: title, goal, and questions. Write the title as a heading, and for the goal, based on the target and info, write in a way that everyone from other executives to junior staff can clearly understand within one minute what improvements might be needed, what measures could be considered, and what data is needed to determine the certainty of needs and prioritize measures. Create questions and answer choices as many times as specified in count. The number of choices should be minimum 2 values like "Yes, No" and maximum 5. Now, please proceed with creation.
+      title: Create Survey Questions and Choices
     rewrite:
       description: Rewrite the input text according to the instructions.
       inputExample1:
@@ -795,6 +839,101 @@ useCaseBuilder:
         </instruction>
       title: Code generation
     name: Programming
+    queryGeneration:
+      description: Generate queries for various databases.
+      inputExample1:
+        parameters:
+          key1: Database-Type
+          key2: Information about the tables to be used
+          key3: Natural language description of the query you want to execute
+          value1: Athena
+          value2: |-
+            describe cloudtrail_logs_aws_cloudtrail_logs_XXXXXXXXXXXX_XXXXXXXX;
+
+            eventversion        	string
+            useridentity        	struct<type:string,principalid:string,arn:string,accountid:string,invokedby:string,accesskeyid:string,username:string,sessioncontext:struct<attributes:struct<mfaauthenticated:string,creationdate:string>,sessionissuer:struct<type:string,principalid:string,arn:string,accountid:string,username:string>,ec2roledelivery:string,webidfederationdata:map<string,string>>>
+            eventtime           	string
+            eventsource         	string
+            eventname           	string
+            awsregion           	string
+            sourceipaddress     	string
+            useragent           	string
+            errorcode           	string
+            errormessage        	string
+            requestparameters   	string
+            responseelements    	string
+            additionaleventdata 	string
+            requestid           	string
+            eventid             	string
+            resources           	array<struct<arn:string,accountid:string,type:string>>
+            eventtype           	string
+            apiversion          	string
+            readonly            	string
+            recipientaccountid  	string
+            serviceeventdetails 	string
+            sharedeventid       	string
+            vpcendpointid       	string
+            tlsdetails          	struct<tlsversion:string,ciphersuite:string,clientprovidedhostheader:string>
+          value3: Output the top 10 identities that have been hitting the API the most in the past month, along with the number of times.
+        title: Athena
+      inputExample2:
+        parameters:
+          key1: Database-Type
+          key2: Information about the tables to be used
+          key3: Natural language description of the query you want to execute
+          value1: Redshift
+          value2: |-
+            CREATE TABLE customers (
+              customer_id INTEGER,
+              first_name VARCHAR(50) NOT NULL,
+              last_name VARCHAR(50) NOT NULL,
+              email VARCHAR(100) NOT NULL,
+              birth_date DATE,
+              phone VARCHAR(20),
+              address VARCHAR(200),
+              city VARCHAR(50),
+              state VARCHAR(25),
+              postal_code VARCHAR(10),
+              country VARCHAR(50),
+              created_at TIMESTAMP DEFAULT GETDATE(),
+              CONSTRAINT pk_customers PRIMARY KEY (customer_id),
+              CONSTRAINT uq_customer_email UNIQUE (email)
+            )
+            CREATE TABLE orders (
+              order_id INTEGER IDENTITY(1,1),
+              customer_id INTEGER NOT NULL,
+              order_date TIMESTAMP DEFAULT GETDATE() NOT NULL,
+              status VARCHAR(20) NOT NULL,
+              total_amount DECIMAL(10,2) NOT NULL,
+              payment_method VARCHAR(50),
+              shipping_address VARCHAR(200),
+              shipping_city VARCHAR(50),
+              shipping_state VARCHAR(25),
+              shipping_postal_code VARCHAR(10),
+              shipping_country VARCHAR(50),
+              CONSTRAINT pk_orders PRIMARY KEY (order_id),
+              CONSTRAINT fk_orders_customers FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+            );
+          value3: Calculate the average sales by age group. Divide the age groups by 10, such as 21-30, 31-40, etc., and group those 20 years old and under as "20 and under" and those 80 years old and above as "80 and above".
+        title: Redshift
+      inputExample3:
+        parameters:
+          key1: Database-Type
+          key2: Information about the tables to be used
+          key3: Natural language description of the query you want to execute
+          value1: PostgreSQL
+          value2: None
+          value3: Query to find the average size per record (in KB) for all tables with more than 1 record
+        title: PostgreSQL
+      promptTemplate: |-
+        You are a database specialist AI. The user provides the database to query with the <database> tag, information about the tables to use with the <schema> tag, and a natural language description of the query they want to execute with the <query> tag.
+        You should generate an efficient query that takes into consideration the <database> type.
+        <database>{{select:Database-Type:Athena,Redshift,PostgreSQL,Oracle,MySQL}}</database>
+        <schema>{{text:Information about the tables to be used}}</schema>
+        <query>{{text:Natural language description of the query you want to execute}}</query>
+        First, the AI should think about how to fulfill the user's wishes and consider SQL (preferably written in a straightforward manner) that is easy for the user to understand, then output it in the format ```sql{query to be executed}```.
+        However, when using WITH clauses or CASE clauses, please always assign aliases to all table names and column names, and access them through these aliases.
+      title: SQL Generation
   textAnalysis:
     name: Text analysis
     qaPair:

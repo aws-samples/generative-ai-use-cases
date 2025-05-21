@@ -23,24 +23,24 @@ const KENDRA_STATE_CFN_PARAMETER_NAME = 'kendraState';
 
 export interface RagProps {
   // Context Params
-  envSuffix: string;
-  kendraIndexLanguage: string;
-  kendraIndexArnInCdkContext?: string | null;
-  kendraDataSourceBucketName?: string | null;
-  kendraIndexScheduleEnabled: boolean;
-  kendraIndexScheduleCreateCron?: IndexScheduleCron | null;
-  kendraIndexScheduleDeleteCron?: IndexScheduleCron | null;
+  readonly envSuffix: string;
+  readonly kendraIndexLanguage: string;
+  readonly kendraIndexArnInCdkContext?: string | null;
+  readonly kendraDataSourceBucketName?: string | null;
+  readonly kendraIndexScheduleEnabled: boolean;
+  readonly kendraIndexScheduleCreateCron?: IndexScheduleCron | null;
+  readonly kendraIndexScheduleDeleteCron?: IndexScheduleCron | null;
 
   // Resource
-  userPool: UserPool;
-  api: RestApi;
+  readonly userPool: UserPool;
+  readonly api: RestApi;
 }
 
 export interface IndexScheduleCron {
-  minute: string;
-  hour: string;
-  month: string;
-  weekDay: string;
+  readonly minute: string;
+  readonly hour: string;
+  readonly month: string;
+  readonly weekDay: string;
 }
 
 class KendraIndexWithCfnParameter extends kendra.CfnIndex {
@@ -181,7 +181,14 @@ export class Rag extends Construct {
         sources: [s3Deploy.Source.asset('./rag-docs')],
         destinationBucket: dataSourceBucket,
         // There is a possibility that access logs are left in the same Bucket in the previous configuration, so this setting is left
-        exclude: ['AccessLogs/*', 'logs*', 'docs/bedrock-ug.pdf.metadata.json'],
+        exclude: [
+          'AccessLogs/*',
+          'logs*',
+          'docs/bedrock-ug.pdf.metadata.json',
+          'docs/nova-ug.pdf.metadata.json',
+        ],
+        prune: false,
+        memoryLimit: 1024,
       });
 
       let index: kendra.CfnIndex;

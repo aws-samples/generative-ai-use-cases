@@ -11,7 +11,7 @@ export default {
       },
     },
     fontFamily: {
-      body: ['M PLUS Rounded 1c'],
+      body: ['"Noto Sans JP"', 'Sarabun'],
     },
     extend: {
       transitionProperty: {

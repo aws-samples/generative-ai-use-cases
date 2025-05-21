@@ -75,6 +75,10 @@ GenU は生成 AI を活用した多様なユースケースを標準で提供�
         <td>ダイアグラム生成</td>
         <td>ダイアグラム生成は、あらゆるトピックに関する文章や内容を最適な図を用いて視覚化します。 テキストベースで簡単に図を生成でき、プログラマーやデザイナーでなくても効率的にフローチャートなどの図を作成できます。</td>
       </tr>
+      <tr>
+        <td>音声チャット</td>
+        <td>音声チャットでは生成 AI と双方向の音声によるチャットが可能です。自然な会話と同様、AI の発言中に割り込んで話すこともできます。また、システムプロンプトを設定することで、特定の役割を持った AI と音声で会話することもできます。</td>
+      </tr>
     </tbody>
   </table>
 </details>
@@ -137,12 +141,12 @@ GenU は OSS ですので、カスタマイズして独自のユースケース�
 ## デプロイ
 
 > [!IMPORTANT]
-> [`/packages/cdk/cdk.json`](/packages/cdk/cdk.json) に記載されている `modelRegion` リージョンの `modelIds` (テキスト生成)、`imageGenerationModelIds` (画像生成) 及び `videoGenerationModelIds` (動画生成) を有効化してください。([Amazon Bedrock の Model access 画面](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess))
+> 設定に記載されている `modelRegion` リージョンの `modelIds` (テキスト生成)、`imageGenerationModelIds` (画像生成) 及び `videoGenerationModelIds` (動画生成) を有効化してください。(デフォルトの設定ファイル [`/packages/cdk/cdk.json`](/packages/cdk/cdk.json)) ([Amazon Bedrock の Model access 画面](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess))
 
 GenU のデプロイには [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/)（以降 CDK）を利用します。CDK の実行環境が用意できない場合は、以下のデプロイ方法を参照してください。
 
 - [AWS CloudShell を利用したデプロイ方法 (手元の環境を用意することが難しい場合)](docs/ja/DEPLOY_ON_CLOUDSHELL.md)
-- [Workshop](https://catalog.workshops.aws/generative-ai-use-cases-jp)
+- Workshop ([日本語](https://catalog.workshops.aws/generative-ai-use-cases-jp) / [英語](https://catalog.workshops.aws/generative-ai-use-cases))
 
 まず、以下のコマンドを実行してください。全てのコマンドはリポジトリのルートで実行してください。
 
@@ -208,11 +212,13 @@ GenU をご利用いただく際の、構成と料金試算例を公開してお
 
 ## 参照
 
+- [GitHub: Generative AI Use Cases を 1 click でデプロイする](https://github.com/aws-samples/sample-one-click-generative-ai-solutions)
 - [ブログ: 生成 AI アプリをノーコードで作成・社内配布できる GenU ユースケースビルダー](https://aws.amazon.com/jp/blogs/news/genu-use-cases-builder/)
 - [ブログ: RAG プロジェクトを成功させる方法 #1 ~ あるいは早く失敗しておく方法 ~](https://aws.amazon.com/jp/builders-flash/202502/way-to-succeed-rag-project/)
 - [ブログ: RAG チャットで精度向上のためのデバッグ方法](https://qiita.com/sugimount-a/items/7ed3c5fc1eb867e28566)
 - [ブログ: Amazon Q Developer CLI を利用してノーコーディングで GenU をカスタマイズ](https://qiita.com/wadabee/items/659e189018ad1a08e152)
 - [ブログ: Generative AI Use Cases JP をカスタマイズする方法](https://aws.amazon.com/jp/blogs/news/how-to-generative-ai-use-cases-jp/)
+- [ブログ: Generative AI Use Cases JP ~ はじめての Contribution ガイド](https://aws.amazon.com/jp/builders-flash/202504/genu-development-guide/)
 - [ブログ: 無茶振りは生成 AI に断ってもらおう ~ ブラウザに生成 AI を組み込んでみた ~](https://aws.amazon.com/jp/builders-flash/202405/genai-sorry-message/)
 - [ブログ: Amazon Bedrock で Interpreter を開発!](https://aws.amazon.com/jp/builders-flash/202311/bedrock-interpreter/)
 - [動画: 生成 AI ユースケースを考え倒すための Generative AI Use Cases JP (GenU) の魅力と使い方](https://www.youtube.com/live/s1P5A2SIWgc?si=PBQ4ZHQXU4pDhL8A)

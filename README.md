@@ -5,9 +5,9 @@
 
 English | [日本語](./README_ja.md)
 
-Application implementation with business use cases for safely utilizing generative AI in business operations
+Well-architected application implementation with business use cases for utilizing generative AI in business operations
 
-  <img src="./docs/assets/images/sc_lp_en.png" alt="Application implementation with business use cases for safely utilizing generative AI in business operations" width="68%">
+  <img src="./docs/assets/images/sc_lp_en.png" alt="Well-architected application implementation with business use cases for utilizing generative AI in business operations" width="68%">
 </div>
 
 > [!IMPORTANT]
@@ -77,6 +77,10 @@ GenU provides a variety of standard use cases leveraging generative AI. These us
         <td>Diagram Generation</td>
         <td>Diagram generation visualizes text and content on any topic using optimal diagrams. It allows for easy text-based diagram creation, enabling efficient creation of flowcharts and other diagrams even for non-programmers and non-designers.</td>
       </tr>
+      <tr>
+        <td>Voice Chat</td>
+        <td>In Voice Chat, you can have a bidirectional voice chat with generative AI. Similar to natural conversation, you can also interrupt and speak while the AI is talking. Also, by setting a system prompt, you can have voice conversations with AI that has specific roles.</td>
+      </tr>
     </tbody>
   </table>
 </details>
@@ -144,7 +148,7 @@ In that case, please be careful about conflicts with GenU's main branch.
 GenU deployment uses [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/) (CDK). If you cannot prepare a CDK execution environment, refer to the following deployment methods:
 
 - [Deployment method using AWS CloudShell (if preparing your own environment is difficult)](docs/en/DEPLOY_ON_CLOUDSHELL.md)
-- [Workshop](https://catalog.workshops.aws/generative-ai-use-cases-jp)
+- Workshop ([English](https://catalog.workshops.aws/generative-ai-use-cases) / [Japanese](https://catalog.workshops.aws/generative-ai-use-cases-jp))
 
 First, run the following command. All commands should be executed at the repository root.
 
@@ -210,11 +214,13 @@ If you would like to have your use case featured, please contact us via [Issue](
 
 ## References
 
+- [GitHub (Japanese): How to deploy GenU by one click](https://github.com/aws-samples/sample-one-click-generative-ai-solutions)
 - [Blog (Japanese): GenU Use Case Builder for Creating and Distributing Generative AI Apps with No Code](https://aws.amazon.com/jp/blogs/news/genu-use-cases-builder/)
 - [Blog (Japanese): How to Make RAG Projects Successful #1 ~ Or How to Fail Fast ~](https://aws.amazon.com/jp/builders-flash/202502/way-to-succeed-rag-project/)
 - [Blog (Japanese): Debugging Methods to Improve Accuracy in RAG Chat](https://qiita.com/sugimount-a/items/7ed3c5fc1eb867e28566)
 - [Blog (Japanese): Customizing GenU with No Coding Using Amazon Q Developer CLI](https://qiita.com/wadabee/items/659e189018ad1a08e152)
 - [Blog (Japanese): How to Customize Generative AI Use Cases JP](https://aws.amazon.com/jp/blogs/news/how-to-generative-ai-use-cases-jp/)
+- [Blog (Japanese): Generative AI Use Cases JP ~ First Contribution Guide](https://aws.amazon.com/jp/builders-flash/202504/genu-development-guide/)
 - [Blog (Japanese): Let Generative AI Decline Unreasonable Requests ~ Integrating Generative AI into Browsers ~](https://aws.amazon.com/jp/builders-flash/202405/genai-sorry-message/)
 - [Blog (Japanese): Developing an Interpreter with Amazon Bedrock!](https://aws.amazon.com/jp/builders-flash/202311/bedrock-interpreter/)
 - [Video (Japanese): The Appeal and Usage of Generative AI Use Cases JP (GenU) for Thoroughly Considering Generative AI Use Cases](https://www.youtube.com/live/s1P5A2SIWgc?si=PBQ4ZHQXU4pDhL8A)

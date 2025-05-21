@@ -84,7 +84,7 @@ npm run cdk:deploy
 const envs: Record<string, Partial<StackInput>> = {
   dev: {
     ragEnabled: true,
-    kendraIndexLanguage: 'jp',
+    kendraIndexLanguage: 'ja',
   },
 };
 ```
@@ -96,12 +96,15 @@ const envs: Record<string, Partial<StackInput>> = {
 {
   "context": {
     "ragEnabled": true,
-    "kendraIndexLanguage": "jp"
+    "kendraIndexLanguage": "ja"
   }
 }
 ```
 
 変更後に `npm run cdk:deploy` で再度デプロイして反映させます。また、`/packages/cdk/rag-docs/docs` に保存されているデータが、自動で Kendra データソース用の S3 バケットにアップロードされます。(ただし `logs` から始まる名前のファイルは同期されませんので注意してください。)
+
+> [!NOTE]
+> デフォルトでは、Amazon Bedrock ユーザーガイド (日本語) と Amazon Nova ユーザーガイド (英語) がサンプルデータとして `/packages/cdk/rag-docs/docs` に格納されています。
 
 続いて、Kendra の Data source の Sync を以下の手順で行ってください。
 
@@ -234,7 +237,12 @@ const envs: Record<string, Partial<StackInput>> = {
 npx -w packages/cdk cdk bootstrap --region us-east-1
 ```
 
-デプロイ時に `/packages/cdk/rag-docs/docs` に保存されているデータが、自動で Knowledge Base データソース用の S3 バケットにアップロードされます。(ただし `logs` から始まる名前のファイルは同期されませんので注意してください。) デプロイ完了後、以下の手順で Knowledge Base の Data source を Sync してください。
+デプロイ時に `/packages/cdk/rag-docs/docs` に保存されているデータが、自動で Knowledge Base データソース用の S3 バケットにアップロードされます。(ただし `logs` から始まる名前のファイルは同期されませんので注意してください。)
+
+> [!NOTE]
+> デフォルトでは、Amazon Bedrock ユーザーガイド (日本語) と Amazon Nova ユーザーガイド (英語) が、サンプルデータとして `/packages/cdk/rag-docs/docs` に格納されています。
+
+デプロイ完了後、以下の手順で Knowledge Base の Data source を Sync してください。
 
 1. [Knowledge Base のコンソール画面](https://console.aws.amazon.com/bedrock/home#/knowledge-bases) を開く
 1. generative-ai-use-cases-jp をクリック
@@ -626,6 +634,15 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### 音声チャットユースケースの有効化
+
+> [!NOTE]
+> 音声チャットの反応速度はアプリケーションのリージョン (GenerativeAiUseCasesStack がデプロイされたリージョン) に大きく影響を受けます。反応が遅延する場合は、ユーザーがアプリケーションのリージョンと物理的に近い距離にいるかを確認してください。
+
+`speechToSpeechModelIds` にモデルを 1 つ以上定義すると有効化されます。
+`speechToSpeechModelIds` に関しては [Amazon Bedrock のモデルを変更する](#amazon-bedrock-のモデルを変更する) をご参照ください。
+デフォルト値は [packages/cdk/lib/stack-input.ts](/packages/cdk/lib/stack-input.ts) をご参照ください。
+
 ### 画像生成ユースケースの有効化
 
 `imageGenerationModelIds` にモデルを 1 つ以上定義すると有効化されます。
@@ -662,10 +679,15 @@ const envs: Record<string, Partial<StackInput>> = {
 "apac.anthropic.claude-3-sonnet-20240229-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
+"us.meta.llama4-maverick-17b-instruct-v1:0",
+"us.meta.llama4-scout-17b-instruct-v1:0",
 "us.meta.llama3-2-90b-instruct-v1:0",
 "us.meta.llama3-2-11b-instruct-v1:0",
+"us.mistral.pixtral-large-2502-v1:0",
+"eu.mistral.pixtral-large-2502-v1:0",
 "amazon.nova-pro-v1:0",
 "amazon.nova-lite-v1:0",
+"us.amazon.nova-premier-v1:0",
 "us.amazon.nova-pro-v1:0",
 "us.amazon.nova-lite-v1:0",
 "eu.amazon.nova-pro-v1:0",
@@ -730,6 +752,7 @@ const envs: Record<string, Partial<StackInput>> = {
       video: true, // 動画生成を非表示
       videoAnalyzer: true, // 映像分析を非表示
       diagram: true, // ダイアグラム生成を非表示
+      voiceChat: true, // 音声チャットを非表示
     },
   },
 };
@@ -750,7 +773,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "image": true,
       "video": true,
       "videoAnalyzer": true,
-      "diagram": true
+      "diagram": true,
+      "voiceChat": true
     }
   }
 }
@@ -784,7 +808,7 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ## Amazon Bedrock のモデルを変更する
 
-`parameter.ts` もしくは `cdk.json` の `modelRegion`, `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds` でモデルとモデルのリージョンを指定します。`modelIds` と `imageGenerationModelIds` と `videoGenerationModelIds` は指定したリージョンで利用できるモデルの中から利用したいモデルのリストで指定してください。AWS ドキュメントに、[モデルの一覧](https://docs.aws.amazon.com/bedrock/latest/userguide/model-ids.html)と[リージョン別のモデルサポート一覧](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)があります。
+`parameter.ts` もしくは `cdk.json` の `modelRegion`, `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, `speechToSpeechModelIds` でモデルとモデルのリージョンを指定します。`modelIds` と `imageGenerationModelIds` と `videoGenerationModelIds` と `speechToSpeechModelIds` は指定したリージョンで利用できるモデルの中から利用したいモデルのリストで指定してください。AWS ドキュメントに、[モデルの一覧](https://docs.aws.amazon.com/bedrock/latest/userguide/model-ids.html)と[リージョン別のモデルサポート一覧](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)があります。
 
 また、[cross-region inference](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference-support.html)のモデルに対応しています。cross-region inference のモデルは `{us|eu|apac}.{model-provider}.{model-name}` で表されるモデルで、設定した modelRegion で指定したリージョンの `{us|eu|apac}` と一致している必要があります。
 
@@ -814,7 +838,11 @@ const envs: Record<string, Partial<StackInput>> = {
 "apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
 "us.deepseek.r1-v1:0",
+"us.writer.palmyra-x5-v1:0",
+"us.writer.palmyra-x4-v1:0",
 "amazon.titan-text-premier-v1:0",
+"us.meta.llama4-maverick-17b-instruct-v1:0",
+"us.meta.llama4-scout-17b-instruct-v1:0",
 "us.meta.llama3-3-70b-instruct-v1:0",
 "us.meta.llama3-2-90b-instruct-v1:0",
 "us.meta.llama3-2-11b-instruct-v1:0",
@@ -830,6 +858,8 @@ const envs: Record<string, Partial<StackInput>> = {
 "mistral.mistral-large-2407-v1:0",
 "mistral.mistral-large-2402-v1:0",
 "mistral.mistral-small-2402-v1:0",
+"us.mistral.pixtral-large-2502-v1:0",
+"eu.mistral.pixtral-large-2502-v1:0",
 "anthropic.claude-v2:1",
 "anthropic.claude-v2",
 "anthropic.claude-instant-v1",
@@ -838,6 +868,7 @@ const envs: Record<string, Partial<StackInput>> = {
 "amazon.nova-pro-v1:0",
 "amazon.nova-lite-v1:0",
 "amazon.nova-micro-v1:0",
+"us.amazon.nova-premier-v1:0",
 "us.amazon.nova-pro-v1:0",
 "us.amazon.nova-lite-v1:0",
 "us.amazon.nova-micro-v1:0",
@@ -847,6 +878,12 @@ const envs: Record<string, Partial<StackInput>> = {
 "apac.amazon.nova-pro-v1:0",
 "apac.amazon.nova-lite-v1:0",
 "apac.amazon.nova-micro-v1:0"
+```
+
+このソリューションが対応している speech-to-speech モデルは以下です。
+
+```
+amazon.nova-sonic-v1:0
 ```
 
 このソリューションが対応している画像生成モデルは以下です。
@@ -868,6 +905,7 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ```
 "amazon.nova-reel-v1:0",
+"amazon.nova-reel-v1:1",
 "luma.ray-v2:0"
 ```
 
@@ -875,7 +913,7 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ### 複数のリージョンのモデルを同時に利用する
 
-GenU では、特に指定がない限り`modelRegion`のモデルを使用します。一部リージョンのみで利用可能な最新モデル等を使いたい場合、`modelIds`または`imageGenerationModelIds`または`videoGenerationModelIds`に`{modelId: '<モデル名>', region: '<リージョンコード>'}`を指定することで、そのモデルのみ指定したリージョンから呼び出すことができます。
+GenU では、特に指定がない限り`modelRegion`のモデルを使用します。一部リージョンのみで利用可能な最新モデル等を使いたい場合、`modelIds`または`imageGenerationModelIds`または`videoGenerationModelIds`または`speechToSpeechModelIds`に`{modelId: '<モデル名>', region: '<リージョンコード>'}`を指定することで、そのモデルのみ指定したリージョンから呼び出すことができます。
 
 > [!NOTE] > [モニタリング用ダッシュボード](#モニタリング用のダッシュボードの有効化)と複数リージョンのモデル利用を併用する場合、デフォルトのダッシュボード設定では主リージョン（`modelRegion`で指定したリージョン）以外のモデルのプロンプトログが表示されません。
 >
@@ -908,8 +946,10 @@ const envs: Record<string, Partial<StackInput>> = {
       'apac.amazon.nova-lite-v1:0',
       'apac.amazon.nova-micro-v1:0',
       { modelId: 'us.deepseek.r1-v1:0', region: 'us-east-1' },
-      { modelId: 'us.meta.llama3-3-70b-instruct-v1:0', region: 'us-east-1' },
-      { modelId: 'us.meta.llama3-2-90b-instruct-v1:0', region: 'us-east-1' },
+      { modelId: 'us.writer.palmyra-x5-v1:0', region: 'us-west-2' }
+      { modelId: 'us.meta.llama4-maverick-17b-instruct-v1:0', region: 'us-east-1' },
+      { modelId: 'us.meta.llama4-scout-17b-instruct-v1:0', region: 'us-east-1' },
+      { modelId: 'us.mistral.pixtral-large-2502-v1:0', region: 'us-east-1' },
     ],
     imageGenerationModelIds: [
       'amazon.nova-canvas-v1:0',
@@ -920,6 +960,9 @@ const envs: Record<string, Partial<StackInput>> = {
     videoGenerationModelIds: [
       'amazon.nova-reel-v1:0',
       { modelId: 'luma.ray-v2:0', region: 'us-west-2' },
+    ],
+    speechToSpeechModelIds: [
+      { modelId: 'amazon.nova-sonic-v1:0', region: 'us-east-1' },
     ],
   },
 };
@@ -950,11 +993,19 @@ const envs: Record<string, Partial<StackInput>> = {
         "region": "us-east-1"
       },
       {
-        "modelId": "us.meta.llama3-3-70b-instruct-v1:0",
+        "modelId": "us.writer.palmyra-x5-v1:0",
+        "region": "us-west-2"
+      },
+      {
+        "modelId": "us.meta.llama4-maverick-17b-instruct-v1:0",
         "region": "us-east-1"
       },
       {
-        "modelId": "us.meta.llama3-2-90b-instruct-v1:0",
+        "modelId": "us.meta.llama4-scout-17b-instruct-v1:0",
+        "region": "us-east-1"
+      },
+      {
+        "modelId": "us.mistral.pixtral-large-2502-v1:0",
         "region": "us-east-1"
       }
     ],
@@ -978,6 +1029,12 @@ const envs: Record<string, Partial<StackInput>> = {
       {
         "modelId": "luma.ray-v2:0",
         "region": "us-west-2"
+      }
+    ],
+    "speechToSpeechModelIds": [
+      {
+        "modelId": "amazon.nova-sonic-v1:0",
+        "region": "us-east-1"
       }
     ]
   }
@@ -1013,7 +1070,8 @@ const envs: Record<string, Partial<StackInput>> = {
       'amazon.titan-image-generator-v1',
       'stability.stable-diffusion-xl-v1',
     ],
-    videoGenerationModelIds: ['amazon.nova-reel-v1:0'],
+    videoGenerationModelIds: ['amazon.nova-reel-v1:1'],
+    speechToSpeechModelIds: ['amazon.nova-sonic-v1:0'],
   },
 };
 ```
@@ -1045,7 +1103,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "amazon.titan-image-generator-v1",
       "stability.stable-diffusion-xl-v1"
     ],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:0"]
+    "videoGenerationModelIds": ["amazon.nova-reel-v1:1"],
+    "speechToSpeechModelIds": ["amazon.nova-sonic-v1:0"]
   }
 }
 ```
@@ -1130,21 +1189,20 @@ const envs: Record<string, Partial<StackInput>> = {
 // parameter.ts
 const envs: Record<string, Partial<StackInput>> = {
   dev: {
-    modelRegion: 'us-east-2',
+    modelRegion: 'us-west-2',
     modelIds: [
       "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
       "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "us.anthropic.claude-3-opus-20240229-v1:0",
-      "us.anthropic.claude-3-sonnet-20240229-v1:0",
       "us.anthropic.claude-3-haiku-20240307-v1:0",
       "us.deepseek.r1-v1:0",
-      "us.meta.llama3-3-70b-instruct-v1:0",
-      "us.meta.llama3-2-90b-instruct-v1:0",
+      "us.writer.palmyra-x5-v1:0",
+      "us.writer.palmyra-x4-v1:0",
+      "us.meta.llama4-maverick-17b-instruct-v1:0",
+      "us.meta.llama4-scout-17b-instruct-v1:0",
       "us.meta.llama3-2-11b-instruct-v1:0",
       "us.meta.llama3-2-3b-instruct-v1:0",
       "us.meta.llama3-2-1b-instruct-v1:0",
+      "us.amazon.nova-premier-v1:0",
       "us.amazon.nova-pro-v1:0",
       "us.amazon.nova-lite-v1:0",
       "us.amazon.nova-micro-v1:0",
@@ -1176,18 +1234,17 @@ const envs: Record<string, Partial<StackInput>> = {
     "modelRegion": "us-west-2",
     "modelIds": [
       "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
       "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "us.anthropic.claude-3-opus-20240229-v1:0",
-      "us.anthropic.claude-3-sonnet-20240229-v1:0",
       "us.anthropic.claude-3-haiku-20240307-v1:0",
       "us.deepseek.r1-v1:0",
-      "us.meta.llama3-3-70b-instruct-v1:0",
-      "us.meta.llama3-2-90b-instruct-v1:0",
+      "us.writer.palmyra-x5-v1:0",
+      "us.writer.palmyra-x4-v1:0",
+      "us.meta.llama4-maverick-17b-instruct-v1:0",
+      "us.meta.llama4-scout-17b-instruct-v1:0",
       "us.meta.llama3-2-11b-instruct-v1:0",
       "us.meta.llama3-2-3b-instruct-v1:0",
       "us.meta.llama3-2-1b-instruct-v1:0",
+      "us.amazon.nova-premier-v1:0",
       "us.amazon.nova-pro-v1:0",
       "us.amazon.nova-lite-v1:0",
       "us.amazon.nova-micro-v1:0",
@@ -1718,7 +1775,7 @@ const envs: Record<string, Partial<StackInput>> = {
 ## 別 AWS アカウントの Bedrock を利用したい場合
 
 > [!NOTE]
-> Agent 系のタスク (Agent, Flow, プロンプト最適化ツール) に関しては別 AWS アカウントの利用をサポートしていないため、実行時にエラーになる可能性があります。
+> 「Flow チャットユースケース」および「プロンプト最適化ツール」は別 AWS アカウントの利用をサポートしていないため、実行時にエラーになる可能性があります。
 
 別 AWS アカウントの Bedrock を利用することができます。前提条件として、GenU の初回デプロイは完了済みとします。
 
@@ -1728,10 +1785,16 @@ const envs: Record<string, Partial<StackInput>> = {
 - `GenerativeAiUseCasesStack-APIPredictService`
 - `GenerativeAiUseCasesStack-APIPredictStreamService`
 - `GenerativeAiUseCasesStack-APIGenerateImageService`
+- `GenerativeAiUseCasesStack-APIGenerateVideoService`
+- `GenerativeAiUseCasesStack-APIListVideoJobsService`
+- `GenerativeAiUseCasesStack-SpeechToSpeechTaskService`
+- `GenerativeAiUseCasesStack-RagKnowledgeBaseRetrieve` (Knowledge Base 利用時のみ)
+- `GenerativeAiUseCasesStack-APIGetFileDownloadSigned` (Knowledge Base 利用時のみ)
 
 Principal の指定方法について詳細を確認したい場合はこちらを参照ください: [AWS JSON ポリシーの要素: Principal](https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/reference_policies_elements_principal.html)
 
-Principal 設定例 (別アカウントにて設定)
+<details>
+  <summary>Principal 設定例 (別アカウントにて設定)</summary>
 
 ```json
 {
@@ -1744,19 +1807,85 @@ Principal 設定例 (別アカウントにて設定)
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIPredictTitleServiceXXX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIPredictServiceXXXXXXXX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIPredictStreamServiceXX-XXXXXXXXXXXX",
-          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateImageServiceXX-XXXXXXXXXXXX"
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateImageServiceXX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateVideoServiceXX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIListVideoJobsServiceXX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-SpeechToSpeechTaskService-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-RagKnowledgeBaseRetrieveX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGetFileDownloadSignedU-XXXXXXXXXXXX"
         ]
       },
-      "Action": "sts:AssumeRole",
-      "Condition": {}
+      "Action": "sts:AssumeRole"
     }
   ]
 }
 ```
 
+</details>
+
+<details>
+  <summary>ポリシー設定例 (別アカウントにて設定)</summary>
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowBedrockInvokeModel",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:Invoke*",
+        "bedrock:Rerank",
+        "bedrock:GetInferenceProfile",
+        "bedrock:GetAsyncInvoke",
+        "bedrock:ListAsyncInvokes",
+        "bedrock:GetAgent*",
+        "bedrock:ListAgent*"
+      ],
+      "Resource": ["*"]
+    },
+    {
+      "Sid": "AllowS3PutObjectToVideoTempBucket",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject"],
+      "Resource": ["arn:aws:s3:::<video-temp-bucket-name>/*"]
+    },
+    {
+      "Sid": "AllowBedrockRetrieveFromKnowledgeBase",
+      "Effect": "Allow",
+      "Action": ["bedrock:RetrieveAndGenerate*", "bedrock:Retrieve*"],
+      "Resource": [
+        "arn:aws:bedrock:<region>:<account-id>:knowledge-base/<knowledge-base-id>"
+      ]
+    },
+    {
+      "Sid": "AllowS3GetPresignedUrl",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject*"],
+      "Resource": ["arn:aws:s3:::<knowledge-base-datasource-bucket-name>/*"]
+    }
+  ]
+}
+```
+
+</details>
+
 パラメータには以下の値を設定します。
 
 - `crossAccountBedrockRoleArn` ... 別アカウントで事前に作成した IAM ロールの ARN です
+
+Knowledge Base を利用する場合は、下記パラメーターも指定します。
+
+- `ragKnowledgeBaseEnabled` ... Knowledge Base を有効化する場合は `true` とします
+- `ragKnowledgeBaseId` ... 別アカウントに事前構築した Knowledge Base の ID です
+  - Knowledge Base は `modelRegion` に存在する必要があります
+
+Agent Chat ユースケースを使用する場合、下記パラメーターも指定します。
+
+- `agents` ... 以下の属性を持つ Bedrock Agent の設定のリストです
+  - `displayName` ... エージェントの表示名
+  - `agentId` ... 別アカウントに事前構築したエージェントの ID
+  - `aliasId` ... 別アカウントに事前構築したエージェントのエイリアス ID
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
@@ -1766,6 +1895,17 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     crossAccountBedrockRoleArn:
       'arn:aws:iam::アカウントID:role/事前に作成したロール名',
+    // Knowledge Base を利用する場合のみ
+    ragKnowledgeBaseEnabled: true,
+    ragKnowledgeBaseId: 'YOUR_KNOWLEDGE_BASE_ID',
+    // Bedrock エージェントを利用する場合のみ
+    agents: [
+      {
+        displayName: 'YOUR AGENT NAME',
+        agentId: 'YOUR_AGENT_ID',
+        aliasId: 'YOUR_AGENT_ALIAS_ID',
+      },
+    ],
   },
 };
 ```
@@ -1776,7 +1916,18 @@ const envs: Record<string, Partial<StackInput>> = {
 // cdk.json
 {
   "context": {
-    "crossAccountBedrockRoleArn": "arn:aws:iam::アカウントID:role/事前に作成したロール名"
+    "crossAccountBedrockRoleArn": "arn:aws:iam::アカウントID:role/事前に作成したロール名",
+    // Knowledge Base を利用する場合のみ
+    "ragKnowledgeBaseEnabled": true,
+    "ragKnowledgeBaseId": "YOUR_KNOWLEDGE_BASE_ID",
+    // Bedrock エージェントを利用する場合のみ
+    "agents": [
+      {
+        "displayName": "YOUR AGENT NAME",
+        "agentId": "YOUR_AGENT_ID",
+        "aliasId": "YOUR_AGENT_ALIAS_ID"
+      }
+    ]
   }
 }
 ```
