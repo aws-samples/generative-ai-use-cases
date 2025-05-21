@@ -7,25 +7,24 @@ import {
 import { fileTypeFromBuffer, fileTypeFromStream } from 'file-type';
 
 // Map MIME types to their respective formats
-export const documentMimeTypeToExtensions: Record<DocumentMimeType, string[]> =
-  {
-    [DocumentMimeType.PDF]: ['pdf'],
-    [DocumentMimeType.CSV]: ['csv'],
-    [DocumentMimeType.DOC]: ['doc'],
-    [DocumentMimeType.DOCX]: ['docx'],
-    [DocumentMimeType.XLS]: ['xls'],
-    [DocumentMimeType.XLSX]: ['xlsx'],
-    [DocumentMimeType.HTML]: ['html'],
-    [DocumentMimeType.TXT]: ['txt'],
-    [DocumentMimeType.MD]: ['md'],
-  };
-export const imageMimeTypeToExtensions: Record<ImageMimeType, string[]> = {
+const documentMimeTypeToExtensions: Record<DocumentMimeType, string[]> = {
+  [DocumentMimeType.PDF]: ['pdf'],
+  [DocumentMimeType.CSV]: ['csv'],
+  [DocumentMimeType.DOC]: ['doc'],
+  [DocumentMimeType.DOCX]: ['docx'],
+  [DocumentMimeType.XLS]: ['xls'],
+  [DocumentMimeType.XLSX]: ['xlsx'],
+  [DocumentMimeType.HTML]: ['html'],
+  [DocumentMimeType.TXT]: ['txt'],
+  [DocumentMimeType.MD]: ['md'],
+};
+const imageMimeTypeToExtensions: Record<ImageMimeType, string[]> = {
   [ImageMimeType.PNG]: ['png'],
   [ImageMimeType.JPEG]: ['jpeg', 'jpg'],
   [ImageMimeType.GIF]: ['gif'],
   [ImageMimeType.WEBP]: ['webp'],
 };
-export const videoMimeTypeToExtensions: Record<VideoMimeType, string[]> = {
+const videoMimeTypeToExtensions: Record<VideoMimeType, string[]> = {
   [VideoMimeType.MKV]: ['mkv'],
   [VideoMimeType.MOV]: ['mov'],
   [VideoMimeType.MP4]: ['mp4'],
@@ -35,7 +34,7 @@ export const videoMimeTypeToExtensions: Record<VideoMimeType, string[]> = {
   [VideoMimeType.WMV]: [], // We don't support WMV as 'file-type' doesn't support it
   [VideoMimeType.THREE_GP]: ['3gp'],
 };
-export const mimeTypeToExtensions: Record<SupportedMimeType, string[]> = {
+const mimeTypeToExtensions: Record<SupportedMimeType, string[]> = {
   ...documentMimeTypeToExtensions,
   ...imageMimeTypeToExtensions,
   ...videoMimeTypeToExtensions,

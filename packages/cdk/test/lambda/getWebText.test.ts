@@ -24,9 +24,12 @@ function createAPIGatewayProxyEvent(url?: string): APIGatewayProxyEvent {
 }
 
 // Mock global fetch
-global.fetch = jest.fn().mockImplementation(() => 
+global.fetch = jest.fn().mockImplementation(() =>
   Promise.resolve({
-    text: () => Promise.resolve('<html><body><h1>Test Title</h1><p>Test content</p></body></html>')
+    text: () =>
+      Promise.resolve(
+        '<html><body><h1>Test Title</h1><p>Test content</p></body></html>'
+      ),
   })
 );
 
@@ -40,13 +43,18 @@ describe('getWebText Lambda handler', () => {
     // Mock HTML content response
     (global.fetch as jest.Mock).mockImplementation(() =>
       Promise.resolve({
-        text: () => Promise.resolve('<html><body><h1>Test Title</h1><p>Test content</p></body></html>')
+        text: () =>
+          Promise.resolve(
+            '<html><body><h1>Test Title</h1><p>Test content</p></body></html>'
+          ),
       })
     );
-    
+
     // Execute test
-    const result = await handler(createAPIGatewayProxyEvent('https://example.com'));
-    
+    const result = await handler(
+      createAPIGatewayProxyEvent('https://example.com')
+    );
+
     // Verify results
     expect(result.statusCode).toBe(200);
     expect(JSON.parse(result.body)).toHaveProperty('text');
@@ -59,7 +67,7 @@ describe('getWebText Lambda handler', () => {
   test('returns 400 error when URL parameter is missing', async () => {
     // Execute test
     const result = await handler(createAPIGatewayProxyEvent());
-    
+
     // Verify results
     expect(result.statusCode).toBe(400);
     expect(JSON.parse(result.body)).toEqual({
@@ -71,8 +79,10 @@ describe('getWebText Lambda handler', () => {
   // Test for invalid URL scheme
   test('returns 403 error when URL scheme is not http or https', async () => {
     // Execute test
-    const result = await handler(createAPIGatewayProxyEvent('ftp://example.com'));
-    
+    const result = await handler(
+      createAPIGatewayProxyEvent('ftp://example.com')
+    );
+
     // Verify results
     expect(result.statusCode).toBe(403);
     expect(JSON.parse(result.body)).toEqual({
@@ -84,8 +94,10 @@ describe('getWebText Lambda handler', () => {
   // Test for private IP address access
   test('returns 403 error when trying to access private IP address', async () => {
     // Execute test
-    const result = await handler(createAPIGatewayProxyEvent('http://192.168.1.1'));
-    
+    const result = await handler(
+      createAPIGatewayProxyEvent('http://192.168.1.1')
+    );
+
     // Verify results
     expect(result.statusCode).toBe(403);
     expect(JSON.parse(result.body)).toEqual({
@@ -97,8 +109,10 @@ describe('getWebText Lambda handler', () => {
   // Test for localhost access
   test('returns 403 error when trying to access localhost', async () => {
     // Execute test
-    const result = await handler(createAPIGatewayProxyEvent('http://localhost'));
-    
+    const result = await handler(
+      createAPIGatewayProxyEvent('http://localhost')
+    );
+
     // Verify results
     expect(result.statusCode).toBe(403);
     expect(JSON.parse(result.body)).toEqual({
@@ -110,12 +124,15 @@ describe('getWebText Lambda handler', () => {
   // Test for domain resolving to private IP
   test('returns 403 error when domain resolves to private IP', async () => {
     // Execute test - the util.promisify mock handles giving us a private IP
-    const result = await handler(createAPIGatewayProxyEvent('http://example-internal.com'));
-    
+    const result = await handler(
+      createAPIGatewayProxyEvent('http://example-internal.com')
+    );
+
     // Verify results
     expect(result.statusCode).toBe(403);
     expect(JSON.parse(result.body)).toEqual({
-      message: 'Access to domains resolving to internal networks is not allowed.',
+      message:
+        'Access to domains resolving to internal networks is not allowed.',
     });
     expect(global.fetch).not.toHaveBeenCalled();
   });
@@ -125,13 +142,15 @@ describe('getWebText Lambda handler', () => {
     // Mock console.error to prevent actual logging during test
     const originalConsoleError = console.error;
     console.error = jest.fn();
-    
+
     // Execute test - the util.promisify mock will throw an error
-    const result = await handler(createAPIGatewayProxyEvent('http://non-existent-domain.com'));
-    
+    const result = await handler(
+      createAPIGatewayProxyEvent('http://non-existent-domain.com')
+    );
+
     // Restore console.error
     console.error = originalConsoleError;
-    
+
     // Verify results
     expect(result.statusCode).toBe(403);
     expect(JSON.parse(result.body)).toEqual({
@@ -143,20 +162,22 @@ describe('getWebText Lambda handler', () => {
   // Test for fetch error
   test('returns 500 error when fetch fails', async () => {
     // Mock fetch to throw an error
-    (global.fetch as jest.Mock).mockImplementation(() => 
+    (global.fetch as jest.Mock).mockImplementation(() =>
       Promise.reject(new Error('Network error'))
     );
-    
+
     // Mock console.log to prevent actual logging during test
     const originalConsoleLog = console.log;
     console.log = jest.fn();
-    
+
     // Execute test
-    const result = await handler(createAPIGatewayProxyEvent('https://example.com'));
-    
+    const result = await handler(
+      createAPIGatewayProxyEvent('https://example.com')
+    );
+
     // Restore console.log
     console.log = originalConsoleLog;
-    
+
     // Verify results
     expect(result.statusCode).toBe(500);
     expect(JSON.parse(result.body)).toEqual({
@@ -169,13 +190,13 @@ describe('getWebText Lambda handler', () => {
     // Mock console.error to prevent actual logging during test
     const originalConsoleError = console.error;
     console.error = jest.fn();
-    
+
     // Execute test
     const result = await handler(createAPIGatewayProxyEvent('not-a-valid-url'));
-    
+
     // Restore console.error
     console.error = originalConsoleError;
-    
+
     // Verify results
     expect(result.statusCode).toBe(403);
     expect(JSON.parse(result.body)).toEqual({

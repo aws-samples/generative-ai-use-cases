@@ -21,7 +21,7 @@ export const mimeTypeToFormat: Record<SupportedMimeType, SupportedFormat> =
     ])
   ) as Record<SupportedMimeType, SupportedFormat>;
 
-export const getFileFormatFromMimeType = (mimeType: string) => {
+export const getFormatFromMimeType = (mimeType: string) => {
   if (mimeType in mimeTypeToFormat) {
     return mimeTypeToFormat[mimeType as SupportedMimeType];
   }
