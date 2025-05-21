@@ -32,6 +32,7 @@ chat:
   show_system_prompt: Show system prompt
   system_prompt: System Prompt
   title: Chat
+  view_prompt_examples: View Prompt Examples
 common:
   cancel: Cancel
   clear: Clear

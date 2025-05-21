@@ -157,6 +157,9 @@ const ChatPage: React.FC = () => {
   >(undefined);
   const [showSetting, setShowSetting] = useState(false);
   const { t } = useTranslation();
+  const [forceExpandPromptList, setForceExpandPromptList] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     // On the conversation history page, do not change the system prompt even if the model is changed
@@ -433,12 +436,21 @@ const ChatPage: React.FC = () => {
         </div>
 
         {((isEmpty && !loadingMessages) || loadingMessages) && (
-          <div className="relative flex h-[calc(100vh-13rem)] flex-col items-center justify-center">
+          <div className="relative flex h-[calc(100vh-13rem)] flex-col items-center justify-center gap-y-4">
             <BedrockIcon
               className={`fill-gray-400 ${
                 loadingMessages ? 'animate-pulse' : ''
               }`}
             />
+
+            <Button
+              className="text-sm"
+              outlined
+              onClick={() => {
+                setForceExpandPromptList(Math.random());
+              }}>
+              {t('chat.view_prompt_examples')}
+            </Button>
           </div>
         )}
 
@@ -557,6 +569,7 @@ const ChatPage: React.FC = () => {
           systemContextList={systemContextList as SystemContext[]}
           onClickDeleteSystemContext={onClickDeleteSystemContext}
           onClickUpdateSystemContext={onClickUpdateSystemContext}
+          forceExpand={forceExpandPromptList}
         />
       )}
 

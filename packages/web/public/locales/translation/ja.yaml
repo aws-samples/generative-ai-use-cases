@@ -30,6 +30,7 @@ chat:
   show_system_prompt: システムプロンプトの表示
   system_prompt: システムプロンプト
   title: チャット
+  view_prompt_examples: プロンプト例を見る
 common:
   cancel: キャンセル
   clear: クリア

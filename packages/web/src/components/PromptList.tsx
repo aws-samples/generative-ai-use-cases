@@ -32,6 +32,7 @@ type Props = BaseProps & {
     systemContextId: string,
     title: string
   ) => Promise<void>;
+  forceExpand: number | null;
 };
 
 const PromptList: React.FC<Props> = (props) => {
@@ -42,10 +43,28 @@ const PromptList: React.FC<Props> = (props) => {
   // PromptList is fixed for use on the chat page
   const { getModelId } = useChat('/chat');
   const modelId = getModelId();
+  const [previousForceExpanded, setPreviousForceExpanded] = useState<
+    number | null
+  >(null);
 
   const prompter = useMemo(() => {
     return getPrompter(modelId);
   }, [modelId]);
+
+  useEffect(() => {
+    if (
+      props.forceExpand !== null &&
+      previousForceExpanded !== props.forceExpand
+    ) {
+      setPreviousForceExpanded(props.forceExpand);
+      setExpanded(true);
+    }
+  }, [
+    props.forceExpand,
+    previousForceExpanded,
+    setPreviousForceExpanded,
+    setExpanded,
+  ]);
 
   // To access the upper setExpanded, nest the component
   const Item: React.FC<PromptListItem> = (props) => {
