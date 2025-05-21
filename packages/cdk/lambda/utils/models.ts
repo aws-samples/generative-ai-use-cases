@@ -30,6 +30,7 @@ import {
   applyAutoCacheToMessages,
   applyAutoCacheToSystem,
 } from './promptCache';
+import { getFileFormatFromMimeType } from './media';
 
 // Default Models
 
@@ -351,7 +352,7 @@ const createConverseCommandInput = (
         if (extra.type === 'image' && extra.source.type === 'base64') {
           contentBlocks.push({
             image: {
-              format: extra.source.mediaType.split('/')[1],
+              format: getFileFormatFromMimeType(extra.source.mediaType),
               source: {
                 bytes: Buffer.from(extra.source.data, 'base64'),
               },
@@ -360,7 +361,7 @@ const createConverseCommandInput = (
         } else if (extra.type === 'file' && extra.source.type === 'base64') {
           contentBlocks.push({
             document: {
-              format: extra.name.split('.').pop(),
+              format: getFileFormatFromMimeType(extra.source.mediaType),
               name: extra.name
                 .split('.')[0]
                 .replace(/[^a-zA-Z0-9\s\-()[\]]/g, 'X'), // If the file name contains Japanese, it will cause an error, so convert it
@@ -372,7 +373,7 @@ const createConverseCommandInput = (
         } else if (extra.type === 'video' && extra.source.type === 'base64') {
           contentBlocks.push({
             video: {
-              format: extra.source.mediaType.split('/')[1],
+              format: getFileFormatFromMimeType(extra.source.mediaType),
               source: {
                 bytes: Buffer.from(extra.source.data, 'base64'),
               },
@@ -381,7 +382,7 @@ const createConverseCommandInput = (
         } else if (extra.type === 'video' && extra.source.type === 's3') {
           contentBlocks.push({
             video: {
-              format: extra.source.mediaType.split('/')[1],
+              format: getFileFormatFromMimeType(extra.source.mediaType),
               source: {
                 s3Location: {
                   uri: extra.source.data,
