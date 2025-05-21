@@ -8,6 +8,7 @@ import { PiLightbulbFilamentBold, PiWarningFill } from 'react-icons/pi';
 import { BaseProps } from '../@types/common';
 import Button from './Button';
 import { useTranslation } from 'react-i18next';
+import { MODELS } from '../hooks/useModel';
 
 type Props = BaseProps & {
   modelId: string;
@@ -28,6 +29,7 @@ const GenerateImageAssistant: React.FC<Props> = (props) => {
   const { pathname } = useLocation();
   const { loading, messages, postChat, popMessage } = useChat(pathname);
   const [isAutoGenerating, setIsAutoGenerating] = useState(false);
+  const { modelDisplayName } = MODELS;
 
   const contents = useMemo<
     (
@@ -143,7 +145,7 @@ const GenerateImageAssistant: React.FC<Props> = (props) => {
             value={props.modelId}
             onChange={props.onChangeModel}
             options={props.modelIds.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
           />
         </div>

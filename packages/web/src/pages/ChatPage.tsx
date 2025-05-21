@@ -132,7 +132,7 @@ const ChatPage: React.FC = () => {
   const { createSystemContext } = useSystemContextApi();
   const { scrollableContainer, setFollowing } = useFollow();
   const { getChatTitle } = useChatList();
-  const { modelIds: availableModels } = MODELS;
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const { data: share, mutate: reloadShare } = findShareId(chatId);
   const modelId = getModelId();
   const prompter = useMemo(() => {
@@ -143,6 +143,9 @@ const ChatPage: React.FC = () => {
   >(undefined);
   const [showSetting, setShowSetting] = useState(false);
   const { t } = useTranslation();
+  const [forceExpandPromptList, setForceExpandPromptList] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     // On the conversation history page, do not change the system prompt even if the model is changed
@@ -162,18 +165,18 @@ const ChatPage: React.FC = () => {
 
   const accept = useMemo(() => {
     if (!modelId) return [];
-    const feature = MODELS.modelFeatureFlags[modelId];
+    const feature = MODELS.modelMetadata[modelId];
     return [
-      ...(feature.doc ? fileLimit.accept.doc : []),
-      ...(feature.image ? fileLimit.accept.image : []),
-      ...(feature.video ? fileLimit.accept.video : []),
+      ...(feature.flags.doc ? fileLimit.accept.doc : []),
+      ...(feature.flags.image ? fileLimit.accept.image : []),
+      ...(feature.flags.video ? fileLimit.accept.video : []),
     ];
   }, [modelId]);
   const fileUpload = useMemo(() => {
     return accept.length > 0;
   }, [accept]);
   const setting = useMemo(() => {
-    return MODELS.modelFeatureFlags[modelId]?.reasoning ?? false;
+    return MODELS.modelMetadata[modelId]?.flags.reasoning ?? false;
   }, [modelId]);
 
   useEffect(() => {
@@ -388,6 +391,11 @@ const ChatPage: React.FC = () => {
     }
   };
 
+  // Initialize forceExpandPromptList to null when the path changes
+  useEffect(() => {
+    setForceExpandPromptList(null);
+  }, [pathname, setForceExpandPromptList]);
+
   return (
     <>
       <div
@@ -413,18 +421,29 @@ const ChatPage: React.FC = () => {
             value={modelId}
             onChange={setModelId}
             options={availableModels.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
           />
         </div>
 
         {((isEmpty && !loadingMessages) || loadingMessages) && (
-          <div className="relative flex h-[calc(100vh-13rem)] flex-col items-center justify-center">
+          <div className="relative flex h-[calc(100vh-13rem)] flex-col items-center justify-center gap-y-4">
             <BedrockIcon
               className={`fill-gray-400 ${
                 loadingMessages ? 'animate-pulse' : ''
               }`}
             />
+
+            {!loadingMessages && (
+              <Button
+                className="text-sm"
+                outlined
+                onClick={() => {
+                  setForceExpandPromptList(Math.random());
+                }}>
+                {t('chat.view_prompt_examples')}
+              </Button>
+            )}
           </div>
         )}
 
@@ -543,6 +562,7 @@ const ChatPage: React.FC = () => {
           systemContextList={systemContextList as SystemContext[]}
           onClickDeleteSystemContext={onClickDeleteSystemContext}
           onClickUpdateSystemContext={onClickUpdateSystemContext}
+          forceExpand={forceExpandPromptList}
         />
       )}
 
@@ -614,7 +634,7 @@ const ChatPage: React.FC = () => {
             defaultOpened={true}>
             <div className="">
               <ModelParameters
-                modelFeatureFlags={MODELS.modelFeatureFlags[modelId]}
+                modelFeatureFlags={MODELS.modelMetadata[modelId].flags}
                 overrideModelParameters={overrideModelParameters}
                 setOverrideModelParameters={setOverrideModelParameters}
               />

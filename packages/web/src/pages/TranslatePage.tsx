@@ -117,7 +117,7 @@ const TranslatePage: React.FC = () => {
     getStopReason,
   } = useChat(pathname);
   const { setTypingTextInput, typingTextOutput } = useTyping(loading);
-  const { modelIds: availableModels } = MODELS;
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const modelId = getModelId();
   const prompter = useMemo(() => {
     return getPrompter(modelId);
@@ -306,7 +306,7 @@ const TranslatePage: React.FC = () => {
               value={modelId}
               onChange={setModelId}
               options={availableModels.map((m) => {
-                return { value: m, label: m };
+                return { value: m, label: modelDisplayName(m) };
               })}
             />
             <div className="col-span-12 col-start-1 mx-2 lg:col-span-10 lg:col-start-2 xl:col-span-10 xl:col-start-2">

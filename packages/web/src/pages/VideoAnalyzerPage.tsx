@@ -79,7 +79,7 @@ const VideoAnalyzerPage: React.FC = () => {
     clear: clearChat,
   } = useChat(pathname);
   const { setTypingTextInput, typingTextOutput } = useTyping(loading);
-  const { visionModelIds } = MODELS;
+  const { visionModelIds, modelDisplayName } = MODELS;
   const modelId = getModelId();
   const prompter = useMemo(() => {
     return getPrompter(modelId);
@@ -297,7 +297,7 @@ const VideoAnalyzerPage: React.FC = () => {
                 value={modelId}
                 onChange={setModelId}
                 options={visionModelIds.map((m) => {
-                  return { value: m, label: m };
+                  return { value: m, label: modelDisplayName(m) };
                 })}
                 label={t('videoAnalyzer.model')}
               />

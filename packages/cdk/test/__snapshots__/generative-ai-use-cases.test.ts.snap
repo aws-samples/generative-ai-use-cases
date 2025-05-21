@@ -9738,6 +9738,9 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         },
         "Environment": {
           "Variables": {
+            "BUCKET_NAME": {
+              "Ref": "APIFileBucket8FB29855",
+            },
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
             },
@@ -9796,6 +9799,13 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Statement": [
             {
               "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
                 "dynamodb:BatchWriteItem",
                 "dynamodb:PutItem",
                 "dynamodb:UpdateItem",
@@ -9910,6 +9920,13 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Statement": [
             {
               "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
                 "dynamodb:BatchWriteItem",
                 "dynamodb:PutItem",
                 "dynamodb:UpdateItem",
@@ -13063,6 +13080,13 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Statement": [
             {
               "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
                 "dynamodb:BatchWriteItem",
                 "dynamodb:PutItem",
                 "dynamodb:UpdateItem",
@@ -13634,6 +13658,44 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
       "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
+    "ApiSecurityHeadersPolicyA2894EB4": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ResponseHeadersPolicyConfig": {
+          "Name": "GenerativeAiUseCasesStackApiSecurityHeadersPolicyFF62FE6B",
+          "SecurityHeadersConfig": {
+            "ContentSecurityPolicy": {
+              "ContentSecurityPolicy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com https://raw.githubusercontent.com https://api.github.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;",
+              "Override": true,
+            },
+            "ContentTypeOptions": {
+              "Override": true,
+            },
+            "FrameOptions": {
+              "FrameOption": "DENY",
+              "Override": true,
+            },
+            "ReferrerPolicy": {
+              "Override": true,
+              "ReferrerPolicy": "strict-origin-when-cross-origin",
+            },
+            "StrictTransportSecurity": {
+              "AccessControlMaxAgeSec": 63072000,
+              "IncludeSubdomains": true,
+              "Override": true,
+              "Preload": true,
+            },
+            "XSSProtection": {
+              "ModeBlock": true,
+              "Override": true,
+              "Protection": true,
+            },
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::ResponseHeadersPolicy",
+      "UpdateReplacePolicy": "Delete",
+    },
     "ApiWafAssociation": {
       "DeletionPolicy": "Delete",
       "Properties": {
@@ -13695,6 +13757,9 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "DefaultCacheBehavior": {
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
             "Compress": true,
+            "ResponseHeadersPolicyId": {
+              "Ref": "ApiSecurityHeadersPolicyA2894EB4",
+            },
             "TargetOriginId": "GenerativeAiUseCasesStackApiWebCloudFrontDistributionOrigin15479CB7B",
             "ViewerProtocolPolicy": "redirect-to-https",
           },

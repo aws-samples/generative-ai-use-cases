@@ -77,7 +77,7 @@ const SummarizePage: React.FC = () => {
     updateSystemContextByModel,
   } = useChat(pathname);
   const { setTypingTextInput, typingTextOutput } = useTyping(loading);
-  const { modelIds: availableModels } = MODELS;
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const modelId = getModelId();
   const prompter = useMemo(() => {
     return getPrompter(modelId);
@@ -159,7 +159,7 @@ const SummarizePage: React.FC = () => {
               value={modelId}
               onChange={setModelId}
               options={availableModels.map((m) => {
-                return { value: m, label: m };
+                return { value: m, label: modelDisplayName(m) };
               })}
             />
           </div>

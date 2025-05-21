@@ -224,7 +224,7 @@ const GenerateVideoPage: React.FC = () => {
     errorMessages,
     clear: clearFiles,
   } = useFiles(pathname);
-  const { videoGenModelIds, videoGenModels } = MODELS;
+  const { videoGenModelIds, videoGenModels, modelDisplayName } = MODELS;
   const { getFileDownloadSignedUrl } = useFileApi();
   const [previewVideoSrc, setPreviewVideoSrc] = useState('');
   const [previewPrompt, setPreviewPrompt] = useState('');
@@ -450,7 +450,7 @@ const GenerateVideoPage: React.FC = () => {
             value={videoGenModelId}
             onChange={setVideoGenModelId}
             options={videoGenModelIds.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
             fullWidth
           />

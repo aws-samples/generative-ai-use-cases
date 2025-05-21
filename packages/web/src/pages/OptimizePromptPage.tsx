@@ -8,6 +8,7 @@ import Select from '../components/Select';
 import Markdown from '../components/Markdown';
 import ButtonCopy from '../components/ButtonCopy';
 import useOptimizePrompt from '../hooks/useOptimizePrompt';
+import { MODELS } from '../hooks/useModel';
 
 type StateType = {
   prompt: string;
@@ -65,6 +66,7 @@ const OptimizePromptPage: React.FC = () => {
   } = useOptimizePromptState();
   const { supportedModelIds, optimizePrompt } = useOptimizePrompt();
   const [loading, setLoading] = useState(false);
+  const { modelDisplayName } = MODELS;
 
   useEffect(() => {
     // If supportedModelIds is 0, this page will be disabled
@@ -120,7 +122,7 @@ const OptimizePromptPage: React.FC = () => {
             value={modelId}
             onChange={setModelId}
             options={supportedModelIds.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
           />
           <div className="flex w-full flex-col lg:flex-row">

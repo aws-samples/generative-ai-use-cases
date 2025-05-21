@@ -17,9 +17,15 @@ export type FeatureFlags = {
 
   // Additional Flags
   light?: boolean;
+  legacy?: boolean;
 };
 
 export type ModelConfiguration = {
   modelId: string;
   region: string;
+};
+
+export type ModelMetadata = {
+  flags: FeatureFlags;
+  displayName: string;
 };

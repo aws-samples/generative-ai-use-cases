@@ -119,7 +119,7 @@ const CommentItem: React.FC<CommentItemProps> = ({
 const TailwindAdvancedEditor: React.FC<Props> = ({ initialSentence }) => {
   const { t } = useTranslation();
   const { write, modelId, setModelId } = useWriter();
-  const { modelIds: availableModels } = MODELS;
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const [commentManager, setCommentManager] = useState<AICommentManager | null>(
     null
   );
@@ -278,7 +278,7 @@ const TailwindAdvancedEditor: React.FC<Props> = ({ initialSentence }) => {
             onChange={setModelId}
             options={availableModels.map((m) => ({
               value: m,
-              label: m,
+              label: modelDisplayName(m),
             }))}
             className="w-48"
           />

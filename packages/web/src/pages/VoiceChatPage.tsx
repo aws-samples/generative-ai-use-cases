@@ -37,7 +37,8 @@ const VoiceChatPage: React.FC = () => {
   );
   const [inputSystemPrompt, setInputSystemPrompt] = useState(systemPrompt);
   const { scrollableContainer, setFollowing } = useFollow();
-  const { speechToSpeechModelIds, speechToSpeechModels } = MODELS;
+  const { speechToSpeechModelIds, speechToSpeechModels, modelDisplayName } =
+    MODELS;
   const [modelId, setModelId] = useState(speechToSpeechModelIds[0]);
   // Define useRef for the cleanup function when leaving the page.
   // To get the latest value without including isActive in the dependency array.
@@ -92,7 +93,7 @@ const VoiceChatPage: React.FC = () => {
               value={modelId}
               onChange={setModelId}
               options={speechToSpeechModelIds.map((m) => {
-                return { value: m, label: m };
+                return { value: m, label: modelDisplayName(m) };
               })}
             />
           </div>

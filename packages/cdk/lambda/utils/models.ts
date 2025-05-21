@@ -25,7 +25,7 @@ import {
   ConversationRole,
   ContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
-import { modelFeatureFlags } from '@generative-ai-use-cases/common';
+import { modelMetadata } from '@generative-ai-use-cases/common';
 import {
   applyAutoCacheToMessages,
   applyAutoCacheToSystem,
@@ -44,7 +44,7 @@ const modelIds: ModelConfiguration[] = (
   .filter((model) => model.modelId);
 // If there is a lightweight model among the available models, prioritize the lightweight model.
 const lightWeightModelIds = modelIds.filter(
-  (model: ModelConfiguration) => modelFeatureFlags[model.modelId].light
+  (model: ModelConfiguration) => modelMetadata[model.modelId].flags.light
 );
 const defaultModelConfiguration = lightWeightModelIds[0] || modelIds[0];
 export const defaultModel: Model = {
@@ -431,7 +431,7 @@ const createConverseCommandInput = (
   };
 
   if (
-    modelFeatureFlags[model.modelId].reasoning &&
+    modelMetadata[model.modelId].flags.reasoning &&
     model.modelParameters?.reasoningConfig?.type === 'enabled'
   ) {
     converseCommandInput.inferenceConfig = {
