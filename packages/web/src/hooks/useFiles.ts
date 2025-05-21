@@ -163,7 +163,7 @@ const useFilesState = create<{
 
         // Filter by file count
         let isFileNumberAllowed = false;
-        if (uploadedFile.file.type.includes('image')) {
+        if (uploadedFile.type === 'image') {
           imageFileCount += 1;
           isFileNumberAllowed =
             imageFileCount <= (fileLimit.maxImageFileCount || 0);
@@ -196,7 +196,7 @@ const useFilesState = create<{
               );
             }
           }
-        } else if (uploadedFile.file.type.includes('video')) {
+        } else if (uploadedFile.type === 'video') {
           videoFileCount += 1;
           isFileNumberAllowed =
             videoFileCount <= (fileLimit.maxVideoFileCount || 0);
