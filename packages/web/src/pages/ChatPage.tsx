@@ -405,6 +405,11 @@ const ChatPage: React.FC = () => {
     }
   };
 
+  // Initialize forceExpandPromptList to null when the path changes
+  useEffect(() => {
+    setForceExpandPromptList(null);
+  }, [pathname, setForceExpandPromptList]);
+
   return (
     <>
       <div
@@ -443,14 +448,16 @@ const ChatPage: React.FC = () => {
               }`}
             />
 
-            <Button
-              className="text-sm"
-              outlined
-              onClick={() => {
-                setForceExpandPromptList(Math.random());
-              }}>
-              {t('chat.view_prompt_examples')}
-            </Button>
+            {!loadingMessages && (
+              <Button
+                className="text-sm"
+                outlined
+                onClick={() => {
+                  setForceExpandPromptList(Math.random());
+                }}>
+                {t('chat.view_prompt_examples')}
+              </Button>
+            )}
           </div>
         )}
 
