@@ -13,7 +13,7 @@ const SupportedFormat = {
 type SupportedFormatKey = keyof typeof SupportedFormat;
 type SupportedFormat = (typeof SupportedFormat)[SupportedFormatKey];
 
-export const mimeTypeToFormat: Record<SupportedMimeType, SupportedFormat> =
+const mimeTypeToFormat: Record<SupportedMimeType, SupportedFormat> =
   Object.fromEntries(
     Object.entries(SupportedMimeType).map(([key, mimeType]) => [
       mimeType,

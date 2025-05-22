@@ -1,44 +1,13 @@
 import {
-  DocumentMimeType,
   ImageMimeType,
   VideoMimeType,
   SupportedMimeType,
+  documentMimeTypeToExtensions,
+  imageMimeTypeToExtensions,
+  videoMimeTypeToExtensions,
+  mimeTypeToExtensions,
 } from '@generative-ai-use-cases/common';
 import { fileTypeFromBuffer, fileTypeFromStream } from 'file-type';
-
-// Map MIME types to their respective formats
-const documentMimeTypeToExtensions: Record<DocumentMimeType, string[]> = {
-  [DocumentMimeType.PDF]: ['pdf'],
-  [DocumentMimeType.CSV]: ['csv'],
-  [DocumentMimeType.DOC]: ['doc'],
-  [DocumentMimeType.DOCX]: ['docx'],
-  [DocumentMimeType.XLS]: ['xls'],
-  [DocumentMimeType.XLSX]: ['xlsx'],
-  [DocumentMimeType.HTML]: ['html'],
-  [DocumentMimeType.TXT]: ['txt'],
-  [DocumentMimeType.MD]: ['md'],
-};
-const imageMimeTypeToExtensions: Record<ImageMimeType, string[]> = {
-  [ImageMimeType.PNG]: ['png'],
-  [ImageMimeType.JPEG]: ['jpeg', 'jpg'],
-  [ImageMimeType.GIF]: ['gif'],
-  [ImageMimeType.WEBP]: ['webp'],
-};
-const videoMimeTypeToExtensions: Record<VideoMimeType, string[]> = {
-  [VideoMimeType.MKV]: ['mkv'],
-  [VideoMimeType.MOV]: ['mov'],
-  [VideoMimeType.MP4]: ['mp4'],
-  [VideoMimeType.WEBM]: ['webm'],
-  [VideoMimeType.FLV]: ['flv'],
-  [VideoMimeType.MPEG]: ['mpeg', 'mpg'],
-  [VideoMimeType.WMV]: [], // We don't support WMV as 'file-type' doesn't support it
-  [VideoMimeType.THREE_GP]: ['3gp'],
-};
-const mimeTypeToExtensions: Record<SupportedMimeType, string[]> = {
-  ...documentMimeTypeToExtensions,
-  ...imageMimeTypeToExtensions,
-  ...videoMimeTypeToExtensions,
-};
 
 // Sets of supported MIME types
 const imageMimeTypeSet = new Set(Object.values(ImageMimeType));
