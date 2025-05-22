@@ -37,8 +37,14 @@ export const getMimeTypeFromFileHeader = async (file: File) => {
   try {
     mimeType = (await fileTypeFromStream(file.stream()))?.mime;
   } catch (error) {
-    const arrayBuffer = await file.slice(0, 4096).arrayBuffer(); // Only read the first 4KB
-    mimeType = (await fileTypeFromBuffer(arrayBuffer))?.mime;
+    console.error('Error reading MIME type from stream:', error);
+    try {
+      const arrayBuffer = await file.slice(0, 4096).arrayBuffer(); // Only read the first 4KB
+      mimeType = (await fileTypeFromBuffer(arrayBuffer))?.mime;
+    } catch (error) {
+      console.error('Error reading MIME type from buffer:', error);
+      return;
+    }
   }
 
   // Some file types are not accepted by file-type.
@@ -47,7 +53,7 @@ export const getMimeTypeFromFileHeader = async (file: File) => {
     if (unparsableMimeTypeSet.has(file.type as SupportedMimeType)) {
       mimeType = file.type;
     } else {
-      return ''; // Failed to detect the mime type
+      return; // Failed to detect the mime type
     }
   }
   return (mimeTypeAlias[mimeType] || mimeType) as SupportedMimeType;
@@ -62,7 +68,7 @@ export const AcceptedDotExtensions = {
 };
 
 // Get file type from MIME type
-export const getFileTypeFromMimeType = (mimeType?: string) => {
+export const getFileTypeFromMimeType = (mimeType?: SupportedMimeType) => {
   if (imageMimeTypeSet.has(mimeType as ImageMimeType)) return 'image';
   if (videoMimeTypeSet.has(mimeType as VideoMimeType)) return 'video';
   return 'file';
@@ -70,7 +76,7 @@ export const getFileTypeFromMimeType = (mimeType?: string) => {
 
 // Validate if MIME type and extension are compatible
 export const validateMimeTypeAndExtension = (
-  mimeType: string,
+  mimeType: SupportedMimeType,
   extension: string
 ) => {
   if (mimeType in mimeTypeToExtensions) {

@@ -122,10 +122,9 @@ const useFilesState = create<{
 
         // Validate file extension and MIME type
         const isFileExtensionAccepted = accept.includes(`.${extension}`);
-        const isFileExtensionValid = validateMimeTypeAndExtension(
-          uploadedFile.mimeType,
-          extension
-        );
+        const isMimeTypeValid =
+          !uploadedFile.mimeType ||
+          validateMimeTypeAndExtension(uploadedFile.mimeType, extension);
         if (accept && accept.length === 0) {
           errorMessages.push(i18next.t('files.error.modelNotSupported'));
         } else if (!isFileExtensionAccepted) {
@@ -135,7 +134,7 @@ const useFilesState = create<{
               acceptedExtensions: accept.join(', '),
             })
           );
-        } else if (!isFileExtensionValid) {
+        } else if (!isMimeTypeValid) {
           errorMessages.push(
             i18next.t('files.error.mimeMismatch', {
               fileName: uploadedFile.file.name,

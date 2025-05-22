@@ -1,3 +1,4 @@
+import { SupportedMimeType } from '@generative-ai-use-cases/common';
 import { PrimaryKey } from './base';
 import { AdditionalModelRequestFields } from './text';
 
@@ -58,7 +59,7 @@ export type UploadedFileType = {
   file: File;
   name: string;
   type: 'image' | 'video' | 'file';
-  mimeType: string;
+  mimeType?: SupportedMimeType;
   base64EncodedData?: string;
   s3Url?: string;
   uploading: boolean;
