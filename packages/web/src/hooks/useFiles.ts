@@ -123,7 +123,7 @@ const useFilesState = create<{
         // Validate file extension and MIME type
         const isFileExtensionAccepted = accept.includes(`.${extension}`);
         const isMimeTypeValid =
-          !uploadedFile.mimeType ||
+          uploadedFile.mimeType &&
           validateMimeTypeAndExtension(uploadedFile.mimeType, extension);
         if (accept && accept.length === 0) {
           errorMessages.push(i18next.t('files.error.modelNotSupported'));
