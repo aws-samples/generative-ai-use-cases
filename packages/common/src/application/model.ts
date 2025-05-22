@@ -66,11 +66,11 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   },
   'us.anthropic.claude-opus-4-20250514-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude 4 Opus',
+    displayName: 'Claude Opus 4',
   },
   'us.anthropic.claude-sonnet-4-20250514-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude 4 Sonnet',
+    displayName: 'Claude Sonnet 4',
   },
   'us.anthropic.claude-3-7-sonnet-20250219-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
@@ -109,7 +109,7 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   },
   'eu.anthropic.claude-sonnet-4-20250514-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude 4 Sonnet',
+    displayName: 'Claude Sonnet 4',
   },
   'eu.anthropic.claude-3-7-sonnet-20250219-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
@@ -136,7 +136,7 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   },
   'apac.anthropic.claude-sonnet-4-20250514-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude 4 Sonnet',
+    displayName: 'Claude Sonnet 4',
   },
   'apac.anthropic.claude-3-7-sonnet-20250219-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
