@@ -64,6 +64,14 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     },
     displayName: 'Claude 3 Haiku',
   },
+  'us.anthropic.claude-opus-4-20250514-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude 4 Opus',
+  },
+  'us.anthropic.claude-sonnet-4-20250514-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude 4 Sonnet',
+  },
   'us.anthropic.claude-3-7-sonnet-20250219-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
     displayName: 'Claude 3.7 Sonnet',
@@ -99,6 +107,14 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     },
     displayName: 'Claude 3 Haiku',
   },
+  'eu.anthropic.claude-sonnet-4-20250514-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude 4 Sonnet',
+  },
+  'eu.anthropic.claude-3-7-sonnet-20250219-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude 3.7 Sonnet',
+  },
   'eu.anthropic.claude-3-5-sonnet-20240620-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
     displayName: 'Claude 3.5 Sonnet',
@@ -117,6 +133,14 @@ export const modelMetadata: Record<string, ModelMetadata> = {
       ...MODEL_FEATURE.LIGHT,
     },
     displayName: 'Claude 3 Haiku',
+  },
+  'apac.anthropic.claude-sonnet-4-20250514-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude 4 Sonnet',
+  },
+  'apac.anthropic.claude-3-7-sonnet-20250219-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude 3.7 Sonnet',
   },
   'apac.anthropic.claude-3-5-sonnet-20241022-v2:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE,

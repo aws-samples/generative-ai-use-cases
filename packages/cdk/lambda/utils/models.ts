@@ -885,6 +885,38 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseStreamOutput: (body: ConverseStreamOutput) => StreamingChunk;
   };
 } = {
+  'us.anthropic.claude-opus-4-20250514-v1:0': {
+    defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.anthropic.claude-sonnet-4-20250514-v1:0': {
+    defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'eu.anthropic.claude-sonnet-4-20250514-v1:0': {
+    defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'apac.anthropic.claude-sonnet-4-20250514-v1:0': {
+    defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
   'anthropic.claude-3-5-sonnet-20241022-v2:0': {
     defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
@@ -918,6 +950,22 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
   'us.anthropic.claude-3-7-sonnet-20250219-v1:0': {
+    defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'eu.anthropic.claude-3-7-sonnet-20250219-v1:0': {
+    defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'apac.anthropic.claude-3-7-sonnet-20250219-v1:0': {
     defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
