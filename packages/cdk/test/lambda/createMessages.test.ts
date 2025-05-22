@@ -168,7 +168,7 @@ describe('createMessages Lambda handler', () => {
       message: 'Internal Server Error',
     });
     expect(consoleLogSpy).toHaveBeenCalled();
-    
+
     // Restore the spy
     consoleLogSpy.mockRestore();
   });

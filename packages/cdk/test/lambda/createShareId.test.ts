@@ -50,7 +50,7 @@ describe('createShareId Lambda handler', () => {
       createdDate,
       shareId,
     };
-    
+
     const mockUserIdAndChatId: UserIdAndChatId = {
       id: shareId,
       createdDate,
@@ -67,7 +67,7 @@ describe('createShareId Lambda handler', () => {
       title: '',
       updatedDate: '',
     });
-    
+
     mockedCreateShareId.mockResolvedValue({
       shareId: mockShareId,
       userIdAndChatId: mockUserIdAndChatId,
@@ -119,11 +119,11 @@ describe('createShareId Lambda handler', () => {
       title: '',
       updatedDate: '',
     });
-    
+
     // Mock console.log to prevent actual logging during test
     const originalConsoleLog = console.log;
     console.log = jest.fn();
-    
+
     mockedCreateShareId.mockRejectedValue(new Error('Database error'));
 
     // Execute test
@@ -142,11 +142,11 @@ describe('createShareId Lambda handler', () => {
   // Test for missing chatId parameter
   test('handles missing chatId parameter properly', async () => {
     const userId = 'testUser';
-    
+
     // Mock console.log to prevent actual logging during test
     const originalConsoleLog = console.log;
     console.log = jest.fn();
-    
+
     // No chatId provided in this test
     const event = createAPIGatewayProxyEvent(undefined, userId);
     const result = await handler(event);

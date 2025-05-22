@@ -1,7 +1,10 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { handler } from '../../lambda/updateFeedback';
 import { listMessages, updateFeedback } from '../../lambda/repository';
-import { RecordedMessage, UpdateFeedbackRequest } from 'generative-ai-use-cases';
+import {
+  RecordedMessage,
+  UpdateFeedbackRequest,
+} from 'generative-ai-use-cases';
 
 // Mock the repository
 jest.mock('../../lambda/repository');
@@ -49,7 +52,7 @@ describe('updateFeedback Lambda handler', () => {
       createdDate,
       feedback: 'positive',
       reasons: ['helpful', 'accurate'],
-      detailedFeedback: 'This response was very helpful!'
+      detailedFeedback: 'This response was very helpful!',
     };
 
     const mockMessages: RecordedMessage[] = [
@@ -85,7 +88,10 @@ describe('updateFeedback Lambda handler', () => {
     // Verify results
     expect(result.statusCode).toBe(200);
     expect(mockedListMessages).toHaveBeenCalledWith(chatId);
-    expect(mockedUpdateFeedback).toHaveBeenCalledWith(chatId, updateFeedbackRequest);
+    expect(mockedUpdateFeedback).toHaveBeenCalledWith(
+      chatId,
+      updateFeedbackRequest
+    );
     expect(JSON.parse(result.body)).toEqual({
       message: mockUpdatedMessage,
     });
@@ -120,7 +126,8 @@ describe('updateFeedback Lambda handler', () => {
     // Verify results
     expect(result.statusCode).toBe(403);
     expect(JSON.parse(result.body)).toEqual({
-      message: 'You do not have permission to provide feedback on this message.',
+      message:
+        'You do not have permission to provide feedback on this message.',
     });
     expect(mockedUpdateFeedback).not.toHaveBeenCalled();
   });
@@ -148,7 +155,7 @@ describe('updateFeedback Lambda handler', () => {
         messageId: 'msg123',
         role: 'assistant',
         content: 'Answer to your question',
-        userId: `user#${anotherUserId}`,  // Different user
+        userId: `user#${anotherUserId}`, // Different user
         feedback: 'none',
         usecase: 'test',
       },
@@ -168,7 +175,8 @@ describe('updateFeedback Lambda handler', () => {
     // Verify results
     expect(result.statusCode).toBe(403);
     expect(JSON.parse(result.body)).toEqual({
-      message: 'You do not have permission to provide feedback on this message.',
+      message:
+        'You do not have permission to provide feedback on this message.',
     });
     expect(mockedUpdateFeedback).not.toHaveBeenCalled();
   });
@@ -186,11 +194,11 @@ describe('updateFeedback Lambda handler', () => {
 
     // Set up mock to throw error
     mockedListMessages.mockRejectedValue(new Error('Database error'));
-    
+
     // Mock console.log to prevent actual logging during test
     const originalConsoleLog = console.log;
     console.log = jest.fn();
-    
+
     // Execute test
     const result = await handler(
       createAPIGatewayProxyEvent(updateFeedbackRequest, chatId, userId)
@@ -215,9 +223,11 @@ describe('updateFeedback Lambda handler', () => {
     // Mock console.log to prevent actual logging during test
     const originalConsoleLog = console.log;
     console.log = jest.fn();
-    
+
     // No body provided in this test
-    const result = await handler(createAPIGatewayProxyEvent(null, chatId, userId));
+    const result = await handler(
+      createAPIGatewayProxyEvent(null, chatId, userId)
+    );
 
     // Restore console.log
     console.log = originalConsoleLog;
