@@ -1,0 +1,566 @@
+<!--
+  Based on https://github.com/squidfunk/mkdocs-material/blob/master/src/overrides/home.html
+-->
+
+{% extends "main.html" %}
+
+<!-- Render hero under tabs -->
+{% block tabs %} {{ super() }}
+
+<!-- Additional styles for landing page -->
+<style>
+  /* Application header should be static for the landing page */
+  .md-header {
+    position: initial;
+  }
+
+  /* Remove spacing, as we cannot hide it completely */
+  .md-main__inner {
+    margin: 0;
+  }
+
+  /* Hide main content for now */
+  .md-content {
+    display: none;
+  }
+
+  /* Hide table of contents */
+  @media screen and (min-width: 60em) {
+    .md-sidebar--secondary {
+      display: none;
+    }
+  }
+
+  /* Hide navigation */
+  @media screen and (min-width: 76.25em) {
+    .md-sidebar--primary {
+      display: none;
+    }
+  }
+</style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+<header
+  class="bg-gradient-to-r from-gray-900 to-cyan-700 pb-20 pt-32 text-white">
+  <div class="container mx-auto px-6">
+    <div class="flex flex-col items-center gap-10 md:flex-row">
+      <div class="mb-10 md:mb-0 md:w-1/2">
+        <h1 class="mb-6 text-4xl font-bold md:text-6xl">
+          Generative AI Use Cases (GenU)
+        </h1>
+        <p class="mb-8 text-xl">
+          生成AIを安全に業務活用するための、ビジネスユースケース集を備えたアプリケーション実装
+        </p>
+        <div class="flex gap-4">
+          <a
+            href="ABOUT.html"
+            class="inline-flex items-center rounded-full bg-orange-500 px-8 py-3 text-sm hover:bg-orange-600">
+            Get Started
+          </a>
+          <a
+            href="https://github.com/aws-samples/generative-ai-use-cases"
+            class="inline-flex items-center rounded-full border border-orange-500 px-8 py-3 text-sm text-orange-500 hover:bg-orange-600 hover:text-white">
+            <i class="fab fa-github mr-2"></i>GitHub
+          </a>
+        </div>
+      </div>
+      <div class="md:w-1/2">
+        <img
+          src="../assets/images/sc_lp_ja.png"
+          alt="GenU Screenshot"
+          class="rounded-lg shadow-xl" />
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="features" class="py-20">
+  <div class="container mx-auto px-6">
+    <h2 class="mb-16 text-center text-3xl font-bold">主な機能</h2>
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-3">
+      <div class="text-center">
+        <div
+          class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
+          <i class="fas fa-robot text-2xl text-orange-500"></i>
+        </div>
+        <h3 class="mb-4 text-xl font-semibold">多様なユースケース</h3>
+        <p class="text-sm text-gray-600">
+          チャット、RAG、文章生成など、様々なビジネスシーンに対応
+        </p>
+      </div>
+      <div class="text-center">
+        <div
+          class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
+          <i class="fas fa-shield-alt text-2xl text-orange-500"></i>
+        </div>
+        <h3 class="mb-4 text-xl font-semibold">セキュアな実装</h3>
+        <p class="text-sm text-gray-600">
+          Amazon Bedrockを活用した安全なAI活用基盤
+        </p>
+      </div>
+      <div class="text-center">
+        <div
+          class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
+          <i class="fas fa-code text-2xl text-orange-500"></i>
+        </div>
+        <h3 class="mb-4 text-xl font-semibold">カスタマイズ可能</h3>
+        <p class="text-sm text-gray-600">
+          ユースケースビルダーによる独自機能の追加
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="usecases" class="bg-gray-50 py-20">
+  <div class="container mx-auto px-6">
+    <h2 class="mb-16 text-center text-3xl font-bold">ユースケース</h2>
+    <div class="swiper usecase-swiper">
+      <div class="swiper-wrapper pb-10">
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_chat.gif"
+              alt="Chat"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">チャット</h3>
+            <p class="text-sm text-gray-600">
+              大規模言語モデル (LLM) とチャット形式で対話することができます。LLM
+              と直接対話するプラットフォームが存在するおかげで、細かいユースケースや新しいユースケースに迅速に対応することができます。また、プロンプトエンジニアリングの検証用環境としても有効です。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_usecase_builder.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">ユースケースビルダー</h3>
+            <p class="text-sm text-gray-600">
+              プロンプトテンプレートを自然言語で記述することで独自のユースケースを作成できる機能です。プロンプトテンプレートだけで独自のユースケース画面が自動生成されるため、コード変更・カスタマイズ作業が一切不要です。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_rag.gif"
+              alt="RAG Chat"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">RAG チャット</h3>
+            <p class="text-sm text-gray-600">
+              RAG は LLM
+              が苦手な最新の情報やドメイン知識を外部から伝えることで、根拠に基づいた回答を生成できるようにする手法です。例えば、社内ドキュメントを
+              LLM
+              に渡せば、社内の問い合わせ対応が自動化できます。このリポジトリでは
+              Amazon Kendra か Knowledge Bases から情報を取得します。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_agent.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Agent チャット</h3>
+            <p class="text-sm text-gray-600">
+              Agent は LLM を API
+              と連携することでさまざまなタスクを行えるようにする手法です。このソリューションではサンプル実装として検索エンジンを利用し必要な情報を調査して回答する
+              Agent を実装しています。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_flow_chat.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Flow チャット</h3>
+            <p class="text-sm text-gray-600">
+              Amazon Bedrock Flows
+              により、プロンプト、基盤モデル、および他のAWSサービスを接続することでワークフローを作成できます。Flow
+              チャットユースケースでは、作成済みの Flow
+              を選択して実行するチャットが利用できます。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_voice_chat.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">音声チャット</h3>
+            <p class="text-sm text-gray-600">
+              音声チャットでは生成 AI
+              と双方向の音声によるチャットが可能です。自然な会話と同様、AI
+              の発言中に割り込んで話すこともできます。また、システムプロンプトを設定することで、特定の役割を持った
+              AI と音声で会話することもできます。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_summarize.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">要約</h3>
+            <p class="text-sm text-gray-600">
+              LLM
+              は、大量の文章を要約するタスクを得意としています。ただ要約するだけでなく、文章をコンテキストとして与えた上で、必要な情報を対話形式で引き出すこともできます。例えば、契約書を読み込ませて「XXX
+              の条件は？」「YYY
+              の金額は？」といった情報を取得することが可能です。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_writer.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">執筆</h3>
+            <p class="text-sm text-gray-600">
+              LLM
+              による文章執筆支援、校閲支援が可能です。誤字脱字のチェックだけでなく、文章の推敲をさせたり、文章の流れや内容を考慮したより客観的な視点から改善点を提案できます。人に見せる前に
+              LLM
+              に自分では気づかなかった点を客観的にチェックしてもらいクオリティを上げる効果が期待できます。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_translate.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">翻訳</h3>
+            <p class="text-sm text-gray-600">
+              多言語で学習した LLM
+              は、翻訳を行うことも可能です。また、ただ翻訳するだけではなく、カジュアルさ・対象層など様々な指定されたコンテキスト情報を翻訳に反映させることが可能です。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_web_content.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">Web コンテンツ抽出</h3>
+            <p class="text-sm text-gray-600">
+              ブログやドキュメントなどの Web コンテンツを抽出します。LLM
+              によって不要な情報はそぎ落とし、成立した文章として整形します。抽出したコンテンツは要約、翻訳などの別のユースケースで利用できます。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_generate_image.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">画像生成</h3>
+            <p class="text-sm text-gray-600">
+              画像生成 AI
+              は、テキストや画像を元に新しい画像を生成できます。アイデアを即座に可視化することができ、デザイン作業などの効率化を期待できます。こちらの機能では、プロンプトの作成を
+              LLM に支援してもらうことができます。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_generate_video.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">動画生成</h3>
+            <p class="text-sm text-gray-600">
+              動画生成 AI
+              はテキストから短い動画を生成します。生成した動画は素材としてさまざまなシーンで活用できます。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_video_analyzer.gif"
+              alt="Text Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">映像分析</h3>
+            <p class="text-sm text-gray-600">
+              マルチモーダルモデルによってテキストのみではなく、画像を入力することが可能になりました。こちらの機能では、映像の画像フレームとテキストを入力として
+              LLM に分析を依頼します。
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_generate_diagram.gif"
+              alt="Diagram Generation"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">ダイアグラム生成</h3>
+            <p class="text-sm text-gray-600">
+              自然言語による説明、文書やコードから、フローチャート、シーケンス図、マインドマップなどの様々な図を自動的に作成できます。
+              システム設計、ビジネスフロー、プロジェクト計画などの複雑な関係性を、視覚的に表現し理解を効率化します。
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<section id="customers" class="py-20">
+  <div class="container mx-auto px-6">
+    <h2 class="mb-16 text-center text-3xl font-bold">導入企業</h2>
+    <div class="swiper customer-swiper">
+      <div class="swiper-wrapper pb-10">
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/yasashii-te/">
+            <img
+              src="../assets/images/cases/yasashiite_logo.png"
+              alt="やさしい手"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenUのおかげで、利用者への付加価値提供と従業員の業務効率向上が実現できました。従業員にとって「いままでの仕事」が楽しい仕事に変化していく「サクサクからワクワクへ」更に進化を続けます！
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/takihyo/">
+            <img
+              src="../assets/images/cases/TAKIHYO_logo.png"
+              alt="タキヒヨー"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              生成 AI を活用し社内業務効率化と 450
+              時間超の工数削減を実現。Amazon Bedrock
+              を衣服デザイン等に適用、デジタル人材育成を推進。
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/salsonido_case.png">
+            <img
+              src="../assets/images/cases/salsonido_logo.png"
+              alt="サルソニード"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              ソリューションとして用意されている GenU を活用することで、生成 AI
+              による業務プロセスの改善に素早く取り掛かることができました。
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/tamura-ss_case.png">
+            <img
+              src="../assets/images/cases/tamura-ss_logo.png"
+              alt="タムラ製作所"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              AWS が Github
+              に公開しているアプリケーションサンプルは即テスト可能な機能が豊富で、そのまま利用することで自分たちにあった機能の選定が難なくでき、最終システムの開発時間を短縮することができました。
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/jdsc_case.png">
+            <img
+              src="../assets/images/cases/jdsc_logo.png"
+              alt="JDSC"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Bedrock ではセキュアにデータを用い LLM
+              が活用できます。また、用途により最適なモデルを切り替えて利用できるので、コストを抑えながら速度・精度を高めることができました。
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://cloudpack.jp/casestudy/302.html?_gl=1*17hkazh*_gcl_au*ODA5MDk3NzI0LjE3MTM0MTQ2MDU">
+            <img
+              src="../assets/images/cases/iret_logo.png"
+              alt="アイレット株式会社"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              株式会社バンダイナムコアミューズメントの生成 AI
+              活用に向けて社内のナレッジを蓄積・体系化すべく、AWS が提供している
+              Generative AI Use Cases
+              を活用したユースケースサイトを開発。アイレット株式会社が本プロジェクトの設計・構築・開発を支援。
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/idealog_case.png">
+            <img
+              src="../assets/images/cases/idealog_logo.jpg"
+              alt="アイデアログ"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              従来の生成 AI
+              ツールよりもさらに業務効率化ができていると感じます。入出力データをモデルの学習に使わない
+              Amazon Bedrock を使っているので、セキュリティ面も安心です。
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/estyle_case.png">
+            <img
+              src="../assets/images/cases/estyle_logo.png"
+              alt="エスタイル"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU を活用して短期間で生成 AI
+              環境を構築し、社内のナレッジシェアを促進することができました。
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/meidensha_case.png">
+            <img
+              src="../assets/images/cases/meidensha_logo.svg"
+              alt="明電舎"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Bedrock や Amazon Kendra など AWS
+              のサービスを利用することで、生成 AI
+              の利用環境を迅速かつセキュアに構築することができました。議事録の自動生成や社内情報の検索など、従業員の業務効率化に貢献しています。
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/st-grp_case.png">
+            <img
+              src="../assets/images/cases/st-grp_logo.jpg"
+              alt="三協立山株式会社"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              社内に埋もれていた情報が Amazon Kendra
+              の活用で素早く探せるようになりました。GenU
+              を参考にすることで求めていた議事録生成などの機能を迅速に提供できました。
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/oisix/">
+            <img
+              src="../assets/images/cases/oisixradaichi_logo.png"
+              alt="オイシックス・ラ・大地株式会社"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU を活用したユースケースの開発プロジェクトを通して、
+              必要なリソース、プロジェクト体制、外部からの支援、
+              人材育成などを把握するきっかけとなり、 生成 AI
+              の社内展開に向けたイメージを明確につかむことができました。
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/san-a/">
+            <img
+              src="../assets/images/cases/san-a_logo.png"
+              alt="株式会社サンエー"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Bedrock を活用することでエンジニアの生産性が劇的に向上し、
+              内製で構築してきた当社特有の環境のクラウドへの移行を加速できました。
+            </p>
+          </a>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  new Swiper('.usecase-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+
+  new Swiper('.customer-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+</script>
+
+<footer class="text-center text-gray-600">
+  このページは、GenU summit-2024
+  ブランチのウェブサイト作成ユースケースで作成されました。
+</footer>
+
+{% endblock %}
+
+<!-- Content -->
+{% block content %}{% endblock %}

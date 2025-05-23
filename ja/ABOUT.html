@@ -1,0 +1,1597 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://aws-samples.github.io/generative-ai-use-cases/ja/ABOUT.html">
+      
+      
+        <link rel="prev" href="index.html">
+      
+      
+        <link rel="next" href="DEPLOY_ON_CLOUDSHELL.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>クイックスタート - Generative AI Use Cases (GenU)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/custom/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="クイックスタート - Generative AI Use Cases (GenU)" >
+      
+        <meta  property="og:description"  content="None" >
+      
+        <meta  property="og:image"  content="https://aws-samples.github.io/generative-ai-use-cases/assets/images/social/ja/ABOUT.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="https://aws-samples.github.io/generative-ai-use-cases/ja/ABOUT.html" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="クイックスタート - Generative AI Use Cases (GenU)" >
+      
+        <meta  name="twitter:description"  content="None" >
+      
+        <meta  name="twitter:image"  content="https://aws-samples.github.io/generative-ai-use-cases/assets/images/social/ja/ABOUT.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#generative-ai-use-cases-略称genu" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="index.html" title="Generative AI Use Cases (GenU)" class="md-header__button md-logo" aria-label="Generative AI Use Cases (GenU)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Generative AI Use Cases (GenU)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              クイックスタート
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="言語切り替え">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../en/ABOUT.html" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="ABOUT.html" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="共有" aria-label="共有" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aws-samples/generative-ai-use-cases" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/generative-ai-use-cases
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  概要
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="ABOUT.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="Generative AI Use Cases (GenU)" class="md-nav__button md-logo" aria-label="Generative AI Use Cases (GenU)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Generative AI Use Cases (GenU)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aws-samples/generative-ai-use-cases" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/generative-ai-use-cases
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概要
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    デプロイ方法
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            デプロイ方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    クイックスタート
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="ABOUT.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    クイックスタート
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#genu-活用パターン集" class="md-nav__link">
+    <span class="md-ellipsis">
+      GenU 活用パターン集
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#デプロイ" class="md-nav__link">
+    <span class="md-ellipsis">
+      デプロイ
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#アーキテクチャ" class="md-nav__link">
+    <span class="md-ellipsis">
+      アーキテクチャ
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#その他" class="md-nav__link">
+    <span class="md-ellipsis">
+      その他
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#料金試算" class="md-nav__link">
+    <span class="md-ellipsis">
+      料金試算
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#お客様事例" class="md-nav__link">
+    <span class="md-ellipsis">
+      お客様事例
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#参照" class="md-nav__link">
+    <span class="md-ellipsis">
+      参照
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      License
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEPLOY_ON_CLOUDSHELL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    (オプション) AWS CloudShell でデプロイする
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEPLOY_OPTION.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    デプロイオプション
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    認証
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            認証
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="SAML_WITH_GOOGLE_WORKSPACE.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Google Workspace で認証する
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="SAML_WITH_ENTRA_ID.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Microsoft Entra ID で認証する
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    ブラウザ拡張機能
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            ブラウザ拡張機能
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概要
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_BUILD.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ビルド
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_INSTALL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    インストール
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_SAML.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SAML 認証
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    その他
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            その他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="UPDATE.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    アップデート方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEVELOPMENT.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ローカル開発環境構築手順
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DESTROY.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    リソースの削除方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="PWA.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ネイティブアプリのように利用する方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#genu-活用パターン集" class="md-nav__link">
+    <span class="md-ellipsis">
+      GenU 活用パターン集
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#デプロイ" class="md-nav__link">
+    <span class="md-ellipsis">
+      デプロイ
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#アーキテクチャ" class="md-nav__link">
+    <span class="md-ellipsis">
+      アーキテクチャ
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#その他" class="md-nav__link">
+    <span class="md-ellipsis">
+      その他
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#料金試算" class="md-nav__link">
+    <span class="md-ellipsis">
+      料金試算
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#お客様事例" class="md-nav__link">
+    <span class="md-ellipsis">
+      お客様事例
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#参照" class="md-nav__link">
+    <span class="md-ellipsis">
+      参照
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      Security
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      License
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/aws-samples/generative-ai-use-cases/blob/main/docs/ja/ABOUT.md" title="編集" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/aws-samples/generative-ai-use-cases/raw/main/docs/ja/ABOUT.md" title="このページの原文を表示" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<div align="center">
+<h1 id="generative-ai-use-cases-略称genu">Generative AI Use Cases (略称:GenU)<a class="headerlink" href="#generative-ai-use-cases-略称genu" title="Permanent link">&para;</a></h1>
+<p><a href="https://aws-samples.github.io/generative-ai-use-cases/index.html"><img alt="" src="https://img.shields.io/badge/%E3%83%89%E3%82%AD%E3%83%A5%E3%83%A1%E3%83%B3%E3%83%88-%E6%9C%80%E6%96%B0-blue" /></a> <a href="https://github.com/aws-samples/generative-ai-use-cases/blob/main/LICENSE"><img alt="" src="https://img.shields.io/badge/license-MIT-blue.svg" /></a> <a href="https://github.com/aws-samples/generative-ai-use-cases/actions/workflows/node.js.yml"><img alt="" src="https://github.com/aws-samples/generative-ai-use-cases/actions/workflows/node.js.yml/badge.svg" /></a> <a href="https://github.com/aws-samples/generative-ai-use-cases/actions/workflows/browser-extension.yml"><img alt="" src="https://github.com/aws-samples/generative-ai-use-cases/actions/workflows/browser-extension.yml/badge.svg" /></a></p>
+<p><a href="../en/ABOUT.html">English</a> | 日本語</p>
+<p>生成 AI を安全に業務活用するための、ビジネスユースケース集を備えたアプリケーション実装</p>
+<p><img src="../assets/images/sc_lp_ja.png" alt="生成 AI を安全に業務活用するための、ビジネスユースケース集を備えたアプリケーション実装" width="68%"></p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Important</p>
+<p>GenU は v4 より多言語対応しました。</p>
+</div>
+<h2 id="genu-活用パターン集">GenU 活用パターン集<a class="headerlink" href="#genu-活用パターン集" title="Permanent link">&para;</a></h2>
+<p>GenU の機能やオプションを活用パターンごとに紹介いたします。網羅的なデプロイオプションに関しては <a href="DEPLOY_OPTION.html">こちら</a> をご参照ください。</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>活用パターンをクリックして詳細を確認してください</p>
+</div>
+<details>
+<summary><strong><ins>生成 AI のユースケースを体験したい</ins></strong></summary>
+<p>GenU は生成 AI を活用した多様なユースケースを標準で提供しています。それらのユースケースは、生成 AI を業務活用するためのアイデアの種となったり、そのまま業務で活用できるものなど、さまざまです。今後もさらにブラッシュアップされたユースケースを随時追加予定です。また、不要であれば <a href="DEPLOY_OPTION.html#特定のユースケースを非表示にする">特定のユースケースを非表示にする</a> オプションで非表示にすることもできます。デフォルトで提供しているユースケース一覧はこちらです。</p>
+<p><br/>
+  <br/>
+  </p>
+<table width="100%">
+    <thead>
+      <tr>
+        <td width="20%">ユースケース</td>
+        <td width="80%">説明</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>チャット</td>
+        <td>大規模言語モデル (LLM) とチャット形式で対話することができます。LLM と直接対話するプラットフォームが存在するおかげで、細かいユースケースや新しいユースケースに迅速に対応することができます。また、プロンプトエンジニアリングの検証用環境としても有効です。</td>
+      </tr>
+      <tr>
+        <td>文章生成</td>
+        <td>あらゆるコンテキストで文章を生成することは LLM が最も得意とするタスクの 1 つです。記事・レポート・メールなど、あらゆる文章を生成します。</td>
+      </tr>
+      <tr>
+        <td>要約</td>
+        <td>LLM は、大量の文章を要約するタスクを得意としています。ただ要約するだけでなく、文章をコンテキストとして与えた上で、必要な情報を対話形式で引き出すこともできます。例えば、契約書を読み込ませて「XXX の条件は？」「YYY の金額は？」といった情報を取得することが可能です。</td>
+      </tr>
+      <tr>
+        <td>執筆</td>
+        <td>LLM は、誤字脱字のチェックだけでなく、文章の流れや内容を考慮したより客観的な視点から改善点を提案できます。人に見せる前に LLM に自分では気づかなかった点を客観的にチェックしてもらいクオリティを上げる効果が期待できます。</td>
+      </tr>
+      <tr>
+        <td>翻訳</td>
+        <td>多言語で学習した LLM は、翻訳を行うことも可能です。また、ただ翻訳するだけではなく、カジュアルさ・対象層など様々な指定されたコンテキスト情報を翻訳に反映させることが可能です。</td>
+      </tr>
+      <tr>
+        <td>Web コンテンツ抽出</td>
+        <td>ブログやドキュメントなどの Web コンテンツから必要な情報を抽出します。LLMによって不要な情報を除去し、整った文章として整形します。抽出したコンテンツは要約、翻訳などの別のユースケースで利用できます。</td>
+      </tr>
+      <tr>
+        <td>画像生成</td>
+        <td>画像生成 AI は、テキストや画像を元に新しい画像を生成できます。アイデアを即座に可視化することができ、デザイン作業などの効率化を期待できます。こちらの機能では、プロンプトの作成を LLM に支援してもらうことができます。</td>
+      </tr>
+      <tr>
+        <td>動画生成</td>
+        <td>動画生成 AI はテキストから短い動画を生成します。生成した動画は素材としてさまざまなシーンで活用できます。</td>
+      </tr>
+      <tr>
+        <td>映像分析</td>
+        <td>マルチモーダルモデルによってテキストのみではなく、画像を入力することが可能になりました。こちらの機能では、映像の画像フレームとテキストを入力として LLM に分析を依頼します。</td>
+      </tr>
+      <tr>
+        <td>ダイアグラム生成</td>
+        <td>ダイアグラム生成は、あらゆるトピックに関する文章や内容を最適な図を用いて視覚化します。 テキストベースで簡単に図を生成でき、プログラマーやデザイナーでなくても効率的にフローチャートなどの図を作成できます。</td>
+      </tr>
+      <tr>
+        <td>音声チャット</td>
+        <td>音声チャットでは生成 AI と双方向の音声によるチャットが可能です。自然な会話と同様、AI の発言中に割り込んで話すこともできます。また、システムプロンプトを設定することで、特定の役割を持った AI と音声で会話することもできます。</td>
+      </tr>
+    </tbody>
+  </table>
+</details>
+<details>
+<summary><strong><ins>RAG がしたい</ins></strong></summary>
+<p>RAG は LLM が苦手な最新の情報やドメイン知識を外部から伝えることで、本来なら回答できない内容にも答えられるようにする手法です。
+社内に蓄積された PDF, Word, Excel などのファイルが情報ソースになります。
+RAG は根拠に基づいた回答のみを許すため、LLM にありがちな「それっぽい間違った情報」を回答させないという効果もあります。</p>
+<p>GenU は RAG チャットというユースケースを提供しています。
+また RAG チャットの情報ソースとして <a href="DEPLOY_OPTION.html">Amazon Kendra</a> と <a href="DEPLOY_OPTION.html#rag-チャット-knowledge-base-ユースケースの有効化">Knowledge Base</a> の 2 種類が利用可能です。
+Amazon Kendra を利用する場合は、<a href="DEPLOY_OPTION.html#既存の-amazon-kendra-index-を利用したい場合">手動で作成した S3 Bucket や Kendra Index をそのまま利用する</a>ことが可能です。
+Knowledge Base を利用する場合は、<a href="DEPLOY_OPTION.html#advanced-parsing-を有効化">Advanced Parsing</a>・<a href="DEPLOY_OPTION.html#チャンク戦略を変更">チャンク戦略の選択</a>・<a href="DEPLOY_OPTION.html#rag-チャット-knowledge-base-ユースケースの有効化">クエリ分解</a>・<a href="DEPLOY_OPTION.html#rag-チャット-knowledge-base-ユースケースの有効化">リランキング</a> など高度な RAG が利用可能です。
+また Knowledge Base では、<a href="DEPLOY_OPTION.html#メタデータフィルターの設定">メタデータフィルターの設定</a> も可能です。
+例えば「組織ごとにアクセス可能なデータソースを切り替えたい」や「UI からユーザーがフィルタを設定したい」といった要件を満たすことが可能です。</p>
+</details>
+<details>
+<summary><strong><ins>独自に作成した AI エージェントや Bedrock Flows などを社内で利用したい</ins></strong></summary>
+<p>GenU で <a href="DEPLOY_OPTION.html#agent-チャットユースケースの有効化">エージェントを有効化</a>すると Web 検索エージェントと Code Interpreter エージェントが作成されます。
+Web 検索エージェントは、ユーザーの質問に回答するための情報を Web で検索し、回答します。例えば「AWS の GenU ってなに？」という質問に回答できます。
+Code Interpreter エージェントは、ユーザーからのリクエストに応えるためにコードが実行できます。例えば「適当なダミーデータで散布図を描いて」といったリクエストに応えられます。</p>
+<p>Web 検索エージェントと Code Interpreter エージェントはエージェントとしては基本的なものですので、中にはもっと業務に寄り添った実践的なエージェントを使いたいという要望もあると思います。
+GenU では手動で作成したエージェントや別のアセットで作成したエージェントを <a href="DEPLOY_OPTION.html#手動で作成した-agent-を追加">インポートする機能</a> を提供しております。</p>
+<p>GenU をエージェント活用のプラットフォームとして利用することで、GenU が提供する <a href="DEPLOY_OPTION.html#セキュリティ関連設定">豊富なセキュリティオプション</a> や <a href="DEPLOY_OPTION.html#saml-認証">SAML認証</a> などを活用し、実践的なエージェントを社内に普及させることができます。
+また、オプションで <a href="DEPLOY_OPTION.html#特定のユースケースを非表示にする">不要な標準ユースケースを非表示</a> にしたり、<a href="DEPLOY_OPTION.html#agent-をインライン表示にする">エージェントをインライン表示</a> することで、よりエージェントに特化したプラットフォームとして GenU をご利用いただくことが可能です。</p>
+<p>Bedrock Flows に関しても同様に <a href="DEPLOY_OPTION.html#flow-チャットユースケースの有効化">インポート機能</a> がございますので、ぜひご活用ください。</p>
+</details>
+<details>
+<summary><strong><ins>独自のユースケースを作成したい</ins></strong></summary>
+<p>GenU はプロンプトテンプレートを自然言語で記述することで独自のユースケースを作成できる「ユースケースビルダー」という機能を提供しています。
+プロンプトテンプレートだけで独自のユースケース画面が自動生成されるため、GenU 本体のコード変更は一切不要です。
+作成したユースケースは、個人利用だけではなく、アプリケーションにログインできる全ユーザーに共有することもできます。
+ユースケースビルダーは不要であれば<a href="DEPLOY_OPTION.html#ユースケースビルダーの設定">無効化</a>することも可能です。
+ユースケースビルダーについての詳細は、ぜひ<a href="https://aws.amazon.com/jp/blogs/news/genu-use-cases-builder/">こちらのブログ</a>をご覧ください。
+<br/>
+<br/>
+ユースケースビルダーではフォームにテキストを入力したりファイルを添付するユースケースが作成できますが、要件によってはチャットの UI が良い場合もあると思います。
+そのようなケースでは「チャット」ユースケースのシステムプロンプト保存機能をご活用ください。
+システムプロンプトを保存しておくことで、ワンクリックで業務に必要な "ボット" が作成できます。
+例えば「ソースコードを入力するとひたすらレビューしてくれるボット」や「入力した内容からひたすらメールアドレスを抽出してくれるボット」などが作成できます。
+また、チャットの会話履歴はログインユーザーにシェアすることが可能で、シェアされた会話履歴からシステムプロンプトをインポートすることもできます。
+<br/>
+<br/>
+GenU は OSS ですので、カスタマイズして独自のユースケースを追加するということも可能です。
+その場合は GenU の main ブランチとのコンフリクトにお気をつけてください。</p>
+</details>
+<h2 id="デプロイ">デプロイ<a class="headerlink" href="#デプロイ" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Important</p>
+<p>設定に記載されている <code>modelRegion</code> リージョンの <code>modelIds</code> (テキスト生成)、<code>imageGenerationModelIds</code> (画像生成) 及び <code>videoGenerationModelIds</code> (動画生成) を有効化してください。(デフォルトの設定ファイル <a href="/packages/cdk/cdk.json"><code>/packages/cdk/cdk.json</code></a>) (<a href="https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess">Amazon Bedrock の Model access 画面</a>)</p>
+</div>
+<p>GenU のデプロイには <a href="https://aws.amazon.com/jp/cdk/">AWS Cloud Development Kit</a>（以降 CDK）を利用します。CDK の実行環境が用意できない場合は、以下のデプロイ方法を参照してください。</p>
+<ul>
+<li><a href="DEPLOY_ON_CLOUDSHELL.html">AWS CloudShell を利用したデプロイ方法 (手元の環境を用意することが難しい場合)</a></li>
+<li>Workshop (<a href="https://catalog.workshops.aws/generative-ai-use-cases-jp">日本語</a> / <a href="https://catalog.workshops.aws/generative-ai-use-cases">英語</a>)</li>
+</ul>
+<p>まず、以下のコマンドを実行してください。全てのコマンドはリポジトリのルートで実行してください。</p>
+<pre><code class="language-bash">npm ci
+</code></pre>
+<p>CDK を利用したことがない場合、初回のみ <a href="https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/bootstrapping.html">Bootstrap</a> 作業が必要です。すでに Bootstrap された環境では以下のコマンドは不要です。</p>
+<pre><code class="language-bash">npx -w packages/cdk cdk bootstrap
+</code></pre>
+<p>続いて、以下のコマンドで AWS リソースをデプロイします。デプロイが完了するまで、お待ちください（20 分程度かかる場合があります）。</p>
+<pre><code class="language-bash"># 通常デプロイ
+npm run cdk:deploy
+
+# 高速デプロイ (作成されるリソースを事前確認せずに素早くデプロイ)
+npm run cdk:deploy:quick
+</code></pre>
+<h2 id="アーキテクチャ">アーキテクチャ<a class="headerlink" href="#アーキテクチャ" title="Permanent link">&para;</a></h2>
+<p><img alt="arch.drawio.png" src="../assets/images/arch.drawio.png" /></p>
+<h2 id="その他">その他<a class="headerlink" href="#その他" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="DEPLOY_OPTION.html">デプロイオプション</a></li>
+<li><a href="UPDATE.html">アップデート方法</a></li>
+<li><a href="DEVELOPMENT.html">ローカル開発環境構築手順</a></li>
+<li><a href="DESTROY.html">リソースの削除方法</a></li>
+<li><a href="PWA.html">ネイティブアプリのように利用する方法</a></li>
+<li><a href="EXTENSION.html">ブラウザ拡張機能を利用する</a></li>
+</ul>
+<h2 id="料金試算">料金試算<a class="headerlink" href="#料金試算" title="Permanent link">&para;</a></h2>
+<p>GenU をご利用いただく際の、構成と料金試算例を公開しております。(従量課金制となっており、実際の料金はご利用内容により変動いたします。)</p>
+<ul>
+<li><a href="https://aws.amazon.com/jp/cdp/ai-chatbot/">シンプル版 (RAG なし) 試算</a></li>
+<li><a href="https://aws.amazon.com/jp/cdp/ai-chatapp/">RAG (Amazon Kendra) あり試算</a></li>
+<li><a href="https://aws.amazon.com/jp/cdp/genai-chat-app/">RAG (Knowledge Base) あり試算</a></li>
+</ul>
+<h2 id="お客様事例">お客様事例<a class="headerlink" href="#お客様事例" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Customer</th>
+<th style="text-align: left;">Quote</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="https://www.yasashiite.com/" target="_blank"><img src="../assets/images/cases/yasashiite_logo.png"></a></td>
+<td style="text-align: left;"><strong>株式会社やさしい手</strong> <br/> <em>GenU のおかげで、利用者への付加価値提供と従業員の業務効率向上が実現できました。従業員にとって「いままでの仕事」が楽しい仕事に変化していく「サクサクからワクワクへ」更に進化を続けます！</em> <br/> ・<a href="../assets/images/cases/yasashiite_case.png">事例の詳細を見る</a> <br/> ・<a href="https://aws.amazon.com/jp/solutions/case-studies/yasashii-te/">事例のページを見る</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://www.takihyo.co.jp/" target="_blank"><img src="../assets/images/cases/TAKIHYO_logo.png"></a></td>
+<td style="text-align: left;"><strong>タキヒヨー株式会社</strong> <br/> <em>生成 AI を活用し社内業務効率化と 450 時間超の工数削減を実現。Amazon Bedrock を衣服デザイン等に適用、デジタル人材育成を推進。</em> <br/> ・<a href="https://aws.amazon.com/jp/solutions/case-studies/takihyo/">事例のページを見る</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://salsonido.com/" target="_blank"><img src="../assets/images/cases/salsonido_logo.png"></a></td>
+<td style="text-align: left;"><strong>株式会社サルソニード</strong> <br/> <em>ソリューションとして用意されている GenU を活用することで、生成 AI による業務プロセスの改善に素早く取り掛かることができました。</em> <br/> ・<a href="../assets/images/cases/salsonido_case.png">事例の詳細を見る</a> <br/> ・<a href="https://kirei.ai/">適用サービス</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://www.tamura-ss.co.jp/jp/index.html" target="_blank"><img src="../assets/images/cases/tamura-ss_logo.png"></a></td>
+<td style="text-align: left;"><strong>株式会社タムラ製作所</strong> <br/> <em>AWS が Github に公開しているアプリケーションサンプルは即テスト可能な機能が豊富で、そのまま利用することで自分たちにあった機能の選定が難なくでき、最終システムの開発時間を短縮することができました。</em><br/> ・<a href="../assets/images/cases/tamura-ss_case.png">事例の詳細を見る</a><br/></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://jdsc.ai/" target="_blank"><img src="../assets/images/cases/jdsc_logo.png"></a></td>
+<td style="text-align: left;"><strong>株式会社JDSC</strong> <br/> <em>Amazon Bedrock ではセキュアにデータを用い LLM が活用できます。また、用途により最適なモデルを切り替えて利用できるので、コストを抑えながら速度・精度を高めることができました。</em> <br/> ・<a href="../assets/images/cases/jdsc_case.png">事例の詳細を見る</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://www.iret.co.jp/" target="_blank"><img src="../assets/images/cases/iret_logo.png"></a></td>
+<td style="text-align: left;"><strong>アイレット株式会社</strong> <br/> <em>株式会社バンダイナムコアミューズメントの生成 AI 活用に向けて社内のナレッジを蓄積・体系化すべく、AWS が提供している Generative AI Use Cases JP を活用したユースケースサイトを開発。アイレット株式会社が本プロジェクトの設計・構築・開発を支援。</em> <br/> ・<a href="https://cloudpack.jp/casestudy/302.html?_gl=1*17hkazh*_gcl_au*ODA5MDk3NzI0LjE3MTM0MTQ2MDU">株式会社バンダイナムコアミューズメント様のクラウドを活用した導入事例</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://idealog.co.jp" target="_blank"><img src="../assets/images/cases/idealog_logo.jpg"></a></td>
+<td style="text-align: left;"><strong>株式会社アイデアログ</strong> <br/> <em>M従来の生成 AI ツールよりもさらに業務効率化ができていると感じます。入出力データをモデルの学習に使わない Amazon Bedrock を使っているので、セキュリティ面も安心です。</em> <br/> ・<a href="../assets/images/cases/idealog_case.png">事例の詳細を見る</a> <br/> ・<a href="https://kaijosearch.com/">適用サービス</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://estyle.co.jp/" target="_blank"><img src="../assets/images/cases/estyle_logo.png"></a></td>
+<td style="text-align: left;"><strong>株式会社エスタイル</strong> <br/> <em>GenU を活用して短期間で生成 AI 環境を構築し、社内のナレッジシェアを促進することができました。</em> <br/> ・<a href="../assets/images/cases/estyle_case.png">事例の詳細を見る</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://meidensha.co.jp/" target="_blank"><img src="../assets/images/cases/meidensha_logo.svg"></a></td>
+<td style="text-align: left;"><strong>株式会社明電舎</strong> <br/> <em>Amazon Bedrock や Amazon Kendra など AWS のサービスを利用することで、生成 AI の利用環境を迅速かつセキュアに構築することができました。議事録の自動生成や社内情報の検索など、従業員の業務効率化に貢献しています。</em> <br/> ・<a href="../assets/images/cases/meidensha_case.png">事例の詳細を見る</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://www.st-grp.co.jp/" target="_blank"><img src="../assets/images/cases/st-grp_logo.jpg"></a></td>
+<td style="text-align: left;"><strong>三協立山株式会社</strong> <br/> <em>社内に埋もれていた情報が Amazon Kendra の活用で素早く探せるようになりました。GenU を参考にすることで求めていた議事録生成などの機能を迅速に提供できました。</em> <br/> ・<a href="../assets/images/cases/st-grp_case.png">事例の詳細を見る</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://www.oisixradaichi.co.jp/" target="_blank"><img src="../assets/images/cases/oisixradaichi_logo.png"></a></td>
+<td style="text-align: left;"><strong>オイシックス・ラ・大地株式会社</strong> <br/> <em>GenU を活用したユースケースの開発プロジェクトを通して、必要なリソース、プロジェクト体制、外部からの支援、人材育成などを把握するきっかけとなり、生成 AI の社内展開に向けたイメージを明確につかむことができました。</em> <br/> ・<a href="https://aws.amazon.com/jp/solutions/case-studies/oisix/">事例のページを見る</a></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="https://www.san-a.co.jp/" target="_blank"><img src="../assets/images/cases/san-a_logo.png"></a></td>
+<td style="text-align: left;"><strong>株式会社サンエー</strong> <br/> <em>Amazon Bedrock を活用することでエンジニアの生産性が劇的に向上し、内製で構築してきた当社特有の環境のクラウドへの移行を加速できました。</em> <br/> ・<a href="../assets/images/cases/san-a_case.png">事例の詳細を見る</a><br/> ・<a href="https://aws.amazon.com/jp/solutions/case-studies/san-a/">事例のページを見る</a></td>
+</tr>
+</tbody>
+</table>
+<p>活用事例を掲載させて頂ける場合は、<a href="https://github.com/aws-samples/generative-ai-use-cases/issues">Issue</a>よりご連絡ください。</p>
+<h2 id="参照">参照<a class="headerlink" href="#参照" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="https://github.com/aws-samples/sample-one-click-generative-ai-solutions">GitHub: Generative AI Use Cases を 1 click でデプロイする</a></li>
+<li><a href="https://aws.amazon.com/jp/blogs/news/genu-use-cases-builder/">ブログ: 生成 AI アプリをノーコードで作成・社内配布できる GenU ユースケースビルダー</a></li>
+<li><a href="https://aws.amazon.com/jp/builders-flash/202502/way-to-succeed-rag-project/">ブログ: RAG プロジェクトを成功させる方法 #1 ~ あるいは早く失敗しておく方法 ~</a></li>
+<li><a href="https://qiita.com/sugimount-a/items/7ed3c5fc1eb867e28566">ブログ: RAG チャットで精度向上のためのデバッグ方法</a></li>
+<li><a href="https://qiita.com/wadabee/items/659e189018ad1a08e152">ブログ: Amazon Q Developer CLI を利用してノーコーディングで GenU をカスタマイズ</a></li>
+<li><a href="https://aws.amazon.com/jp/blogs/news/how-to-generative-ai-use-cases-jp/">ブログ: Generative AI Use Cases JP をカスタマイズする方法</a></li>
+<li><a href="https://aws.amazon.com/jp/builders-flash/202504/genu-development-guide/">ブログ: Generative AI Use Cases JP ~ はじめての Contribution ガイド</a></li>
+<li><a href="https://aws.amazon.com/jp/builders-flash/202405/genai-sorry-message/">ブログ: 無茶振りは生成 AI に断ってもらおう ~ ブラウザに生成 AI を組み込んでみた ~</a></li>
+<li><a href="https://aws.amazon.com/jp/builders-flash/202311/bedrock-interpreter/">ブログ: Amazon Bedrock で Interpreter を開発!</a></li>
+<li><a href="https://www.youtube.com/live/s1P5A2SIWgc?si=PBQ4ZHQXU4pDhL8A">動画: 生成 AI ユースケースを考え倒すための Generative AI Use Cases JP (GenU) の魅力と使い方</a></li>
+</ul>
+<h2 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h2>
+<p>See <a href="https://github.com/aws-samples/generative-ai-use-cases/blob/main/CONTRIBUTING.md#security-issue-notifications">CONTRIBUTING</a> for more information.</p>
+<h2 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h2>
+<p>This library is licensed under the MIT-0 License. See the LICENSE file.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="フッター" >
+        
+          
+          <a href="index.html" class="md-footer__link md-footer__link--prev" aria-label="前: 概要">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                前
+              </span>
+              <div class="md-ellipsis">
+                概要
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="DEPLOY_ON_CLOUDSHELL.html" class="md-footer__link md-footer__link--next" aria-label="次: (オプション) AWS CloudShell でデプロイする">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                次
+              </span>
+              <div class="md-ellipsis">
+                (オプション) AWS CloudShell でデプロイする
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2025, Amazon Web Services, Inc. or its affiliates. All rights reserved.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.trackings", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>
