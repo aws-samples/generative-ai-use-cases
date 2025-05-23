@@ -75,7 +75,7 @@ const RagKnowledgeBasePage: React.FC = () => {
     retryGeneration,
   } = useChat(pathname);
   const { scrollableContainer, setFollowing } = useFollow();
-  const { modelIdsInModelRegion: availableModels } = MODELS;
+  const { modelIdsInModelRegion: availableModels, modelDisplayName } = MODELS;
   const modelId = getModelId();
   const prompter = useMemo(() => {
     return getPrompter(modelId);
@@ -224,7 +224,7 @@ const RagKnowledgeBasePage: React.FC = () => {
             value={modelId}
             onChange={setModelId}
             options={availableModels.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
           />
         </div>

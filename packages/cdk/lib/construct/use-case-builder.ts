@@ -64,6 +64,7 @@ export class UseCaseBuilder extends Construct {
     // Add UseCaseBuilder related APIs
     const listUseCasesFunction = new NodejsFunction(this, 'ListUseCases', {
       ...commonProperty,
+      memorySize: 512,
       entry: `${commonPath}/listUseCases.ts`,
     });
     useCaseBuilderTable.grantReadData(listUseCasesFunction);
@@ -73,6 +74,7 @@ export class UseCaseBuilder extends Construct {
       'ListFavoriteUseCases',
       {
         ...commonProperty,
+        memorySize: 512,
         entry: `${commonPath}/listFavoriteUseCases.ts`,
         environment: {
           ...commonProperty.environment,
@@ -84,6 +86,7 @@ export class UseCaseBuilder extends Construct {
 
     const getUseCaseFunction = new NodejsFunction(this, 'GetUseCase', {
       ...commonProperty,
+      memorySize: 512,
       entry: `${commonPath}/getUseCase.ts`,
     });
     useCaseBuilderTable.grantReadData(getUseCaseFunction);
@@ -123,6 +126,7 @@ export class UseCaseBuilder extends Construct {
       'ListRecentlyUsedUseCases',
       {
         ...commonProperty,
+        memorySize: 512,
         entry: `${commonPath}/listRecentlyUsedUseCases.ts`,
       }
     );

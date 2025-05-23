@@ -129,7 +129,7 @@ const GenerateDiagramPage: React.FC = () => {
     diagramType,
   } = useDiagram(pathname);
 
-  const { modelIds: availableModels } = MODELS;
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const modelId = getModelId();
 
   const disabledExec = useMemo(() => {
@@ -500,7 +500,7 @@ const GenerateDiagramPage: React.FC = () => {
                   onChange={setModelId}
                   options={availableModels.map((m) => ({
                     value: m,
-                    label: m,
+                    label: modelDisplayName(m),
                   }))}
                   label={t('diagram.model')}
                 />

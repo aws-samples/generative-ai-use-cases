@@ -565,7 +565,8 @@ const GenerateImagePage: React.FC = () => {
   const [previousImageSample, setPreviousImageSample] = useState(3);
   const [previousGenerationMode, setPreviousGenerationMode] =
     useState<AmazonUIImageGenerationMode>('TEXT_IMAGE');
-  const { modelIds, imageGenModelIds, imageGenModels } = MODELS;
+  const { modelIds, imageGenModelIds, imageGenModels, modelDisplayName } =
+    MODELS;
   const modelId = getModelId();
   const prompter = useMemo(() => {
     return getPrompter(modelId);
@@ -1002,7 +1003,7 @@ const GenerateImagePage: React.FC = () => {
               value={imageGenModelId}
               onChange={setImageGenModelId}
               options={imageGenModelIds.map((m) => {
-                return { value: m, label: m };
+                return { value: m, label: modelDisplayName(m) };
               })}
               fullWidth
             />

@@ -106,7 +106,7 @@ const WebContent: React.FC = () => {
   const { setTypingTextInput, typingTextOutput } = useTyping(loading);
   const { getWebText } = useChatApi();
   const [showError, setShowError] = useState(false);
-  const { modelIds: availableModels } = MODELS;
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const modelId = getModelId();
   const prompter = useMemo(() => {
     return getPrompter(modelId);
@@ -229,7 +229,7 @@ const WebContent: React.FC = () => {
               value={modelId}
               onChange={setModelId}
               options={availableModels.map((m) => {
-                return { value: m, label: m };
+                return { value: m, label: modelDisplayName(m) };
               })}
             />
           </div>

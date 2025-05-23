@@ -156,7 +156,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
       return getModelId();
     }
   }, [getModelId, props.fixedModelId]);
-  const { modelIds: availableModels } = MODELS;
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const { setTypingTextInput, typingTextOutput } = useTyping(loading);
   const { updateRecentUseUseCase } = useMyUseCases();
   const { retrieve: retrieveKendra } = useRagApi();
@@ -430,7 +430,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
 
   const accept = useMemo(() => {
     if (!modelId) return [];
-    const feature = MODELS.modelFeatureFlags[modelId];
+    const feature = MODELS.modelMetadata[modelId].flags;
     return [
       ...(feature.doc ? fileLimit.accept.doc : []),
       ...(feature.image ? fileLimit.accept.image : []),
@@ -569,7 +569,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
             value={modelId}
             onChange={setModelId}
             options={availableModels.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
           />
         </div>

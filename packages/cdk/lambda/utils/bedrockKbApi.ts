@@ -1,5 +1,4 @@
 import {
-  BedrockAgentRuntimeClient,
   DependencyFailedException,
   ImplicitFilterConfiguration,
   OrchestrationConfiguration,
@@ -23,10 +22,9 @@ import {
 } from '@generative-ai-use-cases/common';
 import { streamingChunk } from './streamingChunk';
 import { verifyToken } from './auth';
+import { initBedrockAgentRuntimeClient } from './bedrockClient';
 
-const agentRuntimeClient = new BedrockAgentRuntimeClient({
-  region: process.env.MODEL_REGION,
-});
+const MODEL_REGION = process.env.MODEL_REGION as string;
 
 // Convert s3://<BUCKET>/<PREFIX> to https://s3.<REGION>.amazonaws.com/<BUCKET>/<PREFIX>
 const convertS3UriToUrl = (s3Uri: string, region: string): string => {
@@ -167,7 +165,11 @@ const bedrockKbApi: ApiInterface = {
           },
         },
       });
-      const res = await agentRuntimeClient.send(command);
+
+      const client = await initBedrockAgentRuntimeClient({
+        region: MODEL_REGION,
+      });
+      const res = await client.send(command);
 
       if (res.sessionId) {
         yield streamingChunk({ text: '', sessionId: res.sessionId });

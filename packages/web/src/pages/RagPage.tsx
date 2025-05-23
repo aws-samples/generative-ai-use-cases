@@ -39,7 +39,7 @@ const RagPage: React.FC = () => {
   const { getModelId, setModelId } = useChat(pathname);
   const { postMessage, clear, loading, messages, isEmpty } = useRag(pathname);
   const { scrollableContainer, setFollowing } = useFollow();
-  const { modelIds: availableModels } = MODELS;
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const modelId = getModelId();
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const RagPage: React.FC = () => {
             value={modelId}
             onChange={setModelId}
             options={availableModels.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
           />
         </div>

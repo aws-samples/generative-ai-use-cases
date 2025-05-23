@@ -80,5 +80,8 @@ $env:VITE_APP_INLINE_AGENTS = Extract-Value $stack_output "InlineAgents"
 $env:VITE_APP_USE_CASE_BUILDER_ENABLED = Extract-Value $stack_output "UseCaseBuilderEnabled"
 $env:VITE_APP_OPTIMIZE_PROMPT_FUNCTION_ARN = Extract-Value $stack_output "OptimizePromptFunctionArn"
 $env:VITE_APP_HIDDEN_USE_CASES = Extract-Value $stack_output "HiddenUseCases"
+$env:VITE_APP_SPEECH_TO_SPEECH_NAMESPACE = Extract-Value $stack_output "SpeechToSpeechNamespace"
+$env:VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT = Extract-Value $stack_output "SpeechToSpeechEventApiEndpoint"
+$env:VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS = Extract-Value $stack_output "SpeechToSpeechModelIds"
 
 npm -w packages/web run dev

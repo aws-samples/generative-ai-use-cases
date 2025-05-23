@@ -27,6 +27,7 @@ type Props = BaseProps & {
   chatContent?: ShownMessage;
   loading?: boolean;
   hideFeedback?: boolean;
+  hideSaveSystemContext?: boolean;
   setSaveSystemContext?: (s: string) => void;
   setShowSystemContextModal?: (value: boolean) => void;
   allowRetry?: boolean;
@@ -236,7 +237,7 @@ const ChatMessage: React.FC<Props> = (props) => {
         </div>
 
         <div className="mt-1 flex items-start justify-end pr-8 lg:pr-14 print:hidden">
-          {chatContent?.role === 'system' && (
+          {chatContent?.role === 'system' && !props.hideSaveSystemContext && (
             <ButtonIcon
               className="text-gray-400"
               onClick={() => {

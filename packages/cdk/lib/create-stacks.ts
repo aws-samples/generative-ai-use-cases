@@ -52,6 +52,13 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
       : null;
 
   // Agent
+  if (params.crossAccountBedrockRoleArn) {
+    if (params.agentEnabled || params.searchApiKey) {
+      throw new Error(
+        'When `crossAccountBedrockRoleArn` is specified, the `agentEnabled` and `searchApiKey` parameters are not supported. Please create agents in the other account and specify them in the `agents` parameter.'
+      );
+    }
+  }
   const agentStack = params.agentEnabled
     ? new AgentStack(app, `WebSearchAgentStack${params.env}`, {
         env: {
@@ -76,9 +83,9 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
 
   // Create S3 Bucket for each unique region for StartAsyncInvoke in video generation
   // because the S3 Bucket must be in the same region as Bedrock Runtime
-  const videoModelRegions = params.videoGenerationModelIds
-    .map((model) => model.region)
-    .filter((elem, index, self) => self.indexOf(elem) === index);
+  const videoModelRegions = [
+    ...new Set(params.videoGenerationModelIds.map((model) => model.region)),
+  ];
   const videoBucketRegionMap: Record<string, string> = {};
 
   for (const region of videoModelRegions) {
@@ -90,6 +97,7 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
           account: params.account,
           region,
         },
+        params,
       }
     );
 

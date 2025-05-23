@@ -5,9 +5,9 @@
 
 English | [日本語](./README_ja.md)
 
-Application implementation with business use cases for safely utilizing generative AI in business operations
+Well-architected application implementation with business use cases for utilizing generative AI in business operations
 
-  <img src="./docs/assets/images/sc_lp_en.png" alt="Application implementation with business use cases for safely utilizing generative AI in business operations" width="68%">
+  <img src="./docs/assets/images/sc_lp_en.png" alt="Well-architected application implementation with business use cases for utilizing generative AI in business operations" width="68%">
 </div>
 
 > [!IMPORTANT]
@@ -77,6 +77,10 @@ GenU provides a variety of standard use cases leveraging generative AI. These us
         <td>Diagram Generation</td>
         <td>Diagram generation visualizes text and content on any topic using optimal diagrams. It allows for easy text-based diagram creation, enabling efficient creation of flowcharts and other diagrams even for non-programmers and non-designers.</td>
       </tr>
+      <tr>
+        <td>Voice Chat</td>
+        <td>In Voice Chat, you can have a bidirectional voice chat with generative AI. Similar to natural conversation, you can also interrupt and speak while the AI is talking. Also, by setting a system prompt, you can have voice conversations with AI that has specific roles.</td>
+      </tr>
     </tbody>
   </table>
 </details>
@@ -144,7 +148,7 @@ In that case, please be careful about conflicts with GenU's main branch.
 GenU deployment uses [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/) (CDK). If you cannot prepare a CDK execution environment, refer to the following deployment methods:
 
 - [Deployment method using AWS CloudShell (if preparing your own environment is difficult)](docs/en/DEPLOY_ON_CLOUDSHELL.md)
-- Workshop ([English](https://catalog.us-east-1.prod.workshops.aws/workshops/58088ef5-d47c-441d-ae65-e44ff1d6a92b) / [Japanese](https://catalog.workshops.aws/generative-ai-use-cases-jp))
+- Workshop ([English](https://catalog.workshops.aws/generative-ai-use-cases) / [Japanese](https://catalog.workshops.aws/generative-ai-use-cases-jp))
 
 First, run the following command. All commands should be executed at the repository root.
 

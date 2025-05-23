@@ -143,6 +143,7 @@ export class RagKnowledgeBaseStack extends Stack {
       ragKnowledgeBaseAdvancedParsing,
       ragKnowledgeBaseAdvancedParsingModelId,
       ragKnowledgeBaseBinaryVector,
+      crossAccountBedrockRoleArn,
     } = props.params;
 
     if (typeof embeddingModelId !== 'string') {
@@ -154,6 +155,12 @@ export class RagKnowledgeBaseStack extends Stack {
     if (!EMBEDDING_MODELS.includes(embeddingModelId)) {
       throw new Error(
         `embeddingModelId is invalid (valid embeddingModelId: ${EMBEDDING_MODELS})`
+      );
+    }
+
+    if (crossAccountBedrockRoleArn) {
+      throw new Error(
+        'With `crossAccountBedrockRoleArn` specified, you must use an existing knowledge base. Create a knowledge base in your Bedrock account and provide its `knowledgeBaseId`.'
       );
     }
 

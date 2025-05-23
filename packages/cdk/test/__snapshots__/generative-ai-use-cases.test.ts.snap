@@ -1387,7 +1387,7 @@ exports[`GenerativeAiUseCases matches the snapshot 3`] = `
         },
         "AutoPrepare": true,
         "Description": "Code Interpreter",
-        "FoundationModel": "anthropic.claude-3-sonnet-20240229-v1:0",
+        "FoundationModel": "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
         "IdleSessionTTLInSeconds": 3600,
         "Instruction": "You are an advanced AI agent with the ability to execute code, generate charts, and perform complex data analysis. 
 Your main function is to solve problems and meet user requests by utilizing these capabilities.
@@ -1500,7 +1500,7 @@ Automatically detect the language of the user's request and think and answer in 
         },
         "AutoPrepare": true,
         "Description": "Search Agent",
-        "FoundationModel": "anthropic.claude-3-haiku-20240307-v1:0",
+        "FoundationModel": "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
         "IdleSessionTTLInSeconds": 3600,
         "Instruction": "You are an advanced assistant with the ability to search and retrieve information from the web to perform complex research tasks.
 Your main function is to solve problems and meet user requests by utilizing these capabilities.
@@ -2042,6 +2042,29 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
     "SelfSignUpEnabled": {
       "Value": "true",
     },
+    "SpeechToSpeechEventApiEndpoint": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Fn::GetAtt": [
+                "SpeechToSpeechEventApi1E2E9AB4",
+                "Dns.Http",
+              ],
+            },
+            "/event",
+          ],
+        ],
+      },
+    },
+    "SpeechToSpeechModelIds": {
+      "Value": "[{"modelId":"amazon.nova-sonic-v1:0","region":"us-east-1"}]",
+    },
+    "SpeechToSpeechNamespace": {
+      "Value": "speech-to-speech",
+    },
     "UseCaseBuilderEnabled": {
       "Value": "true",
     },
@@ -2160,7 +2183,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A502123d75c6f1f887fef40596e8e44b7c34d5d": {
+    "APIApiDeployment3A502123457785fef82d1521cf56189f5ab6294b": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -2231,6 +2254,9 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         "APIApisharesshareshareId3696CDAF",
         "APIApisharesshareOPTIONS6D42A67D",
         "APIApisharesshareF2EC0273",
+        "APIApispeechtospeechOPTIONS92DBE1B9",
+        "APIApispeechtospeechPOST8D76474A",
+        "APIApispeechtospeechD6FA255B",
         "APIApisystemcontextssystemContextIdDELETEB527E743",
         "APIApisystemcontextssystemContextIdOPTIONS96E8D02C",
         "APIApisystemcontextssystemContextId9D6F9E56",
@@ -2307,7 +2333,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A502123d75c6f1f887fef40596e8e44b7c34d5d",
+          "Ref": "APIApiDeployment3A502123457785fef82d1521cf56189f5ab6294b",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -5868,6 +5894,172 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         },
       },
       "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApispeechtospeechD6FA255B": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "APIApiFFA96F67",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "speech-to-speech",
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApispeechtospeechOPTIONS92DBE1B9": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": {
+          "IntegrationResponses": [
+            {
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": {
+          "Ref": "APIApispeechtospeechD6FA255B",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApispeechtospeechPOST8D76474A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "SpeechToSpeechAuthorizerF61277A4",
+        },
+        "HttpMethod": "POST",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "SpeechToSpeechStartSession80A7495E",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "APIApispeechtospeechD6FA255B",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApispeechtospeechPOSTApiPermissionGenerativeAiUseCasesStackAPIApi89219E17POSTspeechtospeech0FB686CB": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SpeechToSpeechStartSession80A7495E",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:us-east-1:123456890123:",
+              {
+                "Ref": "APIApiFFA96F67",
+              },
+              "/",
+              {
+                "Ref": "APIApiDeploymentStageapiCD55D117",
+              },
+              "/POST/speech-to-speech",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApispeechtospeechPOSTApiPermissionTestGenerativeAiUseCasesStackAPIApi89219E17POSTspeechtospeech2C9E93F5": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SpeechToSpeechStartSession80A7495E",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:us-east-1:123456890123:",
+              {
+                "Ref": "APIApiFFA96F67",
+              },
+              "/test-invoke-stage/POST/speech-to-speech",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
       "UpdateReplacePolicy": "Delete",
     },
     "APIApisystemcontexts57785227": {
@@ -9546,6 +9738,9 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         },
         "Environment": {
           "Variables": {
+            "BUCKET_NAME": {
+              "Ref": "APIFileBucket8FB29855",
+            },
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
             },
@@ -9604,6 +9799,13 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Statement": [
             {
               "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
                 "dynamodb:BatchWriteItem",
                 "dynamodb:PutItem",
                 "dynamodb:UpdateItem",
@@ -9718,6 +9920,13 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Statement": [
             {
               "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
                 "dynamodb:BatchWriteItem",
                 "dynamodb:PutItem",
                 "dynamodb:UpdateItem",
@@ -10958,6 +11167,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
             },
+            "VIDEO_BUCKET_OWNER": "123456890123",
             "VIDEO_BUCKET_REGION_MAP": {
               "Fn::Join": [
                 "",
@@ -11116,6 +11326,11 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
           "S3Key": "HASH-REPLACED.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
+          },
         },
         "Handler": "index.handler",
         "Role": {
@@ -12865,6 +13080,13 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Statement": [
             {
               "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
                 "dynamodb:BatchWriteItem",
                 "dynamodb:PutItem",
                 "dynamodb:UpdateItem",
@@ -13105,6 +13327,23 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "VITE_APP_SAML_COGNITO_DOMAIN_NAME": "",
           "VITE_APP_SAML_COGNITO_FEDERATED_IDENTITY_PROVIDER_NAME": "",
           "VITE_APP_SELF_SIGN_UP_ENABLED": "true",
+          "VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT": {
+            "Fn::Join": [
+              "",
+              [
+                "https://",
+                {
+                  "Fn::GetAtt": [
+                    "SpeechToSpeechEventApi1E2E9AB4",
+                    "Dns.Http",
+                  ],
+                },
+                "/event",
+              ],
+            ],
+          },
+          "VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS": "[{"modelId":"amazon.nova-sonic-v1:0","region":"us-east-1"}]",
+          "VITE_APP_SPEECH_TO_SPEECH_NAMESPACE": "speech-to-speech",
           "VITE_APP_USER_POOL_CLIENT_ID": {
             "Ref": "AuthUserPoolclientA74673A9",
           },
@@ -13419,6 +13658,44 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
       "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
+    "ApiSecurityHeadersPolicyA2894EB4": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ResponseHeadersPolicyConfig": {
+          "Name": "GenerativeAiUseCasesStackApiSecurityHeadersPolicyFF62FE6B",
+          "SecurityHeadersConfig": {
+            "ContentSecurityPolicy": {
+              "ContentSecurityPolicy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com https://raw.githubusercontent.com https://api.github.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;",
+              "Override": true,
+            },
+            "ContentTypeOptions": {
+              "Override": true,
+            },
+            "FrameOptions": {
+              "FrameOption": "DENY",
+              "Override": true,
+            },
+            "ReferrerPolicy": {
+              "Override": true,
+              "ReferrerPolicy": "strict-origin-when-cross-origin",
+            },
+            "StrictTransportSecurity": {
+              "AccessControlMaxAgeSec": 63072000,
+              "IncludeSubdomains": true,
+              "Override": true,
+              "Preload": true,
+            },
+            "XSSProtection": {
+              "ModeBlock": true,
+              "Override": true,
+              "Protection": true,
+            },
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::ResponseHeadersPolicy",
+      "UpdateReplacePolicy": "Delete",
+    },
     "ApiWafAssociation": {
       "DeletionPolicy": "Delete",
       "Properties": {
@@ -13480,6 +13757,9 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "DefaultCacheBehavior": {
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
             "Compress": true,
+            "ResponseHeadersPolicyId": {
+              "Ref": "ApiSecurityHeadersPolicyA2894EB4",
+            },
             "TargetOriginId": "GenerativeAiUseCasesStackApiWebCloudFrontDistributionOrigin15479CB7B",
             "ViewerProtocolPolicy": "redirect-to-https",
           },
@@ -15110,7 +15390,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
             "Arn",
           ],
         },
-        "Runtime": "nodejs18.x",
+        "Runtime": "nodejs20.x",
         "Timeout": 300,
       },
       "Type": "AWS::Lambda::Function",
@@ -15745,6 +16025,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         },
         "Environment": {
           "Variables": {
+            "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
@@ -16087,6 +16368,351 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         },
       },
       "Type": "AWS::WAFv2::WebACL",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SpeechToSpeechAuthorizerF61277A4": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "IdentitySource": "method.request.header.Authorization",
+        "Name": "GenerativeAiUseCasesStackSpeechToSpeechAuthorizerC597101F",
+        "ProviderARNs": [
+          {
+            "Fn::GetAtt": [
+              "AuthUserPool8115E87F",
+              "Arn",
+            ],
+          },
+        ],
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+        "Type": "COGNITO_USER_POOLS",
+      },
+      "Type": "AWS::ApiGateway::Authorizer",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SpeechToSpeechChannelNameCA32A058": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "SpeechToSpeechEventApi1E2E9AB4",
+            "ApiId",
+          ],
+        },
+        "HandlerConfigs": {},
+        "Name": "speech-to-speech",
+      },
+      "Type": "AWS::AppSync::ChannelNamespace",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SpeechToSpeechEventApi1E2E9AB4": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "EventConfig": {
+          "AuthProviders": [
+            {
+              "AuthType": "AWS_IAM",
+            },
+            {
+              "AuthType": "AMAZON_COGNITO_USER_POOLS",
+              "CognitoConfig": {
+                "AwsRegion": "us-east-1",
+                "UserPoolId": {
+                  "Ref": "AuthUserPool8115E87F",
+                },
+              },
+            },
+          ],
+          "ConnectionAuthModes": [
+            {
+              "AuthType": "AWS_IAM",
+            },
+            {
+              "AuthType": "AMAZON_COGNITO_USER_POOLS",
+            },
+          ],
+          "DefaultPublishAuthModes": [
+            {
+              "AuthType": "AWS_IAM",
+            },
+            {
+              "AuthType": "AMAZON_COGNITO_USER_POOLS",
+            },
+          ],
+          "DefaultSubscribeAuthModes": [
+            {
+              "AuthType": "AWS_IAM",
+            },
+            {
+              "AuthType": "AMAZON_COGNITO_USER_POOLS",
+            },
+          ],
+        },
+        "Name": "SpeechToSpeech",
+      },
+      "Type": "AWS::AppSync::Api",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SpeechToSpeechStartSession80A7495E": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "SpeechToSpeechStartSessionServiceRoleDefaultPolicy4D6D3AC7",
+        "SpeechToSpeechStartSessionServiceRoleEBE56984",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "SPEECH_TO_SPEECH_TASK_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "SpeechToSpeechTaskC1149BF3",
+                "Arn",
+              ],
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "SpeechToSpeechStartSessionServiceRoleEBE56984",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SpeechToSpeechStartSessionServiceRoleDefaultPolicy4D6D3AC7": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "SpeechToSpeechTaskC1149BF3",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "SpeechToSpeechTaskC1149BF3",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "SpeechToSpeechStartSessionServiceRoleDefaultPolicy4D6D3AC7",
+        "Roles": [
+          {
+            "Ref": "SpeechToSpeechStartSessionServiceRoleEBE56984",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SpeechToSpeechStartSessionServiceRoleEBE56984": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SpeechToSpeechTaskC1149BF3": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "SpeechToSpeechTaskServiceRoleDefaultPolicy1048205C",
+        "SpeechToSpeechTaskServiceRole6B9DD524",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
+            "EVENT_API_ENDPOINT": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Fn::GetAtt": [
+                      "SpeechToSpeechEventApi1E2E9AB4",
+                      "Dns.Http",
+                    ],
+                  },
+                  "/event",
+                ],
+              ],
+            },
+            "NAMESPACE": "speech-to-speech",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "SpeechToSpeechTaskServiceRole6B9DD524",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SpeechToSpeechTaskServiceRole6B9DD524": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "SpeechToSpeechTaskServiceRoleDefaultPolicy1048205C": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "appsync:EventConnect",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":appsync:us-east-1:123456890123:apis/",
+                    {
+                      "Fn::GetAtt": [
+                        "SpeechToSpeechEventApi1E2E9AB4",
+                        "ApiId",
+                      ],
+                    },
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": [
+                "appsync:EventPublish",
+                "appsync:EventSubscribe",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":appsync:us-east-1:123456890123:apis/",
+                    {
+                      "Fn::GetAtt": [
+                        "SpeechToSpeechEventApi1E2E9AB4",
+                        "ApiId",
+                      ],
+                    },
+                    "/channelNamespace/speech-to-speech",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "bedrock:*",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "SpeechToSpeechTaskServiceRoleDefaultPolicy1048205C",
+        "Roles": [
+          {
+            "Ref": "SpeechToSpeechTaskServiceRole6B9DD524",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
     "TranscribeAudioBucket39DFF290": {
@@ -17075,6 +17701,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
         },
         "Handler": "index.handler",
+        "MemorySize": 512,
         "Role": {
           "Fn::GetAtt": [
             "UseCaseBuilderGetUseCaseServiceRoleF32AAC5F",
@@ -17193,6 +17820,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
         },
         "Handler": "index.handler",
+        "MemorySize": 512,
         "Role": {
           "Fn::GetAtt": [
             "UseCaseBuilderListFavoriteUseCasesServiceRole5BCFD9A7",
@@ -17311,6 +17939,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
         },
         "Handler": "index.handler",
+        "MemorySize": 512,
         "Role": {
           "Fn::GetAtt": [
             "UseCaseBuilderListRecentlyUsedUseCasesServiceRole977F8D35",
@@ -17429,6 +18058,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
         },
         "Handler": "index.handler",
+        "MemorySize": 512,
         "Role": {
           "Fn::GetAtt": [
             "UseCaseBuilderListUseCasesServiceRoleDE660444",

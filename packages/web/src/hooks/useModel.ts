@@ -1,5 +1,5 @@
 import { Model, ModelConfiguration } from 'generative-ai-use-cases';
-import { modelFeatureFlags } from '@generative-ai-use-cases/common';
+import { modelMetadata } from '@generative-ai-use-cases/common';
 
 const modelRegion = import.meta.env.VITE_APP_MODEL_REGION;
 
@@ -20,7 +20,7 @@ const modelIdsInModelRegion: string[] = bedrockModelConfigs
   .map((model) => model.modelId);
 
 const visionModelIds: string[] = bedrockModelIds.filter(
-  (modelId) => modelFeatureFlags[modelId].image
+  (modelId) => modelMetadata[modelId].flags.image
 );
 const visionEnabled: boolean = visionModelIds.length > 0;
 
@@ -55,6 +55,21 @@ const videoModelConfigs = (
   )
   .filter((model) => model.modelId);
 const videoGenModelIds: string[] = videoModelConfigs.map(
+  (model) => model.modelId
+);
+const speechToSpeechModelConfigs = (
+  JSON.parse(
+    import.meta.env.VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS
+  ) as ModelConfiguration[]
+)
+  .map(
+    (model: ModelConfiguration): ModelConfiguration => ({
+      modelId: model.modelId.trim(),
+      region: model.region.trim(),
+    })
+  )
+  .filter((model) => model.modelId);
+const speechToSpeechModelIds: string[] = speechToSpeechModelConfigs.map(
   (model) => model.modelId
 );
 
@@ -106,6 +121,16 @@ const videoGenModels = [
       }) as Model
   ),
 ];
+const speechToSpeechModels = [
+  ...speechToSpeechModelConfigs.map(
+    (model) =>
+      ({
+        modelId: model.modelId,
+        type: 'bedrock',
+        region: model.region,
+      }) as Model
+  ),
+];
 const agentModels = [
   ...agentNames.map(
     (name) => ({ modelId: name, type: 'bedrockAgent' }) as Model
@@ -130,11 +155,16 @@ export const findModelByModelId = (modelId: string) => {
 
 const searchAgent = agentNames.find((name) => name.includes('Search'));
 
+const modelDisplayName = (modelId: string): string => {
+  return modelMetadata[modelId]?.displayName ?? modelId;
+};
+
 export const MODELS = {
   modelRegion: modelRegion,
   modelIds: [...bedrockModelIds, ...endpointNames],
   modelIdsInModelRegion,
-  modelFeatureFlags: modelFeatureFlags,
+  modelMetadata,
+  modelDisplayName,
   visionModelIds: visionModelIds,
   visionEnabled: visionEnabled,
   imageGenModelIds: imageGenModelIds,
@@ -148,4 +178,6 @@ export const MODELS = {
   searchAgent: searchAgent,
   flows,
   flowChatEnabled: flows.length > 0,
+  speechToSpeechModelIds: speechToSpeechModelIds,
+  speechToSpeechModels: speechToSpeechModels,
 };
