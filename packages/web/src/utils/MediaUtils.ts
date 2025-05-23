@@ -13,16 +13,6 @@ import { fileTypeFromBuffer, fileTypeFromStream } from 'file-type';
 const imageMimeTypeSet = new Set(Object.values(ImageMimeType));
 const videoMimeTypeSet = new Set(Object.values(VideoMimeType));
 
-// Some MIME types are not accepted by file-type
-const unparsableMimeTypeSet = new Set<SupportedMimeType>([
-  'application/msword',
-  'application/vnd.ms-excel',
-  'text/plain',
-  'text/csv',
-  'text/html',
-  'text/markdown',
-]);
-
 // Some MIME types are not normalized, so we need to map them to their normalized types
 const mimeTypeAlias: Record<string, SupportedMimeType> = {
   // mpeg
@@ -43,18 +33,14 @@ export const getMimeTypeFromFileHeader = async (file: File) => {
       mimeType = (await fileTypeFromBuffer(arrayBuffer))?.mime;
     } catch (error) {
       console.error('Error reading MIME type from buffer:', error);
-      return;
+      throw new Error('Error reading MIME type from file');
     }
   }
-
-  // Some file types are not accepted by file-type.
+  // Some file types are not supported by the file-type library.
+  // In this case, we fall back to using 'file.type' for the MIME type, since the file-type library covers most binary file types.
+  // https://github.com/sindresorhus/file-type/tree/main?tab=readme-ov-file#supported-file-types
   if (!mimeType || mimeType === 'application/x-cfb') {
-    // We accept text, doc, and xls files
-    if (unparsableMimeTypeSet.has(file.type as SupportedMimeType)) {
-      mimeType = file.type;
-    } else {
-      return; // Failed to detect the mime type
-    }
+    mimeType = file.type;
   }
   return (mimeTypeAlias[mimeType] || mimeType) as SupportedMimeType;
 };
@@ -68,7 +54,7 @@ export const AcceptedDotExtensions = {
 };
 
 // Get file type from MIME type
-export const getFileTypeFromMimeType = (mimeType?: SupportedMimeType) => {
+export const getFileTypeFromMimeType = (mimeType: SupportedMimeType) => {
   if (imageMimeTypeSet.has(mimeType as ImageMimeType)) return 'image';
   if (videoMimeTypeSet.has(mimeType as VideoMimeType)) return 'video';
   return 'file';
