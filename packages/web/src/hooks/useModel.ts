@@ -131,6 +131,7 @@ const speechToSpeechModels = [
       }) as Model
   ),
 ];
+const bedrockModels = [...textModels, ...imageGenModels, ...videoGenModels];
 const agentModels = [
   ...agentNames.map(
     (name) => ({ modelId: name, type: 'bedrockAgent' }) as Model
@@ -138,12 +139,9 @@ const agentModels = [
 ];
 
 export const findModelByModelId = (modelId: string) => {
-  const model = [
-    ...textModels,
-    ...imageGenModels,
-    ...videoGenModels,
-    ...agentModels,
-  ].find((m) => m.modelId === modelId);
+  const model = [...bedrockModels, ...agentModels].find(
+    (m) => m.modelId === modelId
+  );
 
   if (model) {
     // deep copy
@@ -156,7 +154,22 @@ export const findModelByModelId = (modelId: string) => {
 const searchAgent = agentNames.find((name) => name.includes('Search'));
 
 const modelDisplayName = (modelId: string): string => {
-  return modelMetadata[modelId]?.displayName ?? modelId;
+  // Get the same models (with different regions)
+  const criPrefix = /^(us|eu|apac)\./;
+  const baseModelId = modelId.replace(criPrefix, '');
+  const sameModels = bedrockModels.filter(
+    (m) => m.modelId.replace(criPrefix, '') === baseModelId
+  );
+
+  // If there are multiple instances of the same model, add CRI suffix to the display name
+  let displayName = modelMetadata[modelId]?.displayName ?? modelId;
+  if (sameModels.length > 1) {
+    const criMatch = modelId.match(criPrefix);
+    if (criMatch) {
+      displayName += ` (${criMatch[1].toUpperCase()})`;
+    }
+  }
+  return displayName;
 };
 
 export const MODELS = {

@@ -109,6 +109,27 @@ export class Api extends Construct {
       throw new Error(`Unsupported Model Name: ${rerankingModelId}`);
     }
 
+    // We don't support using the same model ID accross multiple regions
+    const allModelIds = [
+      ...modelIds,
+      ...imageGenerationModelIds,
+      ...videoGenerationModelIds,
+    ].map((m) => m.modelId);
+    const findDuplicates = (arr: string[]) => {
+      const [seen, dup] = [new Set(), new Set()];
+      arr.forEach((item) => (seen.has(item) ? dup.add(item) : seen.add(item)));
+      return [...dup];
+    };
+    const modelIdwithDuplicates = findDuplicates(allModelIds);
+    if (modelIdwithDuplicates.length > 0) {
+      throw new Error(
+        'Following model IDs have duplicates. ' +
+          'Using the same model ID across multiple regions is not supported: ' +
+          modelIdwithDuplicates.join(', ') +
+          '\n'
+      );
+    }
+
     // Agent Map
     const agentMap: AgentMap = {};
     for (const agent of agents) {
