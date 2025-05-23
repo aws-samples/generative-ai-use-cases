@@ -120,12 +120,12 @@ export class Api extends Construct {
       arr.forEach((item) => (seen.has(item) ? dup.add(item) : seen.add(item)));
       return [...dup];
     };
-    const modelIdwithDuplicates = findDuplicates(allModelIds);
-    if (modelIdwithDuplicates.length > 0) {
+    const modelIdsWithDuplicates = findDuplicates(allModelIds);
+    if (modelIdsWithDuplicates.length > 0) {
       throw new Error(
         'Following model IDs have duplicates. ' +
           'Using the same model ID across multiple regions is not supported: ' +
-          modelIdwithDuplicates.join(', ') +
+          modelIdsWithDuplicates.join(', ') +
           '\n'
       );
     }
