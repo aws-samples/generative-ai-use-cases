@@ -866,6 +866,10 @@ const GenerateImagePage: React.FC = () => {
     clearChat();
   }, [clear, clearChat]);
 
+  const downloadFileName = useMemo(() => {
+    return prompt.toLowerCase().replace(/ /g, '-').replace(/,/g, '_');
+  }, [prompt]);
+
   return (
     <div className="grid h-screen grid-cols-12 gap-4 p-4">
       <ModalDialog
@@ -943,6 +947,7 @@ const GenerateImagePage: React.FC = () => {
               loading={generating}
               error={image[selectedImageIndex].error}
               errorMessage={image[selectedImageIndex].errorMessage}
+              downloadFileName={downloadFileName}
             />
           </div>
 
