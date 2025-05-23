@@ -704,7 +704,7 @@ const useChatState = create<{
                 name: uploadedFile.name,
                 source: {
                   type: 's3',
-                  mediaType: uploadedFile.file.type,
+                  mediaType: uploadedFile.mimeType,
                   data: uploadedFile.s3Url ?? '',
                 },
               }) as ExtraData

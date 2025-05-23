@@ -35,6 +35,7 @@ import useFiles from '../../hooks/useFiles';
 import ZoomUpImage from '../ZoomUpImage';
 import ZoomUpVideo from '../ZoomUpVideo';
 import FileCard from '../FileCard';
+import { AcceptedDotExtensions } from '../../utils/MediaUtils';
 import { PiPaperclip, PiSpinnerGap } from 'react-icons/pi';
 import { useTranslation } from 'react-i18next';
 
@@ -45,22 +46,7 @@ const ragKnowledgeBaseEnabled: boolean =
 // Match pages/ChatPage.tsx
 // If a difference occurs, update it
 const fileLimit: FileLimit = {
-  accept: {
-    doc: [
-      '.csv',
-      '.doc',
-      '.docx',
-      '.html',
-      '.md',
-      '.pdf',
-      '.txt',
-      '.xls',
-      '.xlsx',
-      '.gif',
-    ],
-    image: ['.jpg', '.jpeg', '.png', '.webp'],
-    video: ['.mkv', '.mov', '.mp4', '.webm'],
-  },
+  accept: AcceptedDotExtensions,
   maxFileCount: 5,
   maxFileSizeMB: 4.5,
   maxImageFileCount: 20,

@@ -30,25 +30,11 @@ import {
   SystemContext,
 } from 'generative-ai-use-cases';
 import ModelParameters from '../components/ModelParameters';
+import { AcceptedDotExtensions } from '../utils/MediaUtils';
 import { useTranslation } from 'react-i18next';
 
 const fileLimit: FileLimit = {
-  accept: {
-    doc: [
-      '.csv',
-      '.doc',
-      '.docx',
-      '.html',
-      '.md',
-      '.pdf',
-      '.txt',
-      '.xls',
-      '.xlsx',
-      '.gif',
-    ],
-    image: ['.jpg', '.jpeg', '.png', '.webp'],
-    video: ['.mkv', '.mov', '.mp4', '.webm'],
-  },
+  accept: AcceptedDotExtensions,
   maxFileCount: 5,
   maxFileSizeMB: 4.5,
   maxImageFileCount: 20,
