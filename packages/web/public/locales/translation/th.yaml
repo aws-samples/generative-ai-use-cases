@@ -30,6 +30,7 @@ chat:
   show_system_prompt: แสดง system prompt
   system_prompt: System Prompt
   title: Chat
+  view_prompt_examples: ดูตัวอย่าง Prompt
 common:
   cancel: ยกเลิก
   clear: ล้าง
