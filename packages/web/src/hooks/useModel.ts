@@ -1,5 +1,8 @@
 import { Model, ModelConfiguration } from 'generative-ai-use-cases';
-import { modelMetadata } from '@generative-ai-use-cases/common';
+import {
+  MODEL_ID_CRI_PREFIX,
+  modelMetadata,
+} from '@generative-ai-use-cases/common';
 
 const modelRegion = import.meta.env.VITE_APP_MODEL_REGION;
 
@@ -155,8 +158,22 @@ export const findModelByModelId = (modelId: string) => {
 
 const searchAgent = agentNames.find((name) => name.includes('Search'));
 
+const duplicateBaseModelIdSet = new Set(
+  bedrockModelIds
+    .map((modelId) => modelId.replace(MODEL_ID_CRI_PREFIX, ''))
+    .filter((item, index, arr) => arr.indexOf(item) !== index)
+);
+
 const modelDisplayName = (modelId: string): string => {
-  return modelMetadata[modelId]?.displayName ?? modelId;
+  // If there are multiple instances of the same model, add CRI suffix to the display name
+  let displayName = modelMetadata[modelId]?.displayName ?? modelId;
+  if (duplicateBaseModelIdSet.has(modelId.replace(MODEL_ID_CRI_PREFIX, ''))) {
+    const criMatch = modelId.match(MODEL_ID_CRI_PREFIX);
+    if (criMatch) {
+      displayName += ` (${criMatch[1].toUpperCase()})`;
+    }
+  }
+  return displayName;
 };
 
 export const MODELS = {
