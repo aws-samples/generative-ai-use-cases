@@ -331,6 +331,7 @@ diagram:
 drawer:
   ai_services: AI Services
   builder_mode: Builder Mode
+  done: Done
   generative_ai: Generative AI
   tools: Tools
   use_cases: Use Cases

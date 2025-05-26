@@ -302,6 +302,7 @@ diagram:
 drawer:
   ai_services: AI サービス
   builder_mode: ビルダーモード
+  done: 完了
   generative_ai: (生成 AI)
   tools: ツール
   use_cases: ユースケース

@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { BaseProps } from '../@types/common';
 import { useNavigate } from 'react-router-dom';
-import { PiMagnifyingGlass } from 'react-icons/pi';
+import { PiMagnifyingGlass, PiGear } from 'react-icons/pi';
 import ExpandableMenu from './ExpandableMenu';
 import ChatList from './ChatList';
 import DrawerItem, { DrawerItemProps } from './DrawerItem';
 import DrawerBase from './DrawerBase';
 import Switch from './Switch';
+import Button from './Button';
 import { useTranslation } from 'react-i18next';
 
 export type ItemProps = DrawerItemProps & {
@@ -40,6 +41,8 @@ const Drawer: React.FC<Props> = (props) => {
   const useCaseBuilderEnabled: boolean =
     import.meta.env.VITE_APP_USE_CASE_BUILDER_ENABLED === 'true';
 
+  const [settingVisibility, setSettingVisibility] = useState(false);
+
   return (
     <>
       <DrawerBase>
@@ -56,9 +59,17 @@ const Drawer: React.FC<Props> = (props) => {
             <div className="border-b" />
           </>
         )}
-        <div className="text-aws-smile mx-3 my-1 text-xs">
-          {t('drawer.use_cases')}{' '}
-          <span className="text-gray-400">{t('drawer.generative_ai')}</span>
+        <div className="text-aws-smile mx-3 my-1 flex items-center justify-between text-xs">
+          <div>
+            {t('drawer.use_cases')}{' '}
+            <span className="text-gray-400">{t('drawer.generative_ai')}</span>
+          </div>
+          <PiGear
+            className="cursor-pointer text-base text-white"
+            onClick={() => {
+              setSettingVisibility(!settingVisibility);
+            }}
+          />
         </div>
         <div className="scrollbar-thin scrollbar-thumb-white ml-2 mr-1 h-full overflow-y-auto">
           {usecases.map((item, idx) => (
@@ -68,8 +79,22 @@ const Drawer: React.FC<Props> = (props) => {
               icon={item.icon}
               to={item.to}
               sub={item.sub}
+              settingVisibility={settingVisibility}
             />
           ))}
+
+          {settingVisibility && (
+            <div className="my-2 flex w-full justify-center">
+              <Button
+                className="w-full"
+                onClick={() => {
+                  setSettingVisibility(false);
+                }}
+                outlined>
+                {t('drawer.done')}
+              </Button>
+            </div>
+          )}
         </div>
         <div className="border-b" />
         {tools.length > 0 && (
