@@ -117,8 +117,7 @@ export class Api extends Construct {
     );
     if (duplicateModelIds.size > 0) {
       throw new Error(
-        'Following model IDs have duplicates. ' +
-          'Using the same model ID across multiple regions is not supported:\n' +
+        'Duplicate model IDs detected. Using the same model ID multiple times is not supported:\n' +
           [...duplicateModelIds].map((s) => `- ${s}\n`).join('\n')
       );
     }
