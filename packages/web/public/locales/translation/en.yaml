@@ -695,7 +695,6 @@ rag:
   retrieving: Retrieving reference documents from Kendra...
   title: RAG Chat
 setting:
-  ai: Generative AI
   ai_items:
     agent_name: Agent Name
     image_gen_model: Image Generation Model Name
@@ -703,27 +702,29 @@ setting:
     model_region: LLM & Image Generation Model Region
     video_gen_model: Video Generation Model Name
   config_message: >-
-    Settings can be changed using <0>AWS CDK</0>, not on this screen. If you
+    System settings can be changed using <0>AWS CDK</0>, not on this screen. If you
     encounter errors when running use cases, please make sure you have enabled
     the specified models in {{region}}. For details on how to do this, please
     refer to <1>generative-ai-use-cases</1>.
-  general: General
   items:
     agent_enabled: Agent Enabled
     language: Language
     language_help: Change display language
+    login_status: Login status
     rag_enabled: RAG (Amazon Kendra) Enabled
     rag_kb_enabled: RAG (Knowledge Base) Enabled
+    typing_animation: Typing Animation
     version: Version
     version_help: Referencing the version in package.json of generative-ai-use-cases
   recent_updates: Recent Updates
   signout: Sign Out
-  title: Settings
+  system: System settings
   update:
     message: >-
       Updates are available on GitHub. If you want to use the latest features,
       please pull the main branch of <0>generative-ai-use-cases</0> and
       redeploy.
+  user: User settings
   view_all_updates: View All Updates
 shared:
   contact_admin: Please contact the administrator.

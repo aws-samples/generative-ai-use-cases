@@ -598,7 +598,6 @@ rag:
   retrieving: Kendra から参考ドキュメントを取得しています...
   title: RAG チャット
 setting:
-  ai: 生成 AI
   ai_items:
     agent_name: Agent 名
     image_gen_model: 画像生成 モデル名
@@ -606,25 +605,27 @@ setting:
     model_region: LLM & 画像生成 モデルリージョン
     video_gen_model: 動画生成 モデル名
   config_message: >-
-    設定の変更はこの画面ではなく <0>AWS CDK</0> で行います。 また、ユースケース実行時にエラーになる場合は、必ず {{region}}
+    システム設定の変更はこの画面ではなく <0>AWS CDK</0> で行います。 また、ユースケース実行時にエラーになる場合は、必ず {{region}}
     にて指定したモデルを有効化しているか確認してください。それぞれのやり方については <1>generative-ai-use-cases</1>
     をご参照ください。
-  general: 全般
   items:
     agent_enabled: Agent 有効
     language: 言語設定
     language_help: 表示言語を変更できます
+    login_status: ログイン状態
     rag_enabled: RAG (Amazon Kendra) 有効
     rag_kb_enabled: RAG (Knowledge Base) 有効
+    typing_animation: タイピングアニメーション
     version: バージョン
     version_help: generative-ai-use-cases の package.json の version を参照しています
   recent_updates: 最近のアップデート
   signout: サインアウト
-  title: 設定情報
+  system: システム設定
   update:
     message: >-
       GitHub にアップデートがあります。最新の機能を利用したい場合は <0>generative-ai-use-cases</0> の
       main ブランチを pull して再度デプロイしてください。
+  user: ユーザー設定
   view_all_updates: 全てのアップデートを見る
 shared:
   contact_admin: 管理者に問い合わせてください。
