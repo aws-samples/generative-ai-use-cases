@@ -27,6 +27,7 @@ import {
   BEDROCK_RERANKING_MODELS,
   BEDROCK_TEXT_MODELS,
 } from '@generative-ai-use-cases/common';
+import { allowS3AccessWithSourceIpCondition } from '../utils/s3-access-policy';
 
 export interface BackendApiProps {
   // Context Params
@@ -40,6 +41,8 @@ export interface BackendApiProps {
   readonly rerankingModelId?: string | null;
   readonly customAgents: Agent[];
   readonly crossAccountBedrockRoleArn?: string | null;
+  readonly allowedIpV4AddressRanges?: string[] | null;
+  readonly allowedIpV6AddressRanges?: string[] | null;
 
   // Resource
   readonly userPool: UserPool;
@@ -393,7 +396,18 @@ export class Api extends Construct {
         BUCKET_NAME: fileBucket.bucketName,
       },
     });
-    fileBucket.grantWrite(getSignedUrlFunction);
+    // Grant S3 write permissions with source IP condition
+    if (getSignedUrlFunction.role) {
+      allowS3AccessWithSourceIpCondition(
+        fileBucket.bucketName,
+        getSignedUrlFunction.role,
+        'write',
+        {
+          ipv4: props.allowedIpV4AddressRanges,
+          ipv6: props.allowedIpV6AddressRanges,
+        }
+      );
+    }
 
     const getFileDownloadSignedUrlFunction = new NodejsFunction(
       this,
@@ -407,7 +421,18 @@ export class Api extends Construct {
         },
       }
     );
-    fileBucket.grantRead(getFileDownloadSignedUrlFunction);
+    // Grant S3 read permissions with source IP condition
+    if (getFileDownloadSignedUrlFunction.role) {
+      allowS3AccessWithSourceIpCondition(
+        fileBucket.bucketName,
+        getFileDownloadSignedUrlFunction.role,
+        'read',
+        {
+          ipv4: props.allowedIpV4AddressRanges,
+          ipv6: props.allowedIpV6AddressRanges,
+        }
+      );
+    }
 
     // If SageMaker Endpoint exists, grant permission
     if (endpointNames.length > 0) {
@@ -939,19 +964,5 @@ export class Api extends Construct {
     this.agentNames = Object.keys(agentMap);
     this.fileBucket = fileBucket;
     this.getFileDownloadSignedUrlFunction = getFileDownloadSignedUrlFunction;
-  }
-
-  // Allow download by specifying bucket name
-  allowDownloadFile(bucketName: string) {
-    this.getFileDownloadSignedUrlFunction.role?.addToPrincipalPolicy(
-      new PolicyStatement({
-        effect: Effect.ALLOW,
-        resources: [
-          `arn:aws:s3:::${bucketName}`,
-          `arn:aws:s3:::${bucketName}/*`,
-        ],
-        actions: ['s3:GetBucket*', 's3:GetObject*', 's3:List*'],
-      })
-    );
   }
 }

@@ -17,11 +17,14 @@ import {
   HttpMethods,
 } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
+import { allowS3AccessWithSourceIpCondition } from '../utils/s3-access-policy';
 
 export interface TranscribeProps {
   readonly userPool: UserPool;
   readonly idPool: IdentityPool;
   readonly api: RestApi;
+  readonly allowedIpV4AddressRanges?: string[] | null;
+  readonly allowedIpV6AddressRanges?: string[] | null;
 }
 
 export class Transcribe extends Construct {
@@ -59,7 +62,17 @@ export class Transcribe extends Construct {
         BUCKET_NAME: audioBucket.bucketName,
       },
     });
-    audioBucket.grantWrite(getSignedUrlFunction);
+    if (getSignedUrlFunction.role) {
+      allowS3AccessWithSourceIpCondition(
+        audioBucket.bucketName,
+        getSignedUrlFunction.role,
+        'write',
+        {
+          ipv4: props.allowedIpV4AddressRanges,
+          ipv6: props.allowedIpV6AddressRanges,
+        }
+      );
+    }
 
     const startTranscriptionFunction = new NodejsFunction(
       this,
