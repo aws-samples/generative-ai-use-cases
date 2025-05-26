@@ -1,8 +1,10 @@
 import useVersion from '../hooks/useVersion';
+import useUserSetting from '../hooks/useUserSetting';
 import { Link } from 'react-router-dom';
 import Help from '../components/Help';
 import Alert from '../components/Alert';
 import Button from '../components/Button';
+import Switch from '../components/Switch';
 import { MODELS } from '../hooks/useModel';
 import useGitHub, { PullRequest } from '../hooks/useGitHub';
 import { PiGithubLogoFill, PiArrowSquareOut } from 'react-icons/pi';
@@ -21,15 +23,17 @@ const SettingItem = (props: {
   name: string;
   value: string | React.ReactNode;
   helpMessage?: string;
+  top?: boolean;
 }) => {
   return (
-    <div className="border-aws-squid-ink mb-2 w-2/3 border-b-2 border-solid lg:w-1/2">
-      <div className="flex justify-between py-0.5">
-        <div className="flex items-center">
-          {props.name}
-          {props.helpMessage && <Help message={props.helpMessage} />}
-        </div>
-        <div className="text-right">{props.value}</div>
+    <div
+      className={`border-aws-squid-ink grid grid-cols-12 border-solid px-1 py-2 hover:bg-gray-200 ${props.top ? 'border-y' : 'border-b'}`}>
+      <div className="col-span-4 flex items-center justify-start">
+        {props.name}
+        {props.helpMessage && <Help message={props.helpMessage} />}
+      </div>
+      <div className="col-span-8 flex items-center justify-end">
+        {props.value}
       </div>
     </div>
   );
@@ -52,6 +56,8 @@ const Setting = () => {
   const localVersion = getLocalVersion();
   const hasUpdate = getHasUpdate();
   const closedPullRequests = getClosedPullRequests();
+  const { settingTypingAnimation, setSettingTypingAnimation } =
+    useUserSetting();
 
   const onClickSignout = useCallback(() => {
     // Delete all SWR cache
@@ -62,13 +68,9 @@ const Setting = () => {
   }, [cache, signOut]);
 
   return (
-    <div>
-      <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-        {t('setting.title')}
-      </div>
-
+    <div className="px-12 lg:px-32 xl:px-64">
       {hasUpdate && (
-        <div className="mt-5 flex w-full justify-center">
+        <div className="my-5 flex w-full justify-center">
           <Alert severity="info" className="flex w-fit items-center">
             <Trans
               i18nKey="setting.update.message"
@@ -85,27 +87,10 @@ const Setting = () => {
       )}
 
       <div className="my-3 flex justify-center font-semibold">
-        {t('setting.general')}
+        {t('setting.user')}
       </div>
 
-      <div className="flex w-full flex-col items-center text-sm">
-        <SettingItem
-          name={t('setting.items.version')}
-          value={localVersion || t('common.not_available')}
-          helpMessage={t('setting.items.version_help')}
-        />
-        <SettingItem
-          name={t('setting.items.rag_enabled')}
-          value={ragEnabled.toString()}
-        />
-        <SettingItem
-          name={t('setting.items.rag_kb_enabled')}
-          value={ragKnowledgeBaseEnabled.toString()}
-        />
-        <SettingItem
-          name={t('setting.items.agent_enabled')}
-          value={agentEnabled.toString()}
-        />
+      <div className="text-sm">
         <SettingItem
           name={t('setting.items.language')}
           value={
@@ -121,14 +106,49 @@ const Setting = () => {
             </select>
           }
           helpMessage={t('setting.items.language_help')}
+          top={true}
         />
+
+        <SettingItem
+          name={t('setting.items.typing_animation')}
+          value={
+            <Switch
+              checked={settingTypingAnimation}
+              label=""
+              onSwitch={setSettingTypingAnimation}
+            />
+          }></SettingItem>
+
+        <SettingItem
+          name={t('setting.items.login_status')}
+          value={
+            <Button onClick={onClickSignout}>{t('setting.signout')}</Button>
+          }></SettingItem>
       </div>
 
-      <div className="my-3 flex justify-center font-semibold">
-        {t('setting.ai')}
+      <div className="mb-3 mt-9 flex justify-center font-semibold">
+        {t('setting.system')}
       </div>
 
-      <div className="flex w-full flex-col items-center text-sm">
+      <div className="text-sm">
+        <SettingItem
+          name={t('setting.items.version')}
+          value={localVersion || t('common.not_available')}
+          helpMessage={t('setting.items.version_help')}
+          top={true}
+        />
+        <SettingItem
+          name={t('setting.items.rag_enabled')}
+          value={ragEnabled.toString()}
+        />
+        <SettingItem
+          name={t('setting.items.rag_kb_enabled')}
+          value={ragKnowledgeBaseEnabled.toString()}
+        />
+        <SettingItem
+          name={t('setting.items.agent_enabled')}
+          value={agentEnabled.toString()}
+        />
         <SettingItem
           name={t('setting.ai_items.llm_model')}
           value={modelIds.join(', ')}
@@ -149,7 +169,7 @@ const Setting = () => {
           name={t('setting.ai_items.model_region')}
           value={modelRegion}
         />
-        <div className="mt-5 w-2/3 text-xs lg:w-1/2">
+        <div className="my-2 text-xs">
           <Trans
             i18nKey="setting.config_message"
             values={{ region: modelRegion }}
@@ -169,13 +189,13 @@ const Setting = () => {
         </div>
       </div>
 
-      <div className="mb-3 mt-8 flex items-center justify-center font-semibold">
-        <PiGithubLogoFill className="mr-2 text-lg" />
+      <div className="mb-3 mt-9 flex items-center justify-center font-semibold">
+        <PiGithubLogoFill className="mr-1 text-base" />
         {t('setting.recent_updates')}
       </div>
 
-      <div className="flex flex-col items-center text-sm">
-        <ul className="h-64 w-2/3 overflow-y-scroll border border-gray-400 p-1 lg:w-1/2">
+      <div className="flex w-full flex-col items-center text-sm">
+        <ul className="h-64 w-full overflow-y-scroll border border-gray-400 p-2">
           {closedPullRequests.map((p: PullRequest, idx: number) => {
             return (
               <li key={idx} className="block truncate text-sm">
@@ -192,7 +212,7 @@ const Setting = () => {
           })}
         </ul>
 
-        <div className="mt-1 flex w-2/3 justify-end text-xs lg:w-1/2">
+        <div className="mb-3 mt-1 flex w-full justify-end text-xs">
           <a
             href="https://github.com/aws-samples/generative-ai-use-cases/pulls?q=is%3Apr+is%3Aclosed"
             className="flex items-center hover:underline"
@@ -201,12 +221,6 @@ const Setting = () => {
             {t('setting.view_all_updates')}
           </a>
         </div>
-      </div>
-
-      <div className="my-10 flex w-full justify-center">
-        <Button onClick={onClickSignout} className="text-lg">
-          {t('setting.signout')}
-        </Button>
       </div>
     </div>
   );

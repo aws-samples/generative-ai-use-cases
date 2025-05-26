@@ -3,7 +3,10 @@ import {
   Message,
   SystemContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
-import { SUPPORTED_CACHE_FIELDS } from '@generative-ai-use-cases/common';
+import {
+  CRI_PREFIX_PATTERN,
+  SUPPORTED_CACHE_FIELDS,
+} from '@generative-ai-use-cases/common';
 
 const CACHE_POINT = {
   cachePoint: { type: 'default' },
@@ -15,7 +18,7 @@ const SYSTEM_CACHE_POINT = {
 
 const getSupportedCacheFields = (modelId: string) => {
   // Remove CRI prefix
-  const baseModelId = modelId.replace(/^(us|eu|apac)\./, '');
+  const baseModelId = modelId.replace(CRI_PREFIX_PATTERN, '');
   return SUPPORTED_CACHE_FIELDS[baseModelId] || [];
 };
 

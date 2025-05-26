@@ -530,3 +530,5 @@ export const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
   'amazon.nova-lite-v1:0': ['messages', 'system'],
   'amazon.nova-micro-v1:0': ['messages', 'system'],
 };
+
+export const CRI_PREFIX_PATTERN = /^(us|eu|apac)\./;

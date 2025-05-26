@@ -618,7 +618,6 @@ rag:
   retrieving: กำลังค้นคืนเอกสารอ้างอิงจาก Kendra...
   title: RAG Chat
 setting:
-  ai: Generative AI
   ai_items:
     agent_name: Agent Name
     image_gen_model: Image Generation Model Name
@@ -627,7 +626,6 @@ setting:
     video_gen_model: Video Generation Model Name
   config_message: >-
     การตั้งค่าสามารถเปลี่ยนแปลงได้โดยใช้ <0>AWS CDK</0> ไม่ใช่บนหน้าจอนี้ หากคุณพบข้อผิดพลาดเมื่อใช้ use cases โปรดตรวจสอบว่าคุณได้เปิดใช้งานโมเดลที่ระบุใน {{region}} สำหรับรายละเอียดเกี่ยวกับวิธีการทำเช่นนี้ โปรดดูที่ <1>generative-ai-use-cases</1>
-  general: ทั่วไป
   items:
     agent_enabled: เปิดใช้งานตัวแทน
     language: ภาษา
@@ -638,7 +636,6 @@ setting:
     version_help: อ้างอิงเวอร์ชันใน package.json ของ generative-ai-use-cases
   recent_updates: การอัปเดตล่าสุด
   signout: ออกจากระบบ
-  title: ตั้งค่า
   update:
     message: >-
       มีการอัปเดตบน GitHub หากคุณต้องการใช้คุณสมบัติล่าสุด โปรดดึงสาขาหลักของ <0>generative-ai-use-cases</0> และปรับใช้ใหม่
