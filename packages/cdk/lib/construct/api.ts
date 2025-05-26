@@ -110,16 +110,16 @@ export class Api extends Construct {
     }
 
     // We don't support using the same model ID accross multiple regions
-    const modelIdsWithDuplicates = new Set(
+    const duplicateModelIds = new Set(
       [...modelIds, ...imageGenerationModelIds, ...videoGenerationModelIds]
         .map((m) => m.modelId)
         .filter((item, index, arr) => arr.indexOf(item) !== index)
     );
-    if (modelIdsWithDuplicates.size > 0) {
+    if (duplicateModelIds.size > 0) {
       throw new Error(
         'Following model IDs have duplicates. ' +
           'Using the same model ID across multiple regions is not supported:\n' +
-          [...modelIdsWithDuplicates].map((s) => `- ${s}\n`).join('\n')
+          [...duplicateModelIds].map((s) => `- ${s}\n`).join('\n')
       );
     }
 
