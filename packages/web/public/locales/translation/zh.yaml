@@ -1,0 +1,1061 @@
+agent:
+  drop_files: 拖放文件上传
+  title: Agent 聊天
+auth:
+  loading: 加载中...
+  login: 登录
+  title: Generative AI Use Cases on AWS
+chat:
+  advanced_options: 高级选项
+  create_link: 创建链接
+  create_link_message: 通过创建链接，您将向所有可以登录此应用程序的用户公开对话历史。
+  create_system_prompt: 创建系统提示
+  delete_chat_confirmation: '是否删除聊天"{{title}}"？'
+  delete_confirmation: 删除确认
+  delete_link: 删除链接
+  delete_link_message: 通过删除链接，您可以停止公开对话历史。
+  drop_files: 请拖放文件
+  history: 对话历史
+  initialize: 初始化
+  model_parameters: 模型参数
+  open_link: 打开链接
+  prompt_examples: 提示示例
+  save: 保存
+  saved_system_prompts: 已保存的系统提示
+  search_by_title: 按标题搜索
+  settings: 设置
+  share: 分享
+  share_conversation: 分享对话历史
+  sharing: 分享中
+  show_system_prompt: 显示系统提示
+  system_prompt: 系统提示
+  title: 聊天
+common:
+  cancel: 取消
+  clear: 清除
+  close: 关闭
+  complete: 完成
+  create: 创建
+  delete: 删除
+  enter_text: 请输入
+  error: 错误
+  errorNoSuggestions: 未找到建议。
+  execute: 执行
+  feedback_received: 已收到反馈。谢谢。
+  here: 这里
+  load_more: 加载更多
+  loading: 加载中...
+  next: 下一步
+  no_options_found: 未找到选项
+  none: 无
+  notAuthenticated: 未认证。
+  not_available: 无法获取
+  not_selected: 未选择
+  optional: 可选
+  previous: 上一步
+  required: 必填
+  reviewComplete: 审核完成
+  save: 保存
+  selectUseCase: 选择用例
+  start_over: 重新开始
+  submit: 提交
+  title: 标题
+  trace: 跟踪
+  try: 尝试
+demo:
+  inter_use_cases: 用例集成
+diagram:
+  answer: 回答
+  chart: 图表
+  clear: 清除
+  diagram_type: 选择图表类型
+  diagram_will_appear: 图表将显示在此处
+  download_as_png: 下载为PNG
+  download_as_svg: 下载为SVG
+  generate: 生成
+  input_example: 输入示例
+  input_label: 用于生成图表的文本
+  input_placeholder: 请输入用于生成的文本
+  invalid_syntax: 无效语法
+  markdown_edit: Markdown编辑
+  mermaid_syntax: Mermaid语法在这里
+  model: 模型
+  other_diagram_types: 查看其他图表类型
+  png_error: 'PNG输出错误: '
+  result: 生成结果
+  serverBusy: 服务器繁忙。请稍后再试。
+  show_code: 显示代码
+  show_diagram: 显示图表
+  step1_complete: '步骤1: 完成'
+  step1_loading: '步骤1: 正在选择最佳图表'
+  step1_selected: 已选择
+  step2_loading: '步骤2: 正在生成图表'
+  svg_error: 'SVG输出错误: '
+  title: 图表生成
+  types:
+    AI:
+      content: 请用彩色图表展示公司一般费用生产流程。
+      description: 让AI选择最佳图表类型
+      exampleTitle: 费用流程示例
+    architecture:
+      content: >-
+        请展示基于云的Web应用程序架构。
+
+        包括以下组件:
+        前端
+        后端
+        数据库
+        缓存
+        负载均衡器
+        CDN等
+      desc: 架构图表示系统整体结构
+      exampleTitle: Web应用架构示例
+      title: 架构图
+    blockdiagram:
+      content: >-
+        请创建一个展示智能手机硬件组件的方块图。
+
+        包括以下元素:
+        处理器
+        内存
+        存储
+        显示屏
+        相机
+        各种传感器等。
+      desc: 方块图表示系统主要组件
+      exampleTitle: 智能手机组成示例
+      title: 方块图
+    classdiagram:
+      content: >-
+        请创建电子商务网站的领域模型。
+
+        存在以下类: 
+        User（用户）
+        Product（商品）
+        Order（订单）
+        CartItem（购物车商品）
+
+        请为每个类包含适当的属性和方法。
+      desc: 类图表示面向对象设计的类结构
+      exampleTitle: 电商网站模型示例
+      title: 类图
+    erdiagram:
+      content: >-
+        请展示博客系统的数据库设计。
+
+        有以下表格，并且每个都设置了适当的关系:
+        文章（posts）
+        用户（users）
+        评论（comments）
+        分类（categories）
+        标签（tags）
+      desc: ER图表示数据库的实体和关系
+      exampleTitle: 博客DB设计示例
+      title: ER图
+    flowchart:
+      content: >-
+        我想用流程图表示早晨准备的流程。请包括以下步骤: 
+        醒来，起床，洗脸，刷牙，吃早餐，换衣服，出门，
+
+        请在中间加入"是否有充足时间？"的判断点，如果有充足时间，则添加"喝咖啡"这一步骤。
+        如果没有充足时间，则直接进入"出门"步骤。
+
+        请制作简洁易懂的图表设计。
+      desc: 流程图可视化流程或工作流
+      exampleTitle: 早晨准备流程示例
+      title: 流程图
+    ganttchart:
+      content: >-
+        请展示Web应用程序开发项目的时间表。
+        包括需求定义、设计、开发、测试、部署各个阶段。
+      desc: 甘特图可视化项目时间表
+      exampleTitle: 开发时间表示例
+      title: 甘特图
+    gitgraph:
+      content: >-
+        请表示一个从主分支分出登录功能和个人资料编辑功能两个feature分支的开发流程。
+
+        在登录功能开发中，进行了表单实现和验证添加等多次提交，最终通过Pull
+        Request合并到main分支。
+
+        另一方面，在个人资料编辑功能开发过程中，需要合并main分支上的最新更改。
+
+        在每个合并点，请包含类似"Reviewed and merged login feature
+        #123"这样的，经过代码审查的真实项目提交信息。
+      desc: Git图可视化分支和合并历史
+      exampleTitle: 开发流程示例
+      title: Git图
+    mindmap:
+      content: 请思考生成AI的各种用例，并用思维导图图示。
+      desc: 思维导图以层次结构表示相关概念或想法
+      exampleTitle: 生成AI用例示例
+      title: 思维导图
+    networkpacket:
+      content: >-
+        请创建一个展示HTTP请求数据包结构的图表。
+        包括头部和正文的主要元素。
+      desc: 网络数据包图表示数据结构
+      exampleTitle: HTTP数据包示例
+      title: 网络数据包图
+    piechart:
+      content: >-
+        我想创建一个展示东京20-30岁人群通勤和上学方式比例的饼图。
+
+        请为电车、自行车、步行、汽车、公交这五种方式各设置适当的比例。
+        图表标题为"东京20-30岁人群的通勤和上学方式"。
+      desc: 饼图表示整体中的比例
+      exampleTitle: 通勤方式比例示例
+      title: 饼图
+    quadrantchart:
+      content: >-
+        请创建一个比较社交媒体平台特性的四象限图表。
+        标题为"社交媒体平台分析"。 
+        X轴从"以文本为中心"变化到"以视觉为中心"，
+        Y轴从"专业"变化到"休闲"。
+
+        请为各象限添加以下标签: 
+        右上象限: "视觉休闲"
+        左上象限: "文本休闲"
+        左下象限: "文本专业"
+        右下象限: "视觉专业"
+
+        请在图表上标出以下社交媒体平台:
+        Twitter: 偏向文本且较为休闲，
+        Instagram: 非常视觉化且相当休闲，
+        LinkedIn: 偏向文本且非常专业，
+        TikTok: 非常视觉化且最为休闲，
+        Facebook: X轴和Y轴的中间位置。 
+
+        如果可能，请用不同颜色显示各平台。
+      desc: 四象限图表沿两个轴对项目进行分类
+      exampleTitle: 社交媒体分析示例
+      title: 象限图
+    requirementdiagram:
+      content: >-
+        请展示智能家居系统的主要功能需求。
+        包括照明控制、温度管理、安全、能源效率等需求。
+      desc: 需求图表示系统需求和关系
+      exampleTitle: 智能家居需求示例
+      title: 需求图
+    sankeychart:
+      content: >-
+        请创建一个展示网站用户流的桑基图。
+        从登陆页面开始，显示各页面的转换和流失率。
+      desc: 桑基图用宽度表示流量或变化量
+      exampleTitle: 用户流示例
+      title: 桑基图
+    sequencediagram:
+      content: >-
+        请展示Web应用程序中，用户按下登录按钮到认证完成的流程。
+
+        涉及前端、认证服务器、数据库三个组件。
+      desc: 时序图按时间顺序表示组件间的交互
+      exampleTitle: 登录流程示例
+      title: 时序图
+    statediagram:
+      content: >-
+        请展示在线购物车的状态转换。
+        包括"空"、"已添加商品"、"结账中"、"支付完成"等状态。
+      desc: 状态转换图表示系统的状态变化
+      exampleTitle: 购物车状态示例
+      title: 状态转换图
+    timeline:
+      content: >-
+        请用时间线表示2000年至2020年社交媒体的主要演变和转折点。
+                
+        请包括以下要素: 
+        博客普及期
+        照片分享平台兴起
+        微博客出现
+        视频分享服务发展
+        移动优先型社交网络扩展
+        短视频平台兴起
+
+        对于每个转折点，请添加1-2个在那个时期发生的重要技术创新或社会变化（例如:
+        智能手机普及、高速移动互联网实现等）。
+      desc: 时间线按时间顺序显示事件
+      exampleTitle: 社交媒体演变示例
+      title: 时间线
+    userjourney:
+      content: >-
+        请展示在线购物网站的客户购买体验。
+
+        请包括以下流程:
+        商品搜索
+        商品浏览
+        添加到购物车
+        结账
+        支付
+        配送跟踪
+      desc: 用户旅程表示客户体验流程
+      exampleTitle: 购买体验示例
+      title: 用户旅程
+    xychart:
+      content: >-
+        请创建一个展示过去10年日本平均睡眠时间和工作时间关系的XY图表。
+
+        X轴为每日平均工作时间，Y轴为每日平均睡眠时间，并标出各年的数据点。
+      desc: XY图表表示两个变量之间的关系
+      exampleTitle: 睡眠-工作时间示例
+      title: XY图表
+drawer:
+  ai_services: AI 服务
+  builder_mode: 构建者模式
+  generative_ai: (生成式 AI)
+  tools: 工具
+  use_cases: 用例
+feedback:
+  additional_feedback: 如果您有其他反馈，请输入。(可选)
+  reason_error: 请选择原因。
+  reason_title: 请告诉我们您评价此回答的原因。
+  reasons:
+    harmful: 有害或攻击性
+    inaccurate: 不准确
+    other: 其他
+    outdated: 信息过时
+files:
+  error:
+    fileCountExceeded: 文件数量不能超过 {{maxCount}} 个。
+    fileSizeExceeded: 文件大小不能超过 {{maxSize}} MB。
+    imageCountExceeded: 图片数量不能超过 {{maxCount}} 个。
+    invalidExtension: '{{fileName}} 是不允许的扩展名。允许的扩展名为 {{acceptedExtensions}}。'
+    invalidImageDimension: 可指定的图像文件尺寸为 {{allowedDimensions}}（上传的图像尺寸为 {{uploadedDimension}}）
+    mimeMismatch: '{{fileName}} 的文件格式不正确。'
+    modelNotSupported: 模型不支持。
+    videoCountExceeded: 视频数量不能超过 {{maxCount}} 个。
+flow:
+  title: Flow 聊天
+generateImage:
+  add_color: 添加颜色
+  assistant:
+    error_message: 提示生成失败。请再试一次。
+    error_title: 发生错误
+    generating_image: 正在生成图像...
+    generating_prompt: 正在生成提示...
+    help: 创建用于图像生成的提示。告诉助手您的需求，AI将生成提示和负面提示来创建图像。
+    hint_1: 从简单的指示开始，如"生成一张可爱猫咪的图像"。
+    hint_2: 指定风格如"水彩风格"或"逼真"会更有效。
+    hint_3: 详细描述您想包含的元素，如"背景是山"或"蓝天"。
+    hint_4: 关于质量的指示也很有效，如"高分辨率"或"细节描绘"。
+    hint_5: 您也可以指定特定的艺术风格，如"动漫风格"或"油画风格"。
+    hint_6: 对于复杂场景，请具体指示构图、配色等。
+    hint_title: 提示
+    input_placeholder: 您想生成什么样的图像？
+    no_style: 无风格
+    prompt_completed: 提示生成完成
+    recommended_style: 推荐风格
+    retry: 重试
+    title: 图像生成助手
+  cfg_scale: CFG比例
+  clear: 清除
+  colors: 颜色
+  control_mode: 控制模式
+  control_strength: 控制强度
+  custom_colors: 自定义颜色
+  detail_parameters: 详细参数
+  generate: 生成
+  generation_mode: 生成模式
+  help:
+    cfg_scale: 该值越高，生成的图像就越忠实于提示。
+    colors: 可以从预设的调色板中选择
+    control_mode: >-
+      CANNY_EDGE:提取参考图像的边缘。适合反映详细图案等。SEGMENTATION:将参考图像分割成区域。适合反映多个物体的位置关系。
+    control_strength: 越接近1，生成的图像越基于"参考图像"的构图，越接近0，生成的图像与"参考图像"的构图越不同。
+    generation_mode: >-
+      TEXT_IMAGE:从文本生成图像。
+      IMAGE_VARIATION:从参考图像生成类似图像。
+      INPAINTING:编辑图像的一部分。
+      OUTPAINTING:扩展图像。
+      IMAGE_CONDITIONING:反映构图。
+      COLOR_GUIDED_GENERATION:使用指定配色生成。
+      BACKGROUND_REMOVAL:移除背景
+    image_samples: 随机设置Seed值同时生成指定数量的图像。
+    image_strength: 越接近1，生成的图像越接近"初始图像"，越接近0，生成的图像与"初始图像"越不同。
+    init_image: 可以设置作为图像生成初始状态的图像。设置初始图像可以引导生成接近初始图像的图像。
+    mask_image: >-
+      可以设置图像的蒙版。设置蒙版图像后，可以生成蒙版区域（Inpaint）或外部区域（Outpaint)。不能与蒙版提示同时使用。
+    mask_prompt: >-
+      请描述您想要蒙版/排除的元素（Inpaint），或不想蒙版/想保留的元素（Outpaint）。请使用单词列表而非句子。不能与蒙版图像同时使用。
+    negative_prompt: 请描述您不想生成的元素或想排除的元素。请使用单词列表而非句子。
+    prompt: 请描述您想生成的图像。请使用单词列表而非句子。
+    seed: 随机数种子值。指定相同的种子值将生成相同的图像。
+    steps: 图像生成的迭代次数。步骤数越多，图像越精细，但生成时间也越长。
+  image_samples: 图像样本数
+  image_strength: 图像强度
+  init_image: 初始图像
+  mask_image: 蒙版图像
+  mask_prompt: 蒙版提示
+  model: 模型
+  negative_prompt: 负面提示
+  prompt: 提示
+  resolution: 分辨率
+  seed: 种子
+  set: 设置
+  steps: 步骤数
+  style_preset: 风格预设
+  title: 图像生成
+generateText:
+  clear: 清除
+  continue_output: 继续输出
+  execute: 执行
+  format_placeholder: 请指定文本格式。(markdown、博客、商务邮件等)
+  input_placeholder: 请输入
+  result_placeholder: 生成的文本将显示在这里
+  source_info: 作为文本来源的信息
+  title: 文本生成
+landing:
+  demo:
+    agent:
+      content: 请用虚拟数据绘制散点图。
+    chat:
+      content: >-
+        请编写一个返回斐波那契数的Python函数。并解释实现。
+        参数应为项数，处理应使用递归编写。请用markdown格式输出。
+    diagram:
+      content: 请用彩色图表展示公司一般费用生产流程。
+    generate:
+      context: >-
+        Amazon Bedrock 是一项完全托管的服务，通过单一API提供来自AI21 Labs、Anthropic、Cohere、Meta、Stability AI和Amazon等领先AI公司的高性能基础模型(FM)。
+        它还提供构建生成式AI应用程序所需的广泛功能，使您能够在保持隐私和安全的同时简化开发。
+        使用Amazon Bedrock的全面功能，您可以轻松尝试各种顶级FM，使用微调和检索增强生成(RAG)等技术私密地使用您的数据进行自定义，以及创建可执行从预订旅行和处理保险索赔到创建广告活动和管理库存等复杂业务任务的托管代理。
+        所有这些都无需编写代码。Amazon Bedrock是无服务器的，因此您无需管理基础设施。
+        此外，您可以使用熟悉的AWS服务安全地将生成式AI功能集成到您的应用程序中并进行部署。
+      information: 为演示文稿以markdown格式分章节，每章节简明解释
+    image:
+      content: >-
+        请输出智能手机广告的设计方案。
+        可爱、时尚、易用、流行文化、亲切、面向年轻人、音乐、照片、流行智能手机、背景是城市街道
+    rag:
+      content: 请解释Claude的参数并告诉我如何设置它们。
+    summarize:
+      sentence: >-
+        Amazon Bedrock是一项完全托管的服务，通过API提供Amazon和主要AI初创公司的基础模型(FM)。
+        这使您可以从各种FM中选择，找到最适合您用例的模型。
+        Amazon Bedrock的无服务器体验让您可以快速开始使用FM，轻松尝试FM，使用您自己的数据私密自定义FM，并使用AWS工具和功能将FM无缝集成到您的应用程序中并部署。
+        Amazon Bedrock的代理是一项完全托管的功能，使开发人员能够轻松创建基于自己知识源提供最新答案并完成各种用例任务的生成式AI应用程序。
+        Bedrock的无服务器体验使您无需管理基础设施即可快速开始，使用您自己的数据私密自定义FM，并使用熟悉的AWS工具和功能轻松将它们集成到您的应用程序中并部署（包括与Amazon SageMaker的ML功能集成，如用于测试各种模型的实验和用于大规模管理FM的管道）。
+    translate:
+      language: en
+      sentence: 你好。我是一个帮助翻译的AI助手。请输入您想要的任何文本。
+    video:
+      content: 请描述视频中显示的内容。如果视频中有文字，请也读出来。
+    web_content:
+      url: https://aws.amazon.com/jp/bedrock/
+  title: 开始使用生成式AI
+  try: 尝试
+  try_message: 点击可以体验各种用例。
+  use_cases:
+    agent_chat:
+      description: >-
+        Agent聊天用例利用Agents for Amazon Bedrock执行操作，并可以参考Knowledge
+        Bases for Amazon Bedrock的向量数据库。
+      title: Agent聊天
+    chat:
+      description: >-
+        您可以与LLM进行对话形式的交互。这可以快速应对详细用例和新用例。这也是验证提示工程的有效环境。
+      title: 聊天
+    diagram:
+      description: >-
+        可以从自然语言描述、文档或代码自动创建各种图表，如流程图、时序图和思维导图。这有助于可视化表示系统设计、业务流程、项目计划等复杂关系，提高理解效率。
+      title: 图表生成
+    flow_chat:
+      description: >-
+        使用Flow创建具有多个步骤的交互式聊天流程。根据用户输入动态决定下一步，实现更复杂的对话场景。
+      title: Flow聊天
+    generate_text:
+      description: >-
+        在任何上下文中生成文本是LLM最擅长的任务之一。
+        它可以应对文章、报告、电子邮件等各种上下文。
+      title: 文本生成
+    image:
+      description: >-
+        图像生成AI可以基于文本或图像生成新图像。它可以立即可视化想法，有望提高设计工作等的效率。
+        在此功能中，您可以获得LLM的提示创建帮助。
+      title: 图像生成
+    rag_chat:
+      description_kb: >-
+        RAG(检索增强生成)是结合信息检索和LLM文本生成的方法，可实现有效的信息访问。
+        它使用Knowledge Base的混合搜索检索参考文档，然后LLM生成回答。
+      description_kendra: >-
+        RAG(检索增强生成)是结合信息检索和LLM文本生成的方法，可实现有效的信息访问。
+        LLM基于从Amazon Kendra检索的参考文档生成回答，使您能够轻松实现"能够回应公司内部信息的LLM聊天"。
+      sub_kb: Knowledge Base
+      sub_kendra: Amazon Kendra
+      title: RAG聊天
+    summarize:
+      description: >-
+        LLM擅长总结大量文本的任务。总结时可以提供上下文，如"用一行"或"用孩子能理解的语言"。
+      title: 摘要
+    translate:
+      description: >-
+        经过多语言训练的LLM也能进行翻译。它不仅可以简单翻译，还能将各种指定的上下文信息如随意性、目标受众等反映到翻译中。
+      title: 翻译
+    video-analysis:
+      description: >-
+        多模态模型使我们能够输入文本以外的内容，如图像。在此功能中，我们将视频的图像帧和文本作为输入，请求LLM进行分析。
+      title: 视频分析
+    video-generation:
+      description: >-
+        视频生成AI从文本生成短视频。生成的视频可作为素材用于各种场景。
+      title: 视频生成
+    voice_chat:
+      description: >-
+        语音聊天允许您与生成式AI进行双向语音对话。
+        就像自然对话一样，您也可以在AI说话时插话。
+        此外，通过设置系统提示，您还可以与具有特定角色的AI进行语音对话。
+      title: 语音聊天
+    web_content:
+      description: >-
+        提取博客或文档等Web内容。LLM会删除不必要的信息，将其整理成完整的文本。提取的内容可用于摘要、翻译等其他用例。
+      title: Web内容提取
+    writer:
+      description: >-
+        经过多语言训练的LLM也能进行翻译。它不仅可以简单翻译，还能将各种指定的上下文信息如随意性、
+        目标受众等反映到翻译中。
+      title: 写作
+  use_cases_integration:
+    blog:
+      description: >-
+        结合多个用例生成博客文章。自动生成文章概要和缩略图，使OGP设置变得容易。作为示例，
+        我们将基于AWS官方网站的信息生成介绍生成式AI的博客文章。
+      title: 博客文章创作
+    meeting:
+      description: >-
+        结合多个用例，从会议录音数据自动创建会议记录。无需人力成本即可完成录音数据转录、
+        转录结果整理和会议记录创建。
+      title: 会议记录创建
+    title: 用例集成
+  use_cases_title: 用例列表
+language:
+  de: 德语
+  en: 英语
+  es: 西班牙语
+  fr: 法语
+  ja: 日语
+  ko: 韩语
+  zh: 中文
+model:
+  parameters:
+    reasoning: 推理
+    reasoning_budget: 推理预算
+navigation:
+  agentChat: Agent聊天
+  chat: 聊天
+  diagramGeneration: 图表生成
+  flowChat: Flow聊天
+  home: 首页
+  imageGeneration: 图像生成
+  promptOptimization: 提示优化
+  ragChat: RAG聊天
+  settings: 设置
+  speechRecognition: 语音识别
+  summary: 摘要
+  textGeneration: 文本生成
+  translation: 翻译
+  videoAnalysis: 视频分析
+  videoGeneration: 视频生成
+  voiceChat: 语音聊天
+  webContentExtraction: Web内容提取
+  writing: 写作
+notfound:
+  title: 页面未找到
+optimizePrompt:
+  clear: 清除
+  execute: 执行
+  input_placeholder: 请直接输入您当前使用的提示。如果输出是英文，请添加"请用中文输出"等指示。
+  result_placeholder: 结果将显示在这里
+  title: 提示优化
+rag:
+  can_add_filters: 可以通过自定义添加过滤器。
+  errorRetrieval: >-
+    无法从Kendra获取参考文档。请确认以下内容：
+    - Amazon Kendra索引创建的计划时间已过，且索引创建已有足够时间
+    - Amazon Kendra索引删除的计划时间尚未到达
+  filter: 过滤器
+  filter_settings: 关于过滤器设置，请参考
+  here: 这里
+  knowledgeBase:
+    noDocuments: >-
+      未找到参考文档。请确认以下内容：
+      - 目标文档是否已添加到Knowledge Base的数据源中
+      - Knowledge Base的数据源是否已同步
+      - 尝试改变输入表达方式
+    retrieveError: >-
+      检索时发生错误。请确认以下内容：
+
+      - cdk.json中指定的embeddingModelId是否在Amazon Bedrock ({{region}})
+      中启用
+    retrieving: 正在从Knowledge Base获取参考文档...
+  noDocuments: >-
+    未找到参考文档。请确认以下内容：
+    - 目标文档是否已添加到Amazon Kendra的数据源中
+    - Amazon Kendra的数据源是否已同步
+    - 尝试改变输入表达方式
+  no_settings_found: 未找到设置。
+  page: 页面
+  please_refer: 请参考。
+  retrieving: 正在从Kendra获取参考文档...
+  title: RAG聊天
+setting:
+  ai: 生成式AI
+  ai_items:
+    agent_name: Agent名称
+    image_gen_model: 图像生成模型名称
+    llm_model: LLM模型名称
+    model_region: LLM和图像生成模型区域
+    video_gen_model: 视频生成模型名称
+  config_message: >-
+    设置更改不在此屏幕而是在<0>AWS CDK</0>中进行。此外，如果在执行用例时出现错误，
+    请务必确认您是否在{{region}}中启用了指定的模型。有关各种方法，
+    请参考<1>generative-ai-use-cases</1>。
+  general: 通用
+  items:
+    agent_enabled: Agent已启用
+    language: 语言设置
+    language_help: 可以更改显示语言
+    rag_enabled: RAG (Amazon Kendra)已启用
+    rag_kb_enabled: RAG (Knowledge Base)已启用
+    version: 版本
+    version_help: 参考generative-ai-use-cases的package.json中的version
+  recent_updates: 最近更新
+  signout: 退出登录
+  title: 设置信息
+  update:
+    message: >-
+      GitHub上有更新。如果您想使用最新功能，请pull <0>generative-ai-use-cases</0>的main分支
+      并重新部署。
+  view_all_updates: 查看所有更新
+shared:
+  contact_admin: 请联系管理员。
+  error: 错误
+  not_found_message: 页面未找到。对话历史可能未共享或已被删除。
+sketch:
+  clear: 清除
+  pen_size: 笔尺寸
+  upload_image: 上传图像
+summarize:
+  additional_context: 附加上下文
+  additional_context_placeholder: 您可以输入希望额外考虑的点（如随意程度等）
+  enter_text: 请输入
+  result_placeholder: 摘要将显示在这里
+  text_to_summarize: 要摘要的文本
+  title: 摘要
+transcribe:
+  detailed_parameters: 详细参数
+  file_upload: 文件上传
+  max_speakers: 最大发言人数
+  max_speakers_help: 要识别的最大发言人数
+  mic_input: 麦克风输入
+  result_placeholder: 语音识别结果将显示在这里
+  select_input_method: 请选择麦克风输入或文件上传
+  speaker_names: 发言人姓名（逗号分隔）
+  speaker_recognition: 说话人识别
+  start_recording: 开始录音
+  stop_recording: 停止录音
+  supported_files: 支持mp3、mp4、wav、flac、ogg、amr、webm、m4a文件
+  title: 语音识别
+translate:
+  additional_context: 附加上下文
+  additional_context_placeholder: 您可以输入希望额外考虑的点（如随意程度等）
+  auto_detect_language: 自动检测语言
+  auto_translate: 自动翻译
+  continue_output: 继续输出
+  enter_text: 请输入
+  result_placeholder: 翻译结果将显示在这里
+  text_to_translate: 要翻译的文本
+  title: 翻译
+useCaseBuilder:
+  accessError: 访问错误
+  addInputExample: 添加输入示例
+  attach_file: 附加文件
+  blog:
+    generate_article: 创建博客文章
+    generate_article_context: >-
+      请生成一篇解释生成式AI机制和在AWS上使用生成式AI优势的博客文章。生成文章时，请务必遵守<rules></rules>。
+      <rules>
+      - 请使用markdown格式分章节编写。
+      - 请针对生成式AI和AWS初学者编写文章。
+      - 不要使用IT初学者不理解的术语，或将其替换为易懂的词语。
+      - 请编写一篇能让读者了解生成式AI能做什么的文章。
+      - 由于文章内容太少会让读者不满意，请补充一般信息以增加文章量。
+      - 请编写能吸引读者兴趣的文章。
+      </rules>
+    generate_article_description: 基于参考信息自动生成博客文章。详细设置上下文可以使生成的文章更符合您的意图。
+    generate_thumbnail: 创建博客文章缩略图
+    generate_thumbnail_content: >-
+      请为博客文章OGP生成缩略图。请制作一眼就能看出是关于云计算或AI的文章的图像。
+      博客文章概要设置在<article></article>中。
+      <article>
+      {{summarizedSentence}}
+      </article>
+    generate_thumbnail_description: 为OGP（分享文章链接时显示的文章预览）生成缩略图。在OGP中设置吸引人的缩略图可能会吸引读者的兴趣。
+    reference_info: 参考信息
+    reference_info_context: 请只提取关于生成式AI概述、解释其机制的部分以及解释AWS的部分。
+    reference_info_description: >-
+      指定URL自动获取作为文章参考的信息。
+      通过设置额外上下文，可以只提取您需要的信息。
+    summarize_article: 摘要
+    summarize_article_description: 为OGP（分享文章链接时显示的文章预览）总结文章。适当设置OGP可以在分享文章时正确传达文章概要。
+  builderMode: 构建者模式
+  cancel: 取消
+  create: 创建
+  createDescription: 创建用例。请在预览中确认操作后再创建。创建后也可以编辑。
+  createErrorCondition: 不满足可创建用例的条件。请满足以下所有条件。
+  createNew: 新建
+  creating: 创建中...
+  delete: 删除
+  deleteConfirmation: 是否删除？
+  deleteDescription: 删除用例。如果已共享，其他用户将无法访问。
+  deleteSharedWarning: 此用例已共享。删除后，所有用户将无法使用此用例。
+  deleteUseCaseTitle: 删除我的用例
+  deleting: 删除中...
+  description: 描述
+  edit: 编辑用例
+  enterPromptTemplate: 请输入提示模板
+  enterTitle: 请输入标题
+  error:
+    duplicate_select_options: '{{select:{{label}}}} 包含重复选项。'
+    empty_select_options: '{{select:{{label}}}} 包含空选项。'
+    missing_kb_text_form: >-
+      请在提示模板中包含用于输入Knowledge Base搜索查询的表单 {{text{{label}}}}。
+    missing_select_options: '{{select}} 未设置选项。请按照 {{select:标签:选项1,选项2}} 格式设置。'
+    missing_text_form: '请在提示模板中包含用于输入Amazon Kendra搜索查询的表单 {{text{{label}}}}。'
+    rag_kendra_not_enabled: >-
+      提示模板中指定了 {{retrieveKendra}}，但GenU中未启用RAG聊天(Amazon Kendra)。
+    rag_knowledge_base_not_enabled: >-
+      提示模板中指定了 {{retrieveKnowledgeBase}}，但GenU中未启用RAG聊天(Knowledge Base)。
+  favorites: 收藏
+  fileUploadDescription: 可附加的文件类型因模型而异
+  fileUploadDisabled: 不能附加文件
+  fileUploadEnabled: 可以附加文件
+  help:
+    emailReplyExample: 邮件回复示例
+    emailReplyPrompt: |-
+      您是负责回复邮件的人员。
+      请遵守以下规则，创建回复邮件。
+      <规则>
+      - 这是发给业务伙伴的邮件。需要使用敬语，但由于已建立关系，不需要过于正式的文字。
+      - 请理解回复对象邮件的内容，创建符合回复内容的回复邮件。
+      - 请绝对不要在邮件中包含从回复对象邮件和回复内容中无法读取的信息。
+      </规则>
+      <回复对象邮件>
+      {{text:回复对象的邮件正文}}
+      </回复对象邮件>
+      <回复内容>
+      {{text:回复内容}}
+      </回复内容>
+    example: 示例
+    formPlaceholderDescription: >-
+      {{form}} 是用于定义输入表单的占位符。可以写为 {{form}} 或 {{form:标签}}。
+      {{form}} 创建接受文本输入的表单，但不将输入嵌入到提示模板中。
+      这用于"想要查询数据源（如RAG）但不想将查询内容本身嵌入到提示中"的用例。
+    formPlaceholderExample:
+      prompt: |-
+        您是一个根据提供信息生成测验的AI助手。
+
+        {{form:搜索测验基础信息}}
+
+        请阅读以下信息，创建一个四选一测验。
+        也请提供正确答案。
+
+        <信息>
+        {{retrieveKendra:搜索测验基础信息}}
+        </信息>
+      title: 生成测验
+    placeholder: 占位符
+    placeholderDescription: >-
+      占位符的格式为 {{输入类型:标签}}。
+      由于标签作为标识符，具有相同标签的占位符被视为相同输入。
+      也可以省略标签，写为 {{输入类型}}。在这种情况下，无标签的占位符被视为相同输入。
+      实际执行的提示可以从GenU的对话历史中确认。
+    placeholderList: 占位符列表
+    promptTemplateDescription: >-
+      这类似于向生成式AI发出指令的"模板"。您可以根据目的预先准备指令文本的格式。
+      提示模板可以定义在执行时嵌入文本的占位符。
+    promptTemplateTitle: 什么是提示模板？
+    retrieveKendraDescription: >-
+      {{retrieveKendra}} 将从Amazon Kendra检索的结果嵌入到提示模板中。
+      可以写为 {{retrieveKendra}} 或 {{retrieveKendra:标签}}。
+      {{retrieveKendra}} 需要另一个用于输入搜索查询的占位符({{text}})。
+      它们必须具有相同的标签。 
+      要使用此功能，GenU中必须启用RAG聊天(Amazon Kendra)。
+      如果未启用，请联系管理员。
+    retrieveKendraExample:
+      prompt: |-
+        您是一个回答用户问题的AI助手。
+        请阅读以下信息。
+
+        <信息>
+        {{retrieveKendra:问题}}
+        </信息>
+
+        参考上述信息，回答以下问题。
+
+        <问题>
+        {{text:问题}}
+        </问题>
+      title: 简单RAG
+    retrieveKnowledgeBaseDescription: >-
+      {{retrieveKnowledgeBase}} 将从Knowledge Base检索的结果嵌入到提示模板中。
+      可以写为 {{retrieveKnowledgeBase}} 或 {{retrieveKnowledgeBase:标签}}。
+      {{retrieveKnowledgeBase}} 需要另一个用于输入搜索查询的占位符({{text}})。
+      它们必须具有相同的标签。 
+      要使用此功能，GenU中必须启用RAG聊天(Knowledge Base)。
+      如果未启用，请联系管理员。
+    retrieveKnowledgeBaseExample:
+      prompt: |-
+        您是一个回答用户问题的AI助手。
+        请阅读以下信息。
+
+        <信息>
+        {{retrieveKnowledgeBase:问题}}
+        </信息>
+
+        参考上述信息，回答以下问题。
+
+        <问题>
+        {{text:问题}}
+        </问题>
+      title: 简单RAG
+    selectPlaceholderDescription: >-
+      {{select}} 是用于定义选择框的占位符。
+      {{select}} 不能省略标签和选项。
+      必须按照 {{select:标签:选项1,选项2}} 格式编写。
+      选项以逗号分隔定义。如果不想显示标签，可以使用 {{select::选项1,选项2}} 这样的空字符标签。(空字符标签与无标签不同。)
+    selectPlaceholderExample:
+      prompt: |-
+        您是熟悉AWS服务的专家。
+
+        请回答关于以下服务的问题。
+        {{select:AWS服务:Amazon Bedrock,Amazon S3,AWS Lambda}}
+
+        问题如下：
+        {{text:问题}}
+      title: 关于AWS服务的问题
+    textPlaceholderDescription: >-
+      {{text}} 是最基本的占位符。
+      可以写为 {{text}} 或 {{text:标签}}。
+      {{text}} 创建接受文本输入的表单，并将输入的值直接嵌入到提示模板中。
+  helpTitle: 帮助
+  inputExamples: 输入示例
+  loadMore: 加载更多
+  mainMenu: 主菜单
+  meeting:
+    create_minutes: 创建会议记录
+    create_minutes_context: >-
+      请根据会议发言内容，以markdown格式创建会议记录。
+      请按会议讨论的主题分章节，总结讨论内容、决定事项和待办事项。
+    create_minutes_description: 使用"文本生成"功能生成会议记录。通过详细指定上下文，可以指示会议记录的格式和记录粒度。
+    formatting: 会议记录格式化
+    formatting_context: >-
+      已输入录音数据的转录结果，请按照<rules></rules>进行整理。
+      <rules>
+      - 请删除填充词。
+      - 请将疑似转录错误的内容更正为正确内容。
+      - 如果省略了连接词等，请补充使其易读。
+      - 请不要省略问答内容，全部记录。
+      </rules>
+    formatting_description: 使用"文本生成"功能整理转录文件。删除填充词和修正语音识别不正确的部分等，使其更易于人类理解。
+    transcription: 会议记录语音转录
+    transcription_description: >-
+      使用"语音识别"功能从录音数据中转录对话内容。请使用任意音频文件执行。
+      语音识别完成后，请按"格式化"按钮（语音识别结果将自动复制）。
+  menuCreate: 创建
+  menuDelete: 删除
+  menuFileAttachment: 文件附件
+  menuInputExamples: 输入示例
+  menuModelSelection: 模型选择
+  menuUpdate: 更新
+  menuUseCaseDefinition: 用例定义
+  modelFixed: 模型已固定。
+  modelFixedDescription: 不显示模型选择UI，因此用户可以在不意识到生成式AI存在的情况下使用用例
+  modelNotFixed: 模型未固定。
+  modelNotFixedDescription: 显示模型选择UI，用户可以自由选择模型。
+  myUseCases: 我的用例
+  noMyUseCases: 没有我的用例。
+  noUpdateContent: 没有更新内容
+  noUserInput: 用例不接受用户输入。请在提示模板中添加占位符或打开文件附件。
+  notExistOrNotShared: 此用例不存在或未共享。
+  notSharedDescription: 此用例未共享，因此只有您可以使用。
+  ok: 确定
+  preview: 预览
+  private: 私有
+  promptTemplate: 提示模板
+  promptTemplateHint: >-
+    不能创建不接受用户输入的用例。请在提示模板中定义占位符或打开文件附件。
+  promptTemplatePlaceholder: 关于如何编写提示模板，请参阅"帮助"或"示例集"。
+  recentlyUsed: 使用历史
+  resultPlaceholder: 结果将显示在这里
+  returnToTop: 返回首页
+  samples: 示例集
+  share: 共享
+  shareUrlDescription: 通过访问此共享URL，其他用户也可以使用此用例。
+  shared: 已共享
+  sharedDescription: 此用例可供所有能登录此应用程序的用户使用。
+  title: 标题
+  untitled: 无标题
+  untitledUseCase: 无标题用例
+  update: 更新
+  updateDescription: 更新用例。如果用例已共享且其他用户也在使用，他们的内容也会更新。
+  updateErrorCondition: 要更新，请满足以下所有条件。
+  updating: 更新中...
+video:
+  aspectRatio: 宽高比
+  clear: 清除
+  dimension: 屏幕尺寸
+  duration: 视频长度(秒)
+  error:
+    empty_prompt: 请输入提示
+    invalid_parameters: 参数无效
+    model_not_selected: 未选择模型
+  fps: 帧率
+  generate: 生成
+  generation:
+    failed: 视频生成失败({{error}})
+    started: 已开始视频生成作业。即使离开页面也没问题。
+  job:
+    delete_confirm: 确定要删除此作业吗？
+    delete_failed: 作业删除失败
+    delete_success: 作业已删除
+    list: 作业列表
+    no_jobs: 没有生成作业
+  load:
+    more: 加载更多
+  loading: 加载中...
+  loop: 循环
+  model: 模型
+  no_preview: 无预览
+  press:
+    play: 请按播放按钮
+  preview_loading: 预览加载中...
+  prompt:
+    display: 提示将显示在这里
+    placeholder: 孩子们在玩很多球
+    title: 提示
+  resolution: 分辨率
+  seed:
+    help: 随机数种子值。指定相同的种子值将生成相同的视频。
+    title: 种子值
+  status:
+    completed: 完成
+    failed: 失败
+    finalizing: 完成中
+    inprogress: 处理中
+  supportedExtensions: '支持的扩展名: {{acceptedExtensions}}'
+  supportedImageDimensions: '支持的图像尺寸: {{supportedDimensions}}'
+  table:
+    date: 日期
+    delete: 删除
+    download: 下载
+    model: 模型
+    play: 播放
+    prompt: 提示
+    status: 状态
+  taskType: 任务类型
+  upload: 上传
+  uploadImage: 上传图像
+  uploadImageHelp: 可以指定用作视频第一帧的图像
+videoAnalyzer:
+  camera: 相机
+  clear: 清除
+  errors:
+    cameraAccessFailed: '无法访问网络摄像头:'
+  label: 近实时分析视频
+  model: 模型
+  start: 开始
+  stop: 停止
+  title: 视频分析
+voiceChat:
+  close: 结束会话
+  default_system_prompt: 您是一个AI助手。
+  experimental_warning: >-
+    语音聊天仍处于实验阶段。架构等可能在未来发生变化。对话历史不会保存。仅支持英语。
+  experimental_warning_title: 关于语音聊天
+  im_listening: 请说话
+  start: 开始会话
+  title: 语音聊天
+webcontent:
+  additional_context: 附加上下文
+  additional_context_placeholder: 您可以输入希望额外考虑的点（例如：进行摘要）
+  enter_url: 请输入URL
+  error_message: >-
+    访问指定URL时发生错误。可能是禁止抓取或URL错误。如果您认为这是临时问题，请重试。
+  fetched: 已获取
+  instruction: 请指定以文本为主要内容的网站，如博客、文章、文档等。否则，可能无法正常输出。
+  loading: 加载中...
+  not_fetched: 未获取
+  not_fetched_instruction: 未获取。请输入URL并按执行按钮。
+  original_text: '提取前的文本 ({{status}})'
+  result_placeholder: 提取的文本将显示在这里
+  title: Web内容提取
+  website_to_extract: 要提取内容的网站
+writer:
+  ai:
+    ask_ai: 向AI提问
+    continue_instruct: 继续指示AI
+    discard: 丢弃
+    edit_selection: 编辑选定内容
+    error: 发生错误
+    generate: 生成
+    insert_below: 在选定内容下方插入
+    instruct_ai: 指示AI
+    options:
+      collect_data: 调查佐证和数据并添加
+      continue: 继续输出
+      fact_check: 事实检查
+      fix: 校对
+      improve: 修改
+      longer: 加长
+      search: 搜索并撰写...
+      shorter: 缩短
+    replace_selection: 替换选定内容
+    search_instruct: 指示AI搜索
+    thinking: 思考中
+    trace: 跟踪
+    use_search_engine: 使用搜索引擎
+  amazonBedrockDescription: >-
+    Amazon Bedrock是一项完全托管的服务，通过单一API提供来自AI21 Labs、Anthropic、Cohere、Meta、Stability AI和Amazon等领先AI公司的高性能基础模型(FM)，并提供构建生成式AI应用程序所需的广泛功能，同时保持安全、隐私和负责任的AI。
+  appearance: 外观
+  autoCompleteDescription: >-
+    您可以对选定文本向AI发出指令。例如，可以执行"修改"、"校对"、"缩短"、"加长"等操作，也可以输入自定义指令。
+  autoCompleteFeature: AI自动完成功能
+  background: 背景色
+  characters: 字符
+  clear: 清除
+  clear_comments: 清除评论
+  clear_success: 已清除编辑器
+  color: 文字颜色
+  colors:
+    blue: 蓝色
+    default: 默认
+    gray: 灰色
+    green: 绿色
+    orange: 橙色
+    pink: 粉色
+    purple: 紫色
+    red: 红色
+    yellow: 黄色
+  dark: 暗色
+  description: 这是一个支持写作、修改文章和校对的工具。您可以在AI的帮助下高效地进行写作。
+  example1: 例如，您可以让AI继续输出这段文字：
+  example2: 您还可以检查文章中的事实。请选择以下文本并选择"事实检查"：
+  factCheckExample: 巴拉克·奥巴马是美国第43任总统。他从2001年到2009年担任总统。
+  incorrectTextExample: 我去过日本。东京是一个非常美意气的城市。
+  light: 亮色
+  link: 链接
+  no_issues: 未发现问题
+  no_results: 没有结果
+  paste_link: 粘贴链接
+  replace: 替换
+  review: 校对
+  reviewDescription: 可以对整个文档进行校对。检测错别字和语法错误，并提供修正建议。
+  reviewFeature: 校对功能
+  saved: 已保存
+  saving: 保存中
+  system: 系统
+  textEditorDescription: >-
+    此编辑器可作为普通文本编辑器使用。支持粗体、斜体、列表、标题等基本格式设置。还显示写作过程中的字符数。
+  title: 写作
+  tutorial: 教程
+  tutorial_success: 已加载教程
+  useAsTextEditor: 作为文本编辑器使用

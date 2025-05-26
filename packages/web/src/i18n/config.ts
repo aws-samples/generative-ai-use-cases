@@ -7,7 +7,7 @@ import { initReactI18next } from 'react-i18next';
 import yaml from 'js-yaml';
 
 /* eslint-disable i18nhelper/no-jp-string */
-/* eslint-disable i18nhelper/no-jp-comment */
+ 
 
 // Define the supported languages as an object.
 // This is for use when the user manually switches languages.
@@ -15,7 +15,7 @@ export const supportedLngs = {
   en: 'English',
   ja: '日本語',
   th: 'ไทย',
-  // zh: '中文',
+  zh: '中文',
   // ko: '한국어',
 };
 
