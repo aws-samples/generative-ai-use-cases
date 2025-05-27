@@ -11385,27 +11385,30 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Statement": [
             {
               "Action": [
-                "s3:GetObject*",
                 "s3:GetBucket*",
+                "s3:GetObject*",
                 "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": [
                 {
-                  "Fn::GetAtt": [
-                    "APIFileBucket8FB29855",
-                    "Arn",
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "APIFileBucket8FB29855",
+                      },
+                    ],
                   ],
                 },
                 {
                   "Fn::Join": [
                     "",
                     [
+                      "arn:aws:s3:::",
                       {
-                        "Fn::GetAtt": [
-                          "APIFileBucket8FB29855",
-                          "Arn",
-                        ],
+                        "Ref": "APIFileBucket8FB29855",
                       },
                       "/*",
                     ],
@@ -11680,31 +11683,30 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Statement": [
             {
               "Action": [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
                 "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
               ],
               "Effect": "Allow",
               "Resource": [
                 {
-                  "Fn::GetAtt": [
-                    "APIFileBucket8FB29855",
-                    "Arn",
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "APIFileBucket8FB29855",
+                      },
+                    ],
                   ],
                 },
                 {
                   "Fn::Join": [
                     "",
                     [
+                      "arn:aws:s3:::",
                       {
-                        "Fn::GetAtt": [
-                          "APIFileBucket8FB29855",
-                          "Arn",
-                        ],
+                        "Ref": "APIFileBucket8FB29855",
                       },
                       "/*",
                     ],
@@ -16959,31 +16961,30 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Statement": [
             {
               "Action": [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
                 "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
               ],
               "Effect": "Allow",
               "Resource": [
                 {
-                  "Fn::GetAtt": [
-                    "TranscribeAudioBucket39DFF290",
-                    "Arn",
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "TranscribeAudioBucket39DFF290",
+                      },
+                    ],
                   ],
                 },
                 {
                   "Fn::Join": [
                     "",
                     [
+                      "arn:aws:s3:::",
                       {
-                        "Fn::GetAtt": [
-                          "TranscribeAudioBucket39DFF290",
-                          "Arn",
-                        ],
+                        "Ref": "TranscribeAudioBucket39DFF290",
                       },
                       "/*",
                     ],
