@@ -11,8 +11,12 @@ const createSourceIpCondition = (
     ? {
         IpAddress: {
           'aws:SourceIp': [
-            ...(allowedIpV4AddressRanges ?? []),
-            ...(allowedIpV6AddressRanges ?? []),
+            ...(allowedIpV4AddressRanges == null // null or undefined
+              ? ['0.0.0.0/0']
+              : allowedIpV4AddressRanges),
+            ...(allowedIpV6AddressRanges == null // null or undefined
+              ? ['::/0']
+              : allowedIpV6AddressRanges),
           ],
         },
       }
