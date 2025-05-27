@@ -7,7 +7,6 @@ import { initReactI18next } from 'react-i18next';
 import yaml from 'js-yaml';
 
 /* eslint-disable i18nhelper/no-jp-string */
- 
 
 // Define the supported languages as an object.
 // This is for use when the user manually switches languages.

@@ -1,7 +1,7 @@
 import { ObjectExt } from './ObjectsExt.js';
 const AudioRecorderWorkletUrl = new URL(
-  './AudioRecorderProcessor.worklet.js',
-  import.meta.url
+  '/AudioRecorderProcessor.worklet.js',
+  window.location.origin
 ).toString();
 
 export class AudioRecorder {
