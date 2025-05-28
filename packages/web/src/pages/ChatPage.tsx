@@ -127,6 +127,7 @@ const ChatPage: React.FC = () => {
     updateSystemContextByModel,
     getCurrentSystemContext,
     retryGeneration,
+    forceToStop,
   } = useChat(pathname, chatId);
   const { createShareId, findShareId, deleteShareId } = useChatApi();
   const { createSystemContext } = useSystemContextApi();
@@ -241,6 +242,10 @@ const ChatPage: React.FC = () => {
     clear();
     setContent('');
   }, [clear, setContent]);
+
+  const onStop = useCallback(() => {
+    forceToStop();
+  }, [forceToStop]);
 
   const [creatingShareId, setCreatingShareId] = useState(false);
   const [deletingShareId, setDeletingShareId] = useState(false);
@@ -538,11 +543,15 @@ const ChatPage: React.FC = () => {
           )}
           <InputChatContent
             content={content}
-            disabled={loading}
+            disabled={false}
             onChangeContent={setContent}
             resetDisabled={!!chatId}
             onSend={() => {
-              onSend();
+              if (!loading) {
+                onSend();
+              } else {
+                onStop();
+              }
             }}
             onReset={onReset}
             fileUpload={fileUpload}
@@ -552,6 +561,7 @@ const ChatPage: React.FC = () => {
             onSetting={() => {
               setShowSetting(true);
             }}
+            canStop={true}
           />
         </div>
       </div>

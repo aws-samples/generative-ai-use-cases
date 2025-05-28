@@ -32,6 +32,7 @@ const useChatState = create<{
       chat?: Chat;
       messages: ShownMessage[];
       stopReason: string;
+      forcedStop: boolean;
     };
   };
   modelIds: {
@@ -101,6 +102,7 @@ const useChatState = create<{
     feedbackData: UpdateFeedbackRequest
   ) => Promise<void>;
   getStopReason: (id: string) => string;
+  setForcedStop: (id: string, flag: boolean) => void;
 }>((set, get) => {
   const {
     createChat,
@@ -145,6 +147,7 @@ const useChatState = create<{
             chat,
             messages,
             stopReason: '',
+            forcedStop: false,
           };
         }),
         base64Cache: {},
@@ -380,6 +383,16 @@ const useChatState = create<{
     return '';
   };
 
+  const setForcedStop = (id: string, flag: boolean) => {
+    set((state) => {
+      return {
+        chats: produce(state.chats, (draft) => {
+          draft[id].forcedStop = flag;
+        }),
+      };
+    });
+  };
+
   const generateMessage = async (
     generationMode: GenerationMode,
     id: string,
@@ -502,6 +515,12 @@ const useChatState = create<{
     let tmpChunk = '';
 
     for await (const chunk of stream) {
+      if (get().chats[id].forcedStop) {
+        updateStopReason(id, 'forcedStop');
+        setForcedStop(id, false);
+        break;
+      }
+
       const chunks = chunk.split('\n');
 
       for (const c of chunks) {
@@ -759,6 +778,7 @@ const useChatState = create<{
     },
 
     getStopReason: getStopReason,
+    setForcedStop,
   };
 });
 
@@ -788,6 +808,7 @@ const useChat = (id: string, chatId?: string) => {
     pushMessage,
     popMessage,
     getStopReason,
+    setForcedStop,
   } = useChatState();
   const { data: messagesData, isLoading: isLoadingMessage } =
     useChatApi().listMessages(chatId);
@@ -951,6 +972,9 @@ const useChat = (id: string, chatId?: string) => {
     },
     getStopReason: () => {
       return getStopReason(id);
+    },
+    forceToStop: () => {
+      return setForcedStop(id, true);
     },
   };
 };

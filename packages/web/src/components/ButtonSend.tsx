@@ -1,5 +1,9 @@
 import React from 'react';
-import { PiPaperPlaneRightFill, PiSpinnerGap } from 'react-icons/pi';
+import {
+  PiPaperPlaneRightFill,
+  PiSpinnerGap,
+  PiStopFill,
+} from 'react-icons/pi';
 import { BaseProps } from '../@types/common';
 
 type Props = BaseProps & {
@@ -7,6 +11,7 @@ type Props = BaseProps & {
   loading?: boolean;
   onClick: () => void;
   icon?: React.ReactNode;
+  canStop?: boolean;
 };
 
 const ButtonSend: React.FC<Props> = (props) => {
@@ -18,9 +23,15 @@ const ButtonSend: React.FC<Props> = (props) => {
         props.disabled ? 'bg-gray-300' : 'bg-aws-smile'
       }`}
       onClick={props.onClick}
-      disabled={props.disabled || props.loading}>
+      disabled={props.disabled}>
       {props.loading ? (
-        <PiSpinnerGap className="animate-spin" />
+        <>
+          {props.canStop ? (
+            <PiStopFill />
+          ) : (
+            <PiSpinnerGap className="animate-spin" />
+          )}
+        </>
       ) : (
         <>{props.icon ? <>{props.icon}</> : <PiPaperPlaneRightFill />}</>
       )}

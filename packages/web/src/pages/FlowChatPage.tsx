@@ -98,6 +98,7 @@ const FlowChatPage: React.FC = () => {
               <ChatMessage
                 chatContent={message}
                 loading={loading && idx === messages.length - 1}
+                hideFeedback={true}
               />
               <div className="w-full border-b border-gray-300"></div>
             </div>
@@ -118,6 +119,7 @@ const FlowChatPage: React.FC = () => {
           onSend={onSend}
           onReset={onReset}
           fileUpload={false}
+          loading={loading}
         />
       </div>
 

@@ -73,6 +73,7 @@ const RagKnowledgeBasePage: React.FC = () => {
     postChat,
     updateSystemContextByModel,
     retryGeneration,
+    forceToStop,
   } = useChat(pathname);
   const { scrollableContainer, setFollowing } = useFollow();
   const { modelIdsInModelRegion: availableModels, modelDisplayName } = MODELS;
@@ -212,6 +213,11 @@ const RagKnowledgeBasePage: React.FC = () => {
     setSessionId(undefined);
   }, [clear, setContent, setFilters, setSessionId]);
 
+  const onStop = useCallback(() => {
+    forceToStop();
+    setSessionId(undefined);
+  }, [forceToStop, setSessionId]);
+
   return (
     <>
       <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
@@ -258,16 +264,21 @@ const RagKnowledgeBasePage: React.FC = () => {
           className={`fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden`}>
           <InputChatContent
             content={content}
-            disabled={loading}
+            disabled={false}
             onChangeContent={setContent}
             onSend={() => {
-              onSend();
+              if (!loading) {
+                onSend();
+              } else {
+                onStop();
+              }
             }}
             onReset={onReset}
             setting={true}
             onSetting={() => {
               setShowSetting(true);
             }}
+            canStop={true}
           />
         </div>
       </div>

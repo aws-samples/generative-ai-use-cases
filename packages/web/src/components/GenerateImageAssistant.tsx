@@ -282,6 +282,7 @@ const GenerateImageAssistant: React.FC<Props> = (props) => {
             fullWidth
             hideReset
             content={props.content}
+            disabled={loading || props.isGeneratingImage}
             loading={loading || props.isGeneratingImage}
             onChangeContent={props.onChangeContent}
             onSend={onSend}

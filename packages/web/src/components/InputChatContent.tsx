@@ -33,6 +33,7 @@ type Props = {
   fileUpload?: boolean;
   fileLimit?: FileLimit;
   accept?: string[];
+  canStop?: boolean;
 } & (
   | {
       hideReset?: false;
@@ -102,12 +103,12 @@ const InputChatContent: React.FC<Props> = (props) => {
 
   const disabledSend = useMemo(() => {
     return (
-      props.content.trim() === '' ||
+      (!loading && props.content.trim() === '') ||
       props.disabled ||
       uploading ||
       errorMessages.length > 0
     );
-  }, [props.content, props.disabled, uploading, errorMessages]);
+  }, [props.content, props.disabled, uploading, errorMessages, loading]);
 
   return (
     <div
@@ -230,6 +231,7 @@ const InputChatContent: React.FC<Props> = (props) => {
             loading={loading || uploading}
             onClick={props.onSend}
             icon={props.sendIcon}
+            canStop={props.canStop}
           />
         </div>
 

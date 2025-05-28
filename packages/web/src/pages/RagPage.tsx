@@ -36,7 +36,7 @@ const RagPage: React.FC = () => {
   const { t } = useTranslation();
   const { content, setContent } = useRagPageState();
   const { pathname, search } = useLocation();
-  const { getModelId, setModelId } = useChat(pathname);
+  const { getModelId, setModelId, forceToStop } = useChat(pathname);
   const { postMessage, clear, loading, messages, isEmpty } = useRag(pathname);
   const { scrollableContainer, setFollowing } = useFollow();
   const { modelIds: availableModels, modelDisplayName } = MODELS;
@@ -68,6 +68,10 @@ const RagPage: React.FC = () => {
     clear();
     setContent('');
   }, [clear, setContent]);
+
+  const onStop = useCallback(() => {
+    forceToStop();
+  }, [forceToStop]);
 
   return (
     <>
@@ -116,12 +120,17 @@ const RagPage: React.FC = () => {
         <div className="fixed bottom-0 z-0 flex w-full items-end justify-center lg:pr-64 print:hidden">
           <InputChatContent
             content={content}
-            disabled={loading}
+            disabled={false}
             onChangeContent={setContent}
             onSend={() => {
-              onSend();
+              if (!loading) {
+                onSend();
+              } else {
+                onStop();
+              }
             }}
             onReset={onReset}
+            canStop={true}
           />
         </div>
       </div>
