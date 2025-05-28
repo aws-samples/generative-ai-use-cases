@@ -4,6 +4,11 @@ const AudioRecorderWorkletUrl = new URL(
   window.location.origin
 ).toString();
 
+// Firefox doesn't support connecting AudioNodes from AudioContexts with different sample rates
+// Therefore, we use the default sample rate of AudioContext and downsample the audio data manually
+const TARGET_SAMPLE_RATE = 16000;
+const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
+
 export class AudioRecorder {
   constructor() {
     this.onAudioRecordedListeners = [];
@@ -30,7 +35,10 @@ export class AudioRecorder {
 
   async start() {
     try {
-      this.audioContext = new AudioContext({ sampleRate: 16000 });
+      this.audioContext = new AudioContext({
+        // Set the sample rate if not Firefox, otherwise use the default
+        sampleRate: !isFirefox ? TARGET_SAMPLE_RATE : undefined,
+      });
 
       // Get user media stream
       try {
@@ -102,6 +110,8 @@ export class AudioRecorder {
       // Start recording
       this.workletNode.port.postMessage({
         type: 'start',
+        sourceSampleRate: this.audioContext.sampleRate,
+        targetSampleRate: TARGET_SAMPLE_RATE,
       });
 
       this.initialized = true;

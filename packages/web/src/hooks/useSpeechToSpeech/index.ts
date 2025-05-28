@@ -24,14 +24,6 @@ const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
   return btoa(binary.join(''));
 };
 
-const float32ArrayToInt16Array = (float32Array: Float32Array): Int16Array => {
-  const int16Array = new Int16Array(float32Array.length);
-  for (let i = 0; i < float32Array.length; i++) {
-    int16Array[i] = Math.max(-1, Math.min(1, float32Array[i])) * 0x7fff;
-  }
-  return int16Array;
-};
-
 const base64ToFloat32Array = (base64String: string) => {
   try {
     const binaryString = atob(base64String);
@@ -103,9 +95,8 @@ export const useSpeechToSpeech = () => {
     const audioRecorder = new AudioRecorder();
     audioRecorder.addEventListener(
       'onAudioRecorded',
-      (audioData: Float32Array) => {
-        const int16Array = float32ArrayToInt16Array(audioData);
-        const base64Data = arrayBufferToBase64(int16Array.buffer);
+      (audioData: Int16Array) => {
+        const base64Data = arrayBufferToBase64(audioData.buffer);
         audioInputQueue.current.push(base64Data);
       }
     );
