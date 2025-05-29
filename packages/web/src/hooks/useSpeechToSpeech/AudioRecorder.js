@@ -4,8 +4,8 @@ const AudioRecorderWorkletUrl = new URL(
   window.location.origin
 ).toString();
 
-// Firefox doesn't support connecting AudioNodes from AudioContexts with different sample rates
-// Therefore, we use the default sample rate of AudioContext and downsample the audio data manually
+// Firefox doesn't support connecting AudioNodes from AudioContexts with different sample rates.
+// Therefore, we use the default sample rate of AudioContext and downsample the audio manually.
 const TARGET_SAMPLE_RATE = 16000;
 const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 

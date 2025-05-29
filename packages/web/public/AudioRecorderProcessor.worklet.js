@@ -5,8 +5,8 @@ class AudioRecorderProcessor extends AudioWorkletProcessor {
     super();
     this.isRecording = false;
     this.samplingRatio = 1;
-    // Converting array and sending data on every frame causes significant overhead
-    // Batching multiple frames reduces this overhead at the cost of slightly increased latency
+    // Converting array and sending data on every frame causes significant overhead.
+    // Batching multiple frames reduces this overhead and provides a smoother user experience.
     this.bufferSize = DEFAULT_BUFFER_SIZE;
     this.buffer = [];
 
@@ -43,13 +43,13 @@ class AudioRecorderProcessor extends AudioWorkletProcessor {
     }
     const input = inputs[0][0];
 
-    // When using Firefox, audio must be manually downsampled to 16 kHz
+    // When using Firefox, audio must be manually downsampled to 16 kHz (e.g., 48 kHz to 16 kHz)
     // Currently, this is done by simply skipping samples (this may be not sufficient for some cases)
     const numSamples = Math.floor(input.length / this.samplingRatio);
     for (let i = 0; i < numSamples; i++) {
       // Get the value at the sampled index
       const f32 = input[Math.floor(i * this.samplingRatio)];
-      // Convert float32 to int16
+      // Convert float32 to int16 (actual type conversion happens in sendBuffer method)
       const i16 = Math.max(-1, Math.min(1, f32)) * 0x7fff;
       // Push to the buffer
       this.buffer.push(i16);
