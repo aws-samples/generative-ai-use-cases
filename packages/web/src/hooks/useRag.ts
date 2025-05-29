@@ -47,6 +47,7 @@ const useRag = (id: string) => {
     postChat,
     clear,
     loading,
+    writing,
     setLoading,
     updateSystemContext,
     popMessage,
@@ -65,6 +66,7 @@ const useRag = (id: string) => {
     isEmpty,
     clear,
     loading,
+    writing,
     messages,
     postMessage: async (content: string) => {
       const model = findModelByModelId(modelId);

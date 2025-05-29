@@ -77,6 +77,7 @@ const AgentChatPage: React.FC = () => {
     getModelId,
     setModelId,
     loading,
+    writing,
     loadingMessages,
     isEmpty,
     messages,
@@ -277,7 +278,7 @@ const AgentChatPage: React.FC = () => {
         <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden">
           <InputChatContent
             content={content}
-            disabled={false}
+            disabled={loading && !writing}
             onChangeContent={setContent}
             resetDisabled={false}
             onSend={() => {
@@ -291,7 +292,7 @@ const AgentChatPage: React.FC = () => {
             fileUpload={true}
             fileLimit={fileLimit}
             accept={fileLimit.accept.doc}
-            canStop={true}
+            canStop={writing}
           />
         </div>
       </div>

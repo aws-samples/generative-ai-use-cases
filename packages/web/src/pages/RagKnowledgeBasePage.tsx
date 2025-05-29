@@ -67,6 +67,7 @@ const RagKnowledgeBasePage: React.FC = () => {
     getModelId,
     setModelId,
     loading,
+    writing,
     isEmpty,
     messages,
     clear,
@@ -264,7 +265,7 @@ const RagKnowledgeBasePage: React.FC = () => {
           className={`fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden`}>
           <InputChatContent
             content={content}
-            disabled={false}
+            disabled={loading && !writing}
             onChangeContent={setContent}
             onSend={() => {
               if (!loading) {
@@ -278,7 +279,7 @@ const RagKnowledgeBasePage: React.FC = () => {
             onSetting={() => {
               setShowSetting(true);
             }}
-            canStop={true}
+            canStop={writing}
           />
         </div>
       </div>

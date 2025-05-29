@@ -37,7 +37,8 @@ const RagPage: React.FC = () => {
   const { content, setContent } = useRagPageState();
   const { pathname, search } = useLocation();
   const { getModelId, setModelId, forceToStop } = useChat(pathname);
-  const { postMessage, clear, loading, messages, isEmpty } = useRag(pathname);
+  const { postMessage, clear, loading, writing, messages, isEmpty } =
+    useRag(pathname);
   const { scrollableContainer, setFollowing } = useFollow();
   const { modelIds: availableModels, modelDisplayName } = MODELS;
   const modelId = getModelId();
@@ -120,7 +121,7 @@ const RagPage: React.FC = () => {
         <div className="fixed bottom-0 z-0 flex w-full items-end justify-center lg:pr-64 print:hidden">
           <InputChatContent
             content={content}
-            disabled={false}
+            disabled={loading && !writing}
             onChangeContent={setContent}
             onSend={() => {
               if (!loading) {
@@ -130,7 +131,7 @@ const RagPage: React.FC = () => {
               }
             }}
             onReset={onReset}
-            canStop={true}
+            canStop={writing}
           />
         </div>
       </div>

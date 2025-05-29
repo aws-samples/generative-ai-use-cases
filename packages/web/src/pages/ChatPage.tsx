@@ -117,6 +117,7 @@ const ChatPage: React.FC = () => {
     getModelId,
     setModelId,
     loading,
+    writing,
     loadingMessages,
     isEmpty,
     messages,
@@ -543,7 +544,7 @@ const ChatPage: React.FC = () => {
           )}
           <InputChatContent
             content={content}
-            disabled={false}
+            disabled={loading && !writing}
             onChangeContent={setContent}
             resetDisabled={!!chatId}
             onSend={() => {
@@ -561,7 +562,7 @@ const ChatPage: React.FC = () => {
             onSetting={() => {
               setShowSetting(true);
             }}
-            canStop={true}
+            canStop={writing}
           />
         </div>
       </div>

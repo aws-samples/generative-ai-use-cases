@@ -41,10 +41,14 @@ const useChatState = create<{
   loading: {
     [id: string]: boolean;
   };
+  writing: {
+    [id: string]: boolean;
+  };
   base64Cache: { [key: string]: string };
   getModelId: (id: string) => string;
   setModelId: (id: string, newModelId: string) => void;
   setLoading: (id: string, newLoading: boolean) => void;
+  setWriting: (id: string, newWriting: boolean) => void;
   init: (id: string) => void;
   clear: (id: string) => void;
   restore: (id: string, messages: RecordedMessage[], chat: Chat) => void;
@@ -134,6 +138,17 @@ const useChatState = create<{
         loading: {
           ...state.loading,
           [id]: newLoading,
+        },
+      };
+    });
+  };
+
+  const setWriting = (id: string, newWriting: boolean) => {
+    set((state) => {
+      return {
+        writing: {
+          ...state.loading,
+          [id]: newWriting,
         },
       };
     });
@@ -521,6 +536,10 @@ const useChatState = create<{
         break;
       }
 
+      if (!get().writing[id]) {
+        setWriting(id, true);
+      }
+
       const chunks = chunk.split('\n');
 
       for (const c of chunks) {
@@ -560,6 +579,8 @@ const useChatState = create<{
     if (tmpChunk.length > 0) {
       addChunkToAssistantMessage(id, tmpChunk, undefined, model);
     }
+
+    setWriting(id, false);
 
     // Postprocessing of messages (example: addition of footnote)
     if (postProcessOutput) {
@@ -618,10 +639,12 @@ const useChatState = create<{
     chats: {},
     modelIds: {},
     loading: {},
+    writing: {},
     base64Cache: {},
     getModelId,
     setModelId,
     setLoading,
+    setWriting,
     init: (id: string) => {
       if (!get().chats[id]) {
         initChatWithSystemContext(id);
@@ -793,9 +816,11 @@ const useChat = (id: string, chatId?: string) => {
   const {
     chats,
     loading,
+    writing,
     getModelId,
     setModelId,
     setLoading,
+    setWriting,
     init,
     clear,
     restore,
@@ -837,6 +862,7 @@ const useChat = (id: string, chatId?: string) => {
 
   return {
     loading: loading[id] ?? false,
+    writing: writing[id] ?? false,
     getModelId: () => {
       return getModelId(id);
     },
@@ -845,6 +871,9 @@ const useChat = (id: string, chatId?: string) => {
     },
     setLoading: (newLoading: boolean) => {
       setLoading(id, newLoading);
+    },
+    setWriting: (newWriting: boolean) => {
+      setWriting(id, newWriting);
     },
     loadingMessages: isLoadingMessage,
     init: () => {
