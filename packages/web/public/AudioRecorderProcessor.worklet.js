@@ -1,4 +1,4 @@
-const DEFAULT_BUFFER_SIZE = 512;
+const DEFAULT_BUFFER_SIZE = 512; // 512 samples / 16 kHz = 32 ms
 
 class AudioRecorderProcessor extends AudioWorkletProcessor {
   constructor() {
