@@ -21,6 +21,7 @@ type Props = RowItemProps & {
 };
 
 const MAX_HEIGHT = 300;
+const isFirefox = navigator.userAgent.toLowerCase().includes('firefox');
 
 const Textarea: React.FC<Props> = (props) => {
   const { t } = useTranslation();
@@ -29,44 +30,22 @@ const Textarea: React.FC<Props> = (props) => {
   const _maxHeight = props.maxHeight || MAX_HEIGHT;
 
   useEffect(() => {
-    if (!ref.current) {
-      return;
-    }
-
+    if (!ref.current) return;
+    // Reset the height to auto to calculate the scroll height
     ref.current.style.height = 'auto';
 
-    if (_maxHeight > 0 && ref.current.scrollHeight > _maxHeight) {
-      ref.current.style.height = _maxHeight + 'px';
-      setIsMax(true);
-    } else {
-      ref.current.style.height = ref.current.scrollHeight + 'px';
-      setIsMax(false);
-    }
+    // Ensure the layout is updated before calculating the scroll height
+    // due to the bug in Firefox:
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1795904
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1787062
+    if (isFirefox) void ref.current.scrollHeight;
+
+    // Set the height to match content, up to max height
+    const scrollHeight = ref.current.scrollHeight;
+    const _isMax = _maxHeight > 0 && scrollHeight > _maxHeight;
+    ref.current.style.height = (_isMax ? _maxHeight : scrollHeight) + 'px';
+    setIsMax(_isMax);
   }, [props.value, _maxHeight]);
-
-  useEffect(() => {
-    const current = ref.current;
-    if (!current) {
-      return;
-    }
-
-    const listener = (e: DocumentEventMap['keypress']) => {
-      if (props.onEnter) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          props.onEnter();
-        }
-      }
-    };
-
-    current.addEventListener('keypress', listener);
-
-    return () => {
-      if (current) {
-        current.removeEventListener('keypress', listener);
-      }
-    };
-  }, [ref, props]);
 
   return (
     <RowItem notItem={props.notItem}>
@@ -100,6 +79,12 @@ const Textarea: React.FC<Props> = (props) => {
         rows={props.rows ?? 1}
         placeholder={props.placeholder || t('common.enter_text')}
         value={props.value}
+        onKeyDown={(e) => {
+          if (props.onEnter && e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            props.onEnter();
+          }
+        }}
         onChange={(e) => {
           props.onChange(e.target.value);
         }}
