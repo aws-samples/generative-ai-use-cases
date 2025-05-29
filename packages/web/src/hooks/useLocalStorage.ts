@@ -1,17 +1,45 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo } from 'react';
+import { create } from 'zustand';
+
+type StateType = {
+  onMemoryState: Record<string, string>;
+  setValue: (key: string, value: string) => void;
+};
+
+const useLocalStorageState = create<StateType>((set) => {
+  const setValue = (key: string, value: string) => {
+    localStorage.setItem(key, value);
+    set((state) => {
+      return {
+        onMemoryState: {
+          ...state.onMemoryState,
+          [key]: value,
+        },
+      };
+    });
+  };
+
+  return {
+    onMemoryState: {},
+    setValue,
+  };
+});
 
 const useLocalStorage = (key: string, defaultValue: string) => {
-  const [value, setValue] = useState(localStorage.getItem(key) ?? defaultValue);
+  const { setValue, onMemoryState } = useLocalStorageState();
 
-  const setValueWrapper = useCallback(
+  const setValueForKey = useCallback(
     (value: string) => {
-      localStorage.setItem(key, value);
-      setValue(value);
+      setValue(key, value);
     },
     [setValue, key]
   );
 
-  return [value, setValueWrapper] as const;
+  const valueForKey = useMemo(() => {
+    return onMemoryState[key] ?? localStorage.getItem(key) ?? defaultValue;
+  }, [onMemoryState, key, defaultValue]);
+
+  return [valueForKey, setValueForKey] as const;
 };
 
 export default useLocalStorage;

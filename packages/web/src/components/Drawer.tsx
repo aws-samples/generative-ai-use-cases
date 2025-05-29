@@ -9,6 +9,7 @@ import DrawerBase from './DrawerBase';
 import Switch from './Switch';
 import Button from './Button';
 import { useTranslation } from 'react-i18next';
+import useUserSetting from '../hooks/useUserSetting';
 
 export type ItemProps = DrawerItemProps & {
   display: 'usecase' | 'tool' | 'none';
@@ -21,6 +22,7 @@ type Props = BaseProps & {
 const Drawer: React.FC<Props> = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { settingShowUseCaseBuilder, settingShowTools } = useUserSetting();
 
   const usecases = useMemo(() => {
     return props.items.filter((i) => i.display === 'usecase');
@@ -46,7 +48,7 @@ const Drawer: React.FC<Props> = (props) => {
   return (
     <>
       <DrawerBase>
-        {useCaseBuilderEnabled && (
+        {useCaseBuilderEnabled && settingShowUseCaseBuilder && (
           <>
             <Switch
               className="mx-3 my-2"
@@ -97,7 +99,7 @@ const Drawer: React.FC<Props> = (props) => {
           )}
         </div>
         <div className="border-b" />
-        {tools.length > 0 && (
+        {tools.length > 0 && settingShowTools && (
           <>
             <ExpandableMenu
               title={t('drawer.tools')}

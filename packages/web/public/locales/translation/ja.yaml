@@ -616,6 +616,8 @@ setting:
     login_status: ログイン状態
     rag_enabled: RAG (Amazon Kendra) 有効
     rag_kb_enabled: RAG (Knowledge Base) 有効
+    show_tools: ツールの表示
+    show_use_case_builder: ユースケースビルダーの表示
     typing_animation: タイピングアニメーション
     version: バージョン
     version_help: generative-ai-use-cases の package.json の version を参照しています

@@ -56,8 +56,14 @@ const Setting = () => {
   const localVersion = getLocalVersion();
   const hasUpdate = getHasUpdate();
   const closedPullRequests = getClosedPullRequests();
-  const { settingTypingAnimation, setSettingTypingAnimation } =
-    useUserSetting();
+  const {
+    settingTypingAnimation,
+    setSettingTypingAnimation,
+    settingShowUseCaseBuilder,
+    setSettingShowUseCaseBuilder,
+    settingShowTools,
+    setSettingShowTools,
+  } = useUserSetting();
 
   const onClickSignout = useCallback(() => {
     // Delete all SWR cache
@@ -116,6 +122,26 @@ const Setting = () => {
               checked={settingTypingAnimation}
               label=""
               onSwitch={setSettingTypingAnimation}
+            />
+          }></SettingItem>
+
+        <SettingItem
+          name={t('setting.items.show_use_case_builder')}
+          value={
+            <Switch
+              checked={settingShowUseCaseBuilder}
+              label=""
+              onSwitch={setSettingShowUseCaseBuilder}
+            />
+          }></SettingItem>
+
+        <SettingItem
+          name={t('setting.items.show_tools')}
+          value={
+            <Switch
+              checked={settingShowTools}
+              label=""
+              onSwitch={setSettingShowTools}
             />
           }></SettingItem>
 

@@ -714,6 +714,8 @@ setting:
     login_status: Login status
     rag_enabled: RAG (Amazon Kendra) Enabled
     rag_kb_enabled: RAG (Knowledge Base) Enabled
+    show_tools: Show Tools
+    show_use_case_builder: Show Use Case Builder
     typing_animation: Typing Animation
     version: Version
     version_help: Referencing the version in package.json of generative-ai-use-cases
