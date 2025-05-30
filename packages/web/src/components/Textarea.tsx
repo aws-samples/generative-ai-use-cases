@@ -77,6 +77,8 @@ const Textarea: React.FC<Props> = (props) => {
         placeholder={props.placeholder || t('common.enter_text')}
         value={props.value}
         onKeyDown={(e) => {
+          // keyCode is deprecated, but used for some browsers to handle IME input
+          if (e.nativeEvent.isComposing || e.keyCode === 229) return;
           if (props.onEnter && e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             props.onEnter();
