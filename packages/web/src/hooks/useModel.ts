@@ -18,6 +18,9 @@ const bedrockModelConfigs = (
 const bedrockModelIds: string[] = bedrockModelConfigs.map(
   (model) => model.modelId
 );
+const lightModelIds: string[] = bedrockModelConfigs
+  .filter((model) => modelMetadata[model.modelId].flags.light)
+  .map((model) => model.modelId);
 const modelIdsInModelRegion: string[] = bedrockModelConfigs
   .filter((model) => model.region === modelRegion)
   .map((model) => model.modelId);
@@ -180,6 +183,7 @@ export const MODELS = {
   modelIdsInModelRegion,
   modelMetadata,
   modelDisplayName,
+  lightModelIds,
   visionModelIds: visionModelIds,
   visionEnabled: visionEnabled,
   imageGenModelIds: imageGenModelIds,

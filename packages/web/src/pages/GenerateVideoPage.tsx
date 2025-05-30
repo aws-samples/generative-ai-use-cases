@@ -21,12 +21,14 @@ import {
   PiArrowClockwise,
   PiTrash,
   PiUpload,
+  PiTranslate,
 } from 'react-icons/pi';
 import { GenerateVideoPageQueryParams } from '../@types/navigate';
 import { useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import useOneshotTranslation from '../hooks/useOneshotTranslation';
 
 const TASK_TYPES = (modelId: string): string[] => {
   if (modelId === 'amazon.nova-reel-v1:1') {
@@ -235,6 +237,7 @@ const GenerateVideoPage: React.FC = () => {
   const [deletingJobIds, setDeletingJobIds] = useState<Record<string, boolean>>(
     {}
   );
+  const { translate, translating } = useOneshotTranslation();
 
   const onChangeFiles = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -441,6 +444,10 @@ const GenerateVideoPage: React.FC = () => {
     return date.toLocaleString();
   }, []);
 
+  const translateAndSetAsPrompt = useCallback(() => {
+    translate(prompt, 'English').then(setPrompt);
+  }, [translate, prompt, setPrompt]);
+
   return (
     <div className="grid h-screen grid-cols-12 gap-4 p-4">
       <div className="col-span-12 lg:col-span-4">
@@ -469,14 +476,26 @@ const GenerateVideoPage: React.FC = () => {
 
           {MODEL_PARAMS(videoGenModelId, taskType) && (
             <>
-              <Textarea
-                value={prompt}
-                onChange={setPrompt}
-                label={t('video.prompt.title')}
-                placeholder={t('video.prompt.placeholder')}
-                rows={3}
-                required
-              />
+              <div className="relative">
+                <Textarea
+                  value={prompt}
+                  onChange={setPrompt}
+                  label={t('video.prompt.title')}
+                  placeholder={t('video.prompt.placeholder')}
+                  rows={3}
+                  required
+                />
+                <ButtonIcon
+                  className="absolute bottom-2 right-1"
+                  onClick={translateAndSetAsPrompt}
+                  disabled={translating}>
+                  {translating ? (
+                    <PiSpinnerGap className="animate-spin" />
+                  ) : (
+                    <PiTranslate />
+                  )}
+                </ButtonIcon>
+              </div>
 
               {MODEL_PARAMS(videoGenModelId, taskType).dimension && (
                 <Select
