@@ -488,6 +488,8 @@ const ChatPage: React.FC = () => {
                   setSaveSystemContext={setSaveSystemContext}
                   setShowSystemContextModal={setShowSystemContextModal}
                   allowRetry={idx === showingMessages.length - 1}
+                  editable={idx === showingMessages.length - 2}
+                  onCommitEdit={idx === showingMessages.length - 2 ? (modifiedPrompt: string) => { console.log(modifiedPrompt); } : undefined}
                   retryGeneration={onRetry}
                 />
                 <div className="w-full border-b border-gray-300"></div>

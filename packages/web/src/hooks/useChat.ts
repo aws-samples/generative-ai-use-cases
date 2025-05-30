@@ -24,7 +24,7 @@ import { getPrompter } from '../prompts';
 import { findModelByModelId } from './useModel';
 import useFileApi from './useFileApi';
 
-type GenerationMode = 'normal' | 'continue' | 'retry';
+type GenerationMode = 'normal' | 'continue' | 'retry' | 'edit';
 
 const useChatState = create<{
   chats: {

@@ -11,6 +11,8 @@ import {
   PiChalkboardTeacher,
   PiFloppyDisk,
   PiArrowClockwise,
+  PiNotePencil,
+  PiCheck,
 } from 'react-icons/pi';
 import { BaseProps } from '../@types/common';
 import { ShownMessage, UpdateFeedbackRequest } from 'generative-ai-use-cases';
@@ -19,6 +21,7 @@ import useChat from '../hooks/useChat';
 import useTyping from '../hooks/useTyping';
 import FileCard from './FileCard';
 import FeedbackForm from './FeedbackForm';
+import Textarea from './Textarea';
 import useFiles from '../hooks/useFiles';
 import { useTranslation } from 'react-i18next';
 
@@ -31,7 +34,9 @@ type Props = BaseProps & {
   setSaveSystemContext?: (s: string) => void;
   setShowSystemContextModal?: (value: boolean) => void;
   allowRetry?: boolean;
+  editable?: boolean;
   retryGeneration?: () => void;
+  onCommitEdit?: (string: modifiedPrompt) => void;
 };
 
 const ChatMessage: React.FC<Props> = (props) => {
@@ -45,6 +50,8 @@ const ChatMessage: React.FC<Props> = (props) => {
   const [isSendingFeedback, setIsSendingFeedback] = useState(false);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [showThankYouMessage, setShowThankYouMessage] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editingPrompt, setEditingPrompt] = useState('');
   const { getFileDownloadSignedUrl } = useFiles(pathname);
 
   const { setTypingTextInput, typingTextOutput } = useTyping(
@@ -207,13 +214,17 @@ const ChatMessage: React.FC<Props> = (props) => {
                 })}
               </div>
             )}
-            {chatContent?.role === 'user' && (
-              <div className="whitespace-pre-wrap">{typingTextOutput}</div>
-            )}
+            {chatContent?.role === 'user' && (<>
+              {editing ? (
+                <Textarea value={editingPrompt} onChange={setEditingPrompt}/>
+              ) : (
+                <div className="whitespace-pre-wrap">{typingTextOutput}</div>
+              )}
+            </>)}
             {chatContent?.role === 'assistant' && (
               <Markdown prefix={`${props.idx}`}>
                 {typingTextOutput +
-                  `${
+                 `${
                     props.loading && (chatContent?.content ?? '') !== ''
                       ? '▍'
                       : ''
@@ -247,43 +258,64 @@ const ChatMessage: React.FC<Props> = (props) => {
               <PiFloppyDisk />
             </ButtonIcon>
           )}
-          {chatContent?.role === 'assistant' &&
-            !props.loading &&
-            !props.hideFeedback && (
-              <>
-                {props.allowRetry && (
-                  <ButtonIcon
-                    className="mr-0.5 text-gray-400"
-                    onClick={() => props.retryGeneration?.()}>
-                    <PiArrowClockwise />
-                  </ButtonIcon>
-                )}
-                <ButtonCopy
-                  className="mr-0.5 text-gray-400"
-                  text={chatContent?.content || ''}
-                />
-                {chatContent && (
-                  <>
-                    <ButtonFeedback
-                      className="mx-0.5"
-                      feedback="good"
-                      message={chatContent}
-                      disabled={disabled}
-                      onClick={() => {
-                        handleFeedbackClick('good');
-                      }}
-                    />
-                    <ButtonFeedback
-                      className="ml-0.5"
-                      feedback="bad"
-                      message={chatContent}
-                      disabled={disabled}
-                      onClick={() => handleFeedbackClick('bad')}
-                    />
-                  </>
-                )}
-              </>
+          {chatContent?.role === 'user' && props.editable && (<>
+            {editing ? (
+              <ButtonIcon
+                className="text-gray-400"
+                onClick={() => {
+                  setEditing(false);
+                  props.onCommitEdit(editingPrompt);
+                }}>
+                <PiCheck className="text-green-500"/>
+              </ButtonIcon>
+            ) : (
+              <ButtonIcon
+                className="text-gray-400"
+                onClick={() => {
+                  setEditingPrompt(chatContent?.content ?? '');
+                  setEditing(true);
+                }}>
+                <PiNotePencil/>
+              </ButtonIcon>
             )}
+          </>)}
+          {chatContent?.role === 'assistant' &&
+           !props.loading &&
+           !props.hideFeedback && (
+             <>
+               {props.allowRetry && (
+                 <ButtonIcon
+                   className="mr-0.5 text-gray-400"
+                   onClick={() => props.retryGeneration?.()}>
+                   <PiArrowClockwise />
+                 </ButtonIcon>
+               )}
+               <ButtonCopy
+                 className="mr-0.5 text-gray-400"
+                 text={chatContent?.content || ''}
+               />
+               {chatContent && (
+                 <>
+                   <ButtonFeedback
+                     className="mx-0.5"
+                     feedback="good"
+                     message={chatContent}
+                     disabled={disabled}
+                     onClick={() => {
+                       handleFeedbackClick('good');
+                     }}
+                   />
+                   <ButtonFeedback
+                     className="ml-0.5"
+                     feedback="bad"
+                     message={chatContent}
+                     disabled={disabled}
+                     onClick={() => handleFeedbackClick('bad')}
+                   />
+                 </>
+               )}
+             </>
+          )}
         </div>
         <div>
           {showFeedbackForm && (
