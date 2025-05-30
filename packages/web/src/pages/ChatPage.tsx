@@ -124,6 +124,7 @@ const ChatPage: React.FC = () => {
     rawMessages,
     clear,
     postChat,
+    editChat,
     updateSystemContext,
     updateSystemContextByModel,
     getCurrentSystemContext,
@@ -489,7 +490,21 @@ const ChatPage: React.FC = () => {
                   setShowSystemContextModal={setShowSystemContextModal}
                   allowRetry={idx === showingMessages.length - 1}
                   editable={idx === showingMessages.length - 2}
-                  onCommitEdit={idx === showingMessages.length - 2 ? (modifiedPrompt: string) => { console.log(modifiedPrompt); } : undefined}
+                  onCommitEdit={idx === showingMessages.length - 2 ? (modifiedPrompt: string) => {
+                    editChat(
+                      modifiedPrompt,
+                      false,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      base64Cache,
+                      overrideModelParameters,
+                    );
+                  } : undefined}
                   retryGeneration={onRetry}
                 />
                 <div className="w-full border-b border-gray-300"></div>

@@ -71,6 +71,21 @@ const useChatState = create<{
     base64Cache: Record<string, string> | undefined,
     overrideModelParameters: AdditionalModelRequestFields | undefined
   ) => void;
+  edit: (
+    id: string,
+    content: string,
+    mutateListChat: SWRInfiniteKeyedMutator<ListChatsResponse[]>,
+    ignoreHistory: boolean,
+    preProcessInput: ((message: ShownMessage[]) => ShownMessage[]) | undefined,
+    postProcessOutput: ((message: string) => string) | undefined,
+    sessionId: string | undefined,
+    uploadedFiles: UploadedFileType[] | undefined,
+    extraData: ExtraData[] | undefined,
+    overrideModelType: Model['type'] | undefined,
+    setSessionId: (sessionId: string) => void,
+    base64Cache: Record<string, string> | undefined,
+    overrideModelParameters: AdditionalModelRequestFields | undefined
+  ) => void;
   continueGeneration: (
     generationMode: GenerationMode,
     id: string,
@@ -327,7 +342,6 @@ const useChatState = create<{
         })
         .filter((data) => {
           if (!data.source.data) {
-            console.log('File cache not found:', data.name);
             return false;
           }
           return true;
@@ -615,8 +629,21 @@ const useChatState = create<{
 
     const toBeRecordedMessages = addMessageIdsToUnrecordedMessages(id);
 
-    // In the case of continuing to output or retrying, update the last assistant's message
-    if (generationMode === 'continue' || generationMode === 'retry') {
+    // In the case of editting, update the last user's message
+    if (generationMode === 'edit') {
+      const lastUserMessage: ShownMessage =
+        get().chats[id].messages[get().chats[id].messages.length - 2];
+      const updatedUserMessage: ToBeRecordedMessage = {
+        createdDate: lastUserMessage.createdDate!,
+        messageId: lastUserMessage.messageId!,
+        usecase: lastUserMessage.usecase!,
+        ...lastUserMessage,
+      };
+      toBeRecordedMessages.push(updatedUserMessage);
+    }
+
+    // In the case of continuing to output, retrying, or editing, update the last assistant's message
+    if (generationMode === 'continue' || generationMode === 'retry' || generationMode == 'edit') {
       const lastAssistantMessage: ShownMessage =
         get().chats[id].messages[get().chats[id].messages.length - 1];
       const updatedAssistantMessage: ToBeRecordedMessage = {
@@ -789,6 +816,70 @@ const useChatState = create<{
       );
     },
 
+    edit: async (
+      id: string,
+      content: string,
+      mutateListChat: SWRInfiniteKeyedMutator<ListChatsResponse[]>,
+      ignoreHistory: boolean,
+      preProcessInput:
+        | ((message: ShownMessage[]) => ShownMessage[])
+        | undefined = undefined,
+      postProcessOutput: ((message: string) => string) | undefined = undefined,
+      sessionId: string | undefined = undefined,
+      uploadedFiles: UploadedFileType[] | undefined = undefined,
+      extraData: ExtraData[] | undefined = undefined,
+      overrideModelType: Model['type'] | undefined = undefined,
+      setSessionId: (sessionId: string) => void = () => {},
+      base64Cache: Record<string, string> | undefined = undefined,
+      overrideModelParameters:
+        | AdditionalModelRequestFields
+        | undefined = undefined
+    ) => {
+      set((state) => {
+        const newChats = produce(state.chats, (draft) => {
+          const lastAssistantMessage = draft[id].messages.pop()!;
+          const lastUserMessage = draft[id].messages.pop()!;
+
+          // Clear the assistant message
+          const clearedAssistantMessage: UnrecordedMessage = {
+            ...lastAssistantMessage,
+            content: '',
+            trace: '',
+            extraData: [],
+          };
+
+          // Edit the user message
+          const edittedUserMessage: UnrecordedMessage = {
+            ...lastUserMessage,
+            content,
+          };
+
+          draft[id].messages.push(edittedUserMessage);
+          draft[id].messages.push(clearedAssistantMessage);
+        });
+
+        return {
+          chats: newChats,
+        };
+      });
+
+      await generateMessage(
+        'edit',
+        id,
+        mutateListChat,
+        ignoreHistory,
+        preProcessInput,
+        postProcessOutput,
+        sessionId,
+        uploadedFiles,
+        extraData,
+        overrideModelType,
+        setSessionId,
+        base64Cache,
+        overrideModelParameters
+      );
+    },
+
     continueGeneration: generateMessage,
     retryGeneration: generateMessage,
     sendFeedback: async (id: string, feedbackData: UpdateFeedbackRequest) => {
@@ -825,6 +916,7 @@ const useChat = (id: string, chatId?: string) => {
     clear,
     restore,
     post,
+    edit,
     continueGeneration,
     retryGeneration,
     sendFeedback,
@@ -917,6 +1009,39 @@ const useChat = (id: string, chatId?: string) => {
         | undefined = undefined
     ) => {
       post(
+        id,
+        content,
+        mutateChatList,
+        ignoreHistory,
+        preProcessInput,
+        postProcessOutput,
+        sessionId,
+        uploadedFiles,
+        extraData,
+        overrideModelType,
+        setSessionId,
+        base64Cache,
+        overrideModelParameters
+      );
+    },
+    editChat: (
+      content: string,
+      ignoreHistory: boolean = false,
+      preProcessInput:
+        | ((message: ShownMessage[]) => ShownMessage[])
+        | undefined = undefined,
+      postProcessOutput: ((message: string) => string) | undefined = undefined,
+      sessionId: string | undefined = undefined,
+      uploadedFiles: UploadedFileType[] | undefined = undefined,
+      extraData: ExtraData[] | undefined = undefined,
+      overrideModelType: Model['type'] | undefined = undefined,
+      setSessionId: (sessionId: string) => void = () => {},
+      base64Cache: Record<string, string> | undefined = undefined,
+      overrideModelParameters:
+        | AdditionalModelRequestFields
+        | undefined = undefined
+    ) => {
+      edit(
         id,
         content,
         mutateChatList,

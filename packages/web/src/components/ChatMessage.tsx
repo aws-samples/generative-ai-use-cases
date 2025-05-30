@@ -13,6 +13,7 @@ import {
   PiArrowClockwise,
   PiNotePencil,
   PiCheck,
+  PiX,
 } from 'react-icons/pi';
 import { BaseProps } from '../@types/common';
 import { ShownMessage, UpdateFeedbackRequest } from 'generative-ai-use-cases';
@@ -59,7 +60,7 @@ const ChatMessage: React.FC<Props> = (props) => {
   );
 
   useEffect(() => {
-    if (chatContent?.content) {
+    if (chatContent?.content !== undefined && chatContent?.content !== null) {
       setTypingTextInput(chatContent?.content);
     }
   }, [chatContent, setTypingTextInput]);
@@ -259,23 +260,27 @@ const ChatMessage: React.FC<Props> = (props) => {
             </ButtonIcon>
           )}
           {chatContent?.role === 'user' && props.editable && (<>
-            {editing ? (
+            {editing ? (<>
               <ButtonIcon
-                className="text-gray-400"
+                onClick={() => {
+                  setEditing(false);
+                }}>
+                <PiX className="text-red-500"/>
+              </ButtonIcon>
+              <ButtonIcon
                 onClick={() => {
                   setEditing(false);
                   props.onCommitEdit(editingPrompt);
                 }}>
                 <PiCheck className="text-green-500"/>
               </ButtonIcon>
-            ) : (
+            </>) : (
               <ButtonIcon
-                className="text-gray-400"
                 onClick={() => {
                   setEditingPrompt(chatContent?.content ?? '');
                   setEditing(true);
                 }}>
-                <PiNotePencil/>
+                <PiNotePencil className="text-gray-400"/>
               </ButtonIcon>
             )}
           </>)}
