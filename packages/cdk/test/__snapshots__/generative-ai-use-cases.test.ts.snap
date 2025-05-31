@@ -2183,7 +2183,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A502123457785fef82d1521cf56189f5ab6294b": {
+    "APIApiDeployment3A502123f0975eea7d864770e54fb622c5a1b52e": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -2267,6 +2267,9 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         "APIApisystemcontextsOPTIONS0D2703AA",
         "APIApisystemcontextsPOST3883EC4A",
         "APIApisystemcontexts57785227",
+        "APIApitokenusageGETF4970022",
+        "APIApitokenusageOPTIONS59BB9297",
+        "APIApitokenusageD4EF3867",
         "APIApitranscribeOPTIONS5030955A",
         "APIApitranscribe874542A9",
         "APIApitranscriberesultjobNameGET5C0FF2AB",
@@ -2333,7 +2336,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A502123457785fef82d1521cf56189f5ab6294b",
+          "Ref": "APIApiDeployment3A502123f0975eea7d864770e54fb622c5a1b52e",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -6661,6 +6664,172 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
       "Type": "AWS::Lambda::Permission",
       "UpdateReplacePolicy": "Delete",
     },
+    "APIApitokenusageD4EF3867": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "APIApiFFA96F67",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "token-usage",
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitokenusageGETApiPermissionGenerativeAiUseCasesStackAPIApi89219E17GETtokenusageB8578FCA": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "APIGetTokenUsageE1C5C872",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:us-east-1:123456890123:",
+              {
+                "Ref": "APIApiFFA96F67",
+              },
+              "/",
+              {
+                "Ref": "APIApiDeploymentStageapiCD55D117",
+              },
+              "/GET/token-usage",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitokenusageGETApiPermissionTestGenerativeAiUseCasesStackAPIApi89219E17GETtokenusage69F1E4E9": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "APIGetTokenUsageE1C5C872",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:us-east-1:123456890123:",
+              {
+                "Ref": "APIApiFFA96F67",
+              },
+              "/test-invoke-stage/GET/token-usage",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitokenusageGETF4970022": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "APIAuthorizer9DCC037B",
+        },
+        "HttpMethod": "GET",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "APIGetTokenUsageE1C5C872",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "APIApitokenusageD4EF3867",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitokenusageOPTIONS59BB9297": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": {
+          "IntegrationResponses": [
+            {
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": {
+          "Ref": "APIApitokenusageD4EF3867",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
     "APIApitranscribe874542A9": {
       "DeletionPolicy": "Delete",
       "Properties": {
@@ -9744,6 +9913,15 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
             },
+            "TOKEN_USAGE_BY_MODEL_TABLE_NAME": {
+              "Ref": "DatabaseTokenUsageByModelTable43848310",
+            },
+            "TOKEN_USAGE_BY_USECASE_TABLE_NAME": {
+              "Ref": "DatabaseTokenUsageByUsecaseTable53C3DD8F",
+            },
+            "TOKEN_USAGE_TABLE_NAME": {
+              "Ref": "DatabaseTokenUsageTable63031EAB",
+            },
           },
         },
         "Handler": "index.handler",
@@ -9833,6 +10011,69 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
                       "/index/*",
                     ],
                   ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DatabaseTokenUsageTable63031EAB",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DatabaseTokenUsageByUsecaseTable53C3DD8F",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DatabaseTokenUsageByModelTable43848310",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
                 },
               ],
             },
@@ -11721,6 +11962,168 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         "Roles": [
           {
             "Ref": "APIGetSignedUrlServiceRole3309134D",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIGetTokenUsageE1C5C872": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "APIGetTokenUsageServiceRoleDefaultPolicy9A5B3DA6",
+        "APIGetTokenUsageServiceRoleBA7D93BB",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "TABLE_NAME": {
+              "Ref": "DatabaseTableF104A135",
+            },
+            "TOKEN_USAGE_BY_MODEL_TABLE_NAME": {
+              "Ref": "DatabaseTokenUsageByModelTable43848310",
+            },
+            "TOKEN_USAGE_BY_USECASE_TABLE_NAME": {
+              "Ref": "DatabaseTokenUsageByUsecaseTable53C3DD8F",
+            },
+            "TOKEN_USAGE_TABLE_NAME": {
+              "Ref": "DatabaseTokenUsageTable63031EAB",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "APIGetTokenUsageServiceRoleBA7D93BB",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+      },
+      "Type": "AWS::Lambda::Function",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIGetTokenUsageServiceRoleBA7D93BB": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIGetTokenUsageServiceRoleDefaultPolicy9A5B3DA6": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DatabaseTokenUsageTable63031EAB",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DatabaseTokenUsageByUsecaseTable53C3DD8F",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DatabaseTokenUsageByModelTable43848310",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "APIGetTokenUsageServiceRoleDefaultPolicy9A5B3DA6",
+        "Roles": [
+          {
+            "Ref": "APIGetTokenUsageServiceRoleBA7D93BB",
           },
         ],
       },
@@ -15367,6 +15770,90 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
           {
             "AttributeName": "createdDate",
+            "KeyType": "RANGE",
+          },
+        ],
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "DatabaseTokenUsageByModelTable43848310": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "userId",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "dateModel",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [
+          {
+            "AttributeName": "userId",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "dateModel",
+            "KeyType": "RANGE",
+          },
+        ],
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "DatabaseTokenUsageByUsecaseTable53C3DD8F": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "userId",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "dateUsecase",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [
+          {
+            "AttributeName": "userId",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "dateUsecase",
+            "KeyType": "RANGE",
+          },
+        ],
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "DatabaseTokenUsageTable63031EAB": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "userId",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "date",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [
+          {
+            "AttributeName": "userId",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "date",
             "KeyType": "RANGE",
           },
         ],

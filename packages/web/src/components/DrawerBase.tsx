@@ -36,12 +36,13 @@ const DrawerBase: React.FC<Props> = (props) => {
         className={`bg-aws-squid-ink flex h-screen w-64 flex-col justify-between text-sm text-white  print:hidden`}>
         <div className="flex h-full flex-col">
           {props.children}
-          <div className="flex flex-none items-center justify-between gap-2 border-t border-gray-400 px-3 py-2">
+          <div className="flex flex-none items-center gap-2 border-t border-gray-400 px-3 py-2">
             <Link
               to={settingUrl}
               className="mr-2 overflow-x-hidden hover:brightness-75">
               <span className="text-sm">{email}</span>
             </Link>
+            <div className="grow" />
             <Link to={settingUrl}>
               <IconWithDot showDot={hasUpdate}>
                 <PiGear className="text-lg" />

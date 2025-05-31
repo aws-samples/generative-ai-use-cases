@@ -3,6 +3,7 @@ import {
   RecordedMessage,
   ToBeRecordedMessage,
   UnrecordedMessage,
+  Metadata,
 } from './message';
 import { Chat } from './chat';
 import { SystemContext } from './systemContext';
@@ -22,6 +23,7 @@ import { ShareId, UserIdAndChatId } from './share';
 export type StreamingChunk = {
   text: string;
   trace?: string;
+  metadata?: Metadata;
   stopReason?: StopReason | 'error';
   sessionId?: string;
 };

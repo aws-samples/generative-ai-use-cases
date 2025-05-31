@@ -42,6 +42,7 @@ export type UnrecordedMessage = {
   trace?: string;
   extraData?: ExtraData[];
   llmType?: string;
+  metadata?: Metadata;
 };
 
 export type ExtraData = {
@@ -51,6 +52,16 @@ export type ExtraData = {
     type: 's3' | 'base64' | 'json';
     mediaType: string; // mime type (i.e. image/png, text/plain, application/pdf, application/json)
     data: string; // s3 location for s3, data for base64, json for json
+  };
+};
+
+export type Metadata = {
+  usage: {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    cacheReadInputTokens?: number;
+    cacheWriteInputTokens?: number;
   };
 };
 

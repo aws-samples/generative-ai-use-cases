@@ -134,8 +134,12 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
 
         const output = extractConverseStreamOutput(model, response);
 
-        if (output.text || output.trace) {
-          yield streamingChunk({ text: output.text, trace: output.trace });
+        if (output.text || output.trace || output.metadata) {
+          yield streamingChunk({
+            text: output.text,
+            trace: output.trace,
+            metadata: output.metadata,
+          });
         }
 
         if (response.messageStop) {
@@ -143,7 +147,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
             text: '',
             stopReason: response.messageStop.stopReason,
           });
-          break;
+          // Metadata comes after the stopReason, so we need to keep loop
         }
       }
     } catch (e) {

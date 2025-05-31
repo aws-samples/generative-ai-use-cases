@@ -11,6 +11,10 @@ import {
   PiChalkboardTeacher,
   PiFloppyDisk,
   PiArrowClockwise,
+  PiArrowUp,
+  PiArrowDown,
+  PiCloudArrowUp,
+  PiCloudArrowDown,
 } from 'react-icons/pi';
 import { BaseProps } from '../@types/common';
 import { ShownMessage, UpdateFeedbackRequest } from 'generative-ai-use-cases';
@@ -229,8 +233,30 @@ const ChatMessage: React.FC<Props> = (props) => {
             )}
 
             {chatContent?.role === 'assistant' && (
-              <div className="mt-2 text-right text-xs text-gray-400 lg:mb-0">
-                {chatContent?.llmType}
+              <div className="mt-2 flex flex-wrap justify-end gap-2">
+                <div className="text-right text-xs text-gray-400 lg:mb-0">
+                  {chatContent?.llmType}
+                </div>
+                {chatContent?.metadata && (
+                  <div className="flex items-center gap-1 text-xs text-gray-400">
+                    <PiArrowUp title="Input tokens" />
+                    {chatContent.metadata.usage.inputTokens}
+                    <PiArrowDown title="Output tokens" />
+                    {chatContent.metadata.usage.outputTokens}
+                    {chatContent.metadata.usage.cacheWriteInputTokens && (
+                      <>
+                        <PiCloudArrowUp title="Cache write input tokens" />
+                        {chatContent.metadata.usage.cacheWriteInputTokens}
+                      </>
+                    )}
+                    {chatContent.metadata.usage.cacheReadInputTokens && (
+                      <>
+                        <PiCloudArrowDown title="Cache read input tokens" />
+                        {chatContent.metadata.usage.cacheReadInputTokens}
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>

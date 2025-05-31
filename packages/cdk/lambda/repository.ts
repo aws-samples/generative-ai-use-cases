@@ -7,6 +7,7 @@ import {
   SystemContext,
   UpdateFeedbackRequest,
   ListChatsResponse,
+  TokenUsageStats,
 } from 'generative-ai-use-cases';
 import * as crypto from 'crypto';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
@@ -21,6 +22,11 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 
 const TABLE_NAME: string = process.env.TABLE_NAME!;
+const TOKEN_USAGE_TABLE_NAME: string = process.env.TOKEN_USAGE_TABLE_NAME!;
+const TOKEN_USAGE_BY_USECASE_TABLE_NAME: string =
+  process.env.TOKEN_USAGE_BY_USECASE_TABLE_NAME!;
+const TOKEN_USAGE_BY_MODEL_TABLE_NAME: string =
+  process.env.TOKEN_USAGE_BY_MODEL_TABLE_NAME!;
 const dynamoDb = new DynamoDBClient({});
 const dynamoDbDocument = DynamoDBDocumentClient.from(dynamoDb);
 
@@ -201,6 +207,120 @@ export const listMessages = async (
   return res.Items as RecordedMessage[];
 };
 
+// Update token usage
+async function updateTokenUsage(message: RecordedMessage): Promise<void> {
+  const timestamp = message.createdDate.split('#')[0];
+  const date = new Date(parseInt(timestamp));
+  const dateStr = date.toISOString().slice(0, 10); // YYYY-MM-DD
+  const userId = message.userId.replace('user#', '');
+  const modelId = message.llmType || 'unknown';
+  const usecase = message.usecase || 'unknown';
+  const usage = message.metadata?.usage || {
+    inputTokens: 0,
+    outputTokens: 0,
+    cacheReadInputTokens: 0,
+    cacheWriteInputTokens: 0,
+  };
+
+  try {
+    // Define 3 update commands for 3 tables
+    const mainTableUpdate = {
+      TableName: TOKEN_USAGE_TABLE_NAME,
+      Key: {
+        userId,
+        date: dateStr,
+      },
+      UpdateExpression: `
+        SET totalExecutions = if_not_exists(totalExecutions, :zero) + :one,
+            totalInputTokens = if_not_exists(totalInputTokens, :zero) + :inputTokens,
+            totalOutputTokens = if_not_exists(totalOutputTokens, :zero) + :outputTokens,
+            totalCacheReadInputTokens = if_not_exists(totalCacheReadInputTokens, :zero) + :cacheReadInputTokens,
+            totalCacheWriteInputTokens = if_not_exists(totalCacheWriteInputTokens, :zero) + :cacheWriteInputTokens
+      `,
+      ExpressionAttributeValues: {
+        ':zero': 0,
+        ':one': 1,
+        ':inputTokens': usage.inputTokens || 0,
+        ':outputTokens': usage.outputTokens || 0,
+        ':cacheReadInputTokens': usage.cacheReadInputTokens || 0,
+        ':cacheWriteInputTokens': usage.cacheWriteInputTokens || 0,
+      },
+    };
+
+    const usecaseUpdate = {
+      TableName: TOKEN_USAGE_BY_USECASE_TABLE_NAME,
+      Key: {
+        userId,
+        dateUsecase: `${dateStr}#${usecase}`,
+      },
+      UpdateExpression: `
+        SET #date = :date,
+            #usecase = :usecase,
+            executions = if_not_exists(executions, :zero) + :one,
+            inputTokens = if_not_exists(inputTokens, :zero) + :inputTokens,
+            outputTokens = if_not_exists(outputTokens, :zero) + :outputTokens,
+            cacheReadInputTokens = if_not_exists(cacheReadInputTokens, :zero) + :cacheReadInputTokens,
+            cacheWriteInputTokens = if_not_exists(cacheWriteInputTokens, :zero) + :cacheWriteInputTokens
+      `,
+      ExpressionAttributeNames: {
+        '#date': 'date',
+        '#usecase': 'usecase',
+      },
+      ExpressionAttributeValues: {
+        ':date': dateStr,
+        ':usecase': usecase,
+        ':zero': 0,
+        ':one': 1,
+        ':inputTokens': usage.inputTokens || 0,
+        ':outputTokens': usage.outputTokens || 0,
+        ':cacheReadInputTokens': usage.cacheReadInputTokens || 0,
+        ':cacheWriteInputTokens': usage.cacheWriteInputTokens || 0,
+      },
+    };
+
+    const modelUpdate = {
+      TableName: TOKEN_USAGE_BY_MODEL_TABLE_NAME,
+      Key: {
+        userId,
+        dateModel: `${dateStr}#${modelId}`,
+      },
+      UpdateExpression: `
+        SET #date = :date,
+            #modelId = :modelId,
+            executions = if_not_exists(executions, :zero) + :one,
+            inputTokens = if_not_exists(inputTokens, :zero) + :inputTokens,
+            outputTokens = if_not_exists(outputTokens, :zero) + :outputTokens,
+            cacheReadInputTokens = if_not_exists(cacheReadInputTokens, :zero) + :cacheReadInputTokens,
+            cacheWriteInputTokens = if_not_exists(cacheWriteInputTokens, :zero) + :cacheWriteInputTokens
+      `,
+      ExpressionAttributeNames: {
+        '#date': 'date',
+        '#modelId': 'modelId',
+      },
+      ExpressionAttributeValues: {
+        ':date': dateStr,
+        ':modelId': modelId,
+        ':zero': 0,
+        ':one': 1,
+        ':inputTokens': usage.inputTokens || 0,
+        ':outputTokens': usage.outputTokens || 0,
+        ':cacheReadInputTokens': usage.cacheReadInputTokens || 0,
+        ':cacheWriteInputTokens': usage.cacheWriteInputTokens || 0,
+      },
+    };
+
+    // Update 3 tables in parallel
+    await Promise.all([
+      dynamoDbDocument.send(new UpdateCommand(mainTableUpdate)),
+      dynamoDbDocument.send(new UpdateCommand(usecaseUpdate)),
+      dynamoDbDocument.send(new UpdateCommand(modelUpdate)),
+    ]);
+  } catch (error) {
+    console.error('Error updating token usage:', error);
+    throw error;
+  }
+}
+
 export const batchCreateMessages = async (
   messages: ToBeRecordedMessage[],
   _userId: string,
@@ -225,9 +345,12 @@ export const batchCreateMessages = async (
         feedback,
         usecase: m.usecase,
         llmType: m.llmType ?? '',
+        metadata: m.metadata,
       };
     }
   );
+
+  // Save messages
   await dynamoDbDocument.send(
     new BatchWriteCommand({
       RequestItems: {
@@ -241,6 +364,9 @@ export const batchCreateMessages = async (
       },
     })
   );
+
+  // Update token usage in parallel
+  await Promise.all(items.map(updateTokenUsage));
 
   return items;
 };
@@ -518,4 +644,163 @@ export const deleteShareId = async (_shareId: string): Promise<void> => {
       ],
     })
   );
+};
+
+export const aggregateTokenUsage = async (
+  startDate: string,
+  endDate: string,
+  userIds?: string[]
+): Promise<TokenUsageStats[]> => {
+  const userId = userIds?.[0];
+  if (!userId) {
+    throw new Error('userId is required');
+  }
+
+  // Calculate the difference between dates
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const diffTime = Math.abs(end.getTime() - start.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+  // getRecentTokenUsage to get data
+  return getRecentTokenUsage(diffDays, userId);
+};
+
+// Get token usage for the last N days
+export const getRecentTokenUsage = async (
+  days: number = 7,
+  userId?: string
+): Promise<TokenUsageStats[]> => {
+  const endDate = new Date();
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days + 1);
+
+  const startDateStr = startDate.toISOString().slice(0, 10);
+  const endDateStr = endDate.toISOString().slice(0, 10);
+
+  try {
+    // Define queries with date range
+    const mainTableQuery = {
+      TableName: TOKEN_USAGE_TABLE_NAME,
+      KeyConditionExpression:
+        '#userId = :userId AND #date BETWEEN :startDate AND :endDate',
+      ExpressionAttributeNames: {
+        '#userId': 'userId',
+        '#date': 'date',
+      },
+      ExpressionAttributeValues: {
+        ':userId': userId,
+        ':startDate': startDateStr,
+        ':endDate': endDateStr,
+      },
+    };
+
+    const usecaseQuery = {
+      TableName: TOKEN_USAGE_BY_USECASE_TABLE_NAME,
+      KeyConditionExpression:
+        '#userId = :userId AND #dateUsecase BETWEEN :startDatePrefix AND :endDatePrefix',
+      ExpressionAttributeNames: {
+        '#userId': 'userId',
+        '#dateUsecase': 'dateUsecase',
+      },
+      ExpressionAttributeValues: {
+        ':userId': userId,
+        ':startDatePrefix': `${startDateStr}#`,
+        ':endDatePrefix': `${endDateStr}#\uffff`, // \uffff is the highest Unicode character
+      },
+    };
+
+    const modelQuery = {
+      TableName: TOKEN_USAGE_BY_MODEL_TABLE_NAME,
+      KeyConditionExpression:
+        '#userId = :userId AND #dateModel BETWEEN :startDatePrefix AND :endDatePrefix',
+      ExpressionAttributeNames: {
+        '#userId': 'userId',
+        '#dateModel': 'dateModel',
+      },
+      ExpressionAttributeValues: {
+        ':userId': userId,
+        ':startDatePrefix': `${startDateStr}#`,
+        ':endDatePrefix': `${endDateStr}#\uffff`, // \uffff is the highest Unicode character
+      },
+    };
+
+    // Execute queries in parallel
+    const [mainResults, usecaseResults, modelResults] = await Promise.all([
+      dynamoDbDocument.send(new QueryCommand(mainTableQuery)),
+      dynamoDbDocument.send(new QueryCommand(usecaseQuery)),
+      dynamoDbDocument.send(new QueryCommand(modelQuery)),
+    ]);
+
+    // Create a map of dates to store aggregated data
+    const statsMap = new Map<string, TokenUsageStats>();
+
+    // Initialize stats for all dates in the range
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      const dateStr = currentDate.toISOString().slice(0, 10);
+      statsMap.set(dateStr, {
+        date: dateStr,
+        userId: userId || 'all',
+        totalExecutions: 0,
+        totalInputTokens: 0,
+        totalOutputTokens: 0,
+        totalCacheReadInputTokens: 0,
+        totalCacheWriteInputTokens: 0,
+        usecaseStats: {},
+        modelStats: {},
+      });
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Process main table results
+    mainResults.Items?.forEach((item) => {
+      const stats = statsMap.get(item.date);
+      if (stats) {
+        stats.totalExecutions = item.totalExecutions || 0;
+        stats.totalInputTokens = item.totalInputTokens || 0;
+        stats.totalOutputTokens = item.totalOutputTokens || 0;
+        stats.totalCacheReadInputTokens = item.totalCacheReadInputTokens || 0;
+        stats.totalCacheWriteInputTokens = item.totalCacheWriteInputTokens || 0;
+      }
+    });
+
+    // Process usecase results
+    usecaseResults.Items?.forEach((item) => {
+      const [date, usecase] = item.dateUsecase.split('#');
+      const stats = statsMap.get(date);
+      if (stats) {
+        stats.usecaseStats[usecase] = {
+          executions: item.executions || 0,
+          inputTokens: item.inputTokens || 0,
+          outputTokens: item.outputTokens || 0,
+          cacheReadInputTokens: item.cacheReadInputTokens || 0,
+          cacheWriteInputTokens: item.cacheWriteInputTokens || 0,
+        };
+      }
+    });
+
+    // Process model results
+    modelResults.Items?.forEach((item) => {
+      const [date, modelId] = item.dateModel.split('#');
+      const stats = statsMap.get(date);
+      if (stats) {
+        stats.modelStats[modelId] = {
+          executions: item.executions || 0,
+          inputTokens: item.inputTokens || 0,
+          outputTokens: item.outputTokens || 0,
+          cacheReadInputTokens: item.cacheReadInputTokens || 0,
+          cacheWriteInputTokens: item.cacheWriteInputTokens || 0,
+        };
+      }
+    });
+
+    // Convert map to array and sort by date
+    return Array.from(statsMap.values()).sort((a, b) =>
+      a.date.localeCompare(b.date)
+    );
+  } catch (error) {
+    console.error('Error fetching token usage data:', error);
+    throw error;
+  }
 };
