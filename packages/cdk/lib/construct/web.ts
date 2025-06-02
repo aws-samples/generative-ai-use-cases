@@ -187,14 +187,22 @@ export class Web extends Construct {
       });
     }
 
+    // Apply additional CloudFront configurations
+    const cfnDistribution = cloudFrontWebDistribution.node
+      .defaultChild as CfnDistribution;
+    
     if (props.webAclId) {
-      const existingCloudFrontWebDistribution = cloudFrontWebDistribution.node
-        .defaultChild as CfnDistribution;
-      existingCloudFrontWebDistribution.addPropertyOverride(
+      cfnDistribution.addPropertyOverride(
         'DistributionConfig.WebACLId',
         props.webAclId
       );
     }
+
+    // Ensure IPv6 setting is applied (fallback if enableIpv6 doesn't work)
+    cfnDistribution.addPropertyOverride(
+      'DistributionConfig.IPV6Enabled',
+      props.cloudFrontIPv6Enabled
+    );
 
     const build = new NodejsBuild(this, 'BuildWeb', {
       assets: [
