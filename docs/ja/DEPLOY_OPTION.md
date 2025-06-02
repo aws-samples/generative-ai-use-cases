@@ -1557,6 +1557,32 @@ const envs: Record<string, Partial<StackInput>> = {
 npx -w packages/cdk cdk bootstrap --region us-east-1
 ```
 
+### CloudFront IPv6 設定
+
+CloudFront の IPv6 サポートを有効または無効に設定できます。`cloudFrontIPv6Enabled` を `false` に設定すると、CloudFront ディストリビューションの IPv6 サポートが無効化されます。（デフォルトは `true`）
+
+**[parameter.ts](/packages/cdk/parameter.ts) を編集**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    cloudFrontIPv6Enabled: false,
+  },
+};
+```
+
+**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
+
+```json
+// cdk.json
+{
+  "context": {
+    "cloudFrontIPv6Enabled": false
+  }
+}
+```
+
 ### SAML 認証
 
 Google Workspace や Microsoft Entra ID (旧 Azure Active Directory) などの IdP が提供する SAML 認証機能と連携ができます。次に詳細な連携手順があります。こちらもご活用ください。

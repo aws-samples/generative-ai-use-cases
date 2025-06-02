@@ -1550,6 +1550,32 @@ When you specify any of `allowedIpV4AddressRanges`, `allowedIpV6AddressRanges`, 
 npx -w packages/cdk cdk bootstrap --region us-east-1
 ```
 
+### CloudFront IPv6 Configuration
+
+You can enable or disable IPv6 support for CloudFront. Set `cloudFrontIPv6Enabled` to `false` to disable IPv6 support for the CloudFront distribution. (Default is `true`)
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    cloudFrontIPv6Enabled: false,
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+{
+  "context": {
+    "cloudFrontIPv6Enabled": false
+  }
+}
+```
+
 ### SAML Authentication
 
 You can integrate with SAML authentication features provided by IdPs such as Google Workspace or Microsoft Entra ID (formerly Azure Active Directory). Here are detailed integration procedures:

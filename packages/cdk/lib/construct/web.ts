@@ -56,6 +56,7 @@ export interface WebProps {
   readonly speechToSpeechNamespace: string;
   readonly speechToSpeechEventApiEndpoint: string;
   readonly speechToSpeechModelIds: ModelConfiguration[];
+  readonly cloudFrontIPv6Enabled: boolean;
 }
 
 export class Web extends Construct {
@@ -125,6 +126,7 @@ export class Web extends Construct {
       cloudFrontLoggingBucketProps: commonBucketProps,
       cloudFrontLoggingBucketAccessLogBucketProps: commonBucketProps,
       cloudFrontDistributionProps: {
+        enableIpv6: props.cloudFrontIPv6Enabled,
         defaultBehavior: {
           responseHeadersPolicy: responseHeadersPolicy,
         },

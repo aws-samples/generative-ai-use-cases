@@ -152,6 +152,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       speechToSpeechModelIds: params.speechToSpeechModelIds,
       // Frontend
       hiddenUseCases: params.hiddenUseCases,
+      cloudFrontIPv6Enabled: params.cloudFrontIPv6Enabled,
       // Custom Domain
       cert: props.cert,
       hostName: params.hostName,

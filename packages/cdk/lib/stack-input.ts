@@ -151,6 +151,8 @@ export const stackInputSchema = z.object({
   allowedIpV4AddressRanges: z.array(z.string()).nullish(),
   allowedIpV6AddressRanges: z.array(z.string()).nullish(),
   allowedCountryCodes: z.array(z.string()).nullish(),
+  // CloudFront
+  cloudFrontIPv6Enabled: z.boolean().default(true),
   // Custom Domain
   hostName: z.string().nullish(),
   domainName: z.string().nullish(),
