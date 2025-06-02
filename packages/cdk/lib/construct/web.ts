@@ -198,12 +198,6 @@ export class Web extends Construct {
       );
     }
 
-    // Ensure IPv6 setting is applied (fallback if enableIpv6 doesn't work)
-    cfnDistribution.addPropertyOverride(
-      'DistributionConfig.IPV6Enabled',
-      props.cloudFrontIPv6Enabled
-    );
-
     const build = new NodejsBuild(this, 'BuildWeb', {
       assets: [
         {
