@@ -83,6 +83,7 @@ const AgentChatPage: React.FC = () => {
     messages,
     clear,
     postChat,
+    editChat,
     updateSystemContextByModel,
     retryGeneration,
     forceToStop,
@@ -180,6 +181,25 @@ const AgentChatPage: React.FC = () => {
     setSessionId(uuidv4());
   }, [forceToStop, setSessionId]);
 
+  const onEdit = useCallback(
+    (modifiedPrompt: string) => {
+      setFollowing(true);
+      editChat(
+        modifiedPrompt,
+        false,
+        undefined,
+        undefined,
+        sessionId,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        base64Cache
+      );
+    },
+    [editChat, sessionId, base64Cache, setFollowing]
+  );
+
   const showingMessages = useMemo(() => {
     return messages;
   }, [messages]);
@@ -265,6 +285,12 @@ const AgentChatPage: React.FC = () => {
                   loading={loading && idx === showingMessages.length - 1}
                   allowRetry={idx === showingMessages.length - 1}
                   retryGeneration={onRetry}
+                  editable={idx === showingMessages.length - 2 && !loading}
+                  onCommitEdit={
+                    idx === showingMessages.length - 2 && !loading
+                      ? onEdit
+                      : undefined
+                  }
                 />
                 <div className="w-full border-b border-gray-300"></div>
               </div>

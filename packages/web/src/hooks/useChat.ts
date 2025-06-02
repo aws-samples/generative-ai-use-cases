@@ -643,7 +643,11 @@ const useChatState = create<{
     }
 
     // In the case of continuing to output, retrying, or editing, update the last assistant's message
-    if (generationMode === 'continue' || generationMode === 'retry' || generationMode == 'edit') {
+    if (
+      generationMode === 'continue' ||
+      generationMode === 'retry' ||
+      generationMode == 'edit'
+    ) {
       const lastAssistantMessage: ShownMessage =
         get().chats[id].messages[get().chats[id].messages.length - 1];
       const updatedAssistantMessage: ToBeRecordedMessage = {

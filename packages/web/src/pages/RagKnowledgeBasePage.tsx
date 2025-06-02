@@ -72,6 +72,7 @@ const RagKnowledgeBasePage: React.FC = () => {
     messages,
     clear,
     postChat,
+    editChat,
     updateSystemContextByModel,
     retryGeneration,
     forceToStop,
@@ -214,6 +215,24 @@ const RagKnowledgeBasePage: React.FC = () => {
     setSessionId(undefined);
   }, [clear, setContent, setFilters, setSessionId]);
 
+  const onEdit = useCallback(
+    (modifiedPrompt: string) => {
+      const extraData: ExtraData[] = getExtraDataFromFilters();
+      editChat(
+        modifiedPrompt,
+        false,
+        undefined,
+        undefined,
+        sessionId,
+        undefined,
+        extraData,
+        'bedrockKb',
+        setSessionId
+      );
+    },
+    [sessionId, getExtraDataFromFilters, editChat, setSessionId]
+  );
+
   const onStop = useCallback(() => {
     forceToStop();
     setSessionId(undefined);
@@ -251,6 +270,10 @@ const RagKnowledgeBasePage: React.FC = () => {
                 loading={loading && idx === messages.length - 1}
                 allowRetry={idx === messages.length - 1}
                 retryGeneration={onRetry}
+                editable={idx === messages.length - 2 && !loading}
+                onCommitEdit={
+                  idx === messages.length - 2 && !loading ? onEdit : undefined
+                }
               />
               <div className="w-full border-b border-gray-300"></div>
             </div>

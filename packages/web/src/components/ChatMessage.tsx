@@ -37,7 +37,7 @@ type Props = BaseProps & {
   allowRetry?: boolean;
   editable?: boolean;
   retryGeneration?: () => void;
-  onCommitEdit?: (string: modifiedPrompt) => void;
+  onCommitEdit?: (modifiedPrompt: string) => void;
 };
 
 const ChatMessage: React.FC<Props> = (props) => {
@@ -215,17 +215,19 @@ const ChatMessage: React.FC<Props> = (props) => {
                 })}
               </div>
             )}
-            {chatContent?.role === 'user' && (<>
-              {editing ? (
-                <Textarea value={editingPrompt} onChange={setEditingPrompt}/>
-              ) : (
-                <div className="whitespace-pre-wrap">{typingTextOutput}</div>
-              )}
-            </>)}
+            {chatContent?.role === 'user' && (
+              <>
+                {editing ? (
+                  <Textarea value={editingPrompt} onChange={setEditingPrompt} />
+                ) : (
+                  <div className="whitespace-pre-wrap">{typingTextOutput}</div>
+                )}
+              </>
+            )}
             {chatContent?.role === 'assistant' && (
               <Markdown prefix={`${props.idx}`}>
                 {typingTextOutput +
-                 `${
+                  `${
                     props.loading && (chatContent?.content ?? '') !== ''
                       ? '▍'
                       : ''
@@ -259,68 +261,74 @@ const ChatMessage: React.FC<Props> = (props) => {
               <PiFloppyDisk />
             </ButtonIcon>
           )}
-          {chatContent?.role === 'user' && props.editable && (<>
-            {editing ? (<>
-              <ButtonIcon
-                onClick={() => {
-                  setEditing(false);
-                }}>
-                <PiX className="text-red-500"/>
-              </ButtonIcon>
-              <ButtonIcon
-                onClick={() => {
-                  setEditing(false);
-                  props.onCommitEdit(editingPrompt);
-                }}>
-                <PiCheck className="text-green-500"/>
-              </ButtonIcon>
-            </>) : (
-              <ButtonIcon
-                onClick={() => {
-                  setEditingPrompt(chatContent?.content ?? '');
-                  setEditing(true);
-                }}>
-                <PiNotePencil className="text-gray-400"/>
-              </ButtonIcon>
-            )}
-          </>)}
-          {chatContent?.role === 'assistant' &&
-           !props.loading &&
-           !props.hideFeedback && (
-             <>
-               {props.allowRetry && (
-                 <ButtonIcon
-                   className="mr-0.5 text-gray-400"
-                   onClick={() => props.retryGeneration?.()}>
-                   <PiArrowClockwise />
-                 </ButtonIcon>
-               )}
-               <ButtonCopy
-                 className="mr-0.5 text-gray-400"
-                 text={chatContent?.content || ''}
-               />
-               {chatContent && (
-                 <>
-                   <ButtonFeedback
-                     className="mx-0.5"
-                     feedback="good"
-                     message={chatContent}
-                     disabled={disabled}
-                     onClick={() => {
-                       handleFeedbackClick('good');
-                     }}
-                   />
-                   <ButtonFeedback
-                     className="ml-0.5"
-                     feedback="bad"
-                     message={chatContent}
-                     disabled={disabled}
-                     onClick={() => handleFeedbackClick('bad')}
-                   />
-                 </>
-               )}
-             </>
+          {chatContent?.role === 'user' && props.editable && (
+            <>
+              {editing ? (
+                <>
+                  <ButtonIcon
+                    onClick={() => {
+                      setEditing(false);
+                    }}>
+                    <PiX className="text-red-500" />
+                  </ButtonIcon>
+                  <ButtonIcon
+                    onClick={() => {
+                      if (props.onCommitEdit) {
+                        setEditing(false);
+                        props.onCommitEdit(editingPrompt);
+                      }
+                    }}>
+                    <PiCheck className="text-green-500" />
+                  </ButtonIcon>
+                </>
+              ) : (
+                <ButtonIcon
+                  onClick={() => {
+                    setEditingPrompt(chatContent?.content ?? '');
+                    setEditing(true);
+                  }}>
+                  <PiNotePencil className="text-gray-400" />
+                </ButtonIcon>
+              )}
+            </>
           )}
+          {chatContent?.role === 'assistant' &&
+            !props.loading &&
+            !props.hideFeedback && (
+              <>
+                {props.allowRetry && (
+                  <ButtonIcon
+                    className="mr-0.5 text-gray-400"
+                    onClick={() => props.retryGeneration?.()}>
+                    <PiArrowClockwise />
+                  </ButtonIcon>
+                )}
+                <ButtonCopy
+                  className="mr-0.5 text-gray-400"
+                  text={chatContent?.content || ''}
+                />
+                {chatContent && (
+                  <>
+                    <ButtonFeedback
+                      className="mx-0.5"
+                      feedback="good"
+                      message={chatContent}
+                      disabled={disabled}
+                      onClick={() => {
+                        handleFeedbackClick('good');
+                      }}
+                    />
+                    <ButtonFeedback
+                      className="ml-0.5"
+                      feedback="bad"
+                      message={chatContent}
+                      disabled={disabled}
+                      onClick={() => handleFeedbackClick('bad')}
+                    />
+                  </>
+                )}
+              </>
+            )}
         </div>
         <div>
           {showFeedbackForm && (
