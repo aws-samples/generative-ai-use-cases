@@ -187,12 +187,10 @@ export class Web extends Construct {
       });
     }
 
-    // Apply additional CloudFront configurations
-    const cfnDistribution = cloudFrontWebDistribution.node
-      .defaultChild as CfnDistribution;
-    
     if (props.webAclId) {
-      cfnDistribution.addPropertyOverride(
+      const existingCloudFrontWebDistribution = cloudFrontWebDistribution.node
+        .defaultChild as CfnDistribution;
+      existingCloudFrontWebDistribution.addPropertyOverride(
         'DistributionConfig.WebACLId',
         props.webAclId
       );
