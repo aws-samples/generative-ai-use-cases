@@ -64,6 +64,11 @@ export class Web extends Construct {
   constructor(scope: Construct, id: string, props: WebProps) {
     super(scope, id);
 
+    const cspSaml = props.samlCognitoDomainName
+      ? ` https://${props.samlCognitoDomainName}`
+      : '';
+    const csp = `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' https://*.amazonaws.com; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com:* https://raw.githubusercontent.com https://api.github.com${cspSaml}; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;`;
+
     // Create Response Headers Policy for security headers
     const responseHeadersPolicy = new ResponseHeadersPolicy(
       this,
@@ -72,8 +77,7 @@ export class Web extends Construct {
         securityHeadersBehavior: {
           // Content Security Policy configuration
           contentSecurityPolicy: {
-            contentSecurityPolicy:
-              "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' https://*.amazonaws.com https://*.s3.*.amazonaws.com; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com:* https://raw.githubusercontent.com https://api.github.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;",
+            contentSecurityPolicy: csp,
             override: true,
           },
           // Clickjacking protection

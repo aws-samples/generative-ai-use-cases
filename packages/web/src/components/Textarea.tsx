@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import RowItem, { RowItemProps } from './RowItem';
 import Help from './Help';
 import { useTranslation } from 'react-i18next';
@@ -25,48 +25,26 @@ const MAX_HEIGHT = 300;
 const Textarea: React.FC<Props> = (props) => {
   const { t } = useTranslation();
   const ref = useRef<HTMLTextAreaElement>(null);
-  const [isMax, setIsMax] = useState(false);
-  const _maxHeight = props.maxHeight || MAX_HEIGHT;
+  const maxHeight = props.maxHeight || MAX_HEIGHT;
 
-  useEffect(() => {
-    if (!ref.current) {
-      return;
-    }
-
+  useLayoutEffect(() => {
+    if (!ref.current) return;
+    // Reset the height to auto to calculate the scroll height
     ref.current.style.height = 'auto';
+    ref.current.style.overflowY = 'hidden';
 
-    if (_maxHeight > 0 && ref.current.scrollHeight > _maxHeight) {
-      ref.current.style.height = _maxHeight + 'px';
-      setIsMax(true);
-    } else {
-      ref.current.style.height = ref.current.scrollHeight + 'px';
-      setIsMax(false);
-    }
-  }, [props.value, _maxHeight]);
+    // Ensure the layout is updated before calculating the scroll height
+    // due to the bug in Firefox:
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1795904
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1787062
+    void ref.current.scrollHeight;
 
-  useEffect(() => {
-    const current = ref.current;
-    if (!current) {
-      return;
-    }
-
-    const listener = (e: DocumentEventMap['keypress']) => {
-      if (props.onEnter) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          props.onEnter();
-        }
-      }
-    };
-
-    current.addEventListener('keypress', listener);
-
-    return () => {
-      if (current) {
-        current.removeEventListener('keypress', listener);
-      }
-    };
-  }, [ref, props]);
+    // Set the height to match content, up to max height
+    const scrollHeight = ref.current.scrollHeight;
+    const isMax = maxHeight > 0 && scrollHeight > maxHeight;
+    ref.current.style.height = (isMax ? maxHeight : scrollHeight) + 'px';
+    ref.current.style.overflowY = isMax ? 'auto' : 'hidden';
+  }, [props.value, maxHeight]);
 
   return (
     <RowItem notItem={props.notItem}>
@@ -93,13 +71,19 @@ const Textarea: React.FC<Props> = (props) => {
         className={`${
           props.className ?? ''
         } w-full resize-none rounded p-1.5 outline-none ${
-          isMax ? 'overflow-y-auto' : 'overflow-hidden'
-        } ${
           props.noBorder ? 'border-0 focus:ring-0 ' : 'border border-black/30'
         } ${props.disabled ? 'bg-gray-200 ' : ''}`}
         rows={props.rows ?? 1}
         placeholder={props.placeholder || t('common.enter_text')}
         value={props.value}
+        onKeyDown={(e) => {
+          // keyCode is deprecated, but used for some browsers to handle IME input
+          if (e.nativeEvent.isComposing || e.keyCode === 229) return;
+          if (props.onEnter && e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            props.onEnter();
+          }
+        }}
         onChange={(e) => {
           props.onChange(e.target.value);
         }}
