@@ -61,7 +61,7 @@
     "allowedIpV4AddressRanges": null,
     "allowedIpV6AddressRanges": null,
     "allowedCountryCodes": null,
-    "cloudFrontIPv6Enabled": false,
+    "cloudFrontIPv6Enabled": true,
     "hostName": null,
     "domainName": null,
     "hostedZoneId": null,
