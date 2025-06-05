@@ -10,6 +10,10 @@ npm run cdk:destroy
 npm run cdk:destroy -- -c env=prod
 ```
 
+> [!NOTE]
+> デプロイ時と削除時の cdk.json (parameter.ts) の値が異なると、上記コマンドを実行しても特定のスタックが削除されない場合があります。
+> マネジメントコンソールの CloudFormation の画面 (modelRegion および cdk deploy を実行したリージョン) にて、関連するスタックが残っていないことを確認して下さい。
+
 ## エラーになった場合
 
 以下のようなエラーが発生することがあります。

@@ -10,6 +10,10 @@ npm run cdk:destroy
 npm run cdk:destroy -- -c env=prod
 ```
 
+> [!NOTE]
+> If the values in cdk.json (parameter.ts) differ between deployment and deletion times, certain stacks may not be deleted when running the above command.
+> Please verify that no stacks remain by checking the CloudFormation page in AWS Management Console (in the modelRegion and the region where you executed cdk deploy).
+
 ## If an Error Occurs
 
 You may encounter the following error:
