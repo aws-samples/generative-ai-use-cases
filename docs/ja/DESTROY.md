@@ -1,9 +1,13 @@
 # リソースの削除方法
 
-以下のコマンドを実行してください。**Cognito UserPool, DynamoDB Table など全てのデータが削除されます。**
+デプロイ方法に応じて、以下のコマンドを実行してください。**Cognito UserPool, DynamoDB Table など全てのデータが削除されます。**
 
 ```bash
+# cdk.json の context.env で指定した環境を削除
 npm run cdk:destroy
+
+# parameter.ts で設定した環境を削除 (以下の例では 'prod')
+npm run cdk:destroy -- -c env=prod
 ```
 
 ## エラーになった場合
