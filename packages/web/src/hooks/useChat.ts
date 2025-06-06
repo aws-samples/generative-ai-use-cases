@@ -69,7 +69,8 @@ const useChatState = create<{
     overrideModelType: Model['type'] | undefined,
     setSessionId: (sessionId: string) => void,
     base64Cache: Record<string, string> | undefined,
-    overrideModelParameters: AdditionalModelRequestFields | undefined
+    overrideModelParameters: AdditionalModelRequestFields | undefined,
+    knowledgeBaseId: string | undefined
   ) => void;
   edit: (
     id: string,
@@ -439,7 +440,8 @@ const useChatState = create<{
     base64Cache: Record<string, string> | undefined = undefined,
     overrideModelParameters:
       | AdditionalModelRequestFields
-      | undefined = undefined
+      | undefined = undefined,
+    selectedKnowledgeBaseId: string | undefined = undefined
   ) => {
     const modelId = get().modelIds[id];
 
@@ -538,6 +540,7 @@ const useChatState = create<{
       model: model,
       messages: formattedMessages,
       id: id,
+      kbId: selectedKnowledgeBaseId,
     });
 
     // Update the assistant's message
@@ -763,7 +766,8 @@ const useChatState = create<{
       base64Cache: Record<string, string> | undefined = undefined,
       overrideModelParameters:
         | AdditionalModelRequestFields
-        | undefined = undefined
+        | undefined = undefined,
+      selectedKnowledgeBaseId: string | undefined = undefined
     ) => {
       const unrecordedUserMessage: UnrecordedMessage = {
         role: 'user',
@@ -816,7 +820,8 @@ const useChatState = create<{
         overrideModelType,
         setSessionId,
         base64Cache,
-        overrideModelParameters
+        overrideModelParameters,
+        selectedKnowledgeBaseId
       );
     },
 
@@ -1010,7 +1015,8 @@ const useChat = (id: string, chatId?: string) => {
       base64Cache: Record<string, string> | undefined = undefined,
       overrideModelParameters:
         | AdditionalModelRequestFields
-        | undefined = undefined
+        | undefined = undefined,
+      selectedKnowledgeBaseId: string | undefined = undefined
     ) => {
       post(
         id,
@@ -1025,7 +1031,8 @@ const useChat = (id: string, chatId?: string) => {
         overrideModelType,
         setSessionId,
         base64Cache,
-        overrideModelParameters
+        overrideModelParameters,
+        selectedKnowledgeBaseId
       );
     },
     editChat: (
