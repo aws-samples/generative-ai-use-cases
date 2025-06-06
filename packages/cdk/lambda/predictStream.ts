@@ -17,16 +17,25 @@ declare global {
 
 export const handler = awslambda.streamifyResponse(
   async (event, responseStream, context) => {
-    context.callbackWaitsForEmptyEventLoop = false;
-    const model = event.model || defaultModel;
-    for await (const token of api[model.type].invokeStream?.(
-      model,
-      event.messages,
-      event.id,
-      event.idToken
-    ) ?? []) {
-      responseStream.write(token);
+    try {
+      context.callbackWaitsForEmptyEventLoop = false;
+      const model = event.model || defaultModel;
+      for await (const token of api[model.type].invokeStream?.(
+        model,
+        event.messages,
+        event.id,
+        event.idToken,
+        event.kbId
+      ) ?? []) {
+        responseStream.write(token);
+      }
+      responseStream.end();
+    } catch (error) {
+      console.error('Error in stream processing:', error);
+      responseStream.write(
+        JSON.stringify({ error: 'Stream processing failed' })
+      );
+      responseStream.end();
     }
-    responseStream.end();
   }
 );

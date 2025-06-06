@@ -17,6 +17,10 @@ import { userDefinedExplicitFilters } from '@generative-ai-use-cases/common';
 import { RetrievalFilter } from '@aws-sdk/client-bedrock-agent-runtime';
 import { RetrievalFilterLabel } from '../components/KbFilter';
 import KbFilter from '../components/KbFilter';
+
+//Added for dynamic KB
+import { useKnowledgeBases } from '../hooks/useKnowledgeBases';
+
 import {
   ExplicitFilterConfiguration,
   ExtraData,
@@ -33,6 +37,8 @@ type StateType = {
   setSessionId: (c: string | undefined) => void;
   setContent: (c: string) => void;
   setFilters: (f: (RetrievalFilterLabel | null)[]) => void;
+  selectedKnowledgeBaseId: string | undefined;
+  setSelectedKnowledgeBaseId: (id: string | undefined) => void;
 };
 
 const useRagKnowledgeBasePageState = create<StateType>((set) => {
@@ -55,6 +61,12 @@ const useRagKnowledgeBasePageState = create<StateType>((set) => {
         filters: f,
       }));
     },
+    selectedKnowledgeBaseId: undefined,
+    setSelectedKnowledgeBaseId: (id: string | undefined) => {
+      set(() => ({
+        selectedKnowledgeBaseId: id,
+      }));
+    },
   };
 });
 
@@ -67,15 +79,12 @@ const RagKnowledgeBasePage: React.FC = () => {
     getModelId,
     setModelId,
     loading,
-    writing,
     isEmpty,
     messages,
     clear,
     postChat,
-    editChat,
     updateSystemContextByModel,
     retryGeneration,
-    forceToStop,
   } = useChat(pathname);
   const { scrollableContainer, setFollowing } = useFollow();
   const { modelIdsInModelRegion: availableModels, modelDisplayName } = MODELS;
@@ -85,6 +94,8 @@ const RagKnowledgeBasePage: React.FC = () => {
   }, [modelId]);
 
   const [showSetting, setShowSetting] = useState(false);
+  const [selectedKnowledgeBaseId, setSelectedKnowledgeBaseId] =
+    useState<string>('');
 
   const RetrievalFilterLabelToRetrievalFilter = (
     f: RetrievalFilterLabel | null,
@@ -172,6 +183,19 @@ const RagKnowledgeBasePage: React.FC = () => {
     setFollowing(true);
     // If there is a filter, add it to extraData
     const extraData: ExtraData[] = getExtraDataFromFilters();
+
+    // Add the knowledge base ID to the request if selected
+    /*if (selectedKnowledgeBaseId) {
+      extraData.push({
+        type: 'json',
+        name: 'knowledgeBaseId',
+        source: {
+          type: 'json',
+          mediaType: 'application/json',
+          data: JSON.stringify({ knowledgeBaseId: selectedKnowledgeBaseId }),
+        },
+      });
+    }*/
     postChat(
       content,
       false,
@@ -181,7 +205,10 @@ const RagKnowledgeBasePage: React.FC = () => {
       undefined,
       extraData,
       'bedrockKb',
-      setSessionId
+      setSessionId,
+      undefined,
+      undefined,
+      selectedKnowledgeBaseId
     );
     setContent('');
   }, [
@@ -192,10 +219,25 @@ const RagKnowledgeBasePage: React.FC = () => {
     setContent,
     setFollowing,
     setSessionId,
+    selectedKnowledgeBaseId,
   ]);
 
   const onRetry = useCallback(() => {
     const extraData: ExtraData[] = getExtraDataFromFilters();
+
+    // Add the knowledge base ID to the request if selected
+    if (selectedKnowledgeBaseId) {
+      extraData.push({
+        type: 'json',
+        name: 'knowledgeBaseId',
+        source: {
+          type: 'json',
+          mediaType: 'application/json',
+          data: JSON.stringify({ knowledgeBaseId: selectedKnowledgeBaseId }),
+        },
+      });
+    }
+
     retryGeneration(
       false,
       undefined,
@@ -204,9 +246,17 @@ const RagKnowledgeBasePage: React.FC = () => {
       undefined,
       extraData,
       'bedrockKb',
-      setSessionId
+      setSessionId,
+      undefined,
+      undefined
     );
-  }, [sessionId, getExtraDataFromFilters, retryGeneration, setSessionId]);
+  }, [
+    sessionId,
+    selectedKnowledgeBaseId,
+    getExtraDataFromFilters,
+    retryGeneration,
+    setSessionId,
+  ]);
 
   const onReset = useCallback(() => {
     clear();
@@ -215,28 +265,17 @@ const RagKnowledgeBasePage: React.FC = () => {
     setSessionId(undefined);
   }, [clear, setContent, setFilters, setSessionId]);
 
-  const onEdit = useCallback(
-    (modifiedPrompt: string) => {
-      const extraData: ExtraData[] = getExtraDataFromFilters();
-      editChat(
-        modifiedPrompt,
-        false,
-        undefined,
-        undefined,
-        sessionId,
-        undefined,
-        extraData,
-        'bedrockKb',
-        setSessionId
-      );
-    },
-    [sessionId, getExtraDataFromFilters, editChat, setSessionId]
-  );
+  //const { knowledgeBaseIds, loading: loadingKbs } = useKnowledgeBases();
+  const { knowledgeBaseIds } = useKnowledgeBases();
 
-  const onStop = useCallback(() => {
-    forceToStop();
-    setSessionId(undefined);
-  }, [forceToStop, setSessionId]);
+  //const { selectedKnowledgeBaseId, setSelectedKnowledgeBaseId } = useRagKnowledgeBasePageState();
+  const handleKnowledgeBaseChange = (value: string) => {
+    if (value === '') {
+      setSelectedKnowledgeBaseId('');
+    } else {
+      setSelectedKnowledgeBaseId(value);
+    }
+  };
 
   return (
     <>
@@ -255,6 +294,21 @@ const RagKnowledgeBasePage: React.FC = () => {
           />
         </div>
 
+        <div className="mt-2 flex w-full items-end justify-center gap-4 lg:mt-0">
+          <Select
+            value={selectedKnowledgeBaseId ?? ''}
+            onChange={(value: string) => {
+              // Handle the change here
+              handleKnowledgeBaseChange(value);
+            }}
+            options={knowledgeBaseIds.map((id) => {
+              return { value: id, label: `KB: ${id}` };
+            })}
+            //isLoading={loadingKbs}
+            //placeholder="Select Knowledge Base"
+          />
+        </div>
+
         {isEmpty && (
           <div className="relative flex h-[calc(100vh-9rem)] flex-col items-center justify-center">
             <BedrockIcon className="fill-gray-400" />
@@ -270,10 +324,6 @@ const RagKnowledgeBasePage: React.FC = () => {
                 loading={loading && idx === messages.length - 1}
                 allowRetry={idx === messages.length - 1}
                 retryGeneration={onRetry}
-                editable={idx === messages.length - 2 && !loading}
-                onCommitEdit={
-                  idx === messages.length - 2 && !loading ? onEdit : undefined
-                }
               />
               <div className="w-full border-b border-gray-300"></div>
             </div>
@@ -288,21 +338,16 @@ const RagKnowledgeBasePage: React.FC = () => {
           className={`fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden`}>
           <InputChatContent
             content={content}
-            disabled={loading && !writing}
+            disabled={loading}
             onChangeContent={setContent}
             onSend={() => {
-              if (!loading) {
-                onSend();
-              } else {
-                onStop();
-              }
+              onSend();
             }}
             onReset={onReset}
             setting={true}
             onSetting={() => {
               setShowSetting(true);
             }}
-            canStop={writing}
           />
         </div>
       </div>
