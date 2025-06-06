@@ -44,11 +44,16 @@ export type GenerateTextPageQueryParams = BaseQueryParams & {
 };
 
 export type RagPageQueryParams = BaseQueryParams & {
-  content?: stiring;
+  content?: string;
 };
 
 export type AgentPageQueryParams = BaseQueryParams & {
-  content?: stiring;
+  content?: string;
+};
+
+export type McpPageQueryParams = BaseQueryParams & {
+  systemPrompt?: string;
+  content?: string;
 };
 
 export type SummarizePageQueryParams = BaseQueryParams & {

@@ -406,6 +406,10 @@ generateText:
   source_info: 文章の元になる情報
   title: 文章生成
 landing:
+  alert:
+    description: >-
+      こちらは SA が内部デモのために利用する環境です。カスタマーにデモをする場合は、原則自分の AWS アカウントにデプロイしたものを利用してください。カスタマーのデータの入力や業務利用をしてはいけません。
+    title: GenU デモ環境について
   demo:
     agent:
       content: ダミーデータで散布図を描いてください。
@@ -427,6 +431,9 @@ landing:
       content: >-
         スマホ広告のデザイン案を出力してください。
         可愛い、おしゃれ、使いやすい、POPカルチャー、親しみやすい、若者向け、音楽、写真、流行のスマホ、背景が街
+    mcp:
+      content: >-
+        Amazon Bedrock のセキュリティについて調べてください。ユーザーの入力はモデルの学習に使われますか？
     rag:
       content: Claude のパラメータを説明し、その設定方法も教えてください。
     summarize:
@@ -474,6 +481,10 @@ landing:
         画像生成 AI は、テキストや画像を元に新しい画像を生成できます。アイデアを即座に可視化することができ、デザイン作業などの効率化を期待できます。こちらの機能では、プロンプトの作成を
         LLM に支援してもらうことができます。
       title: 画像生成
+    mcp_chat:
+      description: >-
+        MCP チャットは  Model Context Protocol (MCP) を通じて、Bedrock の LLM モデルと外部データや外部ツールをシームレスに連携させるチャット機能です。mcp.json を編集することで、自由にツールを追加できます。MCP のエージェントとして Strands Agents を活用しています。
+      title: MCP チャット
     rag_chat:
       description_kb: >-
         RAG (Retrieval Augmented Generation) は、情報の検索と LLM の文章生成を組み合わせる手法のことで、効果的な情報アクセスを実現できます。
@@ -536,6 +547,9 @@ language:
   ko: 韓国語
   th: タイ語
   zh: 中国語
+mcp_chat:
+  loading_message: MCP サーバーと接続しています。時間がかかる場合があります。そのまま待機してください...
+  title: MCP チャット
 model:
   parameters:
     reasoning: Reasoning

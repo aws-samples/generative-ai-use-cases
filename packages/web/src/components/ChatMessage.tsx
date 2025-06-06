@@ -53,6 +53,7 @@ const ChatMessage: React.FC<Props> = (props) => {
   const [showThankYouMessage, setShowThankYouMessage] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editingPrompt, setEditingPrompt] = useState('');
+  const [isOpenTrace, setIsOpenTrace] = useState(false);
   const { getFileDownloadSignedUrl } = useFiles(pathname);
 
   const { setTypingTextInput, typingTextOutput } = useTyping(
@@ -141,6 +142,11 @@ const ChatMessage: React.FC<Props> = (props) => {
     setShowFeedbackForm(false);
   };
 
+  const toggleOpenTrace = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    e.preventDefault();
+    setIsOpenTrace(!isOpenTrace);
+  };
+
   return (
     <div
       className={`flex justify-center ${
@@ -171,20 +177,34 @@ const ChatMessage: React.FC<Props> = (props) => {
 
           <div className="ml-5 w-full pr-8 lg:pr-14">
             {chatContent?.trace && (
-              <details className="mb-2 cursor-pointer rounded border p-2">
-                <summary className="text-sm">
-                  <div className="inline-flex gap-1">
-                    {t('common.trace')}
-                    {props.loading && !chatContent?.content && (
-                      <div className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></div>
-                    )}
-                  </div>
-                </summary>
-                <Markdown prefix={`${props.idx}-trace`}>
-                  {chatContent.trace}
-                </Markdown>
-              </details>
+              <div className="mb-2 rounded border p-2">
+                <details className="cursor-pointer" open={isOpenTrace}>
+                  <summary className="text-sm" onClick={toggleOpenTrace}>
+                    <div className="inline-flex gap-1">
+                      {t('common.trace')}
+                      {props.loading && !chatContent?.content && (
+                        <div className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></div>
+                      )}
+                    </div>
+                  </summary>
+                  <Markdown prefix={`${props.idx}-trace`}>
+                    {chatContent.trace}
+                  </Markdown>
+                </details>
+
+                {!isOpenTrace &&
+                  props.loading &&
+                  !chatContent?.content &&
+                  chatContent?.traceInlineMessage && (
+                    <Markdown
+                      className="mt-2"
+                      prefix={`${props.idx}-last-trace`}>
+                      {chatContent.traceInlineMessage}
+                    </Markdown>
+                  )}
+              </div>
             )}
+
             {chatContent?.extraData && chatContent.extraData.length > 0 && (
               <div className="mb-2 flex flex-wrap gap-2">
                 {chatContent.extraData.map((data, idx) => {

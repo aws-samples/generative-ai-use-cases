@@ -577,6 +577,60 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### MCP チャットユースケースの有効化
+
+[MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) とは、LLM モデルと外部データやツールを繋ぐプロトコルです。
+GenU では [Strands Agents](https://strandsagents.com/latest/) を活用して MCP に準拠したツールを実行するチャットユースケースを用意しています。
+MCP チャットユースケースを有効化するためには、`docker` コマンドが実行可能である必要があります。
+
+**[parameter.ts](/packages/cdk/parameter.ts) を編集**
+
+```
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    mcpEnabled: true,
+  },
+};
+```
+
+**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
+
+```json
+// cdk.json
+{
+  "context": {
+    "mcpEnabled": true
+  }
+}
+```
+
+利用する MCP サーバーは [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json) に定義されております。
+デフォルトで定義されているツール以外のツールを累加する場合は、mcp.json を変更してください。
+
+**ただし、現状 MCP サーバーとその設定には以下の制約があります。**
+
+- MCP サーバーは AWS Lambda で実行されるため、ファイルの書き込みはできません。(`/tmp` 以下に書き込むことは可能ですが、取り出すことができません。)
+- MCP サーバーは `uvx` または `npx` で実行可能である必要があります。
+- MCP クライアントは stdio のみが利用できます。
+- 現状、マルチモーダルのリクエストはサポートされていません。
+- API Key などを動的に取得して環境変数に設定する仕組みはまだ実装されていません。
+- ユーザーが利用する MCP サーバーを選択する仕組みはまだ実装されていません。(現状は mcp.json に定義されたすべてのツールが利用されます。)
+- mcp.json には `command`, `args`, `env` が設定できます。具体例は以下です。
+
+```json
+{
+  "mcpServers": {
+    "SERVER_NAME": {
+      "command": "uvx",
+      "args": ["SERVER_ARG"]
+      "env": {
+        "YOUR_API_KEY": "xxx"
+      }
+    }
+  }
+}
+```
+
 ### Flow チャットユースケースの有効化
 
 Flow チャットユースケースでは、作成済みの Flow を呼び出すことができます。

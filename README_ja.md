@@ -97,10 +97,12 @@ Knowledge Base を利用する場合は、[Advanced Parsing](docs/ja/DEPLOY_OPTI
 また Knowledge Base では、[メタデータフィルターの設定](docs/ja/DEPLOY_OPTION.md#メタデータフィルターの設定) も可能です。
 例えば「組織ごとにアクセス可能なデータソースを切り替えたい」や「UI からユーザーがフィルタを設定したい」といった要件を満たすことが可能です。
 
+また、[MCP チャットを有効化](docs/ja/DEPLOY_OPTION.md#mcp-チャットユースケースの有効化) して外部サービスの MCP サーバーを [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json) に追加することで、AWS 外のデータを参照する RAG を構築することも可能です。
+
 </details>
 
 <details markdown="1">
-  <summary><strong><ins>独自に作成した AI エージェントや Bedrock Flows などを社内で利用したい</ins></strong></summary>
+  <summary><strong><ins>独自に作成した Bedrock Agents や Bedrock Flows などを社内で利用したい。</ins></strong></summary>
 
 GenU で [エージェントを有効化](docs/ja/DEPLOY_OPTION.md#agent-チャットユースケースの有効化)すると Web 検索エージェントと Code Interpreter エージェントが作成されます。
 Web 検索エージェントは、ユーザーの質問に回答するための情報を Web で検索し、回答します。例えば「AWS の GenU ってなに？」という質問に回答できます。
@@ -113,6 +115,8 @@ GenU をエージェント活用のプラットフォームとして利用する
 また、オプションで [不要な標準ユースケースを非表示](docs/ja/DEPLOY_OPTION.md#特定のユースケースを非表示にする) にしたり、[エージェントをインライン表示](docs/ja/DEPLOY_OPTION.md#agent-をインライン表示にする) することで、よりエージェントに特化したプラットフォームとして GenU をご利用いただくことが可能です。
 
 Bedrock Flows に関しても同様に [インポート機能](docs/ja/DEPLOY_OPTION.md#flow-チャットユースケースの有効化) がございますので、ぜひご活用ください。
+
+また、[MCP チャットを有効化](docs/ja/DEPLOY_OPTION.md#mcp-チャットユースケースの有効化) して外部サービスの MCP サーバーを [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json) に追加することで、AWS 外のサービスにも何らかのアクションを起こすエージェントを作成することも可能です。
 
 </details>
 

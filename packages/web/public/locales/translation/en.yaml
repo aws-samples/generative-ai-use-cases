@@ -471,6 +471,10 @@ generateText:
   source_info: Source information for text
   title: Text Generation
 landing:
+  alert:
+    description: >-
+      This is an environment used for internal demos by SA. When giving demos to customers, please use the one deployed in your own AWS account as a rule. Do not input customer data or use it for business purposes.
+    title: About GenU Demo Environment
   demo:
     agent:
       content: Draw a scatter chart with dummy data.
@@ -499,6 +503,9 @@ landing:
 
         Cute, stylish, easy to use, POP culture, friendly, youth-oriented,
         music, photography, trendy smartphone, city background
+    mcp:
+      content: >-
+        Please research about Amazon Bedrock security. Is user input used for model training?
     rag:
       content: Please provide an overview of Amazon Nova Canvas and explain its key features.
     summarize:
@@ -558,6 +565,10 @@ landing:
       description: >-
         Image generation AI can create new images based on text or images. It allows immediate visualization of ideas and can be expected to improve efficiency in design work. In this feature, you can get LLM assistance in creating prompts.
       title: Image Generation
+    mcp_chat:
+      description: >-
+        MCP Chat is a chat function that seamlessly integrates Bedrock's LLM models with external data and external tools through the Model Context Protocol (MCP). You can freely add tools by editing the mcp.json file. Leveraging Strands Agents as an MCP agent.
+      title: MCP Chat
     rag_chat:
       description_kb: >-
         RAG (Retrieval Augmented Generation) is a method that combines information retrieval and LLM text generation, enabling effective information access.
@@ -618,6 +629,9 @@ language:
   ko: Korean
   th: Thai
   zh: Chinese
+mcp_chat:
+  loading_message: Connecting to MCP server. This may take some time. Please wait...
+  title: MCP Chat
 model:
   parameters:
     reasoning: Reasoning

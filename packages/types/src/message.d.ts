@@ -94,7 +94,9 @@ export type ToBeRecordedMessage = UnrecordedMessage & {
 
 export type ShownMessage = Partial<PrimaryKey> &
   Partial<MessageAttributes> &
-  UnrecordedMessage;
+  UnrecordedMessage & {
+    traceInlineMessage?: string;
+  };
 
 export type DocumentComment = {
   excerpt: string;

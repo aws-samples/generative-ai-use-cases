@@ -16,3 +16,4 @@ export * from './rag-knowledge-base';
 export * from './useCases';
 export * from './share';
 export * from './speech-to-speech';
+export * from './mcp';
