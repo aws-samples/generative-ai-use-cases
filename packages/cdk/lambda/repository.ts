@@ -7,10 +7,15 @@ import {
   SystemContext,
   UpdateFeedbackRequest,
   ListChatsResponse,
+  TokenUsageStats,
 } from 'generative-ai-use-cases';
 import * as crypto from 'crypto';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
+  ConditionalCheckFailedException,
+  DynamoDBClient,
+} from '@aws-sdk/client-dynamodb';
+import {
+  BatchGetCommand,
   BatchWriteCommand,
   DeleteCommand,
   DynamoDBDocumentClient,
@@ -21,6 +26,7 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 
 const TABLE_NAME: string = process.env.TABLE_NAME!;
+const STATS_TABLE_NAME: string = process.env.STATS_TABLE_NAME!;
 const dynamoDb = new DynamoDBClient({});
 const dynamoDbDocument = DynamoDBDocumentClient.from(dynamoDb);
 
@@ -201,6 +207,136 @@ export const listMessages = async (
   return res.Items as RecordedMessage[];
 };
 
+// Update token usage
+async function updateTokenUsage(message: RecordedMessage): Promise<void> {
+  if (!message.metadata?.usage) {
+    return;
+  }
+
+  const timestamp = message.createdDate.split('#')[0];
+  const date = new Date(parseInt(timestamp));
+  const dateStr = date.toISOString().slice(0, 10); // YYYY-MM-DD
+  const userId = message.userId.replace('user#', '');
+  const modelId = message.llmType || 'unknown';
+  const usecase = message.usecase || 'unknown';
+  const usage = message.metadata?.usage || {
+    inputTokens: 0,
+    outputTokens: 0,
+    cacheReadInputTokens: 0,
+    cacheWriteInputTokens: 0,
+  };
+
+  try {
+    // Try to update with shallow nesting structure
+    await dynamoDbDocument.send(
+      new UpdateCommand({
+        TableName: STATS_TABLE_NAME,
+        Key: {
+          id: `stats#${dateStr}`,
+          userId: userId,
+        },
+        UpdateExpression: `
+          SET
+            #date = :date,
+            executions.#overall = if_not_exists(executions.#overall, :zero) + :one,
+            executions.#modelKey = if_not_exists(executions.#modelKey, :zero) + :one,
+            executions.#usecaseKey = if_not_exists(executions.#usecaseKey, :zero) + :one,
+            inputTokens.#overall = if_not_exists(inputTokens.#overall, :zero) + :inputTokens,
+            inputTokens.#modelKey = if_not_exists(inputTokens.#modelKey, :zero) + :inputTokens,
+            inputTokens.#usecaseKey = if_not_exists(inputTokens.#usecaseKey, :zero) + :inputTokens,
+            outputTokens.#overall = if_not_exists(outputTokens.#overall, :zero) + :outputTokens,
+            outputTokens.#modelKey = if_not_exists(outputTokens.#modelKey, :zero) + :outputTokens,
+            outputTokens.#usecaseKey = if_not_exists(outputTokens.#usecaseKey, :zero) + :outputTokens,
+            cacheReadInputTokens.#overall = if_not_exists(cacheReadInputTokens.#overall, :zero) + :cacheReadInputTokens,
+            cacheReadInputTokens.#modelKey = if_not_exists(cacheReadInputTokens.#modelKey, :zero) + :cacheReadInputTokens,
+            cacheReadInputTokens.#usecaseKey = if_not_exists(cacheReadInputTokens.#usecaseKey, :zero) + :cacheReadInputTokens,
+            cacheWriteInputTokens.#overall = if_not_exists(cacheWriteInputTokens.#overall, :zero) + :cacheWriteInputTokens,
+            cacheWriteInputTokens.#modelKey = if_not_exists(cacheWriteInputTokens.#modelKey, :zero) + :cacheWriteInputTokens,
+            cacheWriteInputTokens.#usecaseKey = if_not_exists(cacheWriteInputTokens.#usecaseKey, :zero) + :cacheWriteInputTokens
+        `,
+        ExpressionAttributeNames: {
+          '#date': 'date',
+          '#overall': 'overall',
+          '#modelKey': `model#${modelId}`,
+          '#usecaseKey': `usecase#${usecase}`,
+        },
+        ExpressionAttributeValues: {
+          ':date': dateStr,
+          ':zero': 0,
+          ':one': 1,
+          ':inputTokens': usage.inputTokens || 0,
+          ':outputTokens': usage.outputTokens || 0,
+          ':cacheReadInputTokens': usage.cacheReadInputTokens || 0,
+          ':cacheWriteInputTokens': usage.cacheWriteInputTokens || 0,
+        },
+      })
+    );
+  } catch (updateError) {
+    if (updateError instanceof ConditionalCheckFailedException) {
+      console.log(
+        'Record does not exist, creating initial structure:',
+        updateError
+      );
+      try {
+        // Create record with complete object structure (without condition)
+        await dynamoDbDocument.send(
+          new UpdateCommand({
+            TableName: STATS_TABLE_NAME,
+            Key: {
+              id: `stats#${dateStr}`,
+              userId: userId,
+            },
+            UpdateExpression: `
+              SET
+                #date = :date,
+                executions = :executionsObj,
+                inputTokens = :inputTokensObj,
+                outputTokens = :outputTokensObj,
+                cacheReadInputTokens = :cacheReadInputTokensObj,
+                cacheWriteInputTokens = :cacheWriteInputTokensObj
+            `,
+            ExpressionAttributeNames: {
+              '#date': 'date',
+            },
+            ExpressionAttributeValues: {
+              ':date': dateStr,
+              ':executionsObj': {
+                overall: 1,
+                [`model#${modelId}`]: 1,
+                [`usecase#${usecase}`]: 1,
+              },
+              ':inputTokensObj': {
+                overall: usage.inputTokens || 0,
+                [`model#${modelId}`]: usage.inputTokens || 0,
+                [`usecase#${usecase}`]: usage.inputTokens || 0,
+              },
+              ':outputTokensObj': {
+                overall: usage.outputTokens || 0,
+                [`model#${modelId}`]: usage.outputTokens || 0,
+                [`usecase#${usecase}`]: usage.outputTokens || 0,
+              },
+              ':cacheReadInputTokensObj': {
+                overall: usage.cacheReadInputTokens || 0,
+                [`model#${modelId}`]: usage.cacheReadInputTokens || 0,
+                [`usecase#${usecase}`]: usage.cacheReadInputTokens || 0,
+              },
+              ':cacheWriteInputTokensObj': {
+                overall: usage.cacheWriteInputTokens || 0,
+                [`model#${modelId}`]: usage.cacheWriteInputTokens || 0,
+                [`usecase#${usecase}`]: usage.cacheWriteInputTokens || 0,
+              },
+            },
+          })
+        );
+      } catch (putError) {
+        console.log('Error creating token usage:', putError);
+      }
+    } else {
+      console.log('Error updating token usage:', updateError);
+    }
+  }
+}
+
 export const batchCreateMessages = async (
   messages: ToBeRecordedMessage[],
   _userId: string,
@@ -225,9 +361,12 @@ export const batchCreateMessages = async (
         feedback,
         usecase: m.usecase,
         llmType: m.llmType ?? '',
+        metadata: m.metadata,
       };
     }
   );
+
+  // Save messages
   await dynamoDbDocument.send(
     new BatchWriteCommand({
       RequestItems: {
@@ -241,6 +380,9 @@ export const batchCreateMessages = async (
       },
     })
   );
+
+  // Update token usage in parallel
+  await Promise.all(items.map(updateTokenUsage));
 
   return items;
 };
@@ -518,4 +660,86 @@ export const deleteShareId = async (_shareId: string): Promise<void> => {
       ],
     })
   );
+};
+
+export const aggregateTokenUsage = async (
+  startDate: string,
+  endDate: string,
+  userIds?: string[]
+): Promise<TokenUsageStats[]> => {
+  const userId = userIds?.[0];
+  if (!userId) {
+    throw new Error('userId is required');
+  }
+
+  try {
+    // Initialize all dates in the date range
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const statsMap = new Map<string, TokenUsageStats>();
+
+    // Create keys for BatchGetItem
+    const keys = [];
+    const currentDate = new Date(start);
+    while (currentDate <= end) {
+      const dateStr = currentDate.toISOString().slice(0, 10);
+      statsMap.set(dateStr, {
+        date: dateStr,
+        userId,
+        executions: { overall: 0 },
+        inputTokens: { overall: 0 },
+        outputTokens: { overall: 0 },
+        cacheReadInputTokens: { overall: 0 },
+        cacheWriteInputTokens: { overall: 0 },
+      });
+
+      keys.push({
+        id: `stats#${dateStr}`,
+        userId: userId,
+      });
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // BatchGetItem supports up to 100 items per request
+    // Split keys into chunks if necessary
+    const chunkSize = 100;
+    const keyChunks = [];
+    for (let i = 0; i < keys.length; i += chunkSize) {
+      keyChunks.push(keys.slice(i, i + chunkSize));
+    }
+
+    // Execute BatchGetItem for each chunk
+    const batchPromises = keyChunks.map((chunk) =>
+      dynamoDbDocument.send(
+        new BatchGetCommand({
+          RequestItems: {
+            [STATS_TABLE_NAME]: {
+              Keys: chunk,
+            },
+          },
+        })
+      )
+    );
+
+    const batchResults = await Promise.all(batchPromises);
+
+    // Update the map with the retrieved data
+    batchResults.forEach((result) => {
+      result.Responses?.[STATS_TABLE_NAME]?.forEach((item) => {
+        const stats = item as TokenUsageStats;
+        if (stats.date) {
+          statsMap.set(stats.date, stats);
+        }
+      });
+    });
+
+    // Convert to array and sort
+    return Array.from(statsMap.values()).sort((a, b) =>
+      a.date.localeCompare(b.date)
+    );
+  } catch (error) {
+    console.error('Error aggregating token usage:', error);
+    throw error;
+  }
 };

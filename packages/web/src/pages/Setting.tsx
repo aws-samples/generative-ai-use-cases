@@ -150,6 +150,15 @@ const Setting = () => {
           value={
             <Button onClick={onClickSignout}>{t('setting.signout')}</Button>
           }></SettingItem>
+
+        <SettingItem
+          name={t('setting.items.stats')}
+          value={
+            <Link to="/stats" className="flex items-center">
+              {t('setting.items.stats')}{' '}
+              <PiArrowSquareOut className="text-base" />
+            </Link>
+          }></SettingItem>
       </div>
 
       <div className="mb-3 mt-9 flex justify-center font-semibold">

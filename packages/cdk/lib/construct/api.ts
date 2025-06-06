@@ -49,6 +49,7 @@ export interface BackendApiProps {
   readonly idPool: IdentityPool;
   readonly userPoolClient: UserPoolClient;
   readonly table: Table;
+  readonly statsTable: Table;
   readonly knowledgeBaseId?: string;
   readonly agents?: Agent[];
   readonly guardrailIdentify?: string;
@@ -531,10 +532,12 @@ export class Api extends Construct {
       timeout: Duration.minutes(15),
       environment: {
         TABLE_NAME: table.tableName,
+        STATS_TABLE_NAME: props.statsTable.tableName,
         BUCKET_NAME: fileBucket.bucketName,
       },
     });
     table.grantReadWriteData(createMessagesFunction);
+    props.statsTable.grantReadWriteData(createMessagesFunction);
 
     const updateChatTitleFunction = new NodejsFunction(
       this,
@@ -701,6 +704,18 @@ export class Api extends Construct {
       },
     });
     fileBucket.grantDelete(deleteFileFunction);
+
+    // Lambda function for getting token usage
+    const getTokenUsageFunction = new NodejsFunction(this, 'GetTokenUsage', {
+      runtime: Runtime.NODEJS_LATEST,
+      entry: './lambda/getTokenUsage.ts',
+      environment: {
+        TABLE_NAME: table.tableName,
+        STATS_TABLE_NAME: props.statsTable.tableName,
+      },
+    });
+    table.grantReadData(getTokenUsageFunction);
+    props.statsTable.grantReadData(getTokenUsageFunction);
 
     // API Gateway
     const authorizer = new CognitoUserPoolsAuthorizer(this, 'Authorizer', {
@@ -951,6 +966,14 @@ export class Api extends Construct {
         new LambdaIntegration(deleteFileFunction),
         commonAuthorizerProps
       );
+
+    // GET: /token-usage
+    const tokenUsageResource = api.root.addResource('token-usage');
+    tokenUsageResource.addMethod(
+      'GET',
+      new LambdaIntegration(getTokenUsageFunction),
+      commonAuthorizerProps
+    );
 
     this.api = api;
     this.predictStreamFunction = predictStreamFunction;

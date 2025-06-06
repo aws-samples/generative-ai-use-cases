@@ -10,7 +10,7 @@ chat:
   create_link: リンクの作成
   create_link_message: リンクを作成することで、このアプリケーションにログイン可能な全ユーザーに対して会話履歴を公開します。
   create_system_prompt: システムプロンプトの作成
-  delete_chat_confirmation: 'チャット「{{title}}」を削除しますか？'
+  delete_chat_confirmation: チャット「{{title}}」を削除しますか？
   delete_confirmation: 削除確認
   delete_link: リンクの削除
   delete_link_message: リンクを削除することで、会話履歴の公開を停止できます。
@@ -99,43 +99,23 @@ diagram:
       description: AIに最適なダイアグラムタイプを選択させます
       exampleTitle: 経費フロー例
     architecture:
-      content: >-
+      content: |-
         クラウドベースのWeb アプリケーションのアーキテクチャを示してください。
-
-        以下のコンポーネントを含めます:
-        フロントエンド
-        バックエンド
-        データベース
-        キャッシュ
-        ロードバランサー
-        CDNなど
+        以下のコンポーネントを含めます: フロントエンド バックエンド データベース キャッシュ ロードバランサー CDNなど
       desc: アーキテクチャ図はシステム全体の構造を表現します
       exampleTitle: Webアプリ構成例
       title: アーキテクチャ図
     blockdiagram:
-      content: >-
+      content: |-
         スマートフォンのハードウェアコンポーネントを示すブロック図を作成してください。
-
-        以下の要素を含めます:
-        プロセッサ
-        メモリ
-        ストレージ
-        ディスプレイ
-        カメラ
-        各種センサーなど。
+        以下の要素を含めます: プロセッサ メモリ ストレージ ディスプレイ カメラ 各種センサーなど。
       desc: ブロック図はシステムの主要コンポーネントを表現します
       exampleTitle: スマホ構成例
       title: ブロック図
     classdiagram:
-      content: >-
+      content: |-
         ECサイトのドメインモデルを作成してください。
-
-        以下のクラスが存在します: 
-        User（ユーザー）
-        Product（商品）
-        Order（注文）
-        CartItem（カート内商品）
-
+        以下のクラスが存在します:  User（ユーザー） Product（商品） Order（注文） CartItem（カート内商品）
         各クラスには適切なプロパティとメソッドを含めてください。
       desc: クラス図はオブジェクト指向設計のクラス構造を表現します
       exampleTitle: ECサイトモデル例
@@ -144,12 +124,8 @@ diagram:
       content: >-
         ブログシステムのデータベース設計を示してください。
 
-        以下のテーブルがあり、それぞれ適切にリレーションが設定されています。:
-        記事（posts）
-        ユーザー（users）
-        コメント（comments）
-        カテゴリー（categories）
-        タグ（tags）
+        以下のテーブルがあり、それぞれ適切にリレーションが設定されています。: 記事（posts） ユーザー（users） コメント（comments）
+        カテゴリー（categories） タグ（tags）
       desc: ER図はデータベースのエンティティとリレーションシップを表現します
       exampleTitle: ブログDB設計例
       title: ER図
@@ -166,9 +142,7 @@ diagram:
       exampleTitle: 朝の準備フロー例
       title: フローチャート
     ganttchart:
-      content: >-
-        Webアプリケーション開発プロジェクトのスケジュールを示してください。
-        要件定義、設計、開発、テスト、デプロイメントの各フェーズを含めます。
+      content: Webアプリケーション開発プロジェクトのスケジュールを示してください。 要件定義、設計、開発、テスト、デプロイメントの各フェーズを含めます。
       desc: ガントチャートはプロジェクトスケジュールを視覚化します
       exampleTitle: 開発スケジュール例
       title: ガントチャート
@@ -192,9 +166,7 @@ diagram:
       exampleTitle: 生成AIユースケース例
       title: マインドマップ
     networkpacket:
-      content: >-
-        HTTPリクエストパケットの構造を示す図を作成してください。
-        ヘッダーとボディの主要な要素を含めます。
+      content: HTTPリクエストパケットの構造を示す図を作成してください。 ヘッダーとボディの主要な要素を含めます。
       desc: ネットワークパケット図はデータ構造を表現します
       exampleTitle: HTTPパケット例
       title: ネットワークパケット図
@@ -209,54 +181,39 @@ diagram:
       title: 円グラフ
     quadrantchart:
       content: >-
-        ソーシャルメディアプラットフォームの特性を比較する4象限チャートを作成してください。
-        タイトルは「ソーシャルメディアプラットフォーム分析」。 
-        X軸は「テキスト中心」から「視覚中心」へと変化し、
-        Y軸は「プロフェッショナル」から「カジュアル」へと変化する。
+        ソーシャルメディアプラットフォームの特性を比較する4象限チャートを作成してください。 タイトルは「ソーシャルメディアプラットフォーム分析」。 
+        X軸は「テキスト中心」から「視覚中心」へと変化し、 Y軸は「プロフェッショナル」から「カジュアル」へと変化する。
 
-        各象限には以下のようにラベルを付けてください: 
-        右上の象限: 「視覚的カジュアル」
-        左上の象限: 「テキスト的カジュアル」
-        左下の象限: 「テキスト的プロフェッショナル」
-        右下の象限: 「視覚的プロフェッショナル」
+        各象限には以下のようにラベルを付けてください:  右上の象限: 「視覚的カジュアル」 左上の象限: 「テキスト的カジュアル」 左下の象限:
+        「テキスト的プロフェッショナル」 右下の象限: 「視覚的プロフェッショナル」
 
-        次のソーシャルメディアプラットフォームをチャート上にプロットしてください:
-        Twitter: テキスト寄りでややカジュアル、
-        Instagram: 非常に視覚的でかなりカジュアル、
-        LinkedIn: テキスト寄りで非常にプロフェッショナル、
-        TikTok: 非常に視覚的で最もカジュアル、
-        Facebook: X軸とY軸の中間あたり。 
+        次のソーシャルメディアプラットフォームをチャート上にプロットしてください: Twitter: テキスト寄りでややカジュアル、
+        Instagram: 非常に視覚的でかなりカジュアル、 LinkedIn: テキスト寄りで非常にプロフェッショナル、 TikTok:
+        非常に視覚的で最もカジュアル、 Facebook: X軸とY軸の中間あたり。 
 
         可能であれば、各プラットフォームを異なる色で表示してください。
       desc: 4象限チャートは2軸に沿って項目を分類します
       exampleTitle: ソーシャルメディア分析例
       title: 象限チャート
     requirementdiagram:
-      content: >-
-        スマートホームシステムの主要な機能要件を示してください。
-        照明制御、温度管理、セキュリティ、エネルギー効率化などの要件を含めます。
+      content: スマートホームシステムの主要な機能要件を示してください。 照明制御、温度管理、セキュリティ、エネルギー効率化などの要件を含めます。
       desc: 要求図はシステム要件と関係を表現します
       exampleTitle: スマートホーム要件例
       title: 要求図
     sankeychart:
-      content: >-
-        Webサイトのユーザーフローを示すサンキーチャートを作成してください。
-        ランディングページから始まり、各ページの遷移と離脱率を表示します。
+      content: Webサイトのユーザーフローを示すサンキーチャートを作成してください。 ランディングページから始まり、各ページの遷移と離脱率を表示します。
       desc: サンキーチャートはフローや変化量を幅で表現します
       exampleTitle: ユーザーフロー例
       title: サンキーチャート
     sequencediagram:
-      content: >-
+      content: |-
         Webアプリケーションで、ユーザーがログインボタンを押してから認証が完了するまでの流れを示してください。
-
         フロントエンド、認証サーバー、データベースの3つのコンポーネントが関係します。
       desc: シーケンス図はコンポーネント間の相互作用を時系列で表現します
       exampleTitle: ログインフロー例
       title: シーケンス図
     statediagram:
-      content: >-
-        オンラインショッピングカートの状態遷移を示してください。
-        「空」、「商品追加済み」、「チェックアウト中」、「支払い完了」などの状態を含めます。
+      content: オンラインショッピングカートの状態遷移を示してください。 「空」、「商品追加済み」、「チェックアウト中」、「支払い完了」などの状態を含めます。
       desc: 状態遷移図はシステムの状態変化を表現します
       exampleTitle: カート状態例
       title: 状態遷移図
@@ -264,13 +221,8 @@ diagram:
       content: >-
         2000年から2020年までのソーシャルメディアの主要な進化と転換点をタイムラインで表現してください。
                 
-        以下の要素を含めてください: 
-        ブログの普及期
-        写真共有プラットフォームの台頭
-        マイクロブログの登場
-        動画共有サービスの発展
-        モバイルファースト型SNSの広がり
-        ショート動画プラットフォームの台頭
+        以下の要素を含めてください:  ブログの普及期 写真共有プラットフォームの台頭 マイクロブログの登場 動画共有サービスの発展
+        モバイルファースト型SNSの広がり ショート動画プラットフォームの台頭
 
         各転換点について、その時期に起きた重要な技術革新や社会的変化（例:
         スマートフォンの普及、高速モバイルインターネットの実現など）も1-2個ずつ追記してください。
@@ -278,23 +230,15 @@ diagram:
       exampleTitle: ソーシャルメディア進化例
       title: タイムライン
     userjourney:
-      content: >-
+      content: |-
         オンラインショッピングサイトでの顧客の購買体験を示してください。
-
-        以下の流れを含めてください:
-        商品検索
-        商品閲覧
-        カートへの追加
-        チェックアウト
-        支払い
-        配送追跡
+        以下の流れを含めてください: 商品検索 商品閲覧 カートへの追加 チェックアウト 支払い 配送追跡
       desc: ユーザージャーニーは顧客体験の流れを表現します
       exampleTitle: 購買体験例
       title: ユーザージャーニー
     xychart:
-      content: >-
+      content: |-
         過去10年間の日本の平均睡眠時間と労働時間の関係を示すXYチャートを作成してください。
-
         X軸を1日の平均労働時間、Y軸を1日の平均睡眠時間とし、各年のデータポイントをプロットしてください。
       desc: XYチャートは2つの変数間の関係を表現します
       exampleTitle: 睡眠・労働時間例
@@ -321,7 +265,9 @@ files:
     fileSizeExceeded: ファイルサイズは {{maxSize}} MB 以下にしてください。
     imageCountExceeded: 画像数は {{maxCount}} 個以下にしてください。
     invalidExtension: '{{fileName}} は許可されていない拡張子です。許可されている拡張子は {{acceptedExtensions}} です。'
-    invalidImageDimension: 指定可能な画像ファイルのサイズは {{allowedDimensions}} です (アップロードされた画像のサイズ {{uploadedDimension}})
+    invalidImageDimension: >-
+      指定可能な画像ファイルのサイズは {{allowedDimensions}} です (アップロードされた画像のサイズ
+      {{uploadedDimension}})
     mimeMismatch: '{{fileName}} のファイル形式が不正です。'
     modelNotSupported: モデルが対応していません。
     videoCountExceeded: 動画数は {{maxCount}} 個以下にしてください。
@@ -364,13 +310,9 @@ generateImage:
       CANNY_EDGE:参照画像のエッジを抽出します。詳細な模様などを反映したい場合に最適です。SEGMENTATION:参照画像内を領域に区切ります。複数の物体の位置関係を反映したい場合に最適です。
     control_strength: 1に近いほど「参照画像」の構図に基づいた画像が生成され、0に近いほど「参照画像」の構図とは異なる画像が生成されます。
     generation_mode: >-
-      TEXT_IMAGE:テキストから画像を生成します。
-      IMAGE_VARIATION:参照画像から類似画像を生成します。
-      INPAINTING:画像の一部を編集します。
-      OUTPAINTING:画像を拡張します。
-      IMAGE_CONDITIONING:構図を反映します。
-      COLOR_GUIDED_GENERATION:配色指定で生成します。
-      BACKGROUND_REMOVAL:背景を除去します
+      TEXT_IMAGE:テキストから画像を生成します。 IMAGE_VARIATION:参照画像から類似画像を生成します。
+      INPAINTING:画像の一部を編集します。 OUTPAINTING:画像を拡張します。 IMAGE_CONDITIONING:構図を反映します。
+      COLOR_GUIDED_GENERATION:配色指定で生成します。 BACKGROUND_REMOVAL:背景を除去します
     image_samples: Seed をランダム設定しながら画像を指定の数だけ同時に生成します。
     image_strength: 1に近いほど「初期画像」に近い画像が生成され、0に近いほど「初期画像」とは異なる画像が生成されます。
     init_image: 画像生成の初期状態となる画像を設定できます。初期画像を設定することで、初期画像に近い画像を生成するように誘導できます。
@@ -417,11 +359,14 @@ landing:
       content: 会社の一般的な経費生産フローを色つきで図示してください。
     generate:
       context: >-
-        Amazon Bedrock は、AI21 Labs、Anthropic、Cohere、Meta、Stability AI、Amazon などの大手 AI 企業が提供する高性能な基盤モデル (FM) を単一の API で選択できるフルマネージド型サービスです。
-        また、生成 AI アプリケーションの構築に必要な幅広い機能も備えているため、プライバシーとセキュリティを維持しながら開発を簡素化できます。
-        Amazon Bedrock の包括的な機能を使用すると、さまざまなトップ FM を簡単に試したり、微調整や検索拡張生成 (RAG) などの手法を使用してデータを使用してプライベートにカスタマイズしたり、旅行の予約や保険金請求の処理から広告キャンペーンの作成や在庫管理まで、複雑なビジネスタスクを実行するマネージドエージェントを作成したりできます。
-        これらはすべて、コードを記述することなく行えます。Amazon Bedrock はサーバーレスであるため、インフラストラクチャを管理する必要がありません。
-        また、使い慣れた AWS サービスを使用して、生成 AI 機能をアプリケーションに安全に統合してデプロイできます。
+        Amazon Bedrock は、AI21 Labs、Anthropic、Cohere、Meta、Stability AI、Amazon
+        などの大手 AI 企業が提供する高性能な基盤モデル (FM) を単一の API で選択できるフルマネージド型サービスです。 また、生成 AI
+        アプリケーションの構築に必要な幅広い機能も備えているため、プライバシーとセキュリティを維持しながら開発を簡素化できます。 Amazon
+        Bedrock の包括的な機能を使用すると、さまざまなトップ FM を簡単に試したり、微調整や検索拡張生成 (RAG)
+        などの手法を使用してデータを使用してプライベートにカスタマイズしたり、旅行の予約や保険金請求の処理から広告キャンペーンの作成や在庫管理まで、複雑なビジネスタスクを実行するマネージドエージェントを作成したりできます。
+        これらはすべて、コードを記述することなく行えます。Amazon Bedrock
+        はサーバーレスであるため、インフラストラクチャを管理する必要がありません。 また、使い慣れた AWS サービスを使用して、生成 AI
+        機能をアプリケーションに安全に統合してデプロイできます。
       information: プレゼンテーションのために、マークダウン形式で章立てして、それぞれ端的に説明を
     image:
       content: >-
@@ -431,11 +376,18 @@ landing:
       content: Claude のパラメータを説明し、その設定方法も教えてください。
     summarize:
       sentence: >-
-        Amazon Bedrock は、Amazon や主要な AI スタートアップ企業が提供する基盤モデル (FM) を API を通じて利用できるようにする完全マネージド型サービスです。
-        そのため、さまざまな FM から選択して、ユースケースに最も適したモデルを見つけることができます。
-        Amazon Bedrock のサーバーレスエクスペリエンスにより、すぐに FM を開始したり、FM を簡単に試したり、独自のデータを使用して FM をプライベートにカスタマイズしたり、AWS のツールや機能を使用して FM をアプリケーションにシームレスに統合してデプロイしたりできます。
-        Amazon Bedrock のエージェントは、開発者が独自の知識源に基づいて最新の回答を提供し、幅広いユースケースのタスクを完了できるジェネレーティブ AI アプリケーションを開発者が簡単に作成できるようにする完全マネージド機能です。
-        Bedrock のサーバーレスエクスペリエンスにより、インフラストラクチャを管理することなく、すぐに使用を開始し、独自のデータを使用して FM をプライベートにカスタマイズし、使い慣れた AWS ツールや機能を使用してそれらをアプリケーションに簡単に統合してデプロイできます (さまざまなモデルをテストするための実験や FM を大規模に管理するためのパイプラインなどの Amazon SageMaker の ML 機能との統合を含みます)。
+        Amazon Bedrock は、Amazon や主要な AI スタートアップ企業が提供する基盤モデル (FM) を API
+        を通じて利用できるようにする完全マネージド型サービスです。 そのため、さまざまな FM
+        から選択して、ユースケースに最も適したモデルを見つけることができます。 Amazon Bedrock
+        のサーバーレスエクスペリエンスにより、すぐに FM を開始したり、FM を簡単に試したり、独自のデータを使用して FM
+        をプライベートにカスタマイズしたり、AWS のツールや機能を使用して FM をアプリケーションにシームレスに統合してデプロイしたりできます。
+        Amazon Bedrock
+        のエージェントは、開発者が独自の知識源に基づいて最新の回答を提供し、幅広いユースケースのタスクを完了できるジェネレーティブ AI
+        アプリケーションを開発者が簡単に作成できるようにする完全マネージド機能です。 Bedrock
+        のサーバーレスエクスペリエンスにより、インフラストラクチャを管理することなく、すぐに使用を開始し、独自のデータを使用して FM
+        をプライベートにカスタマイズし、使い慣れた AWS ツールや機能を使用してそれらをアプリケーションに簡単に統合してデプロイできます
+        (さまざまなモデルをテストするための実験や FM を大規模に管理するためのパイプラインなどの Amazon SageMaker の ML
+        機能との統合を含みます)。
     translate:
       language: en
       sentence: こんにちは。私は翻訳を支援する AI アシスタントです。お好きな文章を入力してください。
@@ -454,7 +406,8 @@ landing:
       title: Agent チャット
     chat:
       description: >-
-        LLM とチャット形式で対話することができます。細かいユースケースや新しいユースケースに迅速に対応することができます。プロンプトエンジニアリングの検証用環境としても有効です。
+        LLM
+        とチャット形式で対話することができます。細かいユースケースや新しいユースケースに迅速に対応することができます。プロンプトエンジニアリングの検証用環境としても有効です。
       title: チャット
     diagram:
       description: >-
@@ -462,7 +415,8 @@ landing:
       title: ダイアグラム生成
     flow_chat:
       description: >-
-        Flow を使用して、複数のステップを持つ対話型チャットフローを作成します。ユーザーの入力に基づいて、動的に次のステップを決定し、より複雑な対話シナリオを実現します。
+        Flow
+        を使用して、複数のステップを持つ対話型チャットフローを作成します。ユーザーの入力に基づいて、動的に次のステップを決定し、より複雑な対話シナリオを実現します。
       title: Flow チャット
     generate_text:
       description: >-
@@ -471,39 +425,43 @@ landing:
       title: 文章生成
     image:
       description: >-
-        画像生成 AI は、テキストや画像を元に新しい画像を生成できます。アイデアを即座に可視化することができ、デザイン作業などの効率化を期待できます。こちらの機能では、プロンプトの作成を
+        画像生成 AI
+        は、テキストや画像を元に新しい画像を生成できます。アイデアを即座に可視化することができ、デザイン作業などの効率化を期待できます。こちらの機能では、プロンプトの作成を
         LLM に支援してもらうことができます。
       title: 画像生成
     rag_chat:
       description_kb: >-
-        RAG (Retrieval Augmented Generation) は、情報の検索と LLM の文章生成を組み合わせる手法のことで、効果的な情報アクセスを実現できます。
-        Knowledge Base の Hybrid Search を利用して参考ドキュメントを取得し、LLM が回答を生成します。
+        RAG (Retrieval Augmented Generation) は、情報の検索と LLM
+        の文章生成を組み合わせる手法のことで、効果的な情報アクセスを実現できます。 Knowledge Base の Hybrid Search
+        を利用して参考ドキュメントを取得し、LLM が回答を生成します。
       description_kendra: >-
-        RAG (Retrieval Augmented Generation) は、情報の検索と LLM の文章生成を組み合わせる手法のことで、効果的な情報アクセスを実現できます。
-        Amazon Kendra から取得した参考ドキュメントをベースに LLM が回答を生成してくれるため、「社内情報に対応した LLM チャット」を簡単に実現することが可能です。
+        RAG (Retrieval Augmented Generation) は、情報の検索と LLM
+        の文章生成を組み合わせる手法のことで、効果的な情報アクセスを実現できます。 Amazon Kendra から取得した参考ドキュメントをベースに
+        LLM が回答を生成してくれるため、「社内情報に対応した LLM チャット」を簡単に実現することが可能です。
       sub_kb: Knowledge Base
       sub_kendra: Amazon Kendra
       title: RAG チャット
     summarize:
       description: >-
-        LLM は、大量の文章を要約するタスクを得意としています。要約する際に「1行で」や「子供でもわかる言葉で」などコンテキストを与えることができます。
+        LLM
+        は、大量の文章を要約するタスクを得意としています。要約する際に「1行で」や「子供でもわかる言葉で」などコンテキストを与えることができます。
       title: 要約
     translate:
       description: >-
-        多言語で学習した LLM は、翻訳を行うことも可能です。また、ただ翻訳するだけではなく、カジュアルさ・対象層など様々な指定されたコンテキスト情報を翻訳に反映させることが可能です。
+        多言語で学習した LLM
+        は、翻訳を行うことも可能です。また、ただ翻訳するだけではなく、カジュアルさ・対象層など様々な指定されたコンテキスト情報を翻訳に反映させることが可能です。
       title: 翻訳
     video-analysis:
       description: >-
-        マルチモーダルモデルによってテキストのみではなく、画像を入力することが可能になりました。こちらの機能では、映像の画像フレームとテキストを入力として LLM に分析を依頼します。
+        マルチモーダルモデルによってテキストのみではなく、画像を入力することが可能になりました。こちらの機能では、映像の画像フレームとテキストを入力として
+        LLM に分析を依頼します。
       title: 映像分析
     video-generation:
-      description: >-
-        動画生成 AI はテキストから短い動画を生成します。生成した動画は素材としてさまざまなシーンで活用できます。
+      description: 動画生成 AI はテキストから短い動画を生成します。生成した動画は素材としてさまざまなシーンで活用できます。
       title: 動画生成
     voice_chat:
       description: >-
-        音声チャットでは生成 AI と双方向の音声によるチャットが可能です。
-        自然な会話と同様、AI の発言中に割り込んで話すこともできます。
+        音声チャットでは生成 AI と双方向の音声によるチャットが可能です。 自然な会話と同様、AI の発言中に割り込んで話すこともできます。
         また、システムプロンプトを設定することで、特定の役割を持った AI と音声で会話することもできます。
       title: 音声チャット
     web_content:
@@ -512,8 +470,7 @@ landing:
         によって不要な情報はそぎ落とし、成立した文章として整形します。抽出したコンテンツは要約、翻訳などの別のユースケースで利用できます。
       title: Web コンテンツ抽出
     writer:
-      description: >-
-        ライティングの支援、文章の推敲、校閲を行うツールです。AI の支援を得ながら効率的に執筆することができます。
+      description: ライティングの支援、文章の推敲、校閲を行うツールです。AI の支援を得ながら効率的に執筆することができます。
       title: 執筆
   use_cases_integration:
     blog:
@@ -570,18 +527,16 @@ optimizePrompt:
 rag:
   can_add_filters: をカスタマイズすることでフィルターを追加できます。
   errorRetrieval: >-
-    Kendra から参考ドキュメントを取得できませんでした。以下をご確認ください：
-    - Amazon Kendra インデックス作成のスケジュール時間が経過し、インデックス作成に十分な時間が経過したか
-    - Amazon Kendra インデックス削除のスケジュール時間が経過していないか
+    Kendra から参考ドキュメントを取得できませんでした。以下をご確認ください： - Amazon Kendra
+    インデックス作成のスケジュール時間が経過し、インデックス作成に十分な時間が経過したか - Amazon Kendra
+    インデックス削除のスケジュール時間が経過していないか
   filter: フィルタ
   filter_settings: フィルター設定については
   here: こちら
   knowledgeBase:
     noDocuments: >-
-      参考ドキュメントが見つかりませんでした。以下をご確認ください：
-      - 対象ドキュメントが Knowledge Base のデータソースに追加されているか
-      - Knowledge Base のデータソースが同期されているか
-      - 入力の表現を変えてみてください
+      参考ドキュメントが見つかりませんでした。以下をご確認ください： - 対象ドキュメントが Knowledge Base
+      のデータソースに追加されているか - Knowledge Base のデータソースが同期されているか - 入力の表現を変えてみてください
     retrieveError: >-
       取得中にエラーが発生しました。以下をご確認ください：
 
@@ -589,10 +544,8 @@ rag:
       で有効になっているか
     retrieving: Knowledge Base から参考ドキュメントを取得しています...
   noDocuments: >-
-    参考ドキュメントが見つかりませんでした。以下をご確認ください：
-    - 対象ドキュメントが Amazon Kendra のデータソースに追加されているか
-    - Amazon Kendra のデータソースが同期されているか
-    - 入力の表現を変えてみてください
+    参考ドキュメントが見つかりませんでした。以下をご確認ください： - 対象ドキュメントが Amazon Kendra のデータソースに追加されているか -
+    Amazon Kendra のデータソースが同期されているか - 入力の表現を変えてみてください
   no_settings_found: 設定が見つかりませんでした。
   page: ページ
   please_refer: をご参照ください。
@@ -606,9 +559,9 @@ setting:
     model_region: LLM & 画像生成 モデルリージョン
     video_gen_model: 動画生成 モデル名
   config_message: >-
-    システム設定の変更はこの画面ではなく <0>AWS CDK</0> で行います。 また、ユースケース実行時にエラーになる場合は、必ず {{region}}
-    にて指定したモデルを有効化しているか確認してください。それぞれのやり方については <1>generative-ai-use-cases</1>
-    をご参照ください。
+    システム設定の変更はこの画面ではなく <0>AWS CDK</0> で行います。 また、ユースケース実行時にエラーになる場合は、必ず
+    {{region}} にて指定したモデルを有効化しているか確認してください。それぞれのやり方については
+    <1>generative-ai-use-cases</1> をご参照ください。
   items:
     agent_enabled: Agent 有効
     language: 言語設定
@@ -618,6 +571,7 @@ setting:
     rag_kb_enabled: RAG (Knowledge Base) 有効
     show_tools: ツールの表示
     show_use_case_builder: ユースケースビルダーの表示
+    stats: 利用統計
     typing_animation: タイピングアニメーション
     version: バージョン
     version_help: generative-ai-use-cases の package.json の version を参照しています
@@ -626,8 +580,8 @@ setting:
   system: システム設定
   update:
     message: >-
-      GitHub にアップデートがあります。最新の機能を利用したい場合は <0>generative-ai-use-cases</0> の
-      main ブランチを pull して再度デプロイしてください。
+      GitHub にアップデートがあります。最新の機能を利用したい場合は <0>generative-ai-use-cases</0> の main
+      ブランチを pull して再度デプロイしてください。
   user: ユーザー設定
   view_all_updates: 全てのアップデートを見る
 shared:
@@ -638,6 +592,17 @@ sketch:
   clear: クリア
   pen_size: ペンサイズ
   upload_image: 画像をアップロード
+stat:
+  cache_read_tokens: キャッシュ読込
+  cache_write_tokens: キャッシュ書込
+  daily_token_usage: 利用トークン
+  input_tokens: 入力
+  last_7_days: 過去7日
+  model_executions: モデル実行回数
+  no_data_available: データがありません
+  output_tokens: 出力
+  title: 統計
+  usecase_distribution: ユースケース実行回数
 summarize:
   additional_context: 追加コンテキスト
   additional_context_placeholder: 追加で考慮してほしい点を入力することができます（カジュアルさ等）
@@ -657,7 +622,7 @@ transcribe:
   speaker_recognition: 話者認識
   start_recording: 録音を開始する
   stop_recording: 録音を停止する
-  supported_files: 'mp3, mp4, wav, flac, ogg, amr, webm, m4a ファイルが利用可能です'
+  supported_files: mp3, mp4, wav, flac, ogg, amr, webm, m4a ファイルが利用可能です
   title: 音声認識
 translate:
   additional_context: 追加コンテキスト
@@ -677,30 +642,26 @@ useCaseBuilder:
     generate_article: ブログ記事作成
     generate_article_context: >-
       生成AIの仕組みの解説とAWSで生成AIを利用するメリットを解説するブログ記事を生成してください。記事を生成する際は、<rules></rules>を必ず守ってください。
-      <rules>
-      - マークダウン形式で章立てして書いてください。
-      - 生成AIおよび、AWS初心者をターゲットにした記事にしてください。
-      - IT初心者が分からないような用語は使わないか、分かりやすい言葉に置き換えてください。
-      - 生成AIで何ができるのかがわかる記事にしてください。
-      - 文章量が少ないと読者が満足しないので、一般的な情報は補完しながら文量を多くしてください。
-      - 読者の興味を惹きつけるような文章にしてください。
+      <rules> - マークダウン形式で章立てして書いてください。 - 生成AIおよび、AWS初心者をターゲットにした記事にしてください。 -
+      IT初心者が分からないような用語は使わないか、分かりやすい言葉に置き換えてください。 - 生成AIで何ができるのかがわかる記事にしてください。 -
+      文章量が少ないと読者が満足しないので、一般的な情報は補完しながら文量を多くしてください。 - 読者の興味を惹きつけるような文章にしてください。
       </rules>
     generate_article_description: 参考情報を元にブログの記事を自動生成します。コンテキストを詳細に設定することで、自分の意図した内容で記事が生成されやすくなります。
     generate_thumbnail: ブログ記事のサムネイル画像作成
     generate_thumbnail_content: >-
       ブログ記事のOGP用にサムネイル画像を生成してください。クラウドやAIの記事であることが一目でわかる画像にしてください。
-      ブログ記事の概要は<article></article>に設定されています。
-      <article>
-      {{summarizedSentence}}
+      ブログ記事の概要は<article></article>に設定されています。 <article> {{summarizedSentence}}
       </article>
-    generate_thumbnail_description: OGP（記事のリンクをシェアする際に表示される記事のプレビュー）用に、サムネイルを生成します。OGP にキャッチーなサムネイルを設定することで、読者の関心を惹くことができるかもしれません。
+    generate_thumbnail_description: >-
+      OGP（記事のリンクをシェアする際に表示される記事のプレビュー）用に、サムネイルを生成します。OGP
+      にキャッチーなサムネイルを設定することで、読者の関心を惹くことができるかもしれません。
     reference_info: 参考情報
     reference_info_context: 生成AIの概要、仕組みを解説している部分、AWSについて説明している部分のみ抽出してください。
-    reference_info_description: >-
-      URL を指定して、記事の参考となる情報を自動取得します。
-      追加コンテキストを設定することで、自分の欲しい情報のみを抽出可能です。
+    reference_info_description: URL を指定して、記事の参考となる情報を自動取得します。 追加コンテキストを設定することで、自分の欲しい情報のみを抽出可能です。
     summarize_article: 要約
-    summarize_article_description: OGP（記事のリンクをシェアする際に表示される記事のプレビュー）用に、記事を要約します。OGP を適切に設定することで、記事がシェアされた際に記事の概要を正しく伝えることができます。
+    summarize_article_description: >-
+      OGP（記事のリンクをシェアする際に表示される記事のプレビュー）用に、記事を要約します。OGP
+      を適切に設定することで、記事がシェアされた際に記事の概要を正しく伝えることができます。
   builderMode: ビルダーモード
   cancel: キャンセル
   create: 作成
@@ -725,7 +686,7 @@ useCaseBuilder:
       Knowledge Base の検索クエリを入力するためのフォーム {{text{{label}}}}
       をプロンプテンプレートに内に記述してください。
     missing_select_options: '{{select}} にオプションが設定されていません。{{select:ラベル:オプション1,オプション2}} のように設定してください'
-    missing_text_form: 'Amazon Kendra の検索クエリを入力するためのフォーム {{text{{label}}}} をプロンプテンプレートに内に記述してください。'
+    missing_text_form: Amazon Kendra の検索クエリを入力するためのフォーム {{text{{label}}}} をプロンプテンプレートに内に記述してください。
     rag_kendra_not_enabled: >-
       プロンプトテンプレート内で {{retrieveKendra}} が指定されていますが GenU で RAG チャット (Amazon
       Kendra) が有効になっていません。
@@ -754,9 +715,9 @@ useCaseBuilder:
       </返信内容>
     example: 例
     formPlaceholderDescription: >-
-      {{form}} は入力フォームを定義するための placeholder です。{{form}} あるいは {{form:ラベル}} のように記述します。
-      {{form}} はテキスト入力を受け付けるフォームを作成しますが、プロンプトテンプレートに入力を埋め込みません。
-      「RAG 等でデータソースに問い合わせしたいが、問い合わせ内容そのものはプロンプトに埋め込みたくない」というユースケースで使います。
+      {{form}} は入力フォームを定義するための placeholder です。{{form}} あるいは {{form:ラベル}}
+      のように記述します。 {{form}} はテキスト入力を受け付けるフォームを作成しますが、プロンプトテンプレートに入力を埋め込みません。 「RAG
+      等でデータソースに問い合わせしたいが、問い合わせ内容そのものはプロンプトに埋め込みたくない」というユースケースで使います。
     formPlaceholderExample:
       prompt: |-
         あなたは、与えられた情報を元にクイズを生成する AI アシスタントです。
@@ -772,24 +733,20 @@ useCaseBuilder:
       title: クイズの生成
     placeholder: プレースホルダー
     placeholderDescription: >-
-      Placeholder は {{入力タイプ:ラベル}} のように書きます。
-      ラベルが識別子になるため、同一のラベルを持つ placeholder は同じ入力であるとみなされます。
-      ラベルを省略して {{入力タイプ}} のように書くことも可能です。その場合、無ラベルの placeholder は同じ入力であるとみなされます。
-      実際に実行されたプロンプトは GenU の会話履歴から確認できます。
+      Placeholder は {{入力タイプ:ラベル}} のように書きます。 ラベルが識別子になるため、同一のラベルを持つ placeholder
+      は同じ入力であるとみなされます。 ラベルを省略して {{入力タイプ}} のように書くことも可能です。その場合、無ラベルの placeholder
+      は同じ入力であるとみなされます。 実際に実行されたプロンプトは GenU の会話履歴から確認できます。
     placeholderList: プレースホルダー一覧
     promptTemplateDescription: >-
-      生成 AI
-      に指示を出すための「ひな形」のようなものです。目的に応じて、あらかじめ指示文の型を用意しておくことができます。
-      プロンプトテンプレートには実行時にテキストを埋め込むための placeholder
-      が定義できます。
+      生成 AI に指示を出すための「ひな形」のようなものです。目的に応じて、あらかじめ指示文の型を用意しておくことができます。
+      プロンプトテンプレートには実行時にテキストを埋め込むための placeholder が定義できます。
     promptTemplateTitle: プロンプトテンプレートとは?
     retrieveKendraDescription: >-
       {{retrieveKendra}} は Amazon Kendra から retrieve した結果をプロンプトテンプレートに埋め込みます。
       {{retrieveKendra}} あるいは {{retrieveKendra:ラベル}} のように記述します。
       {{retrieveKendra}} は検索クエリを入力するための placeholder ({{text}}) が別に必要です。
-      それらは同一ラベルである必要があります。 
-      この機能を利用するためには、GenU で RAG チャット (Amazon Kendra) が有効になっている必要があります。
-      有効化されていない場合は管理者に問い合わせてください。
+      それらは同一ラベルである必要があります。  この機能を利用するためには、GenU で RAG チャット (Amazon Kendra)
+      が有効になっている必要があります。 有効化されていない場合は管理者に問い合わせてください。
     retrieveKendraExample:
       prompt: |-
         あなたは、ユーザーの質問に答える AI アシスタントです。
@@ -806,10 +763,10 @@ useCaseBuilder:
         </質問>
       title: シンプルな RAG
     retrieveKnowledgeBaseDescription: >-
-      {{retrieveKnowledgeBase}} は Knowledge Base から retrieve した結果をプロンプトテンプレートに埋め込みます。
-      {{retrieveKnowledgeBase}} あるいは {{retrieveKnowledgeBase:ラベル}} のように記述します。
-      {{retrieveKnowledgeBase}} は検索クエリを入力するための placeholder ({{text}}) が別に必要です。
-      それらは同一ラベルである必要があります。 
+      {{retrieveKnowledgeBase}} は Knowledge Base から retrieve
+      した結果をプロンプトテンプレートに埋め込みます。 {{retrieveKnowledgeBase}} あるいは
+      {{retrieveKnowledgeBase:ラベル}} のように記述します。 {{retrieveKnowledgeBase}}
+      は検索クエリを入力するための placeholder ({{text}}) が別に必要です。 それらは同一ラベルである必要があります。 
       この機能を利用するためには、GenU で RAG チャット (Knowledge Base) が有効になっている必要があります。
       有効化されていない場合は管理者に問い合わせてください。
     retrieveKnowledgeBaseExample:
@@ -828,9 +785,8 @@ useCaseBuilder:
         </質問>
       title: シンプルな RAG
     selectPlaceholderDescription: >-
-      {{select}} はセレクトボックスを定義するための placeholder です。
-      {{select}} はラベルとオプションを省略できません。
-      必ず {{select:ラベル:選択肢1,選択肢2}} のように記述します。
+      {{select}} はセレクトボックスを定義するための placeholder です。 {{select}}
+      はラベルとオプションを省略できません。 必ず {{select:ラベル:選択肢1,選択肢2}} のように記述します。
       選択肢はカンマ区切りで定義します。ラベルを表示したくない場合は{{select::選択肢1,選択肢2}}のように空文字ラベルを使います。(空文字ラベルは無ラベルとは異なります。)
     selectPlaceholderExample:
       prompt: |-
@@ -843,8 +799,7 @@ useCaseBuilder:
         {{text:質問}}
       title: AWS サービスについての質問
     textPlaceholderDescription: >-
-      {{text}} は最も基本的な placeholder です。
-      {{text}} あるいは {{text:ラベル}} のように記述します。
+      {{text}} は最も基本的な placeholder です。 {{text}} あるいは {{text:ラベル}} のように記述します。
       {{text}} はテキスト入力を受け付けるフォームを作成し、入力した値をそのままプロンプトテンプレートに埋め込みます。
   helpTitle: ヘルプ
   inputExamples: 入力例
@@ -858,14 +813,11 @@ useCaseBuilder:
     create_minutes_description: 「文章生成」の機能を使って、議事録を生成します。コンテキストを詳細に指定することで、議事録のフォーマットや記載の粒度を指示できます。
     formatting: 議事録作成のフォーマット
     formatting_context: >-
-      録音データの文字起こし結果が入力されているので、<rules></rules>の通りに整形してください。
-      <rules>
-      - フィラーワードを除去してください。
-      - 文字起こしの誤認識と思われる内容は正しい内容に書き換えてください。
-      - 接続詞などが省略されている場合は、読みやすいように補完してください。
-      - 質疑応答も省略せず、記載してください。
-      </rules>
-    formatting_description: 「文章生成」の機能を使って、文字起こしファイルを整形します。フィラーワードの除去や音声認識が正しくできていない部分などを補正し、人間が理解しやすいようにします。
+      録音データの文字起こし結果が入力されているので、<rules></rules>の通りに整形してください。 <rules> -
+      フィラーワードを除去してください。 - 文字起こしの誤認識と思われる内容は正しい内容に書き換えてください。 -
+      接続詞などが省略されている場合は、読みやすいように補完してください。 - 質疑応答も省略せず、記載してください。 </rules>
+    formatting_description: >-
+      「文章生成」の機能を使って、文字起こしファイルを整形します。フィラーワードの除去や音声認識が正しくできていない部分などを補正し、人間が理解しやすいようにします。
     transcription: 議事録作成の音声文字起こし
     transcription_description: >-
       「音声認識」の機能を使って、録音データから会話の内容を文字起こしします。任意の音声ファイルで実行してください。
@@ -979,8 +931,7 @@ videoAnalyzer:
 voiceChat:
   close: セッションを終了する
   default_system_prompt: You are an AI assistant.
-  experimental_warning: >-
-    音声チャットはまだ実験的な段階です。アーキテクチャ等は今後変更される可能性があります。会話履歴は保存されません。対応言語は英語のみです。
+  experimental_warning: 音声チャットはまだ実験的な段階です。アーキテクチャ等は今後変更される可能性があります。会話履歴は保存されません。対応言語は英語のみです。
   experimental_warning_title: 音声チャットについて
   im_listening: 発言してください
   start: セッションを始める
@@ -997,7 +948,7 @@ webcontent:
   loading: 読み込み中...
   not_fetched: 未取得
   not_fetched_instruction: 未取得です。URL を入力して実行ボタンを押してください。
-  original_text: '抽出前のテキスト ({{status}})'
+  original_text: 抽出前のテキスト ({{status}})
   result_placeholder: 抽出された文章がここに表示されます
   title: Web コンテンツ抽出
   website_to_extract: コンテンツを抽出したい Web サイト

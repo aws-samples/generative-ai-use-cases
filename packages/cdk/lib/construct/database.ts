@@ -3,7 +3,9 @@ import * as ddb from 'aws-cdk-lib/aws-dynamodb';
 
 export class Database extends Construct {
   public readonly table: ddb.Table;
+  public readonly statsTable: ddb.Table;
   public readonly feedbackIndexName: string;
+
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
@@ -28,7 +30,21 @@ export class Database extends Construct {
       },
     });
 
+    // Stats table for token usage statistics
+    const statsTable = new ddb.Table(this, 'StatsTable', {
+      partitionKey: {
+        name: 'id',
+        type: ddb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'userId',
+        type: ddb.AttributeType.STRING,
+      },
+      billingMode: ddb.BillingMode.PAY_PER_REQUEST,
+    });
+
     this.table = table;
+    this.statsTable = statsTable;
     this.feedbackIndexName = feedbackIndexName;
   }
 }
