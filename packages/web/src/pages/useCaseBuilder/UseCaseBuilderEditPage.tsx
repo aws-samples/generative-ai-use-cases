@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import ButtonIcon from '../../components/ButtonIcon';
@@ -14,6 +14,7 @@ import {
   PiEye,
   PiX,
   PiCircleFill,
+  PiUpload,
 } from 'react-icons/pi';
 import useMyUseCases from '../../hooks/useCaseBuilder/useMyUseCases';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -53,6 +54,16 @@ const ErrorMesage: React.FC<{
     </li>
   );
 };
+
+// JSON use case import type definition
+interface ImportableUseCase {
+  promptTemplate: string;
+  fixedModelId: string;
+  fileUpload: boolean;
+  inputExamples: UseCaseInputExample[];
+  description: string;
+  title: string;
+}
 
 type StateType = {
   useCaseId: string | null;
@@ -154,6 +165,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
   const { useCaseId: useCaseIdPathParam } = useParams();
   const { state } = useLocation();
   const { t } = useTranslation();
+  const jsonFileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     title,
@@ -448,9 +460,72 @@ const UseCaseBuilderEditPage: React.FC = () => {
         setIsDeleting(false);
       });
   }, [deleteUseCase, navigate, useCaseId]);
+  
+  // Handle import button click event
+  const handleImportClick = useCallback(() => {
+    if (jsonFileInputRef.current) {
+      jsonFileInputRef.current.click();
+    }
+  }, [jsonFileInputRef]);
+  
+  // Handle file selection and parsing
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Check if the file is a JSON file
+    if (!file.name.toLowerCase().endsWith('.json')) {
+      alert(t('useCaseBuilder.invalidFileType'));
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const useCaseData: ImportableUseCase = JSON.parse(event.target?.result as string);
+        
+        // Validate the required fields
+        if (!useCaseData.title || !useCaseData.promptTemplate) {
+          alert(t('useCaseBuilder.invalidJsonFormat'));
+          return;
+        }
+        
+        // Navigate to the new use case page with the imported data
+        navigate('/use-case-builder/new', {
+          state: {
+            title: useCaseData.title,
+            promptTemplate: useCaseData.promptTemplate,
+            description: useCaseData.description || '',
+            inputExamples: useCaseData.inputExamples || [],
+            fixedModelId: useCaseData.fixedModelId || '',
+            fileUpload: useCaseData.fileUpload || false,
+          },
+        });
+      } catch (error) {
+        console.error('Error parsing JSON file:', error);
+        alert(t('useCaseBuilder.invalidJsonFormat'));
+      }
+    };
+    
+    reader.readAsText(file);
+    
+    // Reset the input value to allow selecting the same file again if needed
+    if (jsonFileInputRef.current) {
+      jsonFileInputRef.current.value = '';
+    }
+  }, [navigate, t]);
 
   return (
     <>
+      {/* Hidden file input for JSON import */}
+      <input
+        type="file"
+        ref={jsonFileInputRef}
+        className="hidden"
+        accept=".json"
+        onChange={handleFileSelect}
+      />
+      
       <ModalDialogDeleteUseCase
         isOpen={isOpenDeleteDialog}
         targetLabel={title}
@@ -518,6 +593,17 @@ const UseCaseBuilderEditPage: React.FC = () => {
               );
             }
           })}
+          
+          {/* Import Use Case Button */}
+          <div className="mt-2 border border-gray-200 rounded-md p-2 mx-1">
+            <div 
+              className="hover:text-aws-smile flex cursor-pointer flex-row items-center justify-center px-2 py-1.5 text-sm text-gray-800 gap-2 border-l-2 border-transparent"
+              onClick={handleImportClick}
+            >
+              <PiUpload className="text-base" />
+              {t('useCaseBuilder.importUseCase')}
+            </div>
+          </div>
         </div>
 
         <div className="col-span-12 lg:col-span-5">

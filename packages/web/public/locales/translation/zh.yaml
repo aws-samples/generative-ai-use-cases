@@ -638,6 +638,9 @@ useCaseBuilder:
   fileUploadDescription: 可附加的文件类型因模型而异
   fileUploadDisabled: 不能附加文件
   fileUploadEnabled: 可以附加文件
+  importUseCase: 导入用例
+  invalidFileType: 文件格式无效。请选择JSON文件。
+  invalidJsonFormat: JSON格式无效。请检查文件内容。
   help:
     emailReplyExample: 邮件回复示例
     emailReplyPrompt: |-

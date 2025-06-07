@@ -44,7 +44,6 @@ common:
   error: An error occurred
   errorNoSuggestions: No suggestions were found.
   execute: Execute
-  export: Export
   feedback_received: Feedback received. Thank you.
   here: here
   load_more: Load more
@@ -931,6 +930,9 @@ useCaseBuilder:
   fileUploadDescription: Users can upload files for the LLM to reference the content.
   fileUploadDisabled: Disable file upload
   fileUploadEnabled: Enable file upload
+  importUseCase: Import Use Case
+  invalidFileType: Invalid file type. Please select a JSON file.
+  invalidJsonFormat: Invalid JSON format. Please check the file content.
   help:
     emailReplyExample: Email Reply
     emailReplyPrompt: >-
