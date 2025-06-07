@@ -11,6 +11,7 @@ import {
   VideoAnalyzerParams,
   WebContentParams,
   DiagramParams,
+  MeetingMinutesParams,
 } from './index';
 
 import {
@@ -555,6 +556,23 @@ Output only the selected chart type from the <Choice> list, with an exact match,
         diagramSystemPrompts[params.diagramType!] ||
         diagramSystemPrompts.FlowChart
       );
+  },
+  meetingMinutesPrompt(params: MeetingMinutesParams): string {
+    if (params.style === 'custom' && params.customPrompt) {
+      return params.customPrompt;
+    }
+
+    switch (params.style) {
+      case 'newspaper':
+        return `As a professional journalist. You will receive transcribed text from reporters and craft an article while preserving as much of the original content volume as possible to deliver comprehensive information to your audience. For your audience, you must write the article in received text language.`;
+
+      case 'faq':
+        return `As a professional assistant, please identify the conversation topic and write an abstract summarizing the theme along with question-and-answer pairs that preserve the original information content as much as possible. For your boss, you must write in received conversation language.`;
+
+      case 'transcription':
+      default:
+        return `As a professional translator, please correct filler words and misrecognition in received transcribed text. Please add paragraph breaks if you detect obvious topic changes, and if you find important statements related to the topic, please format them in bold style. For speakers, you must transcribe in received text language.`;
+    }
   },
 };
 

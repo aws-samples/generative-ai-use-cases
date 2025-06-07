@@ -536,6 +536,33 @@ language:
   ko: 韓国語
   th: タイ語
   zh: 中国語
+meetingMinutes:
+  auto_generate: 自動生成
+  custom_prompt: カスタムプロンプト
+  custom_prompt_placeholder: 議事録生成用のカスタムプロンプトを入力してください...
+  frequency: 生成頻度
+  frequency_10min: 10分ごと
+  frequency_1min: 1分ごと
+  frequency_5min: 5分ごと
+  generate: 生成
+  generate_minutes_header: 議事録生成
+  generated_minutes: 生成された議事録
+  generating: 議事録生成中...
+  generation_error: 議事録の生成に失敗しました。再試行してください。
+  generation_success: 議事録が正常に生成されました
+  last_generated: 最後の生成時刻 {{time}}
+  minutes_placeholder: 生成後にここに議事録が表示されます
+  model: モデル
+  next_generation_in: '次回生成まで : '
+  record_transcribe: 音声認識
+  speech_recognition: 音声認識
+  style: 議事録スタイル
+  style_custom: カスタム
+  style_faq: 質疑応答
+  style_newspaper: 新聞
+  style_transcription: 文字起こし
+  title: 議事録生成
+  transcript: 文字起こし
 model:
   parameters:
     reasoning: Reasoning
@@ -547,6 +574,7 @@ navigation:
   flowChat: Flow チャット
   home: ホーム
   imageGeneration: 画像生成
+  meetingMinutes: 議事録生成
   promptOptimization: プロンプト最適化
   ragChat: RAG チャット
   settings: 設定

@@ -534,6 +534,33 @@ language:
   ja: 日语
   ko: 韩语
   zh: 中文
+meetingMinutes:
+  auto_generate: 自动生成
+  custom_prompt: 自定义提示
+  custom_prompt_placeholder: 输入用于生成会议纪要的自定义提示...
+  frequency: 生成频率
+  frequency_10min: 每10分钟
+  frequency_1min: 每分钟
+  frequency_5min: 每5分钟
+  generate: 生成
+  generate_minutes_header: 生成会议纪要
+  generated_minutes: 已生成的会议纪要
+  generating: 正在生成会议纪要...
+  generation_error: 会议纪要生成失败。请重试。
+  generation_success: 会议纪要生成成功
+  last_generated: 最后生成时间 {{time}}
+  minutes_placeholder: 生成后会议纪要将显示在这里
+  model: 模型
+  next_generation_in: '下次生成时间 :'
+  record_transcribe: 录音和转录
+  speech_recognition: 语音识别
+  style: 会议纪要风格
+  style_custom: 自定义
+  style_faq: 常见问题
+  style_newspaper: 新闻报道
+  style_transcription: 转录
+  title: 会议纪要生成器
+  transcript: 转录文本
 model:
   parameters:
     reasoning: 推理
@@ -545,6 +572,7 @@ navigation:
   flowChat: Flow聊天
   home: 首页
   imageGeneration: 图像生成
+  meetingMinutes: 会议纪要
   promptOptimization: 提示优化
   ragChat: RAG聊天
   settings: 设置

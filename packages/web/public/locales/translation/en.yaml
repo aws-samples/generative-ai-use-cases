@@ -618,6 +618,33 @@ language:
   ko: Korean
   th: Thai
   zh: Chinese
+meetingMinutes:
+  auto_generate: Auto Generate
+  custom_prompt: Custom Prompt
+  custom_prompt_placeholder: Enter your custom prompt for generating meeting minutes...
+  frequency: Generation Frequency
+  frequency_10min: Every 10 minutes
+  frequency_1min: Every 1 minute
+  frequency_5min: Every 5 minutes
+  generate: Generate
+  generate_minutes_header: Generate Minutes
+  generated_minutes: Generated Minutes
+  generating: Generating minutes...
+  generation_error: Failed to generate meeting minutes. Please try again.
+  generation_success: Meeting minutes generated successfully
+  last_generated: Last generated {{time}}
+  minutes_placeholder: Minutes will appear here after generation
+  model: Model
+  next_generation_in: 'Next generation in : '
+  record_transcribe: Record & Transcribe
+  speech_recognition: Speech Recognition
+  style: Minutes Style
+  style_custom: Custom
+  style_faq: FAQ
+  style_newspaper: Newspaper
+  style_transcription: Transcription
+  title: Meeting Minutes Generator
+  transcript: Transcript
 model:
   parameters:
     reasoning: Reasoning
@@ -629,6 +656,7 @@ navigation:
   flowChat: Flow Chat
   home: Home
   imageGeneration: Image Generation
+  meetingMinutes: Meeting Minutes
   promptOptimization: Prompt Optimization
   ragChat: RAG Chat
   settings: Settings

@@ -547,6 +547,33 @@ language:
   ko: ภาษาเกาหลี
   th: ภาษาไทย
   zh: ภาษาจีน
+meetingMinutes:
+  auto_generate: สร้างอัตโนมัติ
+  custom_prompt: พรอมต์แบบกำหนดเอง
+  custom_prompt_placeholder: ป้อนพรอมต์แบบกำหนดเองสำหรับการสร้างรายงานการประชุม...
+  frequency: ความถี่ในการสร้าง
+  frequency_10min: ทุก 10 นาที
+  frequency_1min: ทุกนาที
+  frequency_5min: ทุก 5 นาที
+  generate: สร้าง
+  generate_minutes_header: สร้างรายงานการประชุม
+  generated_minutes: รายงานการประชุมที่สร้างแล้ว
+  generating: กำลังสร้างรายงานการประชุม...
+  generation_error: ไม่สามารถสร้างรายงานการประชุมได้ กรุณาลองอีกครั้ง
+  generation_success: สร้างรายงานการประชุมสำเร็จ
+  last_generated: สร้างล่าสุดเมื่อ {{time}}
+  minutes_placeholder: รายงานการประชุมจะปรากฏที่นี่หลังจากสร้าง
+  model: โมเดล
+  next_generation_in: 'สร้างครั้งถัดไปใน : '
+  record_transcribe: บันทึกและถอดความ
+  speech_recognition: การรู้จำเสียงพูด
+  style: รูปแบบรายงานการประชุม
+  style_custom: กำหนดเอง
+  style_faq: คำถามที่พบบ่อย
+  style_newspaper: หนังสือพิมพ์
+  style_transcription: การถอดความ
+  title: ตัวสร้างรายงานการประชุม
+  transcript: บันทึกการถอดความ
 model:
   parameters:
     reasoning: การให้เหตุผล
@@ -558,6 +585,7 @@ navigation:
   flowChat: Flow Chat
   home: Home (หน้าหลัก)
   imageGeneration: การสร้างภาพ
+  meetingMinutes: รายงานการประชุม
   promptOptimization: ปรับแต่ง Prompt ให้ตรงความต้องการ
   ragChat: RAG Chat
   settings: ตั้งค่า
