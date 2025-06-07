@@ -42,6 +42,7 @@ common:
   error: エラー
   errorNoSuggestions: 候補が見つかりませんでした。
   execute: 実行
+  export: エクスポート
   feedback_received: フィードバックを受け付けました。ありがとうございます。
   here: こちら
   load_more: さらに読み込む
