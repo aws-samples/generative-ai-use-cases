@@ -183,7 +183,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
         fileUpload: !!useCaseData.fileUpload,
         inputExamples: useCaseData.inputExamples || [],
         description: useCaseData.description || "xxxxx",
-        title: "test",
+        title: useCaseData.title || "",
       };
       
       // Create a blob with the JSON data in the specified format
