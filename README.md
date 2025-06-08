@@ -134,6 +134,7 @@ GenU provides a feature called "Use Case Builder" that allows you to create cust
 Custom use case screens are automatically generated just from prompt templates, so no code changes to GenU itself are required.
 Created use cases can be shared with all users who can log into the application, not just for personal use.
 Use Case Builder can be [disabled](docs/en/DEPLOY_OPTION.md#use-case-builder-configuration) if not needed.
+Use cases can also be exported as .json files and shared with third parties. When sharing use cases, please be careful not to include any confidential information in prompts or usage examples. Use cases shared by third parties can be imported by uploading the .json file from the new use case creation screen.
 For more details about Use Case Builder, please check <a href="https://aws.amazon.com/jp/blogs/news/genu-use-cases-builder/">this blog</a>.
 <br/>
 <br/>
