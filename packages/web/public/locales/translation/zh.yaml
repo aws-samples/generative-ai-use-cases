@@ -41,6 +41,7 @@ common:
   error: 错误
   errorNoSuggestions: 未找到建议。
   execute: 执行
+  export: 导出
   feedback_received: 已收到反馈。谢谢。
   here: 这里
   load_more: 加载更多

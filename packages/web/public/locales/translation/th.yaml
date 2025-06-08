@@ -42,6 +42,7 @@ common:
   error: เกิดข้อผิดพลาด
   errorNoSuggestions: ไม่พบคำแนะนำ
   execute: ดำเนินการ
+  export: ส่งออก
   feedback_received: ได้รับข้อเสนอแนะแล้ว ขอบคุณ
   here: ที่นี่
   load_more: โหลดเพิ่มเติม
