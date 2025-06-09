@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.1.12",
+    "@aws-crypto/sha256-js": "^5.2.0",
     "@aws-sdk/client-cognito-identity": "^3.755.0",
     "@aws-sdk/client-kendra": "^3.755.0",
     "@aws-sdk/client-lambda": "^3.755.0",
@@ -19,6 +20,8 @@
     "@aws-sdk/client-transcribe": "^3.755.0",
     "@aws-sdk/client-transcribe-streaming": "^3.755.0",
     "@aws-sdk/credential-provider-cognito-identity": "^3.755.0",
+    "@aws-sdk/signature-v4": "^3.370.0",
+    "@aws-sdk/protocol-http": "^3.370.0",
     "@headlessui/react": "^1.7.18",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",

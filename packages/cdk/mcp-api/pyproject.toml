@@ -1,0 +1,13 @@
+[project]
+name = "mcp-api"
+version = "0.0.0"
+requires-python = ">=3.12"
+dependencies = [
+  "strands-agents",
+  "strands-agents-tools",
+  "boto3",
+  "mcp",
+  "fastapi",
+  "uvicorn",
+  "pydantic",
+]

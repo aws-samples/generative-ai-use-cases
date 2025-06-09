@@ -83,5 +83,7 @@ $env:VITE_APP_HIDDEN_USE_CASES = Extract-Value $stack_output "HiddenUseCases"
 $env:VITE_APP_SPEECH_TO_SPEECH_NAMESPACE = Extract-Value $stack_output "SpeechToSpeechNamespace"
 $env:VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT = Extract-Value $stack_output "SpeechToSpeechEventApiEndpoint"
 $env:VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS = Extract-Value $stack_output "SpeechToSpeechModelIds"
+$env:VITE_APP_MCP_ENABLED = Extract-Value $stack_output "McpEnabled"
+$env:VITE_APP_MCP_ENDPOINT = Extract-Value $stack_output "McpEndpoint"
 
 npm -w packages/web run dev

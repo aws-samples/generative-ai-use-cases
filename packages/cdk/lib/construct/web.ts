@@ -56,6 +56,8 @@ export interface WebProps {
   readonly speechToSpeechNamespace: string;
   readonly speechToSpeechEventApiEndpoint: string;
   readonly speechToSpeechModelIds: ModelConfiguration[];
+  readonly mcpEnabled: boolean;
+  readonly mcpEndpoint: string | null;
 }
 
 export class Web extends Construct {
@@ -67,7 +69,7 @@ export class Web extends Construct {
     const cspSaml = props.samlCognitoDomainName
       ? ` https://${props.samlCognitoDomainName}`
       : '';
-    const csp = `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' https://*.amazonaws.com; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com:* https://raw.githubusercontent.com https://api.github.com${cspSaml}; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;`;
+    const csp = `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://*.amazonaws.com; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com:* https://*.on.aws https://raw.githubusercontent.com https://api.github.com${cspSaml}; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;`;
 
     // Create Response Headers Policy for security headers
     const responseHeadersPolicy = new ResponseHeadersPolicy(
@@ -260,6 +262,8 @@ export class Web extends Construct {
         VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS: JSON.stringify(
           props.speechToSpeechModelIds
         ),
+        VITE_APP_MCP_ENABLED: props.mcpEnabled.toString(),
+        VITE_APP_MCP_ENDPOINT: props.mcpEndpoint ?? '',
       },
     });
     // Enhance computing resources

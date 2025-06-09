@@ -1999,6 +1999,12 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         ],
       },
     },
+    "McpEnabled": {
+      "Value": "false",
+    },
+    "McpEndpoint": {
+      "Value": "",
+    },
     "ModelIds": {
       "Value": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
     },
@@ -13651,6 +13657,8 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           },
           "VITE_APP_IMAGE_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
           "VITE_APP_INLINE_AGENTS": "false",
+          "VITE_APP_MCP_ENABLED": "false",
+          "VITE_APP_MCP_ENDPOINT": "",
           "VITE_APP_MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
           "VITE_APP_MODEL_REGION": "us-east-1",
           "VITE_APP_OPTIMIZE_PROMPT_FUNCTION_ARN": {
@@ -14010,7 +14018,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
           "Name": "GenerativeAiUseCasesStackApiSecurityHeadersPolicyFF62FE6B",
           "SecurityHeadersConfig": {
             "ContentSecurityPolicy": {
-              "ContentSecurityPolicy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' https://*.amazonaws.com; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com:* https://raw.githubusercontent.com https://api.github.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;",
+              "ContentSecurityPolicy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://*.amazonaws.com; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com:* https://*.on.aws https://raw.githubusercontent.com https://api.github.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;",
               "Override": true,
             },
             "ContentTypeOptions": {

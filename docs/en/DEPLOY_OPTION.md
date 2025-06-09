@@ -562,6 +562,60 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### Enabling MCP Chat Use Case
+
+[MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) is a protocol that connects LLM models with external data and tools.
+In GenU, we provide chat use cases that execute MCP-compliant tools using [Strands Agents](https://strandsagents.com/latest/).
+To enable MCP chat use cases, the `docker` command must be executable.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    mcpEnabled: true,
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+{
+  "context": {
+    "mcpEnabled": true
+  }
+}
+```
+
+The MCP servers to be used are defined in [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json).
+If you want to add tools other than those defined by default, please modify mcp.json.
+
+**However, there are currently the following constraints on the MCP server and its configuration:**
+
+- The MCP server runs on AWS Lambda, so file writing is not possible. (Writing to `/tmp` is possible, but you cannot retrieve the files.)
+- The MCP server must be executable with `uvx` or `npx`.
+- The MCP client can only use stdio.
+- Currently, multimodal requests are not supported.
+- A mechanism to dynamically obtain API Keys and set them as environment variables has not yet been implemented.
+- A mechanism for users to select which MCP server to use has not yet been implemented. (Currently, all tools defined in mcp.json are used.)
+- In mcp.json, you can configure `command`, `args`, and `env`. Here's a specific example:
+
+```json
+{
+  "mcpServers": {
+    "SERVER_NAME": {
+      "command": "uvx",
+      "args": ["SERVER_ARG"]
+      "env": {
+        "YOUR_API_KEY": "xxx"
+      }
+    }
+  }
+}
+```
+
 ### Enabling Flow Chat Use Case
 
 In the Flow Chat use case, you can call created Flows.

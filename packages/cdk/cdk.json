@@ -57,6 +57,7 @@
     "searchApiKey": "",
     "agents": [],
     "inlineAgents": false,
+    "mcpEnabled": false,
     "flows": [],
     "allowedIpV4AddressRanges": null,
     "allowedIpV6AddressRanges": null,
