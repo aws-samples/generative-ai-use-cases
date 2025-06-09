@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import useSWR from 'swr';
 import useVersion from '../hooks/useVersion';
 import IconWithDot from './IconWithDot';
-import { PiGear } from 'react-icons/pi';
+import { PiChartBar, PiGear } from 'react-icons/pi';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   builderMode?: boolean;
@@ -14,6 +15,7 @@ type Props = BaseProps & {
 
 const DrawerBase: React.FC<Props> = (props) => {
   const { getHasUpdate } = useVersion();
+  const { t } = useTranslation();
 
   // The first argument is not required, but if it is not included, the request will not be made, so 'user' string is entered
   const { data } = useSWR('user', () => {
@@ -43,7 +45,10 @@ const DrawerBase: React.FC<Props> = (props) => {
               <span className="text-sm">{email}</span>
             </Link>
             <div className="grow" />
-            <Link to={settingUrl}>
+            <Link to="/stats" title={t('stat.title')}>
+              <PiChartBar className="text-lg" />
+            </Link>
+            <Link to={settingUrl} title={t('navigation.settings')}>
               <IconWithDot showDot={hasUpdate}>
                 <PiGear className="text-lg" />
               </IconWithDot>
