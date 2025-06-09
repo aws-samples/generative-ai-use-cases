@@ -1,10 +1,18 @@
 # How to Delete Resources
 
-Please execute the following command. **All data including Cognito UserPool, DynamoDB Table, etc. will be deleted.**
+Please execute the following command depending on your deployment method. **All data including Cognito UserPool, DynamoDB Table, etc. will be deleted.**
 
 ```bash
+# Delete the environment specified in context.env of cdk.json
 npm run cdk:destroy
+
+# Delete the environment configured in parameter.ts ('prod' in the following example)
+npm run cdk:destroy -- -c env=prod
 ```
+
+> [!NOTE]
+> If the values in cdk.json (parameter.ts) differ between deployment and deletion times, certain stacks may not be deleted when running the above command.
+> Please verify that no stacks remain by checking the CloudFormation page in AWS Management Console (in the modelRegion and the region where you executed cdk deploy).
 
 ## If an Error Occurs
 
