@@ -19,6 +19,7 @@ import { produce } from 'immer';
 import ButtonFavorite from './ButtonFavorite';
 import ButtonShare from './ButtonShare';
 import ButtonUseCaseEdit from './ButtonUseCaseEdit';
+import ButtonUseCaseExport from './ButtonUseCaseExport';
 import Skeleton from '../Skeleton';
 import useMyUseCases from '../../hooks/useCaseBuilder/useMyUseCases';
 import { UseCaseInputExample, FileLimit } from 'generative-ai-use-cases';
@@ -38,7 +39,6 @@ import FileCard from '../FileCard';
 import { AcceptedDotExtensions } from '../../utils/MediaUtils';
 import { PiPaperclip, PiSpinnerGap } from 'react-icons/pi';
 import { useTranslation } from 'react-i18next';
-import useHttp from '../../hooks/useHttp';
 
 const ragEnabled: boolean = import.meta.env.VITE_APP_RAG_ENABLED === 'true';
 const ragKnowledgeBaseEnabled: boolean =
@@ -159,59 +159,8 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
   } = useFiles(pathname);
   const stopReason = getStopReason();
   const [isOver, setIsOver] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
 
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
-  const { api } = useHttp();
-
-  // Add export function with the modified format
-  const onClickExport = useCallback(async () => {
-    if (props.isLoading || loading || props.previewMode || !('useCaseId' in props)) {
-      return;
-    }
-    
-    setIsExporting(true);
-    
-    try {
-      const response = await api.get(`/usecases/${props.useCaseId}`);
-      const useCaseData = response.data;
-      
-      // Create export data with the requested format
-      const exportData = {
-        promptTemplate: useCaseData.promptTemplate || "xxxxx",
-        fixedModelId: useCaseData.fixedModelId || "",
-        fileUpload: !!useCaseData.fileUpload,
-        inputExamples: useCaseData.inputExamples || [],
-        description: useCaseData.description || "xxxxx",
-        title: useCaseData.title || "",
-      };
-      
-      // Create a blob with the JSON data in the specified format
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
-        type: 'application/json' 
-      });
-      
-      // Create a URL for the blob
-      const url = URL.createObjectURL(blob);
-      
-      // Create a temporary link element
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${useCaseData.title || 'usecase'}.json`;
-      
-      // Trigger download
-      document.body.appendChild(link);
-      link.click();
-      
-      // Cleanup
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Failed to export use case:', error);
-    } finally {
-      setIsExporting(false);
-    }
-  }, [api, props, loading]);
 
   const placeholders = useMemo(() => {
     return extractPlaceholdersFromPromptTemplate(props.promptTemplate);
@@ -572,17 +521,18 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
                 onClick={props.onToggleFavorite}
               />
 
-              {props.canEdit && (
-                <>
-                  <ButtonUseCaseEdit useCaseId={props.useCaseId} />
-                  <ButtonShare
-                    className="ml-2"
-                    isShared={props.isShared}
-                    disabled={props.isLoading}
-                    onClick={props.onToggleShared}
-                  />
-                </>
-              )}
+                {props.canEdit && (
+                  <>
+                    <ButtonUseCaseEdit useCaseId={props.useCaseId} className="ml-2" />
+                    <ButtonUseCaseExport useCaseId={props.useCaseId} className="ml-2" />
+                    <ButtonShare
+                      className="ml-2"
+                      isShared={props.isShared}
+                      disabled={props.isLoading}
+                      onClick={props.onToggleShared}
+                    />
+                  </>
+                )}
             </div>
           </div>
         )}
@@ -757,17 +707,6 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
           {stopReason === 'max_tokens' && (
             <Button onClick={continueGeneration}>
               {t('translate.continue_output')}
-            </Button>
-          )}
-          
-          {/* Add Export button */}
-          {!props.previewMode && (
-            <Button
-              outlined
-              onClick={onClickExport}
-              disabled={props.isLoading || loading || isExporting}
-              loading={isExporting}>
-              {t('common.export') || 'エクスポート'}
             </Button>
           )}
 

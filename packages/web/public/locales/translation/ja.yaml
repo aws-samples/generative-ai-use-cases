@@ -746,7 +746,6 @@ useCaseBuilder:
   fileUploadDescription: 添付可能なファイルはモデルによって異なります
   fileUploadDisabled: ファイルは添付できません
   fileUploadEnabled: ファイルを添付できます
-  importUseCase: インポート
   invalidFileType: ファイル形式が無効です。JSONファイルを選択してください。
   invalidJsonFormat: JSONフォーマットが無効です。ファイルの内容を確認してください。
   help:

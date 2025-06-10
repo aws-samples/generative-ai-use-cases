@@ -14,7 +14,7 @@ import {
   PiEye,
   PiX,
   PiCircleFill,
-  PiUpload,
+  PiUploadSimple,
 } from 'react-icons/pi';
 import useMyUseCases from '../../hooks/useCaseBuilder/useMyUseCases';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -593,21 +593,21 @@ const UseCaseBuilderEditPage: React.FC = () => {
               );
             }
           })}
-          
-          {/* Import Use Case Button */}
-          <div className="mt-2 border border-gray-200 rounded-md p-2 mx-1">
-            <div 
-              className="hover:text-aws-smile flex cursor-pointer flex-row items-center justify-center px-2 py-1.5 text-sm text-gray-800 gap-2 border-l-2 border-transparent"
-              onClick={handleImportClick}
-            >
-              <PiUpload className="text-base" />
-              {t('useCaseBuilder.importUseCase')}
-            </div>
-          </div>
         </div>
 
         <div className="col-span-12 lg:col-span-5">
-          <Card label={t(`${currentMenu}`)} className="relative">
+          <Card 
+            label={t(`${currentMenu}`)}
+            className="relative">
+            {currentMenu === t('useCaseBuilder.menuUseCaseDefinition') && (
+              <div className="absolute right-3 top-5">
+                <ButtonIcon
+                  className="text-gray-600 hover:text-aws-smile"
+                  onClick={handleImportClick}>
+                  <PiUploadSimple className="text-lg" />
+                </ButtonIcon>
+              </div>
+            )}
             {currentMenu === t('useCaseBuilder.menuUseCaseDefinition') && (
               <>
                 <RowItem>

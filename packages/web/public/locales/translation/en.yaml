@@ -931,10 +931,6 @@ useCaseBuilder:
   fileUploadDescription: Users can upload files for the LLM to reference the content.
   fileUploadDisabled: Disable file upload
   fileUploadEnabled: Enable file upload
-  importUseCase: Import Use Case
-  invalidFileType: Invalid file type. Please select a JSON file.
-  invalidJsonFormat: Invalid JSON format. Please check the file content.
-  importUseCase: Import Use Case
   invalidFileType: Invalid file type. Please select a JSON file.
   invalidJsonFormat: Invalid JSON format. Please check the file content.
   help:
