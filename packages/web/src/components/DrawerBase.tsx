@@ -6,6 +6,7 @@ import useVersion from '../hooks/useVersion';
 import IconWithDot from './IconWithDot';
 import { PiGear } from 'react-icons/pi';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import useUserSetting from '../hooks/useUserSetting';
 
 type Props = BaseProps & {
   builderMode?: boolean;
@@ -14,6 +15,7 @@ type Props = BaseProps & {
 
 const DrawerBase: React.FC<Props> = (props) => {
   const { getHasUpdate } = useVersion();
+  const { settingShowEmail } = useUserSetting();
 
   // The first argument is not required, but if it is not included, the request will not be made, so 'user' string is entered
   const { data } = useSWR('user', () => {
@@ -36,12 +38,9 @@ const DrawerBase: React.FC<Props> = (props) => {
         className={`bg-aws-squid-ink flex h-screen w-64 flex-col justify-between text-sm text-white  print:hidden`}>
         <div className="flex h-full flex-col">
           {props.children}
-          <div className="flex flex-none items-center justify-between gap-2 border-t border-gray-400 px-3 py-2">
-            <Link
-              to={settingUrl}
-              className="mr-2 overflow-x-hidden hover:brightness-75">
-              <span className="text-sm">{email}</span>
-            </Link>
+          <div className="flex flex-none items-center justify-between gap-x-2 border-t border-gray-400 px-3 py-2">
+            {settingShowEmail && <div className="text-sm">{email}</div>}
+            <div></div>
             <Link to={settingUrl}>
               <IconWithDot showDot={hasUpdate}>
                 <PiGear className="text-lg" />
