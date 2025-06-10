@@ -9,6 +9,10 @@ const useUserSetting = () => {
     'showTools',
     true
   );
+  const [settingShowEmail, setSettingShowEmail] = useLocalStorageBoolean(
+    'showEmail',
+    true
+  );
 
   return {
     settingTypingAnimation,
@@ -17,6 +21,8 @@ const useUserSetting = () => {
     setSettingShowUseCaseBuilder,
     settingShowTools,
     setSettingShowTools,
+    settingShowEmail,
+    setSettingShowEmail,
   };
 };
 

@@ -63,6 +63,8 @@ const Setting = () => {
     setSettingShowUseCaseBuilder,
     settingShowTools,
     setSettingShowTools,
+    settingShowEmail,
+    setSettingShowEmail,
   } = useUserSetting();
 
   const onClickSignout = useCallback(() => {
@@ -142,6 +144,16 @@ const Setting = () => {
               checked={settingShowTools}
               label=""
               onSwitch={setSettingShowTools}
+            />
+          }></SettingItem>
+
+        <SettingItem
+          name={t('setting.items.show_email')}
+          value={
+            <Switch
+              checked={settingShowEmail}
+              label=""
+              onSwitch={setSettingShowEmail}
             />
           }></SettingItem>
 

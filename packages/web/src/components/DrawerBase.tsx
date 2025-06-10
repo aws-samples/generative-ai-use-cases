@@ -6,6 +6,7 @@ import useVersion from '../hooks/useVersion';
 import IconWithDot from './IconWithDot';
 import { PiChartBar, PiGear } from 'react-icons/pi';
 import { fetchAuthSession } from 'aws-amplify/auth';
+import useUserSetting from '../hooks/useUserSetting';
 import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
@@ -15,6 +16,7 @@ type Props = BaseProps & {
 
 const DrawerBase: React.FC<Props> = (props) => {
   const { getHasUpdate } = useVersion();
+  const { settingShowEmail } = useUserSetting();
   const { t } = useTranslation();
 
   // The first argument is not required, but if it is not included, the request will not be made, so 'user' string is entered
@@ -38,17 +40,13 @@ const DrawerBase: React.FC<Props> = (props) => {
         className={`bg-aws-squid-ink flex h-screen w-64 flex-col justify-between text-sm text-white  print:hidden`}>
         <div className="flex h-full flex-col">
           {props.children}
-          <div className="flex flex-none items-center gap-2 border-t border-gray-400 px-3 py-2">
-            <Link
-              to={settingUrl}
-              className="mr-2 overflow-x-hidden hover:brightness-75">
-              <span className="text-sm">{email}</span>
-            </Link>
+          <div className="flex flex-none items-center justify-between gap-x-2 border-t border-gray-400 px-3 py-2">
+            {settingShowEmail && <div className="text-sm">{email}</div>}
             <div className="grow" />
             <Link to="/stats" title={t('stat.title')}>
               <PiChartBar className="text-lg" />
             </Link>
-            <Link to={settingUrl} title={t('navigation.settings')}>
+            <Link to={settingUrl}>
               <IconWithDot showDot={hasUpdate}>
                 <PiGear className="text-lg" />
               </IconWithDot>
