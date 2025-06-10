@@ -3,7 +3,10 @@ import {
   ImageFormat,
   VideoFormat,
 } from '@aws-sdk/client-bedrock-runtime';
-import { SupportedMimeType } from '@generative-ai-use-cases/common';
+import {
+  extensionToMimeType,
+  SupportedMimeType,
+} from '@generative-ai-use-cases/common';
 
 const SupportedFormat = {
   ...DocumentFormat,
@@ -26,4 +29,12 @@ export const getFormatFromMimeType = (mimeType: string) => {
     return mimeTypeToFormat[mimeType as SupportedMimeType];
   }
   throw new Error(`Unsupported MIME type: ${mimeType}`);
+};
+
+export const getMimeTypeFromFileName = (fileName: string) => {
+  const extension = fileName.split('.').pop()?.toLowerCase() || '';
+  if (extension in extensionToMimeType) {
+    return extensionToMimeType[extension];
+  }
+  throw new Error(`Unsupported file extension: ${fileName}`);
 };

@@ -83,3 +83,10 @@ export const mimeTypeToExtensions: Record<SupportedMimeType, string[]> = {
   ...imageMimeTypeToExtensions,
   ...videoMimeTypeToExtensions,
 };
+
+export const extensionToMimeType: Record<string, SupportedMimeType> =
+  Object.fromEntries(
+    Object.entries(mimeTypeToExtensions).flatMap(([mimeType, extensions]) =>
+      extensions.map((ext) => [ext, mimeType as SupportedMimeType])
+    )
+  );

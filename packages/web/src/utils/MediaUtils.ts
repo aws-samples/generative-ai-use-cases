@@ -6,6 +6,7 @@ import {
   imageMimeTypeToExtensions,
   videoMimeTypeToExtensions,
   mimeTypeToExtensions,
+  extensionToMimeType,
 } from '@generative-ai-use-cases/common';
 import { fileTypeFromBuffer, fileTypeFromStream } from 'file-type';
 
@@ -36,12 +37,15 @@ export const getMimeTypeFromFileHeader = async (file: File) => {
       throw new Error('Error reading MIME type from file');
     }
   }
+
   // Some file types are not supported by the file-type library.
-  // In this case, we fall back to using 'file.type' for the MIME type, since the file-type library covers most binary file types.
+  // In this case, we fall back to using common MIME types based on the file extension.
   // https://github.com/sindresorhus/file-type/tree/main?tab=readme-ov-file#supported-file-types
   if (!mimeType || mimeType === 'application/x-cfb') {
-    mimeType = file.type;
+    const extension = file.name.split('.').pop()?.toLowerCase() || '';
+    mimeType = extensionToMimeType[extension] || '';
   }
+
   return (mimeTypeAlias[mimeType] || mimeType) as SupportedMimeType;
 };
 
