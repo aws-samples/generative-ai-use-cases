@@ -10,10 +10,7 @@ import {
   TokenUsageStats,
 } from 'generative-ai-use-cases';
 import * as crypto from 'crypto';
-import {
-  ConditionalCheckFailedException,
-  DynamoDBClient,
-} from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
   BatchGetCommand,
   BatchWriteCommand,
@@ -272,21 +269,20 @@ async function updateTokenUsage(message: RecordedMessage): Promise<void> {
       })
     );
   } catch (updateError) {
-    if (updateError instanceof ConditionalCheckFailedException) {
-      console.log(
-        'Record does not exist, creating initial structure:',
-        updateError
-      );
-      try {
-        // Create record with complete object structure (without condition)
-        await dynamoDbDocument.send(
-          new UpdateCommand({
-            TableName: STATS_TABLE_NAME,
-            Key: {
-              id: `stats#${dateStr}`,
-              userId: userId,
-            },
-            UpdateExpression: `
+    console.log(
+      'Record does not exist, creating initial structure:',
+      updateError
+    );
+    try {
+      // Create record with complete object structure (without condition)
+      await dynamoDbDocument.send(
+        new UpdateCommand({
+          TableName: STATS_TABLE_NAME,
+          Key: {
+            id: `stats#${dateStr}`,
+            userId: userId,
+          },
+          UpdateExpression: `
               SET
                 #date = :date,
                 executions = :executionsObj,
@@ -295,44 +291,41 @@ async function updateTokenUsage(message: RecordedMessage): Promise<void> {
                 cacheReadInputTokens = :cacheReadInputTokensObj,
                 cacheWriteInputTokens = :cacheWriteInputTokensObj
             `,
-            ExpressionAttributeNames: {
-              '#date': 'date',
+          ExpressionAttributeNames: {
+            '#date': 'date',
+          },
+          ExpressionAttributeValues: {
+            ':date': dateStr,
+            ':executionsObj': {
+              overall: 1,
+              [`model#${modelId}`]: 1,
+              [`usecase#${usecase}`]: 1,
             },
-            ExpressionAttributeValues: {
-              ':date': dateStr,
-              ':executionsObj': {
-                overall: 1,
-                [`model#${modelId}`]: 1,
-                [`usecase#${usecase}`]: 1,
-              },
-              ':inputTokensObj': {
-                overall: usage.inputTokens || 0,
-                [`model#${modelId}`]: usage.inputTokens || 0,
-                [`usecase#${usecase}`]: usage.inputTokens || 0,
-              },
-              ':outputTokensObj': {
-                overall: usage.outputTokens || 0,
-                [`model#${modelId}`]: usage.outputTokens || 0,
-                [`usecase#${usecase}`]: usage.outputTokens || 0,
-              },
-              ':cacheReadInputTokensObj': {
-                overall: usage.cacheReadInputTokens || 0,
-                [`model#${modelId}`]: usage.cacheReadInputTokens || 0,
-                [`usecase#${usecase}`]: usage.cacheReadInputTokens || 0,
-              },
-              ':cacheWriteInputTokensObj': {
-                overall: usage.cacheWriteInputTokens || 0,
-                [`model#${modelId}`]: usage.cacheWriteInputTokens || 0,
-                [`usecase#${usecase}`]: usage.cacheWriteInputTokens || 0,
-              },
+            ':inputTokensObj': {
+              overall: usage.inputTokens || 0,
+              [`model#${modelId}`]: usage.inputTokens || 0,
+              [`usecase#${usecase}`]: usage.inputTokens || 0,
             },
-          })
-        );
-      } catch (putError) {
-        console.log('Error creating token usage:', putError);
-      }
-    } else {
-      console.log('Error updating token usage:', updateError);
+            ':outputTokensObj': {
+              overall: usage.outputTokens || 0,
+              [`model#${modelId}`]: usage.outputTokens || 0,
+              [`usecase#${usecase}`]: usage.outputTokens || 0,
+            },
+            ':cacheReadInputTokensObj': {
+              overall: usage.cacheReadInputTokens || 0,
+              [`model#${modelId}`]: usage.cacheReadInputTokens || 0,
+              [`usecase#${usecase}`]: usage.cacheReadInputTokens || 0,
+            },
+            ':cacheWriteInputTokensObj': {
+              overall: usage.cacheWriteInputTokens || 0,
+              [`model#${modelId}`]: usage.cacheWriteInputTokens || 0,
+              [`usecase#${usecase}`]: usage.cacheWriteInputTokens || 0,
+            },
+          },
+        })
+      );
+    } catch (putError) {
+      console.error('Error creating token usage:', putError);
     }
   }
 }
