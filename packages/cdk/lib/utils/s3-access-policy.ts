@@ -4,19 +4,12 @@ const createSourceIpCondition = (
   allowedIpV4AddressRanges?: string[] | null,
   allowedIpV6AddressRanges?: string[] | null
 ) =>
-  // Create a source IP condition when either IPv4 or IPv6 address ranges are specified (not null/undefined)
-  // An empty array (e.g., []) means no access is allowed for that IP version
-  // If both parameters are null/undefined, this function returns undefined
   allowedIpV4AddressRanges || allowedIpV6AddressRanges
     ? {
         IpAddress: {
           'aws:SourceIp': [
-            ...(allowedIpV4AddressRanges == null // null or undefined
-              ? ['0.0.0.0/0']
-              : allowedIpV4AddressRanges),
-            ...(allowedIpV6AddressRanges == null // null or undefined
-              ? ['::/0']
-              : allowedIpV6AddressRanges),
+            ...(allowedIpV4AddressRanges ?? []),
+            ...(allowedIpV6AddressRanges ?? []),
           ],
         },
       }
