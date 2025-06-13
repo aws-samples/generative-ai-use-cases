@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ButtonIcon from '../ButtonIcon';
 import { BaseProps } from '../../@types/common';
-import { PiDownloadSimple } from "react-icons/pi";
+import { PiUploadSimple } from "react-icons/pi";
 import useHttp from '../../hooks/useHttp';
 
 type Props = BaseProps & {
@@ -63,7 +63,7 @@ const ButtonUseCaseExport: React.FC<Props> = (props) => {
       className={props.className ?? ''}
       onClick={onClickExport}
       disabled={isExporting}>
-      <PiDownloadSimple />
+      <PiUploadSimple />
     </ButtonIcon>
   );
 };

@@ -14,7 +14,7 @@ import {
   PiEye,
   PiX,
   PiCircleFill,
-  PiUploadSimple,
+  PiDownloadSimple,
 } from 'react-icons/pi';
 import useMyUseCases from '../../hooks/useCaseBuilder/useMyUseCases';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -604,7 +604,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
                 <ButtonIcon
                   className="text-gray-600 hover:text-aws-smile"
                   onClick={handleImportClick}>
-                  <PiUploadSimple className="text-lg" />
+                  <PiDownloadSimple className="text-lg" />
                 </ButtonIcon>
               </div>
             )}
