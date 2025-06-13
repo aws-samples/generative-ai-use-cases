@@ -11,6 +11,7 @@ exports.handler = async (
 ): Promise<lambda.APIGatewayProxyResult> => {
   const req = JSON.parse(event.body!) as RetrieveKnowledgeBaseRequest;
   const query = req.query;
+  const knowledgeBaseId = req.knowledgeBaseId || KNOWLEDGE_BASE_ID;
 
   if (!query) {
     return {
@@ -25,12 +26,12 @@ exports.handler = async (
 
   const client = await initBedrockAgentRuntimeClient({ region: MODEL_REGION });
   const retrieveCommand = new RetrieveCommand({
-    knowledgeBaseId: KNOWLEDGE_BASE_ID,
+    knowledgeBaseId: knowledgeBaseId,
     retrievalQuery: { text: query },
     retrievalConfiguration: {
       vectorSearchConfiguration: {
         numberOfResults: 10,
-        overrideSearchType: 'HYBRID',
+        //overrideSearchType: 'HYBRID',
       },
     },
   });

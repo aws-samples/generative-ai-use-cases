@@ -133,7 +133,8 @@ const bedrockKbApi: ApiInterface = {
     model: Model,
     messages: UnrecordedMessage[],
     id: string,
-    idToken?: string
+    idToken?: string,
+    kbid?: string
   ) {
     try {
       // Get explicit filters (async since it may require idToken verification)
@@ -148,7 +149,7 @@ const bedrockKbApi: ApiInterface = {
         retrieveAndGenerateConfiguration: {
           type: 'KNOWLEDGE_BASE',
           knowledgeBaseConfiguration: {
-            knowledgeBaseId: process.env.KNOWLEDGE_BASE_ID,
+            knowledgeBaseId: kbid ?? process.env.KNOWLEDGE_BASE_ID,
             modelArn: model.modelId,
             retrievalConfiguration: {
               vectorSearchConfiguration: {
