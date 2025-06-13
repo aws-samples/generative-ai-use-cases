@@ -125,6 +125,7 @@ export class GenerativeAiUseCasesStack extends Stack {
     if (params.mcpEnabled) {
       const mcpApi = new McpApi(this, 'McpApi', {
         idPool: auth.idPool,
+        fileBucket: api.fileBucket,
       });
       mcpEndpoint = mcpApi.endpoint;
     }

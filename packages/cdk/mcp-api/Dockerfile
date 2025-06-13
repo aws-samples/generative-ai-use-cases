@@ -9,7 +9,7 @@ ENV UV_NO_MANAGED_PYTHON=1
 ENV UV_PYTHON=/usr/local/bin/python
 ENV UV_INSTALL_DIR=/usr/local/bin
 
-RUN apt-get update -y && apt-get install curl nodejs npm -y
+RUN apt-get update -y && apt-get install curl nodejs npm graphviz -y
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 COPY pyproject.toml .python-version uv.lock ./
