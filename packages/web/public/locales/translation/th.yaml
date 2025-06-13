@@ -42,6 +42,7 @@ common:
   error: เกิดข้อผิดพลาด
   errorNoSuggestions: ไม่พบคำแนะนำ
   execute: ดำเนินการ
+  export: ส่งออก
   feedback_received: ได้รับข้อเสนอแนะแล้ว ขอบคุณ
   here: ที่นี่
   load_more: โหลดเพิ่มเติม
@@ -785,6 +786,9 @@ useCaseBuilder:
   fileUploadDescription: ผู้ใช้สามารถอัปโหลดไฟล์เพื่อให้ LLM อ้างอิงเนื้อหา
   fileUploadDisabled: ปิดใช้งานการอัปโหลดไฟล์
   fileUploadEnabled: เปิดใช้งานการอัปโหลดไฟล์
+  importUseCase: นำเข้า Use Case
+  invalidFileType: รูปแบบไฟล์ไม่ถูกต้อง โปรดเลือกไฟล์ JSON
+  invalidJsonFormat: รูปแบบ JSON ไม่ถูกต้อง โปรดตรวจสอบเนื้อหาไฟล์
   help:
     emailReplyExample: ตอบอีเมล
     emailReplyPrompt: |-
