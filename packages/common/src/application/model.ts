@@ -526,6 +526,7 @@ export const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
   'anthropic.claude-sonnet-4-20250514-v1:0': ['messages', 'system', 'tools'],
   'anthropic.claude-3-7-sonnet-20250219-v1:0': ['messages', 'system', 'tools'],
   'anthropic.claude-3-5-haiku-20241022-v1:0': ['messages', 'system', 'tools'],
+  'amazon.nova-premier-v1:0': ['messages', 'system'],
   'amazon.nova-pro-v1:0': ['messages', 'system'],
   'amazon.nova-lite-v1:0': ['messages', 'system'],
   'amazon.nova-micro-v1:0': ['messages', 'system'],
