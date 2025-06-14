@@ -15,6 +15,7 @@ export const supportedLngs = {
   ja: '日本語',
   th: 'ไทย',
   zh: '中文',
+  vi: 'Tiếng Việt',
   // ko: '한국어',
 };
 
