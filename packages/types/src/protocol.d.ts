@@ -91,6 +91,7 @@ export type PredictRequest = {
   idToken?: string;
   messages: UnrecordedMessage[];
   id: string;
+  kbId?: string;
 };
 
 export type PredictResponse = string;
@@ -129,6 +130,7 @@ export type RetrieveKendraResponse = RetrieveCommandOutput;
 
 export type RetrieveKnowledgeBaseRequest = {
   query: string;
+  knowledgeBaseId?: string;
 };
 
 export type RetrieveKnowledgeBaseResponse = RetrieveCommandOutputKnowledgeBase;
