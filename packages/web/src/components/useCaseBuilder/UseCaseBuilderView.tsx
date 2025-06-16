@@ -19,6 +19,7 @@ import { produce } from 'immer';
 import ButtonFavorite from './ButtonFavorite';
 import ButtonShare from './ButtonShare';
 import ButtonUseCaseEdit from './ButtonUseCaseEdit';
+import ButtonUseCaseExport from './ButtonUseCaseExport';
 import Skeleton from '../Skeleton';
 import useMyUseCases from '../../hooks/useCaseBuilder/useMyUseCases';
 import { UseCaseInputExample, FileLimit } from 'generative-ai-use-cases';
@@ -520,17 +521,18 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
                 onClick={props.onToggleFavorite}
               />
 
-              {props.canEdit && (
-                <>
-                  <ButtonUseCaseEdit useCaseId={props.useCaseId} />
-                  <ButtonShare
-                    className="ml-2"
-                    isShared={props.isShared}
-                    disabled={props.isLoading}
-                    onClick={props.onToggleShared}
-                  />
-                </>
-              )}
+                {props.canEdit && (
+                  <>
+                    <ButtonUseCaseEdit useCaseId={props.useCaseId} className="ml-2" />
+                    <ButtonUseCaseExport useCaseId={props.useCaseId} className="ml-2" />
+                    <ButtonShare
+                      className="ml-2"
+                      isShared={props.isShared}
+                      disabled={props.isLoading}
+                      onClick={props.onToggleShared}
+                    />
+                  </>
+                )}
             </div>
           </div>
         )}
