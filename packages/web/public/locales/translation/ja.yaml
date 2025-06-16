@@ -508,6 +508,7 @@ language:
   ja: 日本語
   ko: 韓国語
   th: タイ語
+  vi: ベトナム語
   zh: 中国語
 mcp_chat:
   loading_message: MCP サーバーと接続しています。時間がかかる場合があります。そのまま待機してください...

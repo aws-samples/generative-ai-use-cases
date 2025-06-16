@@ -34,7 +34,7 @@ import queryString from 'query-string';
 import useSpeach from '../hooks/useSpeach';
 import { useTranslation } from 'react-i18next';
 
-const languages = ['en', 'ja', 'zh', 'ko', 'fr', 'es', 'de', 'th'];
+const languages = ['en', 'ja', 'zh', 'ko', 'fr', 'es', 'de', 'th', 'vi'];
 
 type StateType = {
   sentence: string;

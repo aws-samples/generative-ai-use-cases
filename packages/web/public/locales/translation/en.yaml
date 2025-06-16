@@ -647,6 +647,7 @@ language:
   ja: Japanese
   ko: Korean
   th: Thai
+  vi: Vietnamese
   zh: Chinese
 mcp_chat:
   loading_message: Connecting to MCP server. This may take some time. Please wait...
