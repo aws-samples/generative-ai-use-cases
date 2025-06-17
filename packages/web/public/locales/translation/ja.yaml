@@ -746,8 +746,6 @@ useCaseBuilder:
   fileUploadDescription: 添付可能なファイルはモデルによって異なります
   fileUploadDisabled: ファイルは添付できません
   fileUploadEnabled: ファイルを添付できます
-  invalidFileType: ファイル形式が無効です。JSONファイルを選択してください。
-  invalidJsonFormat: JSONフォーマットが無効です。ファイルの内容を確認してください。
   help:
     emailReplyExample: メール返信の例
     emailReplyPrompt: |-
@@ -854,6 +852,8 @@ useCaseBuilder:
       {{text}} はテキスト入力を受け付けるフォームを作成し、入力した値をそのままプロンプトテンプレートに埋め込みます。
   helpTitle: ヘルプ
   inputExamples: 入力例
+  invalidFileType: ファイル形式が無効です。JSONファイルを選択してください。
+  invalidJsonFormat: JSONフォーマットが無効です。ファイルの内容を確認してください。
   loadMore: さらに読み込む
   mainMenu: メインメニュー
   meeting:

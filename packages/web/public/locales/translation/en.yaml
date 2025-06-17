@@ -931,8 +931,6 @@ useCaseBuilder:
   fileUploadDescription: Users can upload files for the LLM to reference the content.
   fileUploadDisabled: Disable file upload
   fileUploadEnabled: Enable file upload
-  invalidFileType: Invalid file type. Please select a JSON file.
-  invalidJsonFormat: Invalid JSON format. Please check the file content.
   help:
     emailReplyExample: Email Reply
     emailReplyPrompt: >-
@@ -1075,6 +1073,8 @@ useCaseBuilder:
       the entered value directly into the prompt template.
   helpTitle: Help
   inputExamples: Input Examples
+  invalidFileType: Invalid file type. Please select a JSON file.
+  invalidJsonFormat: Invalid JSON format. Please check the file content.
   loadMore: Load More
   mainMenu: Main Menu
   meeting:

@@ -786,9 +786,6 @@ useCaseBuilder:
   fileUploadDescription: ผู้ใช้สามารถอัปโหลดไฟล์เพื่อให้ LLM อ้างอิงเนื้อหา
   fileUploadDisabled: ปิดใช้งานการอัปโหลดไฟล์
   fileUploadEnabled: เปิดใช้งานการอัปโหลดไฟล์
-  importUseCase: นำเข้า Use Case
-  invalidFileType: รูปแบบไฟล์ไม่ถูกต้อง โปรดเลือกไฟล์ JSON
-  invalidJsonFormat: รูปแบบ JSON ไม่ถูกต้อง โปรดตรวจสอบเนื้อหาไฟล์
   help:
     emailReplyExample: ตอบอีเมล
     emailReplyPrompt: |-
@@ -897,7 +894,10 @@ useCaseBuilder:
       {{text}} เป็น placeholder พื้นฐานที่สุด สามารถเขียนเป็น {{text}} หรือ {{text:label}}
       {{text}} สร้างแบบฟอร์มที่รับอินพุตข้อความและฝังค่าที่ป้อนโดยตรงลงใน prompt template
   helpTitle: ช่วยเหลือ
+  importUseCase: นำเข้า Use Case
   inputExamples: ตัวอย่างอินพุต
+  invalidFileType: รูปแบบไฟล์ไม่ถูกต้อง โปรดเลือกไฟล์ JSON
+  invalidJsonFormat: รูปแบบ JSON ไม่ถูกต้อง โปรดตรวจสอบเนื้อหาไฟล์
   loadMore: โหลดเพิ่มเติม
   mainMenu: เมนูหลัก
   meeting:
