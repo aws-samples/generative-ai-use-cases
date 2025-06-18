@@ -10,9 +10,11 @@ import {
 } from 'aws-cdk-lib/aws-lambda';
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { IdentityPool } from 'aws-cdk-lib/aws-cognito-identitypool';
+import { NetworkMode } from 'aws-cdk-lib/aws-ecr-assets';
 
 export interface McpApiProps {
   readonly idPool: IdentityPool;
+  readonly isSageMakerStudio: boolean;
 }
 
 export class McpApi extends Construct {
@@ -20,9 +22,12 @@ export class McpApi extends Construct {
 
   constructor(scope: Construct, id: string, props: McpApiProps) {
     super(scope, id);
-
     const mcpFunction = new DockerImageFunction(this, 'McpFunction', {
-      code: DockerImageCode.fromImageAsset('./mcp-api'),
+      code: DockerImageCode.fromImageAsset('./mcp-api', {
+        networkMode: props.isSageMakerStudio
+          ? NetworkMode.custom('sagemaker')
+          : NetworkMode.NONE,
+      }),
       memorySize: 1024,
       timeout: Duration.minutes(15),
       architecture: Architecture.ARM_64,

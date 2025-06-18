@@ -105,6 +105,7 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
   }
 
   // GenU Stack
+  const isSageMakerStudio = 'SAGEMAKER_APP_TYPE_LOWERCASE' in process.env;
   const generativeAiUseCasesStack = new GenerativeAiUseCasesStack(
     app,
     `GenerativeAiUseCasesStack${params.env}`,
@@ -133,6 +134,8 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
       webAclId: cloudFrontWafStack?.webAclArn,
       // Custom Domain
       cert: cloudFrontWafStack?.cert,
+      // Image build environment
+      isSageMakerStudio,
     }
   );
 

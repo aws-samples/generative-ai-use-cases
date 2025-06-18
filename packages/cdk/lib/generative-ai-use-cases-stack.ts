@@ -36,6 +36,8 @@ export interface GenerativeAiUseCasesStackProps extends StackProps {
   readonly webAclId?: string;
   // Custom Domain
   readonly cert?: ICertificate;
+  // Image build environment
+  readonly isSageMakerStudio: boolean;
 }
 
 export class GenerativeAiUseCasesStack extends Stack {
@@ -125,6 +127,7 @@ export class GenerativeAiUseCasesStack extends Stack {
     if (params.mcpEnabled) {
       const mcpApi = new McpApi(this, 'McpApi', {
         idPool: auth.idPool,
+        isSageMakerStudio: props.isSageMakerStudio,
       });
       mcpEndpoint = mcpApi.endpoint;
     }
