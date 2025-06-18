@@ -735,7 +735,6 @@ useCaseBuilder:
       {{text}} 是最基本的占位符。 可以写为 {{text}} 或 {{text:标签}}。 {{text}}
       创建接受文本输入的表单，并将输入的值直接嵌入到提示模板中。
   helpTitle: 帮助
-  importUseCase: 导入用例
   inputExamples: 输入示例
   invalidFileType: 文件格式无效。请选择JSON文件。
   invalidJsonFormat: JSON格式无效。请检查文件内容。

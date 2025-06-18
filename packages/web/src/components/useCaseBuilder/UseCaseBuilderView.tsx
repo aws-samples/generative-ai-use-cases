@@ -521,18 +521,24 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
                 onClick={props.onToggleFavorite}
               />
 
-                {props.canEdit && (
-                  <>
-                    <ButtonUseCaseEdit useCaseId={props.useCaseId} className="ml-2" />
-                    <ButtonUseCaseExport useCaseId={props.useCaseId} className="ml-2" />
-                    <ButtonShare
-                      className="ml-2"
-                      isShared={props.isShared}
-                      disabled={props.isLoading}
-                      onClick={props.onToggleShared}
-                    />
-                  </>
-                )}
+              {props.canEdit && (
+                <>
+                  <ButtonUseCaseEdit
+                    useCaseId={props.useCaseId}
+                    className="ml-2"
+                  />
+                  <ButtonUseCaseExport
+                    useCaseId={props.useCaseId}
+                    className="ml-2"
+                  />
+                  <ButtonShare
+                    className="ml-2"
+                    isShared={props.isShared}
+                    disabled={props.isLoading}
+                    onClick={props.onToggleShared}
+                  />
+                </>
+              )}
             </div>
           </div>
         )}

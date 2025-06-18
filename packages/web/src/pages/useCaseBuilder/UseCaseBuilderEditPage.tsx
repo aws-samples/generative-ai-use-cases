@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from 'react';
 import Card from '../../components/Card';
 import Button from '../../components/Button';
 import ButtonIcon from '../../components/ButtonIcon';
@@ -460,60 +466,65 @@ const UseCaseBuilderEditPage: React.FC = () => {
         setIsDeleting(false);
       });
   }, [deleteUseCase, navigate, useCaseId]);
-  
+
   // Handle import button click event
   const handleImportClick = useCallback(() => {
     if (jsonFileInputRef.current) {
       jsonFileInputRef.current.click();
     }
   }, [jsonFileInputRef]);
-  
+
   // Handle file selection and parsing
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    // Check if the file is a JSON file
-    if (!file.name.toLowerCase().endsWith('.json')) {
-      alert(t('useCaseBuilder.invalidFileType'));
-      return;
-    }
-    
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const useCaseData: ImportableUseCase = JSON.parse(event.target?.result as string);
-        
-        // Validate the required fields
-        if (!useCaseData.title || !useCaseData.promptTemplate) {
-          alert(t('useCaseBuilder.invalidJsonFormat'));
-          return;
-        }
-        
-        // Navigate to the new use case page with the imported data
-        navigate('/use-case-builder/new', {
-          state: {
-            title: useCaseData.title,
-            promptTemplate: useCaseData.promptTemplate,
-            description: useCaseData.description || '',
-            inputExamples: useCaseData.inputExamples || [],
-            fixedModelId: useCaseData.fixedModelId || '',
-            fileUpload: useCaseData.fileUpload || false,
-          },
-        });
-      } catch (error) {
-        console.error('Error parsing JSON file:', error);
-        alert(t('useCaseBuilder.invalidJsonFormat'));
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      // Check if the file is a JSON file
+      if (!file.name.toLowerCase().endsWith('.json')) {
+        alert(t('useCaseBuilder.invalidFileType'));
+        return;
       }
-    };
-    
-    reader.readAsText(file);
-    
-    // Reset the input value to allow selecting the same file again if needed
-    if (jsonFileInputRef.current) {
-      jsonFileInputRef.current.value = '';
-    }
-  }, [navigate, t]);
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const useCaseData: ImportableUseCase = JSON.parse(
+            event.target?.result as string
+          );
+
+          // Validate the required fields
+          if (!useCaseData.title || !useCaseData.promptTemplate) {
+            alert(t('useCaseBuilder.invalidJsonFormat'));
+            return;
+          }
+
+          // Navigate to the new use case page with the imported data
+          navigate('/use-case-builder/new', {
+            state: {
+              title: useCaseData.title,
+              promptTemplate: useCaseData.promptTemplate,
+              description: useCaseData.description || '',
+              inputExamples: useCaseData.inputExamples || [],
+              fixedModelId: useCaseData.fixedModelId || '',
+              fileUpload: useCaseData.fileUpload || false,
+            },
+          });
+        } catch (error) {
+          console.error('Error parsing JSON file:', error);
+          alert(t('useCaseBuilder.invalidJsonFormat'));
+        }
+      };
+
+      reader.readAsText(file);
+
+      // Reset the input value to allow selecting the same file again if needed
+      if (jsonFileInputRef.current) {
+        jsonFileInputRef.current.value = '';
+      }
+    },
+    [navigate, t]
+  );
 
   return (
     <>
@@ -525,7 +536,7 @@ const UseCaseBuilderEditPage: React.FC = () => {
         accept=".json"
         onChange={handleFileSelect}
       />
-      
+
       <ModalDialogDeleteUseCase
         isOpen={isOpenDeleteDialog}
         targetLabel={title}
@@ -596,13 +607,11 @@ const UseCaseBuilderEditPage: React.FC = () => {
         </div>
 
         <div className="col-span-12 lg:col-span-5">
-          <Card 
-            label={t(`${currentMenu}`)}
-            className="relative">
+          <Card label={t(`${currentMenu}`)} className="relative">
             {currentMenu === t('useCaseBuilder.menuUseCaseDefinition') && (
               <div className="absolute right-3 top-5">
                 <ButtonIcon
-                  className="text-gray-600 hover:text-aws-smile"
+                  className="hover:text-aws-smile text-gray-600"
                   onClick={handleImportClick}>
                   <PiDownloadSimple className="text-lg" />
                 </ButtonIcon>
