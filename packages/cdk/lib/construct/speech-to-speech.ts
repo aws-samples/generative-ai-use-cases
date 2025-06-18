@@ -70,7 +70,7 @@ export class SpeechToSpeech extends Construct {
     const eventApiEndpoint = `https://${eventApi.httpDns}/event`;
 
     const speechToSpeechTask = new NodejsFunction(this, 'Task', {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: Runtime.NODEJS_22_X,
       entry: './lambda/speechToSpeechTask.ts',
       timeout: Duration.minutes(15),
       environment: {
@@ -114,7 +114,7 @@ export class SpeechToSpeech extends Construct {
       this,
       'StartSession',
       {
-        runtime: Runtime.NODEJS_LATEST,
+        runtime: Runtime.NODEJS_22_X,
         entry: './lambda/startSpeechToSpeechSession.ts',
         timeout: Duration.minutes(15),
         environment: {

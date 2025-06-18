@@ -51,7 +51,7 @@ export class UseCaseBuilder extends Construct {
     });
 
     const commonProperty: NodejsFunctionProps = {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: Runtime.NODEJS_22_X,
       timeout: Duration.minutes(15),
       environment: {
         USECASE_TABLE_NAME: useCaseBuilderTable.tableName,

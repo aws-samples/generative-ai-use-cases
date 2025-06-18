@@ -504,7 +504,7 @@ export class Rag extends Construct {
     // Add RAG related APIs
     // Lambda
     const queryFunction = new NodejsFunction(this, 'Query', {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: Runtime.NODEJS_22_X,
       entry: './lambda/queryKendra.ts',
       timeout: Duration.minutes(15),
       bundling: {
@@ -525,7 +525,7 @@ export class Rag extends Construct {
     );
 
     const retrieveFunction = new NodejsFunction(this, 'Retrieve', {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: Runtime.NODEJS_22_X,
       entry: './lambda/retrieveKendra.ts',
       timeout: Duration.minutes(15),
       bundling: {
