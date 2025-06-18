@@ -26,11 +26,11 @@ export class McpApi extends Construct {
       code: DockerImageCode.fromImageAsset('./mcp-api', {
         networkMode: props.isSageMakerStudio
           ? NetworkMode.custom('sagemaker')
-          : NetworkMode.NONE,
+          : NetworkMode.DEFAULT,
       }),
       memorySize: 1024,
       timeout: Duration.minutes(15),
-      architecture: Architecture.ARM_64,
+      architecture: Architecture.X86_64,
       environment: {
         AWS_LWA_INVOKE_MODE: 'RESPONSE_STREAM',
       },
