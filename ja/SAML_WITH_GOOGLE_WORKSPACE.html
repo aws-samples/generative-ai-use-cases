@@ -1,0 +1,1255 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://aws-samples.github.io/generative-ai-use-cases/ja/SAML_WITH_GOOGLE_WORKSPACE.html">
+      
+      
+        <link rel="prev" href="DEPLOY_OPTION.html">
+      
+      
+        <link rel="next" href="SAML_WITH_ENTRA_ID.html">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+    
+    
+      
+        <title>Google Workspace で認証する - Generative AI Use Cases (GenU)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/custom/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+      
+        <meta  property="og:type"  content="website" >
+      
+        <meta  property="og:title"  content="Google Workspace で認証する - Generative AI Use Cases (GenU)" >
+      
+        <meta  property="og:description"  content="None" >
+      
+        <meta  property="og:image"  content="https://aws-samples.github.io/generative-ai-use-cases/assets/images/social/ja/SAML_WITH_GOOGLE_WORKSPACE.png" >
+      
+        <meta  property="og:image:type"  content="image/png" >
+      
+        <meta  property="og:image:width"  content="1200" >
+      
+        <meta  property="og:image:height"  content="630" >
+      
+        <meta  property="og:url"  content="https://aws-samples.github.io/generative-ai-use-cases/ja/SAML_WITH_GOOGLE_WORKSPACE.html" >
+      
+        <meta  name="twitter:card"  content="summary_large_image" >
+      
+        <meta  name="twitter:title"  content="Google Workspace で認証する - Generative AI Use Cases (GenU)" >
+      
+        <meta  name="twitter:description"  content="None" >
+      
+        <meta  name="twitter:image"  content="https://aws-samples.github.io/generative-ai-use-cases/assets/images/social/ja/SAML_WITH_GOOGLE_WORKSPACE.png" >
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#google-workspace-と-saml-連携" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="index.html" title="Generative AI Use Cases (GenU)" class="md-header__button md-logo" aria-label="Generative AI Use Cases (GenU)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Generative AI Use Cases (GenU)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Google Workspace で認証する
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="言語切り替え">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../en/SAML_WITH_GOOGLE_WORKSPACE.html" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="SAML_WITH_GOOGLE_WORKSPACE.html" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="共有" aria-label="共有" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aws-samples/generative-ai-use-cases" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/generative-ai-use-cases
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  概要
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="ABOUT.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="Generative AI Use Cases (GenU)" class="md-nav__button md-logo" aria-label="Generative AI Use Cases (GenU)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Generative AI Use Cases (GenU)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aws-samples/generative-ai-use-cases" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/generative-ai-use-cases
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概要
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Getting started
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Getting started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_1" id="__nav_2_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    デプロイ方法
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_1">
+            <span class="md-nav__icon md-icon"></span>
+            デプロイ方法
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ABOUT.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    クイックスタート
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEPLOY_ON_CLOUDSHELL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    (オプション) AWS CloudShell でデプロイする
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEPLOY_OPTION.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    デプロイオプション
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    認証
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            認証
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="SAML_WITH_GOOGLE_WORKSPACE.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Google Workspace で認証する
+    
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="SAML_WITH_ENTRA_ID.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Microsoft Entra ID で認証する
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    ブラウザ拡張機能
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            ブラウザ拡張機能
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    概要
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_BUILD.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ビルド
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_INSTALL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    インストール
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_SAML.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    SAML 認証
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    その他
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            その他
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="UPDATE.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    アップデート方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEVELOPMENT.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ローカル開発環境構築手順
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DESTROY.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    リソースの削除方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="PWA.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    ネイティブアプリのように利用する方法
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/aws-samples/generative-ai-use-cases/blob/main/docs/ja/SAML_WITH_GOOGLE_WORKSPACE.md" title="編集" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/aws-samples/generative-ai-use-cases/raw/main/docs/ja/SAML_WITH_GOOGLE_WORKSPACE.md" title="このページの原文を表示" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="google-workspace-と-saml-連携">Google Workspace と SAML 連携<a class="headerlink" href="#google-workspace-と-saml-連携" title="Permanent link">&para;</a></h1>
+<p>Google Workspace と SAML 連携を行う参考手順を紹介します。詳細なパラメーターは各環境に合わせて変更してください。</p>
+<h1 id="事前作業">事前作業<a class="headerlink" href="#事前作業" title="Permanent link">&para;</a></h1>
+<p>GenU の初回デプロイを行います。初回デプロイを行ったあと、Cognito と Google Workspace の SAML 連携を行います。</p>
+<p>CloudFormation の Stack の画面で Outputs タブを開き、WebUrl をメモします。</p>
+<p><img alt="image-20240205185011526" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240205185011526.png" /></p>
+<p>次に、Resource タブから、Cognito user pool の Physical ID をメモします。</p>
+<p><img alt="image-20240128114108630" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240317105731051.png" /></p>
+<h1 id="cognito-の設定--domain-設定">Cognito の設定 : Domain 設定<a class="headerlink" href="#cognito-の設定--domain-設定" title="Permanent link">&para;</a></h1>
+<p>Cognito domain の設定を進めます。
+Cognito user pool の画面で、App integration タブを開き、Domain に関する画面を表示します。Cognito Domain が空白なので、Actions から Create Cognito domain を選択します。</p>
+<p><img alt="image-20240128115029927" src="../assets/SAML_WITH_ENTRA_ID/image-20240128115029927.png" /></p>
+<p>適当に任意の名前を付け、Create Cognito domain を押します。この手順では、<code>your-preferred-name-google</code> とします。世界で一意の名前を付ける必要があります。</p>
+<p><img alt="image-20240128115448597" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240316234530866.png" /></p>
+<p>Cognito domain が設定されました。</p>
+<p><img alt="image-20240128115539920" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240316234607065-1710645672447-1710645678992.png" /></p>
+<h1 id="google-workspace-の設定--saml-アプリケーション">Google Workspace の設定 : SAML アプリケーション<a class="headerlink" href="#google-workspace-の設定--saml-アプリケーション" title="Permanent link">&para;</a></h1>
+<p>以下の URL から Google Workspace の管理画面を開き、SAML の設定を進めていきます。
+https://admin.google.com/u/0/ac/home</p>
+<p>アプリケーションの設定画面から、カスタム SAML アプリの追加を押します。</p>
+<p><img alt="image-20240316233910260" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240316233910260.png" /></p>
+<p>Google Workspace の管理上の名前を入れます。任意の名前で大丈夫です。今回は <code>generative-ai-use-cases</code> と入れます。</p>
+<p><img alt="image-20240316234731919" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240316234731919.png" /></p>
+<p>メタデータをダウンロードボタンを押して、<code>GoogleIDPMetadata.xml</code> をダウンロードしたあと、続行ボタンを押します。</p>
+<p><img alt="image-20240316234937484" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240316234937484.png" /></p>
+<p>以下のパラメーターを指定します。「事前設定」で確認した User Pool の ID や、「Cognito の設定 : Domain 設定」で設定したドメイン名を指定します。</p>
+<p>ACS の URL</p>
+<pre><code># フォーマット
+https://&lt;入力した値&gt;.auth.yourRegion.amazoncognito.com/saml2/idpresponse
+
+# 入力例
+https://your-preferred-name-google.auth.ap-northeast-1.amazoncognito.com/saml2/idpresponse
+</code></pre>
+<p>エンティティ ID</p>
+<pre><code># フォーマット
+urn:amazon:cognito:sp:&lt;UserPoolID&gt;
+
+# 入力例
+urn:amazon:cognito:sp:ap-northeast-1_Rxt6J1TtI
+</code></pre>
+<p>以下が入力した例です。入力したあと、続行ボタンを押します。</p>
+<p><img alt="image-20240316235220492" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240316235220492.png" /></p>
+<p>属性で、Google Directory 上の属性を、どのように Cognito 側と連携するか設定します。<code>Primary email</code> に <code>email</code> と指定します。その後、完了ボタンを押します。</p>
+<p><img alt="image-20240316235522443" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240316235522443.png" /></p>
+<p>アプリケーションが設定されました。</p>
+<p><img alt="image-20240316235732511" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240316235732511.png" /></p>
+<h1 id="google-workspace--アクセス許可設定">Google Workspace : アクセス許可設定<a class="headerlink" href="#google-workspace--アクセス許可設定" title="Permanent link">&para;</a></h1>
+<p>作成したアプリケーションの詳細画面を開いて、アクセス許可の設定を行います。詳細画面から「オフ (すべてのユーザー)」の箇所をクリックします。</p>
+<p><img alt="image-20240317000224510" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240317000224510.png" /></p>
+<p>このサンプル手順では、「会社全体」という組織に所属するユーザーに対してアクセス許可を行います。会社全体に対して「オン」を選択し、オーバーライドを押します。<br />
+このアクセス許可の設定は、各環境に合わせて細かく設定することが出来るので、組織内のポリシーに基づいて変更してください。</p>
+<p><img alt="image-20240317000758589" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240317000758589.png" /></p>
+<p>オンに変わりました。</p>
+<p><img alt="image-20240317000846899" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240317000846899.png" /></p>
+<h1 id="cognito-の設定--federation">Cognito の設定 : Federation<a class="headerlink" href="#cognito-の設定--federation" title="Permanent link">&para;</a></h1>
+<p>AWS マネジメントコンソールで Cognito の設定作業に戻ります。
+Cognito User Pool の画面を開き、Sign-in experience タブから、Add identity provider を選択します。</p>
+<p><img alt="image-20240128124451746" src="../assets/SAML_WITH_ENTRA_ID/image-20240128124451746.png" /></p>
+<p>Google Workspace の連携で SAML を利用するため、SAML を選択します。<strong>Google は選択せずに、SAML を選択します。</strong></p>
+<p><img alt="image-20240128124529523" src="../assets/SAML_WITH_ENTRA_ID/image-20240128124529523.png" /></p>
+<p>Provider name に任意の識別しやすい名前を入れます。ここで指定した Provider name を、後の手順で cdk.json に記載します。
+Choose file を選び、Google Workspace からダウンロードしてきた「GoogleIDPMetadata.xml」をアップロードします。</p>
+<p><img alt="image-20240317001734180" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240317001734180.png" /></p>
+<p>User pool attribute の email を指定します。
+SAML attribute に、<code>email</code> 入力して、Add identity provider を選択します。</p>
+<p><img alt="image-20240317001748561" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240317001748561.png" /></p>
+<p>設定が追加されました。</p>
+<p><img alt="image-20240317001814305" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240317001814305.png" /></p>
+<h1 id="cognito-の設定--hosted-ui">Cognito の設定 : Hosted UI<a class="headerlink" href="#cognito-の設定--hosted-ui" title="Permanent link">&para;</a></h1>
+<p>Google Workspace との連携を Hosted UI で利用するための設定をしていきます。App Integration タブを選択します。</p>
+<p><img alt="image-20240128125211108" src="../assets/SAML_WITH_ENTRA_ID/image-20240128125211108.png" /></p>
+<p>既存の App Client を指定します。</p>
+<p><img alt="image-20240128125243769" src="../assets/SAML_WITH_ENTRA_ID/image-20240128125243769.png" /></p>
+<p>Edit を押します。</p>
+<p><img alt="image-20240128125314475" src="../assets/SAML_WITH_ENTRA_ID/image-20240128125314475.png" /></p>
+<p><a href="#事前作業">事前作業</a>で確認した WebUrl の値を Allowed callback URLs と Allowed sign-out URLs に入力します。
+<a href="DEVELOPMENT.html">ローカル開発環境</a> を利用してフロントエンドの開発を行いたい場合は、<code>http://localhost:5173</code> も Allowed callback URLs と Allowed sign-out URLs に追加で入力します。</p>
+<p><img alt="image-20240205185602299" src="../assets/SAML_WITH_ENTRA_ID/image-20240205185602299.png" /></p>
+<p>Identity Provider で <code>GoogleWorkspace</code> を選択します。また、Cognito user pool を利用した認証は停止したいため、Cognito user pool のチェックボックスを外します。</p>
+<p><img alt="image-20240317002017655" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240317002017655.png" /></p>
+<p>Save changes を押します。</p>
+<p><img alt="image-20240128132707060" src="../assets/SAML_WITH_ENTRA_ID/image-20240128132707060.png" /></p>
+<p>追加されました。</p>
+<p><img alt="image-20240317125402303" src="../assets/SAML_WITH_GOOGLE_WORKSPACE/image-20240317125402303.png" /></p>
+<h1 id="cdkjson-の編集">cdk.json の編集<a class="headerlink" href="#cdkjson-の編集" title="Permanent link">&para;</a></h1>
+<p>これで設定が完了したため、cdk.json の値を変更します。</p>
+<ul>
+<li>samlAuthEnabled : <code>true</code> を指定します。SAML 専用の認証画面に切り替わり、Cognito user pools を利用した従来の認証機能は利用できなくなります。</li>
+<li>samlCognitoDomainName : 「Cognito の設定 : Domain設定」で指定した Cognito Domain 名を入力します。</li>
+<li>samlCognitoFederatedIdentityProviderName : 「Cognito の設定 : Federation」で設定した Identity Provider の名前を入力します。</li>
+</ul>
+<pre><code class="language-json">  &quot;context&quot;: {
+　　 &lt;省略&gt;
+    &quot;samlAuthEnabled&quot;: true,
+    &quot;samlCognitoDomainName&quot;: &quot;your-preferred-name-google.auth.ap-northeast-1.amazoncognito.com&quot;,
+    &quot;samlCognitoFederatedIdentityProviderName&quot;: &quot;GoogleWorkspace&quot;,
+</code></pre>
+<p>設定後、再度デプロイを行うと SAML 連携が有効化されます。</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="フッター" >
+        
+          
+          <a href="DEPLOY_OPTION.html" class="md-footer__link md-footer__link--prev" aria-label="前: デプロイオプション">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                前
+              </span>
+              <div class="md-ellipsis">
+                デプロイオプション
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="SAML_WITH_ENTRA_ID.html" class="md-footer__link md-footer__link--next" aria-label="次: Microsoft Entra ID で認証する">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                次
+              </span>
+              <div class="md-ellipsis">
+                Microsoft Entra ID で認証する
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2025, Amazon Web Services, Inc. or its affiliates. All rights reserved.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.trackings", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      
+    
+  </body>
+</html>
