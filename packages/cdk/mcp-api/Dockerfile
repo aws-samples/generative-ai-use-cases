@@ -2,6 +2,7 @@ FROM public.ecr.aws/docker/library/python:3.13
 
 WORKDIR /var/task
 
+RUN mkdir -p /opt/extensions
 COPY --from=public.ecr.aws/awsguru/aws-lambda-adapter:0.9.1 /lambda-adapter /opt/extensions/lambda-adapter
 
 ENV UV_NO_CACHE=1
