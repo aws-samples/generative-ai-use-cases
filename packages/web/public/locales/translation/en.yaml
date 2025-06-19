@@ -44,6 +44,7 @@ common:
   error: An error occurred
   errorNoSuggestions: No suggestions were found.
   execute: Execute
+  export: Export
   feedback_received: Feedback received. Thank you.
   here: here
   load_more: Load more
@@ -1073,6 +1074,8 @@ useCaseBuilder:
       the entered value directly into the prompt template.
   helpTitle: Help
   inputExamples: Input Examples
+  invalidFileType: Invalid file type. Please select a JSON file.
+  invalidJsonFormat: Invalid JSON format. Please check the file content.
   loadMore: Load More
   mainMenu: Main Menu
   meeting:

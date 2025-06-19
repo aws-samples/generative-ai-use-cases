@@ -8,7 +8,6 @@ import {
 import { UserPool } from 'aws-cdk-lib/aws-cognito';
 import { IdentityPool } from 'aws-cdk-lib/aws-cognito-identitypool';
 import { Effect, Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import {
   BlockPublicAccess,
@@ -18,6 +17,7 @@ import {
 } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 import { allowS3AccessWithSourceIpCondition } from '../utils/s3-access-policy';
+import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
 
 export interface TranscribeProps {
   readonly userPool: UserPool;
@@ -55,7 +55,7 @@ export class Transcribe extends Construct {
     });
 
     const getSignedUrlFunction = new NodejsFunction(this, 'GetSignedUrl', {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: LAMBDA_RUNTIME_NODEJS,
       entry: './lambda/getFileUploadSignedUrl.ts',
       timeout: Duration.minutes(15),
       environment: {
@@ -78,7 +78,7 @@ export class Transcribe extends Construct {
       this,
       'StartTranscription',
       {
-        runtime: Runtime.NODEJS_LATEST,
+        runtime: LAMBDA_RUNTIME_NODEJS,
         entry: './lambda/startTranscription.ts',
         timeout: Duration.minutes(15),
         environment: {
@@ -100,7 +100,7 @@ export class Transcribe extends Construct {
       this,
       'GetTranscription',
       {
-        runtime: Runtime.NODEJS_LATEST,
+        runtime: LAMBDA_RUNTIME_NODEJS,
         entry: './lambda/getTranscription.ts',
         timeout: Duration.minutes(15),
         initialPolicy: [

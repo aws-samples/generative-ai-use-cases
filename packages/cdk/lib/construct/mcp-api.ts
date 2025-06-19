@@ -11,10 +11,12 @@ import {
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { IdentityPool } from 'aws-cdk-lib/aws-cognito-identitypool';
 import { NetworkMode } from 'aws-cdk-lib/aws-ecr-assets';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 
 export interface McpApiProps {
   readonly idPool: IdentityPool;
   readonly isSageMakerStudio: boolean;
+  readonly fileBucket: Bucket;
 }
 
 export class McpApi extends Construct {
@@ -33,6 +35,7 @@ export class McpApi extends Construct {
       architecture: Architecture.X86_64,
       environment: {
         AWS_LWA_INVOKE_MODE: 'RESPONSE_STREAM',
+        FILE_BUCKET: props.fileBucket.bucketName,
       },
     });
 
@@ -43,6 +46,8 @@ export class McpApi extends Construct {
         resources: ['*'],
       })
     );
+
+    props.fileBucket.grantWrite(mcpFunction);
 
     const mcpEndpoint = mcpFunction.addFunctionUrl({
       authType: FunctionUrlAuthType.AWS_IAM,

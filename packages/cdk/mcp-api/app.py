@@ -1,25 +1,39 @@
 import boto3
 import json
 import uvicorn
+import os
+import logging
+import shutil
+import pathlib
 from strands.models import BedrockModel
-from strands import Agent
+from strands import Agent, tool
 from strands.tools.mcp import MCPClient
 from mcp import stdio_client, StdioServerParameters
 from fastapi import FastAPI, Response, status
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List
+from uuid import uuid4
 
 UV_ENV = {
     'UV_NO_CACHE': '1',
-    'UV_TOOL_DIR': '/tmp/tool',
-    'HOME': '/tmp',
-    'TMPDIR': '/tmp',
+    'UV_PYTHON': '/usr/local/bin/python',
+    'UV_TOOL_DIR': '/tmp/.uv/tool',
+    'UV_TOOL_BIN_DIR': '/tmp/.uv/tool/bin',
     'npm_config_cache': '/tmp/.npm',
-    'XDG_CONFIG_HOME': '/tmp/.config',
-    'XDG_CACHE_HOME': '/tmp/.cache',
-    'XDG_DATA_HOME': '/tmp/.local/share',
+    'AWS_REGION': os.environ['AWS_REGION'],
+    'AWS_ACCESS_KEY_ID': os.environ['AWS_ACCESS_KEY_ID'],
+    'AWS_SECRET_ACCESS_KEY': os.environ['AWS_SECRET_ACCESS_KEY'],
+    'AWS_SESSION_TOKEN': os.environ['AWS_SESSION_TOKEN'],
 }
+
+WORKSPACE_DIR = '/tmp/ws'
+
+FIXED_SYSTEM_PROMPT = f"""## About File Output
+- You are running on AWS Lambda. Therefore, when writing files, always write them under `{WORKSPACE_DIR}`.
+- Similarly, if you need a workspace, please use the `{WORKSPACE_DIR}` directory. Do not ask the user about their current workspace. It's always `{WORKSPACE_DIR}`.
+- Also, users cannot directly access files written under `{WORKSPACE_DIR}`. So when submitting these files to users, *always upload them to S3 using the `upload_file_to_s3_and_retrieve_s3_url` tool and provide the S3 URL*. The S3 URL must be included in the final output.
+"""
 
 def stream_chunk(text, trace):
     return json.dumps({ 'text': text, 'trace': trace}, ensure_ascii=False) + '\n'
@@ -63,6 +77,40 @@ def extract_tool_result(event):
                 if 'text' in t:
                     res += t['text']
     return res
+
+def create_session_id():
+    return str(uuid4())
+
+def create_ws_directory():
+    logging.info('Create ws directory')
+    pathlib.Path(WORKSPACE_DIR).mkdir(exist_ok=True)
+
+def clean_ws_directory():
+    logging.info('Clean ws directory...')
+    shutil.rmtree(WORKSPACE_DIR)
+
+@tool
+def upload_file_to_s3_and_retrieve_s3_url(filepath: str) -> str:
+    """Upload the file at /tmp/ws/* and retrieve the s3 path
+
+    Args:
+        filepath: The path to the uploading file
+    """
+    global session_id
+
+    bucket = os.environ['FILE_BUCKET']
+    region = os.environ['AWS_REGION']
+
+    if not filepath.startswith(WORKSPACE_DIR):
+        raise ValueError(f'{filepath} does not appear to be a file under the {WORKSPACE_DIR} directory. Files to be uploaded must exist under {WORKSPACE_DIR}.')
+
+    filename = os.path.basename(filepath)
+    key = f'mcp/{session_id}/{filename}'
+
+    s3 = boto3.client('s3')
+    s3.upload_file(filepath, bucket, key)
+
+    return f'https://{bucket}.s3.{region}.amazonaws.com/{key}'
 
 app = FastAPI()
 
@@ -144,6 +192,14 @@ async def streaming(request: StreamingRequest):
         load_mcp_tools()
 
     async def generate():
+        global session_id
+
+        session_id = create_session_id()
+
+        logging.info(f'New session {session_id}')
+
+        create_ws_directory()
+
         session = boto3.Session(
             region_name=request.model.region,
         )
@@ -154,10 +210,10 @@ async def streaming(request: StreamingRequest):
         )
 
         agent = Agent(
-            system_prompt=request.systemPrompt,
+            system_prompt=f'{request.systemPrompt}\n{FIXED_SYSTEM_PROMPT}',
             messages=convert_unrecorded_message_to_strands_messages(request.messages),
             model=bedrock_model,
-            tools=app.mcp_tools,
+            tools=app.mcp_tools + [upload_file_to_s3_and_retrieve_s3_url],
             callback_handler=None,
         )
 
@@ -180,10 +236,18 @@ async def streaming(request: StreamingRequest):
                         tool_result = tool_result[:200] + '...'
                     yield stream_chunk('', f'```\n{tool_result}\n```\n')
 
+        clean_ws_directory()
+
     return StreamingResponse(
         generate(),
         media_type='text/event-stream',
     )
 
 if __name__ == '__main__':
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'
+    )
+
     uvicorn.run(app, host='0.0.0.0', port=8080)

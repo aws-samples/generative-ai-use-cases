@@ -4,10 +4,10 @@ import * as appsync from 'aws-cdk-lib/aws-appsync';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import * as agw from 'aws-cdk-lib/aws-apigateway';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { ModelConfiguration } from 'generative-ai-use-cases';
 import { BEDROCK_SPEECH_TO_SPEECH_MODELS } from '@generative-ai-use-cases/common';
+import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
 
 export interface SpeechToSpeechProps {
   readonly envSuffix: string;
@@ -70,7 +70,7 @@ export class SpeechToSpeech extends Construct {
     const eventApiEndpoint = `https://${eventApi.httpDns}/event`;
 
     const speechToSpeechTask = new NodejsFunction(this, 'Task', {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: LAMBDA_RUNTIME_NODEJS,
       entry: './lambda/speechToSpeechTask.ts',
       timeout: Duration.minutes(15),
       environment: {
@@ -114,7 +114,7 @@ export class SpeechToSpeech extends Construct {
       this,
       'StartSession',
       {
-        runtime: Runtime.NODEJS_LATEST,
+        runtime: LAMBDA_RUNTIME_NODEJS,
         entry: './lambda/startSpeechToSpeechSession.ts',
         timeout: Duration.minutes(15),
         environment: {

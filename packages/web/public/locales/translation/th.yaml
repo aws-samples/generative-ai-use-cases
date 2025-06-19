@@ -42,6 +42,7 @@ common:
   error: เกิดข้อผิดพลาด
   errorNoSuggestions: ไม่พบคำแนะนำ
   execute: ดำเนินการ
+  export: ส่งออก
   feedback_received: ได้รับข้อเสนอแนะแล้ว ขอบคุณ
   here: ที่นี่
   load_more: โหลดเพิ่มเติม
@@ -894,6 +895,8 @@ useCaseBuilder:
       {{text}} สร้างแบบฟอร์มที่รับอินพุตข้อความและฝังค่าที่ป้อนโดยตรงลงใน prompt template
   helpTitle: ช่วยเหลือ
   inputExamples: ตัวอย่างอินพุต
+  invalidFileType: รูปแบบไฟล์ไม่ถูกต้อง โปรดเลือกไฟล์ JSON
+  invalidJsonFormat: รูปแบบ JSON ไม่ถูกต้อง โปรดตรวจสอบเนื้อหาไฟล์
   loadMore: โหลดเพิ่มเติม
   mainMenu: เมนูหลัก
   meeting:

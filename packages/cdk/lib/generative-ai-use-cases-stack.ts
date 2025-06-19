@@ -128,6 +128,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       const mcpApi = new McpApi(this, 'McpApi', {
         idPool: auth.idPool,
         isSageMakerStudio: props.isSageMakerStudio,
+        fileBucket: api.fileBucket,
       });
       mcpEndpoint = mcpApi.endpoint;
     }

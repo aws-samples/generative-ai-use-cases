@@ -42,6 +42,7 @@ common:
   error: エラー
   errorNoSuggestions: 候補が見つかりませんでした。
   execute: 実行
+  export: エクスポート
   feedback_received: フィードバックを受け付けました。ありがとうございます。
   here: こちら
   load_more: さらに読み込む
@@ -852,6 +853,8 @@ useCaseBuilder:
       {{text}} はテキスト入力を受け付けるフォームを作成し、入力した値をそのままプロンプトテンプレートに埋め込みます。
   helpTitle: ヘルプ
   inputExamples: 入力例
+  invalidFileType: ファイル形式が無効です。JSONファイルを選択してください。
+  invalidJsonFormat: JSONフォーマットが無効です。ファイルの内容を確認してください。
   loadMore: さらに読み込む
   mainMenu: メインメニュー
   meeting:

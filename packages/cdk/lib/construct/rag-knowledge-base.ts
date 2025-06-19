@@ -9,7 +9,7 @@ import {
   RestApi,
 } from 'aws-cdk-lib/aws-apigateway';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
 
 export interface RagKnowledgeBaseProps {
   // Context Params
@@ -29,7 +29,7 @@ export class RagKnowledgeBase extends Construct {
     const { modelRegion } = props;
 
     const retrieveFunction = new NodejsFunction(this, 'Retrieve', {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: LAMBDA_RUNTIME_NODEJS,
       entry: './lambda/retrieveKnowledgeBase.ts',
       timeout: cdk.Duration.minutes(15),
       environment: {

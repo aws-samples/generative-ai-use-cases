@@ -41,6 +41,7 @@ common:
   error: 错误
   errorNoSuggestions: 未找到建议。
   execute: 执行
+  export: 导出
   feedback_received: 已收到反馈。谢谢。
   here: 这里
   load_more: 加载更多
@@ -735,6 +736,8 @@ useCaseBuilder:
       创建接受文本输入的表单，并将输入的值直接嵌入到提示模板中。
   helpTitle: 帮助
   inputExamples: 输入示例
+  invalidFileType: 文件格式无效。请选择JSON文件。
+  invalidJsonFormat: JSON格式无效。请检查文件内容。
   loadMore: 加载更多
   mainMenu: 主菜单
   meeting:

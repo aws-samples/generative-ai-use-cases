@@ -10,8 +10,8 @@ import {
 } from 'aws-cdk-lib/aws-cognito-identitypool';
 import { Effect, Policy, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
 
 export interface AuthProps {
   readonly selfSignUpEnabled: boolean;
@@ -107,7 +107,7 @@ export class Auth extends Construct {
         this,
         'CheckEmailDomain',
         {
-          runtime: Runtime.NODEJS_LATEST,
+          runtime: LAMBDA_RUNTIME_NODEJS,
           entry: './lambda/checkEmailDomain.ts',
           timeout: Duration.minutes(15),
           environment: {

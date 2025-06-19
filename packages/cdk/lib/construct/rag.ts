@@ -17,7 +17,7 @@ import {
   RestApi,
 } from 'aws-cdk-lib/aws-apigateway';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
 
 const KENDRA_STATE_CFN_PARAMETER_NAME = 'kendraState';
 
@@ -504,7 +504,7 @@ export class Rag extends Construct {
     // Add RAG related APIs
     // Lambda
     const queryFunction = new NodejsFunction(this, 'Query', {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: LAMBDA_RUNTIME_NODEJS,
       entry: './lambda/queryKendra.ts',
       timeout: Duration.minutes(15),
       bundling: {
@@ -525,7 +525,7 @@ export class Rag extends Construct {
     );
 
     const retrieveFunction = new NodejsFunction(this, 'Retrieve', {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: LAMBDA_RUNTIME_NODEJS,
       entry: './lambda/retrieveKendra.ts',
       timeout: Duration.minutes(15),
       bundling: {

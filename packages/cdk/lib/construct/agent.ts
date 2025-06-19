@@ -1,5 +1,4 @@
 import { Duration, Lazy, Names, RemovalPolicy } from 'aws-cdk-lib';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import {
@@ -17,6 +16,7 @@ import {
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { CfnAgent, CfnAgentAlias } from 'aws-cdk-lib/aws-bedrock';
 import { Agent as AgentType } from 'generative-ai-use-cases';
+import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
 
 interface AgentProps {
   // Context Params
@@ -81,7 +81,7 @@ export class Agent extends Construct {
         this,
         'BedrockAgentLambda',
         {
-          runtime: Runtime.NODEJS_LATEST,
+          runtime: LAMBDA_RUNTIME_NODEJS,
           entry: './lambda/agent.ts',
           timeout: Duration.seconds(300),
           environment: {
