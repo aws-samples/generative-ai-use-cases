@@ -20,6 +20,7 @@ UV_ENV = {
     'UV_PYTHON': '/usr/local/bin/python',
     'UV_TOOL_DIR': '/tmp/.uv/tool',
     'UV_TOOL_BIN_DIR': '/tmp/.uv/tool/bin',
+    'UV_PROJECT_ENVIRONMENT': '/tmp/.venv',
     'npm_config_cache': '/tmp/.npm',
     'AWS_REGION': os.environ['AWS_REGION'],
     'AWS_ACCESS_KEY_ID': os.environ['AWS_ACCESS_KEY_ID'],

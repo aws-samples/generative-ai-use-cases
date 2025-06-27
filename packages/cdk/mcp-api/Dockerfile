@@ -9,6 +9,7 @@ ENV UV_NO_CACHE=1
 ENV UV_NO_MANAGED_PYTHON=1
 ENV UV_PYTHON=/usr/local/bin/python
 ENV UV_INSTALL_DIR=/usr/local/bin
+ENV UV_PROJECT_ENVIRONMENT=/tmp/.venv
 
 RUN apt-get update -y && apt-get install curl nodejs npm graphviz -y
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
