@@ -36,3 +36,11 @@ export type BraveSearchResult = {
   description: string;
   extra_snippets?: string[];
 };
+
+export type TavilySearchResult = {
+  title: string;
+  url: string;
+  content: string;
+  score: number;
+  raw_content?: string;
+};

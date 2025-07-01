@@ -420,12 +420,15 @@ const envs: Record<string, Partial<StackInput>> = {
 
 API と連携し最新情報を参照して回答する Agent を作成します。Agent のカスタマイズを行い他のアクションを追加できるほか、複数の Agent を作成し切り替えることが可能です。
 
-デフォルトで使用できる検索エージェントでは、無料利用枠の大きさ・リクエスト数の制限・コストの観点から [Brave Search API の Data for AI](https://brave.com/search/api/) を使用していますが、他の API にカスタマイズすることも可能です。API キーの取得はフリープランでもクレジットカードの登録が必要になります。
+デフォルトで使用できる検索エージェントでは、 [Brave Search API の Data for AI](https://brave.com/search/api/) か [Tavily の Tavily Search API](https://docs.tavily.com/documentation/api-reference/endpoint/search) を利用します。他の API を利用するようにカスタマイズすることも可能です。Brave Search API は、無料プランでもクレジットカードの設定が必要なのでご注意ください。
 
 > [!NOTE]
-> Agent チャットユースケースを有効化すると Agent チャットユースケースでのみ外部 API にデータを送信します。（デフォルトでは Brave Search API）他のユースケースは引き続き AWS 内のみに閉じて利用することが可能です。社内ポリシー、API の利用規約などを確認してから有効化してください。
+> Agent チャットユースケースを有効化すると Agent チャットユースケースでのみ外部 API にデータを送信します。（デフォルトでは Brave Search API か Tavily Search API）他のユースケースは引き続き AWS 内のみに閉じて利用することが可能です。社内ポリシー、API の利用規約などを確認してから有効化してください。
 
-`agentEnabled` と `searchAgentEnabled` に `true` を指定し(デフォルトは `false`)、`searchApiKey` に検索エンジンの API キーを指定します。
+`agentEnabled` と `searchAgentEnabled` に `true` (デフォルトは `false`) を指定した上で、必要な項目を設定してください。
+
+- `searchEngine` : 利用する検索エンジンを指定してください。`Brave` か `Tavily` が利用できます。
+- `searchApiKey` : 検索エンジンの API キーを指定します。
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
@@ -435,6 +438,7 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     agentEnabled: true,
     searchAgentEnabled: true,
+    searchEngine: 'Brave' or 'Tavily',
     searchApiKey: '<検索エンジンの API キー>',
   },
 };
@@ -448,6 +452,7 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "agentEnabled": true,
     "searchAgentEnabled": true,
+    "searchEngine": "Brave" or "Tavily",
     "searchApiKey": "<検索エンジンの API キー>"
   }
 }
