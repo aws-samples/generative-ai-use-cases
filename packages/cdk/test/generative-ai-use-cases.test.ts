@@ -47,6 +47,7 @@ describe('GenerativeAiUseCases', () => {
       endpointNames: [],
       agentEnabled: true,
       searchAgentEnabled: true,
+      searchEngine: 'Brave',
       searchApiKey: 'XXXXXX',
       agents: [],
       flows: [],

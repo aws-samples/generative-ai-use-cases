@@ -2,6 +2,7 @@ import {
   AgentInput,
   AgentOutput,
   BraveSearchResult,
+  TavilySearchResult,
 } from 'generative-ai-use-cases';
 import { StackInput } from '../lib/stack-input';
 
@@ -50,7 +51,7 @@ const searchUsingTavily = async (keyword: string): Promise<SearchResult[]> => {
       search_depth: 'basic',
       include_answer: false,
       include_images: false,
-      include_raw_content: false,
+      include_raw_content: true,
       max_results: 3,
     }),
   });
@@ -58,13 +59,11 @@ const searchUsingTavily = async (keyword: string): Promise<SearchResult[]> => {
   const data = await response.json();
   console.log(JSON.stringify(data));
 
-  return data.results.map(
-    (result: { title: string; url: string; content: string }) => ({
-      title: result.title,
-      content: result.content,
-      url: result.url,
-    })
-  );
+  return data.results.map((result: TavilySearchResult) => ({
+    title: result.title,
+    content: result.raw_content ?? result.content,
+    url: result.url,
+  }));
 };
 
 export const handler = async (event: AgentInput): Promise<AgentOutput> => {
