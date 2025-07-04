@@ -405,12 +405,15 @@ const envs: Record<string, Partial<StackInput>> = {
 
 Creates an Agent that connects to APIs to reference the latest information for responses. You can customize the Agent to add other actions and create multiple Agents to switch between.
 
-The default search agent uses [Brave Search API's Data for AI](https://brave.com/search/api/) due to its large free tier, request limit considerations, and cost factors, but you can customize it to use other APIs. Getting an API key requires credit card registration even for the free plan.
+The default search agents available are [Data for AI in Brave Search API] (https://brave.com/search/api/) or [Tavily's Tavily Search API] (https://docs.tavily.com/documentation/api-reference/endpoint/search). It is also possible to customise the API so that it can be used with other APIs. Please note that Brave Search API requires credit card setup, even for free plans.
 
 > [!NOTE]
-> When you enable the Agent Chat use case, it only sends data to external APIs in the Agent Chat use case. (By default, Brave Search API) Other use cases can continue to be used entirely within AWS. Please check your internal policies and API terms of service before enabling.
+> When you enable the Agent Chat use case, it only sends data to external APIs in the Agent Chat use case. (By default, Brave Search API or Tavily Search) Other use cases can continue to be used entirely within AWS. Please check your internal policies and API terms of service before enabling.
 
-Set `agentEnabled` and `searchAgentEnabled` to `true` (default is `false`), and specify the search engine API key in `searchApiKey`.
+Set `agentEnabled` and `searchAgentEnabled` to `true` (default is `false`), and then set the required fields.
+
+- `searchEngine` : Specify the search engine to use. You can use `Brave` or `Tavily`.
+- `searchApiKey` : Specify the API key of the search engine.
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
@@ -420,6 +423,7 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     agentEnabled: true,
     searchAgentEnabled: true,
+    searchEngine: 'Brave' or 'Tavily',
     searchApiKey: '<Search Engine API Key>',
   },
 };
@@ -433,6 +437,7 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "agentEnabled": true,
     "searchAgentEnabled": true,
+    "searchEngine": "Brave" or "Tavily",
     "searchApiKey": "<Search Engine API Key>"
   }
 }

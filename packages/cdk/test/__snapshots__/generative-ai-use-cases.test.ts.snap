@@ -1109,6 +1109,7 @@ exports[`GenerativeAiUseCases matches the snapshot 3`] = `
         "Environment": {
           "Variables": {
             "SEARCH_API_KEY": "XXXXXX",
+            "SEARCH_ENGINE": "Brave",
           },
         },
         "Handler": "index.handler",

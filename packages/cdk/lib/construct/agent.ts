@@ -17,11 +17,13 @@ import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { CfnAgent, CfnAgentAlias } from 'aws-cdk-lib/aws-bedrock';
 import { Agent as AgentType } from 'generative-ai-use-cases';
 import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
+import { StackInput } from '../stack-input';
 
 interface AgentProps {
   // Context Params
   readonly searchAgentEnabled: boolean;
   readonly searchApiKey?: string | null;
+  readonly searchEngine?: StackInput['searchEngine'];
 }
 
 export class Agent extends Construct {
@@ -32,7 +34,7 @@ export class Agent extends Construct {
 
     const suffix = Lazy.string({ produce: () => Names.uniqueId(this) });
 
-    const { searchAgentEnabled, searchApiKey } = props;
+    const { searchAgentEnabled, searchApiKey, searchEngine } = props;
 
     // Bucket to store schema and data for agents for bedrock
     const s3Bucket = new Bucket(this, 'Bucket', {
@@ -76,7 +78,7 @@ export class Agent extends Construct {
     });
 
     // Search Agent
-    if (searchAgentEnabled && searchApiKey) {
+    if (searchAgentEnabled && searchApiKey && searchEngine) {
       const bedrockAgentLambda = new NodejsFunction(
         this,
         'BedrockAgentLambda',
@@ -86,6 +88,7 @@ export class Agent extends Construct {
           timeout: Duration.seconds(300),
           environment: {
             SEARCH_API_KEY: searchApiKey ?? '',
+            SEARCH_ENGINE: searchEngine,
           },
         }
       );
