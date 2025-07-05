@@ -162,6 +162,11 @@ export const stackInputSchema = z.object({
   hostedZoneId: z.string().nullish(),
   // Dashboard
   dashboard: z.boolean().default(false),
+  // Tag
+  tag: z.object({
+    key: z.string().optional(),
+    value: z.string().optional(),
+  }),
 });
 
 // schema after conversion
@@ -170,24 +175,28 @@ export const processedStackInputSchema = stackInputSchema.extend({
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
   imageGenerationModelIds: z.array(
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
   videoGenerationModelIds: z.array(
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
   speechToSpeechModelIds: z.array(
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
 });

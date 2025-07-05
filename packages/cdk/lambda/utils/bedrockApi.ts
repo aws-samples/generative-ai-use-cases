@@ -24,6 +24,7 @@ import {
   BEDROCK_TEXT_GEN_MODELS,
   BEDROCK_IMAGE_GEN_MODELS,
   BEDROCK_VIDEO_GEN_MODELS,
+  getInferenceProfileArn,
 } from './models';
 import { streamingChunk } from './streamingChunk';
 import { initBedrockRuntimeClient } from './bedrockClient';
@@ -181,8 +182,9 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
     const client = await initBedrockRuntimeClient({ region });
 
     // Image generation using Stable Diffusion or Titan Image Generator is not supported for the Converse API, so InvokeModelCommand is used.
+    const modelIdOrArn = getInferenceProfileArn(model.modelId) || model.modelId;
     const command = new InvokeModelCommand({
-      modelId: model.modelId,
+      modelId: modelIdOrArn,
       body: createBodyImage(model, params),
       contentType: 'application/json',
     });
@@ -203,8 +205,9 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
       throw new Error('Video tmp buket is not defined');
     }
 
+    const modelIdOrArn = getInferenceProfileArn(model.modelId) || model.modelId;
     const command = new StartAsyncInvokeCommand({
-      modelId: model.modelId,
+      modelId: modelIdOrArn,
       modelInput: createBodyVideo(model, params),
       outputDataConfig: {
         s3OutputDataConfig: {

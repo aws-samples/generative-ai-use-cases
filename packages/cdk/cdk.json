@@ -16,6 +16,10 @@
   },
   "context": {
     "env": "",
+    "tag": {
+      "key": "Name",
+      "value": "GenU"
+    },
     "ragEnabled": false,
     "kendraIndexArn": null,
     "kendraIndexLanguage": "ja",

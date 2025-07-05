@@ -8,6 +8,7 @@ import { RagKnowledgeBaseStack } from './rag-knowledge-base-stack';
 import { GuardrailStack } from './guardrail-stack';
 import { ProcessedStackInput } from './stack-input';
 import { VideoTmpBucketStack } from './video-tmp-bucket-stack';
+import { ApplicationInferenceProfileStack } from './application-inference-profile-stack';
 
 class DeletionPolicySetter implements cdk.IAspect {
   constructor(private readonly policy: cdk.RemovalPolicy) {}
@@ -102,6 +103,61 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
     );
 
     videoBucketRegionMap[region] = videoTmpBucketStack.bucketName;
+  }
+
+  // Create an ApplicationInferenceProfile for each region of the model to be used
+  const modelRegions = [
+    ...new Set([
+      ...params.modelIds.map((model) => model.region),
+      ...params.imageGenerationModelIds.map((model) => model.region),
+      ...params.videoGenerationModelIds.map((model) => model.region),
+      ...params.speechToSpeechModelIds.map((model) => model.region),
+    ]),
+  ];
+  const inferenceProfileStacks: Record<
+    string,
+    ApplicationInferenceProfileStack
+  > = {};
+  for (const region of modelRegions) {
+    const applicationInferenceProfileStack =
+      new ApplicationInferenceProfileStack(
+        app,
+        `ApplicationInferenceProfileStack${params.env}${region}`,
+        {
+          env: {
+            account: params.account,
+            region,
+          },
+          params,
+        }
+      );
+    inferenceProfileStacks[region] = applicationInferenceProfileStack;
+  }
+
+  // Set inference profile ARNs to model IDs
+  for (const modelId of params.modelIds) {
+    const stack = inferenceProfileStacks[modelId.region];
+    if (stack && stack.inferenceProfileArns[modelId.modelId]) {
+      modelId.inferenceProfileArn = stack.inferenceProfileArns[modelId.modelId];
+    }
+  }
+  for (const modelId of params.imageGenerationModelIds) {
+    const stack = inferenceProfileStacks[modelId.region];
+    if (stack && stack.inferenceProfileArns[modelId.modelId]) {
+      modelId.inferenceProfileArn = stack.inferenceProfileArns[modelId.modelId];
+    }
+  }
+  for (const modelId of params.videoGenerationModelIds) {
+    const stack = inferenceProfileStacks[modelId.region];
+    if (stack && stack.inferenceProfileArns[modelId.modelId]) {
+      modelId.inferenceProfileArn = stack.inferenceProfileArns[modelId.modelId];
+    }
+  }
+  for (const modelId of params.speechToSpeechModelIds) {
+    const stack = inferenceProfileStacks[modelId.region];
+    if (stack && stack.inferenceProfileArns[modelId.modelId]) {
+      modelId.inferenceProfileArn = stack.inferenceProfileArns[modelId.modelId];
+    }
   }
 
   // GenU Stack

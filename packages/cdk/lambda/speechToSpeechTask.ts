@@ -18,7 +18,7 @@ import { initBedrockRuntimeClient } from './utils/bedrockClient';
 
 Object.assign(global, { WebSocket: require('ws') });
 
-const MODEL_REGION = process.env.MODEL_REGION as string;
+const MODEL_REGION = process.env.MODEL_REGION || 'us-east-1';
 
 const MAX_AUDIO_INPUT_QUEUE_SIZE = 200;
 const MIN_AUDIO_OUTPUT_QUEUE_SIZE = 10;
@@ -414,7 +414,42 @@ export const handler = async (event: { channelId: string; model: Model }) => {
   let channel: EventsChannel | null = null;
 
   try {
-    console.log('event', event);
+    console.log(
+      'speechToSpeechTask received event:',
+      JSON.stringify(event, null, 2)
+    );
+
+    if (!event.model) {
+      throw new Error('Model is undefined in event payload');
+    }
+
+    if (!event.model.modelId) {
+      throw new Error('Model.modelId is undefined in event payload');
+    }
+
+    // Speech-to-Speech Inference Profile Arn handling
+    // NOTE: InvokeModelWithBidirectionalStreamCommand currently does not support Inference Profile Arn.
+    // When AWS adds support, uncomment the code block below and change 'const' to 'let' for modelIdOrArn.
+
+    const modelIdOrArn = event.model.modelId; // Fallback to modelId for now
+
+    /*
+    // TODO: Uncomment this block when InvokeModelWithBidirectionalStreamCommand supports Inference Profile Arn
+    // Also change 'const modelIdOrArn' above to 'let modelIdOrArn'
+    try {
+      const speechToSpeechModels = JSON.parse(process.env.SPEECH_TO_SPEECH_MODEL_IDS || '[]');
+      const modelConfig = speechToSpeechModels.find((config: any) => config.modelId === event.model.modelId);
+      if (modelConfig?.inferenceProfileArn) {
+        modelIdOrArn = modelConfig.inferenceProfileArn;
+        console.log('DEBUG: Using Inference Profile ARN for speech-to-speech:', modelIdOrArn);
+      } else {
+        console.log('DEBUG: No inference profile ARN found, using modelId:', modelIdOrArn);
+      }
+    } catch (error) {
+      console.error('DEBUG: Error parsing SPEECH_TO_SPEECH_MODEL_IDS:', error);
+      console.log('DEBUG: Falling back to modelId:', modelIdOrArn);
+    }
+    */
 
     initialize();
 
@@ -516,9 +551,14 @@ export const handler = async (event: { channelId: string; model: Model }) => {
 
     console.log('Async iterator created');
 
+    console.log(
+      'DEBUG: Using modelId for Bedrock Bidirectional Stream API:',
+      modelIdOrArn
+    );
+
     const response = await bedrockRuntimeClient.send(
       new InvokeModelWithBidirectionalStreamCommand({
-        modelId: event.model.modelId,
+        modelId: modelIdOrArn,
         body: asyncIterator,
       })
     );
