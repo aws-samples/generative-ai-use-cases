@@ -41,6 +41,9 @@ const modelIds: ModelConfiguration[] = (
   .map((model) => ({
     modelId: model.modelId.trim(),
     region: model.region.trim(),
+    ...(model.inferenceProfileArn && {
+      inferenceProfileArn: model.inferenceProfileArn,
+    }),
   }))
   .filter((model) => model.modelId);
 // If there is a lightweight model among the available models, prioritize the lightweight model.
@@ -52,6 +55,9 @@ export const defaultModel: Model = {
   type: 'bedrock',
   modelId: defaultModelConfiguration.modelId,
   region: defaultModelConfiguration.region,
+  ...(defaultModelConfiguration.inferenceProfileArn && {
+    inferenceProfileArn: defaultModelConfiguration.inferenceProfileArn,
+  }),
 };
 
 const imageGenerationModels: ModelConfiguration[] = (
@@ -63,6 +69,9 @@ const imageGenerationModels: ModelConfiguration[] = (
     (model: ModelConfiguration): ModelConfiguration => ({
       modelId: model.modelId.trim(),
       region: model.region.trim(),
+      ...(model.inferenceProfileArn && {
+        inferenceProfileArn: model.inferenceProfileArn,
+      }),
     })
   )
   .filter((model) => model.modelId);
@@ -70,6 +79,9 @@ export const defaultImageGenerationModel: Model = {
   type: 'bedrock',
   modelId: imageGenerationModels?.[0]?.modelId ?? '',
   region: imageGenerationModels?.[0]?.region ?? '',
+  ...(imageGenerationModels?.[0]?.inferenceProfileArn && {
+    inferenceProfileArn: imageGenerationModels[0].inferenceProfileArn,
+  }),
 };
 
 const videoGenerationModels: ModelConfiguration[] = (
@@ -81,6 +93,9 @@ const videoGenerationModels: ModelConfiguration[] = (
     (model: ModelConfiguration): ModelConfiguration => ({
       modelId: model.modelId.trim(),
       region: model.region.trim(),
+      ...(model.inferenceProfileArn && {
+        inferenceProfileArn: model.inferenceProfileArn,
+      }),
     })
   )
   .filter((model) => model.modelId);
@@ -88,6 +103,9 @@ export const defaultVideoGenerationModel: Model = {
   type: 'bedrock',
   modelId: videoGenerationModels?.[0]?.modelId ?? '',
   region: videoGenerationModels?.[0]?.region ?? '',
+  ...(videoGenerationModels?.[0]?.inferenceProfileArn && {
+    inferenceProfileArn: videoGenerationModels[0].inferenceProfileArn,
+  }),
 };
 
 // Prompt Templates
@@ -337,6 +355,27 @@ const mergeConverseInferenceParams = (
     },
   }) as ConverseInferenceParams;
 
+// Get inference profile ARN from modelId
+export const getInferenceProfileArn = (modelId: string): string | undefined => {
+  const textModelConfig = modelIds.find((config) => config.modelId === modelId);
+  if (textModelConfig?.inferenceProfileArn) {
+    return textModelConfig.inferenceProfileArn;
+  }
+  const imageModelConfig = imageGenerationModels.find(
+    (config) => config.modelId === modelId
+  );
+  if (imageModelConfig?.inferenceProfileArn) {
+    return imageModelConfig.inferenceProfileArn;
+  }
+  const videoModelConfig = videoGenerationModels.find(
+    (config) => config.modelId === modelId
+  );
+  if (videoModelConfig?.inferenceProfileArn) {
+    return videoModelConfig.inferenceProfileArn;
+  }
+  return undefined;
+};
+
 // API call, extract string from output, etc.
 
 const createConverseCommandInput = (
@@ -437,8 +476,9 @@ const createConverseCommandInput = (
 
   const guardrailConfig = createGuardrailConfig();
 
+  const modelIdOrArn = getInferenceProfileArn(model.modelId) || model.modelId;
   const converseCommandInput: ConverseCommandInput = {
-    modelId: model.modelId,
+    modelId: modelIdOrArn,
     messages: conversationWithCache,
     system: systemContextWithCache,
     inferenceConfig: params.inferenceConfig,

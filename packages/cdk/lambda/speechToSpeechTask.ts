@@ -416,6 +416,30 @@ export const handler = async (event: { channelId: string; model: Model }) => {
   try {
     console.log('event', event);
 
+    // Speech-to-Speech Inference Profile Arn handling
+    // NOTE: InvokeModelWithBidirectionalStreamCommand currently does not support Inference Profile Arn.
+    // When AWS adds support, uncomment the code block below and change 'const' to 'let' for modelIdOrArn.
+
+    const modelIdOrArn = event.model.modelId; // Fallback to modelId for now
+
+    /*
+    // TODO: Uncomment this block when InvokeModelWithBidirectionalStreamCommand supports Inference Profile Arn
+    // Also change 'const modelIdOrArn' above to 'let modelIdOrArn'
+    try {
+      const speechToSpeechModels = JSON.parse(process.env.SPEECH_TO_SPEECH_MODEL_IDS || '[]');
+      const modelConfig = speechToSpeechModels.find((config: any) => config.modelId === event.model.modelId);
+      if (modelConfig?.inferenceProfileArn) {
+        modelIdOrArn = modelConfig.inferenceProfileArn;
+        console.log('DEBUG: Using Inference Profile ARN for speech-to-speech:', modelIdOrArn);
+      } else {
+        console.log('DEBUG: No inference profile ARN found, using modelId:', modelIdOrArn);
+      }
+    } catch (error) {
+      console.error('DEBUG: Error parsing SPEECH_TO_SPEECH_MODEL_IDS:', error);
+      console.log('DEBUG: Falling back to modelId:', modelIdOrArn);
+    }
+    */
+
     initialize();
 
     isActive = true;
@@ -518,7 +542,7 @@ export const handler = async (event: { channelId: string; model: Model }) => {
 
     const response = await bedrockRuntimeClient.send(
       new InvokeModelWithBidirectionalStreamCommand({
-        modelId: event.model.modelId,
+        modelId: modelIdOrArn,
         body: asyncIterator,
       })
     );

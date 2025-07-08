@@ -16,6 +16,7 @@
   },
   "context": {
     "env": "",
+    "tag": {},
     "ragEnabled": false,
     "kendraIndexArn": null,
     "kendraIndexLanguage": "ja",
