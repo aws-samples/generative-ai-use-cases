@@ -7,6 +7,9 @@ import { createStacks } from '../lib/create-stacks';
 const app = new cdk.App();
 const params = getParams(app);
 if (params.tag?.key && params.tag?.value) {
-  cdk.Tags.of(app).add(params.tag.key, params.tag.value);
+  cdk.Tags.of(app).add(params.tag.key, params.tag.value, {
+    // Exclude OpenSearchServerless Collection from tagging
+    excludeResourceTypes: ['AWS::OpenSearchServerless::Collection'],
+  });
 }
 createStacks(app, params);

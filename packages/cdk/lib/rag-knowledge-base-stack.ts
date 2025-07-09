@@ -146,6 +146,13 @@ export class RagKnowledgeBaseStack extends Stack {
       ragKnowledgeBaseBinaryVector,
       crossAccountBedrockRoleArn,
     } = props.params;
+    
+    // Define the common tags to be applied to resources
+    const commonTags = {
+      CostCenter: 'DataAnalytics',
+      Project: 'GenAI',
+      Environment: env.toLowerCase(),
+    };
 
     if (typeof embeddingModelId !== 'string') {
       throw new Error(
@@ -192,6 +199,7 @@ export class RagKnowledgeBaseStack extends Stack {
       description: 'GenU Collection',
       type: 'VECTORSEARCH',
       standbyReplicas: ragKnowledgeBaseStandbyReplicas ? 'ENABLED' : 'DISABLED',
+      // Do not specify tags here to avoid CloudFormation replacement errors
     });
 
     const ossIndex = new OpenSearchServerlessIndex(this, 'OssIndex', {
@@ -290,6 +298,44 @@ export class RagKnowledgeBaseStack extends Stack {
     collection.node.addDependency(accessPolicy);
     collection.node.addDependency(networkPolicy);
     collection.node.addDependency(encryptionPolicy);
+    
+    // Since we need to apply tags directly through AWS SDK instead of CloudFormation
+    // We'll use a custom resource to apply tags after the collection is created
+    // This avoids CloudFormation attempting to replace the collection when adding tags
+    if (Object.keys(commonTags).length > 0) {
+      // Add tag applier custom resource
+      const tagApplier = new lambda.SingletonFunction(this, 'TagApplier', {
+        runtime: LAMBDA_RUNTIME_NODEJS,
+        code: lambda.Code.fromAsset('custom-resources'),
+        handler: 'apply-tags.handler',
+        uuid: 'E2488E36-B465-4D1F-9D1C-89FB99F1CC01',
+        lambdaPurpose: 'ApplyTagsToResources',
+        timeout: cdk.Duration.minutes(5),
+      });
+      
+      // Custom resource to apply tags after collection creation
+      const applyTagsResource = new cdk.CustomResource(this, 'ApplyTags', {
+        serviceToken: tagApplier.functionArn,
+        resourceType: 'Custom::ApplyTags',
+        properties: {
+          tagsHash: JSON.stringify(commonTags),
+          collectionId: collection.ref,
+          region: this.region,
+        },
+      });
+      
+      // Ensure tag application happens after collection creation
+      applyTagsResource.node.addDependency(collection);
+      
+      // Grant permissions to apply tags
+      tagApplier.addToRolePolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          resources: [`arn:aws:aoss:${this.region}:*:collection/${collection.ref}`],
+          actions: ['aoss:TagResource', 'aoss:ListTagsForResource'],
+        })
+      );
+    }
 
     const accessLogsBucket = new s3.Bucket(this, 'DataSourceAccessLogsBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
