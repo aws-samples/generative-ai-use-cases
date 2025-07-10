@@ -36,8 +36,8 @@ import queryString from 'query-string';
 import { MeetingMinutesStyle } from '../hooks/useMeetingMinutes';
 import { LanguageCode } from '@aws-sdk/client-transcribe-streaming';
 
-// Time-series transcript segment for chronological integration
-interface TimeSeriesSegment {
+// Real-time transcript segment for chronological integration
+interface RealtimeSegment {
   resultId: string;
   source: 'microphone' | 'screen';
   startTime: number;
@@ -181,8 +181,6 @@ const MeetingMinutesPage: React.FC = () => {
     rawTranscripts: screenRawTranscripts,
   } = useScreenAudio();
   const {
-    content,
-    setContent,
     speakerLabel,
     setSpeakerLabel,
     maxSpeakers,
@@ -228,10 +226,13 @@ const MeetingMinutesPage: React.FC = () => {
   // Direct input text state
   const [directInputText, setDirectInputText] = useState('');
 
-  // Time-series segments management
-  const [timeSeriesSegments, setTimeSeriesSegments] = useState<
-    TimeSeriesSegment[]
-  >([]);
+  // File upload transcript text state
+  const [fileTranscriptText, setFileTranscriptText] = useState('');
+
+  // Real-time segments management
+  const [realtimeSegments, setRealtimeSegments] = useState<RealtimeSegment[]>(
+    []
+  );
 
   // Language options for transcription
   const languageOptions = useMemo(
@@ -311,11 +312,11 @@ const MeetingMinutesPage: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }, []);
 
-  // Time-series based formatted output
-  const formattedOutput: string = useMemo(() => {
+  // Real-time text output
+  const realtimeText: string = useMemo(() => {
     // Sort segments by start time (chronological order)
     // Show both partial and finalized segments for real-time display
-    const sortedSegments = [...timeSeriesSegments].sort(
+    const sortedSegments = [...realtimeSegments].sort(
       (a, b) => a.startTime - b.startTime
     );
 
@@ -334,14 +335,14 @@ const MeetingMinutesPage: React.FC = () => {
           .join('\n');
       })
       .join('\n');
-  }, [timeSeriesSegments, speakerMapping, formatTime]);
+  }, [realtimeSegments, speakerMapping, formatTime]);
 
   // Auto scroll to bottom when transcript updates if user was at bottom
   useEffect(() => {
     if (
       transcriptTextareaRef.current &&
       isAtBottomRef.current &&
-      formattedOutput
+      realtimeText
     ) {
       // Small delay to ensure content is rendered
       setTimeout(() => {
@@ -351,7 +352,24 @@ const MeetingMinutesPage: React.FC = () => {
         }
       }, 10);
     }
-  }, [formattedOutput]);
+  }, [realtimeText]);
+
+  // Current transcript text based on input method
+  const currentTranscriptText = useMemo(() => {
+    switch (inputMethod) {
+      case 'direct':
+        return directInputText;
+      case 'file':
+        return fileTranscriptText;
+      default:
+        return realtimeText;
+    }
+  }, [inputMethod, directInputText, fileTranscriptText, realtimeText]);
+
+  // Text existence check
+  const hasTranscriptText = useMemo(() => {
+    return currentTranscriptText.trim() !== '';
+  }, [currentTranscriptText]);
 
   const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -362,40 +380,47 @@ const MeetingMinutesPage: React.FC = () => {
 
   useEffect(() => {
     if (transcriptData && transcriptData.transcripts) {
-      setContent(transcriptData.transcripts);
+      // Convert file upload transcripts to simple text format
+      const fileText = transcriptData.transcripts
+        .map((transcript) => {
+          const speakerLabel = transcript.speakerLabel
+            ? `${speakerMapping[transcript.speakerLabel] || transcript.speakerLabel}: `
+            : '';
+          return `${speakerLabel}${transcript.transcript}`;
+        })
+        .join('\n');
+
+      setFileTranscriptText(fileText);
     }
-  }, [setContent, transcriptData]);
+  }, [transcriptData, speakerMapping]);
 
-  // Time-series integration of raw transcripts
-  const updateTimeSeriesSegments = useCallback(
-    (newSegment: TimeSeriesSegment) => {
-      setTimeSeriesSegments((prev) => {
-        const existingIndex = prev.findIndex(
-          (seg) =>
-            seg.resultId === newSegment.resultId &&
-            seg.source === newSegment.source
-        );
+  // Real-time integration of raw transcripts
+  const updateRealtimeSegments = useCallback((newSegment: RealtimeSegment) => {
+    setRealtimeSegments((prev) => {
+      const existingIndex = prev.findIndex(
+        (seg) =>
+          seg.resultId === newSegment.resultId &&
+          seg.source === newSegment.source
+      );
 
-        if (existingIndex >= 0) {
-          // Update existing segment (partial result update)
-          const updated = [...prev];
-          updated[existingIndex] = newSegment;
-          return updated;
-        } else {
-          // Add new segment
-          return [...prev, newSegment];
-        }
-      });
-    },
-    []
-  );
+      if (existingIndex >= 0) {
+        // Update existing segment (partial result update)
+        const updated = [...prev];
+        updated[existingIndex] = newSegment;
+        return updated;
+      } else {
+        // Add new segment
+        return [...prev, newSegment];
+      }
+    });
+  }, []);
 
   // Process microphone raw transcripts
   useEffect(() => {
     if (micRawTranscripts && micRawTranscripts.length > 0) {
       // Only process the latest segment
       const latestSegment = micRawTranscripts[micRawTranscripts.length - 1];
-      const segment: TimeSeriesSegment = {
+      const segment: RealtimeSegment = {
         resultId: latestSegment.resultId,
         source: 'microphone',
         startTime: latestSegment.startTime,
@@ -403,9 +428,9 @@ const MeetingMinutesPage: React.FC = () => {
         isPartial: latestSegment.isPartial,
         transcripts: latestSegment.transcripts,
       };
-      updateTimeSeriesSegments(segment);
+      updateRealtimeSegments(segment);
     }
-  }, [micRawTranscripts, updateTimeSeriesSegments]);
+  }, [micRawTranscripts, updateRealtimeSegments]);
 
   // Process screen audio raw transcripts
   useEffect(() => {
@@ -417,7 +442,7 @@ const MeetingMinutesPage: React.FC = () => {
       // Only process the latest segment
       const latestSegment =
         screenRawTranscripts[screenRawTranscripts.length - 1];
-      const segment: TimeSeriesSegment = {
+      const segment: RealtimeSegment = {
         resultId: latestSegment.resultId,
         source: 'screen',
         startTime: latestSegment.startTime,
@@ -425,20 +450,20 @@ const MeetingMinutesPage: React.FC = () => {
         isPartial: latestSegment.isPartial,
         transcripts: latestSegment.transcripts,
       };
-      updateTimeSeriesSegments(segment);
+      updateRealtimeSegments(segment);
     }
-  }, [screenRawTranscripts, enableScreenAudio, updateTimeSeriesSegments]);
+  }, [screenRawTranscripts, enableScreenAudio, updateRealtimeSegments]);
 
   // Watch for generation signal and trigger generation
   useEffect(() => {
     if (
       shouldGenerateRef.current &&
       autoGenerate &&
-      formattedOutput.trim() !== ''
+      realtimeText.trim() !== ''
     ) {
-      if (formattedOutput !== lastProcessedTranscript && !minutesLoading) {
+      if (realtimeText !== lastProcessedTranscript && !minutesLoading) {
         shouldGenerateRef.current = false; // Reset the flag
-        generateMinutes(formattedOutput, modelId, (status) => {
+        generateMinutes(realtimeText, modelId, (status) => {
           if (status === 'success') {
             toast.success(t('meetingMinutes.generation_success'));
           } else if (status === 'error') {
@@ -452,7 +477,7 @@ const MeetingMinutesPage: React.FC = () => {
   }, [
     countdownSeconds,
     autoGenerate,
-    formattedOutput,
+    realtimeText,
     lastProcessedTranscript,
     minutesLoading,
     generateMinutes,
@@ -504,13 +529,9 @@ const MeetingMinutesPage: React.FC = () => {
   const isRecording = micRecording || screenRecording;
 
   const disableClearExec = useMemo(() => {
-    const hasData =
-      file ||
-      content.length > 0 ||
-      formattedOutput.trim() !== '' ||
-      directInputText.trim() !== '';
+    const hasData = file || hasTranscriptText;
     return !hasData || loading || isRecording;
-  }, [content, file, formattedOutput, directInputText, loading, isRecording]);
+  }, [file, hasTranscriptText, loading, isRecording]);
 
   const disabledMicExec = useMemo(() => {
     return loading;
@@ -536,18 +557,17 @@ const MeetingMinutesPage: React.FC = () => {
   const onClickClear = useCallback(() => {
     // Clear all input methods
     setDirectInputText('');
+    setFileTranscriptText('');
     if (ref.current) {
       ref.current.value = '';
     }
-    setContent([]);
-    setTimeSeriesSegments([]);
+    setRealtimeSegments([]);
     stopMicTranscription();
     stopScreenTranscription();
     clear();
     clearMicTranscripts();
     clearScreenTranscripts();
   }, [
-    setContent,
     stopMicTranscription,
     stopScreenTranscription,
     clear,
@@ -557,8 +577,7 @@ const MeetingMinutesPage: React.FC = () => {
 
   const onClickExecStartTranscription = useCallback(async () => {
     // Clear existing content before starting new recording
-    setContent([]);
-    setTimeSeriesSegments([]);
+    setRealtimeSegments([]);
     clearMicTranscripts();
     clearScreenTranscripts();
 
@@ -590,7 +609,6 @@ const MeetingMinutesPage: React.FC = () => {
     isScreenAudioSupported,
     prepareScreenCapture,
     startTranscriptionWithStream,
-    setContent,
     clearMicTranscripts,
     clearScreenTranscripts,
   ]);
@@ -606,10 +624,8 @@ const MeetingMinutesPage: React.FC = () => {
       return;
     }
 
-    const textForGeneration =
-      inputMethod === 'direct' ? directInputText : formattedOutput;
-    if (textForGeneration.trim() !== '' && !minutesLoading) {
-      generateMinutes(textForGeneration, modelId, (status) => {
+    if (hasTranscriptText && !minutesLoading) {
+      generateMinutes(currentTranscriptText, modelId, (status) => {
         if (status === 'success') {
           toast.success(t('meetingMinutes.generation_success'));
         } else if (status === 'error') {
@@ -618,9 +634,8 @@ const MeetingMinutesPage: React.FC = () => {
       });
     }
   }, [
-    inputMethod,
-    directInputText,
-    formattedOutput,
+    hasTranscriptText,
+    currentTranscriptText,
     minutesLoading,
     modelId,
     generateMinutes,
@@ -966,9 +981,7 @@ const MeetingMinutesPage: React.FC = () => {
                   <Button
                     onClick={handleManualGeneration}
                     disabled={
-                      (inputMethod === 'direct'
-                        ? directInputText.trim() === ''
-                        : formattedOutput === '') ||
+                      !hasTranscriptText ||
                       minutesLoading ||
                       (minutesStyle === 'custom' &&
                         (!customPrompt || customPrompt.trim() === ''))
@@ -988,32 +1001,18 @@ const MeetingMinutesPage: React.FC = () => {
                 <div className="font-bold">
                   {t('meetingMinutes.transcript')}
                 </div>
-                {(inputMethod === 'direct'
-                  ? directInputText.trim() !== ''
-                  : formattedOutput.trim() !== '') && (
+                {hasTranscriptText && (
                   <div className="flex">
                     <ButtonCopy
-                      text={
-                        inputMethod === 'direct'
-                          ? directInputText
-                          : formattedOutput
-                      }
+                      text={currentTranscriptText}
                       interUseCasesKey="transcript"></ButtonCopy>
-                    <ButtonSendToUseCase
-                      text={
-                        inputMethod === 'direct'
-                          ? directInputText
-                          : formattedOutput
-                      }
-                    />
+                    <ButtonSendToUseCase text={currentTranscriptText} />
                   </div>
                 )}
               </div>
               <textarea
                 ref={transcriptTextareaRef}
-                value={
-                  inputMethod === 'direct' ? directInputText : formattedOutput
-                }
+                value={currentTranscriptText}
                 onChange={(e) => {
                   // Only used when inputMethod === 'direct' (other modes are readOnly)
                   setDirectInputText(e.target.value);
