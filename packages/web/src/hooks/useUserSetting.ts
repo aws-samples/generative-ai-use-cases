@@ -1,6 +1,8 @@
 import useLocalStorageBoolean from './useLocalStorageBoolean';
 
 const useUserSetting = () => {
+  const [settingSubmitCmdOrCtrlEnter, setSettingSubmitCmdOrCtrlEnter] =
+    useLocalStorageBoolean('submitCmdOrCtrlEnter', false);
   const [settingTypingAnimation, setSettingTypingAnimation] =
     useLocalStorageBoolean('typingAnimation', true);
   const [settingShowUseCaseBuilder, setSettingShowUseCaseBuilder] =
@@ -15,6 +17,8 @@ const useUserSetting = () => {
   );
 
   return {
+    settingSubmitCmdOrCtrlEnter,
+    setSettingSubmitCmdOrCtrlEnter,
     settingTypingAnimation,
     setSettingTypingAnimation,
     settingShowUseCaseBuilder,

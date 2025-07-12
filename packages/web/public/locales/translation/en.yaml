@@ -17,6 +17,8 @@ chat:
   delete_link: Delete Link
   delete_link_message: You can stop sharing the conversation history by deleting the link.
   drop_files: Drop files here
+  hint_cmd_enter: ⌘ + Enter to Submit
+  hint_ctrl_enter: Ctrl + Enter to Submit
   history: Conversation History
   initialize: Initialize
   model_parameters: Model Parameters
@@ -789,6 +791,7 @@ setting:
     show_tools: Show Tools
     show_use_case_builder: Show Use Case Builder
     stats: Statistics
+    submit_cmd_or_ctrl_enter: ⌘ (ctrl) + Enter to Submit
     typing_animation: Typing Animation
     version: Version
     version_help: Referencing the version in package.json of generative-ai-use-cases

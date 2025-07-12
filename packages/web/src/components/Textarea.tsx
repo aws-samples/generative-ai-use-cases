@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useRef } from 'react';
 import RowItem, { RowItemProps } from './RowItem';
 import Help from './Help';
 import { useTranslation } from 'react-i18next';
+import useUserSetting from '../hooks/useUserSetting';
 
 type Props = RowItemProps & {
   value?: string;
@@ -24,6 +25,7 @@ const MAX_HEIGHT = 300;
 
 const Textarea: React.FC<Props> = (props) => {
   const { t } = useTranslation();
+  const { settingSubmitCmdOrCtrlEnter } = useUserSetting();
   const ref = useRef<HTMLTextAreaElement>(null);
   const maxHeight = props.maxHeight || MAX_HEIGHT;
 
@@ -79,9 +81,21 @@ const Textarea: React.FC<Props> = (props) => {
         onKeyDown={(e) => {
           // keyCode is deprecated, but used for some browsers to handle IME input
           if (e.nativeEvent.isComposing || e.keyCode === 229) return;
-          if (props.onEnter && e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            props.onEnter();
+
+          if (props.onEnter) {
+            if (settingSubmitCmdOrCtrlEnter) {
+              // When cmd/ctrl+enter setting is enabled, send with cmd/ctrl+enter
+              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                props.onEnter();
+              }
+            } else {
+              // Default behavior: send with enter (not shift+enter)
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                props.onEnter();
+              }
+            }
           }
         }}
         onChange={(e) => {

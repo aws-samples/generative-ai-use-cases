@@ -15,6 +15,8 @@ chat:
   delete_link: リンクの削除
   delete_link_message: リンクを削除することで、会話履歴の公開を停止できます。
   drop_files: ファイルをドロップしてください
+  hint_cmd_enter: ⌘ + Enter で送信
+  hint_ctrl_enter: Ctrl + Enter で送信
   history: 会話履歴
   initialize: 初期化
   model_parameters: モデルパラメータ
@@ -630,6 +632,7 @@ setting:
     show_tools: ツールの表示
     show_use_case_builder: ユースケースビルダーの表示
     stats: 利用統計
+    submit_cmd_or_ctrl_enter: ⌘ (ctrl) + Enter で送信
     typing_animation: タイピングアニメーション
     version: バージョン
     version_help: generative-ai-use-cases の package.json の version を参照しています

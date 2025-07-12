@@ -16,6 +16,7 @@ import useFiles from '../hooks/useFiles';
 import FileCard from './FileCard';
 import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
+import useUserSetting from '../hooks/useUserSetting';
 
 type Props = {
   content: string;
@@ -49,6 +50,7 @@ type Props = {
 
 const InputChatContent: React.FC<Props> = (props) => {
   const { t } = useTranslation();
+  const { settingSubmitCmdOrCtrlEnter } = useUserSetting();
   const { pathname } = useLocation();
   const { loading: chatLoading, isEmpty } = useChat(pathname);
   const {
@@ -122,7 +124,11 @@ const InputChatContent: React.FC<Props> = (props) => {
       )}
       <div
         className={`relative flex items-end rounded-xl border border-black/10 bg-gray-100 shadow-[0_0_30px_1px] shadow-gray-400/40 ${
-          props.disableMarginBottom ? '' : 'mb-7'
+          props.disableMarginBottom
+            ? ''
+            : settingSubmitCmdOrCtrlEnter
+              ? 'mb-2'
+              : 'mb-7'
         }`}>
         <div className="flex grow flex-col">
           {props.fileUpload && uploadedFiles.length > 0 && (
@@ -246,6 +252,15 @@ const InputChatContent: React.FC<Props> = (props) => {
           </Button>
         )}
       </div>
+
+      {/* Show keyboard shortcut hint when cmd/ctrl+enter setting is enabled */}
+      {settingSubmitCmdOrCtrlEnter && (
+        <div className="mb-2 text-right text-xs text-gray-500">
+          {navigator.platform.toLowerCase().includes('mac')
+            ? t('chat.hint_cmd_enter')
+            : t('chat.hint_ctrl_enter')}
+        </div>
+      )}
     </div>
   );
 };

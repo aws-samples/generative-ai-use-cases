@@ -15,6 +15,8 @@ chat:
   delete_link: Xóa liên kết
   delete_link_message: Bằng cách xóa liên kết, bạn có thể ngừng công khai lịch sử cuộc trò chuyện.
   drop_files: Vui lòng thả file
+  hint_cmd_enter: ⌘ + Enter để gửi
+  hint_ctrl_enter: Ctrl + Enter để gửi
   history: Lịch sử cuộc trò chuyện
   initialize: Khởi tạo
   model_parameters: Tham số mô hình
@@ -655,6 +657,7 @@ setting:
     rag_kb_enabled: RAG (Knowledge Base) được bật
     show_tools: Hiển thị công cụ
     show_use_case_builder: Hiển thị Use Case Builder
+    submit_cmd_or_ctrl_enter: ⌘ (ctrl) + Enter để gửi
     typing_animation: Hiệu ứng đánh máy
     version: Phiên bản
     version_help: Tham chiếu đến version trong package.json của generative-ai-use-cases

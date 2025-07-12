@@ -57,6 +57,8 @@ const Setting = () => {
   const hasUpdate = getHasUpdate();
   const closedPullRequests = getClosedPullRequests();
   const {
+    settingSubmitCmdOrCtrlEnter,
+    setSettingSubmitCmdOrCtrlEnter,
     settingTypingAnimation,
     setSettingTypingAnimation,
     settingShowUseCaseBuilder,
@@ -116,6 +118,16 @@ const Setting = () => {
           helpMessage={t('setting.items.language_help')}
           top={true}
         />
+
+        <SettingItem
+          name={t('setting.items.submit_cmd_or_ctrl_enter')}
+          value={
+            <Switch
+              checked={settingSubmitCmdOrCtrlEnter}
+              label=""
+              onSwitch={setSettingSubmitCmdOrCtrlEnter}
+            />
+          }></SettingItem>
 
         <SettingItem
           name={t('setting.items.typing_animation')}
