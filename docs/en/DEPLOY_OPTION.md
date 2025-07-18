@@ -1761,6 +1761,33 @@ EventBridge rules are used for scheduling, and Step Functions for process contro
 > - Currently, there's no feature to notify of startup/shutdown errors.
 > - Each time the index is recreated, the IndexId and DataSourceId change. If other services reference these, you'll need to adapt to these changes.
 
+### How to Set Tags
+
+GenU supports tags for cost management and other purposes. The key name of the tag is automatically set to `GenU` `. Here are examples of how to set them:
+
+Setting in `cdk.json`:
+
+```json
+// cdk.json
+  ...
+  "context": {
+    "tagValue": "dev",
+    ...
+```
+
+Setting in `parameter.ts`:
+
+```typescript
+    ...
+    tagValue: "dev",
+    ...
+```
+
+However, tags cannot be used with some resources:
+
+- Cross-region inference model calls
+- Voice chat model calls
+
 ## Enabling Monitoring Dashboard
 
 Create a dashboard that aggregates input/output token counts and recent prompts.

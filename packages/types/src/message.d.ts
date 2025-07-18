@@ -10,6 +10,7 @@ export type Model = {
   modelParameters?: AdditionalModelRequestFields;
   sessionId?: string;
   region?: string;
+  inferenceProfileArn?: string;
 };
 
 export type Agent = {

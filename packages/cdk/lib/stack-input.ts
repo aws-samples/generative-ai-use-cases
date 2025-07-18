@@ -163,6 +163,8 @@ const baseStackInputSchema = z.object({
   hostedZoneId: z.string().nullish(),
   // Dashboard
   dashboard: z.boolean().default(false),
+  // Tag
+  tagValue: z.string().nullish(),
 });
 
 // Common Validator with refine
@@ -186,24 +188,28 @@ export const processedStackInputSchema = baseStackInputSchema.extend({
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
   imageGenerationModelIds: z.array(
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
   videoGenerationModelIds: z.array(
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
   speechToSpeechModelIds: z.array(
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
 });
