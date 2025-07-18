@@ -18,6 +18,7 @@ import {
 import { Construct } from 'constructs';
 import { allowS3AccessWithSourceIpCondition } from '../utils/s3-access-policy';
 import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
+import { ISecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2';
 
 export interface TranscribeProps {
   readonly userPool: UserPool;
@@ -25,6 +26,8 @@ export interface TranscribeProps {
   readonly api: RestApi;
   readonly allowedIpV4AddressRanges?: string[] | null;
   readonly allowedIpV6AddressRanges?: string[] | null;
+  readonly vpc?: IVpc;
+  readonly securityGroups?: ISecurityGroup[];
 }
 
 export class Transcribe extends Construct {
@@ -61,6 +64,8 @@ export class Transcribe extends Construct {
       environment: {
         BUCKET_NAME: audioBucket.bucketName,
       },
+      vpc: props.vpc,
+      securityGroups: props.securityGroups,
     });
     if (getSignedUrlFunction.role) {
       allowS3AccessWithSourceIpCondition(
@@ -91,6 +96,8 @@ export class Transcribe extends Construct {
             resources: ['*'],
           }),
         ],
+        vpc: props.vpc,
+        securityGroups: props.securityGroups,
       }
     );
     audioBucket.grantRead(startTranscriptionFunction);
@@ -110,6 +117,8 @@ export class Transcribe extends Construct {
             resources: ['*'],
           }),
         ],
+        vpc: props.vpc,
+        securityGroups: props.securityGroups,
       }
     );
     transcriptBucket.grantRead(getTranscriptionFunction);

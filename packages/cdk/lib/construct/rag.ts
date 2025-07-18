@@ -18,6 +18,7 @@ import {
 } from 'aws-cdk-lib/aws-apigateway';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
+import { ISecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2';
 
 const KENDRA_STATE_CFN_PARAMETER_NAME = 'kendraState';
 
@@ -34,6 +35,10 @@ export interface RagProps {
   // Resource
   readonly userPool: UserPool;
   readonly api: RestApi;
+
+  // Closed network
+  readonly vpc?: IVpc;
+  readonly securityGroups?: ISecurityGroup[];
 }
 
 export interface IndexScheduleCron {
@@ -515,6 +520,8 @@ export class Rag extends Construct {
         INDEX_ID: kendraIndexId,
         LANGUAGE: kendraIndexLanguage,
       },
+      vpc: props.vpc,
+      securityGroups: props.securityGroups,
     });
     queryFunction.role?.addToPrincipalPolicy(
       new iam.PolicyStatement({
@@ -536,6 +543,8 @@ export class Rag extends Construct {
         INDEX_ID: kendraIndexId,
         LANGUAGE: kendraIndexLanguage,
       },
+      vpc: props.vpc,
+      securityGroups: props.securityGroups,
     });
     retrieveFunction.role?.addToPrincipalPolicy(
       new iam.PolicyStatement({

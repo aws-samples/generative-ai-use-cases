@@ -46,7 +46,14 @@ const useSpeach = (language: string) => {
       const region = import.meta.env.VITE_APP_REGION;
       const userPoolId = import.meta.env.VITE_APP_USER_POOL_ID;
       const idPoolId = import.meta.env.VITE_APP_IDENTITY_POOL_ID;
-      const cognito = new CognitoIdentityClient({ region });
+      const cognitoIdentityPoolProxyEndpoint = import.meta.env
+        .VITE_APP_COGNITO_IDENTITY_POOL_PROXY_ENDPOINT;
+      const cognito = new CognitoIdentityClient({
+        region,
+        ...(cognitoIdentityPoolProxyEndpoint
+          ? { endpoint: cognitoIdentityPoolProxyEndpoint }
+          : {}),
+      });
       const providerName = `cognito-idp.${region}.amazonaws.com/${userPoolId}`;
 
       const polly = new Polly({

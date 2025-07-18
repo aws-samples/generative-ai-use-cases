@@ -6,10 +6,10 @@ import {
 } from '@aws-solutions-constructs/aws-cloudfront-s3';
 import {
   CfnDistribution,
-  Distribution,
   ResponseHeadersPolicy,
   HeadersFrameOption,
   HeadersReferrerPolicy,
+  IDistribution,
 } from 'aws-cdk-lib/aws-cloudfront';
 import { NodejsBuild } from 'deploy-time-build';
 import * as s3 from 'aws-cdk-lib/aws-s3';
@@ -58,58 +58,20 @@ export interface WebProps {
   readonly speechToSpeechModelIds: ModelConfiguration[];
   readonly mcpEnabled: boolean;
   readonly mcpEndpoint: string | null;
+  readonly webBucket?: s3.Bucket;
+  readonly cognitoUserPoolProxyEndpoint?: string;
+  readonly cognitoIdentityPoolProxyEndpoint?: string;
 }
 
 export class Web extends Construct {
-  public readonly distribution: Distribution;
+  // public readonly distribution: Distribution;
+  public readonly webUrl: string;
 
   constructor(scope: Construct, id: string, props: WebProps) {
     super(scope, id);
 
-    const cspSaml = props.samlCognitoDomainName
-      ? ` https://${props.samlCognitoDomainName}`
-      : '';
-    const csp = `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://*.amazonaws.com; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com:* https://*.on.aws https://raw.githubusercontent.com https://api.github.com${cspSaml}; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;`;
-
-    // Create Response Headers Policy for security headers
-    const responseHeadersPolicy = new ResponseHeadersPolicy(
-      this,
-      'SecurityHeadersPolicy',
-      {
-        securityHeadersBehavior: {
-          // Content Security Policy configuration
-          contentSecurityPolicy: {
-            contentSecurityPolicy: csp,
-            override: true,
-          },
-          // Clickjacking protection
-          frameOptions: {
-            frameOption: HeadersFrameOption.DENY,
-            override: true,
-          },
-          // Other security headers
-          strictTransportSecurity: {
-            accessControlMaxAge: Duration.days(365 * 2),
-            includeSubdomains: true,
-            preload: true,
-            override: true,
-          },
-          xssProtection: {
-            protection: true,
-            modeBlock: true,
-            override: true,
-          },
-          contentTypeOptions: {
-            override: true,
-          },
-          referrerPolicy: {
-            referrerPolicy:
-              HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
-            override: true,
-          },
-        },
-      }
-    );
+    let distribution: IDistribution | undefined = undefined;
+    let webBucket: s3.IBucket;
 
     const commonBucketProps: s3.BucketProps = {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
@@ -120,80 +82,135 @@ export class Web extends Construct {
       enforceSSL: true,
     };
 
-    const cloudFrontToS3Props: CloudFrontToS3Props = {
-      insertHttpSecurityHeaders: false,
-      loggingBucketProps: commonBucketProps,
-      bucketProps: commonBucketProps,
-      cloudFrontLoggingBucketProps: commonBucketProps,
-      cloudFrontLoggingBucketAccessLogBucketProps: commonBucketProps,
-      cloudFrontDistributionProps: {
-        defaultBehavior: {
-          responseHeadersPolicy: responseHeadersPolicy,
-        },
-        errorResponses: [
-          {
-            httpStatus: 403,
-            responseHttpStatus: 200,
-            responsePagePath: '/index.html',
-          },
-          {
-            httpStatus: 404,
-            responseHttpStatus: 200,
-            responsePagePath: '/index.html',
-          },
-        ],
-      },
-    };
+    if (!props.webBucket) {
+      const cspSaml = props.samlCognitoDomainName
+        ? ` https://${props.samlCognitoDomainName}`
+        : '';
+      const csp = `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://*.amazonaws.com; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com:* https://*.on.aws https://raw.githubusercontent.com https://api.github.com${cspSaml}; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;`;
 
-    if (
-      props.cert &&
-      props.hostName &&
-      props.domainName &&
-      props.hostedZoneId
-    ) {
-      cloudFrontToS3Props.cloudFrontDistributionProps.certificate = props.cert;
-      cloudFrontToS3Props.cloudFrontDistributionProps.domainNames = [
-        `${props.hostName}.${props.domainName}`,
-      ];
-    }
-
-    const { cloudFrontWebDistribution, s3BucketInterface } = new CloudFrontToS3(
-      this,
-      'Web',
-      cloudFrontToS3Props
-    );
-
-    if (
-      props.cert &&
-      props.hostName &&
-      props.domainName &&
-      props.hostedZoneId
-    ) {
-      // DNS record for custom domain
-      const hostedZone = HostedZone.fromHostedZoneAttributes(
+      // Create Response Headers Policy for security headers
+      const responseHeadersPolicy = new ResponseHeadersPolicy(
         this,
-        'HostedZone',
+        'SecurityHeadersPolicy',
         {
-          hostedZoneId: props.hostedZoneId,
-          zoneName: props.domainName,
+          securityHeadersBehavior: {
+            // Content Security Policy configuration
+            contentSecurityPolicy: {
+              contentSecurityPolicy: csp,
+              override: true,
+            },
+            // Clickjacking protection
+            frameOptions: {
+              frameOption: HeadersFrameOption.DENY,
+              override: true,
+            },
+            // Other security headers
+            strictTransportSecurity: {
+              accessControlMaxAge: Duration.days(365 * 2),
+              includeSubdomains: true,
+              preload: true,
+              override: true,
+            },
+            xssProtection: {
+              protection: true,
+              modeBlock: true,
+              override: true,
+            },
+            contentTypeOptions: {
+              override: true,
+            },
+            referrerPolicy: {
+              referrerPolicy:
+                HeadersReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN,
+              override: true,
+            },
+          },
         }
       );
-      new ARecord(this, 'ARecord', {
-        zone: hostedZone,
-        recordName: props.hostName,
-        target: RecordTarget.fromAlias(
-          new CloudFrontTarget(cloudFrontWebDistribution)
-        ),
-      });
-    }
 
-    if (props.webAclId) {
-      const existingCloudFrontWebDistribution = cloudFrontWebDistribution.node
-        .defaultChild as CfnDistribution;
-      existingCloudFrontWebDistribution.addPropertyOverride(
-        'DistributionConfig.WebACLId',
-        props.webAclId
-      );
+      const cloudFrontToS3Props: CloudFrontToS3Props = {
+        insertHttpSecurityHeaders: false,
+        loggingBucketProps: commonBucketProps,
+        bucketProps: commonBucketProps,
+        cloudFrontLoggingBucketProps: commonBucketProps,
+        cloudFrontLoggingBucketAccessLogBucketProps: commonBucketProps,
+        cloudFrontDistributionProps: {
+          defaultBehavior: {
+            responseHeadersPolicy: responseHeadersPolicy,
+          },
+          errorResponses: [
+            {
+              httpStatus: 403,
+              responseHttpStatus: 200,
+              responsePagePath: '/index.html',
+            },
+            {
+              httpStatus: 404,
+              responseHttpStatus: 200,
+              responsePagePath: '/index.html',
+            },
+          ],
+        },
+      };
+
+      if (
+        props.cert &&
+        props.hostName &&
+        props.domainName &&
+        props.hostedZoneId
+      ) {
+        cloudFrontToS3Props.cloudFrontDistributionProps.certificate =
+          props.cert;
+        cloudFrontToS3Props.cloudFrontDistributionProps.domainNames = [
+          `${props.hostName}.${props.domainName}`,
+        ];
+      }
+
+      const { cloudFrontWebDistribution, s3BucketInterface } =
+        new CloudFrontToS3(this, 'Web', cloudFrontToS3Props);
+
+      if (
+        props.cert &&
+        props.hostName &&
+        props.domainName &&
+        props.hostedZoneId
+      ) {
+        // DNS record for custom domain
+        const hostedZone = HostedZone.fromHostedZoneAttributes(
+          this,
+          'HostedZone',
+          {
+            hostedZoneId: props.hostedZoneId,
+            zoneName: props.domainName,
+          }
+        );
+        new ARecord(this, 'ARecord', {
+          zone: hostedZone,
+          recordName: props.hostName,
+          target: RecordTarget.fromAlias(
+            new CloudFrontTarget(cloudFrontWebDistribution)
+          ),
+        });
+        this.webUrl = `https://${props.hostName}.${props.domainName}`;
+      } else {
+        this.webUrl = `https://${cloudFrontWebDistribution.domainName}`;
+      }
+
+      if (props.webAclId) {
+        const existingCloudFrontWebDistribution = cloudFrontWebDistribution.node
+          .defaultChild as CfnDistribution;
+        existingCloudFrontWebDistribution.addPropertyOverride(
+          'DistributionConfig.WebACLId',
+          props.webAclId
+        );
+      }
+
+      distribution = cloudFrontWebDistribution;
+      webBucket = s3BucketInterface;
+    } else {
+      // Closed network
+      webBucket = props.webBucket!;
+      this.webUrl = 'CLOSED_NETWORK_MODE';
     }
 
     const build = new NodejsBuild(this, 'BuildWeb', {
@@ -222,8 +239,8 @@ export class Web extends Construct {
           ],
         },
       ],
-      destinationBucket: s3BucketInterface,
-      distribution: cloudFrontWebDistribution,
+      destinationBucket: webBucket,
+      distribution: distribution,
       outputSourceDirectory: './packages/web/dist',
       buildCommands: ['npm ci', 'npm run web:build'],
       buildEnvironment: {
@@ -264,13 +281,15 @@ export class Web extends Construct {
         ),
         VITE_APP_MCP_ENABLED: props.mcpEnabled.toString(),
         VITE_APP_MCP_ENDPOINT: props.mcpEndpoint ?? '',
+        VITE_APP_COGNITO_USER_POOL_PROXY_ENDPOINT:
+          props.cognitoUserPoolProxyEndpoint ?? '',
+        VITE_APP_COGNITO_IDENTITY_POOL_PROXY_ENDPOINT:
+          props.cognitoIdentityPoolProxyEndpoint ?? '',
       },
     });
     // Enhance computing resources
     (
       build.node.findChild('Project').node.defaultChild as CfnResource
     ).addPropertyOverride('Environment.ComputeType', ComputeType.MEDIUM);
-
-    this.distribution = cloudFrontWebDistribution;
   }
 }

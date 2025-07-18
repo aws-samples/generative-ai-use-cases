@@ -349,7 +349,7 @@ exports[`GenerativeAiUseCases matches the snapshot 2`] = `
             "Arn",
           ],
         },
-        "Runtime": "nodejs20.x",
+        "Runtime": "nodejs22.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -1710,7 +1710,7 @@ Automatically detect the language of the user's request and think and answer in 
             "Arn",
           ],
         },
-        "Runtime": "nodejs20.x",
+        "Runtime": "nodejs22.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -2327,6 +2327,9 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         "APIApiwebtextOPTIONS5EFD2A2D",
         "APIApiwebtext0828B9D5",
       ],
+      "Metadata": {
+        "aws:cdk:do-not-refactor": true,
+      },
       "Properties": {
         "Description": "Automatically created by the RestApi construct",
         "RestApiId": {
@@ -13644,6 +13647,8 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
               ],
             ],
           },
+          "VITE_APP_COGNITO_IDENTITY_POOL_PROXY_ENDPOINT": "",
+          "VITE_APP_COGNITO_USER_POOL_PROXY_ENDPOINT": "",
           "VITE_APP_ENDPOINT_NAMES": "[]",
           "VITE_APP_FLOWS": "[]",
           "VITE_APP_FLOW_STREAM_FUNCTION_ARN": {
@@ -14745,6 +14750,42 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
                 ],
               },
             },
+            {
+              "Action": "s3:ListBucket",
+              "Condition": {
+                "StringEquals": {
+                  "AWS:SourceArn": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition",
+                        },
+                        ":cloudfront::",
+                        {
+                          "Ref": "AWS::AccountId",
+                        },
+                        ":distribution/",
+                        {
+                          "Ref": "ApiWebCloudFrontDistributionA115FBC3",
+                        },
+                      ],
+                    ],
+                  },
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "cloudfront.amazonaws.com",
+              },
+              "Resource": {
+                "Fn::GetAtt": [
+                  "ApiWebS3Bucket26EF98D6",
+                  "Arn",
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -15650,7 +15691,7 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
             "Arn",
           ],
         },
-        "Runtime": "nodejs20.x",
+        "Runtime": "nodejs22.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",

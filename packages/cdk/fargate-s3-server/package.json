@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.846.0",
+    "express": "^5.1.0"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "start": "npx ts-node app.ts",
+    "bundle": "npx esbuild app.ts --bundle --outfile=dist/app.js --loader:.ts=ts --platform=node"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.14",
+    "esbuild": "^0.25.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
