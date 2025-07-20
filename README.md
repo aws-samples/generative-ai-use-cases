@@ -233,6 +233,8 @@ If you would like to have your use case featured, please contact us via [Issue](
 - [Blog (Japanese): Generative AI Use Cases JP ~ First Contribution Guide](https://aws.amazon.com/jp/builders-flash/202504/genu-development-guide/)
 - [Blog (Japanese): Let Generative AI Decline Unreasonable Requests ~ Integrating Generative AI into Browsers ~](https://aws.amazon.com/jp/builders-flash/202405/genai-sorry-message/)
 - [Blog (Japanese): Developing an Interpreter with Amazon Bedrock!](https://aws.amazon.com/jp/builders-flash/202311/bedrock-interpreter/)
+- [Blog (Japanese): Using GenU's Metadata Filter for Department-based Filtering](https://qiita.com/sugimount-a/items/f08c1a7a777d5dece386)
+- [Blog (Japanese): Running Bedrock Inference on GenU with Different AWS Account](https://qiita.com/sugimount-a/items/e7d2fb94abacebec40d1)
 - [Video (Japanese): The Appeal and Usage of Generative AI Use Cases JP (GenU) for Thoroughly Considering Generative AI Use Cases](https://www.youtube.com/live/s1P5A2SIWgc?si=PBQ4ZHQXU4pDhL8A)
 
 ## Security

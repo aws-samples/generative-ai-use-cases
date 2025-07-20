@@ -230,6 +230,8 @@ GenU をご利用いただく際の、構成と料金試算例を公開してお
 - [ブログ: Generative AI Use Cases JP ~ はじめての Contribution ガイド](https://aws.amazon.com/jp/builders-flash/202504/genu-development-guide/)
 - [ブログ: 無茶振りは生成 AI に断ってもらおう ~ ブラウザに生成 AI を組み込んでみた ~](https://aws.amazon.com/jp/builders-flash/202405/genai-sorry-message/)
 - [ブログ: Amazon Bedrock で Interpreter を開発!](https://aws.amazon.com/jp/builders-flash/202311/bedrock-interpreter/)
+- [ブログ: GenU の メタデータフィルターで部署ごとのフィルターを行う](https://qiita.com/sugimount-a/items/f08c1a7a777d5dece386)
+- [ブログ: GenU で Bedorck を別 AWS アカウントで推論する](https://qiita.com/sugimount-a/items/e7d2fb94abacebec40d1)
 - [動画: 生成 AI ユースケースを考え倒すための Generative AI Use Cases JP (GenU) の魅力と使い方](https://www.youtube.com/live/s1P5A2SIWgc?si=PBQ4ZHQXU4pDhL8A)
 
 ## Security
