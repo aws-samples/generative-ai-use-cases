@@ -3,6 +3,7 @@ import {
   UserPool,
   UserPoolClient,
   UserPoolOperation,
+  StringAttribute,
 } from 'aws-cdk-lib/aws-cognito';
 import {
   IdentityPool,
@@ -44,10 +45,39 @@ export class Auth extends Construct {
         requireDigits: true,
         minLength: 8,
       },
+      customAttributes: {
+        tenantId: new StringAttribute({
+          minLen: 1,
+          maxLen: 256,
+          mutable: false,
+        }),
+      },
     });
 
     const client = userPool.addClient('client', {
       idTokenValidity: Duration.days(1),
+      readAttributes: {
+        address: true,
+        birthdate: true,
+        email: true,
+        emailVerified: true,
+        familyName: true,
+        gender: true,
+        givenName: true,
+        locale: true,
+        middleName: true,
+        name: true,
+        nickname: true,
+        phoneNumber: true,
+        phoneNumberVerified: true,
+        picture: true,
+        preferredUsername: true,
+        profile: true,
+        updatedAt: true,
+        website: true,
+        zoneinfo: true,
+        'custom:tenantId': true,
+      },
     });
 
     const idPool = new IdentityPool(this, 'IdentityPool', {
