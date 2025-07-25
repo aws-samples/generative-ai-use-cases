@@ -163,6 +163,15 @@ const baseStackInputSchema = z.object({
   hostedZoneId: z.string().nullish(),
   // Dashboard
   dashboard: z.boolean().default(false),
+  // Closed network
+  closedNetworkMode: z.boolean().default(false),
+  closedNetworkVpcIpv4Cidr: z.string().default('10.0.0.0/16'),
+  closedNetworkVpcId: z.string().nullish(),
+  closedNetworkSubnetIds: z.array(z.string()).nullish(),
+  closedNetworkCertificateArn: z.string().nullish(),
+  closedNetworkDomainName: z.string().nullish(),
+  closedNetworkCreateTestEnvironment: z.boolean().default(true),
+  closedNetworkCreateResolverEndpoint: z.boolean().default(true),
 });
 
 // Common Validator with refine

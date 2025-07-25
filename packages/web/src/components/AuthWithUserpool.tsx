@@ -8,6 +8,10 @@ const selfSignUpEnabled: boolean =
   import.meta.env.VITE_APP_SELF_SIGN_UP_ENABLED === 'true';
 const speechToSpeechEventApiEndpoint: string = import.meta.env
   .VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT;
+const cognitoUserPoolProxyEndpoint = import.meta.env
+  .VITE_APP_COGNITO_USER_POOL_PROXY_ENDPOINT;
+const cognitoIdentityPoolProxyEndpoint = import.meta.env
+  .VITE_APP_COGNITO_IDENTITY_POOL_PROXY_ENDPOINT;
 
 type Props = {
   children: React.ReactNode;
@@ -21,6 +25,13 @@ const AuthWithUserpool: React.FC<Props> = (props) => {
         userPoolId: import.meta.env.VITE_APP_USER_POOL_ID,
         userPoolClientId: import.meta.env.VITE_APP_USER_POOL_CLIENT_ID,
         identityPoolId: import.meta.env.VITE_APP_IDENTITY_POOL_ID,
+        ...(cognitoUserPoolProxyEndpoint && cognitoIdentityPoolProxyEndpoint
+          ? {
+              userPoolEndpoint: cognitoUserPoolProxyEndpoint,
+              identityPoolEndpoint: cognitoIdentityPoolProxyEndpoint,
+              region: import.meta.env.VITE_APP_REGION,
+            }
+          : {}),
       },
     },
     API: {

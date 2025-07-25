@@ -5,6 +5,7 @@ import svgr from 'vite-plugin-svgr';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { VitePWA } from 'vite-plugin-pwa';
 import { visualizer } from 'rollup-plugin-visualizer';
+import webfontDownload from 'vite-plugin-webfont-dl';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -31,6 +32,7 @@ export default defineConfig(({ mode }) => ({
         process: true,
       },
     }),
+    webfontDownload(),
     VitePWA({
       strategies: 'generateSW',
       registerType: 'autoUpdate',
