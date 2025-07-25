@@ -155,119 +155,6 @@ exports[`GenerativeAiUseCases matches the snapshot 2`] = `
       },
       "Type": "AWS::OpenSearchServerless::AccessPolicy",
     },
-    "ApplyTags": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "Collection",
-      ],
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "ApplyTagsToResourcesE2488E36B4654D1F9D1C89FB99F1CC01E87E9E73",
-            "Arn",
-          ],
-        },
-        "accountId": "123456890123",
-        "collectionId": {
-          "Ref": "Collection",
-        },
-        "region": "us-east-1",
-        "tag": {
-          "key": "GenU",
-          "value": "",
-        },
-      },
-      "Type": "Custom::ApplyTags",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ApplyTagsToResourcesE2488E36B4654D1F9D1C89FB99F1CC01E87E9E73": {
-      "DependsOn": [
-        "ApplyTagsToResourcesE2488E36B4654D1F9D1C89FB99F1CC01ServiceRoleDefaultPolicy0493DEDD",
-        "ApplyTagsToResourcesE2488E36B4654D1F9D1C89FB99F1CC01ServiceRole61085692",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "apply-tags.handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "ApplyTagsToResourcesE2488E36B4654D1F9D1C89FB99F1CC01ServiceRole61085692",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs22.x",
-        "Timeout": 300,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "ApplyTagsToResourcesE2488E36B4654D1F9D1C89FB99F1CC01ServiceRole61085692": {
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "ApplyTagsToResourcesE2488E36B4654D1F9D1C89FB99F1CC01ServiceRoleDefaultPolicy0493DEDD": {
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "aoss:TagResource",
-                "aoss:UntagResource",
-                "aoss:ListTagsForResource",
-              ],
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:aoss:us-east-1:123456890123:collection/",
-                    {
-                      "Ref": "Collection",
-                    },
-                  ],
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ApplyTagsToResourcesE2488E36B4654D1F9D1C89FB99F1CC01ServiceRoleDefaultPolicy0493DEDD",
-        "Roles": [
-          {
-            "Ref": "ApplyTagsToResourcesE2488E36B4654D1F9D1C89FB99F1CC01ServiceRole61085692",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "Collection": {
       "DependsOn": [
         "AccessPolicy",
@@ -1222,7 +1109,6 @@ exports[`GenerativeAiUseCases matches the snapshot 3`] = `
         "Environment": {
           "Variables": {
             "SEARCH_API_KEY": "XXXXXX",
-            "SEARCH_ENGINE": "Brave",
           },
         },
         "Handler": "index.handler",

@@ -76,6 +76,7 @@ export class SpeechToSpeech extends Construct {
       environment: {
         EVENT_API_ENDPOINT: eventApiEndpoint,
         NAMESPACE: channelNamespaceName,
+        SPEECH_TO_SPEECH_MODEL_IDS: JSON.stringify(speechToSpeechModelIds),
         CROSS_ACCOUNT_BEDROCK_ROLE_ARN: props.crossAccountBedrockRoleArn ?? '',
       },
       bundling: {
@@ -119,6 +120,7 @@ export class SpeechToSpeech extends Construct {
         timeout: Duration.minutes(15),
         environment: {
           SPEECH_TO_SPEECH_TASK_FUNCTION_ARN: speechToSpeechTask.functionArn,
+          SPEECH_TO_SPEECH_MODEL_IDS: JSON.stringify(speechToSpeechModelIds),
         },
         bundling: {
           nodeModules: ['@aws-sdk/client-bedrock-runtime'],

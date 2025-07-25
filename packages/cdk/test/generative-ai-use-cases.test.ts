@@ -11,6 +11,10 @@ describe('GenerativeAiUseCases', () => {
       account: '123456890123',
       region: 'us-east-1',
       env: '',
+      tag: {
+        key: 'Name',
+        value: 'GenU',
+      },
       ragEnabled: true,
       kendraIndexArn: null,
       kendraDataSourceBucketName: null,
