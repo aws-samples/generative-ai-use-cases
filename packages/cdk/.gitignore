@@ -1,5 +1,4 @@
 *.js
-!jest.config.js
 *.d.ts
 node_modules
 **/__pycache__/**
@@ -7,4 +6,4 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
-!custom-resources/*.js
+!custom-resources/**/*.js

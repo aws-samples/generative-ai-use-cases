@@ -1,6 +1,9 @@
 agent:
   drop_files: ファイルをドロップしてアップロード
   title: Agent チャット
+agent_core:
+  start_conversation: AgentCore と会話を始める
+  title: AgentCore
 auth:
   loading: 読み込み中...
   login: ログイン
@@ -353,7 +356,8 @@ generateText:
 landing:
   alert:
     description: >-
-      こちらは SA が内部デモのために利用する環境です。カスタマーにデモをする場合は、原則自分の AWS アカウントにデプロイしたものを利用してください。カスタマーのデータの入力や業務利用をしてはいけません。
+      こちらは SA が内部デモのために利用する環境です。カスタマーにデモをする場合は、原則自分の AWS
+      アカウントにデプロイしたものを利用してください。カスタマーのデータの入力や業務利用をしてはいけません。
     title: GenU デモ環境について
   demo:
     agent:
@@ -380,8 +384,7 @@ landing:
         スマホ広告のデザイン案を出力してください。
         可愛い、おしゃれ、使いやすい、POPカルチャー、親しみやすい、若者向け、音楽、写真、流行のスマホ、背景が街
     mcp:
-      content: >-
-        Amazon Bedrock のセキュリティについて調べてください。ユーザーの入力はモデルの学習に使われますか？
+      content: Amazon Bedrock のセキュリティについて調べてください。ユーザーの入力はモデルの学習に使われますか？
     rag:
       content: Claude のパラメータを説明し、その設定方法も教えてください。
     summarize:
@@ -441,7 +444,9 @@ landing:
       title: 画像生成
     mcp_chat:
       description: >-
-        MCP チャットは  Model Context Protocol (MCP) を通じて、Bedrock の LLM モデルと外部データや外部ツールをシームレスに連携させるチャット機能です。mcp.json を編集することで、自由にツールを追加できます。MCP のエージェントとして Strands Agents を活用しています。
+        MCP チャットは  Model Context Protocol (MCP) を通じて、Bedrock の LLM
+        モデルと外部データや外部ツールをシームレスに連携させるチャット機能です。mcp.json を編集することで、自由にツールを追加できます。MCP
+        のエージェントとして Strands Agents を活用しています。
       title: MCP チャット
     meeting-minutes:
       description: >-
@@ -683,7 +688,10 @@ transcribe:
   result_placeholder: 音声認識結果がここに表示されます
   screen_audio: スクリーン音声
   screen_audio_error: 'スクリーン音声エラー:'
-  screen_audio_notice: 'Windows の場合:「画面全体」タブより、「システム音声も共有する」を ON にしてください。<br/>Mac の場合:「Chrome Tab」から、「Also share tab audio」を ON にしてください。<br/>Chrome と Edge は動作します。Firefox は動作しません。'
+  screen_audio_notice: >-
+    Windows の場合:「画面全体」タブより、「システム音声も共有する」を ON にしてください。<br/>Mac の場合:「Chrome
+    Tab」から、「Also share tab audio」を ON にしてください。<br/>Chrome と Edge は動作します。Firefox
+    は動作しません。
   select_input_method: マイク入力 or ファイルアップロードから選択してください
   speaker_names: 話し手の名前（カンマ区切り）
   speaker_recognition: 話者認識

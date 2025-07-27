@@ -44,6 +44,8 @@ const ragKnowledgeBaseEnabled: boolean =
 const agentEnabled: boolean = import.meta.env.VITE_APP_AGENT_ENABLED === 'true';
 const inlineAgents: boolean = import.meta.env.VITE_APP_INLINE_AGENTS === 'true';
 const mcpEnabled: boolean = import.meta.env.VITE_APP_MCP_ENABLED === 'true';
+const agentCoreEnabled: boolean =
+  import.meta.env.VITE_APP_AGENT_CORE_ENABLED === 'true';
 const {
   visionEnabled,
   imageGenModelIds,
@@ -133,6 +135,15 @@ const App: React.FC = () => {
           label: t('mcp_chat.title'),
           to: '/mcp',
           icon: <PiGraph />,
+          display: 'usecase' as const,
+          sub: 'Experimental',
+        }
+      : null,
+    agentCoreEnabled
+      ? {
+          label: t('agent_core.title'),
+          to: '/agent-core',
+          icon: <PiRobot />,
           display: 'usecase' as const,
           sub: 'Experimental',
         }

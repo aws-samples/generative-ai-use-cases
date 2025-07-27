@@ -678,6 +678,49 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### Enabling AgentCore Use Cases
+
+This is a use case that integrates with agents created in AgentCore. (Experimental: Breaking changes may be made without notice)
+
+Enabling `agentCoreEnabled` will deploy the default AgentCore Runtime and enable the use case.
+
+You can use externally created AgentCore Runtime with `agentCoreExternalRuntimes`.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    agentCoreEnabled: true,
+    agentCoreExternalRuntimes: [
+      {
+        name: 'AgentCore1',
+        arn: 'arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx',
+      },
+    ],
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+
+{
+  "context": {
+    "agentCoreEnabled": true,
+    "agentCoreExternalRuntimes": [
+      {
+        "name": "AgentCore1",
+        "arn": "arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx"
+      }
+    ]
+  }
+}
+```
+
 ### Enabling Voice Chat Use Case
 
 > [!NOTE]

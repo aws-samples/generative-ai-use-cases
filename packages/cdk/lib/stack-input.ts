@@ -136,6 +136,17 @@ const baseStackInputSchema = z.object({
     )
     .default([]),
   inlineAgents: z.boolean().default(false),
+  // Agent Core Runtime
+  createGenericAgentCoreRuntime: z.boolean().default(false),
+  agentCoreRegion: z.string().nullish(),
+  agentCoreExternalRuntimes: z
+    .array(
+      z.object({
+        name: z.string(),
+        arn: z.string(),
+      })
+    )
+    .default([]),
   // MCP
   mcpEnabled: z.boolean().default(false),
   // Guardrail

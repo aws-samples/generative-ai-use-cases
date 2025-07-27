@@ -1,0 +1,14 @@
+[project]
+name = "generic-agent-core-runtime"
+version = "0.0.1"
+requires-python = ">=3.12"
+dependencies = [
+  "strands-agents>=1.0",
+  "strands-agents-tools",
+  "boto3",
+  "mcp",
+  "fastapi",
+  "uvicorn",
+  "pydantic",
+  "aws-opentelemetry-distro",
+]

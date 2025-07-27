@@ -31,6 +31,7 @@ import AgentChatPage from './pages/AgentChatPage.tsx';
 import FlowChatPage from './pages/FlowChatPage';
 import VoiceChatPage from './pages/VoiceChatPage';
 import McpChatPage from './pages/McpChatPage';
+import AgentCorePage from './pages/AgentCorePage.tsx';
 import { MODELS } from './hooks/useModel';
 import { Authenticator } from '@aws-amplify/ui-react';
 import UseCaseBuilderEditPage from './pages/useCaseBuilder/UseCaseBuilderEditPage.tsx';
@@ -53,6 +54,8 @@ const samlAuthEnabled: boolean =
 const agentEnabled: boolean = import.meta.env.VITE_APP_AGENT_ENABLED === 'true';
 const inlineAgents: boolean = import.meta.env.VITE_APP_INLINE_AGENTS === 'true';
 const mcpEnabled: boolean = import.meta.env.VITE_APP_MCP_ENABLED === 'true';
+const agentCoreEnabled: boolean =
+  import.meta.env.VITE_APP_AGENT_CORE_ENABLED === 'true';
 const {
   visionEnabled,
   imageGenModelIds,
@@ -197,6 +200,12 @@ const routes: RouteObject[] = [
     ? {
         path: '/mcp',
         element: <McpChatPage />,
+      }
+    : null,
+  agentCoreEnabled
+    ? {
+        path: '/agent-core',
+        element: <AgentCorePage />,
       }
     : null,
   {

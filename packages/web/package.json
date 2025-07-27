@@ -13,6 +13,7 @@
   "dependencies": {
     "@aws-amplify/ui-react": "^6.1.12",
     "@aws-crypto/sha256-js": "^5.2.0",
+    "@aws-sdk/client-bedrock-agentcore": "^3.755.0",
     "@aws-sdk/client-cognito-identity": "^3.755.0",
     "@aws-sdk/client-kendra": "^3.755.0",
     "@aws-sdk/client-lambda": "^3.755.0",

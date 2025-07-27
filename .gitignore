@@ -8,3 +8,7 @@ node_modules
 # MkDocs documentation
 site*/
 .cache
+
+# Coding Asssitant
+.kiro/settings
+.kiro/specs

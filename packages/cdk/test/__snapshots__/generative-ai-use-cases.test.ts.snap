@@ -1928,6 +1928,15 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         ],
       },
     },
+    "AgentCoreEnabled": {
+      "Value": "false",
+    },
+    "AgentCoreExternalRuntimes": {
+      "Value": "[]",
+    },
+    "AgentCoreGenericRuntime": {
+      "Value": "null",
+    },
     "AgentEnabled": {
       "Value": "true",
     },
@@ -13622,6 +13631,8 @@ exports[`GenerativeAiUseCases matches the snapshot 5`] = `
         "destinationBucketName": "cdk-hnb659fds-assets-123456890123-us-east-1",
         "environment": {
           "NODE_OPTIONS": "--max-old-space-size=4096",
+          "VITE_APP_AGENT_CORE_ENABLED": "false",
+          "VITE_APP_AGENT_CORE_EXTERNAL_RUNTIMES": "[]",
           "VITE_APP_AGENT_ENABLED": "true",
           "VITE_APP_AGENT_NAMES": "["SearchEngine","CodeInterpreter"]",
           "VITE_APP_API_ENDPOINT": {

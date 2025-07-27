@@ -1,0 +1,26 @@
+{
+  "_comment": "Generic AgentCore Runtime Configuration",
+  "_agentcore_requirements": {
+    "platform": "linux/arm64",
+    "port": 8080,
+    "endpoints": {
+      "/ping": "GET - Health check endpoint",
+      "/invocations": "POST - Main inference endpoint"
+    },
+    "aws_credentials": "Required for Bedrock model access and S3 operations"
+  },
+  "mcpServers": {
+    "time": {
+      "command": "uvx",
+      "args": ["mcp-server-time"]
+    },
+    "awslabs.aws-documentation-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-documentation-mcp-server@latest"]
+    },
+    "awslabs.cdk-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.cdk-mcp-server@latest"]
+    }
+  }
+}

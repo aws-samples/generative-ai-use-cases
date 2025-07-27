@@ -5,6 +5,7 @@
     "module": "commonjs",
     "lib": ["es2020", "dom"],
     "declaration": true,
+    "outDir": "./dist",
 
     // Strict type checking settings
     "strict": true,
@@ -27,11 +28,12 @@
     // Other settings
     "experimentalDecorators": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
 
     // Type definition file settings
     "typeRoots": ["../../node_modules/@types"],
     "types": ["jest", "node"]
   },
   // Exclude files and directories
-  "exclude": ["node_modules", "cdk.out"]
+  "exclude": ["node_modules", "cdk.out", "custom-resources/**", "dist"]
 }

@@ -62,6 +62,8 @@
     "inlineAgents": false,
     "mcpEnabled": false,
     "flows": [],
+    "createGenericAgentCoreRuntime": false,
+    "agentCoreExternalRuntimes": [],
     "allowedIpV4AddressRanges": null,
     "allowedIpV6AddressRanges": null,
     "allowedCountryCodes": null,

@@ -1,0 +1,19 @@
+{
+  "name": "agent-core-runtime-custom-resource",
+  "private": true,
+  "version": "1.0.0",
+  "description": "CustomResource for managing AWS Bedrock AgentCore Runtimes",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist *.js *.d.ts",
+    "prebuild": "npm run clean"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-agentcore-control": "^3.755.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

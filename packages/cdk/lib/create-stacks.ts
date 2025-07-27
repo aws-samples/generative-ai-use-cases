@@ -6,6 +6,7 @@ import { DashboardStack } from './dashboard-stack';
 import { AgentStack } from './agent-stack';
 import { RagKnowledgeBaseStack } from './rag-knowledge-base-stack';
 import { GuardrailStack } from './guardrail-stack';
+import { AgentCoreStack } from './agent-core-stack';
 import { ProcessedStackInput } from './stack-input';
 import { VideoTmpBucketStack } from './video-tmp-bucket-stack';
 
@@ -81,6 +82,18 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
       })
     : null;
 
+  // Agent Core Runtime
+  const agentCoreStack = params.createGenericAgentCoreRuntime
+    ? new AgentCoreStack(app, `AgentCoreStack${params.env}`, {
+        env: {
+          account: params.account,
+          region: params.agentCoreRegion || params.modelRegion,
+        },
+        params: params,
+        crossRegionReferences: true,
+      })
+    : null;
+
   // Create S3 Bucket for each unique region for StartAsyncInvoke in video generation
   // because the S3 Bucket must be in the same region as Bedrock Runtime
   const videoModelRegions = [
@@ -125,6 +138,8 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
         ragKnowledgeBaseStack?.dataSourceBucketName,
       // Agent
       agents: agentStack?.agents,
+      // Agent Core
+      agentCoreStack: agentCoreStack || undefined,
       // Video Generation
       videoBucketRegionMap,
       // Guardrail
@@ -166,6 +181,7 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
     ragKnowledgeBaseStack,
     agentStack,
     guardrail,
+    agentCoreStack,
     generativeAiUseCasesStack,
     dashboardStack,
   };

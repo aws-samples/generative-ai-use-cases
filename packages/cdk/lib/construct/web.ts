@@ -17,6 +17,7 @@ import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
+  AgentCoreConfiguration,
   Flow,
   HiddenUseCases,
   ModelConfiguration,
@@ -58,6 +59,9 @@ export interface WebProps {
   readonly speechToSpeechModelIds: ModelConfiguration[];
   readonly mcpEnabled: boolean;
   readonly mcpEndpoint: string | null;
+  readonly agentCoreEnabled: boolean;
+  readonly agentCoreGenericRuntime?: AgentCoreConfiguration;
+  readonly agentCoreExternalRuntimes: AgentCoreConfiguration[];
 }
 
 export class Web extends Construct {
@@ -264,6 +268,13 @@ export class Web extends Construct {
         ),
         VITE_APP_MCP_ENABLED: props.mcpEnabled.toString(),
         VITE_APP_MCP_ENDPOINT: props.mcpEndpoint ?? '',
+        VITE_APP_AGENT_CORE_ENABLED: props.agentCoreEnabled.toString(),
+        VITE_APP_AGENT_CORE_GENERIC_RUNTIME: JSON.stringify(
+          props.agentCoreGenericRuntime
+        ),
+        VITE_APP_AGENT_CORE_EXTERNAL_RUNTIMES: JSON.stringify(
+          props.agentCoreExternalRuntimes
+        ),
       },
     });
     // Enhance computing resources

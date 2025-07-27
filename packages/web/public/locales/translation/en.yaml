@@ -1,6 +1,9 @@
 agent:
   drop_files: Drop files to upload
   title: Agent Chat
+agent_core:
+  start_conversation: Start a conversation with AgentCore
+  title: AgentCore
 auth:
   loading: Loading...
   login: Login
@@ -443,7 +446,9 @@ generateText:
 landing:
   alert:
     description: >-
-      This is an environment used for internal demos by SA. When giving demos to customers, please use the one deployed in your own AWS account as a rule. Do not input customer data or use it for business purposes.
+      This is an environment used for internal demos by SA. When giving demos to
+      customers, please use the one deployed in your own AWS account as a rule.
+      Do not input customer data or use it for business purposes.
     title: About GenU Demo Environment
   demo:
     agent:
@@ -485,7 +490,8 @@ landing:
         music, photography, trendy smartphone, city background
     mcp:
       content: >-
-        Please research about Amazon Bedrock security. Is user input used for model training?
+        Please research about Amazon Bedrock security. Is user input used for
+        model training?
     rag:
       content: >-
         Please provide an overview of Amazon Nova Canvas and explain its key
@@ -562,12 +568,16 @@ landing:
       title: Image Generation
     mcp_chat:
       description: >-
-        MCP Chat is a chat function that seamlessly integrates Bedrock's LLM models with external data and external tools through the Model Context Protocol (MCP). You can freely add tools by editing the mcp.json file. Leveraging Strands Agents as an MCP agent.
+        MCP Chat is a chat function that seamlessly integrates Bedrock's LLM
+        models with external data and external tools through the Model Context
+        Protocol (MCP). You can freely add tools by editing the mcp.json file.
+        Leveraging Strands Agents as an MCP agent.
       title: MCP Chat
     meeting-minutes:
       description: >-
-        Automatically generate meeting minutes from audio recordings or real-time transcription.
-        No need to write prompts - choose from near-original transcription, newspaper style, or FAQ format.
+        Automatically generate meeting minutes from audio recordings or
+        real-time transcription. No need to write prompts - choose from
+        near-original transcription, newspaper style, or FAQ format.
       title: Meeting Minutes Generation
     rag_chat:
       description_kb: >-
@@ -836,7 +846,9 @@ summarize:
 transcribe:
   detailed_parameters: Detailed parameters
   direct_input: Direct Input
-  direct_input_instruction: Please enter the source text for meeting minutes directly in the "Transcript" area below.
+  direct_input_instruction: >-
+    Please enter the source text for meeting minutes directly in the
+    "Transcript" area below.
   direct_input_placeholder: Please enter the source text for meeting minutes here...
   file_upload: File Upload
   max_speakers: Max Speakers
@@ -845,7 +857,10 @@ transcribe:
   result_placeholder: Speech recognition results will be displayed here
   screen_audio: Screen Audio
   screen_audio_error: 'Screen Audio Error:'
-  screen_audio_notice: 'For Windows: Select "Entire Screen" tab and turn ON "Share system audio".<br/>For Mac: Select "Chrome Tab" and turn ON "Also share tab audio".<br/>Chrome and Edge work. Firefox does not work.'
+  screen_audio_notice: >-
+    For Windows: Select "Entire Screen" tab and turn ON "Share system
+    audio".<br/>For Mac: Select "Chrome Tab" and turn ON "Also share tab
+    audio".<br/>Chrome and Edge work. Firefox does not work.
   select_input_method: Please select from microphone input or file upload
   speaker_names: Speaker names (comma separated)
   speaker_recognition: Speaker recognition

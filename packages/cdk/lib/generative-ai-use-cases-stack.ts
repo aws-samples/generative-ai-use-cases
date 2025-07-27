@@ -11,6 +11,7 @@ import {
   CommonWebAcl,
   SpeechToSpeech,
   McpApi,
+  AgentCore,
 } from './construct';
 import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
@@ -19,6 +20,7 @@ import { Agent } from 'generative-ai-use-cases';
 import { UseCaseBuilder } from './construct/use-case-builder';
 import { ProcessedStackInput } from './stack-input';
 import { allowS3AccessWithSourceIpCondition } from './utils/s3-access-policy';
+import { AgentCoreStack } from './agent-core-stack';
 
 export interface GenerativeAiUseCasesStackProps extends StackProps {
   readonly params: ProcessedStackInput;
@@ -27,6 +29,8 @@ export interface GenerativeAiUseCasesStackProps extends StackProps {
   readonly knowledgeBaseDataSourceBucketName?: string;
   // Agent
   readonly agents?: Agent[];
+  // Agent Core
+  readonly agentCoreStack?: AgentCoreStack;
   // Video Generation
   readonly videoBucketRegionMap: Record<string, string>;
   // Guardrail
@@ -133,6 +137,26 @@ export class GenerativeAiUseCasesStack extends Stack {
       mcpEndpoint = mcpApi.endpoint;
     }
 
+    // AgentCore Runtime (External runtimes and permissions only)
+    let genericRuntimeArn: string | undefined;
+    let genericRuntimeName: string | undefined;
+
+    // Get generic runtime info from AgentCore stack if it exists
+    if (props.agentCoreStack) {
+      genericRuntimeArn = props.agentCoreStack.deployedGenericRuntimeArn;
+      genericRuntimeName = props.agentCoreStack.getGenericRuntimeConfig()?.name;
+    }
+
+    // Create AgentCore construct for external runtimes and permissions
+    if (params.agentCoreExternalRuntimes.length > 0 || genericRuntimeArn) {
+      new AgentCore(this, 'AgentCore', {
+        agentCoreExternalRuntimes: params.agentCoreExternalRuntimes,
+        idPool: auth.idPool,
+        genericRuntimeArn,
+        genericRuntimeName,
+      });
+    }
+
     // Web Frontend
     const web = new Web(this, 'Api', {
       // Auth
@@ -167,6 +191,16 @@ export class GenerativeAiUseCasesStack extends Stack {
       speechToSpeechModelIds: params.speechToSpeechModelIds,
       mcpEnabled: params.mcpEnabled,
       mcpEndpoint,
+      agentCoreEnabled:
+        params.createGenericAgentCoreRuntime ||
+        params.agentCoreExternalRuntimes.length > 0,
+      agentCoreGenericRuntime: genericRuntimeArn
+        ? {
+            name: genericRuntimeName || 'GenericAgentCoreRuntime',
+            arn: genericRuntimeArn,
+          }
+        : undefined,
+      agentCoreExternalRuntimes: params.agentCoreExternalRuntimes,
       // Frontend
       hiddenUseCases: params.hiddenUseCases,
       // Custom Domain
@@ -381,6 +415,26 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     new CfnOutput(this, 'McpEndpoint', {
       value: mcpEndpoint ?? '',
+    });
+
+    new CfnOutput(this, 'AgentCoreEnabled', {
+      value: (
+        params.createGenericAgentCoreRuntime ||
+        params.agentCoreExternalRuntimes.length > 0
+      ).toString(),
+    });
+
+    new CfnOutput(this, 'AgentCoreGenericRuntime', {
+      value: genericRuntimeArn
+        ? JSON.stringify({
+            name: genericRuntimeName || 'GenericAgentCoreRuntime',
+            arn: genericRuntimeArn,
+          })
+        : 'null',
+    });
+
+    new CfnOutput(this, 'AgentCoreExternalRuntimes', {
+      value: JSON.stringify(params.agentCoreExternalRuntimes),
     });
 
     this.userPool = auth.userPool;

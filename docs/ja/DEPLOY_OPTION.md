@@ -693,6 +693,49 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### AgentCore ユースケースの有効化
+
+AgentCore で作成したエージェントと連携するユースケースです。(Experimental: 予告なく破壊的変更を行うことがあります)
+
+`agentCoreEnabled` を有効化するとデフォルトの AgentCore Runtime がデプロイされユースケースが有効化されます。
+
+`agentCoreExternalRuntimes` で外部で作成した AgentCore Runtime を利用することが可能です。
+
+**[parameter.ts](/packages/cdk/parameter.ts) を編集**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    agentCoreEnabled: true,
+    agentCoreExternalRuntimes: [
+      {
+        name: 'AgentCore1',
+        arn: 'arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx',
+      },
+    ],
+  },
+};
+```
+
+**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
+
+```json
+// cdk.json
+
+{
+  "context": {
+    "agentCoreEnabled": true,
+    "agentCoreExternalRuntimes": [
+      {
+        "name": "AgentCore1",
+        "arn": "arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx"
+      }
+    ]
+  }
+}
+```
+
 ### 音声チャットユースケースの有効化
 
 > [!NOTE]
