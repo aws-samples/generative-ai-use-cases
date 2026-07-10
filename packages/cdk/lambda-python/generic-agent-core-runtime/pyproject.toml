@@ -12,7 +12,7 @@ dependencies = [
   "pydantic",
   "aws-opentelemetry-distro>=0.10.1",
   "python-multipart>=0.0.26",
-  "cryptography>=46.0.7",
+  "cryptography>=48.0.1",
 ]
 
 [dependency-groups]
