@@ -11,7 +11,7 @@ dependencies = [
   "uvicorn",
   "pydantic",
   "aws-opentelemetry-distro>=0.10.1",
-  "python-multipart>=0.0.26",
+  "python-multipart>=0.0.31",
   "cryptography>=46.0.7",
 ]
 
