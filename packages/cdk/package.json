@@ -20,7 +20,7 @@
     "@typescript-eslint/eslint-plugin": "^7.6.0",
     "@typescript-eslint/parser": "^7.6.0",
     "aws-cdk": "^2.1100.0",
-    "axios": "^1.15.0",
+    "axios": "^1.18.1",
     "eslint": "^8.56.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.2.5",
