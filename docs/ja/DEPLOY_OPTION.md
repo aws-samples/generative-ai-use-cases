@@ -945,6 +945,25 @@ AWS 外部のサービスにアクセスする場合、AgentCore Gateway を使�
 設定後、MCP 設定で `mcp-proxy-for-aws` を使用してエンドポイントを指定します。
 詳細は [mcp-proxy-for-aws のドキュメント](https://github.com/aws/mcp-proxy-for-aws)を参照してください。
 
+#### Web 検索ツールの有効化
+
+`agentBuilderWebSearchEnabled` を有効化すると、Amazon Bedrock AgentCore の Web Search Tool を利用した Web 検索ツールが追加され、ユーザーは Agent ごとに利用の有無を選択できます。
+API キーの設定は不要で、検索クエリは AWS 内で処理されます (ゼロデータエグレス)。
+
+有効化すると、Web Search コネクタを設定した AgentCore Gateway が自動的に作成されます。
+`agentCoreGatewayArns` のように利用者が用意した Gateway を指定する方式とは異なり、GenU 側で Gateway を作成する点にご注意ください。
+
+`agentBuilderWebSearchExcludeDomains` を指定すると、検索結果から除外するドメインを設定できます。この設定はサーバー側で適用され、Agent からは変更できません。
+
+> [!NOTE]
+> Web Search Tool は一部のリージョンでのみ利用可能です。`agentCoreRegion` (未指定の場合は `modelRegion`) が対応リージョンである必要があります。対応リージョンは [Web Search Tool のドキュメント](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html)を参照してください。
+
+> [!NOTE]
+> Web Search は検索クエリ数に応じた課金が発生します。料金は [Amazon Bedrock AgentCore の料金ページ](https://aws.amazon.com/bedrock/agentcore/pricing/)を参照してください。
+
+> [!NOTE]
+> コネクタのバージョンは CloudFormation で指定できないため、既定バージョンが使用されます。そのため Agent がリクエストごとにドメインや公開日でフィルタする機能は利用できません。
+
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
 ```typescript

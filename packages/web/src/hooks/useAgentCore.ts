@@ -56,7 +56,8 @@ const useAgentCore = (id: string) => {
     mcpServers?: string[],
     agentId?: string,
     modelId?: string, // Add modelId parameter
-    codeExecutionEnabled?: boolean // Add codeExecutionEnabled parameter
+    codeExecutionEnabled?: boolean, // Add codeExecutionEnabled parameter
+    webSearchEnabled?: boolean // Add webSearchEnabled parameter
   ) => {
     // Use provided modelId or fall back to current model ID
     const targetModelId = modelId || getModelId();
@@ -111,6 +112,7 @@ const useAgentCore = (id: string) => {
       mcpServers,
       agentId,
       codeExecutionEnabled,
+      webSearchEnabled,
     };
 
     await postMessage(request);

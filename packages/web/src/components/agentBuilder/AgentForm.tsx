@@ -20,6 +20,7 @@ export interface AgentFormData {
   modelId: string;
   mcpServers: string[];
   codeExecutionEnabled: boolean;
+  webSearchEnabled: boolean;
   isPublic: boolean;
   tags: string[];
 }
@@ -68,6 +69,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
       availableModels[0] || 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
     mcpServers: [],
     codeExecutionEnabled: false,
+    webSearchEnabled: false,
     isPublic: false,
     tags: [],
   });
@@ -138,6 +140,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
         modelId: initialData.modelId || availableModels[0] || '',
         mcpServers: initialData.mcpServers || [],
         codeExecutionEnabled: initialData.codeExecutionEnabled || false,
+        webSearchEnabled: initialData.webSearchEnabled || false,
         isPublic: initialData.isPublic || false,
         tags: initialData.tags || [],
       });
@@ -387,6 +390,31 @@ const AgentForm: React.FC<AgentFormProps> = ({
               </label>
               <p className="mt-1 text-xs text-gray-500">
                 {t('agent_builder.code_execution_description')}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start space-x-3">
+            <input
+              type="checkbox"
+              id="webSearchEnabled"
+              checked={formData.webSearchEnabled}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  webSearchEnabled: e.target.checked,
+                })
+              }
+              className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <div className="flex-1">
+              <label
+                htmlFor="webSearchEnabled"
+                className="block cursor-pointer text-sm font-medium text-gray-700">
+                {t('agent_builder.enable_web_search')}
+              </label>
+              <p className="mt-1 text-xs text-gray-500">
+                {t('agent_builder.web_search_description')}
               </p>
             </div>
           </div>
