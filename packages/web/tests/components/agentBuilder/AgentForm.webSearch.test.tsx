@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // i18n: return the key itself so assertions do not depend on translations
 vi.mock('react-i18next', () => ({
@@ -60,6 +60,12 @@ const webSearchCheckbox = () =>
 describe('AgentForm web search tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Web search is provisioned at deploy time
+    vi.stubEnv('VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED', 'true');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it('renders the web search checkbox with its label and description', () => {
@@ -94,6 +100,15 @@ describe('AgentForm web search tool', () => {
     expect(webSearchCheckbox().checked).toBe(true);
     const lastCall = onFormDataChange.mock.calls.at(-1);
     expect((lastCall?.[0] as AgentFormData).webSearchEnabled).toBe(true);
+  });
+
+  it('is not rendered when web search is not enabled at deploy time', () => {
+    vi.stubEnv('VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED', 'false');
+    renderForm();
+
+    expect(webSearchCheckbox()).toBeNull();
+    // Code execution stays available
+    expect(document.querySelector('#codeExecutionEnabled')).not.toBeNull();
   });
 
   it('keeps code execution independent from web search', () => {

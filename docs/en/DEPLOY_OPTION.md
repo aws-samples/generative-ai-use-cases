@@ -936,6 +936,8 @@ Note that this differs from `agentCoreGatewayArns`, where you specify a Gateway 
 
 `agentBuilderWebSearchExcludeDomains` lets you specify domains to exclude from search results. The list is enforced server side and cannot be changed by the Agent.
 
+When `agentBuilderWebSearchEnabled` is disabled, the web search option is not shown in the agent builder. Leave it disabled if your organization does not allow web search.
+
 > [!NOTE]
 > The Web Search Tool is only available in some Regions. `agentCoreRegion` (or `modelRegion` when it is not specified) must be a supported Region. See the [Web Search Tool documentation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) for the supported Regions.
 

@@ -400,6 +400,7 @@ export class GenerativeAiUseCasesStack extends Stack {
           }
         : undefined,
       agentBuilderEnabled: params.agentBuilderEnabled,
+      agentBuilderWebSearchEnabled: params.agentBuilderWebSearchEnabled,
       agentCoreAgentBuilderRuntime: agentBuilderRuntimeArn
         ? {
             name: agentBuilderRuntimeName || 'AgentBuilderAgentCoreRuntime',

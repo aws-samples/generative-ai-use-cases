@@ -955,6 +955,8 @@ API キーの設定は不要で、検索クエリは AWS 内で処理されま�
 
 `agentBuilderWebSearchExcludeDomains` を指定すると、検索結果から除外するドメインを設定できます。この設定はサーバー側で適用され、Agent からは変更できません。
 
+`agentBuilderWebSearchEnabled` が無効の場合、エージェントビルダーの画面に Web 検索の選択肢は表示されません。組織のポリシーで Web 検索を利用しない場合は、無効のままにしてください。
+
 > [!NOTE]
 > Web Search Tool は一部のリージョンでのみ利用可能です。`agentCoreRegion` (未指定の場合は `modelRegion`) が対応リージョンである必要があります。対応リージョンは [Web Search Tool のドキュメント](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html)を参照してください。
 
