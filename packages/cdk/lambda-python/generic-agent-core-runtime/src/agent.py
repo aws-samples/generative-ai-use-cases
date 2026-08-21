@@ -70,7 +70,7 @@ class AgentManager:
             model_id, region = extract_model_info(model_info)
 
             # Combine system prompts
-            combined_system_prompt = get_system_prompt(system_prompt)
+            combined_system_prompt = get_system_prompt(system_prompt, web_search_enabled=bool(web_search_enabled))
 
             # Get tools (MCP handling is done in ToolManager)
             tools = self.tool_manager.get_tools_with_options(

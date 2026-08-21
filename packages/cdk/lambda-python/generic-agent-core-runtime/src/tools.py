@@ -29,6 +29,16 @@ logger = logging.getLogger(__name__)
 # Pinned for reproducible behavior. Check PyPI regularly for new stable versions.
 MCP_PROXY_FOR_AWS_VERSION = "1.6.4"
 
+# The Web Search connector exposes its tool without a description, so one is
+# supplied to help the model choose between multiple search tools.
+WEB_SEARCH_TOOL_DESCRIPTION = (
+    "Search the web for current information using Amazon Bedrock AgentCore Web Search. "
+    "Queries are processed within AWS and are not sent to third party search engines. "
+    "Returns titles, source URLs, publication dates and relevant snippets. "
+    "Use this when an answer depends on recent or citable information, and cite the "
+    "returned source URLs in the answer."
+)
+
 
 def _create_mcp_client(server_name: str, server_config: dict, uv_env: dict) -> tuple[str, MCPClient | None]:
     """Create and start an MCP client (for parallel execution)"""
@@ -219,11 +229,30 @@ class ToolManager:
 
         try:
             web_search_tools = client.list_tools_sync()
+            for tool in web_search_tools:
+                self._ensure_tool_description(tool)
             logger.info(f"Added {len(web_search_tools)} web search tools (AgentCore Web Search)")
             return web_search_tools
         except Exception as e:
             logger.warning(f"Failed to list web search tools: {e}")
             return []
+
+    @staticmethod
+    def _ensure_tool_description(tool: Any) -> None:
+        """Fill in a description when the connector does not provide one.
+
+        The Web Search connector currently exposes its tool without a description.
+        Without it the model has little to go on when several search tools are
+        available, so a description is supplied here.
+        """
+        mcp_tool = getattr(tool, "mcp_tool", None)
+        if mcp_tool is None or getattr(mcp_tool, "description", None):
+            return
+        try:
+            mcp_tool.description = WEB_SEARCH_TOOL_DESCRIPTION
+            logger.info(f"Filled in description for tool: {getattr(tool, 'tool_name', '')}")
+        except Exception as e:
+            logger.warning(f"Failed to set tool description: {e}")
 
     def get_tools_with_options(self, code_execution_enabled: bool = False, web_search_enabled: bool = False, mcp_servers=None) -> list[Any]:
         """

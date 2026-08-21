@@ -24,6 +24,15 @@ FIXED_SYSTEM_PROMPT = f"""## About File Output
 - If the output file is an image file, the S3 URL output must be in Markdown format.
 """
 
+# Appended when the web search tool is enabled.
+# The acceptable use of the Web Search Tool requires that source citations and
+# links provided with each search result are retained and displayed to the user.
+WEB_SEARCH_SYSTEM_PROMPT = """## About Web Search
+- When a question depends on current information, use the web search tool before answering.
+- You MUST cite the sources you used. Write each citation as a Markdown link in the form `[title](url)`, and include the publication date when it is available.
+- Never present search results without their source links.
+"""
+
 
 def get_aws_credentials() -> dict[str, str]:
     """Get AWS credentials from environment or IAM role"""
@@ -55,12 +64,15 @@ def get_uv_environment() -> dict[str, str]:
     }
 
 
-def get_system_prompt(user_system_prompt: str = None) -> str:
+def get_system_prompt(user_system_prompt: str = None, web_search_enabled: bool = False) -> str:
     """Combine user system prompt with fixed system prompt"""
+    prompts = []
     if user_system_prompt:
-        return f"{user_system_prompt}\n{FIXED_SYSTEM_PROMPT}"
-    else:
-        return FIXED_SYSTEM_PROMPT
+        prompts.append(user_system_prompt)
+    prompts.append(FIXED_SYSTEM_PROMPT)
+    if web_search_enabled:
+        prompts.append(WEB_SEARCH_SYSTEM_PROMPT)
+    return "\n".join(prompts)
 
 
 def extract_model_info(model_info: Any) -> tuple[str, str]:

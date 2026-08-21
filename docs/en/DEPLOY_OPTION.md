@@ -946,17 +946,11 @@ Note that this differs from `agentCoreGatewayArns`, where you specify a Gateway 
 > The connector version cannot be specified through CloudFormation, so the default version is used. As a result, per request domain and published date filters are not available to the Agent.
 
 > [!IMPORTANT]
-> Under the acceptable use terms of Web Search, when you surface output that uses search results to your end users, you **must retain and display the source citations and links** provided with each result. Instruct the Agent in its system prompt to include citations as Markdown links. See [Acceptable use](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) for details.
-
-Example system prompt:
-
-```
-Use the web search tool for questions that need current information, and always
-cite your sources as [title](URL).
-```
+> Under the acceptable use terms of Web Search, when you surface output that uses search results to your end users, you **must retain and display the source citations and links** provided with each result. See [Acceptable use](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) for details.
+> To meet this requirement, an Agent with web search enabled automatically receives a system prompt that instructs it to cite sources as Markdown links. The system prompt entered by the user is preserved as is.
 
 > [!NOTE]
-> When you also enable a search MCP such as `tavily-search`, the Agent decides which tool to use. The Web Search tool does not carry a description, so we recommend stating the intended split in the system prompt (for example, Web Search for sensitive queries and Tavily for deeper research).
+> When you also enable a search MCP such as `tavily-search`, the Agent decides which tool to use. If you want a specific split, state it in the system prompt (for example, Web Search for sensitive queries and Tavily for deeper research).
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 

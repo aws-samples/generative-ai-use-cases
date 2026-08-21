@@ -965,17 +965,11 @@ API キーの設定は不要で、検索クエリは AWS 内で処理されま�
 > コネクタのバージョンは CloudFormation で指定できないため、既定バージョンが使用されます。そのため Agent がリクエストごとにドメインや公開日でフィルタする機能は利用できません。
 
 > [!IMPORTANT]
-> Web Search の利用規約により、検索結果を利用した出力をエンドユーザーに表示する場合は、各結果に付随する**出典とリンクを保持して表示する必要があります**。Agent のシステムプロンプトで、出典を Markdown リンク形式で明記するよう指示してください。詳細は [Acceptable use](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) を参照してください。
-
-システムプロンプトの例:
-
-```
-最新情報が必要な質問には Web 検索ツールを使い、回答には必ず出典を
-[記事タイトル](URL) の形式で明記してください。
-```
+> Web Search の利用規約により、検索結果を利用した出力をエンドユーザーに表示する場合は、各結果に付随する**出典とリンクを保持して表示する必要があります**。詳細は [Acceptable use](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) を参照してください。
+> この要件を満たすため、Web 検索を有効にした Agent には出典を Markdown リンク形式で明記するよう指示するシステムプロンプトが自動的に付与されます。ユーザーが入力したシステムプロンプトはそのまま保持されます。
 
 > [!NOTE]
-> `tavily-search` などの検索系 MCP を併用する場合、どちらのツールを使うかは Agent が判断します。Web Search ツールには説明文が付与されていないため、用途に応じた使い分けをシステムプロンプトで明示することを推奨します (例: 機密性の高いクエリは Web Search、詳細な調査は Tavily)。
+> `tavily-search` などの検索系 MCP を併用する場合、どちらのツールを使うかは Agent が判断します。用途に応じた使い分けを明示したい場合は、システムプロンプトに記載してください (例: 機密性の高いクエリは Web Search、詳細な調査は Tavily)。
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
