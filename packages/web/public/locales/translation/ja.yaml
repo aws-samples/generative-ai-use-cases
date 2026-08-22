@@ -747,6 +747,10 @@ language:
   th: タイ語
   vi: ベトナム語
   zh: 中国語
+maintenance:
+  description: 現在この環境は一時的に利用できません。しばらくしてからお試しください。
+  title: メンテナンス中です
+
 mcp_chat:
   loading_message: MCP サーバーと接続しています。時間がかかる場合があります。そのまま待機してください...
   title: MCP チャット

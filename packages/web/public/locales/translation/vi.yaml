@@ -608,6 +608,10 @@ language:
   ko: Tiếng Hàn
   th: tiếng Thái
   zh: Tiếng Trung
+maintenance:
+  description: Môi trường này tạm thời không khả dụng. Vui lòng thử lại sau.
+  title: Đang bảo trì
+
 meetingMinutes:
   auto_detect_candidates: 'Tự động nhận diện từ: {{languages}}'
   auto_detect_change: Thay đổi trong Cài đặt

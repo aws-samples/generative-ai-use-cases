@@ -624,6 +624,10 @@ language:
   ko: ภาษาเกาหลี
   th: ภาษาไทย
   zh: ภาษาจีน
+maintenance:
+  description: ขณะนี้ไม่สามารถใช้งานระบบนี้ได้ชั่วคราว กรุณาลองใหม่ภายหลัง
+  title: อยู่ระหว่างการบำรุงรักษา
+
 meetingMinutes:
   auto_detect_candidates: 'ตรวจจับอัตโนมัติจาก: {{languages}}'
   auto_detect_change: เปลี่ยนในการตั้งค่า
