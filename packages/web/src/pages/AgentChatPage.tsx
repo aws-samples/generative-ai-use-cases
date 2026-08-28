@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import InputChatContent from '../components/InputChatContent';
 import useChat from '../hooks/useChat';
 import ChatMessage from '../components/ChatMessage';
@@ -74,6 +74,7 @@ const AgentChatPage: React.FC = () => {
   const { t } = useTranslation();
   const { sessionId, content, setContent, setSessionId } = useChatPageState();
   const { pathname, search } = useLocation();
+  const navigate = useNavigate();
   const { agentName } = useParams();
 
   const {
@@ -122,22 +123,20 @@ const AgentChatPage: React.FC = () => {
   useEffect(() => {
     if (agentName) {
       setModelId(agentName);
-    } else {
-      const _modelId = !modelId ? availableModels[0] : modelId;
-      if (search !== '') {
-        const params = queryString.parse(search) as AgentPageQueryParams;
-        setContent(params.content ?? '');
-        setModelId(
-          availableModels.includes(params.modelId ?? '')
-            ? params.modelId!
-            : _modelId
-        );
-      } else {
-        setModelId(_modelId);
-      }
+    } else if (search !== '') {
+      const params = queryString.parse(search) as AgentPageQueryParams;
+      setContent(params.content ?? '');
+      const _modelId = availableModels.includes(params.modelId ?? '')
+        ? params.modelId!
+        : availableModels[0];
+      setModelId(_modelId);
+      // Clear query params after consuming to prevent re-application
+      navigate(pathname, { replace: true });
+    } else if (!modelId) {
+      setModelId(availableModels[0]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setContent, modelId, availableModels, search, agentName]);
+  }, [search, setContent, availableModels, agentName]);
 
   const onSend = useCallback(() => {
     setFollowing(true);

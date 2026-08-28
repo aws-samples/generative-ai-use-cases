@@ -46,12 +46,14 @@ export const handler = async (
     ];
 
     // When adding a new model, the default Claude prompter is used, so the output may be enclosed in <output></output>
-    // The following processing removes the xml tags containing <output></output>
-    const title =
-      (await api['bedrock'].invoke?.(model, messages, req.id))?.replace(
-        /<([^>]+)>([\s\S]*?)<\/\1>/,
-        '$2'
-      ) ?? '';
+    // Some reasoning models (e.g. Opus 4.5) may also output <thinking>...</thinking> before the actual title.
+    // Extract specifically from <output> tags if present, otherwise strip all XML tags.
+    const rawTitle =
+      (await api['bedrock'].invoke?.(model, messages, req.id)) ?? '';
+    const outputMatch = rawTitle.match(/<output>([\s\S]*?)<\/output>/);
+    const title = outputMatch
+      ? outputMatch[1].trim()
+      : rawTitle.replace(/<([^>]+)>[\s\S]*?<\/\1>/g, '').trim();
 
     await setChatTitle(
       req.chat.id,

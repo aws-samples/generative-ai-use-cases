@@ -55,6 +55,9 @@
       "sh -c 'npm run lint'"
     ]
   },
+  "overrides": {
+    "typescript": "~5.8.3"
+  },
   "dependencies": {
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0"
