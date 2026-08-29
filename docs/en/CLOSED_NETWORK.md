@@ -29,9 +29,23 @@ Options related to closed network mode have the `closedNetwork` prefix. The foll
 - Deployment must be performed in an environment with internet connectivity. Also, internet connectivity is required when accessing the operation verification environment from the management console.
 - Deployment requires the same environment as normal mode deployment. Specifically, AWS IAM user configuration, Node.js, and Docker are needed.
 - The region where GenU is deployed and the model region must be the same. Currently, it's not possible to deploy GenU in ap-northeast-1 and use models from us-east-1.
+- When enabling AgentCore (`agentBuilderEnabled` / `createGenericAgentCoreRuntime`), `agentCoreRegion` must also be the same region. In closed network mode, the AgentCore Runtime shares the closed VPC, so it cannot be deployed to a different region (if not specified, it automatically defaults to the same value as `region`). Research Agent (`researchAgentEnabled`) cannot be used in closed network mode because the AgentCore Runtime currently uses a fixed PUBLIC network configuration.
 - Since various resources are created, when importing an existing VPC, it's recommended to use as clean an environment as possible.
 - SAML integration is not available.
 - Voice Chat use case is currently not available.
+
+## AgentCore in Closed Network Mode
+
+When `closedNetworkMode: true` and either `agentBuilderEnabled` or `createGenericAgentCoreRuntime` is enabled, the AgentCore Runtime is automatically deployed with a PRIVATE network configuration (`isAgentCoreNetworkPrivate=true`), sharing the closed VPC and subnets from the ClosedNetworkStack. You do not need to separately specify `agentCoreVpcId` / `agentCoreSubnetIds`.
+
+The following VPC Endpoints are automatically created in the closed VPC, so all communication from the AgentCore Runtime and browser InvokeAgentRuntime calls are completed within the VPC:
+
+- `bedrock-agentcore` (Runtime data plane / control plane)
+- `bedrock-agentcore-gateway` (AgentCore Gateway invocation)
+- `bedrock-runtime` (Foundation Model invocation)
+- `ecr` / `ecr-docker` (Runtime image pull)
+- `logs` (CloudWatch Logs)
+- `s3` (Gateway Endpoint for FileBucket and data source access)
 
 ## Example of Valid Configuration File
 
@@ -142,17 +156,19 @@ Here we make two assumptions:
 
 The endpoints that require name resolution from clients are as follows. Parts enclosed in `<>` need to be replaced with actual values.
 
-| Service Name                | Role                        | Endpoint                                                     | How to Check Endpoint                                                                         |
-| --------------------------- | --------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
-| Application Load Balancer   | Web static file server      | Custom domain or internal-\<aaa>.\<region>.elb.amazonaws.com | Check with ClosedNetworkWebUrl output of ClosedNetworkStack                                   |
-| API Gateway                 | Main API                    | \<xxx>.execute-api.\<region>.amazonaws.com                   | Check with ApiEndpoint output of **GenerativeAiUseCasesStack**                                |
-| API Gateway                 | Cognito User Pool proxy     | \<yyy>.execute-api.\<region>.amazonaws.com                   | Check with CognitoPrivateProxyCognitoUserPoolProxyApiEndpoint... output of ClosedNetworkStack |
-| API Gateway                 | Cognito Identity Pool proxy | \<zzz>.execute-api.\<region>.amazonaws.com                   | Check with CognitoPrivateProxyCognitoIdPoolProxyApiEndpoint... output of ClosedNetworkStack   |
-| Amazon S3                   | Signed URLs                 | s3.\<region>.amazonaws.com                                   | Endpoint is fixed                                                                             |
-| AWS Lambda                  | Streaming output            | lambda.\<region>.amazonaws.com                               | Endpoint is fixed                                                                             |
-| Amazon Transcribe           | Speech-to-text              | transcribe.\<region>.amazonaws.com                           | Endpoint is fixed                                                                             |
-| Amazon Transcribe Streaming | Real-time speech-to-text    | transcribestreaming.\<region>.amazonaws.com                  | Endpoint is fixed                                                                             |
-| Amazon Polly                | Text-to-speech              | polly.\<region>.amazonaws.com                                | Endpoint is fixed                                                                             |
+| Service Name                | Role                         | Endpoint                                                     | How to Check Endpoint                                                                         |
+| --------------------------- | ---------------------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| Application Load Balancer   | Web static file server       | Custom domain or internal-\<aaa>.\<region>.elb.amazonaws.com | Check with ClosedNetworkWebUrl output of ClosedNetworkStack                                   |
+| API Gateway                 | Main API                     | \<xxx>.execute-api.\<region>.amazonaws.com                   | Check with ApiEndpoint output of **GenerativeAiUseCasesStack**                                |
+| API Gateway                 | Cognito User Pool proxy      | \<yyy>.execute-api.\<region>.amazonaws.com                   | Check with CognitoPrivateProxyCognitoUserPoolProxyApiEndpoint... output of ClosedNetworkStack |
+| API Gateway                 | Cognito Identity Pool proxy  | \<zzz>.execute-api.\<region>.amazonaws.com                   | Check with CognitoPrivateProxyCognitoIdPoolProxyApiEndpoint... output of ClosedNetworkStack   |
+| Amazon S3                   | Signed URLs                  | s3.\<region>.amazonaws.com                                   | Endpoint is fixed                                                                             |
+| AWS Lambda                  | Streaming output             | lambda.\<region>.amazonaws.com                               | Endpoint is fixed                                                                             |
+| Amazon Transcribe           | Speech-to-text               | transcribe.\<region>.amazonaws.com                           | Endpoint is fixed                                                                             |
+| Amazon Transcribe Streaming | Real-time speech-to-text     | transcribestreaming.\<region>.amazonaws.com                  | Endpoint is fixed                                                                             |
+| Amazon Polly                | Text-to-speech               | polly.\<region>.amazonaws.com                                | Endpoint is fixed                                                                             |
+| Bedrock AgentCore Runtime   | AgentCore Runtime execution  | bedrock-agentcore.\<region>.amazonaws.com                    | Endpoint is fixed                                                                             |
+| Bedrock AgentCore Gateway   | AgentCore Gateway invocation | bedrock-agentcore-gateway.\<region>.amazonaws.com            | Endpoint is fixed                                                                             |
 
 Please modify your DNS server configuration to specify the IP address of the Resolver Endpoint as the resolver (forwarder) for all endpoints in the table above.
 The IP address of the Resolver Endpoint can be confirmed by opening [Route53](https://console.aws.amazon.com/route53resolver), selecting Inbound endpoints, and clicking on the created endpoint.
@@ -166,17 +182,19 @@ When configuring the local machine's /etc/hosts, you need the IP addresses of ea
 However, since these IP addresses may change and you can only specify a single IP address without redundancy, please use this only for operation verification.
 The following summarizes the endpoints that need configuration and how to check their IP addresses.
 
-| Service Name                | Role                        | Endpoint                                                     | How to Check IP Address |
-| --------------------------- | --------------------------- | ------------------------------------------------------------ | ----------------------- |
-| Application Load Balancer   | Web static file server      | Custom domain or internal-\<aaa>.\<region>.elb.amazonaws.com | Method 1                |
-| API Gateway                 | Main API                    | \<xxx>.execute-api.\<region>.amazonaws.com                   | Method 2                |
-| API Gateway                 | Cognito User Pool proxy     | \<yyy>.execute-api.\<region>.amazonaws.com                   | Method 2                |
-| API Gateway                 | Cognito Identity Pool proxy | \<zzz>.execute-api.\<region>.amazonaws.com                   | Method 2                |
-| Amazon S3                   | Signed URLs                 | \<S3 bucket name>.s3.\<region>.amazonaws.com                 | Method 2                |
-| AWS Lambda                  | Streaming output            | lambda.\<region>.amazonaws.com                               | Method 2                |
-| Amazon Transcribe           | Speech-to-text              | transcribe.\<region>.amazonaws.com                           | Method 2                |
-| Amazon Transcribe Streaming | Real-time speech-to-text    | transcribestreaming.\<region>.amazonaws.com                  | Method 2                |
-| Amazon Polly                | Text-to-speech              | polly.\<region>.amazonaws.com                                | Method 2                |
+| Service Name                | Role                         | Endpoint                                                     | How to Check IP Address |
+| --------------------------- | ---------------------------- | ------------------------------------------------------------ | ----------------------- |
+| Application Load Balancer   | Web static file server       | Custom domain or internal-\<aaa>.\<region>.elb.amazonaws.com | Method 1                |
+| API Gateway                 | Main API                     | \<xxx>.execute-api.\<region>.amazonaws.com                   | Method 2                |
+| API Gateway                 | Cognito User Pool proxy      | \<yyy>.execute-api.\<region>.amazonaws.com                   | Method 2                |
+| API Gateway                 | Cognito Identity Pool proxy  | \<zzz>.execute-api.\<region>.amazonaws.com                   | Method 2                |
+| Amazon S3                   | Signed URLs                  | \<S3 bucket name>.s3.\<region>.amazonaws.com                 | Method 2                |
+| AWS Lambda                  | Streaming output             | lambda.\<region>.amazonaws.com                               | Method 2                |
+| Amazon Transcribe           | Speech-to-text               | transcribe.\<region>.amazonaws.com                           | Method 2                |
+| Amazon Transcribe Streaming | Real-time speech-to-text     | transcribestreaming.\<region>.amazonaws.com                  | Method 2                |
+| Amazon Polly                | Text-to-speech               | polly.\<region>.amazonaws.com                                | Method 2                |
+| Bedrock AgentCore Runtime   | AgentCore Runtime execution  | bedrock-agentcore.\<region>.amazonaws.com                    | Method 2                |
+| Bedrock AgentCore Gateway   | AgentCore Gateway invocation | bedrock-agentcore-gateway.\<region>.amazonaws.com            | Method 2                |
 
 - Method 1: Open Network Interfaces in [EC2](https://console.aws.amazon.com/ec2/home) and search for "elb". The target ENI is the one with Security group names starting with ClosedNetworkStack.... Click the Network interface ID to see the Private IPv4 address. Since there are multiple, select one of them.
 - Method 2: Open Endpoints in [VPC](https://console.aws.amazon.com/vpcconsole/home) and look for the corresponding service name. The service name is the reverse of the endpoint. (However, for API Gateway, the ID is omitted.) Click the VPC endpoint ID to see the deployed Subnets and IP addresses at the bottom of the page. Since there are multiple, select one of them.

@@ -114,6 +114,8 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
             region: params.agentCoreRegion,
           },
           params: params,
+          vpc: closedNetworkStack?.closedVpc.vpc,
+          subnets: closedNetworkStack?.closedVpc.subnets,
         })
       : null;
 

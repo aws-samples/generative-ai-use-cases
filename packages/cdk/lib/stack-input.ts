@@ -249,6 +249,29 @@ export const stackInputSchema = baseStackInputSchema
         'Both VPC ID and Subnet IDs must be provided together for AgentCore network configuration',
       path: ['agentCoreVpcId'],
     }
+  )
+  .refine(
+    (data) => {
+      // In closed network mode, AgentCore must run in the same region as the closed VPC
+      const agentCoreEnabled =
+        data.agentBuilderEnabled ||
+        data.createGenericAgentCoreRuntime ||
+        data.researchAgentEnabled;
+      if (
+        data.closedNetworkMode &&
+        agentCoreEnabled &&
+        data.agentCoreRegion &&
+        data.agentCoreRegion !== data.region
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        'agentCoreRegion must equal region when closedNetworkMode=true (the AgentCore Runtime shares the closed VPC, which exists in a single region)',
+      path: ['agentCoreRegion'],
+    }
   );
 
 // schema after conversion
@@ -297,4 +320,7 @@ export const processedStackInputSchema = baseStackInputSchema.extend({
 });
 
 export type StackInput = z.infer<typeof stackInputSchema>;
+// Input type: fields with .default() are optional — use this for partial
+// parameter objects in parameter.ts so defaults don't need to be repeated.
+export type StackInputIn = z.input<typeof stackInputSchema>;
 export type ProcessedStackInput = z.infer<typeof processedStackInputSchema>;

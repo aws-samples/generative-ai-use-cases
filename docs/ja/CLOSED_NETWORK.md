@@ -30,9 +30,23 @@
 - デプロイはインターネットに疎通可能な環境で行う必要があります。また、動作検証環境にはマネージメントコンソールからアクセスするため、その場合もインターネット疎通が必要になります。
 - デプロイには、通常モードのデプロイと同様の環境が必要です。具体的には、AWS IAM ユーザーの設定、Node.js、Docker が必要です。
 - GenU がデプロイされるリージョンとモデルのリージョンは同一である必要があります。GenU を ap-northeast-1 にデプロイし、us-east-1 のモデルを利用するといったことは現状できません。
+- AgentCore (`agentBuilderEnabled` / `createGenericAgentCoreRuntime`) を有効化する場合、`agentCoreRegion` も同一リージョンである必要があります。閉域モードでは閉域 VPC を AgentCore Runtime が共有するため、別リージョンへのデプロイはできません (指定がない場合は自動的に `region` と同一になります)。Research Agent (`researchAgentEnabled`) は AgentCore Runtime が現状 PUBLIC ネットワーク固定のため、閉域モードでは利用できません。
 - 様々なリソースを作成するため、既存の VPC をインポートする場合は可能な限り clean な環境を利用することを推奨します。
 - SAML 連携は利用できません。
 - Voice Chat のユースケースは現状利用できません。
+
+## 閉域モードでの AgentCore
+
+`closedNetworkMode: true` かつ `agentBuilderEnabled` または `createGenericAgentCoreRuntime` を有効化した場合、AgentCore Runtime は自動的に PRIVATE ネットワーク構成 (`isAgentCoreNetworkPrivate=true`) でデプロイされ、閉域 VPC とサブネットを ClosedNetworkStack から共有します。`agentCoreVpcId` / `agentCoreSubnetIds` を別途指定する必要はありません。
+
+VPC Endpoint は閉域 VPC に下記が自動作成されるため、AgentCore Runtime からの通信および ブラウザからの InvokeAgentRuntime はすべて VPC 内で完結します。
+
+- `bedrock-agentcore` (Runtime データプレーン / コントロールプレーン)
+- `bedrock-agentcore-gateway` (AgentCore Gateway 呼び出し)
+- `bedrock-runtime` (Foundation Model 呼び出し)
+- `ecr` / `ecr-docker` (Runtime イメージの Pull)
+- `logs` (CloudWatch Logs)
+- `s3` (Gateway Endpoint。FileBucket やデータソースへのアクセス)
 
 ## 有効な設定ファイルの例
 
@@ -143,18 +157,19 @@ Certificate body には ssl.crt の中身、Certificate private key には ssl.k
 
 クライアントから名前解決が必要なエンドポイントは以下の通りです。`<>` で囲まれた箇所は実際の値に置き換えが必要です。
 
-| サービス名                  | 役割                       | エンドポイント                                              | エンドポイントの確認方法                                  |
-| --------------------------- | -------------------------- | ----------------------------------------------------------- | --------------------------------------------------------- |
-| Application Load Balancer   | Web 静的ファイルのサーバー | 独自ドメイン or internal-\<aaa>.\<region>.elb.amazonaws.com | ClosedNetworkStack の出力の ClosedNetworkWebUrl で確認    |
-| API Gateway                 | メインの API               | \<xxx>.execute-api.\<region>.amazonaws.com                  | **GenerativeAiUseCasesStack** の出力の ApiEndpoint で確認 |
-| Cognito User Pool           | 認証                       | cognito-idp.\<region>.amazonaws.com                         | エンドポイントは固定                                      |
-| Cognito Identity Pool       | 一時認証情報の取得         | cognito-identity.\<region>.amazonaws.com                    | エンドポイントは固定                                      |
-| Amazon S3                   | 署名付き URL               | s3.\<region>.amazonaws.com                                  | エンドポイントは固定                                      |
-| AWS Lambda                  | ストリーミング出力         | lambda.\<region>.amazonaws.com                              | エンドポイントは固定                                      |
-| Amazon Transcribe           | 文字起こし                 | transcribe.\<region>.amazonaws.com                          | エンドポイントは固定                                      |
-| Amazon Transcribe Streaming | リアルタイム文字起こし     | transcribestreaming.\<region>.amazonaws.com                 | エンドポイントは固定                                      |
-| Amazon Polly                | 文字の読み上げ             | polly.\<region>.amazonaws.com                               | エンドポイントは固定                                      |
-| Bedrock AgentCore Runtime   | AgentCore Runtime の実行   | bedrock-agentcore.\<region>.amazonaws.com                   | エンドポイントは固定                                      |
+| サービス名                  | 役割                         | エンドポイント                                              | エンドポイントの確認方法                                  |
+| --------------------------- | ---------------------------- | ----------------------------------------------------------- | --------------------------------------------------------- |
+| Application Load Balancer   | Web 静的ファイルのサーバー   | 独自ドメイン or internal-\<aaa>.\<region>.elb.amazonaws.com | ClosedNetworkStack の出力の ClosedNetworkWebUrl で確認    |
+| API Gateway                 | メインの API                 | \<xxx>.execute-api.\<region>.amazonaws.com                  | **GenerativeAiUseCasesStack** の出力の ApiEndpoint で確認 |
+| Cognito User Pool           | 認証                         | cognito-idp.\<region>.amazonaws.com                         | エンドポイントは固定                                      |
+| Cognito Identity Pool       | 一時認証情報の取得           | cognito-identity.\<region>.amazonaws.com                    | エンドポイントは固定                                      |
+| Amazon S3                   | 署名付き URL                 | s3.\<region>.amazonaws.com                                  | エンドポイントは固定                                      |
+| AWS Lambda                  | ストリーミング出力           | lambda.\<region>.amazonaws.com                              | エンドポイントは固定                                      |
+| Amazon Transcribe           | 文字起こし                   | transcribe.\<region>.amazonaws.com                          | エンドポイントは固定                                      |
+| Amazon Transcribe Streaming | リアルタイム文字起こし       | transcribestreaming.\<region>.amazonaws.com                 | エンドポイントは固定                                      |
+| Amazon Polly                | 文字の読み上げ               | polly.\<region>.amazonaws.com                               | エンドポイントは固定                                      |
+| Bedrock AgentCore Runtime   | AgentCore Runtime の実行     | bedrock-agentcore.\<region>.amazonaws.com                   | エンドポイントは固定                                      |
+| Bedrock AgentCore Gateway   | AgentCore Gateway の呼び出し | bedrock-agentcore-gateway.\<region>.amazonaws.com           | エンドポイントは固定                                      |
 
 上の表のすべてのエンドポイントのリゾルバー (フォワーダー) として Resolver Endpoint の IP アドレスを指定するように DNS サーバーの設定を変更してください。
 Resolver Endpoint の IP アドレスは、[Route53](https://console.aws.amazon.com/route53resolver) を開き、Inbound endpoints を選択して、作成したエンドポイントをクリックすることで確認できます。

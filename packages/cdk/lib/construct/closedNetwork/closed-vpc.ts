@@ -10,6 +10,8 @@ const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
   TranscribeStreaming: ec2.InterfaceVpcEndpointAwsService.TRANSCRIBE_STREAMING,
   Polly: ec2.InterfaceVpcEndpointAwsService.POLLY,
   AgentCore: ec2.InterfaceVpcEndpointAwsService.BEDROCK_AGENTCORE,
+  AgentCoreGateway:
+    ec2.InterfaceVpcEndpointAwsService.BEDROCK_AGENTCORE_GATEWAY,
   // Cognito VPC Endpoints (Private Link)
   CognitoIdp: ec2.InterfaceVpcEndpointAwsService.COGNITO_IDP,
   CognitoIdentity: new ec2.InterfaceVpcEndpointAwsService('cognito-identity'),
@@ -24,6 +26,9 @@ const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
   CloudWatchLogs: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
   Kendra: ec2.InterfaceVpcEndpointAwsService.KENDRA,
   Sts: ec2.InterfaceVpcEndpointAwsService.STS,
+  // Required by AgentCore Gateway to read API key secrets at invocation time,
+  // and by the API Key Credential Provider creation flow to read user secrets.
+  SecretsManager: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
 };
 
 export interface ClosedVpcProps {
@@ -35,6 +40,7 @@ export interface ClosedVpcProps {
 
 export class ClosedVpc extends Construct {
   public readonly vpc: ec2.IVpc;
+  public readonly subnets: ec2.ISubnet[];
   public readonly apiGatewayVpcEndpoint: ec2.InterfaceVpcEndpoint;
   public readonly hostedZone: PrivateHostedZone | undefined;
 
@@ -59,6 +65,13 @@ export class ClosedVpc extends Construct {
         ],
       });
     }
+
+    // Resolve the subnet set used by VPC endpoints; reused by other constructs (e.g. AgentCore Runtime)
+    this.subnets = props.subnetIds
+      ? props.subnetIds.map((subnetId, index) =>
+          ec2.Subnet.fromSubnetId(this, `ClosedSubnet${index}`, subnetId)
+        )
+      : vpc.isolatedSubnets;
 
     vpc.addGatewayEndpoint('S3GatewayEndpoint', {
       service: ec2.GatewayVpcEndpointAwsService.S3,

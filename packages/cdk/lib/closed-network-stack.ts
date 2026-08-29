@@ -13,6 +13,7 @@ export interface ClosedNetworkStackProps extends StackProps {
 
 export class ClosedNetworkStack extends Stack {
   public readonly vpc: ec2.IVpc;
+  public readonly closedVpc: ClosedVpc;
   public readonly apiGatewayVpcEndpoint: ec2.InterfaceVpcEndpoint;
   public readonly webBucket: s3.Bucket;
 
@@ -105,6 +106,7 @@ export class ClosedNetworkStack extends Stack {
     }
 
     this.vpc = closedVpc.vpc;
+    this.closedVpc = closedVpc;
     this.webBucket = closedWeb.bucket;
     this.apiGatewayVpcEndpoint = closedVpc.apiGatewayVpcEndpoint;
   }
