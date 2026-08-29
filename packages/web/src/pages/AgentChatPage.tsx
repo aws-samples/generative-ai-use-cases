@@ -184,10 +184,15 @@ const AgentChatPage: React.FC = () => {
     setSessionId(uuidv4());
   }, [forceToStop, setSessionId]);
 
+  // Only the last user message can be edited.
+  // The conversation history is kept in the server-side agent session and only
+  // the last message is sent on each request, so truncating the conversation in
+  // the middle cannot be reflected on the agent side.
   const onEdit = useCallback(
-    (modifiedPrompt: string) => {
+    (modifiedPrompt: string, messageId?: string) => {
       setFollowing(true);
       editChat(
+        messageId,
         modifiedPrompt,
         false,
         undefined,

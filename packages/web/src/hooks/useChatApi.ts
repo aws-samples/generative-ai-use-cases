@@ -49,6 +49,17 @@ const useChatApi = () => {
     deleteChat: async (chatId: string) => {
       return http.delete<void>(`chats/${chatId}`);
     },
+    // Delete the messages whose createdDate is greater than or equal to
+    // fromCreatedDate. Used when a message in the middle of the conversation is
+    // edited and the following messages are discarded.
+    deleteMessagesFrom: async (_chatId: string, fromCreatedDate: string) => {
+      const chatId = decomposeId(_chatId);
+      return http.delete<void>(
+        `chats/${chatId}/messages?fromCreatedDate=${encodeURIComponent(
+          fromCreatedDate
+        )}`
+      );
+    },
     deleteAllChats: async (): Promise<void> => {
       let exclusiveStartKey: string | undefined = undefined;
       let hasMore = true;

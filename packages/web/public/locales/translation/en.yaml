@@ -155,6 +155,10 @@ chat:
   delete_link: Delete Link
   delete_link_message: You can stop sharing the conversation history by deleting the link.
   drop_files: Drop files here
+  edit_message_confirmation: Edit Message
+  edit_message_warning: >-
+    Editing this message will delete all the messages after it. Do you want to
+    continue?
   hint_cmd_enter: ⌘ + Enter to Submit
   hint_ctrl_enter: Ctrl + Enter to Submit
   history: History
@@ -469,6 +473,8 @@ drawer:
   tools: Tools
   use_cases: Use Cases
 error:
+  editFailed: Failed to edit the message. Please try again.
+  editTargetNotFound: The message to edit was not found. Please reload the page.
   streamingError:
     ACCESS_DENIED: The selected model is not enabled. Please enable the model in the Amazon Bedrock console.
     PAYLOAD_TOO_LARGE: The attached file is too large. Please reduce the file size or number of attachments and try again.

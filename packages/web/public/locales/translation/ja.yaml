@@ -144,6 +144,8 @@ chat:
   delete_link: リンクの削除
   delete_link_message: リンクを削除することで、会話履歴の公開を停止できます。
   drop_files: ファイルをドロップしてください
+  edit_message_confirmation: メッセージの編集
+  edit_message_warning: このメッセージを編集すると、これ以降のメッセージは削除されます。続行しますか？
   hint_cmd_enter: ⌘ + Enter で送信
   hint_ctrl_enter: Ctrl + Enter で送信
   history: 履歴
@@ -407,6 +409,8 @@ drawer:
   tools: ツール
   use_cases: ユースケース
 error:
+  editFailed: メッセージの編集に失敗しました。再度お試しください。
+  editTargetNotFound: 編集対象のメッセージが見つかりませんでした。画面を再読み込みしてください。
   streamingError:
     ACCESS_DENIED: 選択されたモデルが有効化されていません。Amazon Bedrock コンソールでモデルを有効化してください。
     PAYLOAD_TOO_LARGE: 添付ファイルのサイズが大きすぎます。ファイルサイズまたは添付数を減らして再度お試しください。

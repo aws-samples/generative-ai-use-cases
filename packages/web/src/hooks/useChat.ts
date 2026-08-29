@@ -77,6 +77,7 @@ const useChatState = create<{
   ) => Promise<boolean | undefined>;
   edit: (
     id: string,
+    targetMessageId: string | undefined,
     content: string,
     mutateListChat: SWRInfiniteKeyedMutator<ListChatsResponse[]>,
     ignoreHistory: boolean,
@@ -141,6 +142,7 @@ const useChatState = create<{
   const {
     createChat,
     createMessages,
+    deleteMessagesFrom,
     updateFeedback,
     predictStream,
     predictTitle,
@@ -768,24 +770,27 @@ const useChatState = create<{
       const toBeRecordedMessages = addMessageIdsToUnrecordedMessages(id);
 
       // In the case of editting, update the last user's message
+      // (the message itself is already recorded, so it is not included in
+      // toBeRecordedMessages and has to be added explicitly)
       if (generationMode === 'edit') {
         const lastUserMessage: ShownMessage =
           get().chats[id].messages[get().chats[id].messages.length - 2];
-        const updatedUserMessage: ToBeRecordedMessage = {
-          createdDate: lastUserMessage.createdDate!,
-          messageId: lastUserMessage.messageId!,
-          usecase: lastUserMessage.usecase!,
-          ...lastUserMessage,
-        };
-        toBeRecordedMessages.push(updatedUserMessage);
+        if (lastUserMessage.messageId && lastUserMessage.createdDate) {
+          const updatedUserMessage: ToBeRecordedMessage = {
+            createdDate: lastUserMessage.createdDate,
+            messageId: lastUserMessage.messageId,
+            usecase: lastUserMessage.usecase!,
+            ...lastUserMessage,
+          };
+          toBeRecordedMessages.push(updatedUserMessage);
+        }
       }
 
-      // In the case of continuing to output, retrying, or editing, update the last assistant's message
-      if (
-        generationMode === 'continue' ||
-        generationMode === 'retry' ||
-        generationMode == 'edit'
-      ) {
+      // In the case of continuing to output or retrying, update the last
+      // assistant's message.
+      // (In the case of editing, the assistant's message is newly created and
+      // already included in toBeRecordedMessages)
+      if (generationMode === 'continue' || generationMode === 'retry') {
         const lastAssistantMessage: ShownMessage =
           get().chats[id].messages[get().chats[id].messages.length - 1];
         const updatedAssistantMessage: ToBeRecordedMessage = {
@@ -823,6 +828,8 @@ const useChatState = create<{
       }
       // edit/continue: Don't modify messages
       // - The conversation is already saved in DDB, so it can be restored by reloading
+      //   (in the case of editing, the conversation is restored as truncated at
+      //   the edited message, with its original content)
       // - The user can also retry
 
       // Detect Lambda payload too large error
@@ -992,6 +999,7 @@ const useChatState = create<{
 
     edit: async (
       id: string,
+      targetMessageId: string | undefined,
       content: string,
       mutateListChat: SWRInfiniteKeyedMutator<ListChatsResponse[]>,
       ignoreHistory: boolean,
@@ -1009,27 +1017,80 @@ const useChatState = create<{
         | AdditionalModelRequestFields
         | undefined = undefined
     ) => {
+      const messages = get().chats[id].messages;
+
+      // Find the index of the user message to edit.
+      // If targetMessageId is not given (backward compatibility), fall back to
+      // the last user message in the conversation.
+      const findLastUserMessageIndex = () => {
+        for (let i = messages.length - 1; i >= 0; i--) {
+          if (messages[i].role === 'user') {
+            return i;
+          }
+        }
+        return -1;
+      };
+      const targetIndex = targetMessageId
+        ? messages.findIndex((m) => m.messageId === targetMessageId)
+        : findLastUserMessageIndex();
+
+      if (targetIndex < 0) {
+        console.error(`The message to edit is not found: ${targetMessageId}`);
+        toast.error(i18next.t('error.editTargetNotFound'));
+        return;
+      }
+
+      // Delete the messages after the target from the table before truncating
+      // the local state. Without this, the discarded messages are restored on
+      // reload and mixed with the regenerated ones.
+      // The target message itself is kept: it is updated by createMessages
+      // after the regeneration, so the conversation stays consistent even if
+      // the regeneration fails.
+      const chatId = get().chats[id].chat?.chatId;
+      const firstDiscardedCreatedDate = messages
+        .slice(targetIndex + 1)
+        .find((m) => m.createdDate)?.createdDate;
+
+      if (chatId && firstDiscardedCreatedDate) {
+        // Prevent the conversation from being modified while the request is in
+        // flight (targetIndex would no longer point to the target message)
+        setLoading(id, true);
+
+        try {
+          await deleteMessagesFrom(chatId, firstDiscardedCreatedDate);
+        } catch (e) {
+          console.error(e);
+          setLoading(id, false);
+          toast.error(i18next.t('error.editFailed'));
+          return;
+        }
+      }
+
       set((state) => {
         const newChats = produce(state.chats, (draft) => {
-          const lastAssistantMessage = draft[id].messages.pop()!;
-          const lastUserMessage = draft[id].messages.pop()!;
+          const messages = draft[id].messages;
+          const targetUserMessage = messages[targetIndex];
 
-          // Clear the assistant message
+          // Edit the user message
+          const edittedUserMessage: UnrecordedMessage = {
+            ...targetUserMessage,
+            content,
+          };
+
+          // Remove the target message and everything after it (the rest of the
+          // conversation branch), then push the edited user message followed by
+          // a fresh, empty assistant message to be regenerated.
+          messages.splice(targetIndex);
+
           const clearedAssistantMessage: UnrecordedMessage = {
-            ...lastAssistantMessage,
+            role: 'assistant',
             content: '',
             trace: '',
             extraData: [],
           };
 
-          // Edit the user message
-          const edittedUserMessage: UnrecordedMessage = {
-            ...lastUserMessage,
-            content,
-          };
-
-          draft[id].messages.push(edittedUserMessage);
-          draft[id].messages.push(clearedAssistantMessage);
+          messages.push(edittedUserMessage);
+          messages.push(clearedAssistantMessage);
         });
 
         return {
@@ -1209,6 +1270,7 @@ const useChat = (id: string, chatId?: string) => {
       );
     },
     editChat: (
+      targetMessageId: string | undefined,
       content: string,
       ignoreHistory: boolean = false,
       preProcessInput:
@@ -1227,6 +1289,7 @@ const useChat = (id: string, chatId?: string) => {
     ) => {
       edit(
         id,
+        targetMessageId,
         content,
         mutateChatList,
         ignoreHistory,

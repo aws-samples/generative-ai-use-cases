@@ -15,6 +15,10 @@ chat:
   delete_link: Xóa liên kết
   delete_link_message: Bằng cách xóa liên kết, bạn có thể ngừng công khai lịch sử cuộc trò chuyện.
   drop_files: Vui lòng thả file
+  edit_message_confirmation: Chỉnh sửa tin nhắn
+  edit_message_warning: >-
+    Việc chỉnh sửa tin nhắn này sẽ xóa tất cả tin nhắn phía sau. Bạn có muốn
+    tiếp tục?
   hint_cmd_enter: ⌘ + Enter để gửi
   hint_ctrl_enter: Ctrl + Enter để gửi
   history: Lịch sử
@@ -317,6 +321,8 @@ drawer:
   tools: Công cụ
   use_cases: Use case
 error:
+  editFailed: Không thể chỉnh sửa tin nhắn. Vui lòng thử lại.
+  editTargetNotFound: Không tìm thấy tin nhắn cần chỉnh sửa. Vui lòng tải lại trang.
   streamingError:
     ACCESS_DENIED: Mô hình được chọn chưa được kích hoạt. Vui lòng kích hoạt mô hình trong bảng điều khiển Amazon Bedrock.
     PAYLOAD_TOO_LARGE: Tệp đính kèm quá lớn. Vui lòng giảm kích thước tệp hoặc số lượng tệp đính kèm và thử lại.

@@ -5680,7 +5680,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A5021237a3dd9dd1d0a04e8bff19caaa142feb6": {
+    "APIApiDeployment3A502123d250ee865e87535bbd9ca2feaef95e15": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -5700,6 +5700,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "APIApichatschatIdfeedbacksPOST3E9ACBEC",
         "APIApichatschatIdfeedbacksF371F57A",
         "APIApichatschatIdGET152C9123",
+        "APIApichatschatIdmessagesDELETE5EC16981",
         "APIApichatschatIdmessagesGET94AB097F",
         "APIApichatschatIdmessagesOPTIONS20207E07",
         "APIApichatschatIdmessagesPOST4197DA8F",
@@ -5847,7 +5848,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::ApiGateway::Deployment",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment5C507F9Aca4e0dc5f0cd630edc0afa70cb44493d": {
+    "APIApiDeployment5C507F9A5caad0d70705540ac60b679a7ecf6503": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiproxyANYB1864AFB",
@@ -5861,6 +5862,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "APIApichatschatIdfeedbacksOPTIONS7AB34AA5",
         "APIApichatschatIdfeedbacksPOST3E9ACBEC",
         "APIApichatschatIdGET152C9123",
+        "APIApichatschatIdmessagesDELETE5EC16981",
         "APIApichatschatIdmessagesGET94AB097F",
         "APIApichatschatIdmessagesOPTIONS20207E07",
         "APIApichatschatIdmessagesPOST4197DA8F",
@@ -5969,7 +5971,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A5021237a3dd9dd1d0a04e8bff19caaa142feb6",
+          "Ref": "APIApiDeployment3A502123d250ee865e87535bbd9ca2feaef95e15",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -7527,6 +7529,47 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         },
       },
       "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApichatschatIdmessagesDELETE5EC16981": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "APIAuthorizer9DCC037B",
+        },
+        "HttpMethod": "DELETE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "APIApiHandler18BC61F9",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "APIApichatschatIdmessagesAF527CE8",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
       "UpdateReplacePolicy": "Delete",
     },
     "APIApichatschatIdmessagesGET94AB097F": {
@@ -19556,7 +19599,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A502123b4d122413b06aa1dcc09b7c3e41b73c2": {
+    "APIApiDeployment3A5021236a0c386960c6207673305bff58f4b1ce": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -19576,6 +19619,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "APIApichatschatIdfeedbacksPOST3E9ACBEC",
         "APIApichatschatIdfeedbacksF371F57A",
         "APIApichatschatIdGET152C9123",
+        "APIApichatschatIdmessagesDELETE5EC16981",
         "APIApichatschatIdmessagesGET94AB097F",
         "APIApichatschatIdmessagesOPTIONS20207E07",
         "APIApichatschatIdmessagesPOST4197DA8F",
@@ -19723,7 +19767,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::ApiGateway::Deployment",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment5C507F9A0550cc981adbb009856909b90e72a075": {
+    "APIApiDeployment5C507F9A3cccac9ba81ab6f6038a7ef69b8bb32b": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiproxyANYB1864AFB",
@@ -19737,6 +19781,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "APIApichatschatIdfeedbacksOPTIONS7AB34AA5",
         "APIApichatschatIdfeedbacksPOST3E9ACBEC",
         "APIApichatschatIdGET152C9123",
+        "APIApichatschatIdmessagesDELETE5EC16981",
         "APIApichatschatIdmessagesGET94AB097F",
         "APIApichatschatIdmessagesOPTIONS20207E07",
         "APIApichatschatIdmessagesPOST4197DA8F",
@@ -19845,7 +19890,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A502123b4d122413b06aa1dcc09b7c3e41b73c2",
+          "Ref": "APIApiDeployment3A5021236a0c386960c6207673305bff58f4b1ce",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -21337,6 +21382,47 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         },
       },
       "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApichatschatIdmessagesDELETE5EC16981": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "APIAuthorizer9DCC037B",
+        },
+        "HttpMethod": "DELETE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "APIApiHandler18BC61F9",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "APIApichatschatIdmessagesAF527CE8",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
       "UpdateReplacePolicy": "Delete",
     },
     "APIApichatschatIdmessagesGET94AB097F": {

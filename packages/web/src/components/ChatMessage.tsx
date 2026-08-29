@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import Markdown from './Markdown';
 import ButtonCopy from './ButtonCopy';
@@ -26,6 +26,7 @@ import useChat from '../hooks/useChat';
 import useTyping from '../hooks/useTyping';
 import FileCard from './FileCard';
 import FeedbackForm from './FeedbackForm';
+import DialogConfirmEditMessage from './DialogConfirmEditMessage';
 import Textarea from './Textarea';
 import useFiles from '../hooks/useFiles';
 import { useTranslation } from 'react-i18next';
@@ -40,8 +41,11 @@ type Props = BaseProps & {
   setShowSystemContextModal?: (value: boolean) => void;
   allowRetry?: boolean;
   editable?: boolean;
+  // Whether there are messages after this one. If true, committing an edit
+  // discards them, so a confirmation is shown.
+  hasFollowingMessages?: boolean;
   retryGeneration?: () => void;
-  onCommitEdit?: (modifiedPrompt: string) => void;
+  onCommitEdit?: (modifiedPrompt: string, messageId?: string) => void;
 };
 
 const ChatMessage: React.FC<Props> = (props) => {
@@ -57,6 +61,7 @@ const ChatMessage: React.FC<Props> = (props) => {
   const [showThankYouMessage, setShowThankYouMessage] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editingPrompt, setEditingPrompt] = useState('');
+  const [showEditConfirmation, setShowEditConfirmation] = useState(false);
   const [isOpenTrace, setIsOpenTrace] = useState(false);
   const { getFileDownloadSignedUrl } = useFiles(pathname);
 
@@ -94,6 +99,18 @@ const ChatMessage: React.FC<Props> = (props) => {
   const disabled = useMemo(() => {
     return isSendingFeedback || !props.chatContent?.id;
   }, [isSendingFeedback, props]);
+
+  // The message can only be edited after it is recorded, because the messageId
+  // is required to identify which message to edit.
+  const editable = useMemo(() => {
+    return !!props.editable && !!chatContent?.messageId;
+  }, [props.editable, chatContent]);
+
+  const commitEdit = useCallback(() => {
+    setShowEditConfirmation(false);
+    setEditing(false);
+    props.onCommitEdit?.(editingPrompt, chatContent?.messageId);
+  }, [props, editingPrompt, chatContent]);
 
   const onSendFeedback = async (feedbackData: UpdateFeedbackRequest) => {
     if (!disabled) {
@@ -307,7 +324,7 @@ const ChatMessage: React.FC<Props> = (props) => {
               <PiFloppyDisk />
             </ButtonIcon>
           )}
-          {chatContent?.role === 'user' && props.editable && (
+          {chatContent?.role === 'user' && editable && (
             <>
               {editing ? (
                 <>
@@ -319,9 +336,10 @@ const ChatMessage: React.FC<Props> = (props) => {
                   </ButtonIcon>
                   <ButtonIcon
                     onClick={() => {
-                      if (props.onCommitEdit) {
-                        setEditing(false);
-                        props.onCommitEdit(editingPrompt);
+                      if (props.hasFollowingMessages) {
+                        setShowEditConfirmation(true);
+                      } else {
+                        commitEdit();
                       }
                     }}>
                     <PiCheck className="text-green-500" />
@@ -390,6 +408,14 @@ const ChatMessage: React.FC<Props> = (props) => {
           )}
         </div>
       </div>
+
+      {editable && (
+        <DialogConfirmEditMessage
+          isOpen={showEditConfirmation}
+          onConfirm={commitEdit}
+          onClose={() => setShowEditConfirmation(false)}
+        />
+      )}
     </div>
   );
 };

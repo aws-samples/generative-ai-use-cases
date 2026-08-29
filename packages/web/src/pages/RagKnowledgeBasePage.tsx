@@ -293,10 +293,15 @@ const RagKnowledgeBasePage: React.FC = () => {
     setSessionId(undefined);
   }, [clear, setContent, setFilters, setSessionId]);
 
+  // Only the last user message can be edited.
+  // RetrieveAndGenerate keeps the conversation history in the server-side
+  // session and only the last message is sent on each request, so truncating the
+  // conversation in the middle cannot be reflected on the Knowledge Base side.
   const onEdit = useCallback(
-    (modifiedPrompt: string) => {
+    (modifiedPrompt: string, messageId?: string) => {
       const extraData: ExtraData[] = getExtraDataFromFilters();
       editChat(
+        messageId,
         modifiedPrompt,
         false,
         undefined,

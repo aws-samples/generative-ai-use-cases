@@ -15,6 +15,8 @@ chat:
   delete_link: ลบลิงก์
   delete_link_message: คุณสามารถหยุดการแชร์ประวัติการสนทนาโดยการลบลิงก์
   drop_files: วางไฟล์ที่นี่
+  edit_message_confirmation: แก้ไขข้อความ
+  edit_message_warning: การแก้ไขข้อความนี้จะลบข้อความทั้งหมดที่อยู่หลังจากนี้ ต้องการดำเนินการต่อหรือไม่
   hint_cmd_enter: ⌘ + Enter เพื่อส่ง
   hint_ctrl_enter: Ctrl + Enter เพื่อส่ง
   history: ประวัติ
@@ -318,6 +320,8 @@ drawer:
   tools: เครื่องมือ
   use_cases: Use cases
 error:
+  editFailed: แก้ไขข้อความไม่สำเร็จ กรุณาลองอีกครั้ง
+  editTargetNotFound: ไม่พบข้อความที่ต้องการแก้ไข กรุณาโหลดหน้าใหม่
   streamingError:
     ACCESS_DENIED: โมเดลที่เลือกยังไม่ได้เปิดใช้งาน กรุณาเปิดใช้งานโมเดลในคอนโซล Amazon Bedrock
     PAYLOAD_TOO_LARGE: ไฟล์แนบมีขนาดใหญ่เกินไป กรุณาลดขนาดไฟล์หรือจำนวนไฟล์แนบแล้วลองใหม่อีกครั้ง

@@ -689,6 +689,9 @@ export class Api extends Construct {
     const messages = chat.addResource('messages');
     messages.addMethod('GET');
     messages.addMethod('POST');
+    // Explicitly defined because the addProxy() catch-all does not apply to
+    // methods of a Resource that is already declared above.
+    messages.addMethod('DELETE');
     chat.addResource('feedbacks').addMethod('POST');
 
     const systemcontexts = api.root.addResource('systemcontexts');
@@ -777,7 +780,7 @@ export class Api extends Construct {
 
     // Force a new API Gateway deployment.
     // Bump this version when route configuration changes.
-    const API_DEPLOYMENT_VERSION = 'v2';
+    const API_DEPLOYMENT_VERSION = 'v3';
     const deployment = new Deployment(this, 'ApiDeployment', { api });
     deployment.addToLogicalId(API_DEPLOYMENT_VERSION);
 

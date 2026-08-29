@@ -15,6 +15,8 @@ chat:
   delete_link: 删除链接
   delete_link_message: 通过删除链接，您可以停止公开对话历史。
   drop_files: 请拖放文件
+  edit_message_confirmation: 编辑消息
+  edit_message_warning: 编辑此消息将删除其后的所有消息。是否继续？
   history: 对话历史
   initialize: 初始化
   open_link: 打开链接
@@ -242,6 +244,8 @@ drawer:
   tools: 工具
   use_cases: 用例
 error:
+  editFailed: 消息编辑失败。请重试。
+  editTargetNotFound: 未找到要编辑的消息。请重新加载页面。
   streamingError:
     ACCESS_DENIED: 所选模型尚未启用。请在 Amazon Bedrock 控制台中启用该模型。
     PAYLOAD_TOO_LARGE: 附件文件过大。请减小文件大小或附件数量后重试。

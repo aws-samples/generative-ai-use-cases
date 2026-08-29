@@ -336,9 +336,10 @@ const ChatPage: React.FC = () => {
   }, [forceToStop]);
 
   const onEdit = useCallback(
-    (modifiedPrompt: string) => {
+    (modifiedPrompt: string, messageId?: string) => {
       setFollowing(true);
       editChat(
+        messageId,
         modifiedPrompt,
         false,
         undefined,
@@ -620,11 +621,10 @@ const ChatPage: React.FC = () => {
                   setSaveSystemContext={setSaveSystemContext}
                   setShowSystemContextModal={setShowSystemContextModal}
                   allowRetry={idx === showingMessages.length - 1}
-                  editable={idx === showingMessages.length - 2 && !loading}
+                  editable={chat.role === 'user' && !loading}
+                  hasFollowingMessages={idx < showingMessages.length - 2}
                   onCommitEdit={
-                    idx === showingMessages.length - 2 && !loading
-                      ? onEdit
-                      : undefined
+                    chat.role === 'user' && !loading ? onEdit : undefined
                   }
                   retryGeneration={onRetry}
                 />

@@ -493,6 +493,64 @@ export const deleteChat = async (
   }
 };
 
+/**
+ * Delete the messages in a chat whose createdDate is greater than or equal to
+ * fromCreatedDate.
+ *
+ * Used when a user edits a message in the middle of a conversation: the
+ * messages after the edited one are discarded, so they must be removed from the
+ * table as well. Otherwise they would be restored on reload and mixed with the
+ * regenerated messages.
+ *
+ * Note: this does not roll back the token usage recorded in the stats table,
+ * because the tokens were actually consumed.
+ */
+export const deleteMessagesFrom = async (
+  _chatId: string,
+  fromCreatedDate: string
+): Promise<void> => {
+  const chatId = `chat#${_chatId}`;
+  const res = await dynamoDbDocument.send(
+    new QueryCommand({
+      TableName: TABLE_NAME,
+      KeyConditionExpression: '#id = :id AND #createdDate >= :fromCreatedDate',
+      ExpressionAttributeNames: {
+        '#id': 'id',
+        '#createdDate': 'createdDate',
+      },
+      ExpressionAttributeValues: {
+        ':id': chatId,
+        ':fromCreatedDate': fromCreatedDate,
+      },
+      // Only the key attributes are needed to delete the items
+      ProjectionExpression: '#id, #createdDate',
+    })
+  );
+  const keys = (res.Items ?? []) as { id: string; createdDate: string }[];
+
+  // Split into chunks of 25 (DynamoDB BatchWrite limit)
+  const chunkSize = 25;
+  for (let i = 0; i < keys.length; i += chunkSize) {
+    const chunk = keys.slice(i, i + chunkSize);
+    await dynamoDbDocument.send(
+      new BatchWriteCommand({
+        RequestItems: {
+          [TABLE_NAME]: chunk.map((key) => {
+            return {
+              DeleteRequest: {
+                Key: {
+                  id: key.id,
+                  createdDate: key.createdDate,
+                },
+              },
+            };
+          }),
+        },
+      })
+    );
+  }
+};
+
 export const updateSystemContextTitle = async (
   _userId: string,
   _systemContextId: string,
