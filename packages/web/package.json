@@ -114,6 +114,6 @@
     "vite-plugin-node-polyfills": "^0.28.0",
     "vite-plugin-svgr": "^4.2.0",
     "vite-plugin-webfont-dl": "^3.11.1",
-    "vitest": "^3.2.7"
+    "vitest": "^4.1.11"
   }
 }
