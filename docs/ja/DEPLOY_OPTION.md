@@ -1315,6 +1315,8 @@ const envs: Record<string, Partial<StackInput>> = {
 "google.gemma-3-27b-it",
 "minimax.minimax-m2",
 "moonshot.kimi-k2-thinking",
+"us.moonshotai.kimi-k3",
+"global.moonshotai.kimi-k3",
 "nvidia.nemotron-nano-9b-v2",
 "nvidia.nemotron-nano-12b-v2",
 ```

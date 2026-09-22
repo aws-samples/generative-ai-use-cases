@@ -25,6 +25,14 @@ const MODEL_FEATURE: Record<string, FeatureFlags> = {
     reasoning: true,
   },
   TEXT_IMAGE: { text: true, doc: false, image: true, video: false },
+  // Text + image models that reject sampling params (temperature / topP), e.g. Kimi K3
+  TEXT_IMAGE_NO_SAMPLING: {
+    text: true,
+    doc: false,
+    image: true,
+    video: false,
+    noSamplingParams: true,
+  },
   TEXT_IMAGE_REASONING: {
     text: true,
     doc: false,
@@ -666,6 +674,17 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     // Reasoning by default without additional parameter
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'Kimi K2 Thinking',
+  },
+  // Kimi K3 supports text and image input (video is not supported on Bedrock).
+  // Documents are excluded because the Converse API rejects document inputs for this model.
+  // Sampling params (temperature / topP) are rejected by this model, so noSamplingParams is set.
+  'us.moonshotai.kimi-k3': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'Kimi K3',
+  },
+  'global.moonshotai.kimi-k3': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'Kimi K3',
   },
   // NVIDIA
   'nvidia.nemotron-nano-9b-v2': {
