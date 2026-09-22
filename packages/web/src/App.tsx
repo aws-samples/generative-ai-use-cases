@@ -64,11 +64,10 @@ const {
 // Extract :chatId from /chat/:chatId format
 // Return null if path is in a different format
 const extractChatId = (path: string): string | null => {
-  const pattern = /\/chat\/(.+)/;
-  const match = path.match(pattern);
-
+  const match = path.match(/\/chat\/([^/]+)/);
   return match ? match[1] : null;
 };
+
 
 const App: React.FC = () => {
   const { t } = useTranslation();
