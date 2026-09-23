@@ -34,16 +34,12 @@ export const generateWriterPrompt = (
           content: `Continue the existing article based on the context.
 Focus on the second half of the article.
 Answer is limited to 200 characters and must end with a complete sentence.
-Output only within <output> tags.
+Output only the result enclosed in <output></output> tags. Do not output any other text.
 If appropriate, use Markdown format.`,
         },
         {
           role: 'user',
           content: `<input>${prompt}</input>`,
-        },
-        {
-          role: 'assistant',
-          content: '<output>',
         },
       ],
     },
@@ -54,16 +50,12 @@ If appropriate, use Markdown format.`,
           content: `Improve the given article.
 Write concisely and logically, easy to understand, and based on data (if there is no data, use placeholder X).
 Answer is limited to 200 characters and must end with a complete sentence.
-Output only within <output> tags.
+Output only the result enclosed in <output></output> tags. Do not output any other text.
 If appropriate, use Markdown format.`,
         },
         {
           role: 'user',
           content: `<input>${prompt}</input>`,
-        },
-        {
-          role: 'assistant',
-          content: '<output>',
         },
       ],
     },
@@ -73,16 +65,12 @@ If appropriate, use Markdown format.`,
           role: 'system',
           content: `Make the given article shorter and more concise.
 Answer is limited to 200 characters and must end with a complete sentence.
-Output only within <output> tags.
+Output only the result enclosed in <output></output> tags. Do not output any other text.
 If appropriate, use Markdown format.`,
         },
         {
           role: 'user',
           content: `<input>${prompt}</input>`,
-        },
-        {
-          role: 'assistant',
-          content: '<output>',
         },
       ],
     },
@@ -91,16 +79,12 @@ If appropriate, use Markdown format.`,
         {
           role: 'system',
           content: `Make the given article longer and more detailed.
-Output only within <output> tags.
+Output only the result enclosed in <output></output> tags. Do not output any other text.
 If appropriate, use Markdown format.`,
         },
         {
           role: 'user',
           content: `<input>${prompt}</input>`,
-        },
-        {
-          role: 'assistant',
-          content: '<output>',
         },
       ],
     },
@@ -110,16 +94,12 @@ If appropriate, use Markdown format.`,
           role: 'system',
           content: `You are a proofreader. Correct the grammar and terminology of the given article.
 Answer is limited to 200 characters and must end with a complete sentence.
-Output only within <output> tags.
+Output only the result enclosed in <output></output> tags. Do not output any other text.
 If appropriate, use Markdown format.`,
         },
         {
           role: 'user',
           content: `<input>${prompt}</input>`,
-        },
-        {
-          role: 'assistant',
-          content: '<output>',
         },
       ],
     },
@@ -128,16 +108,12 @@ If appropriate, use Markdown format.`,
         {
           role: 'system',
           content: `Generate an article based on the user's input and the command.
-Output only within <output> tags.
+Output only the result enclosed in <output></output> tags. Do not output any other text.
 If appropriate, use Markdown format.`,
         },
         {
           role: 'user',
           content: `<input>${prompt}</input><command>${command}</command>`,
-        },
-        {
-          role: 'assistant',
-          content: '<output>',
         },
       ],
     },
@@ -192,7 +168,7 @@ List the facts stated and perform fact checking for each.
 The user will provide an article to be corrected using the <input> tag.
 Please point out the <What to point out> and propose a correction if there is one.
 If there is a correction proposal, propose it using the replace tag.
-Output only within <output> tags. Output in language of the article.
+Output only the result enclosed in <output></output> tags. Do not output any other text. Output in language of the article.
 Output in the following <output-format></output-format> format:
 <output-format>[{"excerpt": string; "replace"?: string; "comment"?: string }]</output-format>
 
@@ -212,10 +188,6 @@ If there are no issues, output an empty array.`,
         {
           role: 'user',
           content: `<input>${prompt}</input>`,
-        },
-        {
-          role: 'assistant',
-          content: '<output>',
         },
       ],
     },
