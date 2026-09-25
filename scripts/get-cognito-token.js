@@ -1,59 +1,53 @@
 #!/usr/bin/env node
 
 /**
- * Get Cognito ID Token using SRP authentication
- * This script uses the default ALLOW_USER_SRP_AUTH flow
+ * Get Cognito ID Token using USER_PASSWORD_AUTH flow
+ * Optimized for performance and clean execution
  */
 
-const {
-  CognitoUserPool,
-  CognitoUser,
-  AuthenticationDetails,
-} = require('amazon-cognito-identity-js');
+const { CognitoIdentityProviderClient, InitiateAuthCommand } = require('@aws-sdk/client-cognito-identity-provider');
 
-// Get parameters from environment variables
-const userPoolId = process.env.VITE_APP_USER_POOL_ID;
-const clientId = process.env.VITE_APP_USER_POOL_CLIENT_ID;
-const username = process.env.COGNITO_EMAIL;
-const password = process.env.COGNITO_PASSWORD;
+const {
+  VITE_APP_USER_POOL_ID: userPoolId,
+  VITE_APP_USER_POOL_CLIENT_ID: clientId,
+  COGNITO_EMAIL: username,
+  COGNITO_PASSWORD: password,
+} = process.env;
 
 if (!userPoolId || !clientId || !username || !password) {
-  console.error('Error: Required environment variables not set');
-  console.error(
-    'Required: VITE_APP_USER_POOL_ID, VITE_APP_USER_POOL_CLIENT_ID, COGNITO_EMAIL, COGNITO_PASSWORD'
-  );
+  console.error('Error: Missing required environment variables.');
+  console.error('Required: VITE_APP_USER_POOL_ID, VITE_APP_USER_POOL_CLIENT_ID, COGNITO_EMAIL, COGNITO_PASSWORD');
   process.exit(1);
 }
 
-const poolData = {
-  UserPoolId: userPoolId,
-  ClientId: clientId,
-};
+const regionMatch = userPoolId.match(/^([a-z0-9-]+)_.+/);
+if (!regionMatch) {
+  console.error('Error: Invalid VITE_APP_USER_POOL_ID format.');
+  process.exit(1);
+}
+const region = regionMatch[1];
 
-const userPool = new CognitoUserPool(poolData);
+// Reuse client instance outside the handler for connection pooling
+const client = new CognitoIdentityProviderClient({ region });
 
-const userData = {
-  Username: username,
-  Pool: userPool,
-};
+(async () => {
+  try {
+    const { AuthenticationResult } = await client.send(
+      new InitiateAuthCommand({
+        AuthFlow: 'USER_PASSWORD_AUTH',
+        ClientId: clientId,
+        AuthParameters: { USERNAME: username, PASSWORD: password },
+      })
+    );
 
-const cognitoUser = new CognitoUser(userData);
+    if (!AuthenticationResult?.IdToken) {
+      throw new Error('Authentication succeeded but no IdToken was returned.');
+    }
 
-const authenticationData = {
-  Username: username,
-  Password: password,
-};
-
-const authenticationDetails = new AuthenticationDetails(authenticationData);
-
-cognitoUser.authenticateUser(authenticationDetails, {
-  onSuccess: (result) => {
-    const idToken = result.getIdToken().getJwtToken();
-    console.log(idToken);
+    process.stdout.write(`${AuthenticationResult.IdToken}\n`);
     process.exit(0);
-  },
-  onFailure: (err) => {
-    console.error('Authentication failed:', err.message);
+  } catch (error) {
+    console.error(`Authentication failed: ${error.message}`);
     process.exit(1);
-  },
-});
+  }
+})();

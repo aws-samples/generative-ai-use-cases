@@ -1,5 +1,5 @@
 import { wrapStore } from '@eduardoac-skimlinks/webext-redux';
-import { combineReducers, configureStore, type Action, type ThunkAction } from '@reduxjs/toolkit';
+import { configureStore, type Action, type ThunkAction } from '@reduxjs/toolkit';
 import { localStorage } from 'redux-persist-webextension-storage';
 import {
   FLUSH,
@@ -20,13 +20,8 @@ const persistConfig = {
   storage: localStorage as WebStorage,
 };
 
-const reducers = combineReducers({
-  chat: chatReducer,
-});
-
-const persistedReducer: typeof reducers = persistReducer(persistConfig, reducers);
 const store = configureStore({
-  reducer: persistedReducer,
+  reducer: persistReducer(persistConfig, { chat: chatReducer }),
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -36,7 +31,6 @@ const store = configureStore({
 });
 
 export const initializeWrappedStore = () => wrapStore(store);
-
 export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
