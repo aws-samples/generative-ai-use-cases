@@ -108,6 +108,17 @@ const DEFAULT_128K_DEFAULT_PARAMS: ConverseInferenceParams = {
   },
 };
 
+// Kimi K3 rejects requests whose maxTokens is 128000 or higher
+// ("The maximum tokens you requested exceeds the model limit of 128000").
+// Keep the output token limit safely below that ceiling.
+const KIMI_K3_DEFAULT_PARAMS: ConverseInferenceParams = {
+  inferenceConfig: {
+    maxTokens: 120000,
+    temperature: 1,
+    topP: 1,
+  },
+};
+
 const CLAUDE_SONNET_4_DEFAULT_PARAMS: ConverseInferenceParams = {
   inferenceConfig: {
     maxTokens: 64000,
@@ -2017,6 +2028,26 @@ export const BEDROCK_TEXT_GEN_MODELS: {
   // Moonshot AI
   'moonshot.kimi-k2-thinking': {
     defaultParams: DEFAULT_128K_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInputWithoutSystemContext,
+    createConverseStreamCommandInput:
+      createConverseStreamCommandInputWithoutSystemContext,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  // Kimi K3 is available only through cross-region inference profiles
+  // (us.moonshotai.kimi-k3 / global.moonshotai.kimi-k3).
+  'us.moonshotai.kimi-k3': {
+    defaultParams: KIMI_K3_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInputWithoutSystemContext,
+    createConverseStreamCommandInput:
+      createConverseStreamCommandInputWithoutSystemContext,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'global.moonshotai.kimi-k3': {
+    defaultParams: KIMI_K3_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInputWithoutSystemContext,
     createConverseStreamCommandInput:
