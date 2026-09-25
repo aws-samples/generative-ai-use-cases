@@ -43,6 +43,7 @@
     "hiddenUseCases": {},
     "modelRegion": "us-east-1",
     "modelIds": [
+      "global.anthropic.claude-opus-5-5",
       "global.anthropic.claude-opus-5",
       "global.anthropic.claude-sonnet-5",
       "global.anthropic.claude-sonnet-4-6",
