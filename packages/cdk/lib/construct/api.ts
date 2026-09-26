@@ -421,6 +421,10 @@ export class Api extends Construct {
       vpc,
       securityGroups,
     });
+    apiHandler.addEnvironment(
+      'COPY_VIDEO_JOB_FUNCTION_ARN',
+      copyVideoJob.functionArn
+    );
     for (const region of Object.keys(props.videoBucketRegionMap)) {
       const bucketName = props.videoBucketRegionMap[region];
       copyVideoJob.role?.addToPrincipalPolicy(

@@ -6075,6 +6075,12 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "Agents",
               ],
             },
+            "COPY_VIDEO_JOB_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "APICopyVideoJobB772026B",
+                "Arn",
+              ],
+            },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
             "CUSTOM_AGENTS_JSON": "[]",
             "GUARDRAIL_IDENTIFIER": {
@@ -12543,6 +12549,12 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               "Fn::GetAtt": [
                 "AgentRemoteOutputs90CFA880",
                 "Agents",
+              ],
+            },
+            "COPY_VIDEO_JOB_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "APICopyVideoJobB772026B",
+                "Arn",
               ],
             },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
@@ -19915,6 +19927,12 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "Agents",
               ],
             },
+            "COPY_VIDEO_JOB_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "APICopyVideoJobB772026B",
+                "Arn",
+              ],
+            },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
             "CUSTOM_AGENTS_JSON": "[]",
             "GUARDRAIL_IDENTIFIER": {
@@ -26263,6 +26281,12 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               "Fn::GetAtt": [
                 "AgentRemoteOutputs90CFA880",
                 "Agents",
+              ],
+            },
+            "COPY_VIDEO_JOB_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "APICopyVideoJobB772026B",
+                "Arn",
               ],
             },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
