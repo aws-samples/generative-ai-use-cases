@@ -166,6 +166,30 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Opus 5',
   },
+  // Claude Haiku 5.5 はクロスリージョン推論プロファイル経由で提供（単一リージョンの直接 ID は無し）。
+  // adaptive thinking はデフォルト ON だが disabled で OFF にできる（Opus 4.7/4.8 や Opus 5 と同様）ため、
+  // 「OFF 不可」を表す ALWAYS_ON フラグは付けない。temperature / topP は Opus 4.7 以降と同じく非対応のため
+  // noSamplingParams を含む TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING を用いる。
+  'global.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'us.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'eu.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'au.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'jp.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
   'global.anthropic.claude-opus-4-8': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Opus 4.8',
@@ -828,6 +852,7 @@ export const BEDROCK_SPEECH_TO_SPEECH_MODELS = Object.keys(
 // Prompt caching
 // https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html
 export const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
+  'anthropic.claude-haiku-5-5': ['messages', 'system', 'tools'],
   'anthropic.claude-sonnet-5': ['messages', 'system', 'tools'],
   'anthropic.claude-opus-5-5': ['messages', 'system', 'tools'],
   'anthropic.claude-opus-5': ['messages', 'system', 'tools'],

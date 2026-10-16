@@ -149,6 +149,14 @@ const CLAUDE_OPUS_5_DEFAULT_PARAMS: ConverseInferenceParams = {
   },
 };
 
+// Claude Haiku 5.5 は最大出力 128K トークン。temperature / topP は非対応（モデル側の
+// noSamplingParams フラグにより送信されない）ため maxTokens のみを指定する。
+const CLAUDE_HAIKU_5_5_DEFAULT_PARAMS: ConverseInferenceParams = {
+  inferenceConfig: {
+    maxTokens: 128000,
+  },
+};
+
 const CLAUDE_OPUS_4_8_DEFAULT_PARAMS: ConverseInferenceParams = {
   inferenceConfig: {
     maxTokens: 128000,
@@ -1094,6 +1102,48 @@ export const BEDROCK_TEXT_GEN_MODELS: {
   },
   'au.anthropic.claude-opus-5': {
     defaultParams: CLAUDE_OPUS_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  // Claude Haiku 5.5 はクロスリージョン推論プロファイル経由でのみ提供
+  // （global / us / eu / au / jp）。単一リージョンの直接モデル ID は無い。
+  'global.anthropic.claude-haiku-5-5': {
+    defaultParams: CLAUDE_HAIKU_5_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.anthropic.claude-haiku-5-5': {
+    defaultParams: CLAUDE_HAIKU_5_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'eu.anthropic.claude-haiku-5-5': {
+    defaultParams: CLAUDE_HAIKU_5_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'au.anthropic.claude-haiku-5-5': {
+    defaultParams: CLAUDE_HAIKU_5_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'jp.anthropic.claude-haiku-5-5': {
+    defaultParams: CLAUDE_HAIKU_5_5_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
     createConverseStreamCommandInput: createConverseStreamCommandInput,
