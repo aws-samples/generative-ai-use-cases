@@ -166,10 +166,6 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Opus 5',
   },
-  // Claude Haiku 5.5 はクロスリージョン推論プロファイル経由で提供（単一リージョンの直接 ID は無し）。
-  // adaptive thinking はデフォルト ON だが disabled で OFF にできる（Opus 4.7/4.8 や Opus 5 と同様）ため、
-  // 「OFF 不可」を表す ALWAYS_ON フラグは付けない。temperature / topP は Opus 4.7 以降と同じく非対応のため
-  // noSamplingParams を含む TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING を用いる。
   'global.anthropic.claude-haiku-5-5': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Haiku 5.5',
