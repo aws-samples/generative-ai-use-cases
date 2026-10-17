@@ -65,6 +65,11 @@ const VoiceChatPage: React.FC = () => {
   useEffect(() => {
     setVoiceId(voiceOptions[0]?.value ?? '');
   }, [voiceOptions]);
+
+  // Label of the currently selected voice, shown while a session is active.
+  const selectedVoiceLabel = useMemo(() => {
+    return voiceOptions.find((o) => o.value === voiceId)?.label ?? '';
+  }, [voiceOptions, voiceId]);
   // Define useRef for the cleanup function when leaving the page.
   // To get the latest value without including isActive in the dependency array.
   const isActiveRef = useRef(isActive);
@@ -111,6 +116,13 @@ const VoiceChatPage: React.FC = () => {
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
           {t('voiceChat.title')}
         </div>
+
+        {isActive && (
+          <div className="mt-1 flex w-full flex-col items-center justify-center text-sm text-gray-500 print:hidden">
+            <div>{modelDisplayName(modelId)}</div>
+            {selectedVoiceLabel && <div>{selectedVoiceLabel}</div>}
+          </div>
+        )}
 
         {isEmpty && !isLoading && !isActive && (
           <div className="mt-2 flex w-full flex-col items-center justify-center gap-2 lg:mt-0 print:hidden">
