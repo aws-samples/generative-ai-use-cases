@@ -1253,9 +1253,13 @@ videoAnalyzer:
 voiceChat:
   close: セッションを終了する
   default_system_prompt: You are an AI assistant.
+  gender:
+    feminine: 女性的な声
+    masculine: 男性的な声
   im_listening: 発言してください
   start: セッションを始める
   title: 音声チャット
+  voice: 声
 webcontent:
   additional_context: 追加コンテキスト
   additional_context_placeholder: '追加で考慮してほしい点を入力することができます（例: 要約して）'

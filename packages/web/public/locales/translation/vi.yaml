@@ -1092,9 +1092,13 @@ videoAnalyzer:
 voiceChat:
   close: Kết thúc Phiên
   default_system_prompt: You are an AI assistant.
+  gender:
+    feminine: Giọng nữ tính
+    masculine: Giọng nam tính
   im_listening: Hãy phát biểu
   start: Bắt đầu phiên
   title: Voice Chat
+  voice: Giọng nói
 webcontent:
   additional_context: Ngữ cảnh bổ sung
   additional_context_placeholder: 'Có thể nhập các điểm bổ sung muốn xem xét (ví dụ: tóm tắt)'
