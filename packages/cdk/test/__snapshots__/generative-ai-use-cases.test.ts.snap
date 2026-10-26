@@ -2779,6 +2779,9 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 2`] = `
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1024MiBServiceRole739949D8",
       ],
       "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
           "S3Key": "HASH-REPLACED.zip",
@@ -4254,6 +4257,9 @@ Automatically detect the language of the user's request and think and answer in 
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
       ],
       "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
           "S3Key": "HASH-REPLACED.zip",
@@ -4269,6 +4275,7 @@ Automatically detect the language of the user's request and think and answer in 
             "Ref": "AgentApiSchemaBucketAwsCliLayer2C3ACF8A",
           },
         ],
+        "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
@@ -14435,6 +14442,9 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1024MiBServiceRole739949D8",
       ],
       "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
           "S3Key": "HASH-REPLACED.zip",
@@ -16699,6 +16709,9 @@ exports[`GenerativeAiUseCases matches the snapshot 2`] = `
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1024MiBServiceRole739949D8",
       ],
       "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
           "S3Key": "HASH-REPLACED.zip",
@@ -18122,6 +18135,9 @@ Automatically detect the language of the user's request and think and answer in 
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
       ],
       "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
           "S3Key": "HASH-REPLACED.zip",
@@ -18137,6 +18153,7 @@ Automatically detect the language of the user's request and think and answer in 
             "Ref": "AgentApiSchemaBucketAwsCliLayer2C3ACF8A",
           },
         ],
+        "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
@@ -28836,6 +28853,9 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1024MiBServiceRole739949D8",
       ],
       "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
         "Code": {
           "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
           "S3Key": "HASH-REPLACED.zip",

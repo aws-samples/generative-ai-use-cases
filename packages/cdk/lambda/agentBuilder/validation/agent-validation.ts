@@ -22,7 +22,7 @@ export function validateCreateAgentRequest(
     return { isValid: true, data: validatedData };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((err) => err.message).join(', ');
+      const errorMessage = error.issues.map((err) => err.message).join(', ');
       return { isValid: false, error: errorMessage };
     }
     return { isValid: false, error: 'Invalid request format' };
@@ -42,7 +42,7 @@ export function validateUpdateAgentRequest(
     return { isValid: true, data: validatedData };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((err) => err.message).join(', ');
+      const errorMessage = error.issues.map((err) => err.message).join(', ');
       return { isValid: false, error: errorMessage };
     }
     return { isValid: false, error: 'Invalid request format' };

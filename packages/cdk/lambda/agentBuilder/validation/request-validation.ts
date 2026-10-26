@@ -24,7 +24,7 @@ export function validateShareAgentRequest(
     return { isValid: true, data: validatedData };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((err) => err.message).join(', ');
+      const errorMessage = error.issues.map((err) => err.message).join(', ');
       return { isValid: false, error: errorMessage };
     }
     return { isValid: false, error: 'Invalid request format' };
@@ -44,7 +44,7 @@ export function validateCloneAgentRequest(
     return { isValid: true, data: validatedData };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((err) => err.message).join(', ');
+      const errorMessage = error.issues.map((err) => err.message).join(', ');
       return { isValid: false, error: errorMessage };
     }
     return { isValid: false, error: 'Invalid request format' };
@@ -62,7 +62,7 @@ export function validateAgentId(agentId: unknown): ValidationResult {
     return { isValid: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((err) => err.message).join(', ');
+      const errorMessage = error.issues.map((err) => err.message).join(', ');
       return { isValid: false, error: errorMessage };
     }
     return { isValid: false, error: 'Invalid agent ID format' };
@@ -80,7 +80,7 @@ export function validateUserId(userId: unknown): ValidationResult {
     return { isValid: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const errorMessage = error.errors.map((err) => err.message).join(', ');
+      const errorMessage = error.issues.map((err) => err.message).join(', ');
       return { isValid: false, error: errorMessage };
     }
     return { isValid: false, error: 'Invalid user ID format' };
