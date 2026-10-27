@@ -32,6 +32,7 @@ import {
 } from './promptCache';
 import { getFormatFromMimeType, getMimeTypeFromFileName } from './media';
 import { convertToSafeFilename } from './fileNameUtils';
+import { convertTextDocumentToUtf8 } from './textEncoding';
 
 // Default Models
 
@@ -480,7 +481,10 @@ const createConverseCommandInput = (
               format,
               name: convertToSafeFilename(extra.name),
               source: {
-                bytes: Buffer.from(extra.source.data, 'base64'),
+                bytes: convertTextDocumentToUtf8(
+                  Buffer.from(extra.source.data, 'base64'),
+                  format
+                ),
               },
             },
           } as ContentBlock.DocumentMember);
