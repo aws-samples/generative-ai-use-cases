@@ -49,6 +49,7 @@ agent_builder:
   environment_variables: Environment Variables
   environment_variables_label: Environment Variables
   example_github: GitHub
+  export: Export
   external: External
   external_agent_description: Pre-configured external agents with specialized capabilities
   external_agents: External Agents
@@ -63,6 +64,8 @@ agent_builder:
   generate_short: Generate
   generate_with_ai: Generate with AI
   generating_prompt: Generating system prompt...
+  import: Import
+  import_failed: Could not read that file as an agent definition
   loading_agent: Loading agent...
   mcp_server_configuration: MCP Server Configuration
   mcp_server_description: >-

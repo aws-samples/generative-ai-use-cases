@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
@@ -13,7 +13,12 @@ import {
   PiArrowLeft as BackIcon,
   PiPencilSimple,
   PiEye,
+  PiUploadSimple as ImportIcon,
 } from 'react-icons/pi';
+import {
+  fromPortableAgent,
+  PortableAgent,
+} from '../../utils/agentDefinitionFile';
 
 const AgentBuilderEditPage: React.FC = () => {
   const { t } = useTranslation();
@@ -33,6 +38,30 @@ const AgentBuilderEditPage: React.FC = () => {
 
   // View toggle state for responsive layout
   const [activeView, setActiveView] = useState<'editor' | 'preview'>('editor');
+
+  // An imported definition stands in for the loaded one, so the form fills
+  // itself from the file rather than the user retyping it. Kept in state so
+  // it survives until they save or leave.
+  const [imported, setImported] = useState<PortableAgent | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+
+  const handleImportFile = useCallback(
+    async (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      // Cleared straight away, or choosing the same file twice would not fire
+      // a change and the second import would go unnoticed.
+      event.target.value = '';
+      if (!file) return;
+      try {
+        setImported(fromPortableAgent(JSON.parse(await file.text())));
+        setImportError(null);
+      } catch {
+        setImportError(t('agent_builder.import_failed'));
+      }
+    },
+    [t]
+  );
 
   const handleSave = useCallback(
     async (formData: AgentFormData) => {
@@ -137,6 +166,19 @@ const AgentBuilderEditPage: React.FC = () => {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
           </div>
+          <Button outlined onClick={() => fileInput.current?.click()}>
+            <ImportIcon className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">
+              {t('agent_builder.import')}
+            </span>
+          </Button>
+          <input
+            ref={fileInput}
+            type="file"
+            accept=".json,application/json"
+            onChange={handleImportFile}
+            className="hidden"
+          />
         </div>
 
         {/* View Toggle for small screens - aligned with title on right */}
@@ -170,13 +212,19 @@ const AgentBuilderEditPage: React.FC = () => {
         </div>
       </div>
 
+      {importError && (
+        <div className="mb-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {importError}
+        </div>
+      )}
+
       {/* Content - Large screens: side-by-side, Small screens: toggle view */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         {/* Agent Configuration - Always visible on large screens, toggle on small */}
         <div
           className={`space-y-6 ${activeView !== 'editor' ? 'hidden lg:block' : ''}`}>
           <AgentForm
-            initialData={agent || undefined}
+            initialData={imported || agent || undefined}
             onSave={handleSave}
             onCancel={handleCancel}
             onFormDataChange={handleFormDataChange}

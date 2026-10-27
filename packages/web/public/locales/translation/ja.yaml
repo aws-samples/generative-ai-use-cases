@@ -50,6 +50,7 @@ agent_builder:
   environment_variables: 環境変数
   environment_variables_label: 環境変数
   example_github: GitHub
+  export: エクスポート
   external: 外部
   external_agent_description: 特別な機能を持つ事前設定済みの外部エージェント
   external_agents: 外部エージェント
@@ -63,6 +64,8 @@ agent_builder:
   generate_short: 生成
   generate_with_ai: AIにより生成する
   generating_prompt: システムプロンプトを生成中...
+  import: インポート
+  import_failed: エージェント定義として読み込めませんでした
   loading_agent: エージェントを読み込み中...
   mcp_server_configuration: MCPサーバー設定
   mcp_server_description: エージェントに追加機能を提供するMCPサーバーを選択してください。これらのサーバーはセキュリティのため管理者によって事前設定されています。

@@ -17,9 +17,14 @@ import {
   PiPencil as EditIcon,
   PiCopy as CloneIcon,
   PiTrash as DeleteIcon,
+  PiDownloadSimple as ExportIcon,
   PiDotsThreeOutlineFill as MoreIcon,
 } from 'react-icons/pi';
 import { AgentConfiguration } from 'generative-ai-use-cases';
+import {
+  agentFileName,
+  toPortableAgent,
+} from '../../utils/agentDefinitionFile';
 import useAgentBuilderList from '../../hooks/agentBuilder/useAgentBuilderList';
 
 export type AgentFilter = 'my' | 'favorites' | 'public' | 'external';
@@ -170,6 +175,21 @@ const AgentBuilderListPage: React.FC = () => {
     },
     [cloneAgent]
   );
+
+  const handleExportAgent = useCallback((agent: AgentConfiguration) => {
+    const blob = new Blob([JSON.stringify(toPortableAgent(agent), null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = agentFileName(agent.name);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    setOpenDropdown(null);
+  }, []);
 
   const handleDeleteAgent = useCallback(
     async (agentId: string) => {
@@ -435,6 +455,15 @@ const AgentBuilderListPage: React.FC = () => {
                           className="flex w-full items-center px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50">
                           <CloneIcon className="mr-3 h-4 w-4 text-gray-500" />
                           {t('agent_builder.clone')}
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAction(() => handleExportAgent(agent));
+                          }}
+                          className="flex w-full items-center px-4 py-2.5 text-sm text-gray-700 transition-colors hover:bg-gray-50">
+                          <ExportIcon className="mr-3 h-4 w-4 text-gray-500" />
+                          {t('agent_builder.export')}
                         </button>
                         {currentFilter === 'my' && (
                           <>
