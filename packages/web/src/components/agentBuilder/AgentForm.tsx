@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '../Button';
 import ButtonIcon from '../ButtonIcon';
@@ -46,6 +46,19 @@ const AgentForm: React.FC<AgentFormProps> = ({
   const { t } = useTranslation();
   const { modelIds: availableModels, modelDisplayName } = MODELS;
 
+  // Built-in tools offered to the AI so that it can suggest them.
+  // Add an entry here when a new built-in tool is introduced.
+  const availableBuiltInTools = useMemo(
+    () => [
+      {
+        id: 'codeExecution',
+        name: t('agent_builder.code_execution'),
+        description: t('agent_builder.code_execution_description'),
+      },
+    ],
+    [t]
+  );
+
   // Form state
   const [formData, setFormData] = useState<AgentFormData>({
     name: '',
@@ -69,6 +82,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
   const {
     generatedPrompt,
     suggestedMCPServers,
+    suggestedBuiltInTools,
     isGenerating,
     generate: generatePrompt,
     cancel: cancelGeneration,
@@ -77,6 +91,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
     agentName: formData.name,
     agentDescription: formData.description,
     availableMCPServers,
+    availableBuiltInTools,
   });
 
   // Update systemPrompt when generation produces new content
@@ -92,6 +107,16 @@ const AgentForm: React.FC<AgentFormProps> = ({
       setFormData((prev) => ({ ...prev, mcpServers: suggestedMCPServers }));
     }
   }, [suggestedMCPServers]);
+
+  // Update built-in tools when AI suggests them
+  useEffect(() => {
+    if (suggestedBuiltInTools.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        codeExecutionEnabled: suggestedBuiltInTools.includes('codeExecution'),
+      }));
+    }
+  }, [suggestedBuiltInTools]);
 
   // Update formData.modelId when availableModels becomes available
   useEffect(() => {
