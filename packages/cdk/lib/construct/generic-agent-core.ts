@@ -41,6 +41,9 @@ export interface GenericAgentCoreProps {
   agentCoreVpcId?: string | null;
   agentCoreSubnetIds?: string[] | null;
   gatewayArns?: string[];
+  // Gateway URL for the AgentCore Web Search connector.
+  // When set, the agent builder runtime can use the web search tool.
+  webSearchGatewayUrl?: string;
 }
 
 interface RuntimeResources {
@@ -71,6 +74,7 @@ export class GenericAgentCore extends Construct {
       agentCoreVpcId = null,
       agentCoreSubnetIds = null,
       gatewayArns,
+      webSearchGatewayUrl,
     } = props;
 
     this.gatewayArns = gatewayArns;
@@ -79,7 +83,11 @@ export class GenericAgentCore extends Construct {
     this._fileBucket = this.createFileBucket();
 
     // Load configurations
-    const configs = this.loadConfigurations(env, this._fileBucket.bucketName);
+    const configs = this.loadConfigurations(
+      env,
+      this._fileBucket.bucketName,
+      webSearchGatewayUrl
+    );
     this.genericRuntimeConfig = configs.generic;
     this.agentBuilderRuntimeConfig = configs.agentBuilder;
 
@@ -141,7 +149,11 @@ export class GenericAgentCore extends Construct {
     });
   }
 
-  private loadConfigurations(env: string, bucketName: string) {
+  private loadConfigurations(
+    env: string,
+    bucketName: string,
+    webSearchGatewayUrl?: string
+  ) {
     return {
       generic: {
         name: `GenUGenericRuntime${env}`,
@@ -168,6 +180,9 @@ export class GenericAgentCore extends Construct {
           FILE_BUCKET: bucketName,
           MCP_CONFIG_PATH: '/var/task/mcp-configs/agent-builder/mcp.json',
           SUPPORTED_CACHE_FIELDS: JSON.stringify(SUPPORTED_CACHE_FIELDS),
+          ...(webSearchGatewayUrl && {
+            WEB_SEARCH_GATEWAY_URL: webSearchGatewayUrl,
+          }),
         },
       },
     };

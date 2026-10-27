@@ -43,6 +43,7 @@ agent_builder:
   edit_agent: エージェントを編集
   editor: エディター
   enable_code_execution: コード実行を有効にする
+  enable_web_search: Web検索を有効にする
   enter_agent_name: エージェント名を入力
   enter_system_prompt: エージェントの動作を定義するシステムプロンプトを入力
   enter_tags_comma_separated: タグをカンマ区切りで入力
@@ -109,6 +110,9 @@ agent_builder:
   title: エージェントビルダー
   tool_settings: ツール設定
   updated: 更新日
+  web_search: Web検索
+  web_search_description: >-
+    このエージェントが最新情報を Web 検索できるようにします。検索クエリは AWS 内で処理され、第三者の検索エンジンには送信されません。
 agent_core:
   agent_list: エージェント一覧
   description_label: 説明

@@ -1,4 +1,4 @@
-import { Template } from 'aws-cdk-lib/assertions';
+import { Match, Template } from 'aws-cdk-lib/assertions';
 import * as cdk from 'aws-cdk-lib';
 import {
   processedStackInputSchema,
@@ -276,6 +276,74 @@ describe('GenerativeAiUseCases', () => {
 
     // Assert
     expect(agentCoreTemplate.toJSON()).toMatchSnapshot();
+  });
+
+  test('matches the snapshot (AgentBuilder with web search)', () => {
+    const app = new cdk.App();
+
+    const params = processedStackInputSchema.parse({
+      ...stackInput,
+      agentBuilderEnabled: true,
+      agentBuilderWebSearchEnabled: true,
+      agentBuilderWebSearchExcludeDomains: ['excluded.example.com'],
+    });
+
+    const { agentCoreStack } = createStacks(app, params);
+
+    if (!agentCoreStack) {
+      throw new Error('AgentCore stack is not created');
+    }
+    const agentCoreTemplate = Template.fromStack(agentCoreStack);
+
+    // Assert: the gateway and the web search connector target are created
+    agentCoreTemplate.resourceCountIs('AWS::BedrockAgentCore::Gateway', 1);
+    agentCoreTemplate.resourceCountIs(
+      'AWS::BedrockAgentCore::GatewayTarget',
+      1
+    );
+    agentCoreTemplate.hasResourceProperties(
+      'AWS::BedrockAgentCore::Gateway',
+      Match.objectLike({
+        AuthorizerType: 'AWS_IAM',
+        ProtocolType: 'MCP',
+      })
+    );
+    agentCoreTemplate.hasResourceProperties(
+      'AWS::BedrockAgentCore::GatewayTarget',
+      Match.objectLike({
+        TargetConfiguration: {
+          Mcp: {
+            Connector: {
+              Source: { ConnectorId: 'web-search' },
+            },
+          },
+        },
+      })
+    );
+    expect(agentCoreTemplate.toJSON()).toMatchSnapshot();
+  });
+
+  test('no web search gateway is created when disabled', () => {
+    const app = new cdk.App();
+
+    const params = processedStackInputSchema.parse({
+      ...stackInput,
+      agentBuilderEnabled: true,
+      agentBuilderWebSearchEnabled: false,
+    });
+
+    const { agentCoreStack } = createStacks(app, params);
+
+    if (!agentCoreStack) {
+      throw new Error('AgentCore stack is not created');
+    }
+    const agentCoreTemplate = Template.fromStack(agentCoreStack);
+
+    agentCoreTemplate.resourceCountIs('AWS::BedrockAgentCore::Gateway', 0);
+    agentCoreTemplate.resourceCountIs(
+      'AWS::BedrockAgentCore::GatewayTarget',
+      0
+    );
   });
 
   test('AgentCore VPC config requires both vpcId and subnetIds', () => {

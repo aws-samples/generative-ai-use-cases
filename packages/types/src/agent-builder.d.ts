@@ -29,6 +29,7 @@ export type AgentContent = {
   mcpServers: MCPServerReference[]; // Changed to string array
   modelId: string;
   codeExecutionEnabled?: boolean;
+  webSearchEnabled?: boolean;
   tags?: string[];
   isPublic?: boolean;
   createdByEmail?: string;
@@ -39,6 +40,7 @@ export type AgentInTable = AgentCommon &
   AgentContent & {
     description: string; // Required in table
     codeExecutionEnabled: boolean;
+    webSearchEnabled: boolean;
     isPublic: boolean;
     tags: string[];
     starCount: number; // Number of users who favorited this agent
@@ -119,6 +121,7 @@ export type BaseAgentResponse = {
   modelId: string;
   mcpServers: MCPServerReference[]; // Changed to string array
   codeExecutionEnabled: boolean;
+  webSearchEnabled: boolean;
   tags: string[];
   isPublic: boolean;
   createdAt: string;
@@ -187,4 +190,5 @@ export type AgentCoreRuntimeRequest = {
   mcpServers?: MCPServerReference[]; // Changed to string array
   agentId?: string; // Agent ID for logging/tracking
   codeExecutionEnabled?: boolean; // Code execution setting
+  webSearchEnabled?: boolean; // Web search setting
 };

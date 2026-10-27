@@ -160,6 +160,11 @@ const baseStackInputSchema = z.object({
   createGenericAgentCoreRuntime: z.boolean().default(false),
   agentCoreRegion: z.string().nullish(),
   agentCoreGatewayArns: z.array(z.string()).nullish(),
+  // Provision an AgentCore Gateway with the Web Search connector and
+  // allow agents created in the agent builder to use the web search tool.
+  agentBuilderWebSearchEnabled: z.boolean().default(false),
+  // Domains excluded from all web searches. Enforced server side.
+  agentBuilderWebSearchExcludeDomains: z.array(z.string()).nullish(),
   agentCoreExternalRuntimes: z
     .array(
       z.object({

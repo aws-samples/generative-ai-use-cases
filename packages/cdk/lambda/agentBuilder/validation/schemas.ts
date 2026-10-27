@@ -104,6 +104,7 @@ export const CreateAgentRequestSchema = z.object({
     .optional()
     .default([]),
   codeExecutionEnabled: z.boolean().optional().default(false),
+  webSearchEnabled: z.boolean().optional().default(false),
   isPublic: z.boolean().optional().default(false),
   tags: z
     .array(z.string().max(50, 'Each tag must be 50 characters or less'))
@@ -131,6 +132,7 @@ export const UpdateAgentRequestSchema = z.object({
     .array(MCPServerReferenceSchema)
     .max(10, 'Maximum 10 MCP servers allowed'),
   codeExecutionEnabled: z.boolean().optional().default(false),
+  webSearchEnabled: z.boolean().optional().default(false),
   isPublic: z.boolean().optional().default(false),
   tags: z
     .array(z.string().max(50, 'Each tag must be 50 characters or less'))

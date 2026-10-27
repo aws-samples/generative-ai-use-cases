@@ -42,6 +42,7 @@ agent_builder:
   edit_agent: Edit Agent
   editor: Editor
   enable_code_execution: Enabling code execution
+  enable_web_search: Enabling web search
   enter_agent_name: Enter the agent name
   enter_system_prompt: Enter a system prompt that defines the agent behavior
   enter_tags_comma_separated: Enter tags separated by commas
@@ -118,6 +119,8 @@ agent_builder:
   title: Agent Builder
   tool_settings: Tool Settings
   updated: Updated date
+  web_search: Web search
+  web_search_description: Allows this agent to search the web for current information. Queries are processed within AWS with no data sent to third-party search engines.
 agent_core:
   agent_list: Agent List
   description_label: Description
