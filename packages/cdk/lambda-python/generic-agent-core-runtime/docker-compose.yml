@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   generic-agent-core-runtime:
     build:
@@ -17,6 +15,10 @@ services:
       # Optional: S3 bucket for file uploads (set if you want to test file uploads)
       - FILE_BUCKET=${FILE_BUCKET:-test-bucket}
 
+      # MCP servers are only loaded when this points at an existing file.
+      # Override it to test the Agent Builder set of servers.
+      - MCP_CONFIG_PATH=${MCP_CONFIG_PATH:-/var/task/mcp-configs/generic/mcp.json}
+
       # Agent Core Runtime specific
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=INFO
@@ -27,7 +29,7 @@ services:
       # Mount source code for development (optional - remove for production)
       - ./src:/var/task/src:ro
       - ./app.py:/var/task/app.py:ro
-      - ./mcp.json:/var/task/mcp.json:ro
+      - ./mcp-configs:/var/task/mcp-configs:ro
 
       # Mount AWS credentials (optional - if using local AWS credentials)
       - ~/.aws:/root/.aws:ro
