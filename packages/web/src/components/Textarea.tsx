@@ -31,22 +31,54 @@ const Textarea: React.FC<Props> = (props) => {
   const maxHeight = props.maxHeight || MAX_HEIGHT;
 
   useLayoutEffect(() => {
-    if (!ref.current || props.resizable) return;
-    // Reset the height to auto to calculate the scroll height
-    ref.current.style.height = 'auto';
-    ref.current.style.overflowY = 'hidden';
+    const element = ref.current;
+    if (!element || props.resizable) return;
 
-    // Ensure the layout is updated before calculating the scroll height
-    // due to the bug in Firefox:
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=1795904
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=1787062
-    void ref.current.scrollHeight;
+    let running = false;
 
-    // Set the height to match content, up to max height
-    const scrollHeight = ref.current.scrollHeight;
-    const isMax = maxHeight > 0 && scrollHeight > maxHeight;
-    ref.current.style.height = (isMax ? maxHeight : scrollHeight) + 'px';
-    ref.current.style.overflowY = isMax ? 'auto' : 'hidden';
+    const applyHeight = () => {
+      // Guard against the ResizeObserver observing the height we set ourselves
+      if (running) return;
+      running = true;
+
+      // Reset the height to auto to calculate the scroll height
+      element.style.height = 'auto';
+      element.style.overflowY = 'hidden';
+
+      // Ensure the layout is updated before calculating the scroll height
+      // due to the bug in Firefox:
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=1795904
+      // https://bugzilla.mozilla.org/show_bug.cgi?id=1787062
+      void element.scrollHeight;
+
+      // scrollHeight covers the content and the padding but not the border, while the
+      // height assigned below is interpreted as the full border box
+      const style = window.getComputedStyle(element);
+      const borderHeight =
+        style.boxSizing === 'border-box'
+          ? parseFloat(style.borderTopWidth) +
+            parseFloat(style.borderBottomWidth)
+          : 0;
+
+      // Set the height to match content, up to max height
+      const contentHeight = element.scrollHeight + borderHeight;
+      const isMax = maxHeight > 0 && contentHeight > maxHeight;
+      element.style.height = (isMax ? maxHeight : contentHeight) + 'px';
+      element.style.overflowY = isMax ? 'auto' : 'hidden';
+
+      running = false;
+    };
+
+    applyHeight();
+
+    // The first measurement can run before the element has been laid out, for example
+    // while the dialog that contains it is still being mounted. scrollHeight is 0 then,
+    // and because this effect only depends on the value, a textarea whose value never
+    // changes afterwards would keep that height forever. Re-measure whenever the box
+    // actually changes so the height catches up.
+    const observer = new ResizeObserver(applyHeight);
+    observer.observe(element);
+    return () => observer.disconnect();
   }, [props.value, props.resizable, maxHeight]);
 
   return (
