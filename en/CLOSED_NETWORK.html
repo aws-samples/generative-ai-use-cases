@@ -1,0 +1,1796 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://aws-samples.github.io/generative-ai-use-cases/en/CLOSED_NETWORK.html">
+      
+      
+      
+      
+        
+          <link rel="alternate" href="CLOSED_NETWORK.html" hreflang="en">
+        
+          <link rel="alternate" href="../ja/CLOSED_NETWORK.html" hreflang="ja">
+        
+          <link rel="alternate" href="../ko/CLOSED_NETWORK.html" hreflang="ko">
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Closed Network Mode - Generative AI Use Cases (GenU)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/custom/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Closed Network Mode - Generative AI Use Cases (GenU)" />
+<meta property="og:image" content="https://aws-samples.github.io/generative-ai-use-cases/assets/images/social/en/CLOSED_NETWORK.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://aws-samples.github.io/generative-ai-use-cases/en/CLOSED_NETWORK.html" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" content="Closed Network Mode - Generative AI Use Cases (GenU)" />
+<meta property="twitter:image" content="https://aws-samples.github.io/generative-ai-use-cases/assets/images/social/en/CLOSED_NETWORK.png" />
+</head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#closed-network-mode" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="index.html" title="Generative AI Use Cases (GenU)" class="md-header__button md-logo" aria-label="Generative AI Use Cases (GenU)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Generative AI Use Cases (GenU)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Closed Network Mode
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="CLOSED_NETWORK.html" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../ja/CLOSED_NETWORK.html" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../ko/CLOSED_NETWORK.html" hreflang="ko" class="md-select__link">
+              한국어
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aws-samples/generative-ai-use-cases" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/generative-ai-use-cases
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Overview
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="CHART_TOOL.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="ABOUT.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="Generative AI Use Cases (GenU)" class="md-nav__button md-logo" aria-label="Generative AI Use Cases (GenU)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Generative AI Use Cases (GenU)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aws-samples/generative-ai-use-cases" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/generative-ai-use-cases
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Features
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Features
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="CHART_TOOL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chart Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deploy
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ABOUT.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEPLOY_ON_CLOUDSHELL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Optional) Deploy with AWS CloudShell
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEPLOY_OPTION.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deploy Options
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Authentication
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="SAML_WITH_GOOGLE_WORKSPACE.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authenticate with Google Workspace
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="SAML_WITH_ENTRA_ID.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authenticate with Microsoft Entra ID
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Browser Extension
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Browser Extension
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_BUILD.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Build
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_INSTALL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Install
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_SAML.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAML Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Other
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Other
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="UPDATE.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Update
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEVELOPMENT.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local Development Environment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DESTROY.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Delete Resources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DESTROY_ON_CLOUDSHELL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (Optional) Delete with AWS CloudShell
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="PWA.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use as a Native App
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-of-valid-configuration-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example of Valid Configuration File
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment Method
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verification-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verification Method
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Verification Method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-obtain-ec2-key-pair-private-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1. Obtain EC2 Key Pair Private Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-connect-to-windows-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2. Connect to Windows Instance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-access-genu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3. Access GenU
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#about-the-verification-instance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        About the Verification Instance
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setting-a-custom-domain-for-closed-network-genu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setting a Custom Domain for Closed Network GenU
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setting a Custom Domain for Closed Network GenU">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#obtaining-a-certificate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Obtaining a Certificate
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dns-server-configuration-for-on-premises-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DNS Server Configuration for On-Premises Connection
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DNS Server Configuration for On-Premises Connection">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#when-configuring-etchosts-for-operation-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When Configuring /etc/hosts for Operation Verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/aws-samples/generative-ai-use-cases/blob/main/docs/en/CLOSED_NETWORK.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/aws-samples/generative-ai-use-cases/raw/main/docs/en/CLOSED_NETWORK.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="closed-network-mode">Closed Network Mode<a class="headerlink" href="#closed-network-mode" title="Permanent link">&para;</a></h1>
+<p>By setting the <code>closedNetworkMode</code> option to true, you can enable communication from clients to GenU through a closed network.
+Additionally, communication between AWS Lambda, which is GenU's main computing resource, and other AWS services (such as Amazon DynamoDB, Amazon S3, and Amazon Bedrock) is completed within the VPC. The architectural changes are as follows:</p>
+<ul>
+<li>Amazon CloudFront is not used; web static files are served by Application Load Balancer and ECS Fargate.</li>
+<li>Amazon Cognito is accessed through Amazon API Gateway.</li>
+<li>Communication from Lambda functions to other services is performed via VPC Endpoints.</li>
+</ul>
+<p>Options related to closed network mode have the <code>closedNetwork</code> prefix. The following is a list of options:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>closedNetworkMode</td>
+<td>Whether to enable closed network mode. true enables closed network mode. Default is false.</td>
+</tr>
+<tr>
+<td>closedNetworkVpcIpv4Cidr</td>
+<td>IPv4 CIDR to specify when creating a new VPC. Default is 10.0.0.0/16.</td>
+</tr>
+<tr>
+<td>closedNetworkVpcId</td>
+<td>VPC ID when importing an existing VPC. If not specified, a new VPC will be created.</td>
+</tr>
+<tr>
+<td>closedNetworkSubnetIds</td>
+<td>Specify multiple Subnet IDs where GenU-related resources will be deployed. ALB, Fargate tasks, VPC Endpoints, and Resolver Endpoints will be created. If not specified, Isolated Subnets will be selected. Specify two or more Subnet IDs in an array.</td>
+</tr>
+<tr>
+<td>closedNetworkCertificateArn</td>
+<td>ACM ARN to specify when assigning a domain to GenU. ACM must be manually generated. If not specified, GenU will be published with the Application Load Balancer's default endpoint.</td>
+</tr>
+<tr>
+<td>closedNetworkDomainName</td>
+<td>GenU's domain name. Private Hosted Zone is generated by CDK, so manual creation is not required. Both <code>closedNetworkCertificateArn</code> and <code>closedNetworkDomainName</code> must be specified together or both omitted.</td>
+</tr>
+<tr>
+<td>closedNetworkCreateTestEnvironment</td>
+<td>Whether to create a test environment. Created by default. Specify false if not needed. The test environment is created as an EC2 Windows instance and accessed via Fleet Manager. (Detailed procedures described later.)</td>
+</tr>
+<tr>
+<td>closedNetworkCreateResolverEndpoint</td>
+<td>Whether to generate Route53 Resolver Endpoint. Default is true.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
+<p><img alt="arch-closed-network.drawio.png" src="../assets/images/arch-closed-network.drawio.png" /></p>
+<h2 id="current-limitations">Current Limitations<a class="headerlink" href="#current-limitations" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Deployment must be performed in an environment with internet connectivity. Also, internet connectivity is required when accessing the operation verification environment from the management console.</li>
+<li>Deployment requires the same environment as normal mode deployment. Specifically, AWS IAM user configuration, Node.js, and Docker are needed.</li>
+<li>The region where GenU is deployed and the model region must be the same. Currently, it's not possible to deploy GenU in ap-northeast-1 and use models from us-east-1.</li>
+<li>Since various resources are created, when importing an existing VPC, it's recommended to use as clean an environment as possible.</li>
+<li>SAML integration is not available.</li>
+<li>Voice Chat use case is currently not available.</li>
+</ul>
+<h2 id="example-of-valid-configuration-file">Example of Valid Configuration File<a class="headerlink" href="#example-of-valid-configuration-file" title="Permanent link">&para;</a></h2>
+<p>Here's an example of a valid parameter.ts. If you're using cdk.json, please adapt accordingly.</p>
+<pre><code class="language-typescript">const envs: Record&lt;string, Partial&lt;StackInput&gt;&gt; = {
+  // Deploy with environment name 'priv' (any environment name is fine)
+  priv: {
+    region: 'ap-northeast-1',
+    modelRegion: 'ap-northeast-1',
+    modelIds: ['apac.anthropic.claude-sonnet-4-20250514-v1:0'],
+    imageGenerationModelIds: ['amazon.nova-canvas-v1:0'],
+    videoGenerationModelIds: ['amazon.nova-reel-v1:0'],
+    // Voice Chat is not available
+    speechToSpeechModelIds: [],
+    // Optional settings
+    ragEnabled: true,
+    ragKnowledgeBaseEnabled: true,
+    agentEnabled: true,
+    mcpEnabled: true,
+    guardrailEnabled: true,
+    useCaseBuilderEnabled: true,
+    // Closed network options below
+    closedNetworkMode: true,
+    // The following two are not needed if not setting a domain
+    closedNetworkDomainName: 'genu.closed',
+    closedNetworkCertificateArn:
+      'arn:aws:acm:ap-northeast-1:111111111111:certificate/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+    // When specifying existing VPC and Subnets (the following two are not needed for new creation)
+    closedNetworkVpcId: 'vpc-00000000000000000',
+    closedNetworkSubnetIds: [
+      'subnet-11111111111111111',
+      'subnet-22222222222222222',
+    ],
+  },
+};
+</code></pre>
+<h2 id="deployment-method">Deployment Method<a class="headerlink" href="#deployment-method" title="Permanent link">&para;</a></h2>
+<p>After configuring the <code>closedNetwork...</code> options, deploy using the normal procedure written in <a href="https://github.com/aws-samples/generative-ai-use-cases/blob/main/README.md">README.md</a>. An additional stack called ClosedNetworkStack\<environment name> will be deployed. (For convenience, \<environment name> will be omitted hereafter.)
+The URL for accessing GenU is output in the ClosedNetworkWebUrl of ClosedNetworkStack. Note that it's not the WebUrl of GenerativeAiUseCasesStack.
+Also, GenU cannot be accessed until the deployment of GenerativeAiUseCasesStack is complete.</p>
+<h2 id="verification-method">Verification Method<a class="headerlink" href="#verification-method" title="Permanent link">&para;</a></h2>
+<p>This explains the verification method when closedNetworkCreateTestEnvironment is set to true and deployed. Access the Windows EC2 instance via the management console.</p>
+<h3 id="step-1-obtain-ec2-key-pair-private-key">Step 1. Obtain EC2 Key Pair Private Key<a class="headerlink" href="#step-1-obtain-ec2-key-pair-private-key" title="Permanent link">&para;</a></h3>
+<p>Obtain the private key of the Key Pair set in EC2 to connect to the Windows instance via RDP. The command to obtain the private key is displayed in the ClosedNetworkStack output starting with <code>WindowsRdpGetSSMKeyCommand...</code>.
+It looks like this:</p>
+<pre><code class="language-bash">aws ssm get-parameter --name /ec2/keypair/key-aaaaaaaaaaaaaaaaa --region ap-northeast-1 --with-decryption --query Parameter.Value --output text
+</code></pre>
+<p>Please copy the result of executing this command.</p>
+<h3 id="step-2-connect-to-windows-instance">Step 2. Connect to Windows Instance<a class="headerlink" href="#step-2-connect-to-windows-instance" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Open the management console and go to <a href="https://console.aws.amazon.com/ec2/home">EC2</a>.</li>
+<li>Check the instance with a name starting with ClosedNetworkStack... and click "Connect" in the upper right.</li>
+<li>Select the RDP client tab, choose Connect using Fleet manager, and click Fleet Manager Remote Desktop.</li>
+<li>Select Key pair for Authentication type, select Paste key pair content for Key pair content, and paste the private key obtained in step 1.</li>
+<li>Click Connect.</li>
+</ol>
+<h3 id="step-3-access-genu">Step 3. Access GenU<a class="headerlink" href="#step-3-access-genu" title="Permanent link">&para;</a></h3>
+<p>Open the Edge browser within Windows, enter the URL displayed in the ClosedNetworkWebUrl output of ClosedNetworkStack to access GenU.
+SignUp is required on first access.</p>
+<h3 id="about-the-verification-instance">About the Verification Instance<a class="headerlink" href="#about-the-verification-instance" title="Permanent link">&para;</a></h3>
+<p>The verification instance does not automatically stop, so please manually stop the target instance in EC2 after verification is complete.
+Also, if the verification environment itself is not needed, you can delete it by setting closedNetworkCreateTestEnvironment to false and redeploying.</p>
+<h2 id="setting-a-custom-domain-for-closed-network-genu">Setting a Custom Domain for Closed Network GenU<a class="headerlink" href="#setting-a-custom-domain-for-closed-network-genu" title="Permanent link">&para;</a></h2>
+<h3 id="obtaining-a-certificate">Obtaining a Certificate<a class="headerlink" href="#obtaining-a-certificate" title="Permanent link">&para;</a></h3>
+<p>Issue a certificate for the domain you want to set and import it into <a href="https://console.aws.amazon.com/acm/home">AWS Certificate Manager</a>.
+Specify the ARN of the created Certificate in closedNetworkCertificateArn and specify the domain in closedNetworkDomainName.</p>
+<p>The following procedure is for issuing a self-signed certificate <strong>for verification purposes</strong>, but please do not use this for production. <strong>The browser will display warnings when accessing.</strong>
+Use the <code>openssl</code> command.</p>
+<pre><code class="language-bash"># Generate a key.
+openssl genrsa 2048 &gt; ssl.key
+
+# Specify the domain you will use for Common Name
+openssl req -new -key ssl.key &gt; ssl.csr
+
+# Issue valid for 10 years
+openssl x509 -days 3650 -req -signkey ssl.key &lt; ssl.csr &gt; ssl.crt
+</code></pre>
+<p>Paste the contents of ssl.crt in Certificate body and the contents of ssl.key in Certificate private key, then click the Import certificate button.</p>
+<h2 id="dns-server-configuration-for-on-premises-connection">DNS Server Configuration for On-Premises Connection<a class="headerlink" href="#dns-server-configuration-for-on-premises-connection" title="Permanent link">&para;</a></h2>
+<p>Here we make two assumptions:</p>
+<ul>
+<li>The route from on-premises to AWS is already established. (This means that by specifying the IP address of the VPC created or imported by ClosedNetworkStack, you can reach the resources beyond it.)</li>
+<li>Route53 Resolver Endpoint has been created. (Resolver Endpoint is created by deploying with closedNetworkCreateResolverEndpoint set to true. This parameter is true by default.)</li>
+</ul>
+<p>The endpoints that require name resolution from clients are as follows. Parts enclosed in <code>&lt;&gt;</code> need to be replaced with actual values.</p>
+<table>
+<thead>
+<tr>
+<th>Service Name</th>
+<th>Role</th>
+<th>Endpoint</th>
+<th>How to Check Endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application Load Balancer</td>
+<td>Web static file server</td>
+<td>Custom domain or internal-\<aaa>.\<region>.elb.amazonaws.com</td>
+<td>Check with ClosedNetworkWebUrl output of ClosedNetworkStack</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>Main API</td>
+<td>\<xxx>.execute-api.\<region>.amazonaws.com</td>
+<td>Check with ApiEndpoint output of <strong>GenerativeAiUseCasesStack</strong></td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>Cognito User Pool proxy</td>
+<td>\<yyy>.execute-api.\<region>.amazonaws.com</td>
+<td>Check with CognitoPrivateProxyCognitoUserPoolProxyApiEndpoint... output of ClosedNetworkStack</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>Cognito Identity Pool proxy</td>
+<td>\<zzz>.execute-api.\<region>.amazonaws.com</td>
+<td>Check with CognitoPrivateProxyCognitoIdPoolProxyApiEndpoint... output of ClosedNetworkStack</td>
+</tr>
+<tr>
+<td>Amazon S3</td>
+<td>Signed URLs</td>
+<td>s3.\<region>.amazonaws.com</td>
+<td>Endpoint is fixed</td>
+</tr>
+<tr>
+<td>AWS Lambda</td>
+<td>Streaming output</td>
+<td>lambda.\<region>.amazonaws.com</td>
+<td>Endpoint is fixed</td>
+</tr>
+<tr>
+<td>Amazon Transcribe</td>
+<td>Speech-to-text</td>
+<td>transcribe.\<region>.amazonaws.com</td>
+<td>Endpoint is fixed</td>
+</tr>
+<tr>
+<td>Amazon Transcribe Streaming</td>
+<td>Real-time speech-to-text</td>
+<td>transcribestreaming.\<region>.amazonaws.com</td>
+<td>Endpoint is fixed</td>
+</tr>
+<tr>
+<td>Amazon Polly</td>
+<td>Text-to-speech</td>
+<td>polly.\<region>.amazonaws.com</td>
+<td>Endpoint is fixed</td>
+</tr>
+</tbody>
+</table>
+<p>Please modify your DNS server configuration to specify the IP address of the Resolver Endpoint as the resolver (forwarder) for all endpoints in the table above.
+The IP address of the Resolver Endpoint can be confirmed by opening <a href="https://console.aws.amazon.com/route53resolver">Route53</a>, selecting Inbound endpoints, and clicking on the created endpoint.
+Note that except for "when setting a custom domain for Application Load Balancer," all endpoints are amazonaws.com domains. Therefore, the most simplified configuration is to specify the IP address of the Resolver Endpoint as the resolver for amazonaws.com. However, this configuration has a wide scope and large side effects, so it's strongly recommended to configure each endpoint's FQDN individually.</p>
+<p>For verification purposes, you can also set the Resolver Endpoint IP as the DNS server on your local machine. However, due to concerns about side effects in this case as well, it's strongly recommended to revert the settings after operation verification.</p>
+<h3 id="when-configuring-etchosts-for-operation-verification">When Configuring /etc/hosts for Operation Verification<a class="headerlink" href="#when-configuring-etchosts-for-operation-verification" title="Permanent link">&para;</a></h3>
+<p>When configuring the local machine's /etc/hosts, you need the IP addresses of each endpoint rather than the Resolver Endpoint.
+However, since these IP addresses may change and you can only specify a single IP address without redundancy, please use this only for operation verification.
+The following summarizes the endpoints that need configuration and how to check their IP addresses.</p>
+<table>
+<thead>
+<tr>
+<th>Service Name</th>
+<th>Role</th>
+<th>Endpoint</th>
+<th>How to Check IP Address</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Application Load Balancer</td>
+<td>Web static file server</td>
+<td>Custom domain or internal-\<aaa>.\<region>.elb.amazonaws.com</td>
+<td>Method 1</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>Main API</td>
+<td>\<xxx>.execute-api.\<region>.amazonaws.com</td>
+<td>Method 2</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>Cognito User Pool proxy</td>
+<td>\<yyy>.execute-api.\<region>.amazonaws.com</td>
+<td>Method 2</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>Cognito Identity Pool proxy</td>
+<td>\<zzz>.execute-api.\<region>.amazonaws.com</td>
+<td>Method 2</td>
+</tr>
+<tr>
+<td>Amazon S3</td>
+<td>Signed URLs</td>
+<td>\<S3 bucket name>.s3.\<region>.amazonaws.com</td>
+<td>Method 2</td>
+</tr>
+<tr>
+<td>AWS Lambda</td>
+<td>Streaming output</td>
+<td>lambda.\<region>.amazonaws.com</td>
+<td>Method 2</td>
+</tr>
+<tr>
+<td>Amazon Transcribe</td>
+<td>Speech-to-text</td>
+<td>transcribe.\<region>.amazonaws.com</td>
+<td>Method 2</td>
+</tr>
+<tr>
+<td>Amazon Transcribe Streaming</td>
+<td>Real-time speech-to-text</td>
+<td>transcribestreaming.\<region>.amazonaws.com</td>
+<td>Method 2</td>
+</tr>
+<tr>
+<td>Amazon Polly</td>
+<td>Text-to-speech</td>
+<td>polly.\<region>.amazonaws.com</td>
+<td>Method 2</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Method 1: Open Network Interfaces in <a href="https://console.aws.amazon.com/ec2/home">EC2</a> and search for "elb". The target ENI is the one with Security group names starting with ClosedNetworkStack.... Click the Network interface ID to see the Private IPv4 address. Since there are multiple, select one of them.</li>
+<li>Method 2: Open Endpoints in <a href="https://console.aws.amazon.com/vpcconsole/home">VPC</a> and look for the corresponding service name. The service name is the reverse of the endpoint. (However, for API Gateway, the ID is omitted.) Click the VPC endpoint ID to see the deployed Subnets and IP addresses at the bottom of the page. Since there are multiple, select one of them.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2025, Amazon Web Services, Inc. or its affiliates. All rights reserved.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.trackings", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+    
+  </body>
+</html>

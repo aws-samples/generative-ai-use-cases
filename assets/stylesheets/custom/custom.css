@@ -1,0 +1,19 @@
+:root {
+  --md-primary-fg-color: #232f3e;
+  --md-primary-fg-color--light: #232f3e;
+  --md-primary-fg-color--dark: #232f3e;
+}
+
+.md-header {
+  color: white;
+  background-color: #232f3e;
+}
+
+.md-tabs {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: white;
+}
+
+a {
+  text-decoration: underline;
+}
