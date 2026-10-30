@@ -698,6 +698,7 @@ meetingMinutes:
   diagram_options: 生成する図の種類
   diagram_sequence: シーケンス図（関係性）
   diagram_timeline: タイムライン（期限・スケジュール）
+  edit_in_writer: 執筆で編集
   frequency: 生成頻度
   frequency_10min: 10分ごと
   frequency_1min: 1分ごと

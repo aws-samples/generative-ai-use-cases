@@ -6,8 +6,10 @@ import React, {
   useEffect,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import queryString from 'query-string';
 import { toast } from 'sonner';
-import { PiGearSix, PiDownloadSimple } from 'react-icons/pi';
+import { PiGearSix, PiDownloadSimple, PiPencilLine } from 'react-icons/pi';
 import Button from '../Button';
 import ButtonCopy from '../ButtonCopy';
 import ButtonIcon from '../ButtonIcon';
@@ -15,6 +17,7 @@ import Markdown from '../Markdown';
 import MeetingMinutesSettingsModal from './MeetingMinutesSettingsModal';
 import useMeetingMinutes from '../../hooks/useMeetingMinutes';
 import useMeetingMinutesCustomPromptApi from '../../hooks/useMeetingMinutesCustomPromptApi';
+import useUseCases from '../../hooks/useUseCases';
 import { MODELS } from '../../hooks/useModel';
 import { MeetingMinutesParams, DiagramOption } from '../../prompts';
 import { claudePrompter } from '../../prompts/claude';
@@ -29,6 +32,8 @@ const MeetingMinutesGeneration: React.FC<MeetingMinutesGenerationProps> = ({
   transcriptText,
 }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { enabled } = useUseCases();
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const shouldGenerateRef = useRef<boolean>(false);
 
@@ -305,6 +310,15 @@ const MeetingMinutesGeneration: React.FC<MeetingMinutesGenerationProps> = ({
     [customPrompt, diagramOptions]
   );
 
+  // Open the generated minutes in the Writer use case for editing
+  // (navigates to the existing /writer route; the old /edit route was removed)
+  const handleEditInWriter = useCallback(() => {
+    if (!generatedMinutes) return;
+    navigate(
+      `/writer?${queryString.stringify({ sentence: generatedMinutes })}`
+    );
+  }, [generatedMinutes, navigate]);
+
   // Download minutes as markdown file
   const handleDownload = useCallback(() => {
     if (!generatedMinutes) return;
@@ -365,6 +379,13 @@ const MeetingMinutesGeneration: React.FC<MeetingMinutesGenerationProps> = ({
           {generatedMinutes && (
             <div className="flex gap-1">
               <ButtonCopy text={generatedMinutes} interUseCasesKey="minutes" />
+              {enabled('writer') && (
+                <ButtonIcon
+                  title={t('meetingMinutes.edit_in_writer')}
+                  onClick={handleEditInWriter}>
+                  <PiPencilLine className="text-xl" />
+                </ButtonIcon>
+              )}
               <ButtonIcon onClick={handleDownload}>
                 <PiDownloadSimple className="text-xl" />
               </ButtonIcon>

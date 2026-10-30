@@ -853,6 +853,7 @@ meetingMinutes:
   diagram_options: Diagram Types to Generate
   diagram_sequence: Sequence Diagram (Relationships)
   diagram_timeline: Timeline (Deadlines & Schedule)
+  edit_in_writer: Edit in Writing
   frequency: Generation Frequency
   frequency_10min: Every 10 minutes
   frequency_1min: Every 1 minute

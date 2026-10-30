@@ -462,6 +462,7 @@ meetingMinutes:
   clear_minutes: 清除会议纪要
   custom_prompt: 自定义提示
   custom_prompt_placeholder: 输入用于生成会议纪要的自定义提示...
+  edit_in_writer: 在写作中编辑
   frequency: 生成频率
   frequency_10min: 每10分钟
   frequency_1min: 每分钟

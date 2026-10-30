@@ -558,6 +558,7 @@ meetingMinutes:
   clear_minutes: Xóa biên bản
   custom_prompt: Lời nhắc tùy chỉnh
   custom_prompt_placeholder: Nhập lời nhắc tùy chỉnh để tạo biên bản cuộc họp...
+  edit_in_writer: Chỉnh sửa trong Viết văn
   frequency: Tần suất tạo
   frequency_10min: Mỗi 10 phút
   frequency_1min: Mỗi phút

@@ -147,8 +147,14 @@ const TailwindAdvancedEditor: React.FC<Props> = ({ initialSentence }) => {
     (editor: Editor) => {
       setEditorRef(editor);
       setCommentManager(new AICommentManager(editor, write, t));
+      // Set the sentence passed via URL parameters here instead of via
+      // initialContent, because the markdown extension's setContent parses
+      // string content as markdown (initialContent only accepts JSONContent)
+      if (initialSentence) {
+        editor.commands.setContent(initialSentence);
+      }
     },
-    [write, t]
+    [write, t, initialSentence]
   );
 
   // Apply Codeblock Highlighting on the HTML from editor.getHTML()
@@ -223,18 +229,12 @@ const TailwindAdvancedEditor: React.FC<Props> = ({ initialSentence }) => {
   }, [comments, recalculateCommentPositions]);
 
   // Set the initial content
+  // (when initialSentence is given, the content is set as markdown in
+  // handleEditorCreated; start from an empty document here)
   useEffect(() => {
     const storedContent = window.localStorage.getItem('novel-content');
     const content = initialSentence
-      ? {
-          type: 'doc',
-          content: [
-            {
-              type: 'paragraph',
-              content: [{ type: 'text', text: initialSentence }],
-            },
-          ],
-        }
+      ? emptyContent
       : storedContent
         ? JSON.parse(storedContent)
         : getDefaultEditorContent(t);

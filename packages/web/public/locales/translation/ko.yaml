@@ -430,6 +430,7 @@ meetingMinutes:
   clear_minutes: 회의록 지우기
   custom_prompt: 사용자 정의 프롬프트
   custom_prompt_placeholder: 회의록 생성용 사용자 정의 프롬프트를 입력하세요...
+  edit_in_writer: 글쓰기에서 편집
   frequency: 생성 빈도
   frequency_10min: 10분마다
   frequency_1min: 1분마다
