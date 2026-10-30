@@ -3575,36 +3575,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 2`] = `
       "Type": "Custom::OssIndex",
       "UpdateReplacePolicy": "Delete",
     },
-    "WebCrawlerDataSource": {
-      "Properties": {
-        "DataSourceConfiguration": {
-          "Type": "WEB",
-          "WebConfiguration": {
-            "CrawlerConfiguration": {
-              "CrawlerLimits": {
-                "MaxPages": 100,
-                "RateLimit": 300,
-              },
-              "Scope": "HOST_ONLY",
-            },
-            "SourceConfiguration": {
-              "UrlConfiguration": {
-                "SeedUrls": [
-                  {
-                    "Url": "https://aws-samples.github.io/generative-ai-use-cases/en/",
-                  },
-                ],
-              },
-            },
-          },
-        },
-        "KnowledgeBaseId": {
-          "Ref": "KnowledgeBase",
-        },
-        "Name": "web-crawler-data-source",
-      },
-      "Type": "AWS::Bedrock::DataSource",
-    },
   },
   "Rules": {
     "CheckBootstrapVersion": {
@@ -17494,36 +17464,6 @@ exports[`GenerativeAiUseCases matches the snapshot 2`] = `
       },
       "Type": "Custom::OssIndex",
       "UpdateReplacePolicy": "Delete",
-    },
-    "WebCrawlerDataSource": {
-      "Properties": {
-        "DataSourceConfiguration": {
-          "Type": "WEB",
-          "WebConfiguration": {
-            "CrawlerConfiguration": {
-              "CrawlerLimits": {
-                "MaxPages": 100,
-                "RateLimit": 300,
-              },
-              "Scope": "HOST_ONLY",
-            },
-            "SourceConfiguration": {
-              "UrlConfiguration": {
-                "SeedUrls": [
-                  {
-                    "Url": "https://aws-samples.github.io/generative-ai-use-cases/en/",
-                  },
-                ],
-              },
-            },
-          },
-        },
-        "KnowledgeBaseId": {
-          "Ref": "KnowledgeBase",
-        },
-        "Name": "web-crawler-data-source",
-      },
-      "Type": "AWS::Bedrock::DataSource",
     },
   },
   "Rules": {

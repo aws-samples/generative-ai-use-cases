@@ -252,9 +252,11 @@ After deployment is complete, follow these steps to sync the Knowledge Base Data
 1. Open the [Knowledge Base console](https://console.aws.amazon.com/bedrock/home#/knowledge-bases)
 2. Click on generative-ai-use-cases-jp
 3. Select s3-data-source and click Sync
-4. Select web-crawler-data-source and click Sync
 
-When the Status of each data source becomes Available, the process is complete. Files stored in S3 and web pages fetched by the Web Crawler have been ingested and can be searched through the Knowledge Base.
+When the Status becomes Available, the process is complete. Files stored in S3 have been ingested and can be searched through the Knowledge Base.
+
+> [!NOTE]
+> Starting September 30, 2026, connectors such as Web Crawler can no longer be newly created on customer-managed knowledge bases, so the sample web-crawler-data-source is no longer created. See the [Web Crawler data source documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/webcrawl-data-source-connector.html) for details.
 
 > [!NOTE]
 > After enabling RAG Chat (Knowledge Base), if you want to disable it again, set `ragKnowledgeBaseEnabled: false` and redeploy. This will disable RAG Chat (Knowledge Base), but the `RagKnowledgeBaseStack` itself will remain. To completely remove it, open the management console and delete the `RagKnowledgeBaseStack` stack from CloudFormation in the modelRegion.
@@ -344,7 +346,7 @@ To apply changes, follow these steps to delete and recreate the existing Knowled
 
 With the deletion of RagKnowledgeBaseStack, **the S3 bucket for RAG chat and the RAG files stored in it will be deleted**.
 If you have uploaded RAG files to the S3 bucket, back them up and upload them again after redeployment.
-Also, follow the previously mentioned steps to sync the Data sources (s3-data-source, web-crawler-data-source) again.
+Also, follow the previously mentioned steps to sync the Data source (s3-data-source) again.
 
 #### How to check OpenSearch Service Index in the management console
 
