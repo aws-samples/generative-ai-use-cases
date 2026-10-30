@@ -582,42 +582,10 @@ export class RagKnowledgeBaseStack extends Stack {
       name: 's3-data-source',
     });
 
-    // Web Crawler Data Source (GenU documentation site as sample)
-    // S3 Vectors backend does not support WEB data sources
-    if (useS3Vectors) {
-      cdk.Annotations.of(this).addWarningV2(
-        '@genu/s3vectors-web-datasource',
-        'S3 Vectors backend does not support WEB data sources. Only S3 data sources are available.'
-      );
-    }
-
-    if (!useS3Vectors) {
-      new bedrock.CfnDataSource(this, 'WebCrawlerDataSource', {
-        dataSourceConfiguration: {
-          type: 'WEB',
-          webConfiguration: {
-            sourceConfiguration: {
-              urlConfiguration: {
-                seedUrls: [
-                  {
-                    url: 'https://aws-samples.github.io/generative-ai-use-cases/en/',
-                  },
-                ],
-              },
-            },
-            crawlerConfiguration: {
-              crawlerLimits: {
-                rateLimit: 300,
-                maxPages: 100,
-              },
-              scope: 'HOST_ONLY',
-            },
-          },
-        },
-        knowledgeBaseId: knowledgeBase.ref,
-        name: 'web-crawler-data-source',
-      });
-    }
+    // The Web Crawler sample data source was removed: starting September 30, 2026,
+    // new Web Crawler connectors can no longer be created on customer-managed
+    // knowledge bases.
+    // https://docs.aws.amazon.com/bedrock/latest/userguide/webcrawl-data-source-connector.html
 
     if (!useS3Vectors && collection && ossIndex) {
       knowledgeBase.addDependency(collection);

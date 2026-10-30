@@ -253,9 +253,11 @@ npx -w packages/cdk cdk bootstrap --region us-east-1
 1. [Knowledge Base 콘솔](https://console.aws.amazon.com/bedrock/home#/knowledge-bases) 열기
 2. generative-ai-use-cases-jp 클릭
 3. s3-data-source를 선택하고 Sync 클릭
-4. web-crawler-data-source를 선택하고 Sync 클릭
 
-각 데이터 소스의 Status가 Available이 되면 프로세스가 완료됩니다. S3에 저장된 파일과 Web Crawler로 가져온 웹 페이지가 수집되어 Knowledge Base를 통해 검색할 수 있습니다.
+Status가 Available이 되면 프로세스가 완료됩니다. S3에 저장된 파일이 수집되어 Knowledge Base를 통해 검색할 수 있습니다.
+
+> [!NOTE]
+> 2026년 9월 30일부터 customer-managed Knowledge Base에서 Web Crawler 등의 커넥터를 새로 생성할 수 없게 되어, 샘플로 생성하던 web-crawler-data-source는 더 이상 생성하지 않습니다. 자세한 내용은 [Web Crawler 데이터 소스 문서](https://docs.aws.amazon.com/bedrock/latest/userguide/webcrawl-data-source-connector.html)를 참조하세요.
 
 > [!NOTE]
 > RAG Chat (Knowledge Base)를 활성화한 후 다시 비활성화하려면 `ragKnowledgeBaseEnabled: false`로 설정하고 재배포합니다. 이렇게 하면 RAG Chat (Knowledge Base)가 비활성화되지만 `RagKnowledgeBaseStack` 자체는 남아있습니다. 완전히 제거하려면 관리 콘솔을 열고 modelRegion의 CloudFormation에서 `RagKnowledgeBaseStack` 스택을 삭제하세요.
@@ -345,7 +347,7 @@ chunkingConfiguration: {
 
 RagKnowledgeBaseStack 삭제와 함께 **RAG 채팅용 S3 버킷과 그 안에 저장된 RAG 파일이 삭제됩니다**.
 S3 버킷에 RAG 파일을 업로드한 경우 백업하고 재배포 후 다시 업로드하세요.
-또한 앞서 언급한 단계에 따라 데이터 소스 (s3-data-source, web-crawler-data-source)를 다시 동기화하세요.
+또한 앞서 언급한 단계에 따라 데이터 소스 (s3-data-source)를 다시 동기화하세요.
 
 #### 관리 콘솔에서 OpenSearch Service 인덱스 확인 방법
 
