@@ -19,6 +19,8 @@ import {
   DynamoDBDocumentClient,
   PutCommand,
   QueryCommand,
+  QueryCommandInput,
+  QueryCommandOutput,
   TransactWriteCommand,
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
@@ -50,33 +52,53 @@ export const createChat = async (_userId: string): Promise<Chat> => {
   return item;
 };
 
+/**
+ * Run a Query that relies on a FilterExpression and return the first matching item.
+ *
+ * DynamoDB reads up to 1 MB per Query page and applies FilterExpression *after* that
+ * read, so a matching item can sit on a later page even though the key condition is
+ * narrow. Without following LastEvaluatedKey the item is reported as not found.
+ */
+const queryFirstMatch = async <T>(
+  input: Omit<QueryCommandInput, 'ExclusiveStartKey'>
+): Promise<T | null> => {
+  let exclusiveStartKey: QueryCommandInput['ExclusiveStartKey'] = undefined;
+
+  do {
+    const res: QueryCommandOutput = await dynamoDbDocument.send(
+      new QueryCommand({ ...input, ExclusiveStartKey: exclusiveStartKey })
+    );
+
+    if (res.Items && res.Items.length > 0) {
+      return res.Items[0] as T;
+    }
+
+    exclusiveStartKey = res.LastEvaluatedKey;
+  } while (exclusiveStartKey);
+
+  return null;
+};
+
 export const findChatById = async (
   _userId: string,
   _chatId: string
 ): Promise<Chat | null> => {
   const userId = `user#${_userId}`;
   const chatId = `chat#${_chatId}`;
-  const res = await dynamoDbDocument.send(
-    new QueryCommand({
-      TableName: TABLE_NAME,
-      KeyConditionExpression: '#id = :id',
-      FilterExpression: '#chatId = :chatId',
-      ExpressionAttributeNames: {
-        '#id': 'id',
-        '#chatId': 'chatId',
-      },
-      ExpressionAttributeValues: {
-        ':id': userId,
-        ':chatId': chatId,
-      },
-    })
-  );
 
-  if (!res.Items || res.Items.length === 0) {
-    return null;
-  } else {
-    return res.Items[0] as Chat;
-  }
+  return await queryFirstMatch<Chat>({
+    TableName: TABLE_NAME,
+    KeyConditionExpression: '#id = :id',
+    FilterExpression: '#chatId = :chatId',
+    ExpressionAttributeNames: {
+      '#id': 'id',
+      '#chatId': 'chatId',
+    },
+    ExpressionAttributeValues: {
+      ':id': userId,
+      ':chatId': chatId,
+    },
+  });
 };
 
 export const findSystemContextById = async (
@@ -85,27 +107,20 @@ export const findSystemContextById = async (
 ): Promise<SystemContext | null> => {
   const userId = `systemContext#${_userId}`;
   const systemContextId = `systemContext#${_systemContextId}`;
-  const res = await dynamoDbDocument.send(
-    new QueryCommand({
-      TableName: TABLE_NAME,
-      KeyConditionExpression: '#id = :id',
-      FilterExpression: '#systemContextId = :systemContextId',
-      ExpressionAttributeNames: {
-        '#id': 'id',
-        '#systemContextId': 'systemContextId',
-      },
-      ExpressionAttributeValues: {
-        ':id': userId,
-        ':systemContextId': systemContextId,
-      },
-    })
-  );
 
-  if (!res.Items || res.Items.length === 0) {
-    return null;
-  } else {
-    return res.Items[0] as SystemContext;
-  }
+  return await queryFirstMatch<SystemContext>({
+    TableName: TABLE_NAME,
+    KeyConditionExpression: '#id = :id',
+    FilterExpression: '#systemContextId = :systemContextId',
+    ExpressionAttributeNames: {
+      '#id': 'id',
+      '#systemContextId': 'systemContextId',
+    },
+    ExpressionAttributeValues: {
+      ':id': userId,
+      ':systemContextId': systemContextId,
+    },
+  });
 };
 
 export const listChats = async (
