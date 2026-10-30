@@ -816,6 +816,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   // === Speech to Speech ===
 
   // Amazon
+  'amazon.nova-2-5-sonic': {
+    flags: MODEL_FEATURE.SPEECH_TO_SPEECH,
+    displayName: 'Nova 2.5 Sonic',
+  },
   'amazon.nova-2-sonic-v1:0': {
     flags: MODEL_FEATURE.SPEECH_TO_SPEECH,
     displayName: 'Nova 2 Sonic',
