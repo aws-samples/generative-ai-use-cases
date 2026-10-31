@@ -1,0 +1,89 @@
+# Fails when a pull request would replace, delete or orphan a stateful resource
+# (DynamoDB, S3, Cognito, KMS, ...) in the default `cdk synth` output, which
+# would lose data in existing deployments. A maintainer adds the
+# `cdk-destructive-ok` label after reviewing the migration steps.
+#
+# Runs the PR's code with a read-only token and no secrets. The comparison
+# script is taken from the base commit, so a PR cannot weaken it for itself.
+name: CDK Destructive-Change Guard
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cdk-destructive-guard-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  guard:
+    name: 'CDK destructive-change guard'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CDK_DEFAULT_ACCOUNT: 123456789012
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      GUARD: packages/cdk/scripts/destructive-guard/cli.ts
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.HEAD_SHA }}
+          path: head
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check whether CDK output can change
+        id: scope
+        working-directory: head
+        run: |
+          MERGE_BASE=$(git merge-base "$BASE_SHA" "$HEAD_SHA")
+          echo "merge_base=$MERGE_BASE" >> "$GITHUB_OUTPUT"
+          if git diff --name-only "$MERGE_BASE" "$HEAD_SHA" \
+            | grep -qE '^(packages/(cdk|common|types)/|package(-lock)?\.json$)'; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+            echo "No CDK, shared package or dependency changes; skipped." >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.scope.outputs.needed == 'true'
+        with:
+          ref: ${{ steps.scope.outputs.merge_base }}
+          path: base
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        if: steps.scope.outputs.needed == 'true'
+        with:
+          node-version: 22.x
+          cache: npm
+          cache-dependency-path: |
+            base/package-lock.json
+            head/package-lock.json
+      - name: Synthesize base and head
+        if: steps.scope.outputs.needed == 'true'
+        run: |
+          for tree in base head; do
+            (cd "$tree" && npm ci && npm -w packages/cdk run cdk -- synth -q -o "$GITHUB_WORKSPACE/out/$tree")
+          done
+      - name: Compare
+        if: steps.scope.outputs.needed == 'true'
+        env:
+          ALLOWED: ${{ contains(github.event.pull_request.labels.*.name, 'cdk-destructive-ok') }}
+        run: |
+          # Use the base commit's guard. Fall back to the head's only while the
+          # guard does not exist on the base yet.
+          RUNNER=base
+          [ -f "base/$GUARD" ] || RUNNER=head
+          set +e
+          (cd "$RUNNER/packages/cdk" && npx ts-node "../../$GUARD" "$GITHUB_WORKSPACE/out/base" "$GITHUB_WORKSPACE/out/head")
+          STATUS=$?
+          set -e
+          if [ "$STATUS" -eq 1 ] && [ "$ALLOWED" = "true" ]; then
+            echo "Destructive changes were reviewed (cdk-destructive-ok label)." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          exit "$STATUS"

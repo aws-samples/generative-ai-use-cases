@@ -40,6 +40,17 @@ For detailed development guidelines including linting and code style requirement
 - [DEVELOPMENT.md (English)](docs/en/DEVELOPMENT.md)
 - [DEVELOPMENT.md (日本語)](docs/ja/DEVELOPMENT.md)
 
+## Checks on pull requests
+
+Every pull request runs the CI checks (lint, type check, unit tests and the CDK snapshot test). Please make sure they pass before you ask for a review.
+
+The **CDK destructive-change check** (`cdk-destructive-guard.yml`) compares the `cdk synth` output of your branch with its base, using the default parameters. It fails when a stateful resource (DynamoDB, S3, Cognito, KMS, Knowledge Base, ...) would be replaced, deleted or orphaned, because that change would affect data in existing deployments. If the change is intended:
+
+- Describe the impact on existing deployments and the migration steps in the pull request.
+- A maintainer reviews them and marks the change as accepted. You do not need to do anything else.
+
+For a change that touches authentication, permissions or data access, please explain in the pull request what the change allows that was not allowed before.
+
 ## Coding Standards
 
 When contributing code, please follow the coding standards for each package:

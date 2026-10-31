@@ -1,0 +1,48 @@
+# Dependabot is used for security updates only (version updates are disabled
+# with open-pull-requests-limit: 0) and groups them into one PR per ecosystem
+# per week instead of one PR per package. Patch and minor groups are merged
+# automatically by dependabot-auto-merge.yml; major bumps stay separate PRs
+# for a maintainer to review.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - '/'
+      - '/browser-extension'
+      - '/packages/cdk/fargate-s3-server'
+      - '/packages/cdk/custom-resources/*'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 0
+    groups:
+      npm-security:
+        applies-to: security-updates
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: uv
+    directories:
+      - '/packages/cdk/mcp-api'
+      - '/packages/cdk/lambda-python/*'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 0
+    groups:
+      uv-security:
+        applies-to: security-updates
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ['*']
