@@ -12,6 +12,7 @@
     "postinstall": "npm ci --prefix custom-resources/opensearch-index && npm ci --prefix custom-resources/apply-tags && npm ci --prefix fargate-s3-server"
   },
   "devDependencies": {
+    "@aws-cdk/cloudformation-diff": "^2.187.6",
     "@types/aws-lambda": "^8.10.137",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
