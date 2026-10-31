@@ -1521,9 +1521,13 @@ videoAnalyzer:
 voiceChat:
   close: Close session
   default_system_prompt: You are an AI assistant.
+  gender:
+    feminine: Feminine-sounding
+    masculine: Masculine-sounding
   im_listening: I'm listening...
   start: Start new session
   title: Voice Chat
+  voice: Voice
 webcontent:
   additional_context: Additional context
   additional_context_placeholder: You can enter additional points to consider (e.g., summarize)

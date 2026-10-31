@@ -57,7 +57,7 @@
     ],
     "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
     "videoGenerationModelIds": ["amazon.nova-reel-v1:0"],
-    "speechToSpeechModelIds": ["amazon.nova-2-sonic-v1:0"],
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"],
     "endpointNames": [],
     "agentEnabled": false,
     "agentFoundationModel": "global.anthropic.claude-sonnet-4-6",

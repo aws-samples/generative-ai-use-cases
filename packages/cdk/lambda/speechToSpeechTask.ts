@@ -88,7 +88,7 @@ const enqueueSessionStart = () => {
   });
 };
 
-const enqueuePromptStart = () => {
+const enqueuePromptStart = (voiceId: string) => {
   eventQueue.push({
     event: {
       promptStart: {
@@ -103,8 +103,7 @@ const enqueuePromptStart = () => {
           sampleRateHertz: 24000,
           sampleSizeBits: 16,
           channelCount: 1,
-          // TODO: avoid hardcoding
-          voiceId: 'tiffany',
+          voiceId,
         },
       },
     },
@@ -410,7 +409,13 @@ const processResponseStream = async (
   }
 };
 
-export const handler = async (event: { channelId: string; model: Model }) => {
+export const handler = async (event: {
+  channelId: string;
+  model: Model;
+  voiceId?: string;
+}) => {
+  // Fall back to 'tiffany' for backward compatibility when voiceId is omitted
+  const voiceId = event.voiceId ?? 'tiffany';
   let channel: EventsChannel | null = null;
 
   try {
@@ -482,7 +487,7 @@ export const handler = async (event: { channelId: string; model: Model }) => {
         const event = data?.event;
         if (event && event.direction === 'ctob') {
           if (event.event === 'promptStart') {
-            enqueuePromptStart();
+            enqueuePromptStart(voiceId);
           } else if (event.event === 'systemPrompt') {
             enqueueSystemPrompt(event.data);
           } else if (event.event === 'audioStart') {

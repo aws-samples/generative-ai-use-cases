@@ -857,9 +857,13 @@ videoAnalyzer:
 voiceChat:
   close: 세션 종료
   default_system_prompt: 당신은 AI 어시스턴트입니다.
+  gender:
+    feminine: 여성스러운 음성
+    masculine: 남성스러운 음성
   im_listening: 듣고 있습니다...
   start: 새 세션 시작
   title: 음성 채팅
+  voice: 음성
 webcontent:
   additional_context: 추가 맥락
   additional_context_placeholder: >-

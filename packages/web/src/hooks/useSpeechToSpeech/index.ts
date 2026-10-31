@@ -148,7 +148,7 @@ export const useSpeechToSpeech = () => {
     setTimeout(() => processAudioInput(), 0);
   };
 
-  const connectToAppSync = async (model: Model) => {
+  const connectToAppSync = async (model: Model, voiceId?: string) => {
     audioInputQueue.current = [];
 
     const channelId = uuid();
@@ -199,7 +199,7 @@ export const useSpeechToSpeech = () => {
       },
     });
 
-    await api.post('speech-to-speech', { channel: channelId, model });
+    await api.post('speech-to-speech', { channel: channelId, model, voiceId });
   };
 
   const startRecording = async () => {
@@ -247,7 +247,11 @@ export const useSpeechToSpeech = () => {
     await dispatchEvent('audioStop');
   };
 
-  const startSession = async (systemPrompt: string, model: Model) => {
+  const startSession = async (
+    systemPrompt: string,
+    model: Model,
+    voiceId?: string
+  ) => {
     if (isActive || isLoading) {
       return;
     }
@@ -258,7 +262,7 @@ export const useSpeechToSpeech = () => {
 
     systemPromptRef.current = systemPrompt;
 
-    await connectToAppSync(model);
+    await connectToAppSync(model, voiceId);
     await initAudio();
   };
 

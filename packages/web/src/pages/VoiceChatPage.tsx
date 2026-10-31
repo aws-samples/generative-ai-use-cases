@@ -36,9 +36,40 @@ const VoiceChatPage: React.FC = () => {
   );
   const [inputSystemPrompt, setInputSystemPrompt] = useState(systemPrompt);
   const { scrollableContainer, setFollowing } = useFollow();
-  const { speechToSpeechModelIds, speechToSpeechModels, modelDisplayName } =
-    MODELS;
+  const {
+    speechToSpeechModelIds,
+    speechToSpeechModels,
+    modelDisplayName,
+    speechToSpeechVoices,
+  } = MODELS;
   const [modelId, setModelId] = useState(speechToSpeechModelIds[0]);
+
+  // Voice options (combined language + gender) for the selected model
+  const voiceOptions = useMemo(() => {
+    return speechToSpeechVoices(modelId).map((voice) => {
+      const gender = t(`voiceChat.gender.${voice.gender}`);
+      const voiceName =
+        voice.voiceId.charAt(0).toUpperCase() + voice.voiceId.slice(1);
+      return {
+        value: voice.voiceId,
+        // e.g. "English (US) / en-US / Tiffany (Feminine-sounding)"
+        label: `${voice.language} / ${voice.locale} / ${voiceName} (${gender})`,
+      };
+    });
+  }, [speechToSpeechVoices, modelId, t]);
+
+  const [voiceId, setVoiceId] = useState(voiceOptions[0]?.value ?? '');
+
+  // Reset the voice selection to the first available voice whenever the
+  // selected model changes (the available voices differ per model).
+  useEffect(() => {
+    setVoiceId(voiceOptions[0]?.value ?? '');
+  }, [voiceOptions]);
+
+  // Label of the currently selected voice, shown while a session is active.
+  const selectedVoiceLabel = useMemo(() => {
+    return voiceOptions.find((o) => o.value === voiceId)?.label ?? '';
+  }, [voiceOptions, voiceId]);
   // Define useRef for the cleanup function when leaving the page.
   // To get the latest value without including isActive in the dependency array.
   const isActiveRef = useRef(isActive);
@@ -86,8 +117,15 @@ const VoiceChatPage: React.FC = () => {
           {t('voiceChat.title')}
         </div>
 
+        {isActive && (
+          <div className="mt-1 flex w-full flex-col items-center justify-center text-sm text-gray-500 print:hidden">
+            <div>{modelDisplayName(modelId)}</div>
+            {selectedVoiceLabel && <div>{selectedVoiceLabel}</div>}
+          </div>
+        )}
+
         {isEmpty && !isLoading && !isActive && (
-          <div className="mt-2 flex w-full items-end justify-center lg:mt-0 print:hidden">
+          <div className="mt-2 flex w-full flex-col items-center justify-center gap-2 lg:mt-0 print:hidden">
             <Select
               value={modelId}
               onChange={setModelId}
@@ -95,6 +133,14 @@ const VoiceChatPage: React.FC = () => {
                 return { value: m, label: modelDisplayName(m) };
               })}
             />
+            {voiceOptions.length > 0 && (
+              <Select
+                label={t('voiceChat.voice')}
+                value={voiceId}
+                onChange={setVoiceId}
+                options={voiceOptions}
+              />
+            )}
           </div>
         )}
 
@@ -204,7 +250,7 @@ const VoiceChatPage: React.FC = () => {
                   (m) => m.modelId === modelId
                 );
                 setFollowing(true);
-                startSession(systemPrompt, model!);
+                startSession(systemPrompt, model!, voiceId || undefined);
               }}
               outlined={true}
               disabled={isLoading}>

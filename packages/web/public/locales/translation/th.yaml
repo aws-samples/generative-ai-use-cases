@@ -1124,9 +1124,13 @@ videoAnalyzer:
 voiceChat:
   close: ปิดเซสชั่น
   default_system_prompt: You are an AI assistant.
+  gender:
+    feminine: เสียงคล้ายผู้หญิง
+    masculine: เสียงคล้ายผู้ชาย
   im_listening: กำลังฟัง...
   start: เริ่มเซสชันใหม่
   title: Voice Chat
+  voice: เสียง
 webcontent:
   additional_context: บริบทเพิ่มเติม
   additional_context_placeholder: คุณสามารถป้อนประเด็นเพิ่มเติมที่ต้องการพิจารณา (เช่น สรุป)

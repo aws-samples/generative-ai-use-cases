@@ -939,9 +939,13 @@ videoAnalyzer:
 voiceChat:
   close: 结束会话
   default_system_prompt: 您是一个AI助手。
+  gender:
+    feminine: 偏女性的声音
+    masculine: 偏男性的声音
   im_listening: 请说话
   start: 开始会话
   title: 语音聊天
+  voice: 语音
 webcontent:
   additional_context: 附加上下文
   additional_context_placeholder: 您可以输入希望额外考虑的点（例如：进行摘要）
