@@ -130,6 +130,26 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
     displayName: 'Claude Opus 4',
   },
+  'global.anthropic.claude-opus-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Opus 5.5',
+  },
+  'us.anthropic.claude-opus-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Opus 5.5',
+  },
+  'eu.anthropic.claude-opus-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Opus 5.5',
+  },
+  'au.anthropic.claude-opus-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Opus 5.5',
+  },
+  'jp.anthropic.claude-opus-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Opus 5.5',
+  },
   'global.anthropic.claude-opus-5': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Opus 5',
@@ -145,6 +165,26 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   'au.anthropic.claude-opus-5': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Opus 5',
+  },
+  'global.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'us.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'eu.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'au.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'jp.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
   },
   'global.anthropic.claude-opus-4-8': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
@@ -195,6 +235,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Claude Opus 4.6',
   },
   'global.anthropic.claude-sonnet-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Sonnet 5.5',
+  },
+  'us.anthropic.claude-sonnet-5-5': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
     displayName: 'Claude Sonnet 5.5',
   },
@@ -812,8 +856,10 @@ export const BEDROCK_SPEECH_TO_SPEECH_MODELS = Object.keys(
 // Prompt caching
 // https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html
 export const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
+  'anthropic.claude-haiku-5-5': ['messages', 'system', 'tools'],
   'anthropic.claude-sonnet-5-5': ['messages', 'system', 'tools'],
   'anthropic.claude-sonnet-5': ['messages', 'system', 'tools'],
+  'anthropic.claude-opus-5-5': ['messages', 'system', 'tools'],
   'anthropic.claude-opus-5': ['messages', 'system', 'tools'],
   'anthropic.claude-opus-4-8': ['messages', 'system', 'tools'],
   'anthropic.claude-opus-4-7': ['messages', 'system', 'tools'],

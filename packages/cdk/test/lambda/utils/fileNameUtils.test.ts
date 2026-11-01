@@ -51,4 +51,95 @@ describe('convertToSafeFilename', () => {
     const result = convertToSafeFilename('file@#$.pdf');
     expect(result).toBe('file____cf25ced4');
   });
+
+  // Bedrock rejects every whitespace character except a single ASCII space.
+  // \s in a character class also matches U+3000 and tabs, so they used to pass through.
+  it('should replace ideographic space (U+3000) with underscore', () => {
+    const result = convertToSafeFilename('test\u3000name.pdf');
+    expect(result).toBe('test_name_706fc6f2');
+  });
+
+  it('should replace ideographic space in an all-Japanese filename', () => {
+    const result = convertToSafeFilename(
+      '\u30c6\u30b9\u30c8\u3000\u8cc7\u6599.xlsx'
+    );
+    expect(result).toBe('_______9c852928');
+  });
+
+  it('should replace tab with underscore', () => {
+    const result = convertToSafeFilename('test\tname.pdf');
+    expect(result).toBe('test_name_38e78b48');
+  });
+
+  it('should collapse consecutive spaces into a single space', () => {
+    const result = convertToSafeFilename('test  name.pdf');
+    expect(result).toBe('test name_695fce01');
+  });
+
+  it('should keep a single space as is', () => {
+    const result = convertToSafeFilename('test name.pdf');
+    expect(result).toBe('test name');
+  });
+
+  it('should fall back to a placeholder when the name becomes empty', () => {
+    const result = convertToSafeFilename('');
+    expect(result).toBe('file_d41d8cd9');
+  });
+
+  // DocumentBlock.name is documented as "Minimum length of 1. Maximum length of 200."
+  // https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_DocumentBlock.html
+  it('keeps an ASCII name of exactly 200 characters as is', () => {
+    const result = convertToSafeFilename(`${'a'.repeat(200)}.pdf`);
+    expect(result).toBe('a'.repeat(200));
+  });
+
+  it('caps a long ASCII name at 200 characters with a hash suffix', () => {
+    const result = convertToSafeFilename(`${'a'.repeat(300)}.pdf`);
+    expect(result).toHaveLength(200);
+    expect(result).toMatch(/^a{191}_[0-9a-f]{8}$/);
+  });
+
+  // Truncation alone used to add no hash, so names sharing the first 200
+  // characters collapsed into the same document name.
+  it('gives two long ASCII names with the same prefix different results', () => {
+    const a = convertToSafeFilename(`${'a'.repeat(250)}A.pdf`);
+    const b = convertToSafeFilename(`${'a'.repeat(250)}B.pdf`);
+    expect(a).not.toBe(b);
+  });
+
+  it('trims leading and trailing spaces', () => {
+    const result = convertToSafeFilename(' test name .pdf');
+    expect(result).toMatch(/^test name_[0-9a-f]{8}$/);
+  });
+
+  it('keeps names that differ only by surrounding spaces apart', () => {
+    expect(convertToSafeFilename(' abc.pdf')).not.toBe(
+      convertToSafeFilename('abc.pdf')
+    );
+  });
+
+  it('keeps the hash suffix intact when a replaced name is too long', () => {
+    const result = convertToSafeFilename(`${'あ'.repeat(300)}.pdf`);
+    expect(result.length).toBeLessThanOrEqual(200);
+    // The hash is what keeps two different names apart, so it must survive.
+    expect(result).toMatch(/_[0-9a-f]{8}$/);
+  });
+
+  it('gives two different long names different results', () => {
+    const a = convertToSafeFilename(`${'あ'.repeat(300)}.pdf`);
+    const b = convertToSafeFilename(`${'い'.repeat(300)}.pdf`);
+    expect(a).not.toBe(b);
+  });
+
+  it('does not leave a trailing space after truncation', () => {
+    // The cut lands right after the space at index 190
+    const result = convertToSafeFilename(
+      `${'a'.repeat(190)} ${'b'.repeat(20)}.pdf`
+    );
+    expect(result).toMatch(/^a{190}_[0-9a-f]{8}$/);
+  });
+
+  it('never returns an empty name', () => {
+    expect(convertToSafeFilename('   .pdf')).toMatch(/^file_[0-9a-f]{8}$/);
+  });
 });

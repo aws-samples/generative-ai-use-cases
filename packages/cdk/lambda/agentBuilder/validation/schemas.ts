@@ -15,13 +15,11 @@ export const MCPServerConfigSchema = z
       .min(1, 'MCP server name is required')
       .max(100, 'MCP server name must be 100 characters or less'),
     command: z.enum(['uvx', 'npx', 'node', 'python', 'python3'], {
-      errorMap: () => ({
-        message:
-          'Only uvx, npx, node, python, and python3 commands are allowed for MCP servers',
-      }),
+      error:
+        'Only uvx, npx, node, python, and python3 commands are allowed for MCP servers',
     }),
     args: z.array(z.string()).optional().default([]),
-    env: z.record(z.string()).optional().default({}),
+    env: z.record(z.string(), z.string()).optional().default({}),
     enabled: z.boolean().optional().default(true),
     description: z
       .string()
@@ -142,7 +140,7 @@ export const UpdateAgentRequestSchema = z.object({
 });
 
 export const ShareAgentRequestSchema = z.object({
-  isPublic: z.boolean({ required_error: 'isPublic must be a boolean value' }),
+  isPublic: z.boolean({ error: 'isPublic must be a boolean value' }),
 });
 
 export const CloneAgentRequestSchema = z.object({
