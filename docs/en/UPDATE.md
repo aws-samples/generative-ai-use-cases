@@ -41,6 +41,13 @@ To update to a specific release, specify its tag instead:
 git merge v5.6.0
 ```
 
+If you have no commits of your own, the merge is a fast-forward and your code matches the release.
+If you have your own commits, Git creates a merge commit and opens an editor for the commit message. To keep the default message, add `--no-edit`:
+
+```bash
+git merge --no-edit v5.6.0
+```
+
 If you previously updated by pulling the main branch, your code may already contain changes that are newer than the latest release.
 In that case, the merge above changes nothing, and the next release brings your code back in line with a release.
 
@@ -93,6 +100,14 @@ Code with conflicts needs to be manually fixed.
 
 Pay special attention to conflicts in [cdk.json](/packages/cdk/cdk.json).
 **Always check after the merge to ensure that the items you configured locally have not been lost.**
+
+Do not resolve conflicts in `package-lock.json` by hand. Take the upstream version and regenerate it:
+
+```bash
+git checkout --theirs package-lock.json
+npm install
+git add package-lock.json
+```
 
 ### Using the main branch
 

@@ -41,6 +41,13 @@ git merge $(git describe --tags --abbrev=0 origin/main)
 git merge v5.6.0
 ```
 
+ご自身のコミットがない場合、マージは fast-forward になり、コードはリリースと同じ状態になります。
+ご自身のコミットがある場合はマージコミットが作られ、コミットメッセージを編集するエディタが開きます。メッセージを変更しない場合は `--no-edit` を付けて実行できます。
+
+```bash
+git merge --no-edit v5.6.0
+```
+
 これまで main ブランチを pull してアップデートしていた場合、コードに最新のリリースより新しい変更がすでに含まれていることがあります。
 その場合は上記のマージでは何も変わらず、次のリリースをマージした時点でリリースの内容に揃います。
 
@@ -93,6 +100,14 @@ git diff HEAD v5.6.0
 
 特に [cdk.json](/packages/cdk/cdk.json) のコンフリクトには注意が必要です。
 **手元で設定した項目が消えていないか、マージ後に必ず確認してください。**
+
+`package-lock.json` のコンフリクトは手動で修正せず、本家の内容を採用してから再生成してください。
+
+```bash
+git checkout --theirs package-lock.json
+npm install
+git add package-lock.json
+```
 
 ### main ブランチを利用する場合
 

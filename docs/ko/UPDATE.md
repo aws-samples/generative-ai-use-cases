@@ -41,6 +41,13 @@ git merge $(git describe --tags --abbrev=0 origin/main)
 git merge v5.6.0
 ```
 
+자신의 커밋이 없는 경우 병합은 fast-forward로 처리되며 코드는 릴리스와 같은 상태가 됩니다.
+자신의 커밋이 있는 경우 병합 커밋이 생성되고 커밋 메시지를 편집하는 에디터가 열립니다. 메시지를 변경하지 않으려면 `--no-edit`를 붙여 실행할 수 있습니다:
+
+```bash
+git merge --no-edit v5.6.0
+```
+
 이전에 main 브랜치를 pull하여 업데이트한 경우, 코드에 최신 릴리스보다 새로운 변경사항이 이미 포함되어 있을 수 있습니다.
 이 경우 위의 병합으로는 아무것도 변경되지 않으며, 다음 릴리스를 병합하면 릴리스 내용과 일치하게 됩니다.
 
@@ -93,6 +100,14 @@ git diff HEAD v5.6.0
 
 [cdk.json](/packages/cdk/cdk.json)의 충돌에 특히 주의하세요.
 **병합 후에는 항상 확인하여 로컬에서 구성한 항목이 손실되지 않았는지 확인하세요.**
+
+`package-lock.json`의 충돌은 수동으로 수정하지 말고, 원본 저장소의 내용을 채택한 후 다시 생성하세요:
+
+```bash
+git checkout --theirs package-lock.json
+npm install
+git add package-lock.json
+```
 
 ### main 브랜치 사용
 
