@@ -45,6 +45,7 @@ const baseStackInputSchema = z.object({
     .default([
       'global.anthropic.claude-opus-5-5',
       'global.anthropic.claude-opus-5',
+      'global.anthropic.claude-sonnet-5-5',
       'global.anthropic.claude-sonnet-5',
       'global.anthropic.claude-haiku-5-5',
       'global.anthropic.claude-sonnet-4-6',
