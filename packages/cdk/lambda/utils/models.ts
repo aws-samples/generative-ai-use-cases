@@ -31,7 +31,7 @@ import {
   applyAutoCacheToSystem,
 } from './promptCache';
 import { getFormatFromMimeType, getMimeTypeFromFileName } from './media';
-import { convertToSafeFilename } from './fileNameUtils';
+import { createUniqueDocumentNamer } from './fileNameUtils';
 
 // Default Models
 
@@ -477,6 +477,8 @@ const createConverseCommandInput = (
 
   // Add the string of user role and assistant role other than the system role to the conversation
   messages = messages.filter((message) => message.role !== 'system');
+  // Document names must be unique across the whole request, past turns included
+  const toDocumentName = createUniqueDocumentNamer();
   const conversation = messages.map((message) => {
     const contentBlocks: ContentBlock[] = [];
 
@@ -502,7 +504,7 @@ const createConverseCommandInput = (
           contentBlocks.push({
             document: {
               format,
-              name: convertToSafeFilename(extra.name),
+              name: toDocumentName(extra.name),
               source: {
                 bytes: Buffer.from(extra.source.data, 'base64'),
               },
