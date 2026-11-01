@@ -112,11 +112,11 @@ const DEFAULT_128K_DEFAULT_PARAMS: ConverseInferenceParams = {
 // (128000 is accepted, 128001 returns
 // "The maximum tokens you requested exceeds the model limit of 128000").
 // Keep the output token limit safely below that ceiling.
+// temperature / topP are omitted because the model rejects them
+// (see TEXT_IMAGE_NO_SAMPLING in model.ts).
 const KIMI_K3_DEFAULT_PARAMS: ConverseInferenceParams = {
   inferenceConfig: {
     maxTokens: 120000,
-    temperature: 1,
-    topP: 1,
   },
 };
 
