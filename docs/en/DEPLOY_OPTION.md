@@ -1350,6 +1350,8 @@ This solution supports the following text generation models:
 This solution supports the following speech-to-speech models:
 
 ```
+amazon.nova-2-5-sonic
+amazon.nova-2-sonic-v1:0
 amazon.nova-sonic-v1:0
 ```
 

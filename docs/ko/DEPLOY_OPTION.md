@@ -1182,6 +1182,8 @@ const envs: Record<string, Partial<StackInput>> = {
 이 솔루션은 다음 음성-음성 모델을 지원합니다:
 
 ```
+amazon.nova-2-5-sonic
+amazon.nova-2-sonic-v1:0
 amazon.nova-sonic-v1:0
 ```
 

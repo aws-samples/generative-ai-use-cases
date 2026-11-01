@@ -1369,6 +1369,8 @@ const envs: Record<string, Partial<StackInput>> = {
 このソリューションが対応している speech-to-speech モデルは以下です。
 
 ```
+amazon.nova-2-5-sonic
+amazon.nova-2-sonic-v1:0
 amazon.nova-sonic-v1:0
 ```
 
