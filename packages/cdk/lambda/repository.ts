@@ -10,6 +10,7 @@ import {
   TokenUsageStats,
 } from 'generative-ai-use-cases';
 import * as crypto from 'crypto';
+import { capMessageToItemLimit } from './utils/messageSize';
 
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
@@ -341,9 +342,11 @@ export const batchCreateMessages = async (
   const createdDate = Date.now();
   const feedback = 'none';
 
+  // Oversized messages are shrunk to fit DynamoDB's item limit. The shrunken
+  // copy is also what is returned, so the client shows what was stored.
   const items: RecordedMessage[] = messages.map(
     (m: ToBeRecordedMessage, i: number) => {
-      return {
+      return capMessageToItemLimit({
         id: chatId,
         createdDate: m.createdDate ?? `${createdDate + i}#0`,
         messageId: m.messageId,
@@ -356,7 +359,7 @@ export const batchCreateMessages = async (
         usecase: m.usecase,
         llmType: m.llmType ?? '',
         metadata: m.metadata,
-      };
+      });
     }
   );
 
