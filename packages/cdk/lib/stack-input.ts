@@ -88,7 +88,7 @@ const baseStackInputSchema = z.object({
         }),
       ])
     )
-    .default(['amazon.nova-2-sonic-v1:0']),
+    .default(['amazon.nova-2-5-sonic']),
   endpointNames: z
     .array(
       z.union([
