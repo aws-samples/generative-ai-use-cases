@@ -106,6 +106,7 @@ export default defineConfig(({ mode }) => ({
             'tests/components/**/*.test.{ts,tsx}',
             'tests/hooks/**/*.test.{ts,tsx}',
             'tests/prompts/**/*.test.{ts,tsx}',
+            'tests/utils/**/*.test.{ts,tsx}',
           ],
           environment: 'jsdom',
           globals: true,
