@@ -25,7 +25,7 @@ const MODEL_FEATURE: Record<string, FeatureFlags> = {
     reasoning: true,
   },
   TEXT_IMAGE: { text: true, doc: false, image: true, video: false },
-  // Text + image models that reject sampling params (temperature / topP), e.g. Kimi K3
+  // Text + image models that reject sampling params (temperature / topP), e.g. Kimi K3, GPT-6
   TEXT_IMAGE_NO_SAMPLING: {
     text: true,
     doc: false,
@@ -697,6 +697,56 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   'openai.gpt-oss-20b-1:0': {
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'GPT OSS 20B',
+  },
+  // GPT-6 / GPT-5.6: Converse rejects temperature, topP and document blocks.
+  // Only global. and us. inference profiles exist.
+  'global.openai.gpt-6-sol': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6 Sol',
+  },
+  'us.openai.gpt-6-sol': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6 Sol',
+  },
+  'global.openai.gpt-6-luna': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6 Luna',
+  },
+  'us.openai.gpt-6-luna': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6 Luna',
+  },
+  'global.openai.gpt-6-astra': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6 Astra',
+  },
+  'us.openai.gpt-6-astra': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6 Astra',
+  },
+  'global.openai.gpt-5.6-sol': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-5.6 Sol',
+  },
+  'us.openai.gpt-5.6-sol': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-5.6 Sol',
+  },
+  'global.openai.gpt-5.6-luna': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-5.6 Luna',
+  },
+  'us.openai.gpt-5.6-luna': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-5.6 Luna',
+  },
+  'global.openai.gpt-5.6-terra': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-5.6 Terra',
+  },
+  'us.openai.gpt-5.6-terra': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-5.6 Terra',
   },
   // Google
   'google.gemma-3-4b-it': {
