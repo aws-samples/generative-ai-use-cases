@@ -88,10 +88,34 @@ describe('convertToSafeFilename', () => {
 
   // DocumentBlock.name is documented as "Minimum length of 1. Maximum length of 200."
   // https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_DocumentBlock.html
-  it('caps a long ASCII name at 200 characters', () => {
+  it('keeps an ASCII name of exactly 200 characters as is', () => {
+    const result = convertToSafeFilename(`${'a'.repeat(200)}.pdf`);
+    expect(result).toBe('a'.repeat(200));
+  });
+
+  it('caps a long ASCII name at 200 characters with a hash suffix', () => {
     const result = convertToSafeFilename(`${'a'.repeat(300)}.pdf`);
     expect(result).toHaveLength(200);
-    expect(result).toBe('a'.repeat(200));
+    expect(result).toMatch(/^a{191}_[0-9a-f]{8}$/);
+  });
+
+  // Truncation alone used to add no hash, so names sharing the first 200
+  // characters collapsed into the same document name.
+  it('gives two long ASCII names with the same prefix different results', () => {
+    const a = convertToSafeFilename(`${'a'.repeat(250)}A.pdf`);
+    const b = convertToSafeFilename(`${'a'.repeat(250)}B.pdf`);
+    expect(a).not.toBe(b);
+  });
+
+  it('trims leading and trailing spaces', () => {
+    const result = convertToSafeFilename(' test name .pdf');
+    expect(result).toMatch(/^test name_[0-9a-f]{8}$/);
+  });
+
+  it('keeps names that differ only by surrounding spaces apart', () => {
+    expect(convertToSafeFilename(' abc.pdf')).not.toBe(
+      convertToSafeFilename('abc.pdf')
+    );
   });
 
   it('keeps the hash suffix intact when a replaced name is too long', () => {
@@ -108,12 +132,14 @@ describe('convertToSafeFilename', () => {
   });
 
   it('does not leave a trailing space after truncation', () => {
-    const result = convertToSafeFilename(`${'a'.repeat(199)} bcd.pdf`);
-    expect(result).not.toMatch(/ $/);
-    expect(result.length).toBeLessThanOrEqual(200);
+    // The cut lands right after the space at index 190
+    const result = convertToSafeFilename(
+      `${'a'.repeat(190)} ${'b'.repeat(20)}.pdf`
+    );
+    expect(result).toMatch(/^a{190}_[0-9a-f]{8}$/);
   });
 
-  it('never returns an empty name after truncation', () => {
-    expect(convertToSafeFilename('   .pdf')).not.toBe('');
+  it('never returns an empty name', () => {
+    expect(convertToSafeFilename('   .pdf')).toMatch(/^file_[0-9a-f]{8}$/);
   });
 });

@@ -258,13 +258,14 @@ const convertFileToStrandsContentBlock = async (
   const mimeType = file.type;
   // \s must not be used here: it also matches U+3000 (ideographic space) and tabs,
   // which Bedrock rejects. Consecutive spaces are rejected as well, and the name
-  // is capped at 200 characters.
+  // is capped at 200 characters. Leading and trailing spaces are trimmed.
   const fileName =
     file.name
       .replace(/[^a-zA-Z0-9 \-()[\]]/g, 'X')
       .replace(/ {2,}/g, ' ')
+      .trim()
       .substring(0, 200)
-      .replace(/ +$/, '') || 'file';
+      .trimEnd() || 'file';
 
   // Determine file type based on MIME type
   if (mimeType.startsWith('image/')) {
