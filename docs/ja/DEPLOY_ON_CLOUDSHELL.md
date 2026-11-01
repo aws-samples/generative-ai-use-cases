@@ -17,6 +17,8 @@ GenU では以下の2つの方法でデプロイオプションを指定でき�
 
 [デフォルトの parameter.ts](/packages/cdk/parameter.ts) をダウンロードし、必要な環境設定を追加してください。parameter.ts では dev、staging、prod など複数の環境設定を1つのファイルで管理できます。
 
+上記のデフォルトのファイルは main ブランチのものです。main ブランチにまだリリースされていない変更がある場合は、デプロイするリリースのファイルをダウンロードしてください。[Releases ページ](https://github.com/aws-samples/generative-ai-use-cases/releases) でタグを選択してからファイルを開くと、そのリリースのファイルを取得できます。
+
 ## CloudShell の起動
 
 [CloudShell](https://console.aws.amazon.com/cloudshell/home) を起動します。
@@ -40,6 +42,7 @@ deploy.sh は以下のオプションをサポートしています：
 -c, --cdk-context    ... Path to the cdk.json file
 -p, --parameter-file ... Path to the parameter.ts file
 -e, --env           ... Environment name (e.g., dev, prod)
+-r, --ref           ... Git tag or branch to deploy (default: the latest release)
 -h, --help          ... Show this message
 ```
 
@@ -69,6 +72,13 @@ deploy.sh は以下のオプションをサポートしています：
 
 ```bash
 ./deploy.sh --parameter-file ~/parameter.ts --env prod
+```
+
+5. 特定のリリースやブランチを指定してデプロイ (指定しない場合、`deploy.sh` は最新のリリースをデプロイします)：
+
+```bash
+./deploy.sh --ref v5.6.0
+./deploy.sh --ref main
 ```
 
 デプロイ完了時に CloudFront の URL が表示されます。その URL をブラウザで開くことで GenU にアクセスできます。

@@ -29,10 +29,15 @@ while [[ $# -gt 0 ]]; do
             env_name="$2"
             shift 2
             ;;
+        -r|--ref)
+            git_ref="$2"
+            shift 2
+            ;;
         -h|--help)
             echo "-c, --cdk-context    ... Path to the cdk.json file"
             echo "-p, --parameter-file ... Path to the parameter.ts file"
             echo "-e, --env           ... Environment name (e.g., dev, prod)"
+            echo "-r, --ref           ... Git tag or branch to deploy (default: the latest release)"
             echo "-h, --help          ... Show this message"
             exit 0
             ;;
@@ -63,6 +68,17 @@ rm -rf generative-ai-use-cases
 git clone https://github.com/aws-samples/generative-ai-use-cases
 
 pushd generative-ai-use-cases
+
+# Deploy the latest release unless a tag or branch is specified.
+# The main branch can contain changes that are not released yet.
+if [[ -z "$git_ref" ]]; then
+    git_ref=$(curl -fsSL https://api.github.com/repos/aws-samples/generative-ai-use-cases/releases/latest | jq -r '.tag_name // empty' || true)
+fi
+if [[ -z "$git_ref" ]]; then
+    git_ref=$(git describe --tags --abbrev=0)
+fi
+echo "Deploy GenU $git_ref"
+git -c advice.detachedHead=false checkout "$git_ref"
 
 # Install npm packages
 npm ci

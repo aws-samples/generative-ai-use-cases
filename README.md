@@ -162,7 +162,15 @@ GenU deployment uses [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/)
 - [Deployment method using AWS CloudShell (if preparing your own environment is difficult)](docs/en/DEPLOY_ON_CLOUDSHELL.md)
 - Workshop ([English](https://catalog.workshops.aws/generative-ai-use-cases) / [Japanese](https://catalog.workshops.aws/generative-ai-use-cases-jp))
 
-First, run the following command. All commands should be executed at the repository root.
+Clone the repository and create a branch from the latest release. The main branch can contain changes that are not released yet, so we recommend deploying a [release](https://github.com/aws-samples/generative-ai-use-cases/releases). To update later, see [Update Method](docs/en/UPDATE.md).
+
+```bash
+git clone https://github.com/aws-samples/generative-ai-use-cases
+cd generative-ai-use-cases
+git switch -c genu $(git describe --tags --abbrev=0)
+```
+
+Next, run the following command. All commands should be executed at the repository root.
 
 ```bash
 npm ci

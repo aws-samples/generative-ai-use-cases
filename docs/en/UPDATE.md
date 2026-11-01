@@ -1,24 +1,52 @@
 # Update Method
 
 GenU is frequently updated.
-In addition to feature additions and improvements, security-related updates may also be included, so we recommend regularly pulling from the main branch of the repository and redeploying.
+In addition to feature additions and improvements, security-related updates may also be included, so we recommend regularly updating to the latest release and redeploying.
 
-If you are using the [Deployment Method Using AWS CloudShell](./DEPLOY_ON_CLOUDSHELL.md), you can update by simply running `deploy.sh` again as it always deploys the latest main branch. (The following steps are not necessary.)
+Each release is published as a Git tag (for example `v5.6.0`) with release notes on the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases).
+The main branch also contains changes that are not released yet, so we recommend deploying a release rather than the main branch.
+
+If you are using the [Deployment Method Using AWS CloudShell](./DEPLOY_ON_CLOUDSHELL.md), you can update by simply running `deploy.sh` again as it deploys the latest release by default. (The following steps are not necessary.)
 
 ## Manual Update Process
 
 This is the method for users to update themselves.
 
-### Pull the main branch
+### Check the release notes
 
-This assumes you have already cloned the repository and completed the initial deployment.
-To pull the contents of the main branch, execute the following command:
+Before updating, read the release notes of every release between your current version and the new one on the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases).
+If a release contains a breaking change (for example, a resource that is replaced or deleted, or a setting that is removed or renamed), the release notes describe its impact and the migration steps.
+
+You can check your current version with the following command:
 
 ```bash
-git pull
+git describe --tags
 ```
 
-If you are customizing in a different repository, the remote may be registered under a different name.
+### Merge the latest release
+
+This assumes you have already cloned the repository and completed the initial deployment.
+If you have changed files such as [cdk.json](/packages/cdk/cdk.json) or [parameter.ts](/packages/cdk/parameter.ts), commit them to your branch first.
+
+Retrieve the releases and merge the latest one into your branch with the following commands:
+
+```bash
+git fetch --tags origin
+git merge $(git describe --tags --abbrev=0 origin/main)
+```
+
+To update to a specific release, specify its tag instead:
+
+```bash
+git merge v5.6.0
+```
+
+If you previously updated by pulling the main branch, your code may already contain changes that are newer than the latest release.
+In that case, the merge above changes nothing, and the next release brings your code back in line with a release.
+
+### If you customize in a different repository
+
+If you are customizing in a different repository (for example, a fork), the remote may be registered under a different name.
 You can check the remote with the following command:
 
 ```bash
@@ -34,10 +62,11 @@ aws     https://github.com/aws-samples/generative-ai-use-cases (fetch)
 aws     https://github.com/aws-samples/generative-ai-use-cases (push)
 ```
 
-In this case, explicitly specify "aws" when pulling:
+In this case, explicitly specify "aws":
 
 ```bash
-git pull aws
+git fetch --tags aws
+git merge $(git describe --tags --abbrev=0 aws/main)
 ```
 
 If the `git remote -v` result does not show the repository managed by aws-samples, add it with the following command:
@@ -46,40 +75,35 @@ If the `git remote -v` result does not show the repository managed by aws-sample
 git remote add aws https://github.com/aws-samples/generative-ai-use-cases
 ```
 
-Now that it's registered with the name "aws", execute `git pull aws` to perform the pull.
+Merging a release tag works the same way as merging the main branch at that point, so you can keep your customizations on your own branch and merge each release into it.
+If you only need specific changes, you can also cherry-pick their commits from the main branch.
 
 ### If you want to see changes before incorporating them
 
-The `git pull` command performs both `git fetch` (retrieve changes) and `git merge` (incorporate changes) simultaneously.
-If you want to check the changes before incorporating them, execute `fetch` and `merge` separately.
-In the following commands, we assume that [aws-samples/generative-ai-use-cases](https://github.com/aws-samples/generative-ai-use-cases) is registered as "origin" in the remote.
-To check the remote name, run the `git remote -v` command mentioned earlier.
-
-First, retrieve the changes with the following command:
+To check the changes before merging, compare your code with the release:
 
 ```bash
-git fetch origin
-```
-
-Next, check the differences between your local code and origin/main:
-
-```bash
-git diff origin/main
-```
-
-If there are no issues, execute the merge:
-
-```bash
-git merge origin/main
+git diff HEAD v5.6.0
 ```
 
 ### If conflicts occur
 
-If conflicts occur during `git pull`, it means that both your customized code and the original changes were made to the same file simultaneously.
+If conflicts occur during the merge, it means that both your customized code and the original changes were made to the same file simultaneously.
 Code with conflicts needs to be manually fixed.
 
 Pay special attention to conflicts in [cdk.json](/packages/cdk/cdk.json).
-**Always check after `git pull` to ensure that the items you configured locally have not been lost.**
+**Always check after the merge to ensure that the items you configured locally have not been lost.**
+
+### Using the main branch
+
+If you need a change that is not released yet, you can merge the main branch instead of a release:
+
+```bash
+git fetch origin
+git merge origin/main
+```
+
+The main branch can contain changes that are not described in release notes yet, including breaking changes.
 
 ### Redeploy
 
