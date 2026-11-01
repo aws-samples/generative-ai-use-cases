@@ -25,6 +25,7 @@ const MODEL_FEATURE: Record<string, FeatureFlags> = {
     reasoning: true,
   },
   TEXT_IMAGE: { text: true, doc: false, image: true, video: false },
+  // Text + image models that reject sampling params (temperature / topP), e.g. Kimi K3, GPT-6
   TEXT_IMAGE_NO_SAMPLING: {
     text: true,
     doc: false,
@@ -137,6 +138,26 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
     displayName: 'Claude Opus 4',
   },
+  'global.anthropic.claude-opus-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Opus 5.5',
+  },
+  'us.anthropic.claude-opus-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Opus 5.5',
+  },
+  'eu.anthropic.claude-opus-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Opus 5.5',
+  },
+  'au.anthropic.claude-opus-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Opus 5.5',
+  },
+  'jp.anthropic.claude-opus-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Opus 5.5',
+  },
   'global.anthropic.claude-opus-5': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Opus 5',
@@ -152,6 +173,26 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   'au.anthropic.claude-opus-5': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Opus 5',
+  },
+  'global.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'us.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'eu.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'au.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
+  },
+  'jp.anthropic.claude-haiku-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+    displayName: 'Claude Haiku 5.5',
   },
   'global.anthropic.claude-opus-4-8': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
@@ -200,6 +241,14 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   'eu.anthropic.claude-opus-4-6-v1': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
     displayName: 'Claude Opus 4.6',
+  },
+  'global.anthropic.claude-sonnet-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Sonnet 5.5',
+  },
+  'us.anthropic.claude-sonnet-5-5': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Sonnet 5.5',
   },
   'global.anthropic.claude-sonnet-5': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
@@ -724,6 +773,17 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'Kimi K2 Thinking',
   },
+  // Kimi K3 supports text and image input (video is not supported on Bedrock).
+  // Documents are excluded because the Converse API rejects document inputs for this model.
+  // Sampling params (temperature / topP) are rejected by this model, so noSamplingParams is set.
+  'us.moonshotai.kimi-k3': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'Kimi K3',
+  },
+  'global.moonshotai.kimi-k3': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'Kimi K3',
+  },
   // NVIDIA
   'nvidia.nemotron-nano-9b-v2': {
     flags: MODEL_FEATURE.TEXT_ONLY,
@@ -833,6 +893,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   // === Speech to Speech ===
 
   // Amazon
+  'amazon.nova-2-5-sonic': {
+    flags: MODEL_FEATURE.SPEECH_TO_SPEECH,
+    displayName: 'Nova 2.5 Sonic',
+  },
   'amazon.nova-2-sonic-v1:0': {
     flags: MODEL_FEATURE.SPEECH_TO_SPEECH,
     displayName: 'Nova 2 Sonic',
@@ -865,7 +929,10 @@ export const BEDROCK_SPEECH_TO_SPEECH_MODELS = Object.keys(
 // Prompt caching
 // https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html
 export const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
+  'anthropic.claude-haiku-5-5': ['messages', 'system', 'tools'],
+  'anthropic.claude-sonnet-5-5': ['messages', 'system', 'tools'],
   'anthropic.claude-sonnet-5': ['messages', 'system', 'tools'],
+  'anthropic.claude-opus-5-5': ['messages', 'system', 'tools'],
   'anthropic.claude-opus-5': ['messages', 'system', 'tools'],
   'anthropic.claude-opus-4-8': ['messages', 'system', 'tools'],
   'anthropic.claude-opus-4-7': ['messages', 'system', 'tools'],

@@ -52,7 +52,7 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
       for await (const chunk of stream) {
         if (chunk.text) {
           fullResponse += chunk.text;
-          fullResponse = fullResponse.replace('</output>', '');
+          fullResponse = fullResponse.replace(/(<output>|<\/output>)/g, '');
           setCompletion(fullResponse);
         }
         if (chunk.trace) {

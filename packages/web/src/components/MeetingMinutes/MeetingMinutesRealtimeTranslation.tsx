@@ -86,6 +86,14 @@ const MeetingMinutesRealtimeTranslation: React.FC<
   const isAtBottomRef = useRef<boolean>(true);
   const generateSystemContextRef = useRef<(() => Promise<void>) | null>(null);
   const realtimeSegmentsRef = useRef<RealtimeSegment[]>([]);
+  const translateSentenceRef = useRef<
+    | ((
+        segment: RealtimeSegment,
+        sentenceIndex: number,
+        translationSegment: TranslationSegment
+      ) => Promise<void>)
+    | null
+  >(null);
 
   // Microphone and screen audio hooks
   const {
@@ -230,7 +238,9 @@ const MeetingMinutesRealtimeTranslation: React.FC<
           );
         }
 
-        const recentSegmentsText = getRecentSegmentsContext(realtimeSegments);
+        const recentSegmentsText = getRecentSegmentsContext(
+          realtimeSegmentsRef.current
+        );
         if (recentSegmentsText) {
           contexts.push(`Recent conversation context: ${recentSegmentsText}`);
         }
@@ -287,10 +297,12 @@ const MeetingMinutesRealtimeTranslation: React.FC<
         console.error('Failed to translate sentence:', error);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [
       selectedTranslationModel,
+      primaryLanguage,
       secondaryLanguage,
+      translationType,
       userDefinedContext,
       systemGeneratedContext,
       translate,
@@ -300,6 +312,11 @@ const MeetingMinutesRealtimeTranslation: React.FC<
       // Note: getLanguageNameFromCode and getRecentSegmentsContext are external functions and stable
     ]
   );
+
+  // Keep ref updated with the latest translateSentence so that the
+  // interval-based translation always uses current settings
+  // (avoids stale closures; same pattern as generateSystemContextRef)
+  translateSentenceRef.current = translateSentence;
 
   // Hook for generating system context
   const { predict } = useChatApi();
@@ -626,20 +643,30 @@ const MeetingMinutesRealtimeTranslation: React.FC<
         for (const translationSentence of sentencesToTranslate) {
           const sentenceIndex =
             segment.translationSegments.indexOf(translationSentence);
-          // Translate individual sentence (duplicate prevention is now handled inside translateSentence)
-          await translateSentence(segment, sentenceIndex, translationSentence);
+          // Translate individual sentence via ref to always use the latest
+          // settings (target language, contexts). Calling translateSentence
+          // directly here would capture a stale closure because this effect
+          // intentionally omits function dependencies.
+          // (duplicate prevention is handled inside translateSentence)
+          if (translateSentenceRef.current) {
+            await translateSentenceRef.current(
+              segment,
+              sentenceIndex,
+              translationSentence
+            );
+          }
         }
       }
     }, translationInterval);
 
     return () => clearInterval(intervalId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     realtimeTranslationEnabled,
     selectedTranslationModel,
     translationInterval,
     // Note: We intentionally omit function dependencies to prevent infinite loop recreation of this useEffect.
-    // The interval function accesses current values through closure, which is acceptable for this use case.
+    // The interval callback reads the latest values via refs
+    // (realtimeSegmentsRef / translateSentenceRef) to avoid stale closures.
   ]);
 
   // Recording states
