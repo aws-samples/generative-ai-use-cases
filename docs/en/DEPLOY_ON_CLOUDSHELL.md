@@ -78,5 +78,4 @@ When deployment is complete, the CloudFront URL will be displayed. You can acces
 1. If parameter.ts and environment are specified, and the environment name (including unnamed environments) is defined in parameter.ts, those settings have the highest priority
 2. cdk.json settings are applied next
 
-Note that to execute these steps, you also need to enable the models from [Amazon Bedrock Model access](https://console.aws.amazon.com/bedrock/home#/modelaccess).
-Confirm that the models specified in modelIds, imageGenerationModelIds, videoGenerationModelIds, and speechToSpeechModelIds in the modelRegion of the configuration file (parameter.ts or cdk.json) are enabled.
+Note that the Amazon Bedrock Model access page has been retired, so you no longer need to enable models there. Serverless foundation models are automatically enabled when they are first invoked in your AWS account. For Anthropic models, first-time users may need to submit use case details before they can access the model. Confirm that the models specified in modelIds, imageGenerationModelIds, videoGenerationModelIds, and speechToSpeechModelIds in the modelRegion of the configuration file (parameter.ts or cdk.json) are available in your account.
