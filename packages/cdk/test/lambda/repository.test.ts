@@ -61,6 +61,14 @@ describe('findChatById', () => {
     expect(mockSend).toHaveBeenCalledTimes(2);
   });
 
+  it('reads the partition newest first', async () => {
+    mockSend.mockResolvedValueOnce({ Items: [{ chatId: 'chat#abc' }] });
+
+    await findChatById('user-1', 'abc');
+
+    expect(mockSend.mock.calls[0][0].input.ScanIndexForward).toBe(false);
+  });
+
   it('does not issue a second query when the first page already matches', async () => {
     mockSend.mockResolvedValueOnce({ Items: [{ chatId: 'chat#abc' }] });
 
@@ -91,5 +99,15 @@ describe('findSystemContextById', () => {
     const result = await findSystemContextById('user-1', 'missing');
 
     expect(result).toBeNull();
+  });
+
+  it('reads the partition newest first', async () => {
+    mockSend.mockResolvedValueOnce({
+      Items: [{ systemContextId: 'systemContext#sc-1' }],
+    });
+
+    await findSystemContextById('user-1', 'sc-1');
+
+    expect(mockSend.mock.calls[0][0].input.ScanIndexForward).toBe(false);
   });
 });

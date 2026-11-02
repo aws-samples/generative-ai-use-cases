@@ -90,6 +90,8 @@ export const findChatById = async (
     TableName: TABLE_NAME,
     KeyConditionExpression: '#id = :id',
     FilterExpression: '#chatId = :chatId',
+    // Read newest first: recently used chats are found on the first page.
+    ScanIndexForward: false,
     ExpressionAttributeNames: {
       '#id': 'id',
       '#chatId': 'chatId',
@@ -112,6 +114,8 @@ export const findSystemContextById = async (
     TableName: TABLE_NAME,
     KeyConditionExpression: '#id = :id',
     FilterExpression: '#systemContextId = :systemContextId',
+    // Read newest first: recently created items are found on the first page.
+    ScanIndexForward: false,
     ExpressionAttributeNames: {
       '#id': 'id',
       '#systemContextId': 'systemContextId',
