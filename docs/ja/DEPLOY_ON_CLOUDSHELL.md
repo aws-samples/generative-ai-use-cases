@@ -78,5 +78,4 @@ deploy.sh は以下のオプションをサポートしています：
 1. parameter.ts と環境が指定され、かつ環境名(無名環境含む)が parameter.ts 内で定義されている場合、その環境の設定が最優先されます
 2. cdk.json の設定が次に適用されます
 
-なお、これらの手順を実行する場合も [Amazon Bedrock の Model access](https://console.aws.amazon.com/bedrock/home#/modelaccess) から利用するモデルの有効化が必要です。
-使用する設定ファイル（parameter.ts または cdk.json）の modelRegion において modelIds と imageGenerationModelIds と videoGenerationModelIds と speechToSpeechModelIds で指定されたモデルが有効化されているかを確認してください。
+なお、Amazon Bedrock の Model access ページは廃止されたため、同ページでモデルを有効化する必要はありません。サーバーレスの基盤モデルは、AWS アカウントで初めて呼び出したときに自動的に有効化されます。Anthropic のモデルは、初回のみ利用目的の入力が必要になる場合があります。設定ファイル (parameter.ts または cdk.json) の modelRegion に指定した modelIds、imageGenerationModelIds、videoGenerationModelIds、speechToSpeechModelIds のモデルが、ご利用のアカウントで利用可能であることをご確認ください。
