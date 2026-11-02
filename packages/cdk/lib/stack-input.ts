@@ -215,6 +215,7 @@ const baseStackInputSchema = z.object({
   closedNetworkVpcIpv4Cidr: z.string().default('10.0.0.0/16'),
   closedNetworkVpcId: z.string().nullish(),
   closedNetworkSubnetIds: z.array(z.string()).nullish(),
+  closedNetworkApiGatewayVpcEndpointIds: z.array(z.string()).nullish(),
   closedNetworkCertificateArn: z.string().nullish(),
   closedNetworkDomainName: z.string().nullish(),
   closedNetworkCreateTestEnvironment: z.boolean().default(true),

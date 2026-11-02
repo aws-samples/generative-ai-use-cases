@@ -16,12 +16,7 @@ import { Construct } from 'constructs';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { IdentityPool } from 'aws-cdk-lib/aws-cognito-identitypool';
-import {
-  AnyPrincipal,
-  Effect,
-  PolicyDocument,
-  PolicyStatement,
-} from 'aws-cdk-lib/aws-iam';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import {
   BlockPublicAccess,
   Bucket,
@@ -40,6 +35,7 @@ import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
 import {
   InterfaceVpcEndpoint,
   IVpc,
+  IVpcEndpoint,
   ISecurityGroup,
 } from 'aws-cdk-lib/aws-ec2';
 
@@ -66,6 +62,7 @@ export interface BackendApiProps {
   readonly vpc?: IVpc;
   readonly securityGroups?: ISecurityGroup[];
   readonly apiGatewayVpcEndpoint?: InterfaceVpcEndpoint;
+  readonly additionalApiGatewayVpcEndpoints?: IVpcEndpoint[];
   // RAG
   readonly kendraIndexId?: string;
   readonly kendraIndexLanguage?: string;
@@ -123,6 +120,7 @@ export class Api extends Construct {
       vpc,
       securityGroups,
       apiGatewayVpcEndpoint,
+      additionalApiGatewayVpcEndpoints,
     } = props;
 
     const builtinAgentsJson = props.agents || '[]';
@@ -613,26 +611,14 @@ export class Api extends Construct {
             vpcEndpoints: [apiGatewayVpcEndpoint!],
           }
         : undefined,
-      policy: vpc
-        ? new PolicyDocument({
-            statements: [apiGatewayVpcEndpoint!].map(
-              (e: InterfaceVpcEndpoint) => {
-                return new PolicyStatement({
-                  effect: Effect.ALLOW,
-                  principals: [new AnyPrincipal()],
-                  actions: ['execute-api:Invoke'],
-                  resources: ['execute-api:/*'],
-                  conditions: {
-                    StringEquals: {
-                      'aws:SourceVpce': e.vpcEndpointId,
-                    },
-                  },
-                });
-              }
-            ),
-          })
-        : undefined,
     });
+
+    if (vpc) {
+      api.grantInvokeFromVpcEndpointsOnly([
+        apiGatewayVpcEndpoint!,
+        ...(additionalApiGatewayVpcEndpoints ?? []),
+      ]);
+    }
 
     const errorHeaders = {
       'Access-Control-Allow-Origin': "'*'",

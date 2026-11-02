@@ -9,16 +9,17 @@
 
 폐쇄 네트워크 모드와 관련된 옵션은 `closedNetwork` 접두사를 가집니다. 다음은 옵션 목록입니다:
 
-| 매개변수                            | 설명                                                                                                                                                                                                              |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| closedNetworkMode                   | 폐쇄 네트워크 모드를 활성화할지 여부. true는 폐쇄 네트워크 모드를 활성화합니다. 기본값은 false입니다.                                                                                                             |
-| closedNetworkVpcIpv4Cidr            | 새 VPC를 생성할 때 지정할 IPv4 CIDR. 기본값은 10.0.0.0/16입니다.                                                                                                                                                  |
-| closedNetworkVpcId                  | 기존 VPC를 가져올 때의 VPC ID. 지정하지 않으면 새 VPC가 생성됩니다.                                                                                                                                               |
-| closedNetworkSubnetIds              | GenU 관련 리소스가 배포될 여러 서브넷 ID를 지정합니다. ALB, Fargate 작업, VPC 엔드포인트, Resolver 엔드포인트가 생성됩니다. 지정하지 않으면 격리된 서브넷이 선택됩니다. 배열에 2개 이상의 서브넷 ID를 지정하세요. |
-| closedNetworkCertificateArn         | GenU에 도메인을 할당할 때 지정할 ACM ARN. ACM은 수동으로 생성해야 합니다. 지정하지 않으면 GenU는 Application Load Balancer의 기본 엔드포인트로 게시됩니다.                                                        |
-| closedNetworkDomainName             | GenU의 도메인 이름. Private Hosted Zone은 CDK에서 생성되므로 수동 생성이 필요하지 않습니다. `closedNetworkCertificateArn`과 `closedNetworkDomainName`은 함께 지정하거나 둘 다 생략해야 합니다.                    |
-| closedNetworkCreateTestEnvironment  | 테스트 환경을 생성할지 여부. 기본적으로 생성됩니다. 필요하지 않으면 false를 지정하세요. 테스트 환경은 EC2 Windows 인스턴스로 생성되며 Fleet Manager를 통해 액세스됩니다. (자세한 절차는 나중에 설명됩니다.)       |
-| closedNetworkCreateResolverEndpoint | Route53 Resolver 엔드포인트를 생성할지 여부. 기본값은 true입니다.                                                                                                                                                 |
+| 매개변수                              | 설명                                                                                                                                                                                                                                                       |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| closedNetworkMode                     | 폐쇄 네트워크 모드를 활성화할지 여부. true는 폐쇄 네트워크 모드를 활성화합니다. 기본값은 false입니다.                                                                                                                                                      |
+| closedNetworkVpcIpv4Cidr              | 새 VPC를 생성할 때 지정할 IPv4 CIDR. 기본값은 10.0.0.0/16입니다.                                                                                                                                                                                           |
+| closedNetworkVpcId                    | 기존 VPC를 가져올 때의 VPC ID. 지정하지 않으면 새 VPC가 생성됩니다.                                                                                                                                                                                        |
+| closedNetworkSubnetIds                | GenU 관련 리소스가 배포될 여러 서브넷 ID를 지정합니다. ALB, Fargate 작업, VPC 엔드포인트, Resolver 엔드포인트가 생성됩니다. 지정하지 않으면 격리된 서브넷이 선택됩니다. 배열에 2개 이상의 서브넷 ID를 지정하세요.                                          |
+| closedNetworkApiGatewayVpcEndpointIds | API Gateway 리소스 정책에서 추가로 허용할 VPC 엔드포인트 ID 배열입니다. GenU가 생성하는 API Gateway VPC 엔드포인트는 항상 허용됩니다. 다른 VPC나 다른 계정의 VPC 엔드포인트(예: 집약 VPC의 공유 엔드포인트)를 통해 API Gateway를 호출하는 경우 지정합니다. |
+| closedNetworkCertificateArn           | GenU에 도메인을 할당할 때 지정할 ACM ARN. ACM은 수동으로 생성해야 합니다. 지정하지 않으면 GenU는 Application Load Balancer의 기본 엔드포인트로 게시됩니다.                                                                                                 |
+| closedNetworkDomainName               | GenU의 도메인 이름. Private Hosted Zone은 CDK에서 생성되므로 수동 생성이 필요하지 않습니다. `closedNetworkCertificateArn`과 `closedNetworkDomainName`은 함께 지정하거나 둘 다 생략해야 합니다.                                                             |
+| closedNetworkCreateTestEnvironment    | 테스트 환경을 생성할지 여부. 기본적으로 생성됩니다. 필요하지 않으면 false를 지정하세요. 테스트 환경은 EC2 Windows 인스턴스로 생성되며 Fleet Manager를 통해 액세스됩니다. (자세한 절차는 나중에 설명됩니다.)                                                |
+| closedNetworkCreateResolverEndpoint   | Route53 Resolver 엔드포인트를 생성할지 여부. 기본값은 true입니다.                                                                                                                                                                                          |
 
 ## 현재 제한사항
 

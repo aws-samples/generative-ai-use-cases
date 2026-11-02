@@ -137,6 +137,7 @@ describe('GenerativeAiUseCases', () => {
     const params = processedStackInputSchema.parse({
       ...stackInput,
       closedNetworkMode: true,
+      closedNetworkApiGatewayVpcEndpointIds: ['vpce-0123456789abcdef0'],
     });
 
     const {

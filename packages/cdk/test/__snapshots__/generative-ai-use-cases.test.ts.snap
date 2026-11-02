@@ -5687,7 +5687,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A5021237a3dd9dd1d0a04e8bff19caaa142feb6": {
+    "APIApiDeployment3A5021233d9d47c7d1a915f2f1b9e08e397756df": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -5854,7 +5854,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::ApiGateway::Deployment",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment5C507F9Aca4e0dc5f0cd630edc0afa70cb44493d": {
+    "APIApiDeployment5C507F9A2752a222afdf3f33f97f53a123b70aa4": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiproxyANYB1864AFB",
@@ -5976,7 +5976,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A5021237a3dd9dd1d0a04e8bff19caaa142feb6",
+          "Ref": "APIApiDeployment3A5021233d9d47c7d1a915f2f1b9e08e397756df",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -6011,12 +6011,23 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             {
               "Action": "execute-api:Invoke",
               "Condition": {
-                "StringEquals": {
-                  "aws:SourceVpce": {
-                    "Fn::ImportValue": "ClosedNetworkStack:ExportsOutputRefClosedVpcVpcEndpointApiGateway6200AA118EB915E2",
-                  },
+                "StringNotEquals": {
+                  "aws:SourceVpce": [
+                    {
+                      "Fn::ImportValue": "ClosedNetworkStack:ExportsOutputRefClosedVpcVpcEndpointApiGateway6200AA118EB915E2",
+                    },
+                    "vpce-0123456789abcdef0",
+                  ],
                 },
               },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*",
+              },
+              "Resource": "execute-api:/*",
+            },
+            {
+              "Action": "execute-api:Invoke",
               "Effect": "Allow",
               "Principal": {
                 "AWS": "*",
