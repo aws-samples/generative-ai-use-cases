@@ -11,6 +11,7 @@ import { Buffer } from 'buffer';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { Transcript } from 'generative-ai-use-cases';
+import { getTranscribeSampleRate } from '../utils/AudioUtils';
 
 const pcmEncodeChunk = (chunk: Buffer) => {
   const input = MicrophoneStream.toRaw(chunk);
@@ -160,7 +161,7 @@ const useMicrophone = () => {
     const command = new StartStreamTranscriptionCommand({
       ...commandParams,
       MediaEncoding: 'pcm',
-      MediaSampleRateHertz: 48000,
+      MediaSampleRateHertz: getTranscribeSampleRate(mic.context.sampleRate),
       AudioStream: audioStream(),
       ShowSpeakerLabel: speakerLabel,
     });
