@@ -72,7 +72,7 @@ export class ClosedNetworkStack extends Stack {
         ? `https://${closedVpc.hostedZone.zoneName}`
         : albOrigin;
 
-    // Emitted unconditionally and consumed via cdk-remote-stack RemoteOutputs
+    // Emitted unconditionally and consumed via StackOutputs
     // (not Fn::ImportValue). A plain CfnOutput has no cross-stack export
     // constraint, so toggling closedNetworkDomainName never triggers the
     // "Cannot delete export ... as it is in use" deadlock with the consuming

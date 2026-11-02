@@ -29,7 +29,7 @@ export class AgentCoreStack extends Stack {
         gatewayArns: params.agentCoreGatewayArns ?? undefined,
       });
 
-      // Export runtime info for cross-region access via cdk-remote-stack (only if values exist)
+      // Outputs read by GenerativeAiUseCasesStack via StackOutputs, also across Regions (only if values exist)
       if (
         params.createGenericAgentCoreRuntime &&
         this.genericAgentCore.deployedGenericRuntimeArn
