@@ -3,6 +3,13 @@
 Please explain the changes in detail.
 If there is any impact on existing users (compatibility, degradation, breaking changes, etc.), be sure to include it in the explanation.
 
+## Risk and Review Focus
+
+See [Checks on pull requests](../CONTRIBUTING.md#checks-on-pull-requests).
+
+- Breaking change for existing deployments (resource replacement or deletion, removed settings): yes / no. If yes, describe the migration steps.
+- Please look closely at:
+
 ## Checklist
 
 - [ ] Modified relevant documentation

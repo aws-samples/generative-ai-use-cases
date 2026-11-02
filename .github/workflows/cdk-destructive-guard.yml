@@ -1,0 +1,100 @@
+# Fails when a pull request would replace, delete or orphan a stateful
+# resource (DynamoDB, S3, Cognito, KMS, ...) in the synthesized templates,
+# which would lose data in existing deployments. The templates are synthesized
+# with the cdk.json defaults and with the stateful features turned on (see
+# packages/cdk/scripts/destructive-guard/profiles.ts).
+#
+# The check catches accidental destructive changes. It runs the pull
+# request's code, so it is not a control against a malicious change; changes
+# to workflows and stateful infrastructure still need a maintainer review.
+#
+# When the check fails, the pull request is not merged unless a maintainer
+# decides the change is intended and merges it with a bypass.
+#
+# Runs with a read-only token and no secrets. The guard scripts are taken from
+# the base commit when they exist there.
+name: CDK Destructive-Change Guard
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cdk-destructive-guard-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  guard:
+    name: 'CDK destructive-change guard'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CDK_DEFAULT_ACCOUNT: 123456789012
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      GUARD_DIR: packages/cdk/scripts/destructive-guard
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.HEAD_SHA }}
+          path: head
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check whether CDK output can change
+        id: scope
+        working-directory: head
+        run: |
+          MERGE_BASE=$(git merge-base "$BASE_SHA" "$HEAD_SHA")
+          echo "merge_base=$MERGE_BASE" >> "$GITHUB_OUTPUT"
+          if git diff --name-only "$MERGE_BASE" "$HEAD_SHA" \
+            | grep -qE '^(packages/(cdk|common|types)/|package(-lock)?\.json$)'; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+            echo "No CDK, shared package or dependency changes; skipped." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.scope.outputs.needed == 'true'
+        with:
+          ref: ${{ steps.scope.outputs.merge_base }}
+          path: base
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: steps.scope.outputs.needed == 'true'
+        with:
+          node-version: 22.x
+          cache: npm
+          cache-dependency-path: |
+            base/package-lock.json
+            head/package-lock.json
+
+      - name: Synthesize and compare
+        if: steps.scope.outputs.needed == 'true'
+        run: |
+          # Use the base commit's guard in both trees. Fall back to the head's
+          # only while the guard does not exist on the base yet.
+          SOURCE=base
+          [ -d "base/$GUARD_DIR" ] || SOURCE=head
+          for tree in base head; do
+            if [ "$tree" != "$SOURCE" ]; then
+              rm -rf "$tree/$GUARD_DIR"
+              mkdir -p "$(dirname "$tree/$GUARD_DIR")"
+              cp -R "$SOURCE/$GUARD_DIR" "$tree/$GUARD_DIR"
+            fi
+          done
+          for tree in base head; do
+            (cd "$tree" && npm ci && cd packages/cdk \
+              && npx ts-node "scripts/destructive-guard/synth.ts" "$GITHUB_WORKSPACE/out/$tree")
+          done
+          (cd head/packages/cdk && npx ts-node "scripts/destructive-guard/cli.ts" \
+            "$GITHUB_WORKSPACE/out/base" "$GITHUB_WORKSPACE/out/head" "$GITHUB_WORKSPACE/result") \
+            || STATUS=$?
+          cat result/report.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          exit "${STATUS:-0}"
