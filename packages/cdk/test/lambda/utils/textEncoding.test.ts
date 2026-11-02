@@ -62,11 +62,19 @@ describe('convertTextDocumentToUtf8', () => {
     expect(asText(result)).toBe(expected);
   });
 
-  // Shift_JIS must keep working with EUC-JP checked first. TextDecoder('euc-jp')
-  // lets 0x80-0x8D through, so the first case (katakana with 0x83 lead bytes) is a
-  // regression guard for the strict EUC-JP byte check.
+  // TextDecoder('euc-jp') lets 0x80-0x8D through, so the first case (katakana with
+  // 0x83 lead bytes) is a regression guard for the strict EUC-JP byte check. The
+  // halfwidth katakana cases are also valid EUC-JP, and Shift_JIS must win.
   it.each([
     ['テスト', [0x83, 0x65, 0x83, 0x58, 0x83, 0x67]],
+    ['ｶﾅ', [0xb6, 0xc5]],
+    [
+      'ﾌﾘｺﾐ,1000\nﾔﾏﾀﾞ,2000\n',
+      [
+        0xcc, 0xd8, 0xba, 0xd0, 0x2c, 0x31, 0x30, 0x30, 0x30, 0x0a, 0xd4, 0xcf,
+        0xc0, 0xde, 0x2c, 0x32, 0x30, 0x30, 0x30, 0x0a,
+      ],
+    ],
     [
       '担当:ﾔﾏﾀﾞ\n',
       [0x92, 0x53, 0x93, 0x96, 0x3a, 0xd4, 0xcf, 0xc0, 0xde, 0x0a],
@@ -84,13 +92,13 @@ describe('convertTextDocumentToUtf8', () => {
     expect(asText(result)).toBe(expected);
   });
 
-  // Known limitation, pinned so a change in behavior is noticed: Shift_JIS made only
-  // of paired halfwidth katakana and ASCII is also valid EUC-JP, and is read as such.
-  it('reads paired halfwidth katakana Shift_JIS as EUC-JP (known limitation)', () => {
-    // Two halfwidth katakana (KA, NA) in Shift_JIS
-    const sjisKana = Uint8Array.from([0xb6, 0xc5]);
-    const result = convertTextDocumentToUtf8(sjisKana, 'txt');
-    expect(asText(result)).not.toBe('ｶﾅ');
+  // Known limitation, pinned so a change in behavior is noticed: EUC-JP whose
+  // Shift_JIS reading is plain halfwidth katakana is ambiguous and Shift_JIS wins.
+  it('reads ambiguous EUC-JP as Shift_JIS (known limitation)', () => {
+    // Two kanji (NA-MAE) in EUC-JP
+    const eucJp = Uint8Array.from([0xcc, 0xbe, 0xc1, 0xb0]);
+    const result = convertTextDocumentToUtf8(eucJp, 'txt');
+    expect(asText(result)).toBe('ﾌｾﾁｰ');
   });
 
   it('leaves bytes untouched when no candidate encoding decodes them', () => {

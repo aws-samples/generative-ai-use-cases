@@ -45,26 +45,50 @@ const isEucJp = (bytes: Uint8Array): boolean => {
 };
 
 /**
+ * Whether the text is only ASCII and halfwidth katakana, without the halfwidth
+ * ideographic comma (U+FF64) and middle dot (U+FF65). Those two are what the
+ * EUC-JP hiragana and katakana lead bytes (0xA4, 0xA5) turn into when EUC-JP is
+ * read as Shift_JIS.
+ */
+const isAsciiAndHalfwidthKatakana = (text: string): boolean => {
+  for (let i = 0; i < text.length; i++) {
+    const c = text.charCodeAt(i);
+    const isAscii = c < 0x80;
+    const isHalfwidthKatakana =
+      c >= 0xff61 && c <= 0xff9f && c !== 0xff64 && c !== 0xff65;
+    if (!isAscii && !isHalfwidthKatakana) return false;
+  }
+  return true;
+};
+
+/**
  * Decode legacy Japanese text, or return null when the bytes are neither EUC-JP
  * nor Shift_JIS.
  *
- * EUC-JP is checked before Shift_JIS. Most EUC-JP text is also a valid Shift_JIS
- * byte sequence (0xA1-0xDF are halfwidth katakana in Shift_JIS), so trying
- * Shift_JIS first turns EUC-JP files into garbage. The opposite rarely happens:
- * Shift_JIS kanji and fullwidth kana use lead bytes 0x81-0x9F, which are not
- * valid in EUC-JP. The same order is used by established detectors such as
- * encoding.js.
+ * When only one of the two decodes, that one is used. Shift_JIS kanji and
+ * fullwidth kana use lead bytes 0x81-0x9F, which are invalid in EUC-JP, so most
+ * Shift_JIS text is not ambiguous.
  *
- * Known limitation: Shift_JIS text made only of halfwidth katakana and ASCII,
- * where the katakana come in pairs (e.g. 'ｶﾅ'), is also valid EUC-JP and is read
- * as EUC-JP kanji. No byte-level check can tell the two apart.
+ * When both decode, the bytes are ambiguous. Most EUC-JP text is also valid
+ * Shift_JIS (0xA1-0xDF are halfwidth katakana there), and Shift_JIS made only of
+ * paired halfwidth katakana (common in bank transfer files) is also valid
+ * EUC-JP. Shift_JIS is preferred because it is by far the more common of the two
+ * today, but only when its reading is plain ASCII and halfwidth katakana.
+ * Otherwise the Shift_JIS reading mixes halfwidth katakana with kanji or contains
+ * U+FF64 / U+FF65, which is what EUC-JP looks like when read as Shift_JIS, and
+ * EUC-JP is used.
+ *
+ * Known limitation: short EUC-JP text whose Shift_JIS reading is plain halfwidth
+ * katakana (e.g. a two-kanji word such as NA-MAE) is read as Shift_JIS.
  */
 const decodeLegacyJapanese = (bytes: Uint8Array): string | null => {
-  if (isEucJp(bytes)) {
-    const decoded = decodeStrict(bytes, 'euc-jp');
-    if (decoded !== null) return decoded;
+  const sjis = decodeStrict(bytes, 'shift_jis');
+  const eucJp = isEucJp(bytes) ? decodeStrict(bytes, 'euc-jp') : null;
+
+  if (sjis !== null && eucJp !== null) {
+    return isAsciiAndHalfwidthKatakana(sjis) ? sjis : eucJp;
   }
-  return decodeStrict(bytes, 'shift_jis');
+  return sjis ?? eucJp;
 };
 
 /**
