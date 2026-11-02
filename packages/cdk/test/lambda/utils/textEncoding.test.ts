@@ -46,6 +46,53 @@ describe('convertTextDocumentToUtf8', () => {
     }
   );
 
+  // Most EUC-JP text is also a valid Shift_JIS byte sequence, so it must be checked
+  // before Shift_JIS. These were turned into halfwidth katakana garbage otherwise.
+  it.each([
+    [
+      '氏名,金額\n山田太郎,1000\n',
+      [
+        0xbb, 0xe1, 0xcc, 0xbe, 0x2c, 0xb6, 0xe2, 0xb3, 0xdb, 0x0a, 0xbb, 0xb3,
+        0xc5, 0xc4, 0xc2, 0xc0, 0xcf, 0xba, 0x2c, 0x31, 0x30, 0x30, 0x30, 0x0a,
+      ],
+    ],
+    ['テスト', [0xa5, 0xc6, 0xa5, 0xb9, 0xa5, 0xc8]],
+  ])('converts EUC-JP that is also valid Shift_JIS: %j', (expected, bytes) => {
+    const result = convertTextDocumentToUtf8(Uint8Array.from(bytes), 'csv');
+    expect(asText(result)).toBe(expected);
+  });
+
+  // Shift_JIS must keep working with EUC-JP checked first. TextDecoder('euc-jp')
+  // lets 0x80-0x8D through, so the first case (katakana with 0x83 lead bytes) is a
+  // regression guard for the strict EUC-JP byte check.
+  it.each([
+    ['テスト', [0x83, 0x65, 0x83, 0x58, 0x83, 0x67]],
+    [
+      '担当:ﾔﾏﾀﾞ\n',
+      [0x92, 0x53, 0x93, 0x96, 0x3a, 0xd4, 0xcf, 0xc0, 0xde, 0x0a],
+    ],
+    ['ｶﾅ,ﾃｽﾄ\n', [0xb6, 0xc5, 0x2c, 0xc3, 0xbd, 0xc4, 0x0a]],
+    [
+      '商品ｺｰﾄﾞ,数量\nﾃｽﾄ商品,3\n',
+      [
+        0x8f, 0xa4, 0x95, 0x69, 0xba, 0xb0, 0xc4, 0xde, 0x2c, 0x90, 0x94, 0x97,
+        0xca, 0x0a, 0xc3, 0xbd, 0xc4, 0x8f, 0xa4, 0x95, 0x69, 0x2c, 0x33, 0x0a,
+      ],
+    ],
+  ])('converts Shift_JIS: %j', (expected, bytes) => {
+    const result = convertTextDocumentToUtf8(Uint8Array.from(bytes), 'csv');
+    expect(asText(result)).toBe(expected);
+  });
+
+  // Known limitation, pinned so a change in behavior is noticed: Shift_JIS made only
+  // of paired halfwidth katakana and ASCII is also valid EUC-JP, and is read as such.
+  it('reads paired halfwidth katakana Shift_JIS as EUC-JP (known limitation)', () => {
+    // Two halfwidth katakana (KA, NA) in Shift_JIS
+    const sjisKana = Uint8Array.from([0xb6, 0xc5]);
+    const result = convertTextDocumentToUtf8(sjisKana, 'txt');
+    expect(asText(result)).not.toBe('ｶﾅ');
+  });
+
   it('leaves bytes untouched when no candidate encoding decodes them', () => {
     const undecodable = Uint8Array.from([0xff, 0xfe, 0x00, 0x81, 0xff]);
     const result = convertTextDocumentToUtf8(undecodable, 'txt');
