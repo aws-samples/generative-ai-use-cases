@@ -108,7 +108,8 @@ class AgentManager:
             if code_interpreter is not None:
                 files = sandbox.attachments(processed_messages, processed_prompt)
                 paths = sandbox.put_attachments(code_interpreter, files)
-                combined_system_prompt += "\n" + get_code_interpreter_prompt(paths)
+                fonts = sandbox.set_up_fonts(code_interpreter)
+                combined_system_prompt += "\n" + get_code_interpreter_prompt(paths, fonts)
 
             # Create Strands agent and stream response
             agent = StrandsAgent(

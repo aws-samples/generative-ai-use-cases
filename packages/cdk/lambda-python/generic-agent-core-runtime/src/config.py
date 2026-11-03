@@ -30,9 +30,11 @@ CODE_INTERPRETER_PROMPT = f"""## About the Code Interpreter
 """
 
 
-def get_code_interpreter_prompt(attachment_paths: list[str]) -> str:
+def get_code_interpreter_prompt(attachment_paths: list[str], fonts: str | None = None) -> str:
     """What the model needs to know to work on files with the code interpreter"""
     prompt = CODE_INTERPRETER_PROMPT
+    if fonts:
+        prompt += f"- matplotlib is already set up to draw Japanese, Chinese and Korean text (font.family: {fonts}). Do not change the font or translate labels to avoid missing glyphs.\n"
     if attachment_paths:
         listed = "\n".join(f"  - `{path}`" for path in attachment_paths)
         prompt += f"- The files the user attached are in the sandbox as they are. Open these rather than recreating them from the text you were shown:\n{listed}\n"

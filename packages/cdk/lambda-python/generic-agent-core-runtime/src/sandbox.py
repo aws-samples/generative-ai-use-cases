@@ -83,6 +83,56 @@ def put_attachments(code_interpreter, files: dict[str, bytes]) -> list[str]:
     return [f"{WORKSPACE_DIR}/{name}" for name in files]
 
 
+# Fonts to fall back on for text the default font (DejaVu Sans) lacks, best
+# first for each script. Only installed ones are used, so the sandbox image can
+# change without breaking anything; today it has the Droid fonts.
+_FALLBACK_FONTS = {
+    "ja": ["Noto Sans CJK JP", "Noto Sans JP", "IPAexGothic", "IPAGothic", "Droid Sans Japanese"],
+    "zh": ["Noto Sans CJK SC", "Noto Sans SC", "Droid Sans Fallback"],
+    "ko": ["Noto Sans CJK KR", "Noto Sans KR", "Droid Sans Fallback"],
+}
+
+_FONT_SETUP = f"""
+import matplotlib
+from matplotlib import font_manager
+installed = {{f.name for f in font_manager.fontManager.ttflist}}
+chosen = []
+for candidates in {_FALLBACK_FONTS!r}.values():
+    name = next((c for c in candidates if c in installed), None)
+    if name and name not in chosen:
+        chosen.append(name)
+families = ["DejaVu Sans", *chosen]
+matplotlib.rcParams["font.family"] = families
+import os
+os.makedirs(matplotlib.get_configdir(), exist_ok=True)
+with open(os.path.join(matplotlib.get_configdir(), "matplotlibrc"), "w") as rc:
+    rc.write("font.family: " + ", ".join(families) + "\\n")
+print(", ".join(families))
+"""
+
+
+def set_up_fonts(code_interpreter) -> str | None:
+    """Make charts show Japanese, Chinese and Korean text without the model choosing a font.
+
+    Left alone, matplotlib draws such text as boxes, and the model spends tool
+    calls hunting for a font, or gives up and labels the chart in English.
+    matplotlib falls back from font to font for each character, so Latin text
+    keeps DejaVu Sans and the rest takes the best font installed for its script.
+    The setting is applied to the running interpreter and written to its
+    matplotlibrc, for scripts run as commands. Returns the font list, or None.
+    """
+    from strands_tools.code_interpreter.models import ExecuteCodeAction
+
+    try:
+        result = code_interpreter.execute_code(ExecuteCodeAction(type="executeCode", language="python", code=_FONT_SETUP))
+        families = ast.literal_eval(result["content"][0]["text"])[0]["text"].strip()
+    except Exception as e:
+        logger.warning(f"Could not set up fonts in the code interpreter sandbox: {e}")
+        return None
+    logger.info(f"Fonts in the code interpreter sandbox: {families}")
+    return families or None
+
+
 def read_file(code_interpreter, path: str) -> bytes | None:
     """The bytes of a file the model wrote in the sandbox, or None if it is not there."""
     from strands_tools.code_interpreter.models import ExecuteCommandAction, ReadFilesAction
