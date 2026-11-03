@@ -743,6 +743,7 @@ summarize:
   text_to_summarize: Văn bản muốn tóm tắt
   title: Tóm tắt
 transcribe:
+  audio_source_lost: Phiên âm đã dừng vì nguồn âm thanh không còn khả dụng
   detailed_parameters: Tham số chi tiết
   direct_input: Nhập trực tiếp
   direct_input_instruction: Vui lòng nhập trực tiếp nội dung nguồn cho biên bản cuộc họp vào vùng "Bản chuyển đổi" bên dưới
@@ -751,6 +752,8 @@ transcribe:
   max_speakers: Max Speakers
   max_speakers_help: Số lượng người nói tối đa được nhận dạng
   mic_input: Đầu vào microphone
+  reconnect_failed: Phiên âm đã dừng vì kết nối lại thất bại. Vui lòng bắt đầu ghi âm lại
+  reconnecting: Kết nối phiên âm bị gián đoạn. Đang tự động kết nối lại
   result_placeholder: Kết quả nhận dạng giọng nói sẽ được hiển thị ở đây
   screen_audio: Âm thanh màn hình
   screen_audio_error: Lỗi âm thanh màn hình

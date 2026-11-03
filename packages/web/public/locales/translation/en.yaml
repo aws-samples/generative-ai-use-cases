@@ -1091,6 +1091,7 @@ svg:
   show_preview: Show Preview
   svg_error: 'SVG output error: '
 transcribe:
+  audio_source_lost: Transcription stopped because the audio source is no longer available
   detailed_parameters: Detailed parameters
   direct_input: Direct Input
   direct_input_instruction: >-
@@ -1101,6 +1102,8 @@ transcribe:
   max_speakers: Max Speakers
   max_speakers_help: Maximum number of speakers to recognize
   mic_input: Microphone Input
+  reconnect_failed: Transcription stopped because reconnection failed. Please start recording again
+  reconnecting: Transcription connection was interrupted. Reconnecting automatically
   result_placeholder: Speech recognition results will be displayed here
   screen_audio: Screen Audio
   screen_audio_error: Screen Audio Error

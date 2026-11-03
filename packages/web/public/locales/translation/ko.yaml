@@ -650,6 +650,7 @@ svg:
   show_preview: 미리보기 표시
   svg_error: 'SVG 출력 오류: '
 transcribe:
+  audio_source_lost: 오디오 소스를 더 이상 사용할 수 없어 전사가 중지되었습니다
   detailed_parameters: 세부 매개변수
   direct_input: 직접 입력
   direct_input_instruction: >-
@@ -659,6 +660,8 @@ transcribe:
   max_speakers: 최대 화자 수
   max_speakers_help: 인식할 화자의 최대 수
   mic_input: 마이크 입력
+  reconnect_failed: 재연결에 실패하여 전사가 중지되었습니다. 다시 녹음을 시작해 주세요
+  reconnecting: 전사 연결이 끊어져 자동으로 다시 연결하고 있습니다
   result_placeholder: 음성 인식 결과가 여기에 표시됩니다
   screen_audio: 화면 오디오
   screen_audio_error: 화면 오디오 오류

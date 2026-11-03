@@ -5,13 +5,26 @@ import {
   LanguageCode,
 } from '@aws-sdk/client-transcribe-streaming';
 import MicrophoneStream from 'microphone-stream';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import update from 'immutability-helper';
 import { Buffer } from 'buffer';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { Transcript } from 'generative-ai-use-cases';
 import { getTranscribeSampleRate } from '../utils/AudioUtils';
+import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+
+// Amazon Transcribe Streaming terminates a stream on the server side
+// (e.g. max 4h session, no audio data received for 15 seconds).
+// When that happens without the user stopping the transcription,
+// reconnect automatically. Allow up to MAX_RECONNECT_ATTEMPTS consecutive
+// failures with a linear backoff (1s, 2s, 3s). The failure counter is reset
+// every time a connection is established successfully.
+const MAX_RECONNECT_ATTEMPTS = 3;
+const RECONNECT_DELAY_MS = 1000;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const pcmEncodeChunk = (chunk: Buffer) => {
   const input = MicrophoneStream.toRaw(chunk);
@@ -31,7 +44,17 @@ const idPoolId = import.meta.env.VITE_APP_IDENTITY_POOL_ID;
 const providerName = `cognito-idp.${region}.amazonaws.com/${userPoolId}`;
 
 const useMicrophone = () => {
-  const [micStream, setMicStream] = useState<MicrophoneStream | undefined>();
+  const { t } = useTranslation();
+  const micStreamRef = useRef<MicrophoneStream>();
+  // True when the user explicitly stopped the transcription
+  const userStopRef = useRef(false);
+  // Identifies the active transcription session so that an old
+  // reconnection loop does not survive a stop/start cycle
+  const sessionIdRef = useRef(0);
+  // Offset added to result timestamps so that they stay monotonic
+  // across automatic reconnections
+  const timeOffsetRef = useRef(0);
+  const lastEndTimeRef = useRef(0);
   const [recording, setRecording] = useState(false);
   const [rawTranscripts, setRawTranscripts] = useState<
     {
@@ -101,14 +124,17 @@ const useMicrophone = () => {
     });
   }, [transcribeClient]);
 
+  // Consumes a single transcription stream.
+  // Returns true if the connection was established (even if the stream
+  // ended or failed afterwards), false if it could not be established.
   const startStream = async (
     mic: MicrophoneStream,
     languageCode?: LanguageCode,
     speakerLabel: boolean = false,
     languageOptions?: string[],
     enableMultiLanguage: boolean = false
-  ) => {
-    if (!transcribeClient) return;
+  ): Promise<boolean> => {
+    if (!transcribeClient) return false;
 
     // Update Language
     if (languageCode) {
@@ -166,8 +192,10 @@ const useMicrophone = () => {
       ShowSpeakerLabel: speakerLabel,
     });
 
+    let connected = false;
     try {
       const response = await transcribeClient.send(command);
+      connected = true;
 
       if (response.TranscriptResultStream) {
         // This snippet should be put into an async function
@@ -210,6 +238,11 @@ const useMicrophone = () => {
               })
             );
 
+            // Keep timestamps monotonic across automatic reconnections
+            const startTime = (result.StartTime ?? 0) + timeOffsetRef.current;
+            const endTime = (result.EndTime ?? 0) + timeOffsetRef.current;
+            lastEndTimeRef.current = Math.max(lastEndTimeRef.current, endTime);
+
             setRawTranscripts((prev) => {
               if (prev.length === 0 || !prev[prev.length - 1].isPartial) {
                 // segment is complete
@@ -218,8 +251,8 @@ const useMicrophone = () => {
                     {
                       resultId:
                         result.ResultId ?? `mic-${Date.now()}-${Math.random()}`,
-                      startTime: result.StartTime ?? 0,
-                      endTime: result.EndTime ?? 0,
+                      startTime,
+                      endTime,
                       isPartial: result.IsPartial ?? false,
                       transcripts,
                       languageCode: result.LanguageCode,
@@ -238,8 +271,8 @@ const useMicrophone = () => {
                         resultId:
                           result.ResultId ??
                           `mic-${Date.now()}-${Math.random()}`,
-                        startTime: result.StartTime ?? 0,
-                        endTime: result.EndTime ?? 0,
+                        startTime,
+                        endTime,
                         isPartial: result.IsPartial ?? false,
                         transcripts,
                         languageCode: result.LanguageCode,
@@ -255,11 +288,21 @@ const useMicrophone = () => {
       }
     } catch (error) {
       console.error(error);
-      stopTranscription();
-    } finally {
-      stopTranscription();
-      transcribeClient.destroy();
     }
+    return connected;
+  };
+
+  // Marks the last partial segment as complete so that transcripts received
+  // after a reconnection are appended instead of overwriting it
+  const finalizeLastPartial = () => {
+    setRawTranscripts((prev) => {
+      if (prev.length === 0 || !prev[prev.length - 1].isPartial) {
+        return prev;
+      }
+      return update(prev, {
+        [prev.length - 1]: { isPartial: { $set: false } },
+      });
+    });
   };
 
   const startTranscription = async (
@@ -268,39 +311,78 @@ const useMicrophone = () => {
     languageOptions?: string[],
     enableMultiLanguage?: boolean
   ) => {
-    const mic = new MicrophoneStream();
-    try {
-      setMicStream(mic);
-      mic.setStream(
-        await window.navigator.mediaDevices.getUserMedia({
-          video: false,
-          audio: true,
-        })
-      );
+    const sessionId = ++sessionIdRef.current;
+    const isActive = () =>
+      sessionIdRef.current === sessionId && !userStopRef.current;
 
-      setRecording(true);
-      await startStream(
-        mic,
-        languageCode,
-        speakerLabel,
-        languageOptions,
-        enableMultiLanguage
-      );
-    } catch (e) {
-      console.log(e);
+    userStopRef.current = false;
+    timeOffsetRef.current = 0;
+    lastEndTimeRef.current = 0;
+    let consecutiveFailures = 0;
+    let isInitialAttempt = true;
+    setRecording(true);
+
+    try {
+      while (isActive()) {
+        const mic = new MicrophoneStream();
+        micStreamRef.current = mic;
+        let connected = false;
+        try {
+          mic.setStream(
+            await window.navigator.mediaDevices.getUserMedia({
+              video: false,
+              audio: true,
+            })
+          );
+          connected = await startStream(
+            mic,
+            languageCode,
+            speakerLabel,
+            languageOptions,
+            enableMultiLanguage
+          );
+        } catch (e) {
+          console.log(e);
+        } finally {
+          mic.stop();
+        }
+
+        if (!isActive()) break;
+
+        // The stream ended even though the user did not stop it
+        consecutiveFailures = connected ? 0 : consecutiveFailures + 1;
+        if (isInitialAttempt && !connected) {
+          // e.g. microphone permission denied: keep the legacy behavior
+          break;
+        }
+        isInitialAttempt = false;
+        if (consecutiveFailures >= MAX_RECONNECT_ATTEMPTS) {
+          toast.error(t('transcribe.reconnect_failed'));
+          break;
+        }
+
+        // Prepare for the reconnection while keeping past transcripts
+        timeOffsetRef.current = lastEndTimeRef.current;
+        finalizeLastPartial();
+        toast.info(t('transcribe.reconnecting'));
+        await sleep(RECONNECT_DELAY_MS * (consecutiveFailures + 1));
+      }
     } finally {
-      mic.stop();
-      setRecording(false);
-      setMicStream(undefined);
+      if (sessionIdRef.current === sessionId) {
+        micStreamRef.current = undefined;
+        setRecording(false);
+        transcribeClient?.destroy();
+      }
     }
   };
 
   const stopTranscription = () => {
-    if (micStream) {
-      micStream.stop();
-      setRecording(false);
-      setMicStream(undefined);
+    userStopRef.current = true;
+    if (micStreamRef.current) {
+      micStreamRef.current.stop();
+      micStreamRef.current = undefined;
     }
+    setRecording(false);
   };
 
   const clearTranscripts = () => {

@@ -914,6 +914,7 @@ svg:
   show_preview: プレビューを表示
   svg_error: 'SVG出力エラー: '
 transcribe:
+  audio_source_lost: 音声ソースが利用できなくなったため、文字起こしを停止しました
   detailed_parameters: 詳細なパラメータ
   direct_input: 直接入力
   direct_input_instruction: 下の「文字起こし」エリアに議事録の元となるテキストを直接入力してください。
@@ -922,6 +923,8 @@ transcribe:
   max_speakers: Max Speakers
   max_speakers_help: 認識する話者の最大数
   mic_input: マイク入力
+  reconnect_failed: 文字起こしの再接続に失敗したため、停止しました。もう一度録音を開始してください
+  reconnecting: 文字起こしの接続が切断されたため、自動的に再接続しています
   result_placeholder: 音声認識結果がここに表示されます
   screen_audio: スクリーン音声
   screen_audio_error: スクリーン音声エラー

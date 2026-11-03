@@ -630,6 +630,7 @@ summarize:
   text_to_summarize: 要摘要的文本
   title: 摘要
 transcribe:
+  audio_source_lost: 由于音频源不再可用，转录已停止
   detailed_parameters: 详细参数
   direct_input: 直接输入
   direct_input_instruction: 请在下方"转录文本"区域中直接输入会议记录的源文本
@@ -638,6 +639,8 @@ transcribe:
   max_speakers: 最大发言人数
   max_speakers_help: 要识别的最大发言人数
   mic_input: 麦克风输入
+  reconnect_failed: 由于重新连接失败，转录已停止。请重新开始录音
+  reconnecting: 转录连接已中断，正在自动重新连接
   result_placeholder: 语音识别结果将显示在这里
   screen_audio: 屏幕音频
   screen_audio_error: 屏幕音频错误：
