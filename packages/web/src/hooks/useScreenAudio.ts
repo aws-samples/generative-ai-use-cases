@@ -26,6 +26,8 @@ const RECONNECT_DELAY_MS = 1000;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+type StreamOutcome = { connected: boolean; receivedResults: boolean };
+
 const pcmEncodeChunk = (chunk: Buffer) => {
   const input = MicrophoneStream.toRaw(chunk);
   let offset = 0;
@@ -140,16 +142,17 @@ const useScreenAudio = () => {
   }, [transcribeClient]);
 
   // Consumes a single transcription stream.
-  // Returns true if the connection was established (even if the stream
-  // ended or failed afterwards), false if it could not be established.
+  // `connected`: the connection was established (even if the stream ended or
+  // failed afterwards). `receivedResults`: at least one transcription result
+  // arrived, i.e. audio was actually flowing.
   const startStream = async (
     stream: MicrophoneStream,
     languageCode?: LanguageCode,
     speakerLabel: boolean = false,
     languageOptions?: string[],
     enableMultiLanguage: boolean = false
-  ): Promise<boolean> => {
-    if (!transcribeClient) return false;
+  ): Promise<StreamOutcome> => {
+    if (!transcribeClient) return { connected: false, receivedResults: false };
 
     // Update Language
     if (languageCode) {
@@ -208,6 +211,7 @@ const useScreenAudio = () => {
     });
 
     let connected = false;
+    let receivedResults = false;
     try {
       const response = await transcribeClient.send(command);
       connected = true;
@@ -219,6 +223,7 @@ const useScreenAudio = () => {
             event.TranscriptEvent?.Transcript?.Results &&
             event.TranscriptEvent.Transcript?.Results.length > 0
           ) {
+            receivedResults = true;
             // Get multiple possible results, but this code only processes a single result
             const result = event.TranscriptEvent.Transcript?.Results[0];
 
@@ -301,7 +306,7 @@ const useScreenAudio = () => {
     } catch (error) {
       console.error('Screen audio transcription error:', error);
     }
-    return connected;
+    return { connected, receivedResults };
   };
 
   // Marks the last partial segment as complete so that transcripts received
@@ -477,10 +482,13 @@ const useScreenAudio = () => {
         const clonedTrack = audioTrack.clone();
         const stream = new MicrophoneStream();
         screenStreamRef.current = stream;
-        let connected = false;
+        let outcome: StreamOutcome = {
+          connected: false,
+          receivedResults: false,
+        };
         try {
           stream.setStream(new MediaStream([clonedTrack]));
-          connected = await startStream(
+          outcome = await startStream(
             stream,
             languageCode,
             speakerLabel,
@@ -496,11 +504,17 @@ const useScreenAudio = () => {
 
         if (!isActive()) break;
 
-        // The stream ended even though the user did not stop it
-        consecutiveFailures = connected ? 0 : consecutiveFailures + 1;
-        if (isInitialAttempt && !connected) {
+        // The stream ended even though the user did not stop it.
+        // Only a stream that produced results counts as healthy: one that
+        // connects but ends with no results (e.g. no audio reaches the
+        // browser) counts as a failure, so a dead source stops retrying.
+        consecutiveFailures = outcome.receivedResults
+          ? 0
+          : consecutiveFailures + 1;
+        if (isInitialAttempt && !outcome.connected) {
           // The very first connection could not be established:
-          // keep the legacy behavior (no retry)
+          // keep the legacy behavior (no retry) and tell the user
+          setError('Screen audio transcription failed');
           break;
         }
         isInitialAttempt = false;

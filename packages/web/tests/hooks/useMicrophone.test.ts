@@ -28,6 +28,7 @@ vi.mock('@aws-sdk/client-transcribe-streaming', () => {
 
 vi.mock('microphone-stream', () => {
   class MockMicrophoneStream {
+    context = { sampleRate: 48000 };
     setStream() {}
     stop() {}
     static toRaw(chunk: unknown) {
@@ -278,6 +279,42 @@ describe('useMicrophone auto reconnection', () => {
     // 1 initial connection + 3 reconnection attempts
     expect(mocks.sendMock).toHaveBeenCalledTimes(4);
     // Transcripts are still kept after giving up
+    expect(result.current.rawTranscripts).toHaveLength(1);
+  }, 20000);
+
+  it('stops retrying when reconnections succeed but no audio arrives', async () => {
+    // The first session is healthy. Every later connection is accepted but
+    // ends without any result, as when no audio reaches the browser.
+    mocks.sendMock
+      .mockResolvedValueOnce(
+        streamResponse([
+          transcriptEvent({
+            resultId: 'r1',
+            isPartial: false,
+            startTime: 0,
+            endTime: 2,
+            transcript: 'first session',
+          }),
+        ])
+      )
+      .mockImplementation(async () => streamResponse([]));
+
+    const { result } = await renderReadyHook();
+
+    act(() => {
+      void result.current.startTranscription('ja-JP' as LanguageCode);
+    });
+
+    await waitFor(
+      () =>
+        expect(mocks.toastError).toHaveBeenCalledWith(
+          'transcribe.reconnect_failed'
+        ),
+      { timeout: 15000 }
+    );
+    await waitFor(() => expect(result.current.recording).toBe(false));
+    // 1 healthy connection + 3 connections without results, then give up
+    expect(mocks.sendMock).toHaveBeenCalledTimes(4);
     expect(result.current.rawTranscripts).toHaveLength(1);
   }, 20000);
 

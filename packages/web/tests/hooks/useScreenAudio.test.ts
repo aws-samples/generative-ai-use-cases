@@ -27,6 +27,7 @@ vi.mock('@aws-sdk/client-transcribe-streaming', () => {
 
 vi.mock('microphone-stream', () => {
   class MockMicrophoneStream {
+    context = { sampleRate: 48000 };
     setStream() {}
     stop() {}
     static toRaw(chunk: unknown) {
@@ -263,4 +264,65 @@ describe('useScreenAudio auto reconnection', () => {
     // No reconnection is attempted since the source is gone
     expect(mocks.sendMock).toHaveBeenCalledTimes(1);
   }, 15000);
+
+  it('shows an error when the first connection cannot be established', async () => {
+    mocks.sendMock.mockRejectedValue(new Error('connection failed'));
+
+    const audioTrack = createMockTrack();
+    const displayStream = createMockDisplayStream(audioTrack);
+
+    const { result } = await renderReadyHook();
+
+    await act(async () => {
+      await result.current.startTranscriptionWithStream(
+        displayStream,
+        'ja-JP' as LanguageCode
+      );
+    });
+
+    // The failure is visible to the user instead of ending silently
+    expect(result.current.error).toBe('Screen audio transcription failed');
+    expect(result.current.recording).toBe(false);
+    // The first attempt is not retried
+    expect(mocks.sendMock).toHaveBeenCalledTimes(1);
+  }, 10000);
+
+  it('stops retrying when reconnections succeed but no audio arrives', async () => {
+    mocks.sendMock
+      .mockResolvedValueOnce(
+        streamResponse([
+          transcriptEvent({
+            resultId: 'r1',
+            isPartial: false,
+            startTime: 0,
+            endTime: 2,
+            transcript: 'first session',
+          }),
+        ])
+      )
+      .mockImplementation(async () => streamResponse([]));
+
+    const audioTrack = createMockTrack();
+    const displayStream = createMockDisplayStream(audioTrack);
+
+    const { result } = await renderReadyHook();
+
+    act(() => {
+      void result.current.startTranscriptionWithStream(
+        displayStream,
+        'ja-JP' as LanguageCode
+      );
+    });
+
+    await waitFor(
+      () =>
+        expect(mocks.toastError).toHaveBeenCalledWith(
+          'transcribe.reconnect_failed'
+        ),
+      { timeout: 15000 }
+    );
+    await waitFor(() => expect(result.current.recording).toBe(false));
+    // 1 healthy connection + 3 connections without results, then give up
+    expect(mocks.sendMock).toHaveBeenCalledTimes(4);
+  }, 20000);
 });
