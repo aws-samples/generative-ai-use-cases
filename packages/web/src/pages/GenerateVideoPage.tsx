@@ -24,7 +24,7 @@ import {
   PiTranslate,
 } from 'react-icons/pi';
 import { GenerateVideoPageQueryParams } from '../@types/navigate';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -209,6 +209,7 @@ const GenerateVideoPage: React.FC = () => {
     clear,
   } = useGenerateVideoPageState();
   const { pathname, search } = useLocation();
+  const navigate = useNavigate();
   const {
     generate,
     videoJobs,
@@ -268,11 +269,16 @@ const GenerateVideoPage: React.FC = () => {
           ? params.modelId!
           : _modelId
       );
+      // Clear query params after consuming to prevent re-application
+      navigate(pathname, { replace: true });
     } else {
       setVideoGenModelId(_modelId);
     }
+    // Apply the query string once, as AgentChatPage does, not each time the
+    // model changes: a page opened from a link would otherwise put the text
+    // and the model in the URL back whenever the user picks another model.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoGenModelId, videoGenModelIds, search, setPrompt]);
+  }, [videoGenModelIds, search, setPrompt]);
 
   useEffect(() => {
     if (videoGenModelId === '') {
