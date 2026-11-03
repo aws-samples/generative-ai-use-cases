@@ -7,6 +7,21 @@ import {
   Stack,
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
+
+// CustomResourceProvider takes its own runtime enum, whose values are the
+// Lambda runtime names. Follow the app's Node.js runtime.
+const providerRuntime = (): CustomResourceProviderRuntime => {
+  const runtime = Object.values(CustomResourceProviderRuntime).find(
+    (value) => value === LAMBDA_RUNTIME_NODEJS.name
+  );
+  if (runtime === undefined) {
+    throw new Error(
+      `${LAMBDA_RUNTIME_NODEJS.name} is not supported by CustomResourceProvider`
+    );
+  }
+  return runtime;
+};
 
 export interface StackOutputsProps {
   /** The stack whose outputs are read. It may be in another Region. */
@@ -41,7 +56,7 @@ export class StackOutputs extends Construct {
           __dirname,
           '../../custom-resources/stack-outputs'
         ),
-        runtime: CustomResourceProviderRuntime.NODEJS_22_X,
+        runtime: providerRuntime(),
         policyStatements: [
           {
             Effect: 'Allow',
