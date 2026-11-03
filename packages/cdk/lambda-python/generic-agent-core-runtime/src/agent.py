@@ -9,7 +9,8 @@ import boto3
 from strands import Agent as StrandsAgent
 from strands.models import BedrockModel
 
-from .config import extract_model_info, get_max_iterations, get_system_prompt, supports_prompt_cache, supports_tools_cache
+from . import sandbox
+from .config import extract_model_info, get_code_interpreter_prompt, get_max_iterations, get_system_prompt, supports_prompt_cache, supports_tools_cache
 from .tools import ToolManager
 from .types import Message, ModelInfo
 from .utils import (
@@ -100,6 +101,14 @@ class AgentManager:
             # Process messages and prompt using utility functions
             processed_messages = process_messages(messages)
             processed_prompt = process_prompt(prompt)
+
+            # The code interpreter has a sandbox of its own: put the attachments
+            # there, and tell the model where they are and how to hand files back.
+            code_interpreter = self.tool_manager.code_interpreter
+            if code_interpreter is not None:
+                files = sandbox.attachments(processed_messages, processed_prompt)
+                paths = sandbox.put_attachments(code_interpreter, files)
+                combined_system_prompt += "\n" + get_code_interpreter_prompt(paths)
 
             # Create Strands agent and stream response
             agent = StrandsAgent(

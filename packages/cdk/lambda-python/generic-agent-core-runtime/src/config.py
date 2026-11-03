@@ -24,6 +24,20 @@ FIXED_SYSTEM_PROMPT = f"""## About File Output
 - If the output file is an image file, the S3 URL output must be in Markdown format.
 """
 
+CODE_INTERPRETER_PROMPT = f"""## About the Code Interpreter
+- The code interpreter runs in a sandbox of its own. Write the files you make there under `{WORKSPACE_DIR}` too, and upload them with `upload_file_to_s3_and_retrieve_s3_url` by the same path: it fetches them from the sandbox. Do not read them back with `readFiles` to deliver them.
+- The sandbox cannot reach the internet, so `pip install` fails. Use the libraries already installed.
+"""
+
+
+def get_code_interpreter_prompt(attachment_paths: list[str]) -> str:
+    """What the model needs to know to work on files with the code interpreter"""
+    prompt = CODE_INTERPRETER_PROMPT
+    if attachment_paths:
+        listed = "\n".join(f"  - `{path}`" for path in attachment_paths)
+        prompt += f"- The files the user attached are in the sandbox as they are. Open these rather than recreating them from the text you were shown:\n{listed}\n"
+    return prompt
+
 
 def get_aws_credentials() -> dict[str, str]:
     """Get AWS credentials from environment or IAM role"""
