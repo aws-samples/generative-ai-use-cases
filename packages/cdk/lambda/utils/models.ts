@@ -51,8 +51,8 @@ const lightWeightModelIds = modelIds.filter(
 const defaultModelConfiguration = lightWeightModelIds[0] || modelIds[0];
 export const defaultModel: Model = {
   type: 'bedrock',
-  modelId: defaultModelConfiguration.modelId,
-  region: defaultModelConfiguration.region,
+  modelId: defaultModelConfiguration?.modelId ?? '',
+  region: defaultModelConfiguration?.region ?? '',
 };
 
 const imageGenerationModels: ModelConfiguration[] = (
