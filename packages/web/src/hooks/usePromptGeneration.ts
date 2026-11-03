@@ -192,7 +192,14 @@ export const usePromptGeneration = (
           if (!builtInToolsParsedRef.current) {
             const builtInTools = parseBuiltInTools(rawOutput);
             if (builtInTools !== null) {
-              setSuggestedBuiltInTools(builtInTools);
+              // Keep only ids that were offered, so an invented id from the
+              // model cannot clear tool settings the user chose
+              const knownIds = new Set(
+                (availableBuiltInTools ?? []).map((tool) => tool.id)
+              );
+              setSuggestedBuiltInTools(
+                builtInTools.filter((id) => knownIds.has(id))
+              );
               builtInToolsParsedRef.current = true;
             }
           }
