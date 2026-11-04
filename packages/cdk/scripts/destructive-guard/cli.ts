@@ -1,80 +1,88 @@
-// Usage: ts-node scripts/destructive-guard/cli.ts <base out> <head out> <result dir>
+// Usage: ts-node scripts/destructive-guard/cli.ts <base .snap> <head .snap> <result dir>
 //
-// <base out> and <head out> hold one cdk.out directory per profile, as written
-// by synth.ts. Writes findings.json and report.md into <result dir>. Exits 1
-// when the head would replace, delete or orphan a stateful resource that
-// exists in the base, and 2 when a profile is missing from either side.
-import {
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  writeFileSync,
-} from 'node:fs';
+// Compares the CDK snapshot of a pull request with the one on its base and
+// writes findings.json and report.md into <result dir>. Exits 1 when the head
+// would replace, delete or orphan a stateful resource that exists in the base,
+// and 2 when a snapshot file cannot be read. A base snapshot in the format
+// used before the snapshot serializer escaped strings is skipped with exit 0.
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { CfnTemplate, findDestructiveChanges, Finding } from './compare';
-import { PROFILES } from './profiles';
+import { findDestructiveChanges, Finding } from './compare';
+import { parseSnapshotFile, SnapshotFormatError } from './snapshot';
 
-const SUFFIX = '.template.json';
+const TITLE = '### CDK destructive-change guard';
 
-const readTemplates = (dir: string): Map<string, CfnTemplate> =>
-  new Map(
-    readdirSync(dir)
-      .filter((f) => f.endsWith(SUFFIX))
-      .map((f) => [
-        f.slice(0, -SUFFIX.length),
-        JSON.parse(readFileSync(join(dir, f), 'utf8')) as CfnTemplate,
-      ])
-  );
-
-type ProfileFinding = Finding & { profile: string };
-
-const report = (findings: ProfileFinding[]): string => {
+const report = (findings: Finding[]): string => {
   if (findings.length === 0) {
-    return '### CDK destructive-change guard\n\nNo stateful resource is replaced, deleted or orphaned.\n';
+    return `${TITLE}\n\nNo stateful resource is replaced, deleted or orphaned.\n`;
   }
   const rows = findings.map(
-    (f) =>
-      `| ${f.profile} | ${f.stack} | ${f.logicalId} | ${f.resourceType} | ${f.impact} |`
+    (f) => `| ${f.stack} | ${f.logicalId} | ${f.resourceType} | ${f.impact} |`
   );
   return [
-    '### CDK destructive-change guard',
+    TITLE,
     '',
     'This change replaces, deletes or orphans stateful resources. Existing deployments would lose data. Describe the impact and the migration steps in the pull request; a maintainer decides whether to accept it.',
     '',
-    '| Profile | Stack | Logical ID | Type | Impact |',
-    '| --- | --- | --- | --- | --- |',
+    '| Snapshot | Logical ID | Type | Impact |',
+    '| --- | --- | --- | --- |',
     ...rows,
     '',
   ].join('\n');
 };
 
-const main = (): number => {
-  const [baseRoot, headRoot, resultDir] = process.argv.slice(2);
-  if (!baseRoot || !headRoot || !resultDir) {
-    console.error('usage: cli.ts <base out> <head out> <result dir>');
-    return 2;
-  }
-  const findings: ProfileFinding[] = [];
-  for (const profile of Object.keys(PROFILES)) {
-    const baseDir = join(baseRoot, profile);
-    const headDir = join(headRoot, profile);
-    if (!existsSync(baseDir) || !existsSync(headDir)) {
-      console.error(`profile ${profile} was not synthesized on both sides`);
-      return 2;
-    }
-    findings.push(
-      ...findDestructiveChanges({
-        base: readTemplates(baseDir),
-        head: readTemplates(headDir),
-      }).map((f) => ({ ...f, profile }))
-    );
-  }
-  const markdown = report(findings);
+const write = (resultDir: string, findings: Finding[], markdown: string) => {
   mkdirSync(resultDir, { recursive: true });
   writeFileSync(join(resultDir, 'findings.json'), JSON.stringify(findings));
   writeFileSync(join(resultDir, 'report.md'), markdown);
   console.log(markdown);
+};
+
+const main = (): number => {
+  const [basePath, headPath, resultDir] = process.argv.slice(2);
+  if (!basePath || !headPath || !resultDir) {
+    console.error('usage: cli.ts <base .snap> <head .snap> <result dir>');
+    return 2;
+  }
+
+  let base;
+  try {
+    base = parseSnapshotFile(readFileSync(basePath, 'utf8'));
+  } catch (e) {
+    if (!(e instanceof SnapshotFormatError)) throw e;
+    write(
+      resultDir,
+      [],
+      `${TITLE}\n\nSkipped: the base snapshot predates the escaped snapshot format (${e.message}).\n`
+    );
+    return 0;
+  }
+
+  let head;
+  try {
+    head = parseSnapshotFile(readFileSync(headPath, 'utf8'));
+  } catch (e) {
+    if (!(e instanceof SnapshotFormatError)) throw e;
+    console.error(`head snapshot cannot be read: ${e.message}`);
+    return 2;
+  }
+  if (base.size === 0 || head.size === 0) {
+    console.error('a snapshot file has no entries');
+    return 2;
+  }
+  // Snapshots used positional names before they were named after their stack.
+  // With no name in common there is nothing to pair up.
+  if (![...base.keys()].some((key) => head.has(key))) {
+    write(
+      resultDir,
+      [],
+      `${TITLE}\n\nSkipped: no snapshot name is shared with the base, so the snapshots cannot be paired.\n`
+    );
+    return 0;
+  }
+
+  const findings = findDestructiveChanges({ base, head });
+  write(resultDir, findings, report(findings));
   return findings.length > 0 ? 1 : 0;
 };
 

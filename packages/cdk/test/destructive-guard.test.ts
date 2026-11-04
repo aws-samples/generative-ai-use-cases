@@ -1,8 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
   CfnTemplate,
   findDestructiveChanges,
 } from '../scripts/destructive-guard/compare';
-import { PROFILES } from '../scripts/destructive-guard/profiles';
+import {
+  parseSnapshotFile,
+  SnapshotFormatError,
+} from '../scripts/destructive-guard/snapshot';
 
 const table = (keyName: string) => ({
   Type: 'AWS::DynamoDB::Table',
@@ -118,20 +123,72 @@ describe('findDestructiveChanges', () => {
   });
 });
 
-describe('PROFILES', () => {
-  test('covers the stateful features that are off by default', () => {
-    expect(Object.keys(PROFILES)).toEqual([
-      'default',
-      'all-features',
-      'closed-network',
-    ]);
-    expect(PROFILES['all-features']).toMatchObject({
-      ragEnabled: true,
-      ragKnowledgeBaseEnabled: true,
-      agentEnabled: true,
+describe('parseSnapshotFile', () => {
+  // Written the way Jest writes a .snap file with escapeString enabled:
+  // escaped quotes, raw newlines inside strings, trailing commas, and
+  // backticks and `${` escaped for the template literal.
+  const snap = [
+    '// Jest Snapshot v1, https://goo.gl/fbAQLP',
+    '',
+    'exports[`Stacks: A 1`] = `',
+    '{',
+    '  "Resources": {',
+    '    "Table": {',
+    '      "Properties": {',
+    '        "Policy": "[{\\\\"Rules\\\\":[],}]",',
+    '        "Script": "line1',
+    'line2 \\`x\\` \\${y}",',
+    '      },',
+    '      "Type": "AWS::DynamoDB::Table",',
+    '    },',
+    '  },',
+    '}',
+    '`;',
+    '',
+    'exports[`Stacks: B 1`] = `',
+    '{',
+    '  "Resources": {},',
+    '}',
+    '`;',
+    '',
+  ].join('\n');
+
+  test('reads every snapshot back as a template', () => {
+    const templates = parseSnapshotFile(snap);
+    expect([...templates.keys()]).toEqual(['Stacks: A 1', 'Stacks: B 1']);
+    expect(templates.get('Stacks: A 1')).toEqual({
+      Resources: {
+        Table: {
+          Properties: {
+            Policy: '[{"Rules":[],}]',
+            Script: 'line1\nline2 `x` ${y}',
+          },
+          Type: 'AWS::DynamoDB::Table',
+        },
+      },
     });
-    expect(PROFILES['closed-network']).toMatchObject({
-      closedNetworkMode: true,
-    });
+  });
+
+  test('rejects a snapshot printed without escaping', () => {
+    const unescaped = snap.replace(/\\\\"/g, '"');
+    expect(() => parseSnapshotFile(unescaped)).toThrow(SnapshotFormatError);
+  });
+
+  test('reads the CDK snapshot of this repository', () => {
+    const templates = parseSnapshotFile(
+      readFileSync(
+        join(__dirname, '__snapshots__/generative-ai-use-cases.test.ts.snap'),
+        'utf8'
+      )
+    );
+    expect(templates.size).toBeGreaterThan(0);
+    const main = templates.get(
+      'GenerativeAiUseCases matches the snapshot: GenerativeAiUseCasesStack 1'
+    );
+    expect(main?.Resources).toBeDefined();
+    // Comparing a snapshot with itself finds nothing.
+    expect(
+      findDestructiveChanges({ base: templates, head: templates })
+    ).toEqual([]);
   });
 });

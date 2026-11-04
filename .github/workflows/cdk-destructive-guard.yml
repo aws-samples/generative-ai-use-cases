@@ -1,12 +1,16 @@
 # Fails when a pull request would replace, delete or orphan a stateful
-# resource (DynamoDB, S3, Cognito, KMS, ...) in the synthesized templates,
-# which would lose data in existing deployments. The templates are synthesized
-# with the cdk.json defaults and with the stateful features turned on (see
-# packages/cdk/scripts/destructive-guard/profiles.ts).
+# resource (DynamoDB, S3, Cognito, KMS, ...), which would lose data in
+# existing deployments.
 #
-# The check catches accidental destructive changes. It runs the pull
-# request's code, so it is not a control against a malicious change; changes
-# to workflows and stateful infrastructure still need a maintainer review.
+# The check compares the CDK snapshot of the pull request
+# (packages/cdk/test/__snapshots__/generative-ai-use-cases.test.ts.snap) with
+# the one on its base. The snapshot test in the regular CI fails when the
+# snapshot is out of date, so the two checks together cover the synthesized
+# templates without synthesizing them again here.
+#
+# The check catches accidental destructive changes. It is not a control
+# against a malicious change; changes to workflows and stateful
+# infrastructure still need a maintainer review.
 #
 # When the check fails, the pull request is not merged unless a maintainer
 # decides the change is intended and merges it with a bypass.
@@ -31,70 +35,59 @@ jobs:
   guard:
     name: 'CDK destructive-change guard'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 15
     env:
-      CDK_DEFAULT_ACCOUNT: 123456789012
       BASE_SHA: ${{ github.event.pull_request.base.sha }}
       HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       GUARD_DIR: packages/cdk/scripts/destructive-guard
+      SNAPSHOT: packages/cdk/test/__snapshots__/generative-ai-use-cases.test.ts.snap
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ env.HEAD_SHA }}
-          path: head
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Check whether CDK output can change
+      - name: Check whether the snapshot changed
         id: scope
-        working-directory: head
         run: |
           MERGE_BASE=$(git merge-base "$BASE_SHA" "$HEAD_SHA")
           echo "merge_base=$MERGE_BASE" >> "$GITHUB_OUTPUT"
-          if git diff --name-only "$MERGE_BASE" "$HEAD_SHA" \
-            | grep -qE '^(packages/(cdk|common|types)/|package(-lock)?\.json$)'; then
-            echo "needed=true" >> "$GITHUB_OUTPUT"
-          else
+          if git diff --quiet "$MERGE_BASE" "$HEAD_SHA" -- "$SNAPSHOT"; then
             echo "needed=false" >> "$GITHUB_OUTPUT"
-            echo "No CDK, shared package or dependency changes; skipped." >> "$GITHUB_STEP_SUMMARY"
+            echo "The CDK snapshot is unchanged; skipped." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "needed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Use the base commit's guard scripts
         if: steps.scope.outputs.needed == 'true'
-        with:
-          ref: ${{ steps.scope.outputs.merge_base }}
-          path: base
-          persist-credentials: false
+        env:
+          MERGE_BASE: ${{ steps.scope.outputs.merge_base }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/guard"
+          git show "$MERGE_BASE:$SNAPSHOT" > "$RUNNER_TEMP/guard/base.snap"
+          # Fall back to the head's scripts only while the guard does not
+          # exist on the base yet.
+          if git cat-file -e "$MERGE_BASE:$GUARD_DIR/cli.ts" 2>/dev/null; then
+            rm -rf "$GUARD_DIR"
+            git restore --source "$MERGE_BASE" -- "$GUARD_DIR"
+          fi
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         if: steps.scope.outputs.needed == 'true'
         with:
           node-version: 22.x
           cache: npm
-          cache-dependency-path: |
-            base/package-lock.json
-            head/package-lock.json
 
-      - name: Synthesize and compare
+      - name: Compare the snapshots
         if: steps.scope.outputs.needed == 'true'
         run: |
-          # Use the base commit's guard in both trees. Fall back to the head's
-          # only while the guard does not exist on the base yet.
-          SOURCE=base
-          [ -d "base/$GUARD_DIR" ] || SOURCE=head
-          for tree in base head; do
-            if [ "$tree" != "$SOURCE" ]; then
-              rm -rf "$tree/$GUARD_DIR"
-              mkdir -p "$(dirname "$tree/$GUARD_DIR")"
-              cp -R "$SOURCE/$GUARD_DIR" "$tree/$GUARD_DIR"
-            fi
-          done
-          for tree in base head; do
-            (cd "$tree" && npm ci && cd packages/cdk \
-              && npx ts-node "scripts/destructive-guard/synth.ts" "$GITHUB_WORKSPACE/out/$tree")
-          done
-          (cd head/packages/cdk && npx ts-node "scripts/destructive-guard/cli.ts" \
-            "$GITHUB_WORKSPACE/out/base" "$GITHUB_WORKSPACE/out/head" "$GITHUB_WORKSPACE/result") \
+          # Workspace dependencies only; the CDK postinstall builds are not
+          # needed to read the snapshots.
+          npm ci --ignore-scripts
+          (cd packages/cdk && npx ts-node "scripts/destructive-guard/cli.ts" \
+            "$RUNNER_TEMP/guard/base.snap" "$GITHUB_WORKSPACE/$SNAPSHOT" "$RUNNER_TEMP/guard/result") \
             || STATUS=$?
-          cat result/report.md >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          cat "$RUNNER_TEMP/guard/result/report.md" >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
           exit "${STATUS:-0}"
