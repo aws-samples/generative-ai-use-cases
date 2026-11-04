@@ -109,6 +109,19 @@ npm install
 git add package-lock.json
 ```
 
+### 문제 해결
+
+| 표시되는 메시지                                                           | 원인과 해결 방법                                                                                                                                                                                                                          |
+| ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Your local changes to the following files would be overwritten by merge` | 커밋하지 않은 변경사항이 있습니다. `git commit`으로 자신의 브랜치에 커밋하거나 `git stash`로 임시 저장한 후 다시 병합하세요.                                                                                                              |
+| `CONFLICT (content): Merge conflict in ...`                               | [충돌이 발생한 경우](#충돌이-발생하는-경우)를 참조하세요. 병합을 취소하고 다시 시작하려면 `git merge --abort`를 실행합니다. 병합 전 상태로 돌아갑니다.                                                                                    |
+| `merge: v5.6.0 - not something we can merge`                              | 태그를 가져오지 않았거나 태그 이름이 잘못되었습니다. `git fetch --tags origin`(다른 이름의 원격인 경우 그 이름)을 실행하고 [Releases 페이지](https://github.com/aws-samples/generative-ai-use-cases/releases)에서 태그 이름을 확인하세요. |
+| `fatal: No names found, cannot describe anything.`                        | `git clone --depth 1` 등으로 기록을 생략하고 clone했기 때문에 태그가 없습니다. `git fetch --tags --unshallow origin`을 실행한 후 다시 시도하세요.                                                                                         |
+| `Already up to date.`                                                     | 이미 해당 릴리스 또는 그보다 새로운 main 브랜치의 내용이 포함되어 있습니다. 오류가 아닙니다.                                                                                                                                              |
+| `fatal: destination path 'generative-ai-use-cases' already exists`        | 같은 이름의 디렉토리가 이미 있습니다. 기존 디렉토리에서 업데이트하거나 다른 이름으로 clone하세요(`git clone <URL> <디렉토리 이름>`).                                                                                                      |
+
+충돌 해결을 Kiro 등의 AI 코딩 어시스턴트에 맡길 수도 있습니다. 이 경우에도 병합 후 [cdk.json](/packages/cdk/cdk.json)과 [parameter.ts](/packages/cdk/parameter.ts)에서 설정한 항목이 남아 있는지 반드시 확인하세요.
+
 ### main 브랜치 사용
 
 아직 릴리스되지 않은 변경사항이 필요한 경우 릴리스 대신 main 브랜치를 병합할 수 있습니다:

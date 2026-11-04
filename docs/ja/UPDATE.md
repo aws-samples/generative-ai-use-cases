@@ -109,6 +109,19 @@ npm install
 git add package-lock.json
 ```
 
+### うまくいかない場合
+
+| 表示されるメッセージ                                                      | 原因と対処                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Your local changes to the following files would be overwritten by merge` | コミットしていない変更があります。`git commit` でご自身のブランチにコミットするか、`git stash` で退避してから、もう一度マージしてください。                                                                                            |
+| `CONFLICT (content): Merge conflict in ...`                               | [コンフリクトが発生した場合](#コンフリクトが発生した場合) を参照してください。マージを取り消してやり直す場合は `git merge --abort` を実行します。マージ前の状態に戻ります。                                                            |
+| `merge: v5.6.0 - not something we can merge`                              | タグが取得されていないか、タグ名が間違っています。`git fetch --tags origin` (別名の remote の場合はその名前) を実行し、[Releases ページ](https://github.com/aws-samples/generative-ai-use-cases/releases) でタグ名を確認してください。 |
+| `fatal: No names found, cannot describe anything.`                        | `git clone --depth 1` などで履歴を省略して clone したため、タグがありません。`git fetch --tags --unshallow origin` を実行してから、もう一度実行してください。                                                                          |
+| `Already up to date.`                                                     | すでにそのリリース、またはそれより新しい main ブランチの内容が含まれています。エラーではありません。                                                                                                                                   |
+| `fatal: destination path 'generative-ai-use-cases' already exists`        | clone 先に同じ名前のディレクトリがあります。既存のディレクトリでアップデートするか、別の名前で clone してください (`git clone <URL> <ディレクトリ名>`)。                                                                               |
+
+コンフリクトの解消は、Kiro などの AI コーディングアシスタントに依頼することもできます。その場合も、[cdk.json](/packages/cdk/cdk.json) や [parameter.ts](/packages/cdk/parameter.ts) で設定した項目が残っているか、マージ後に必ず確認してください。
+
 ### main ブランチを利用する場合
 
 まだリリースされていない変更が必要な場合は、リリースの代わりに main ブランチをマージできます。

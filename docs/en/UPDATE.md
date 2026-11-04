@@ -109,6 +109,19 @@ npm install
 git add package-lock.json
 ```
 
+### Troubleshooting
+
+| Message                                                                   | Cause and fix                                                                                                                                                                                                                      |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Your local changes to the following files would be overwritten by merge` | You have uncommitted changes. Commit them to your branch with `git commit`, or set them aside with `git stash`, then merge again.                                                                                                  |
+| `CONFLICT (content): Merge conflict in ...`                               | See [If conflicts occur](#if-conflicts-occur). To cancel the merge and start over, run `git merge --abort`. It restores the state before the merge.                                                                                |
+| `merge: v5.6.0 - not something we can merge`                              | The tag has not been fetched, or the tag name is wrong. Run `git fetch --tags origin` (or the name of your remote) and check the tag name on the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases). |
+| `fatal: No names found, cannot describe anything.`                        | The repository was cloned without history (for example with `git clone --depth 1`), so it has no tags. Run `git fetch --tags --unshallow origin`, then try again.                                                                  |
+| `Already up to date.`                                                     | Your code already contains this release, or a newer state of the main branch. This is not an error.                                                                                                                                |
+| `fatal: destination path 'generative-ai-use-cases' already exists`        | A directory with the same name already exists. Update in the existing directory, or clone into another directory (`git clone <URL> <directory>`).                                                                                  |
+
+You can also ask an AI coding assistant such as Kiro to resolve conflicts. In that case too, always check after the merge that the settings you made in [cdk.json](/packages/cdk/cdk.json) and [parameter.ts](/packages/cdk/parameter.ts) are still there.
+
 ### Using the main branch
 
 If you need a change that is not released yet, you can merge the main branch instead of a release:
