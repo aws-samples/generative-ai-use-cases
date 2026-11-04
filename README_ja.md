@@ -159,7 +159,15 @@ GenU のデプロイには [AWS Cloud Development Kit](https://aws.amazon.com/jp
 - [AWS CloudShell を利用したデプロイ方法 (手元の環境を用意することが難しい場合)](docs/ja/DEPLOY_ON_CLOUDSHELL.md)
 - Workshop ([日本語](https://catalog.workshops.aws/generative-ai-use-cases-jp) / [英語](https://catalog.workshops.aws/generative-ai-use-cases))
 
-まず、以下のコマンドを実行してください。全てのコマンドはリポジトリのルートで実行してください。
+まず、リポジトリを clone し、最新のリリースからブランチを作成します。main ブランチにはまだリリースされていない変更も含まれるため、[リリース](https://github.com/aws-samples/generative-ai-use-cases/releases) をデプロイすることをお勧めします。アップデートの方法は [アップデート方法](docs/ja/UPDATE.md) をご参照ください。
+
+```bash
+git clone https://github.com/aws-samples/generative-ai-use-cases
+cd generative-ai-use-cases
+git switch -c genu $(git describe --tags --abbrev=0)
+```
+
+次に、以下のコマンドを実行してください。全てのコマンドはリポジトリのルートで実行してください。
 
 ```bash
 npm ci

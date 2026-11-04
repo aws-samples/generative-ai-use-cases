@@ -17,6 +17,8 @@ Download the [default cdk.json](/packages/cdk/cdk.json) (you can download the fi
 
 Download the [default parameter.ts](/packages/cdk/parameter.ts) and add the necessary environment settings. In parameter.ts, you can manage multiple environment settings like dev, staging, prod in a single file.
 
+The default files above are those of the main branch. If the main branch has changes that are not released yet, download the files of the release you deploy instead: select its tag on the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases), then open the file.
+
 ## Launching CloudShell
 
 Launch [CloudShell](https://console.aws.amazon.com/cloudshell/home).
@@ -40,6 +42,7 @@ deploy.sh supports the following options:
 -c, --cdk-context    ... Path to the cdk.json file
 -p, --parameter-file ... Path to the parameter.ts file
 -e, --env           ... Environment name (e.g., dev, prod)
+-r, --ref           ... Git tag or branch to deploy (default: the latest release)
 -h, --help          ... Show this message
 ```
 
@@ -69,6 +72,13 @@ Execute deploy.sh with the following commands. Note that the --cdk-context optio
 
 ```bash
 ./deploy.sh --parameter-file ~/parameter.ts --env prod
+```
+
+5. Deploy a specific release or branch (by default, `deploy.sh` deploys the latest release):
+
+```bash
+./deploy.sh --ref v5.6.0
+./deploy.sh --ref main
 ```
 
 When deployment is complete, the CloudFront URL will be displayed. You can access GenU by opening that URL in a browser.
