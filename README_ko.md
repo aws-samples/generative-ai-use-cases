@@ -167,7 +167,15 @@ GenU 배포는 [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/) (CDK)
 - [AWS CloudShell을 사용한 배포 방법 (자체 환경 준비가 어려운 경우)](docs/ko/DEPLOY_ON_CLOUDSHELL.md)
 - 워크샵 ([영어](https://catalog.workshops.aws/generative-ai-use-cases) / [일본어](https://catalog.workshops.aws/generative-ai-use-cases-jp))
 
-먼저 다음 명령을 실행하세요. 모든 명령은 저장소 루트에서 실행해야 합니다.
+먼저 저장소를 복제하고 최신 릴리스에서 브랜치를 생성합니다. main 브랜치에는 아직 릴리스되지 않은 변경사항도 포함되므로 [릴리스](https://github.com/aws-samples/generative-ai-use-cases/releases)를 배포하는 것을 권장합니다. 업데이트 방법은 [업데이트 방법](docs/ko/UPDATE.md)을 참조하세요.
+
+```bash
+git clone https://github.com/aws-samples/generative-ai-use-cases
+cd generative-ai-use-cases
+git switch -c genu $(git describe --tags --abbrev=0)
+```
+
+다음으로 다음 명령을 실행하세요. 모든 명령은 저장소 루트에서 실행해야 합니다.
 
 ```bash
 npm ci
