@@ -100,6 +100,10 @@ RAG also has the effect of preventing LLMs from providing "plausible but incorre
 GenU provides a RAG Chat use case.
 Two types of information sources are available for RAG Chat: [Amazon Kendra](docs/en/DEPLOY_OPTION.md) and [Knowledge Base](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case).
 When using Amazon Kendra, you can [use manually created S3 Buckets or Kendra Indexes as they are](docs/en/DEPLOY_OPTION.md#using-an-existing-amazon-kendra-index).
+
+> [!IMPORTANT]
+> Amazon Kendra entered maintenance mode on June 30, 2026, and has not accepted new customers since July 30, 2026 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). For new RAG chat deployments, we recommend the Knowledge Base option. To avoid fixed vector store costs, set `ragKnowledgeBaseStorageType` to `s3vectors`.
+
 When using Knowledge Base, advanced RAG features such as [Advanced Parsing](docs/en/DEPLOY_OPTION.md#enabling-advanced-parsing), [Chunk Strategy Selection](docs/en/DEPLOY_OPTION.md#changing-chunking-strategy), [Query Decomposition](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case), and [Reranking](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case) are available.
 Knowledge Base also allows for [Metadata Filter Settings](docs/en/DEPLOY_OPTION.md#metadata-filter-configuration).
 For example, you can meet requirements such as "switching accessible data sources by organization" or "allowing users to set filters from the UI."

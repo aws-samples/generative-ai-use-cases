@@ -73,6 +73,9 @@ npm run cdk:deploy
 
 ### Enabling RAG Chat (Amazon Kendra) Use Case
 
+> [!IMPORTANT]
+> Amazon Kendra entered maintenance mode on June 30, 2026, and has not accepted new customers since July 30, 2026 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). For new RAG chat deployments, we recommend the Knowledge Base option. To avoid fixed vector store costs, set `ragKnowledgeBaseStorageType` to `s3vectors`.
+
 Set `ragEnabled` to `true`. (Default is `false`)
 
 You can also set `kendraIndexLanguage` to prefered language, which may improve search performance.
