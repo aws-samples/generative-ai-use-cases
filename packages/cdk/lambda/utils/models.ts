@@ -591,7 +591,8 @@ const createConverseCommandInput = (
       // Adaptive thinking (Claude Opus 4.6+)
       // https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html
       converseCommandInput.additionalModelRequestFields = {
-        thinking: { type: 'adaptive' },
+        // Opus 4.7+ and the 5.x models return no thinking text without display
+        thinking: { type: 'adaptive', display: 'summarized' },
         output_config: {
           effort: model.modelParameters?.reasoningConfig?.effort || 'high',
         },
