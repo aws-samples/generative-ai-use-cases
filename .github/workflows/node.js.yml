@@ -38,4 +38,17 @@ jobs:
       - run: npm run web:build
       - run: npm run cdk:build
       - run: npm run cdk:test
+      # Fails when the pull request replaces, deletes or orphans a stateful
+      # resource in the CDK snapshot. It catches accidental changes; it is not
+      # a control against a malicious one. See CONTRIBUTING.md.
+      - name: Check for destructive changes to stateful resources
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          SNAPSHOT: packages/cdk/test/__snapshots__/generative-ai-use-cases.test.ts.snap
+        run: |
+          git fetch --depth=1 origin "$BASE_SHA"
+          git show "$BASE_SHA:$SNAPSHOT" > "$RUNNER_TEMP/base.snap"
+          cd packages/cdk
+          npx ts-node scripts/destructive-guard.ts "$RUNNER_TEMP/base.snap" "$GITHUB_WORKSPACE/$SNAPSHOT"
       - run: npm -w packages/cdk run cdk synth

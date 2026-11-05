@@ -40,16 +40,9 @@ For detailed development guidelines including linting and code style requirement
 - [DEVELOPMENT.md (English)](docs/en/DEVELOPMENT.md)
 - [DEVELOPMENT.md (日本語)](docs/ja/DEVELOPMENT.md)
 
-## Checks on pull requests
+## Changes to existing deployments
 
-Every pull request runs the CI checks (lint, type check, unit tests and the CDK snapshot test). Please make sure they pass before you ask for a review.
-
-The **CDK destructive-change check** (`cdk-destructive-guard.yml`) compares the CDK snapshot of your branch (`packages/cdk/test/__snapshots__/`) with the one on its base, so update the snapshot with `npm run cdk:test:update-snapshot` when your change affects the templates. It fails when a stateful resource (DynamoDB, S3, Cognito, KMS, Knowledge Base, ...) would be replaced, deleted or orphaned, because that change would affect data in existing deployments. If the change is intended:
-
-- Describe the impact on existing deployments and the migration steps in the pull request.
-- A maintainer reviews them and decides whether to merge the change. You do not need to do anything else.
-
-For a change that touches authentication, permissions or data access, please explain in the pull request what the change allows that was not allowed before.
+The CI compares the CDK snapshot of your branch (`packages/cdk/test/__snapshots__/`) with the one on `main`, so update the snapshot with `npm run cdk:test:update-snapshot` when your change affects the templates. The check fails when a stateful resource (DynamoDB, S3, Cognito, KMS, Knowledge Base, ...) would be replaced, deleted or orphaned, because that change affects data in existing deployments. If the change is intended, describe the impact and the migration steps in the pull request; a maintainer reviews them and decides whether to merge it.
 
 ## Coding Standards
 
