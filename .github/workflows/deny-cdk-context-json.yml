@@ -8,7 +8,7 @@ jobs:
   check-cdk-context:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Check for cdk.context.json
         run: |
           if [ -f "packages/cdk/cdk.context.json" ]; then

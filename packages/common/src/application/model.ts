@@ -698,8 +698,24 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'GPT OSS 20B',
   },
-  // GPT-6 / GPT-5.6: Converse rejects temperature, topP and document blocks.
+  // GPT-6.1 / GPT-6 / GPT-5.6: Converse rejects temperature, topP and document blocks.
   // Only global. and us. inference profiles exist.
+  'global.openai.gpt-6.1-sol': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6.1 Sol',
+  },
+  'us.openai.gpt-6.1-sol': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6.1 Sol',
+  },
+  'global.openai.gpt-6.1-terra': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6.1 Terra',
+  },
+  'us.openai.gpt-6.1-terra': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6.1 Terra',
+  },
   'global.openai.gpt-6-sol': {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-6 Sol',

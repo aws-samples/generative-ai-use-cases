@@ -105,6 +105,10 @@ RAG는 또한 증거에 기반한 답변만을 허용함으로써 LLM이 "그럴
 GenU는 RAG Chat 사용 사례를 제공합니다.
 RAG Chat에는 두 가지 유형의 정보 소스를 사용할 수 있습니다: [Amazon Kendra](docs/ko/DEPLOY_OPTION.md)와 [Knowledge Base](docs/ko/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case).
 Amazon Kendra를 사용할 때는 [수동으로 생성된 S3 버킷이나 Kendra 인덱스를 그대로 사용](docs/ko/DEPLOY_OPTION.md#using-an-existing-amazon-kendra-index)할 수 있습니다.
+
+> [!IMPORTANT]
+> Amazon Kendra는 2026년 6월 30일에 유지 관리 모드로 전환되었으며, 2026년 7월 30일부터 신규 고객을 받지 않습니다 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). 새로 RAG 채팅을 구축하는 경우 Knowledge Base 옵션 사용을 권장합니다. 벡터 스토어의 고정 비용을 피하려면 `ragKnowledgeBaseStorageType`을 `s3vectors`로 설정하십시오.
+
 Knowledge Base를 사용할 때는 [고급 파싱](docs/ko/DEPLOY_OPTION.md#enabling-advanced-parsing), [청크 전략 선택](docs/ko/DEPLOY_OPTION.md#changing-chunking-strategy), [쿼리 분해](docs/ko/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case), [재순위](docs/ko/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case)와 같은 고급 RAG 기능을 사용할 수 있습니다.
 Knowledge Base는 또한 [메타데이터 필터 설정](docs/ko/DEPLOY_OPTION.md#metadata-filter-configuration)을 허용합니다.
 예를 들어, "조직별로 접근 가능한 데이터 소스 전환" 또는 "사용자가 UI에서 필터를 설정할 수 있도록 허용"과 같은 요구사항을 충족할 수 있습니다.
