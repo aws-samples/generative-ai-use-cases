@@ -25,14 +25,16 @@ import {
   ConversationRole,
   ContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
-import { modelMetadata } from '@generative-ai-use-cases/common';
+import {
+  convertTextDocumentToUtf8,
+  modelMetadata,
+} from '@generative-ai-use-cases/common';
 import {
   applyAutoCacheToMessages,
   applyAutoCacheToSystem,
 } from './promptCache';
 import { getFormatFromMimeType, getMimeTypeFromFileName } from './media';
 import { convertToSafeFilename } from './fileNameUtils';
-import { convertTextDocumentToUtf8 } from './textEncoding';
 
 // Default Models
 
