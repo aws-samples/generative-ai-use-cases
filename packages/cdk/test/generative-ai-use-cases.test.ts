@@ -120,13 +120,13 @@ describe('GenerativeAiUseCases', () => {
     const dashboardTemplate = Template.fromStack(dashboardStack);
 
     // Assert
-    expect(cloudFrontWafTemplate.toJSON()).toMatchSnapshot('CloudFrontWafStack');
-    expect(ragKnowledgeBaseTemplate.toJSON()).toMatchSnapshot('RagKnowledgeBaseStack');
-    expect(agentTemplate.toJSON()).toMatchSnapshot('AgentStack');
-    expect(agentCoreTemplate.toJSON()).toMatchSnapshot('AgentCoreStack');
-    expect(guardrailTemplate.toJSON()).toMatchSnapshot('GuardrailStack');
-    expect(generativeAiUseCasesTemplate.toJSON()).toMatchSnapshot('GenerativeAiUseCasesStack');
-    expect(dashboardTemplate.toJSON()).toMatchSnapshot('DashboardStack');
+    expect(cloudFrontWafTemplate.toJSON()).toMatchSnapshot();
+    expect(ragKnowledgeBaseTemplate.toJSON()).toMatchSnapshot();
+    expect(agentTemplate.toJSON()).toMatchSnapshot();
+    expect(agentCoreTemplate.toJSON()).toMatchSnapshot();
+    expect(guardrailTemplate.toJSON()).toMatchSnapshot();
+    expect(generativeAiUseCasesTemplate.toJSON()).toMatchSnapshot();
+    expect(dashboardTemplate.toJSON()).toMatchSnapshot();
   });
 
   test('matches the snapshot (closed network mode)', () => {
@@ -173,13 +173,13 @@ describe('GenerativeAiUseCases', () => {
     const dashboardTemplate = Template.fromStack(dashboardStack);
 
     // Assert
-    expect(closedNetworkTemplate.toJSON()).toMatchSnapshot('ClosedNetworkStack');
-    expect(ragKnowledgeBaseTemplate.toJSON()).toMatchSnapshot('RagKnowledgeBaseStack');
-    expect(agentTemplate.toJSON()).toMatchSnapshot('AgentStack');
-    expect(agentCoreTemplate.toJSON()).toMatchSnapshot('AgentCoreStack');
-    expect(guardrailTemplate.toJSON()).toMatchSnapshot('GuardrailStack');
-    expect(generativeAiUseCasesTemplate.toJSON()).toMatchSnapshot('GenerativeAiUseCasesStack');
-    expect(dashboardTemplate.toJSON()).toMatchSnapshot('DashboardStack');
+    expect(closedNetworkTemplate.toJSON()).toMatchSnapshot();
+    expect(ragKnowledgeBaseTemplate.toJSON()).toMatchSnapshot();
+    expect(agentTemplate.toJSON()).toMatchSnapshot();
+    expect(agentCoreTemplate.toJSON()).toMatchSnapshot();
+    expect(guardrailTemplate.toJSON()).toMatchSnapshot();
+    expect(generativeAiUseCasesTemplate.toJSON()).toMatchSnapshot();
+    expect(dashboardTemplate.toJSON()).toMatchSnapshot();
   });
 
   test('tagKey functionality', () => {
@@ -276,7 +276,7 @@ describe('GenerativeAiUseCases', () => {
     const agentCoreTemplate = Template.fromStack(agentCoreStack);
 
     // Assert
-    expect(agentCoreTemplate.toJSON()).toMatchSnapshot('AgentCoreStack');
+    expect(agentCoreTemplate.toJSON()).toMatchSnapshot();
   });
 
   test('AgentCore VPC config requires both vpcId and subnetIds', () => {
