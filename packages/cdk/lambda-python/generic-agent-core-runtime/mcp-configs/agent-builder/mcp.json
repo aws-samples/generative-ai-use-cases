@@ -36,31 +36,12 @@
         "description": "Access AWS documentation and guides"
       }
     },
-    "awslabs.cdk-mcp-server": {
+    "awslabs.aws-iac-mcp-server": {
       "command": "uvx",
-      "args": ["awslabs.cdk-mcp-server@latest"],
+      "args": ["awslabs.aws-iac-mcp-server@latest"],
       "metadata": {
         "category": "AWS",
-        "description": "AWS CDK code generation and assistance"
-      }
-    },
-    "awslabs.aws-diagram-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.aws-diagram-mcp-server@latest"],
-      "metadata": {
-        "category": "AWS",
-        "description": "Generate AWS architecture diagrams"
-      }
-    },
-    "awslabs.nova-canvas-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.nova-canvas-mcp-server@latest"],
-      "env": {
-        "AWS_REGION": "us-east-1"
-      },
-      "metadata": {
-        "category": "AI/ML",
-        "description": "Amazon Nova Canvas image generation"
+        "description": "AWS CDK and CloudFormation guidance, validation and troubleshooting"
       }
     },
     "tavily-search": {

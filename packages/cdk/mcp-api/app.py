@@ -174,6 +174,7 @@ def safe_parse_mcp_json():
             server = mcp_servers[server_name]
             res.append(
                 {
+                    "name": server_name,
                     "command": server["command"],
                     "args": server["args"] if "args" in server else [],
                     "env": server["env"] if "env" in server else {},
@@ -201,14 +202,23 @@ def make_mcp_client(server):
 
 def load_mcp_tools():
     mcp_servers = safe_parse_mcp_json()
-    mcp_clients = [make_mcp_client(s) for s in mcp_servers]
+    mcp_tools = []
 
-    for c in mcp_clients:
-        c.start()
+    # Start each server independently so that one unavailable server
+    # (e.g. a package removed from PyPI) does not disable all MCP tools.
+    for server in mcp_servers:
+        client = make_mcp_client(server)
+        try:
+            client.start()
+            mcp_tools.extend(client.list_tools_sync())
+        except Exception as e:
+            logging.error(f"Failed to load MCP server {server['name']}: {e}")
+            try:
+                client.stop(None, None, None)
+            except Exception:
+                pass
 
-    # Flatten the tools
-    mcp_tools = sum([c.list_tools_sync() for c in mcp_clients], [])
-
+    logging.info(f"Loaded {len(mcp_tools)} MCP tools")
     app.mcp_tools = mcp_tools
 
 
