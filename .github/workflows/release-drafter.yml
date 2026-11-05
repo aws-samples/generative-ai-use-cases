@@ -19,5 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: release-drafter/release-drafter@v7
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # v7 defaults both to the event ref (refs/pull/N/merge on pull_request),
+          # which forces dry-run mode. Pin them to main.
+          commitish: main
+          config-name: release-drafter.yml@main
+          token: ${{ secrets.GITHUB_TOKEN }}
