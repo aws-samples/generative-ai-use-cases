@@ -94,6 +94,7 @@
     "closedNetworkVpcIpv4Cidr": "10.0.0.0/16",
     "closedNetworkVpcId": null,
     "closedNetworkSubnetIds": null,
+    "closedNetworkVpcEndpointAzs": null,
     "closedNetworkApiGatewayVpcEndpointIds": null,
     "closedNetworkCertificateArn": null,
     "closedNetworkDomainName": null,
