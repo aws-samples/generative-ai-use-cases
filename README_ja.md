@@ -97,6 +97,10 @@ RAG は根拠に基づいた回答のみを許すため、LLM にありがちな
 GenU は RAG チャットというユースケースを提供しています。
 また RAG チャットの情報ソースとして [Amazon Kendra](docs/ja/DEPLOY_OPTION.md) と [Knowledge Base](docs/ja/DEPLOY_OPTION.md#rag-チャット-knowledge-base-ユースケースの有効化) の 2 種類が利用可能です。
 Amazon Kendra を利用する場合は、[手動で作成した S3 Bucket や Kendra Index をそのまま利用する](docs/ja/DEPLOY_OPTION.md#既存の-amazon-kendra-index-を利用したい場合)ことが可能です。
+
+> [!IMPORTANT]
+> Amazon Kendra は 2026 年 6 月 30 日にメンテナンスモードへ移行し、2026 年 7 月 30 日以降は新規のお客様の受付を終了しています ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html))。これから RAG チャットを構築する場合は、Knowledge Base 版の利用を推奨します。固定費を抑えたい場合は `ragKnowledgeBaseStorageType` に `s3vectors` を指定してください。
+
 Knowledge Base を利用する場合は、[Advanced Parsing](docs/ja/DEPLOY_OPTION.md#advanced-parsing-を有効化)・[チャンク戦略の選択](docs/ja/DEPLOY_OPTION.md#チャンク戦略を変更)・[クエリ分解](docs/ja/DEPLOY_OPTION.md#rag-チャット-knowledge-base-ユースケースの有効化)・[リランキング](docs/ja/DEPLOY_OPTION.md#rag-チャット-knowledge-base-ユースケースの有効化) など高度な RAG が利用可能です。
 また Knowledge Base では、[メタデータフィルターの設定](docs/ja/DEPLOY_OPTION.md#メタデータフィルターの設定) も可能です。
 例えば「組織ごとにアクセス可能なデータソースを切り替えたい」や「UI からユーザーがフィルタを設定したい」といった要件を満たすことが可能です。
