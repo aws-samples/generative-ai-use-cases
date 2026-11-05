@@ -1,5 +1,5 @@
 /* eslint-disable i18nhelper/no-jp-string */
-import { convertTextDocumentToUtf8 } from '../../../lambda/utils/textEncoding';
+import { convertTextDocumentToUtf8 } from '@generative-ai-use-cases/common';
 
 // The same two-line CSV in each encoding; EXPECTED below is the decoded text
 const SHIFT_JIS = Uint8Array.from([

@@ -29,6 +29,12 @@ import {
   getRecentSegmentsContext,
 } from './MeetingMinutesContextGenerator';
 
+// The context fields sit above the transcript, which takes the remaining height.
+// Textarea grows with its content up to its maxHeight (300px by default), and the
+// generated context is rewritten every minute, so without a cap the fields keep
+// growing and squeeze the transcript. Cap them at h-20 and scroll inside instead.
+const CONTEXT_MAX_HEIGHT = 80;
+
 const getTranslationTarget = (
   translationType: string,
   detectedLanguageCode: string | undefined,
@@ -878,6 +884,7 @@ const MeetingMinutesRealtimeTranslation: React.FC<
               </label>
               <Textarea
                 className="h-20 w-full text-sm"
+                maxHeight={CONTEXT_MAX_HEIGHT}
                 placeholder={t('translate.userDefinedContextPlaceholder')}
                 value={userDefinedContext}
                 onChange={setUserDefinedContext}
@@ -889,6 +896,7 @@ const MeetingMinutesRealtimeTranslation: React.FC<
               </label>
               <Textarea
                 className="h-20 w-full text-sm"
+                maxHeight={CONTEXT_MAX_HEIGHT}
                 placeholder={t('translate.systemGeneratedContextPlaceholder')}
                 value={systemGeneratedContext}
                 onChange={setSystemGeneratedContext}

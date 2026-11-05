@@ -17,6 +17,8 @@ GenU에서는 다음 두 가지 방법으로 배포 옵션을 지정할 수 있�
 
 [기본 parameter.ts](/packages/cdk/parameter.ts)를 다운로드하고 필요한 환경 설정을 추가합니다. parameter.ts에서는 dev, staging, prod와 같은 여러 환경 설정을 하나의 파일에서 관리할 수 있습니다.
 
+위의 기본 파일은 main 브랜치의 파일입니다. main 브랜치에 아직 릴리스되지 않은 변경사항이 있는 경우 배포할 릴리스의 파일을 다운로드하세요. [Releases 페이지](https://github.com/aws-samples/generative-ai-use-cases/releases)에서 태그를 선택한 후 파일을 열면 해당 릴리스의 파일을 가져올 수 있습니다.
+
 ## CloudShell 실행
 
 [CloudShell](https://console.aws.amazon.com/cloudshell/home)을 실행합니다.
@@ -40,6 +42,7 @@ deploy.sh는 다음 옵션을 지원합니다:
 -c, --cdk-context    ... cdk.json 파일 경로
 -p, --parameter-file ... parameter.ts 파일 경로
 -e, --env           ... 환경 이름 (예: dev, prod)
+-r, --ref           ... 배포할 Git 태그 또는 브랜치 (기본값: 최신 릴리스)
 -h, --help          ... 이 메시지 표시
 ```
 
@@ -69,6 +72,13 @@ deploy.sh는 다음 옵션을 지원합니다:
 
 ```bash
 ./deploy.sh --parameter-file ~/parameter.ts --env prod
+```
+
+5. 특정 릴리스 또는 브랜치를 지정하여 배포 (지정하지 않으면 `deploy.sh`는 최신 릴리스를 배포합니다):
+
+```bash
+./deploy.sh --ref v5.6.0
+./deploy.sh --ref main
 ```
 
 배포가 완료되면 CloudFront URL이 표시됩니다. 해당 URL을 브라우저에서 열어 GenU에 액세스할 수 있습니다.

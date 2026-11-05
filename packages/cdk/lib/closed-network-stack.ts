@@ -23,6 +23,7 @@ export class ClosedNetworkStack extends Stack {
       closedNetworkVpcId,
       closedNetworkVpcIpv4Cidr,
       closedNetworkSubnetIds,
+      closedNetworkVpcEndpointAzs,
       closedNetworkCertificateArn,
       closedNetworkDomainName,
       closedNetworkCreateTestEnvironment,
@@ -54,6 +55,7 @@ export class ClosedNetworkStack extends Stack {
     const closedVpc = new ClosedVpc(this, 'ClosedVpc', {
       vpcId: closedNetworkVpcId,
       subnetIds: closedNetworkSubnetIds,
+      vpcEndpointAvailabilityZones: closedNetworkVpcEndpointAzs,
       ipv4Cidr: closedNetworkVpcIpv4Cidr,
       domainName: closedNetworkDomainName,
     });
