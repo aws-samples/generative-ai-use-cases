@@ -15,11 +15,11 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Get draft release version and URL
         id: get-version
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         with:
           script: |
             const { data: releases } = await github.rest.repos.listReleases({
@@ -66,7 +66,7 @@ jobs:
 
       - name: Create Pull Request
         if: fromJSON(steps.get-version.outputs.result).version != '' && steps.check-version.outputs.versions_match != 'true'
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v8
         with:
           commit-message: 'v${{ fromJSON(steps.get-version.outputs.result).version }}'
           title: 'v${{ fromJSON(steps.get-version.outputs.result).version }}'
