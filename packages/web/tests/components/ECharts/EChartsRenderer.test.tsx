@@ -21,7 +21,8 @@ let getBoundingClientRectSpy: ReturnType<typeof vi.spyOn>;
 
 // ResizeObserver mock: fires callback immediately with non-zero dimensions on observe()
 let lastResizeObserverCallback: ResizeObserverCallback | null = null;
-const MockResizeObserver = vi.fn((callback: ResizeObserverCallback) => {
+// Vitest 4 requires a `function` (not an arrow) implementation for mocks called with `new`.
+const MockResizeObserver = vi.fn(function (callback: ResizeObserverCallback) {
   lastResizeObserverCallback = callback;
   return {
     observe: vi.fn((target: Element) => {

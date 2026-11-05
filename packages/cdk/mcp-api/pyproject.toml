@@ -4,10 +4,20 @@ version = "0.0.0"
 requires-python = ">=3.12"
 dependencies = [
   "strands-agents",
-  "strands-agents-tools",
   "boto3",
   "mcp",
   "fastapi",
   "uvicorn",
   "pydantic",
+]
+
+[tool.uv]
+# Security floors for transitive dependencies (not imported directly).
+# Raise these when Dependabot reports a vulnerable locked version.
+constraint-dependencies = [
+  "cryptography>=50.0.0",
+  "mcp>=1.30.0,<2",
+  "opentelemetry-api>=1.45.1",
+  "python-multipart>=0.0.26",
+  "urllib3>=2.8.0",
 ]
