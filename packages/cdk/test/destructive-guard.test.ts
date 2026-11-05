@@ -183,7 +183,7 @@ describe('parseSnapshotFile', () => {
     );
     expect(templates.size).toBeGreaterThan(0);
     const main = templates.get(
-      'GenerativeAiUseCases matches the snapshot: GenerativeAiUseCasesStack 1'
+      'GenerativeAiUseCases matches the snapshot 6'
     );
     expect(main?.Resources).toBeDefined();
     // Comparing a snapshot with itself finds nothing.

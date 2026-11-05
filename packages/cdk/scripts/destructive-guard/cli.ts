@@ -70,8 +70,10 @@ const main = (): number => {
     console.error('a snapshot file has no entries');
     return 2;
   }
-  // Snapshots used positional names before they were named after their stack.
-  // With no name in common there is nothing to pair up.
+  // Snapshots are paired by name. Names are positional ("... 1", "... 2"), so
+  // reordering the assertions in the test pairs different stacks; that shows
+  // up as findings rather than being missed. With no name in common there is
+  // nothing to pair up.
   if (![...base.keys()].some((key) => head.has(key))) {
     write(
       resultDir,
