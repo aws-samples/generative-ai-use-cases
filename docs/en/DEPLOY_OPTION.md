@@ -73,6 +73,9 @@ npm run cdk:deploy
 
 ### Enabling RAG Chat (Amazon Kendra) Use Case
 
+> [!IMPORTANT]
+> Amazon Kendra entered maintenance mode on June 30, 2026, and has not accepted new customers since July 30, 2026 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). For new RAG chat deployments, we recommend the Knowledge Base option. To avoid fixed vector store costs, set `ragKnowledgeBaseStorageType` to `s3vectors`.
+
 Set `ragEnabled` to `true`. (Default is `false`)
 
 You can also set `kendraIndexLanguage` to prefered language, which may improve search performance.
@@ -1065,6 +1068,10 @@ As of 2025/03, the multimodal models are:
 "apac.amazon.nova-lite-v1:0",
 "jp.amazon.nova-2-lite-v1:0",
 "global.amazon.nova-2-lite-v1:0",
+"global.openai.gpt-6.1-sol",
+"us.openai.gpt-6.1-sol",
+"global.openai.gpt-6.1-terra",
+"us.openai.gpt-6.1-terra",
 "global.openai.gpt-6-sol",
 "us.openai.gpt-6-sol",
 "global.openai.gpt-6-luna",
@@ -1324,6 +1331,10 @@ This solution supports the following text generation models:
 "global.amazon.nova-2-lite-v1:0",
 "openai.gpt-oss-120b-1:0",
 "openai.gpt-oss-20b-1:0",
+"global.openai.gpt-6.1-sol",
+"us.openai.gpt-6.1-sol",
+"global.openai.gpt-6.1-terra",
+"us.openai.gpt-6.1-terra",
 "global.openai.gpt-6-sol",
 "us.openai.gpt-6-sol",
 "global.openai.gpt-6-luna",

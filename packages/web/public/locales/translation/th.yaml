@@ -574,6 +574,7 @@ meetingMinutes:
   clear_minutes: ล้างรายงานการประชุม
   custom_prompt: พรอมต์แบบกำหนดเอง
   custom_prompt_placeholder: ป้อนพรอมต์แบบกำหนดเองสำหรับการสร้างรายงานการประชุม...
+  edit_in_writer: แก้ไขในการเขียน
   frequency: ความถี่ในการสร้าง
   frequency_10min: ทุก 10 นาที
   frequency_1min: ทุกนาที

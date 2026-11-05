@@ -131,8 +131,8 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentCore with VPC) 1`] = `
             "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
-          "MODEL_MAX_TOKENS": "{"anthropic.claude-3-sonnet-20240229-v1:0":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{"anthropic.claude-haiku-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5":["messages","system","tools"],"anthropic.claude-opus-5-5":["messages","system","tools"],"anthropic.claude-opus-5":["messages","system","tools"],"anthropic.claude-opus-4-8":["messages","system","tools"],"anthropic.claude-opus-4-7":["messages","system","tools"],"anthropic.claude-opus-4-6-v1":["messages","system","tools"],"anthropic.claude-sonnet-4-6":["messages","system","tools"],"anthropic.claude-opus-4-5-20251101-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-5-20250929-v1:0":["messages","system","tools"],"anthropic.claude-haiku-4-5-20251001-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-1-20250805-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-3-7-sonnet-20250219-v1:0":["messages","system","tools"],"anthropic.claude-3-5-haiku-20241022-v1:0":["messages","system","tools"],"amazon.nova-premier-v1:0":["messages","system"],"amazon.nova-pro-v1:0":["messages","system"],"amazon.nova-lite-v1:0":["messages","system"],"amazon.nova-micro-v1:0":["messages","system"],"amazon.nova-2-lite-v1:0":["messages","system"]}",
+          "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -583,8 +583,8 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentCore with VPC) 1`] = `
             "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
-          "MODEL_MAX_TOKENS": "{"anthropic.claude-3-sonnet-20240229-v1:0":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{"anthropic.claude-haiku-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5":["messages","system","tools"],"anthropic.claude-opus-5-5":["messages","system","tools"],"anthropic.claude-opus-5":["messages","system","tools"],"anthropic.claude-opus-4-8":["messages","system","tools"],"anthropic.claude-opus-4-7":["messages","system","tools"],"anthropic.claude-opus-4-6-v1":["messages","system","tools"],"anthropic.claude-sonnet-4-6":["messages","system","tools"],"anthropic.claude-opus-4-5-20251101-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-5-20250929-v1:0":["messages","system","tools"],"anthropic.claude-haiku-4-5-20251001-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-1-20250805-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-3-7-sonnet-20250219-v1:0":["messages","system","tools"],"anthropic.claude-3-5-haiku-20241022-v1:0":["messages","system","tools"],"amazon.nova-premier-v1:0":["messages","system"],"amazon.nova-pro-v1:0":["messages","system"],"amazon.nova-lite-v1:0":["messages","system"],"amazon.nova-micro-v1:0":["messages","system"],"amazon.nova-2-lite-v1:0":["messages","system"]}",
+          "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -2626,21 +2626,21 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 2`] = `
           "Fn::Join": [
             "",
             [
-              "[{"Rules":[{"Resource":["collection/generative-ai-use-cases-jp"],"Permission":["aoss:DescribeCollectionItems","aoss:CreateCollectionItems","aoss:UpdateCollectionItems"],"ResourceType":"collection"},{"Resource":["index/generative-ai-use-cases-jp/*"],"Permission":["aoss:UpdateIndex","aoss:DescribeIndex","aoss:ReadDocument","aoss:WriteDocument","aoss:CreateIndex","aoss:DeleteIndex"],"ResourceType":"index"}],"Principal":["",
+              "[{\\"Rules\\":[{\\"Resource\\":[\\"collection/generative-ai-use-cases-jp\\"],\\"Permission\\":[\\"aoss:DescribeCollectionItems\\",\\"aoss:CreateCollectionItems\\",\\"aoss:UpdateCollectionItems\\"],\\"ResourceType\\":\\"collection\\"},{\\"Resource\\":[\\"index/generative-ai-use-cases-jp/*\\"],\\"Permission\\":[\\"aoss:UpdateIndex\\",\\"aoss:DescribeIndex\\",\\"aoss:ReadDocument\\",\\"aoss:WriteDocument\\",\\"aoss:CreateIndex\\",\\"aoss:DeleteIndex\\"],\\"ResourceType\\":\\"index\\"}],\\"Principal\\":[\\"",
               {
                 "Fn::GetAtt": [
                   "KnowledgeBaseRoleA2B317B9",
                   "Arn",
                 ],
               },
-              "","",
+              "\\",\\"",
               {
                 "Fn::GetAtt": [
                   "OpenSearchServerlessIndex339C5FEDA1B543B6B40A5E8E59E5734DServiceRole367CC992",
                   "Arn",
                 ],
               },
-              ""],"Description":""}]",
+              "\\"],\\"Description\\":\\"\\"}]",
             ],
           ],
         },
@@ -3347,7 +3347,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 2`] = `
     "EncryptionPolicy": {
       "Properties": {
         "Name": "generative-ai-use-cases-jp",
-        "Policy": "{"Rules":[{"Resource":["collection/generative-ai-use-cases-jp"],"ResourceType":"collection"}],"AWSOwnedKey":true}",
+        "Policy": "{\\"Rules\\":[{\\"Resource\\":[\\"collection/generative-ai-use-cases-jp\\"],\\"ResourceType\\":\\"collection\\"}],\\"AWSOwnedKey\\":true}",
         "Type": "encryption",
       },
       "Type": "AWS::OpenSearchServerless::SecurityPolicy",
@@ -3474,7 +3474,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 2`] = `
     "NetworkPolicy": {
       "Properties": {
         "Name": "generative-ai-use-cases-jp",
-        "Policy": "[{"Rules":[{"Resource":["collection/generative-ai-use-cases-jp"],"ResourceType":"collection"},{"Resource":["collection/generative-ai-use-cases-jp"],"ResourceType":"dashboard"}],"AllowFromPublic":true}]",
+        "Policy": "[{\\"Rules\\":[{\\"Resource\\":[\\"collection/generative-ai-use-cases-jp\\"],\\"ResourceType\\":\\"collection\\"},{\\"Resource\\":[\\"collection/generative-ai-use-cases-jp\\"],\\"ResourceType\\":\\"dashboard\\"}],\\"AllowFromPublic\\":true}]",
         "Type": "network",
       },
       "Type": "AWS::OpenSearchServerless::SecurityPolicy",
@@ -3649,35 +3649,35 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 3`] = `
         "Fn::Join": [
           "",
           [
-            "[{"displayName":"SearchEngine","agentId":"",
+            "[{\\"displayName\\":\\"SearchEngine\\",\\"agentId\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentSearchAgent3AF6EC6F",
                 "AgentId",
               ],
             },
-            "","aliasId":"",
+            "\\",\\"aliasId\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentSearchAgentAliasD59C2A47",
                 "AgentAliasId",
               ],
             },
-            "","description":"Agent with Web Search Functionality"},{"displayName":"CodeInterpreter","agentId":"",
+            "\\",\\"description\\":\\"Agent with Web Search Functionality\\"},{\\"displayName\\":\\"CodeInterpreter\\",\\"agentId\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCodeInterpreterAgent98889BFE",
                 "AgentId",
               ],
             },
-            "","aliasId":"",
+            "\\",\\"aliasId\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCodeInterpreterAgentAliasB6F54C31",
                 "AgentAliasId",
               ],
             },
-            "","description":"Agent with Code Interpreter Functionality"}]",
+            "\\",\\"description\\":\\"Agent with Code Interpreter Functionality\\"}]",
           ],
         ],
       },
@@ -4628,8 +4628,8 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 4`] = `
             "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
-          "MODEL_MAX_TOKENS": "{"anthropic.claude-3-sonnet-20240229-v1:0":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{"anthropic.claude-haiku-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5":["messages","system","tools"],"anthropic.claude-opus-5-5":["messages","system","tools"],"anthropic.claude-opus-5":["messages","system","tools"],"anthropic.claude-opus-4-8":["messages","system","tools"],"anthropic.claude-opus-4-7":["messages","system","tools"],"anthropic.claude-opus-4-6-v1":["messages","system","tools"],"anthropic.claude-sonnet-4-6":["messages","system","tools"],"anthropic.claude-opus-4-5-20251101-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-5-20250929-v1:0":["messages","system","tools"],"anthropic.claude-haiku-4-5-20251001-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-1-20250805-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-3-7-sonnet-20250219-v1:0":["messages","system","tools"],"anthropic.claude-3-5-haiku-20241022-v1:0":["messages","system","tools"],"amazon.nova-premier-v1:0":["messages","system"],"amazon.nova-pro-v1:0":["messages","system"],"amazon.nova-lite-v1:0":["messages","system"],"amazon.nova-micro-v1:0":["messages","system"],"amazon.nova-2-lite-v1:0":["messages","system"]}",
+          "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -5032,8 +5032,8 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 4`] = `
             "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
-          "MODEL_MAX_TOKENS": "{"anthropic.claude-3-sonnet-20240229-v1:0":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{"anthropic.claude-haiku-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5":["messages","system","tools"],"anthropic.claude-opus-5-5":["messages","system","tools"],"anthropic.claude-opus-5":["messages","system","tools"],"anthropic.claude-opus-4-8":["messages","system","tools"],"anthropic.claude-opus-4-7":["messages","system","tools"],"anthropic.claude-opus-4-6-v1":["messages","system","tools"],"anthropic.claude-sonnet-4-6":["messages","system","tools"],"anthropic.claude-opus-4-5-20251101-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-5-20250929-v1:0":["messages","system","tools"],"anthropic.claude-haiku-4-5-20251001-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-1-20250805-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-3-7-sonnet-20250219-v1:0":["messages","system","tools"],"anthropic.claude-3-5-haiku-20241022-v1:0":["messages","system","tools"],"amazon.nova-premier-v1:0":["messages","system"],"amazon.nova-pro-v1:0":["messages","system"],"amazon.nova-lite-v1:0":["messages","system"],"amazon.nova-micro-v1:0":["messages","system"],"amazon.nova-2-lite-v1:0":["messages","system"]}",
+          "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -5251,21 +5251,21 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "Fn::Join": [
           "",
           [
-            "{"name":"",
+            "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCoreRemoteOutputsDE8C59C9",
                 "AgentBuilderAgentCoreRuntimeName",
               ],
             },
-            "","arn":"",
+            "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCoreRemoteOutputsDE8C59C9",
                 "AgentBuilderAgentCoreRuntimeArn",
               ],
             },
-            ""}",
+            "\\"}",
           ],
         ],
       },
@@ -5281,21 +5281,21 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "Fn::Join": [
           "",
           [
-            "{"name":"",
+            "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCoreRemoteOutputsDE8C59C9",
                 "GenericAgentCoreRuntimeName",
               ],
             },
-            "","arn":"",
+            "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCoreRemoteOutputsDE8C59C9",
                 "GenericAgentCoreRuntimeArn",
               ],
             },
-            ""}",
+            "\\"}",
           ],
         ],
       },
@@ -5369,7 +5369,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       },
     },
     "ImageGenerateModelIds": {
-      "Value": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
+      "Value": "[{\\"modelId\\":\\"stability.stable-diffusion-xl-v1\\",\\"region\\":\\"us-east-1\\"}]",
     },
     "IndexId": {
       "Value": {
@@ -5394,10 +5394,10 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Value": "",
     },
     "McpServersConfig": {
-      "Value": "{"time":{"metadata":{"category":"Utility","description":"Provides current time and date functionality"}},"aws-knowledge-mcp-server":{"metadata":{"category":"AWS","description":"AWS Knowledge Base MCP server for enterprise knowledge access"}},"awslabs.aws-documentation-mcp-server":{"metadata":{"category":"AWS","description":"Access AWS documentation and guides"}},"awslabs.cdk-mcp-server":{"metadata":{"category":"AWS","description":"AWS CDK code generation and assistance"}},"awslabs.aws-diagram-mcp-server":{"metadata":{"category":"AWS","description":"Generate AWS architecture diagrams"}},"awslabs.nova-canvas-mcp-server":{"metadata":{"category":"AI/ML","description":"Amazon Nova Canvas image generation"}},"tavily-search":{"metadata":{"category":"Search","description":"Web search and research capabilities powered by Tavily"}},"tavily-gateway":{"metadata":{"category":"Search","description":"Web search and research capabilities powered by Tavily"}}}",
+      "Value": "{\\"time\\":{\\"metadata\\":{\\"category\\":\\"Utility\\",\\"description\\":\\"Provides current time and date functionality\\"}},\\"aws-knowledge-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"AWS Knowledge Base MCP server for enterprise knowledge access\\"}},\\"awslabs.aws-documentation-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"Access AWS documentation and guides\\"}},\\"awslabs.cdk-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"AWS CDK code generation and assistance\\"}},\\"awslabs.aws-diagram-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"Generate AWS architecture diagrams\\"}},\\"awslabs.nova-canvas-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AI/ML\\",\\"description\\":\\"Amazon Nova Canvas image generation\\"}},\\"tavily-search\\":{\\"metadata\\":{\\"category\\":\\"Search\\",\\"description\\":\\"Web search and research capabilities powered by Tavily\\"}},\\"tavily-gateway\\":{\\"metadata\\":{\\"category\\":\\"Search\\",\\"description\\":\\"Web search and research capabilities powered by Tavily\\"}}}",
     },
     "ModelIds": {
-      "Value": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+      "Value": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
     },
     "ModelRegion": {
       "Value": "us-east-1",
@@ -5466,7 +5466,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       },
     },
     "SpeechToSpeechModelIds": {
-      "Value": "[{"modelId":"amazon.nova-sonic-v1:0","region":"us-east-1"}]",
+      "Value": "[{\\"modelId\\":\\"amazon.nova-sonic-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
     },
     "SpeechToSpeechNamespace": {
       "Value": "speech-to-speech",
@@ -5508,7 +5508,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       },
     },
     "VideoGenerateModelIds": {
-      "Value": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+      "Value": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
     },
     "WebUrl": {
       "Value": {
@@ -6103,7 +6103,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               "Fn::ImportValue": "GuardrailStack:ExportsOutputFnGetAttGuardrailguardrail03A76CF4GuardrailIdDBA991AF",
             },
             "GUARDRAIL_VERSION": "DRAFT",
-            "IMAGE_GENERATION_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
+            "IMAGE_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"stability.stable-diffusion-xl-v1\\",\\"region\\":\\"us-east-1\\"}]",
             "INDEX_ID": {
               "Ref": "RagKendraIndexFEF3924C",
             },
@@ -6111,12 +6111,12 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
             "LANGUAGE": "ja",
-            "MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+            "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
             "PORT": "8080",
             "QUERY_DECOMPOSITION_ENABLED": "false",
             "RERANKING_MODEL_ID": "",
-            "SPEECH_TO_SPEECH_MODEL_IDS": "[{"modelId":"amazon.nova-sonic-v1:0","region":"us-east-1"}]",
+            "SPEECH_TO_SPEECH_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-sonic-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "SPEECH_TO_SPEECH_TASK_FUNCTION_ARN": {
               "Fn::GetAtt": [
                 "SpeechToSpeechTaskC1149BF3",
@@ -6146,15 +6146,15 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               "Fn::Join": [
                 "",
                 [
-                  "{"us-east-1":"",
+                  "{\\"us-east-1\\":\\"",
                   {
                     "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
                   },
-                  ""}",
+                  "\\"}",
                 ],
               ],
             },
-            "VIDEO_GENERATION_MODEL_IDS": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+            "VIDEO_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           },
         },
         "Handler": "run.sh",
@@ -11894,8 +11894,8 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               "Ref": "APIFileBucket8FB29855",
             },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
-            "IMAGE_GENERATION_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
-            "MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+            "IMAGE_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"stability.stable-diffusion-xl-v1\\",\\"region\\":\\"us-east-1\\"}]",
+            "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
@@ -11904,15 +11904,15 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               "Fn::Join": [
                 "",
                 [
-                  "{"us-east-1":"",
+                  "{\\"us-east-1\\":\\"",
                   {
                     "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
                   },
-                  ""}",
+                  "\\"}",
                 ],
               ],
             },
-            "VIDEO_GENERATION_MODEL_IDS": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+            "VIDEO_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           },
         },
         "Handler": "index.handler",
@@ -12573,11 +12573,11 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               "Fn::ImportValue": "GuardrailStack:ExportsOutputFnGetAttGuardrailguardrail03A76CF4GuardrailIdDBA991AF",
             },
             "GUARDRAIL_VERSION": "DRAFT",
-            "IMAGE_GENERATION_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
+            "IMAGE_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"stability.stable-diffusion-xl-v1\\",\\"region\\":\\"us-east-1\\"}]",
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
-            "MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+            "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
             "QUERY_DECOMPOSITION_ENABLED": "false",
             "RERANKING_MODEL_ID": "",
@@ -12587,7 +12587,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "USER_POOL_ID": {
               "Ref": "AuthUserPool8115E87F",
             },
-            "VIDEO_GENERATION_MODEL_IDS": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+            "VIDEO_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           },
         },
         "Handler": "index.handler",
@@ -13371,21 +13371,21 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "Fn::Join": [
               "",
               [
-                "{"name":"",
+                "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
                     "AgentCoreRemoteOutputsDE8C59C9",
                     "AgentBuilderAgentCoreRuntimeName",
                   ],
                 },
-                "","arn":"",
+                "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
                     "AgentCoreRemoteOutputsDE8C59C9",
                     "AgentBuilderAgentCoreRuntimeArn",
                   ],
                 },
-                "","description":"Agent Core Runtime for AgentBuilder"}",
+                "\\",\\"description\\":\\"Agent Core Runtime for AgentBuilder\\"}",
               ],
             ],
           },
@@ -13395,21 +13395,21 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "Fn::Join": [
               "",
               [
-                "{"name":"",
+                "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
                     "AgentCoreRemoteOutputsDE8C59C9",
                     "GenericAgentCoreRuntimeName",
                   ],
                 },
-                "","arn":"",
+                "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
                     "AgentCoreRemoteOutputsDE8C59C9",
                     "GenericAgentCoreRuntimeArn",
                   ],
                 },
-                "","description":"Generic Agent Core Runtime for custom agents"}",
+                "\\",\\"description\\":\\"Generic Agent Core Runtime for custom agents\\"}",
               ],
             ],
           },
@@ -13455,12 +13455,12 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
           "VITE_APP_IDENTITY_POOL_ID": {
             "Ref": "AuthIdentityPool659E7F64",
           },
-          "VITE_APP_IMAGE_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
+          "VITE_APP_IMAGE_MODEL_IDS": "[{\\"modelId\\":\\"stability.stable-diffusion-xl-v1\\",\\"region\\":\\"us-east-1\\"}]",
           "VITE_APP_INLINE_AGENTS": "false",
           "VITE_APP_MCP_ENABLED": "false",
           "VITE_APP_MCP_ENDPOINT": "",
-          "VITE_APP_MCP_SERVERS_CONFIG": "{"time":{"metadata":{"category":"Utility","description":"Provides current time and date functionality"}},"aws-knowledge-mcp-server":{"metadata":{"category":"AWS","description":"AWS Knowledge Base MCP server for enterprise knowledge access"}},"awslabs.aws-documentation-mcp-server":{"metadata":{"category":"AWS","description":"Access AWS documentation and guides"}},"awslabs.cdk-mcp-server":{"metadata":{"category":"AWS","description":"AWS CDK code generation and assistance"}},"awslabs.aws-diagram-mcp-server":{"metadata":{"category":"AWS","description":"Generate AWS architecture diagrams"}},"awslabs.nova-canvas-mcp-server":{"metadata":{"category":"AI/ML","description":"Amazon Nova Canvas image generation"}},"tavily-search":{"metadata":{"category":"Search","description":"Web search and research capabilities powered by Tavily"}},"tavily-gateway":{"metadata":{"category":"Search","description":"Web search and research capabilities powered by Tavily"}}}",
-          "VITE_APP_MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+          "VITE_APP_MCP_SERVERS_CONFIG": "{\\"time\\":{\\"metadata\\":{\\"category\\":\\"Utility\\",\\"description\\":\\"Provides current time and date functionality\\"}},\\"aws-knowledge-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"AWS Knowledge Base MCP server for enterprise knowledge access\\"}},\\"awslabs.aws-documentation-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"Access AWS documentation and guides\\"}},\\"awslabs.cdk-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"AWS CDK code generation and assistance\\"}},\\"awslabs.aws-diagram-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"Generate AWS architecture diagrams\\"}},\\"awslabs.nova-canvas-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AI/ML\\",\\"description\\":\\"Amazon Nova Canvas image generation\\"}},\\"tavily-search\\":{\\"metadata\\":{\\"category\\":\\"Search\\",\\"description\\":\\"Web search and research capabilities powered by Tavily\\"}},\\"tavily-gateway\\":{\\"metadata\\":{\\"category\\":\\"Search\\",\\"description\\":\\"Web search and research capabilities powered by Tavily\\"}}}",
+          "VITE_APP_MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           "VITE_APP_MODEL_REGION": "us-east-1",
           "VITE_APP_OPTIMIZE_PROMPT_FUNCTION_ARN": {
             "Fn::GetAtt": [
@@ -13498,7 +13498,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               ],
             ],
           },
-          "VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS": "[{"modelId":"amazon.nova-sonic-v1:0","region":"us-east-1"}]",
+          "VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-sonic-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           "VITE_APP_SPEECH_TO_SPEECH_NAMESPACE": "speech-to-speech",
           "VITE_APP_USER_POOL_CLIENT_ID": {
             "Ref": "AuthUserPoolclientA74673A9",
@@ -13507,7 +13507,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "Ref": "AuthUserPool8115E87F",
           },
           "VITE_APP_USE_CASE_BUILDER_ENABLED": "true",
-          "VITE_APP_VIDEO_MODEL_IDS": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+          "VITE_APP_VIDEO_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
         },
         "outputEnvFile": false,
         "outputSourceDirectory": "../packages/web/dist",
@@ -13549,35 +13549,35 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         },
         "Source": {
           "BuildSpec": "{
-  "version": "0.2",
-  "env": {
-    "shell": "bash"
+  \\"version\\": \\"0.2\\",
+  \\"env\\": {
+    \\"shell\\": \\"bash\\"
   },
-  "phases": {
-    "install": {
-      "runtime-versions": {
-        "nodejs": 22
+  \\"phases\\": {
+    \\"install\\": {
+      \\"runtime-versions\\": {
+        \\"nodejs\\": 22
       }
     },
-    "build": {
-      "commands": [
-        "current_dir=$(pwd)",
-        "\\necho \\"$input\\"\\nfor obj in $(echo \\"$input\\" | jq -r '.[] | @base64'); do\\n  decoded=$(echo \\"$obj\\" | base64 --decode)\\n  assetUrl=$(echo \\"$decoded\\" | jq -r '.assetUrl')\\n  extractPath=$(echo \\"$decoded\\" | jq -r '.extractPath')\\n  commands=$(echo \\"$decoded\\" | jq -r '.commands')\\n\\n  # Download the zip file\\n  aws s3 cp \\"$assetUrl\\" temp.zip\\n\\n  # Extract the zip file to the extractPath directory\\n  mkdir -p \\"$extractPath\\"\\n  unzip temp.zip -d \\"$extractPath\\"\\n\\n  # Remove the zip file\\n  rm temp.zip\\n\\n  # Run the specified commands in the extractPath directory\\n  cd \\"$extractPath\\"\\n  ls -la\\n  eval \\"$commands\\"\\n  cd \\"$current_dir\\"\\n  ls -la\\ndone\\n              ",
-        "ls -la",
-        "cd \\"$workingDirectory\\"",
-        "eval \\"$buildCommands\\"",
-        "ls -la",
-        "cd \\"$current_dir\\"",
-        "cd \\"$outputSourceDirectory\\"",
-        "aws s3 sync . \\"s3://$destinationBucketName/$destinationKeyPrefix\\" --delete",
-        "\\nif [[ -n \\"$distributionId\\" ]]\\nthen\\nINVALIDATION_OUTPUT=$(aws cloudfront create-invalidation --distribution-id \\"$distributionId\\" --paths \\"$distributionPath\\" --output json)\\nINVALIDATION_ID=$(echo \\"$INVALIDATION_OUTPUT\\" | jq -r '.Invalidation.Id')\\naws cloudfront wait invalidation-completed --distribution-id \\"$distributionId\\" --id \\"$INVALIDATION_ID\\"\\nfi\\n",
-        "\\nif [[ $outputEnvFile == \\"true\\" ]]\\nthen\\n  # Split the comma-separated string into an array\\n  for var_name in \${envNames//,/ }\\n  do\\n      echo \\"Element: $var_name\\"\\n      var_value=\\"\${!var_name}\\"\\n      echo \\"$var_name=$var_value\\" >> tmp.env\\n  done\\n\\n  aws s3 cp tmp.env \\"s3://$assetBucketName/$envFileKey\\"\\nfi\\n              "
+    \\"build\\": {
+      \\"commands\\": [
+        \\"current_dir=$(pwd)\\",
+        \\"\\\\necho \\\\\\"$input\\\\\\"\\\\nfor obj in $(echo \\\\\\"$input\\\\\\" | jq -r '.[] | @base64'); do\\\\n  decoded=$(echo \\\\\\"$obj\\\\\\" | base64 --decode)\\\\n  assetUrl=$(echo \\\\\\"$decoded\\\\\\" | jq -r '.assetUrl')\\\\n  extractPath=$(echo \\\\\\"$decoded\\\\\\" | jq -r '.extractPath')\\\\n  commands=$(echo \\\\\\"$decoded\\\\\\" | jq -r '.commands')\\\\n\\\\n  # Download the zip file\\\\n  aws s3 cp \\\\\\"$assetUrl\\\\\\" temp.zip\\\\n\\\\n  # Extract the zip file to the extractPath directory\\\\n  mkdir -p \\\\\\"$extractPath\\\\\\"\\\\n  unzip temp.zip -d \\\\\\"$extractPath\\\\\\"\\\\n\\\\n  # Remove the zip file\\\\n  rm temp.zip\\\\n\\\\n  # Run the specified commands in the extractPath directory\\\\n  cd \\\\\\"$extractPath\\\\\\"\\\\n  ls -la\\\\n  eval \\\\\\"$commands\\\\\\"\\\\n  cd \\\\\\"$current_dir\\\\\\"\\\\n  ls -la\\\\ndone\\\\n              \\",
+        \\"ls -la\\",
+        \\"cd \\\\\\"$workingDirectory\\\\\\"\\",
+        \\"eval \\\\\\"$buildCommands\\\\\\"\\",
+        \\"ls -la\\",
+        \\"cd \\\\\\"$current_dir\\\\\\"\\",
+        \\"cd \\\\\\"$outputSourceDirectory\\\\\\"\\",
+        \\"aws s3 sync . \\\\\\"s3://$destinationBucketName/$destinationKeyPrefix\\\\\\" --delete\\",
+        \\"\\\\nif [[ -n \\\\\\"$distributionId\\\\\\" ]]\\\\nthen\\\\nINVALIDATION_OUTPUT=$(aws cloudfront create-invalidation --distribution-id \\\\\\"$distributionId\\\\\\" --paths \\\\\\"$distributionPath\\\\\\" --output json)\\\\nINVALIDATION_ID=$(echo \\\\\\"$INVALIDATION_OUTPUT\\\\\\" | jq -r '.Invalidation.Id')\\\\naws cloudfront wait invalidation-completed --distribution-id \\\\\\"$distributionId\\\\\\" --id \\\\\\"$INVALIDATION_ID\\\\\\"\\\\nfi\\\\n\\",
+        \\"\\\\nif [[ $outputEnvFile == \\\\\\"true\\\\\\" ]]\\\\nthen\\\\n  # Split the comma-separated string into an array\\\\n  for var_name in \${envNames//,/ }\\\\n  do\\\\n      echo \\\\\\"Element: $var_name\\\\\\"\\\\n      var_value=\\\\\\"\${!var_name}\\\\\\"\\\\n      echo \\\\\\"$var_name=$var_value\\\\\\" >> tmp.env\\\\n  done\\\\n\\\\n  aws s3 cp tmp.env \\\\\\"s3://$assetBucketName/$envFileKey\\\\\\"\\\\nfi\\\\n              \\"
       ]
     },
-    "post_build": {
-      "commands": [
-        "echo Build completed on \`date\`",
-        "\\nSTATUS='SUCCESS'\\nif [ $CODEBUILD_BUILD_SUCCEEDING -ne 1 ] # Test if the build is failing\\nthen\\nSTATUS='FAILED'\\nREASON=\\"NodejsBuild failed. See CloudWatch Log stream for the detailed reason: \\nhttps://$AWS_REGION.console.aws.amazon.com/cloudwatch/home?region=$AWS_REGION#logsV2:log-groups/log-group/\\\\$252Faws\\\\$252Fcodebuild\\\\$252F$projectName/log-events/$CODEBUILD_LOG_PATH\\"\\nfi\\ncat <<EOF > payload.json\\n{\\n  \\"StackId\\": \\"$stackId\\",\\n  \\"RequestId\\": \\"$requestId\\",\\n  \\"LogicalResourceId\\":\\"$logicalResourceId\\",\\n  \\"PhysicalResourceId\\": \\"$logicalResourceId\\",\\n  \\"Status\\": \\"$STATUS\\",\\n  \\"Reason\\": \\"$REASON\\",\\n  \\"Data\\": {\\n    \\"envFileKey\\": \\"$envFileKey\\"\\n  }\\n}\\nEOF\\ncurl -i -X PUT -H 'Content-Type:' -d \\"@payload.json\\" \\"$responseURL\\"\\n              "
+    \\"post_build\\": {
+      \\"commands\\": [
+        \\"echo Build completed on \`date\`\\",
+        \\"\\\\nSTATUS='SUCCESS'\\\\nif [ $CODEBUILD_BUILD_SUCCEEDING -ne 1 ] # Test if the build is failing\\\\nthen\\\\nSTATUS='FAILED'\\\\nREASON=\\\\\\"NodejsBuild failed. See CloudWatch Log stream for the detailed reason: \\\\nhttps://$AWS_REGION.console.aws.amazon.com/cloudwatch/home?region=$AWS_REGION#logsV2:log-groups/log-group/\\\\\\\\$252Faws\\\\\\\\$252Fcodebuild\\\\\\\\$252F$projectName/log-events/$CODEBUILD_LOG_PATH\\\\\\"\\\\nfi\\\\ncat <<EOF > payload.json\\\\n{\\\\n  \\\\\\"StackId\\\\\\": \\\\\\"$stackId\\\\\\",\\\\n  \\\\\\"RequestId\\\\\\": \\\\\\"$requestId\\\\\\",\\\\n  \\\\\\"LogicalResourceId\\\\\\":\\\\\\"$logicalResourceId\\\\\\",\\\\n  \\\\\\"PhysicalResourceId\\\\\\": \\\\\\"$logicalResourceId\\\\\\",\\\\n  \\\\\\"Status\\\\\\": \\\\\\"$STATUS\\\\\\",\\\\n  \\\\\\"Reason\\\\\\": \\\\\\"$REASON\\\\\\",\\\\n  \\\\\\"Data\\\\\\": {\\\\n    \\\\\\"envFileKey\\\\\\": \\\\\\"$envFileKey\\\\\\"\\\\n  }\\\\n}\\\\nEOF\\\\ncurl -i -X PUT -H 'Content-Type:' -d \\\\\\"@payload.json\\\\\\" \\\\\\"$responseURL\\\\\\"\\\\n              \\"
       ]
     }
   }
@@ -15714,7 +15714,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               ],
             },
             "NAMESPACE": "speech-to-speech",
-            "SPEECH_TO_SPEECH_MODEL_IDS": "[{"modelId":"amazon.nova-sonic-v1:0","region":"us-east-1"}]",
+            "SPEECH_TO_SPEECH_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-sonic-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           },
         },
         "Handler": "index.handler",
@@ -16342,55 +16342,55 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 7`] = `
           "Fn::Join": [
             "",
             [
-              "{"start":"-P7D","widgets":[{"type":"text","width":18,"height":1,"x":0,"y":0,"properties":{"markdown":"**Amazon Bedrock Metrics**"}},{"type":"text","width":6,"height":1,"x":18,"y":0,"properties":{"markdown":"**User Metrics**"}},{"type":"metric","width":6,"height":6,"x":0,"y":1,"properties":{"view":"timeSeries","title":"InputTokenCount (Daily)","region":"",
+              "{\\"start\\":\\"-P7D\\",\\"widgets\\":[{\\"type\\":\\"text\\",\\"width\\":18,\\"height\\":1,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"markdown\\":\\"**Amazon Bedrock Metrics**\\"}},{\\"type\\":\\"text\\",\\"width\\":6,\\"height\\":1,\\"x\\":18,\\"y\\":0,\\"properties\\":{\\"markdown\\":\\"**User Metrics**\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":1,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"InputTokenCount (Daily)\\",\\"region\\":\\"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Bedrock","InputTokenCount","ModelId","anthropic.claude-3-sonnet-20240229-v1:0",{"region":"us-east-1","period":86400,"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":1,"properties":{"view":"timeSeries","title":"OutputTokenCount (Daily)","region":"",
+              "\\",\\"metrics\\":[[\\"AWS/Bedrock\\",\\"InputTokenCount\\",\\"ModelId\\",\\"anthropic.claude-3-sonnet-20240229-v1:0\\",{\\"region\\":\\"us-east-1\\",\\"period\\":86400,\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":1,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"OutputTokenCount (Daily)\\",\\"region\\":\\"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Bedrock","OutputTokenCount","ModelId","anthropic.claude-3-sonnet-20240229-v1:0",{"region":"us-east-1","period":86400,"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":1,"properties":{"view":"timeSeries","title":"Invocations (Daily)","region":"",
+              "\\",\\"metrics\\":[[\\"AWS/Bedrock\\",\\"OutputTokenCount\\",\\"ModelId\\",\\"anthropic.claude-3-sonnet-20240229-v1:0\\",{\\"region\\":\\"us-east-1\\",\\"period\\":86400,\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":1,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations (Daily)\\",\\"region\\":\\"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Bedrock","Invocations","ModelId","anthropic.claude-3-sonnet-20240229-v1:0",{"region":"us-east-1","period":86400,"stat":"Sum"}],["AWS/Bedrock","Invocations","ModelId","stability.stable-diffusion-xl-v1",{"region":"us-east-1","period":86400,"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":1,"properties":{"view":"timeSeries","title":"UserPool","region":"",
+              "\\",\\"metrics\\":[[\\"AWS/Bedrock\\",\\"Invocations\\",\\"ModelId\\",\\"anthropic.claude-3-sonnet-20240229-v1:0\\",{\\"region\\":\\"us-east-1\\",\\"period\\":86400,\\"stat\\":\\"Sum\\"}],[\\"AWS/Bedrock\\",\\"Invocations\\",\\"ModelId\\",\\"stability.stable-diffusion-xl-v1\\",{\\"region\\":\\"us-east-1\\",\\"period\\":86400,\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":1,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"UserPool\\",\\"region\\":\\"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Cognito","SignInSuccesses","UserPool","",
+              "\\",\\"metrics\\":[[\\"AWS/Cognito\\",\\"SignInSuccesses\\",\\"UserPool\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPool8115E87F4F9C6D4C",
               },
-              "","UserPoolClient","",
+              "\\",\\"UserPoolClient\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPoolclientA74673A913CB5D33",
               },
-              "",{"region":"us-east-1","period":3600,"stat":"Sum"}],["AWS/Cognito","TokenRefreshSuccesses","UserPool","",
+              "\\",{\\"region\\":\\"us-east-1\\",\\"period\\":3600,\\"stat\\":\\"Sum\\"}],[\\"AWS/Cognito\\",\\"TokenRefreshSuccesses\\",\\"UserPool\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPool8115E87F4F9C6D4C",
               },
-              "","UserPoolClient","",
+              "\\",\\"UserPoolClient\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPoolclientA74673A913CB5D33",
               },
-              "",{"region":"us-east-1","period":3600,"stat":"Sum"}],["AWS/Cognito","SignUpSuccesses","UserPool","",
+              "\\",{\\"region\\":\\"us-east-1\\",\\"period\\":3600,\\"stat\\":\\"Sum\\"}],[\\"AWS/Cognito\\",\\"SignUpSuccesses\\",\\"UserPool\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPool8115E87F4F9C6D4C",
               },
-              "","UserPoolClient","",
+              "\\",\\"UserPoolClient\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPoolclientA74673A913CB5D33",
               },
-              "",{"region":"us-east-1","period":3600,"stat":"Sum"}]],"yAxis":{}}},{"type":"text","width":24,"height":1,"x":0,"y":7,"properties":{"markdown":"**Prompt Logs**"}},{"type":"log","width":24,"height":6,"x":0,"y":8,"properties":{"view":"table","title":"Prompt Logs","region":"",
+              "\\",{\\"region\\":\\"us-east-1\\",\\"period\\":3600,\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":1,\\"x\\":0,\\"y\\":7,\\"properties\\":{\\"markdown\\":\\"**Prompt Logs**\\"}},{\\"type\\":\\"log\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":8,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Prompt Logs\\",\\"region\\":\\"",
               {
                 "Ref": "AWS::Region",
               },
-              "","query":"SOURCE '",
+              "\\",\\"query\\":\\"SOURCE '",
               {
                 "Ref": "LogGroupF5B46931",
               },
-              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\n| filter schemaType like 'ModelInvocationLog'\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\n| sort @timestamp desc\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId"}}]}",
+              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}}]}",
             ],
           ],
         },
@@ -16569,21 +16569,21 @@ exports[`GenerativeAiUseCases matches the snapshot 2`] = `
           "Fn::Join": [
             "",
             [
-              "[{"Rules":[{"Resource":["collection/generative-ai-use-cases-jp"],"Permission":["aoss:DescribeCollectionItems","aoss:CreateCollectionItems","aoss:UpdateCollectionItems"],"ResourceType":"collection"},{"Resource":["index/generative-ai-use-cases-jp/*"],"Permission":["aoss:UpdateIndex","aoss:DescribeIndex","aoss:ReadDocument","aoss:WriteDocument","aoss:CreateIndex","aoss:DeleteIndex"],"ResourceType":"index"}],"Principal":["",
+              "[{\\"Rules\\":[{\\"Resource\\":[\\"collection/generative-ai-use-cases-jp\\"],\\"Permission\\":[\\"aoss:DescribeCollectionItems\\",\\"aoss:CreateCollectionItems\\",\\"aoss:UpdateCollectionItems\\"],\\"ResourceType\\":\\"collection\\"},{\\"Resource\\":[\\"index/generative-ai-use-cases-jp/*\\"],\\"Permission\\":[\\"aoss:UpdateIndex\\",\\"aoss:DescribeIndex\\",\\"aoss:ReadDocument\\",\\"aoss:WriteDocument\\",\\"aoss:CreateIndex\\",\\"aoss:DeleteIndex\\"],\\"ResourceType\\":\\"index\\"}],\\"Principal\\":[\\"",
               {
                 "Fn::GetAtt": [
                   "KnowledgeBaseRoleA2B317B9",
                   "Arn",
                 ],
               },
-              "","",
+              "\\",\\"",
               {
                 "Fn::GetAtt": [
                   "OpenSearchServerlessIndex339C5FEDA1B543B6B40A5E8E59E5734DServiceRole367CC992",
                   "Arn",
                 ],
               },
-              ""],"Description":""}]",
+              "\\"],\\"Description\\":\\"\\"}]",
             ],
           ],
         },
@@ -17290,7 +17290,7 @@ exports[`GenerativeAiUseCases matches the snapshot 2`] = `
     "EncryptionPolicy": {
       "Properties": {
         "Name": "generative-ai-use-cases-jp",
-        "Policy": "{"Rules":[{"Resource":["collection/generative-ai-use-cases-jp"],"ResourceType":"collection"}],"AWSOwnedKey":true}",
+        "Policy": "{\\"Rules\\":[{\\"Resource\\":[\\"collection/generative-ai-use-cases-jp\\"],\\"ResourceType\\":\\"collection\\"}],\\"AWSOwnedKey\\":true}",
         "Type": "encryption",
       },
       "Type": "AWS::OpenSearchServerless::SecurityPolicy",
@@ -17417,7 +17417,7 @@ exports[`GenerativeAiUseCases matches the snapshot 2`] = `
     "NetworkPolicy": {
       "Properties": {
         "Name": "generative-ai-use-cases-jp",
-        "Policy": "[{"Rules":[{"Resource":["collection/generative-ai-use-cases-jp"],"ResourceType":"collection"},{"Resource":["collection/generative-ai-use-cases-jp"],"ResourceType":"dashboard"}],"AllowFromPublic":true}]",
+        "Policy": "[{\\"Rules\\":[{\\"Resource\\":[\\"collection/generative-ai-use-cases-jp\\"],\\"ResourceType\\":\\"collection\\"},{\\"Resource\\":[\\"collection/generative-ai-use-cases-jp\\"],\\"ResourceType\\":\\"dashboard\\"}],\\"AllowFromPublic\\":true}]",
         "Type": "network",
       },
       "Type": "AWS::OpenSearchServerless::SecurityPolicy",
@@ -17592,35 +17592,35 @@ exports[`GenerativeAiUseCases matches the snapshot 3`] = `
         "Fn::Join": [
           "",
           [
-            "[{"displayName":"SearchEngine","agentId":"",
+            "[{\\"displayName\\":\\"SearchEngine\\",\\"agentId\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentSearchAgent3AF6EC6F",
                 "AgentId",
               ],
             },
-            "","aliasId":"",
+            "\\",\\"aliasId\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentSearchAgentAliasD59C2A47",
                 "AgentAliasId",
               ],
             },
-            "","description":"Agent with Web Search Functionality"},{"displayName":"CodeInterpreter","agentId":"",
+            "\\",\\"description\\":\\"Agent with Web Search Functionality\\"},{\\"displayName\\":\\"CodeInterpreter\\",\\"agentId\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCodeInterpreterAgent98889BFE",
                 "AgentId",
               ],
             },
-            "","aliasId":"",
+            "\\",\\"aliasId\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCodeInterpreterAgentAliasB6F54C31",
                 "AgentAliasId",
               ],
             },
-            "","description":"Agent with Code Interpreter Functionality"}]",
+            "\\",\\"description\\":\\"Agent with Code Interpreter Functionality\\"}]",
           ],
         ],
       },
@@ -18519,8 +18519,8 @@ exports[`GenerativeAiUseCases matches the snapshot 4`] = `
             "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
-          "MODEL_MAX_TOKENS": "{"anthropic.claude-3-sonnet-20240229-v1:0":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{"anthropic.claude-haiku-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5":["messages","system","tools"],"anthropic.claude-opus-5-5":["messages","system","tools"],"anthropic.claude-opus-5":["messages","system","tools"],"anthropic.claude-opus-4-8":["messages","system","tools"],"anthropic.claude-opus-4-7":["messages","system","tools"],"anthropic.claude-opus-4-6-v1":["messages","system","tools"],"anthropic.claude-sonnet-4-6":["messages","system","tools"],"anthropic.claude-opus-4-5-20251101-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-5-20250929-v1:0":["messages","system","tools"],"anthropic.claude-haiku-4-5-20251001-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-1-20250805-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-3-7-sonnet-20250219-v1:0":["messages","system","tools"],"anthropic.claude-3-5-haiku-20241022-v1:0":["messages","system","tools"],"amazon.nova-premier-v1:0":["messages","system"],"amazon.nova-pro-v1:0":["messages","system"],"amazon.nova-lite-v1:0":["messages","system"],"amazon.nova-micro-v1:0":["messages","system"],"amazon.nova-2-lite-v1:0":["messages","system"]}",
+          "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -18923,8 +18923,8 @@ exports[`GenerativeAiUseCases matches the snapshot 4`] = `
             "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
-          "MODEL_MAX_TOKENS": "{"anthropic.claude-3-sonnet-20240229-v1:0":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{"anthropic.claude-haiku-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5-5":["messages","system","tools"],"anthropic.claude-sonnet-5":["messages","system","tools"],"anthropic.claude-opus-5-5":["messages","system","tools"],"anthropic.claude-opus-5":["messages","system","tools"],"anthropic.claude-opus-4-8":["messages","system","tools"],"anthropic.claude-opus-4-7":["messages","system","tools"],"anthropic.claude-opus-4-6-v1":["messages","system","tools"],"anthropic.claude-sonnet-4-6":["messages","system","tools"],"anthropic.claude-opus-4-5-20251101-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-5-20250929-v1:0":["messages","system","tools"],"anthropic.claude-haiku-4-5-20251001-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-1-20250805-v1:0":["messages","system","tools"],"anthropic.claude-opus-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-sonnet-4-20250514-v1:0":["messages","system","tools"],"anthropic.claude-3-7-sonnet-20250219-v1:0":["messages","system","tools"],"anthropic.claude-3-5-haiku-20241022-v1:0":["messages","system","tools"],"amazon.nova-premier-v1:0":["messages","system"],"amazon.nova-pro-v1:0":["messages","system"],"amazon.nova-lite-v1:0":["messages","system"],"amazon.nova-micro-v1:0":["messages","system"],"amazon.nova-2-lite-v1:0":["messages","system"]}",
+          "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -19142,21 +19142,21 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "Fn::Join": [
           "",
           [
-            "{"name":"",
+            "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCoreRemoteOutputsDE8C59C9",
                 "AgentBuilderAgentCoreRuntimeName",
               ],
             },
-            "","arn":"",
+            "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCoreRemoteOutputsDE8C59C9",
                 "AgentBuilderAgentCoreRuntimeArn",
               ],
             },
-            ""}",
+            "\\"}",
           ],
         ],
       },
@@ -19172,21 +19172,21 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "Fn::Join": [
           "",
           [
-            "{"name":"",
+            "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCoreRemoteOutputsDE8C59C9",
                 "GenericAgentCoreRuntimeName",
               ],
             },
-            "","arn":"",
+            "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
                 "AgentCoreRemoteOutputsDE8C59C9",
                 "GenericAgentCoreRuntimeArn",
               ],
             },
-            ""}",
+            "\\"}",
           ],
         ],
       },
@@ -19260,7 +19260,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       },
     },
     "ImageGenerateModelIds": {
-      "Value": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
+      "Value": "[{\\"modelId\\":\\"stability.stable-diffusion-xl-v1\\",\\"region\\":\\"us-east-1\\"}]",
     },
     "IndexId": {
       "Value": {
@@ -19285,10 +19285,10 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Value": "",
     },
     "McpServersConfig": {
-      "Value": "{"time":{"metadata":{"category":"Utility","description":"Provides current time and date functionality"}},"aws-knowledge-mcp-server":{"metadata":{"category":"AWS","description":"AWS Knowledge Base MCP server for enterprise knowledge access"}},"awslabs.aws-documentation-mcp-server":{"metadata":{"category":"AWS","description":"Access AWS documentation and guides"}},"awslabs.cdk-mcp-server":{"metadata":{"category":"AWS","description":"AWS CDK code generation and assistance"}},"awslabs.aws-diagram-mcp-server":{"metadata":{"category":"AWS","description":"Generate AWS architecture diagrams"}},"awslabs.nova-canvas-mcp-server":{"metadata":{"category":"AI/ML","description":"Amazon Nova Canvas image generation"}},"tavily-search":{"metadata":{"category":"Search","description":"Web search and research capabilities powered by Tavily"}},"tavily-gateway":{"metadata":{"category":"Search","description":"Web search and research capabilities powered by Tavily"}}}",
+      "Value": "{\\"time\\":{\\"metadata\\":{\\"category\\":\\"Utility\\",\\"description\\":\\"Provides current time and date functionality\\"}},\\"aws-knowledge-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"AWS Knowledge Base MCP server for enterprise knowledge access\\"}},\\"awslabs.aws-documentation-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"Access AWS documentation and guides\\"}},\\"awslabs.cdk-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"AWS CDK code generation and assistance\\"}},\\"awslabs.aws-diagram-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"Generate AWS architecture diagrams\\"}},\\"awslabs.nova-canvas-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AI/ML\\",\\"description\\":\\"Amazon Nova Canvas image generation\\"}},\\"tavily-search\\":{\\"metadata\\":{\\"category\\":\\"Search\\",\\"description\\":\\"Web search and research capabilities powered by Tavily\\"}},\\"tavily-gateway\\":{\\"metadata\\":{\\"category\\":\\"Search\\",\\"description\\":\\"Web search and research capabilities powered by Tavily\\"}}}",
     },
     "ModelIds": {
-      "Value": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+      "Value": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
     },
     "ModelRegion": {
       "Value": "us-east-1",
@@ -19357,7 +19357,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       },
     },
     "SpeechToSpeechModelIds": {
-      "Value": "[{"modelId":"amazon.nova-sonic-v1:0","region":"us-east-1"}]",
+      "Value": "[{\\"modelId\\":\\"amazon.nova-sonic-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
     },
     "SpeechToSpeechNamespace": {
       "Value": "speech-to-speech",
@@ -19399,7 +19399,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       },
     },
     "VideoGenerateModelIds": {
-      "Value": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+      "Value": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
     },
     "WebUrl": {
       "Value": {
@@ -19955,7 +19955,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               "Fn::ImportValue": "GuardrailStack:ExportsOutputFnGetAttGuardrailguardrail03A76CF4GuardrailIdDBA991AF",
             },
             "GUARDRAIL_VERSION": "DRAFT",
-            "IMAGE_GENERATION_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
+            "IMAGE_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"stability.stable-diffusion-xl-v1\\",\\"region\\":\\"us-east-1\\"}]",
             "INDEX_ID": {
               "Ref": "RagKendraIndexFEF3924C",
             },
@@ -19963,12 +19963,12 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
             "LANGUAGE": "ja",
-            "MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+            "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
             "PORT": "8080",
             "QUERY_DECOMPOSITION_ENABLED": "false",
             "RERANKING_MODEL_ID": "",
-            "SPEECH_TO_SPEECH_MODEL_IDS": "[{"modelId":"amazon.nova-sonic-v1:0","region":"us-east-1"}]",
+            "SPEECH_TO_SPEECH_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-sonic-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "SPEECH_TO_SPEECH_TASK_FUNCTION_ARN": {
               "Fn::GetAtt": [
                 "SpeechToSpeechTaskC1149BF3",
@@ -19998,15 +19998,15 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               "Fn::Join": [
                 "",
                 [
-                  "{"us-east-1":"",
+                  "{\\"us-east-1\\":\\"",
                   {
                     "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
                   },
-                  ""}",
+                  "\\"}",
                 ],
               ],
             },
-            "VIDEO_GENERATION_MODEL_IDS": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+            "VIDEO_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           },
         },
         "Handler": "run.sh",
@@ -25716,8 +25716,8 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               "Ref": "APIFileBucket8FB29855",
             },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
-            "IMAGE_GENERATION_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
-            "MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+            "IMAGE_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"stability.stable-diffusion-xl-v1\\",\\"region\\":\\"us-east-1\\"}]",
+            "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
@@ -25726,15 +25726,15 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               "Fn::Join": [
                 "",
                 [
-                  "{"us-east-1":"",
+                  "{\\"us-east-1\\":\\"",
                   {
                     "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
                   },
-                  ""}",
+                  "\\"}",
                 ],
               ],
             },
-            "VIDEO_GENERATION_MODEL_IDS": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+            "VIDEO_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           },
         },
         "Handler": "index.handler",
@@ -26305,11 +26305,11 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               "Fn::ImportValue": "GuardrailStack:ExportsOutputFnGetAttGuardrailguardrail03A76CF4GuardrailIdDBA991AF",
             },
             "GUARDRAIL_VERSION": "DRAFT",
-            "IMAGE_GENERATION_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
+            "IMAGE_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"stability.stable-diffusion-xl-v1\\",\\"region\\":\\"us-east-1\\"}]",
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
-            "MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+            "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
             "QUERY_DECOMPOSITION_ENABLED": "false",
             "RERANKING_MODEL_ID": "",
@@ -26319,7 +26319,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "USER_POOL_ID": {
               "Ref": "AuthUserPool8115E87F",
             },
-            "VIDEO_GENERATION_MODEL_IDS": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+            "VIDEO_GENERATION_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           },
         },
         "Handler": "index.handler",
@@ -27076,21 +27076,21 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "Fn::Join": [
               "",
               [
-                "{"name":"",
+                "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
                     "AgentCoreRemoteOutputsDE8C59C9",
                     "AgentBuilderAgentCoreRuntimeName",
                   ],
                 },
-                "","arn":"",
+                "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
                     "AgentCoreRemoteOutputsDE8C59C9",
                     "AgentBuilderAgentCoreRuntimeArn",
                   ],
                 },
-                "","description":"Agent Core Runtime for AgentBuilder"}",
+                "\\",\\"description\\":\\"Agent Core Runtime for AgentBuilder\\"}",
               ],
             ],
           },
@@ -27100,21 +27100,21 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "Fn::Join": [
               "",
               [
-                "{"name":"",
+                "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
                     "AgentCoreRemoteOutputsDE8C59C9",
                     "GenericAgentCoreRuntimeName",
                   ],
                 },
-                "","arn":"",
+                "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
                     "AgentCoreRemoteOutputsDE8C59C9",
                     "GenericAgentCoreRuntimeArn",
                   ],
                 },
-                "","description":"Generic Agent Core Runtime for custom agents"}",
+                "\\",\\"description\\":\\"Generic Agent Core Runtime for custom agents\\"}",
               ],
             ],
           },
@@ -27160,12 +27160,12 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
           "VITE_APP_IDENTITY_POOL_ID": {
             "Ref": "AuthIdentityPool659E7F64",
           },
-          "VITE_APP_IMAGE_MODEL_IDS": "[{"modelId":"stability.stable-diffusion-xl-v1","region":"us-east-1"}]",
+          "VITE_APP_IMAGE_MODEL_IDS": "[{\\"modelId\\":\\"stability.stable-diffusion-xl-v1\\",\\"region\\":\\"us-east-1\\"}]",
           "VITE_APP_INLINE_AGENTS": "false",
           "VITE_APP_MCP_ENABLED": "false",
           "VITE_APP_MCP_ENDPOINT": "",
-          "VITE_APP_MCP_SERVERS_CONFIG": "{"time":{"metadata":{"category":"Utility","description":"Provides current time and date functionality"}},"aws-knowledge-mcp-server":{"metadata":{"category":"AWS","description":"AWS Knowledge Base MCP server for enterprise knowledge access"}},"awslabs.aws-documentation-mcp-server":{"metadata":{"category":"AWS","description":"Access AWS documentation and guides"}},"awslabs.cdk-mcp-server":{"metadata":{"category":"AWS","description":"AWS CDK code generation and assistance"}},"awslabs.aws-diagram-mcp-server":{"metadata":{"category":"AWS","description":"Generate AWS architecture diagrams"}},"awslabs.nova-canvas-mcp-server":{"metadata":{"category":"AI/ML","description":"Amazon Nova Canvas image generation"}},"tavily-search":{"metadata":{"category":"Search","description":"Web search and research capabilities powered by Tavily"}},"tavily-gateway":{"metadata":{"category":"Search","description":"Web search and research capabilities powered by Tavily"}}}",
-          "VITE_APP_MODEL_IDS": "[{"modelId":"anthropic.claude-3-sonnet-20240229-v1:0","region":"us-east-1"}]",
+          "VITE_APP_MCP_SERVERS_CONFIG": "{\\"time\\":{\\"metadata\\":{\\"category\\":\\"Utility\\",\\"description\\":\\"Provides current time and date functionality\\"}},\\"aws-knowledge-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"AWS Knowledge Base MCP server for enterprise knowledge access\\"}},\\"awslabs.aws-documentation-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"Access AWS documentation and guides\\"}},\\"awslabs.cdk-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"AWS CDK code generation and assistance\\"}},\\"awslabs.aws-diagram-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AWS\\",\\"description\\":\\"Generate AWS architecture diagrams\\"}},\\"awslabs.nova-canvas-mcp-server\\":{\\"metadata\\":{\\"category\\":\\"AI/ML\\",\\"description\\":\\"Amazon Nova Canvas image generation\\"}},\\"tavily-search\\":{\\"metadata\\":{\\"category\\":\\"Search\\",\\"description\\":\\"Web search and research capabilities powered by Tavily\\"}},\\"tavily-gateway\\":{\\"metadata\\":{\\"category\\":\\"Search\\",\\"description\\":\\"Web search and research capabilities powered by Tavily\\"}}}",
+          "VITE_APP_MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           "VITE_APP_MODEL_REGION": "us-east-1",
           "VITE_APP_OPTIMIZE_PROMPT_FUNCTION_ARN": {
             "Fn::GetAtt": [
@@ -27203,7 +27203,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               ],
             ],
           },
-          "VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS": "[{"modelId":"amazon.nova-sonic-v1:0","region":"us-east-1"}]",
+          "VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-sonic-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           "VITE_APP_SPEECH_TO_SPEECH_NAMESPACE": "speech-to-speech",
           "VITE_APP_USER_POOL_CLIENT_ID": {
             "Ref": "AuthUserPoolclientA74673A9",
@@ -27212,7 +27212,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "Ref": "AuthUserPool8115E87F",
           },
           "VITE_APP_USE_CASE_BUILDER_ENABLED": "true",
-          "VITE_APP_VIDEO_MODEL_IDS": "[{"modelId":"amazon.nova-reel-v1:0","region":"us-east-1"}]",
+          "VITE_APP_VIDEO_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
         },
         "outputEnvFile": false,
         "outputSourceDirectory": "../packages/web/dist",
@@ -27254,35 +27254,35 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         },
         "Source": {
           "BuildSpec": "{
-  "version": "0.2",
-  "env": {
-    "shell": "bash"
+  \\"version\\": \\"0.2\\",
+  \\"env\\": {
+    \\"shell\\": \\"bash\\"
   },
-  "phases": {
-    "install": {
-      "runtime-versions": {
-        "nodejs": 22
+  \\"phases\\": {
+    \\"install\\": {
+      \\"runtime-versions\\": {
+        \\"nodejs\\": 22
       }
     },
-    "build": {
-      "commands": [
-        "current_dir=$(pwd)",
-        "\\necho \\"$input\\"\\nfor obj in $(echo \\"$input\\" | jq -r '.[] | @base64'); do\\n  decoded=$(echo \\"$obj\\" | base64 --decode)\\n  assetUrl=$(echo \\"$decoded\\" | jq -r '.assetUrl')\\n  extractPath=$(echo \\"$decoded\\" | jq -r '.extractPath')\\n  commands=$(echo \\"$decoded\\" | jq -r '.commands')\\n\\n  # Download the zip file\\n  aws s3 cp \\"$assetUrl\\" temp.zip\\n\\n  # Extract the zip file to the extractPath directory\\n  mkdir -p \\"$extractPath\\"\\n  unzip temp.zip -d \\"$extractPath\\"\\n\\n  # Remove the zip file\\n  rm temp.zip\\n\\n  # Run the specified commands in the extractPath directory\\n  cd \\"$extractPath\\"\\n  ls -la\\n  eval \\"$commands\\"\\n  cd \\"$current_dir\\"\\n  ls -la\\ndone\\n              ",
-        "ls -la",
-        "cd \\"$workingDirectory\\"",
-        "eval \\"$buildCommands\\"",
-        "ls -la",
-        "cd \\"$current_dir\\"",
-        "cd \\"$outputSourceDirectory\\"",
-        "aws s3 sync . \\"s3://$destinationBucketName/$destinationKeyPrefix\\" --delete",
-        "\\nif [[ -n \\"$distributionId\\" ]]\\nthen\\nINVALIDATION_OUTPUT=$(aws cloudfront create-invalidation --distribution-id \\"$distributionId\\" --paths \\"$distributionPath\\" --output json)\\nINVALIDATION_ID=$(echo \\"$INVALIDATION_OUTPUT\\" | jq -r '.Invalidation.Id')\\naws cloudfront wait invalidation-completed --distribution-id \\"$distributionId\\" --id \\"$INVALIDATION_ID\\"\\nfi\\n",
-        "\\nif [[ $outputEnvFile == \\"true\\" ]]\\nthen\\n  # Split the comma-separated string into an array\\n  for var_name in \${envNames//,/ }\\n  do\\n      echo \\"Element: $var_name\\"\\n      var_value=\\"\${!var_name}\\"\\n      echo \\"$var_name=$var_value\\" >> tmp.env\\n  done\\n\\n  aws s3 cp tmp.env \\"s3://$assetBucketName/$envFileKey\\"\\nfi\\n              "
+    \\"build\\": {
+      \\"commands\\": [
+        \\"current_dir=$(pwd)\\",
+        \\"\\\\necho \\\\\\"$input\\\\\\"\\\\nfor obj in $(echo \\\\\\"$input\\\\\\" | jq -r '.[] | @base64'); do\\\\n  decoded=$(echo \\\\\\"$obj\\\\\\" | base64 --decode)\\\\n  assetUrl=$(echo \\\\\\"$decoded\\\\\\" | jq -r '.assetUrl')\\\\n  extractPath=$(echo \\\\\\"$decoded\\\\\\" | jq -r '.extractPath')\\\\n  commands=$(echo \\\\\\"$decoded\\\\\\" | jq -r '.commands')\\\\n\\\\n  # Download the zip file\\\\n  aws s3 cp \\\\\\"$assetUrl\\\\\\" temp.zip\\\\n\\\\n  # Extract the zip file to the extractPath directory\\\\n  mkdir -p \\\\\\"$extractPath\\\\\\"\\\\n  unzip temp.zip -d \\\\\\"$extractPath\\\\\\"\\\\n\\\\n  # Remove the zip file\\\\n  rm temp.zip\\\\n\\\\n  # Run the specified commands in the extractPath directory\\\\n  cd \\\\\\"$extractPath\\\\\\"\\\\n  ls -la\\\\n  eval \\\\\\"$commands\\\\\\"\\\\n  cd \\\\\\"$current_dir\\\\\\"\\\\n  ls -la\\\\ndone\\\\n              \\",
+        \\"ls -la\\",
+        \\"cd \\\\\\"$workingDirectory\\\\\\"\\",
+        \\"eval \\\\\\"$buildCommands\\\\\\"\\",
+        \\"ls -la\\",
+        \\"cd \\\\\\"$current_dir\\\\\\"\\",
+        \\"cd \\\\\\"$outputSourceDirectory\\\\\\"\\",
+        \\"aws s3 sync . \\\\\\"s3://$destinationBucketName/$destinationKeyPrefix\\\\\\" --delete\\",
+        \\"\\\\nif [[ -n \\\\\\"$distributionId\\\\\\" ]]\\\\nthen\\\\nINVALIDATION_OUTPUT=$(aws cloudfront create-invalidation --distribution-id \\\\\\"$distributionId\\\\\\" --paths \\\\\\"$distributionPath\\\\\\" --output json)\\\\nINVALIDATION_ID=$(echo \\\\\\"$INVALIDATION_OUTPUT\\\\\\" | jq -r '.Invalidation.Id')\\\\naws cloudfront wait invalidation-completed --distribution-id \\\\\\"$distributionId\\\\\\" --id \\\\\\"$INVALIDATION_ID\\\\\\"\\\\nfi\\\\n\\",
+        \\"\\\\nif [[ $outputEnvFile == \\\\\\"true\\\\\\" ]]\\\\nthen\\\\n  # Split the comma-separated string into an array\\\\n  for var_name in \${envNames//,/ }\\\\n  do\\\\n      echo \\\\\\"Element: $var_name\\\\\\"\\\\n      var_value=\\\\\\"\${!var_name}\\\\\\"\\\\n      echo \\\\\\"$var_name=$var_value\\\\\\" >> tmp.env\\\\n  done\\\\n\\\\n  aws s3 cp tmp.env \\\\\\"s3://$assetBucketName/$envFileKey\\\\\\"\\\\nfi\\\\n              \\"
       ]
     },
-    "post_build": {
-      "commands": [
-        "echo Build completed on \`date\`",
-        "\\nSTATUS='SUCCESS'\\nif [ $CODEBUILD_BUILD_SUCCEEDING -ne 1 ] # Test if the build is failing\\nthen\\nSTATUS='FAILED'\\nREASON=\\"NodejsBuild failed. See CloudWatch Log stream for the detailed reason: \\nhttps://$AWS_REGION.console.aws.amazon.com/cloudwatch/home?region=$AWS_REGION#logsV2:log-groups/log-group/\\\\$252Faws\\\\$252Fcodebuild\\\\$252F$projectName/log-events/$CODEBUILD_LOG_PATH\\"\\nfi\\ncat <<EOF > payload.json\\n{\\n  \\"StackId\\": \\"$stackId\\",\\n  \\"RequestId\\": \\"$requestId\\",\\n  \\"LogicalResourceId\\":\\"$logicalResourceId\\",\\n  \\"PhysicalResourceId\\": \\"$logicalResourceId\\",\\n  \\"Status\\": \\"$STATUS\\",\\n  \\"Reason\\": \\"$REASON\\",\\n  \\"Data\\": {\\n    \\"envFileKey\\": \\"$envFileKey\\"\\n  }\\n}\\nEOF\\ncurl -i -X PUT -H 'Content-Type:' -d \\"@payload.json\\" \\"$responseURL\\"\\n              "
+    \\"post_build\\": {
+      \\"commands\\": [
+        \\"echo Build completed on \`date\`\\",
+        \\"\\\\nSTATUS='SUCCESS'\\\\nif [ $CODEBUILD_BUILD_SUCCEEDING -ne 1 ] # Test if the build is failing\\\\nthen\\\\nSTATUS='FAILED'\\\\nREASON=\\\\\\"NodejsBuild failed. See CloudWatch Log stream for the detailed reason: \\\\nhttps://$AWS_REGION.console.aws.amazon.com/cloudwatch/home?region=$AWS_REGION#logsV2:log-groups/log-group/\\\\\\\\$252Faws\\\\\\\\$252Fcodebuild\\\\\\\\$252F$projectName/log-events/$CODEBUILD_LOG_PATH\\\\\\"\\\\nfi\\\\ncat <<EOF > payload.json\\\\n{\\\\n  \\\\\\"StackId\\\\\\": \\\\\\"$stackId\\\\\\",\\\\n  \\\\\\"RequestId\\\\\\": \\\\\\"$requestId\\\\\\",\\\\n  \\\\\\"LogicalResourceId\\\\\\":\\\\\\"$logicalResourceId\\\\\\",\\\\n  \\\\\\"PhysicalResourceId\\\\\\": \\\\\\"$logicalResourceId\\\\\\",\\\\n  \\\\\\"Status\\\\\\": \\\\\\"$STATUS\\\\\\",\\\\n  \\\\\\"Reason\\\\\\": \\\\\\"$REASON\\\\\\",\\\\n  \\\\\\"Data\\\\\\": {\\\\n    \\\\\\"envFileKey\\\\\\": \\\\\\"$envFileKey\\\\\\"\\\\n  }\\\\n}\\\\nEOF\\\\ncurl -i -X PUT -H 'Content-Type:' -d \\\\\\"@payload.json\\\\\\" \\\\\\"$responseURL\\\\\\"\\\\n              \\"
       ]
     }
   }
@@ -30103,7 +30103,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               ],
             },
             "NAMESPACE": "speech-to-speech",
-            "SPEECH_TO_SPEECH_MODEL_IDS": "[{"modelId":"amazon.nova-sonic-v1:0","region":"us-east-1"}]",
+            "SPEECH_TO_SPEECH_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-sonic-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           },
         },
         "Handler": "index.handler",
@@ -30701,55 +30701,55 @@ exports[`GenerativeAiUseCases matches the snapshot 7`] = `
           "Fn::Join": [
             "",
             [
-              "{"start":"-P7D","widgets":[{"type":"text","width":18,"height":1,"x":0,"y":0,"properties":{"markdown":"**Amazon Bedrock Metrics**"}},{"type":"text","width":6,"height":1,"x":18,"y":0,"properties":{"markdown":"**User Metrics**"}},{"type":"metric","width":6,"height":6,"x":0,"y":1,"properties":{"view":"timeSeries","title":"InputTokenCount (Daily)","region":"",
+              "{\\"start\\":\\"-P7D\\",\\"widgets\\":[{\\"type\\":\\"text\\",\\"width\\":18,\\"height\\":1,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"markdown\\":\\"**Amazon Bedrock Metrics**\\"}},{\\"type\\":\\"text\\",\\"width\\":6,\\"height\\":1,\\"x\\":18,\\"y\\":0,\\"properties\\":{\\"markdown\\":\\"**User Metrics**\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":1,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"InputTokenCount (Daily)\\",\\"region\\":\\"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Bedrock","InputTokenCount","ModelId","anthropic.claude-3-sonnet-20240229-v1:0",{"region":"us-east-1","period":86400,"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":1,"properties":{"view":"timeSeries","title":"OutputTokenCount (Daily)","region":"",
+              "\\",\\"metrics\\":[[\\"AWS/Bedrock\\",\\"InputTokenCount\\",\\"ModelId\\",\\"anthropic.claude-3-sonnet-20240229-v1:0\\",{\\"region\\":\\"us-east-1\\",\\"period\\":86400,\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":1,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"OutputTokenCount (Daily)\\",\\"region\\":\\"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Bedrock","OutputTokenCount","ModelId","anthropic.claude-3-sonnet-20240229-v1:0",{"region":"us-east-1","period":86400,"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":1,"properties":{"view":"timeSeries","title":"Invocations (Daily)","region":"",
+              "\\",\\"metrics\\":[[\\"AWS/Bedrock\\",\\"OutputTokenCount\\",\\"ModelId\\",\\"anthropic.claude-3-sonnet-20240229-v1:0\\",{\\"region\\":\\"us-east-1\\",\\"period\\":86400,\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":1,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations (Daily)\\",\\"region\\":\\"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Bedrock","Invocations","ModelId","anthropic.claude-3-sonnet-20240229-v1:0",{"region":"us-east-1","period":86400,"stat":"Sum"}],["AWS/Bedrock","Invocations","ModelId","stability.stable-diffusion-xl-v1",{"region":"us-east-1","period":86400,"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":1,"properties":{"view":"timeSeries","title":"UserPool","region":"",
+              "\\",\\"metrics\\":[[\\"AWS/Bedrock\\",\\"Invocations\\",\\"ModelId\\",\\"anthropic.claude-3-sonnet-20240229-v1:0\\",{\\"region\\":\\"us-east-1\\",\\"period\\":86400,\\"stat\\":\\"Sum\\"}],[\\"AWS/Bedrock\\",\\"Invocations\\",\\"ModelId\\",\\"stability.stable-diffusion-xl-v1\\",{\\"region\\":\\"us-east-1\\",\\"period\\":86400,\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":1,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"UserPool\\",\\"region\\":\\"",
               {
                 "Ref": "AWS::Region",
               },
-              "","metrics":[["AWS/Cognito","SignInSuccesses","UserPool","",
+              "\\",\\"metrics\\":[[\\"AWS/Cognito\\",\\"SignInSuccesses\\",\\"UserPool\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPool8115E87F4F9C6D4C",
               },
-              "","UserPoolClient","",
+              "\\",\\"UserPoolClient\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPoolclientA74673A913CB5D33",
               },
-              "",{"region":"us-east-1","period":3600,"stat":"Sum"}],["AWS/Cognito","TokenRefreshSuccesses","UserPool","",
+              "\\",{\\"region\\":\\"us-east-1\\",\\"period\\":3600,\\"stat\\":\\"Sum\\"}],[\\"AWS/Cognito\\",\\"TokenRefreshSuccesses\\",\\"UserPool\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPool8115E87F4F9C6D4C",
               },
-              "","UserPoolClient","",
+              "\\",\\"UserPoolClient\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPoolclientA74673A913CB5D33",
               },
-              "",{"region":"us-east-1","period":3600,"stat":"Sum"}],["AWS/Cognito","SignUpSuccesses","UserPool","",
+              "\\",{\\"region\\":\\"us-east-1\\",\\"period\\":3600,\\"stat\\":\\"Sum\\"}],[\\"AWS/Cognito\\",\\"SignUpSuccesses\\",\\"UserPool\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPool8115E87F4F9C6D4C",
               },
-              "","UserPoolClient","",
+              "\\",\\"UserPoolClient\\",\\"",
               {
                 "Fn::ImportValue": "GenerativeAiUseCasesStack:ExportsOutputRefAuthUserPoolclientA74673A913CB5D33",
               },
-              "",{"region":"us-east-1","period":3600,"stat":"Sum"}]],"yAxis":{}}},{"type":"text","width":24,"height":1,"x":0,"y":7,"properties":{"markdown":"**Prompt Logs**"}},{"type":"log","width":24,"height":6,"x":0,"y":8,"properties":{"view":"table","title":"Prompt Logs","region":"",
+              "\\",{\\"region\\":\\"us-east-1\\",\\"period\\":3600,\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":1,\\"x\\":0,\\"y\\":7,\\"properties\\":{\\"markdown\\":\\"**Prompt Logs**\\"}},{\\"type\\":\\"log\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":8,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Prompt Logs\\",\\"region\\":\\"",
               {
                 "Ref": "AWS::Region",
               },
-              "","query":"SOURCE '",
+              "\\",\\"query\\":\\"SOURCE '",
               {
                 "Ref": "LogGroupF5B46931",
               },
-              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\n| filter schemaType like 'ModelInvocationLog'\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\n| sort @timestamp desc\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId"}}]}",
+              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}}]}",
             ],
           ],
         },

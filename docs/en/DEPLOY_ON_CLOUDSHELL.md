@@ -17,6 +17,8 @@ Download the [default cdk.json](/packages/cdk/cdk.json) (you can download the fi
 
 Download the [default parameter.ts](/packages/cdk/parameter.ts) and add the necessary environment settings. In parameter.ts, you can manage multiple environment settings like dev, staging, prod in a single file.
 
+The default files above are those of the main branch. If the main branch has changes that are not released yet, download the files of the release you deploy instead: select its tag on the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases), then open the file.
+
 ## Launching CloudShell
 
 Launch [CloudShell](https://console.aws.amazon.com/cloudshell/home).
@@ -40,6 +42,7 @@ deploy.sh supports the following options:
 -c, --cdk-context    ... Path to the cdk.json file
 -p, --parameter-file ... Path to the parameter.ts file
 -e, --env           ... Environment name (e.g., dev, prod)
+-r, --ref           ... Git tag or branch to deploy (default: the latest release)
 -h, --help          ... Show this message
 ```
 
@@ -71,6 +74,13 @@ Execute deploy.sh with the following commands. Note that the --cdk-context optio
 ./deploy.sh --parameter-file ~/parameter.ts --env prod
 ```
 
+5. Deploy a specific release or branch (by default, `deploy.sh` deploys the latest release):
+
+```bash
+./deploy.sh --ref v5.6.0
+./deploy.sh --ref main
+```
+
 When deployment is complete, the CloudFront URL will be displayed. You can access GenU by opening that URL in a browser.
 
 ### Configuration Priority
@@ -78,5 +88,4 @@ When deployment is complete, the CloudFront URL will be displayed. You can acces
 1. If parameter.ts and environment are specified, and the environment name (including unnamed environments) is defined in parameter.ts, those settings have the highest priority
 2. cdk.json settings are applied next
 
-Note that to execute these steps, you also need to enable the models from [Amazon Bedrock Model access](https://console.aws.amazon.com/bedrock/home#/modelaccess).
-Confirm that the models specified in modelIds, imageGenerationModelIds, videoGenerationModelIds, and speechToSpeechModelIds in the modelRegion of the configuration file (parameter.ts or cdk.json) are enabled.
+Note that the Amazon Bedrock Model access page has been retired, so you no longer need to enable models there. Serverless foundation models are automatically enabled when they are first invoked in your AWS account. For Anthropic models, first-time users may need to submit use case details before they can access the model. Confirm that the models specified in modelIds, imageGenerationModelIds, videoGenerationModelIds, and speechToSpeechModelIds in the modelRegion of the configuration file (parameter.ts or cdk.json) are available in your account.

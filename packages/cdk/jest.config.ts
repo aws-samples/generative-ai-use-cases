@@ -12,5 +12,8 @@ export default {
     '/node_modules/(?!(sanitize-html/node_modules/)?(htmlparser2|domhandler|domutils|dom-serializer|domelementtype|entities)/)',
   ],
   snapshotSerializers: ['<rootDir>/test/snapshot-plugin.ts'],
+  // Escape quotes and backslashes so a snapshot is a template that can be
+  // parsed back (JSON apart from trailing commas).
+  snapshotFormat: { escapeString: true, printBasicPrototype: false },
   testPathIgnorePatterns: ['/node_modules/', 'e2e.test.ts'],
 };
