@@ -8,7 +8,6 @@
 // effective value differs from the default, not only the ones the user
 // remembers changing.
 import { isDeepStrictEqual } from 'node:util';
-import { z } from 'zod';
 import { stackInputSchema } from '../../lib/stack-input';
 
 export type ParameterSource = 'cdk.json' | 'parameter.ts';
@@ -30,13 +29,10 @@ export const parameterSource = (props: {
     ? 'cdk.json'
     : 'parameter.ts';
 
-const schemaKeys = (): Set<string> => {
-  let schema: z.ZodTypeAny = stackInputSchema;
-  while (schema instanceof z.ZodEffects) {
-    schema = schema.innerType();
-  }
-  return new Set(Object.keys((schema as z.AnyZodObject).shape));
-};
+// In zod 4, refine() keeps the object schema, so its shape lists every
+// parameter.
+const schemaKeys = (): Set<string> =>
+  new Set(Object.keys(stackInputSchema.shape));
 
 // Context keys that are CDK settings (feature flags and the like), not GenU
 // parameters. They stay in cdk.json.
