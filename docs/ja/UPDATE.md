@@ -1,24 +1,59 @@
 # アップデート方法
 
 GenU は頻繁にアップデートされています。
-機能追加・改善に加え、セキュリティ文脈のアップデートが入ることもありますので、定期的にリポジトリの main ブランチを pull して再デプロイすることをお勧めします。
+機能追加・改善に加え、セキュリティ文脈のアップデートが入ることもありますので、定期的に最新のリリースにアップデートして再デプロイすることをお勧めします。
 
-[AWS CloudShell を利用したデプロイ方法](./DEPLOY_ON_CLOUDSHELL.md) を利用している場合、常に最新の main ブランチをデプロイするため、再度 `deploy.sh` を実行するとアップデートされます。(以下の手順は不要です。)
+リリースは Git のタグ (例: `v5.6.0`) として公開され、[Releases ページ](https://github.com/aws-samples/generative-ai-use-cases/releases) にリリースノートが掲載されます。
+main ブランチにはまだリリースされていない変更も含まれるため、main ブランチではなくリリースをデプロイすることをお勧めします。
+
+[AWS CloudShell を利用したデプロイ方法](./DEPLOY_ON_CLOUDSHELL.md) を利用している場合、`deploy.sh` はデフォルトで最新のリリースをデプロイするため、再度 `deploy.sh` を実行するとアップデートされます。(以下の手順は不要です。)
 
 ## 手動でアップデートする場合
 
 ユーザー自身がアップデートする方法です。
 
-### main ブランチを pull する
+### リリースノートを確認する
 
-すでにリポジトリを clone 済みで、初回デプロイが完了していることを想定しています。
-main ブランチの内容を pull するには以下のコマンドを実行します。
+アップデートする前に、[Releases ページ](https://github.com/aws-samples/generative-ai-use-cases/releases) で、現在のバージョンから新しいバージョンまでのすべてのリリースノートを確認してください。
+破壊的な変更 (リソースの置き換えや削除、設定項目の削除や名前の変更など) を含むリリースでは、リリースノートに影響と移行手順が記載されています。
+
+現在のバージョンは以下のコマンドで確認できます。
 
 ```bash
-git pull
+git describe --tags
 ```
 
-別のリポジトリでカスタマイズしている場合は、remote が別名で登録されている可能性があります。
+### 最新のリリースをマージする
+
+すでにリポジトリを clone 済みで、初回デプロイが完了していることを想定しています。
+[cdk.json](/packages/cdk/cdk.json) や [parameter.ts](/packages/cdk/parameter.ts) などのファイルを変更している場合は、先にご自身のブランチにコミットしてください。
+
+以下のコマンドでリリースを取得し、最新のリリースをご自身のブランチにマージします。
+
+```bash
+git fetch --tags origin
+git merge $(git describe --tags --abbrev=0 origin/main)
+```
+
+特定のリリースにアップデートする場合は、そのタグを指定します。
+
+```bash
+git merge v5.6.0
+```
+
+ご自身のコミットがない場合、マージは fast-forward になり、コードはリリースと同じ状態になります。
+ご自身のコミットがある場合はマージコミットが作られ、コミットメッセージを編集するエディタが開きます。メッセージを変更しない場合は `--no-edit` を付けて実行できます。
+
+```bash
+git merge --no-edit v5.6.0
+```
+
+これまで main ブランチを pull してアップデートしていた場合、コードに最新のリリースより新しい変更がすでに含まれていることがあります。
+その場合は上記のマージでは何も変わらず、次のリリースをマージした時点でリリースの内容に揃います。
+
+### 別のリポジトリでカスタマイズしている場合
+
+別のリポジトリ (fork など) でカスタマイズしている場合は、remote が別名で登録されている可能性があります。
 remote は以下のコマンドで調べることが可能です。
 
 ```bash
@@ -34,52 +69,69 @@ aws     https://github.com/aws-samples/generative-ai-use-cases (fetch)
 aws     https://github.com/aws-samples/generative-ai-use-cases (push)
 ```
 
-この場合は、aws を明示的に指定して pull を実施します。
+この場合は、明示的に aws を指定します。
 
 ```bash
-git pull aws
+git fetch --tags aws
+git merge $(git describe --tags --abbrev=0 aws/main)
 ```
 
-`git remote -v` の結果、aws-samples で管理されているリポジトリがない場合は、以下のコマンドで追加します。
+`git remote -v` の結果に aws-samples で管理されているリポジトリが表示されない場合は、以下のコマンドで追加します。
 
 ```bash
 git remote add aws https://github.com/aws-samples/generative-ai-use-cases
 ```
 
-aws という名前で登録されたので、`git pull aws` を実行して pull を実施します。
+リリースのタグのマージは、その時点の main ブランチのマージと同じように動作します。カスタマイズはご自身のブランチに置いたまま、リリースごとにマージできます。
+特定の変更だけが必要な場合は、main ブランチからそのコミットを cherry-pick することもできます。
 
-### 取り込む前に変更が見たい場合
+### 取り込む前に変更を確認したい場合
 
-`git pull` コマンドは `git fetch` (変更を取得) と `git merge` (変更を取り込む) を同時に行います。
-変更点を確認してから取り込みたい場合は、`fetch` と `merge` を別々に実行してください。
-以下のコマンドでは、[aws-samples/generative-ai-use-cases](https://github.com/aws-samples/generative-ai-use-cases) が origin という名前で remote に登録されているとして記述します。
-remote 名を調べる場合は、前述した `git remote -v` コマンドを実行してください。
-
-まずは以下のコマンドで変更を取得します。
+マージする前に変更を確認するには、ご自身のコードとリリースを比較します。
 
 ```bash
-git fetch origin
-```
-
-続いて、手元のコードと origin/main の違いを確認します。
-
-```bash
-git diff origin/main
-```
-
-問題なければ、マージを実行します。
-
-```bash
-git merge origin/main
+git diff HEAD v5.6.0
 ```
 
 ### コンフリクトが発生した場合
 
-`git pull` 時にコンフリクトが発生した場合、カスタマイズしたコードと、本家の変更が同時に同じファイルに対して行われてしまっています。
-コンフリクトが入ったコードは手動で修正する必要があります。
+マージ時にコンフリクトが発生した場合は、ご自身でカスタマイズしたコードと本家の変更が同じファイルに同時に入ったことを意味しています。
+コンフリクトが発生したコードは手動で修正する必要があります。
 
 特に [cdk.json](/packages/cdk/cdk.json) のコンフリクトには注意が必要です。
-**手元で設定した項目が消えていないか、`git pull` 後に必ず確認してください。**
+**手元で設定した項目が消えていないか、マージ後に必ず確認してください。**
+
+`package-lock.json` のコンフリクトは手動で修正せず、本家の内容を採用してから再生成してください。
+
+```bash
+git checkout --theirs package-lock.json
+npm install
+git add package-lock.json
+```
+
+### うまくいかない場合
+
+| 表示されるメッセージ                                                      | 原因と対処                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Your local changes to the following files would be overwritten by merge` | コミットしていない変更があります。`git commit` でご自身のブランチにコミットするか、`git stash` で退避してから、もう一度マージしてください。                                                                                            |
+| `CONFLICT (content): Merge conflict in ...`                               | [コンフリクトが発生した場合](#コンフリクトが発生した場合) を参照してください。マージを取り消してやり直す場合は `git merge --abort` を実行します。マージ前の状態に戻ります。                                                            |
+| `merge: v5.6.0 - not something we can merge`                              | タグが取得されていないか、タグ名が間違っています。`git fetch --tags origin` (別名の remote の場合はその名前) を実行し、[Releases ページ](https://github.com/aws-samples/generative-ai-use-cases/releases) でタグ名を確認してください。 |
+| `fatal: No names found, cannot describe anything.`                        | `git clone --depth 1` などで履歴を省略して clone したため、タグがありません。`git fetch --tags --unshallow origin` を実行してから、もう一度実行してください。                                                                          |
+| `Already up to date.`                                                     | すでにそのリリース、またはそれより新しい main ブランチの内容が含まれています。エラーではありません。                                                                                                                                   |
+| `fatal: destination path 'generative-ai-use-cases' already exists`        | clone 先に同じ名前のディレクトリがあります。既存のディレクトリでアップデートするか、別の名前で clone してください (`git clone <URL> <ディレクトリ名>`)。                                                                               |
+
+コンフリクトの解消は、Kiro などの AI コーディングアシスタントに依頼することもできます。その場合も、[cdk.json](/packages/cdk/cdk.json) や [parameter.ts](/packages/cdk/parameter.ts) で設定した項目が残っているか、マージ後に必ず確認してください。
+
+### main ブランチを利用する場合
+
+まだリリースされていない変更が必要な場合は、リリースの代わりに main ブランチをマージできます。
+
+```bash
+git fetch origin
+git merge origin/main
+```
+
+main ブランチには、まだリリースノートに記載されていない変更 (破壊的な変更を含む) が含まれることがあります。
 
 ### 再デプロイする
 

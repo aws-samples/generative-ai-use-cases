@@ -16,14 +16,14 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Get and publish latest draft release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         with:
           script: |
             const { data: releases } = await github.rest.repos.listReleases({

@@ -1,0 +1,55 @@
+# Dependabot is used for security updates only. Version updates are disabled
+# with open-pull-requests-limit: 0, so the schedules below do not throttle
+# anything for npm and uv.
+#
+# Security updates run when a Dependabot alert is raised, not on the schedule.
+# Minor and patch fixes are grouped into one pull request per ecosystem; when
+# a new alert changes the set of dependencies, Dependabot replaces the open
+# group pull request with a new one. Fixes that need a major bump stay
+# separate pull requests.
+#
+# GitHub Actions are pinned to commit SHAs and updated monthly as version
+# updates, grouped into one pull request.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directories:
+      - '/'
+      - '/browser-extension'
+      - '/packages/cdk/fargate-s3-server'
+      - '/packages/cdk/custom-resources/*'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 0
+    groups:
+      npm-security:
+        applies-to: security-updates
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: uv
+    directories:
+      - '/packages/cdk/mcp-api'
+      - '/packages/cdk/lambda-python/*'
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:00'
+      timezone: Asia/Tokyo
+    open-pull-requests-limit: 0
+    groups:
+      uv-security:
+        applies-to: security-updates
+        patterns: ['*']
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ['*']

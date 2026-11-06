@@ -29,6 +29,7 @@ const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
 export interface ClosedVpcProps {
   readonly vpcId?: string | null;
   readonly subnetIds?: string[] | null;
+  readonly vpcEndpointAvailabilityZones?: string[] | null;
   readonly ipv4Cidr: string;
   readonly domainName?: string | null;
 }
@@ -95,6 +96,19 @@ export class ClosedVpc extends Construct {
       ec2.Port.tcp(8443)
     );
 
+    // Subnets for Interface VPC Endpoints.
+    // If vpcEndpointAvailabilityZones is specified, endpoints are created only in those AZs
+    // (the other resources such as ALB are not affected).
+    const subnetFilters: ec2.SubnetFilter[] = [];
+    if (props.subnetIds) {
+      subnetFilters.push(ec2.SubnetFilter.byIds(props.subnetIds));
+    }
+    if (props.vpcEndpointAvailabilityZones?.length) {
+      subnetFilters.push(
+        ec2.SubnetFilter.availabilityZones(props.vpcEndpointAvailabilityZones)
+      );
+    }
+
     for (const [name, service] of Object.entries(VPC_ENDPOINTS)) {
       const vpcEndpoint = new ec2.InterfaceVpcEndpoint(
         this,
@@ -103,11 +117,10 @@ export class ClosedVpc extends Construct {
           vpc,
           service,
           subnets: props.subnetIds
-            ? {
-                subnetFilters: [ec2.SubnetFilter.byIds(props.subnetIds)],
-              }
+            ? { subnetFilters }
             : {
                 subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+                subnetFilters,
               },
           securityGroups: [
             name !== 'TranscribeStreaming'

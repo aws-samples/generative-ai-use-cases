@@ -73,6 +73,9 @@ npm run cdk:deploy
 
 ### RAG チャット (Amazon Kendra) ユースケースの有効化
 
+> [!IMPORTANT]
+> Amazon Kendra は 2026 年 6 月 30 日にメンテナンスモードへ移行し、2026 年 7 月 30 日以降は新規のお客様の受付を終了しています ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html))。これから RAG チャットを構築する場合は、Knowledge Base 版の利用を推奨します。固定費を抑えたい場合は `ragKnowledgeBaseStorageType` に `s3vectors` を指定してください。
+
 `ragEnabled` に `true` を指定します。(デフォルトは `false`)
 
 また、`kendraIndexLanguage` (デフォルトは日本語の `ja`) も必要に応じて変更することが可能です。
@@ -1084,6 +1087,10 @@ const envs: Record<string, Partial<StackInput>> = {
 "apac.amazon.nova-lite-v1:0",
 "jp.amazon.nova-2-lite-v1:0",
 "global.amazon.nova-2-lite-v1:0",
+"global.openai.gpt-6.1-sol",
+"us.openai.gpt-6.1-sol",
+"global.openai.gpt-6.1-terra",
+"us.openai.gpt-6.1-terra",
 "global.openai.gpt-6-sol",
 "us.openai.gpt-6-sol",
 "global.openai.gpt-6-luna",
@@ -1343,6 +1350,10 @@ const envs: Record<string, Partial<StackInput>> = {
 "global.amazon.nova-2-lite-v1:0",
 "openai.gpt-oss-120b-1:0",
 "openai.gpt-oss-20b-1:0",
+"global.openai.gpt-6.1-sol",
+"us.openai.gpt-6.1-sol",
+"global.openai.gpt-6.1-terra",
+"us.openai.gpt-6.1-terra",
 "global.openai.gpt-6-sol",
 "us.openai.gpt-6-sol",
 "global.openai.gpt-6-luna",
