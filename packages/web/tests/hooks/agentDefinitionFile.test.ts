@@ -8,6 +8,7 @@ import {
   toPortableAgent,
   fromPortableAgent,
   agentFileName,
+  applyImportedAgent,
 } from '../../src/utils/agentDefinitionFile';
 
 const complete = {
@@ -116,5 +117,59 @@ describe('naming the file', () => {
   it('falls back when the name says nothing', () => {
     expect(agentFileName('')).toBe('agent.json');
     expect(agentFileName('///')).toBe('agent.json');
+  });
+});
+
+describe('filling the form from an import', () => {
+  const available = ['global.anthropic.claude-sonnet-4-6', 'amazon.nova-pro'];
+
+  // Importing over a shared agent and saving must not quietly stop sharing it.
+  it('keeps the sharing settings of the agent being edited', () => {
+    const { form } = applyImportedAgent({
+      portable: complete,
+      current: { isPublic: true, tags: ['sales', 'docs'] },
+      availableModels: available,
+    });
+    expect(form.isPublic).toBe(true);
+    expect(form.tags).toEqual(['sales', 'docs']);
+    expect(form.systemPrompt).toBe(complete.systemPrompt);
+  });
+
+  it('starts private and untagged when there is nothing to keep', () => {
+    const { form } = applyImportedAgent({
+      portable: complete,
+      current: null,
+      availableModels: available,
+    });
+    expect(form.isPublic).toBe(false);
+    expect(form.tags).toEqual([]);
+  });
+
+  it('keeps a model this deployment offers', () => {
+    const result = applyImportedAgent({
+      portable: complete,
+      availableModels: available,
+    });
+    expect(result.form.modelId).toBe(complete.modelId);
+    expect(result.unavailableModelId).toBeNull();
+  });
+
+  // A file from another deployment may name a model this one cannot run.
+  it('replaces a model this deployment does not offer, and says so', () => {
+    const result = applyImportedAgent({
+      portable: { ...complete, modelId: 'some.other-model' },
+      availableModels: available,
+    });
+    expect(result.form.modelId).toBe(available[0]);
+    expect(result.unavailableModelId).toBe('some.other-model');
+  });
+
+  it('falls back without a notice when the file names no model', () => {
+    const result = applyImportedAgent({
+      portable: { ...complete, modelId: '' },
+      availableModels: available,
+    });
+    expect(result.form.modelId).toBe(available[0]);
+    expect(result.unavailableModelId).toBeNull();
   });
 });

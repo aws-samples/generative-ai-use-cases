@@ -60,6 +60,46 @@ export const fromPortableAgent = (parsed: unknown): PortableAgent => {
   };
 };
 
+/** What the form is filled with after an import. */
+export type ImportedAgentForm = PortableAgent & {
+  isPublic: boolean;
+  tags: string[];
+};
+
+/**
+ * Turns a definition read from a file into what the form should hold.
+ *
+ * The file only describes the agent, so the sharing settings (isPublic, tags)
+ * are kept from the form the user is importing into. Otherwise importing over
+ * a shared agent and saving would quietly stop sharing it.
+ *
+ * The file may come from another deployment whose models this one does not
+ * offer. Such a model is replaced with the first available one and reported
+ * back, rather than saved as an id that only fails when the agent runs.
+ */
+export const applyImportedAgent = ({
+  portable,
+  current,
+  availableModels,
+}: {
+  portable: PortableAgent;
+  current?: { isPublic?: boolean; tags?: string[] } | null;
+  availableModels: string[];
+}): { form: ImportedAgentForm; unavailableModelId: string | null } => {
+  const modelAvailable = availableModels.includes(portable.modelId);
+  return {
+    form: {
+      ...portable,
+      modelId: modelAvailable ? portable.modelId : (availableModels[0] ?? ''),
+      isPublic: current?.isPublic ?? false,
+      tags: current?.tags ?? [],
+    },
+    // An empty id means the file named no model; falling back is not news.
+    unavailableModelId:
+      !modelAvailable && portable.modelId ? portable.modelId : null,
+  };
+};
+
 /** A filename that survives being written to disk. */
 export const agentFileName = (name: string): string => {
   const safe = name.replace(/[\\/:*?"<>|]/g, '').trim();

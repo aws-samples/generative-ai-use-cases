@@ -66,6 +66,7 @@ agent_builder:
   generating_prompt: システムプロンプトを生成中...
   import: インポート
   import_failed: エージェント定義として読み込めませんでした
+  import_model_unavailable: 'ファイルのモデル（{{modelId}}）はこの環境では使えないため、利用可能な最初のモデルを選択しました'
   loading_agent: エージェントを読み込み中...
   mcp_server_configuration: MCPサーバー設定
   mcp_server_description: エージェントに追加機能を提供するMCPサーバーを選択してください。これらのサーバーはセキュリティのため管理者によって事前設定されています。

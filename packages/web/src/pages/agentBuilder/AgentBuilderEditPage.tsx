@@ -16,9 +16,11 @@ import {
   PiUploadSimple as ImportIcon,
 } from 'react-icons/pi';
 import {
+  applyImportedAgent,
   fromPortableAgent,
-  PortableAgent,
+  ImportedAgentForm,
 } from '../../utils/agentDefinitionFile';
+import { MODELS } from '../../hooks/useModel';
 
 const AgentBuilderEditPage: React.FC = () => {
   const { t } = useTranslation();
@@ -42,8 +44,9 @@ const AgentBuilderEditPage: React.FC = () => {
   // An imported definition stands in for the loaded one, so the form fills
   // itself from the file rather than the user retyping it. Kept in state so
   // it survives until they save or leave.
-  const [imported, setImported] = useState<PortableAgent | null>(null);
+  const [imported, setImported] = useState<ImportedAgentForm | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
+  const [importNotice, setImportNotice] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const handleImportFile = useCallback(
@@ -54,13 +57,27 @@ const AgentBuilderEditPage: React.FC = () => {
       event.target.value = '';
       if (!file) return;
       try {
-        setImported(fromPortableAgent(JSON.parse(await file.text())));
+        const { form, unavailableModelId } = applyImportedAgent({
+          portable: fromPortableAgent(JSON.parse(await file.text())),
+          // Sharing settings stay with the agent being edited, not the file.
+          current: currentFormData ?? agent,
+          availableModels: MODELS.modelIds,
+        });
+        setImported(form);
         setImportError(null);
+        setImportNotice(
+          unavailableModelId
+            ? t('agent_builder.import_model_unavailable', {
+                modelId: unavailableModelId,
+              })
+            : null
+        );
       } catch {
         setImportError(t('agent_builder.import_failed'));
+        setImportNotice(null);
       }
     },
-    [t]
+    [t, currentFormData, agent]
   );
 
   const handleSave = useCallback(
@@ -215,6 +232,11 @@ const AgentBuilderEditPage: React.FC = () => {
       {importError && (
         <div className="mb-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {importError}
+        </div>
+      )}
+      {importNotice && (
+        <div className="mb-4 rounded border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+          {importNotice}
         </div>
       )}
 
