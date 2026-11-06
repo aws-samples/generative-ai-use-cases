@@ -29,6 +29,7 @@ function convertToAgentConfiguration(
     mcpServers: agent.mcpServers || [],
     modelId: agent.modelId,
     codeExecutionEnabled: agent.codeExecutionEnabled || false,
+    webSearchEnabled: agent.webSearchEnabled || false,
     isPublic: agent.isPublic || false,
     shareId: undefined, // Not available in AgentAsOutput
     createdAt: agent.createdAt,
@@ -62,6 +63,7 @@ export async function createAgent(
     mcpServers: mcpServerNames,
     modelId: request.modelId,
     codeExecutionEnabled: request.codeExecutionEnabled ?? false,
+    webSearchEnabled: request.webSearchEnabled ?? false,
     isPublic: request.isPublic ?? false,
     tags: (request.tags || [])
       .map((tag) => tag.trim())
@@ -122,6 +124,8 @@ export async function updateAgent(
         request.codeExecutionEnabled ??
         existingAgent.codeExecutionEnabled ??
         false,
+      webSearchEnabled:
+        request.webSearchEnabled ?? existingAgent.webSearchEnabled ?? false,
       tags:
         request.tags
           ?.map((tag) => tag.trim())
@@ -299,6 +303,7 @@ export async function cloneAgent(
     modelId: sourceAgent.modelId,
     mcpServers: sourceAgent.mcpServers || [],
     codeExecutionEnabled: sourceAgent.codeExecutionEnabled || false,
+    webSearchEnabled: sourceAgent.webSearchEnabled || false,
     tags: sourceAgent.tags || [],
     isPublic: false, // Cloned agents are private by default
   });
@@ -315,6 +320,7 @@ export async function cloneAgent(
     modelId: newAgent.modelId,
     mcpServers: newAgent.mcpServers,
     codeExecutionEnabled: newAgent.codeExecutionEnabled,
+    webSearchEnabled: newAgent.webSearchEnabled,
     tags: newAgent.tags,
     isPublic: newAgent.isPublic,
     createdAt: newAgent.createdAt,

@@ -209,7 +209,8 @@ Please respond as this agent with the specified behavior and personality.`;
         agent.mcpServers,
         agent.agentId,
         modelId,
-        agent.codeExecutionEnabled ?? false
+        agent.codeExecutionEnabled ?? false,
+        agent.webSearchEnabled ?? false
       );
 
       setChatContent('');
@@ -318,12 +319,20 @@ Please respond as this agent with the specified behavior and personality.`;
 
           {/* Agent Capabilities */}
           {(agent.codeExecutionEnabled ||
+            agent.webSearchEnabled ||
             (agent.mcpServers && agent.mcpServers.length > 0)) && (
             <div className="flex flex-wrap justify-center gap-2">
               {/* Code Execution - only show when enabled */}
               {agent.codeExecutionEnabled && (
                 <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
                   {t('agent_builder.code_execution')}
+                </span>
+              )}
+
+              {/* Web Search - only show when enabled */}
+              {agent.webSearchEnabled && (
+                <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                  {t('agent_builder.web_search')}
                 </span>
               )}
 
