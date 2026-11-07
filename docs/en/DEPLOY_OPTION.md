@@ -1386,6 +1386,15 @@ This solution supports the following video generation models:
 "luma.ray-v2:0"
 ```
 
+> [!WARNING]
+> `amazon.nova-canvas-v1:0`, `amazon.nova-reel-v1:0` and `amazon.nova-reel-v1:1` reached end of life on 2026-09-30 and can no longer be invoked in any region. Titan Image Generator is no longer offered either. Check [Bedrock model lifecycle](https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html) for the current status.
+>
+> Because of this, the default image generation model is `stability.stable-image-core-v1:1` in us-west-2, and video generation is disabled by default (`videoGenerationModelIds: []`). To use video generation, bootstrap CDK in us-west-2 (`npx -w packages/cdk cdk bootstrap --region us-west-2`) and specify:
+>
+> ```json
+> "videoGenerationModelIds": [{ "modelId": "luma.ray-v2:0", "region": "us-west-2" }]
+> ```
+
 **Please verify that the models you specify are enabled in the specified region.**
 
 ### Using Models from Multiple Regions Simultaneously
