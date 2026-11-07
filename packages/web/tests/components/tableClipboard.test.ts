@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import katex from 'katex';
 import {
   tableToClipboardHtml,
   tableToTsv,
@@ -31,6 +32,31 @@ describe('tableToTsv', () => {
       '<table><tbody><tr><td><strong>bold</strong> and <code>code</code></td></tr></tbody></table>'
     );
     expect(tableToTsv(table)).toBe('bold and code');
+  });
+});
+
+describe('formulas and images', () => {
+  const katexCell = () =>
+    makeTable(
+      `<table><tbody><tr><td>${katex.renderToString('x^2')}</td></tr></tbody></table>`
+    );
+
+  it('copies a KaTeX formula once, as its TeX source', () => {
+    expect(tableToTsv(katexCell())).toBe('x^2');
+    const html = tableToClipboardHtml(katexCell());
+    expect(html).toBe('<table><tbody><tr><td>x^2</td></tr></tbody></table>');
+  });
+
+  it('replaces images with their alt text so signed URLs are not copied', () => {
+    const table = makeTable(
+      '<table><tbody><tr><td><img src="https://bucket.s3.amazonaws.com/a.png?X-Amz-Signature=abc" alt="chart">done</td></tr></tbody></table>'
+    );
+    expect(tableToTsv(table)).toBe('chartdone');
+    const html = tableToClipboardHtml(table);
+    expect(html).not.toContain('X-Amz-Signature');
+    expect(html).not.toContain('<img');
+    // The rendered table keeps its image.
+    expect(table.querySelector('img')).not.toBeNull();
   });
 });
 

@@ -1,4 +1,27 @@
 /**
+ * Copy of the table prepared for the clipboard.
+ *
+ * - KaTeX output holds the formula three times (MathML, the TeX source in an
+ *   <annotation>, and the visual HTML). Without CSS, a paste would show all of
+ *   them, so each formula is replaced by its TeX source.
+ * - Images are replaced by their alt text. In chat their src is often a
+ *   presigned S3 URL, which must not travel into a pasted document.
+ */
+const cloneForClipboard = <T extends HTMLElement>(el: T): T => {
+  const clone = el.cloneNode(true) as T;
+  clone.querySelectorAll('.katex').forEach((katex) => {
+    const tex = katex.querySelector(
+      'annotation[encoding="application/x-tex"]'
+    )?.textContent;
+    katex.replaceWith(tex ?? katex.textContent ?? '');
+  });
+  clone
+    .querySelectorAll('img')
+    .forEach((img) => img.replaceWith(img.getAttribute('alt') ?? ''));
+  return clone;
+};
+
+/**
  * Convert a rendered table to tab-separated text, one row per line.
  *
  * Spreadsheets split pasted plain text on tabs and newlines, so whitespace and
@@ -6,15 +29,14 @@
  * one cell. This is the fallback for targets that ignore the HTML flavor.
  */
 export const tableToTsv = (table: HTMLTableElement): string =>
-  Array.from(table.rows)
+  Array.from(cloneForClipboard(table).rows)
     .map((row) => Array.from(row.cells).map(cellText).join('\t'))
     .join('\n');
 
 const cellText = (cell: HTMLTableCellElement): string => {
   // <br> has no text content; without this "a<br>b" would paste as "ab".
-  const clone = cell.cloneNode(true) as HTMLElement;
-  clone.querySelectorAll('br').forEach((br) => br.replaceWith(' '));
-  return (clone.textContent ?? '').replace(/\s+/g, ' ').trim();
+  cell.querySelectorAll('br').forEach((br) => br.replaceWith(' '));
+  return (cell.textContent ?? '').replace(/\s+/g, ' ').trim();
 };
 
 /**
@@ -23,7 +45,7 @@ const cellText = (cell: HTMLTableCellElement): string => {
  * the paste takes the target's own styling.
  */
 export const tableToClipboardHtml = (table: HTMLTableElement): string => {
-  const clone = table.cloneNode(true) as HTMLTableElement;
+  const clone = cloneForClipboard(table);
   clone
     .querySelectorAll('[class]')
     .forEach((el) => el.removeAttribute('class'));

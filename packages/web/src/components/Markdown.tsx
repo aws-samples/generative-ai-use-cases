@@ -204,15 +204,22 @@ const PreRenderer = ({
 
 // Tables get a copy button that puts both HTML and tab-separated text on the
 // clipboard, so a paste into Excel or Google Sheets keeps the cells.
-const TableRenderer = ({ children }: ComponentProps<'table'> & ExtraProps) => {
+const TableRenderer = ({
+  children,
+  className,
+  style,
+}: ComponentProps<'table'> & ExtraProps) => {
   const { t } = useTranslation();
   const tableRef = useRef<HTMLTableElement>(null);
   const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => () => clearTimeout(timerRef.current), []);
 
   const onCopy = useCallback(() => {
     const table = tableRef.current;
     if (!table) return;
-    copy(tableToTsv(table), {
+    const ok = copy(tableToTsv(table), {
       format: 'text/plain',
       onCopy: (clipboardData) => {
         (clipboardData as DataTransfer).setData(
@@ -221,19 +228,32 @@ const TableRenderer = ({ children }: ComponentProps<'table'> & ExtraProps) => {
         );
       },
     });
+    if (!ok) return;
     setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setCopied(false), 3000);
   }, []);
 
+  // The button sits in its own row above the table, in normal flow, so it
+  // never overlaps the content before the table. The row (24px) plus mt-1
+  // takes the place of the table's own top margin (2em of its 14px font), so
+  // spacing around tables stays as before; first:/last: keep the prose rule
+  // that removes the margin at the start and end of a message. On devices
+  // that can hover the button appears on hover or focus; on touch screens it
+  // is always visible.
   return (
-    <div className="group relative">
-      <ButtonIcon
-        className="not-prose absolute -top-7 right-0 text-base text-gray-500 lg:opacity-0 lg:focus-visible:opacity-100 lg:group-hover:opacity-100"
-        title={t('common.copy_table')}
-        onClick={onCopy}>
-        {copied ? <PiCheck /> : <PiClipboard />}
-      </ButtonIcon>
-      <table ref={tableRef}>{children}</table>
+    <div className="group mb-7 mt-1 first:mt-0 last:mb-0">
+      <div className="flex justify-end print:hidden">
+        <ButtonIcon
+          className="not-prose text-base text-gray-500 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:focus-visible:opacity-100 [@media(hover:hover)]:group-hover:opacity-100"
+          title={t('common.copy_table')}
+          onClick={onCopy}>
+          {copied ? <PiCheck /> : <PiClipboard />}
+        </ButtonIcon>
+      </div>
+      <table ref={tableRef} className={`${className ?? ''} my-0`} style={style}>
+        {children}
+      </table>
     </div>
   );
 };
