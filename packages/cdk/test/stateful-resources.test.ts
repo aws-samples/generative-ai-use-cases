@@ -11,7 +11,7 @@ import { stackInput } from './stack-input.fixture';
 // CloudFormation replace the resource (create a new one, delete the old one
 // and its data). Sources: "Update requires: Replacement" in the CloudFormation
 // resource reference, plus DynamoDB KeySchema, which cannot change in place.
-const STATEFUL_TYPES: Record<string, string[]> = {
+const REPLACEMENT_PROPERTIES: Record<string, string[]> = {
   'AWS::DynamoDB::Table': [
     'TableName',
     'KeySchema',
@@ -67,7 +67,7 @@ const statefulResources = (input: Partial<typeof stackInput>) => {
   for (const stack of app.synth().stacks) {
     const resources: Record<string, Resource> = stack.template.Resources ?? {};
     for (const [id, r] of Object.entries(resources)) {
-      const replacementProps = STATEFUL_TYPES[r.Type];
+      const replacementProps = REPLACEMENT_PROPERTIES[r.Type];
       if (!replacementProps) continue;
       result[`${stack.stackName}/${id}`] = {
         Type: r.Type,

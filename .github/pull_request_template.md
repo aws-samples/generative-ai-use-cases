@@ -11,7 +11,7 @@ How did you confirm the change works? Check what applies and add details
 - [ ] Added or updated tests that fail without this change
 - [ ] Ran it locally (`npm run web:dev` or a local API)
 - [ ] Deployed it to an AWS environment and used the affected feature
-- [ ] Updated an existing deployment (not only a fresh one), if the change touches CDK
+- [ ] (Maintainers) Updated an existing deployment (not only a fresh one), if the change touches CDK
 
 Details:
 
