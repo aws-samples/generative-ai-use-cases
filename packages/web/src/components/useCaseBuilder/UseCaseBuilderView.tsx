@@ -29,6 +29,7 @@ import {
   getItemsFromPlaceholders,
   getTextFormItemsFromItems,
   getTextFormUniqueLabels,
+  splitSelectOptions,
 } from '../../utils/UseCaseBuilderUtils';
 import useRagKnowledgeBaseApi from '../../hooks/useRagKnowledgeBaseApi';
 import useRagApi from '../../hooks/useRagApi';
@@ -196,7 +197,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
         item.options.length > 0 &&
         values[item.label] === ''
       ) {
-        setValue(item.label, item.options.split(',')[0]);
+        setValue(item.label, splitSelectOptions(item.options)[0]);
       }
     }
   }, [selectItems, values, setValue]);
@@ -276,7 +277,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
       if (!item.options || item.options.length === 0) {
         tmpErrorMessages.push(t('useCaseBuilder.error.missing_select_options'));
       } else {
-        const options = item.options.split(',');
+        const options = splitSelectOptions(item.options);
         const emptyOptions = options.filter((o) => o === '');
 
         if (emptyOptions.length > 0) {
@@ -605,11 +606,9 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
                   <Select
                     label={item.label !== NOLABEL ? item.label : undefined}
                     value={values[item.label] ?? ''}
-                    options={
-                      item.options?.split(',')?.map((v: string) => {
-                        return { value: v, label: v };
-                      }) ?? []
-                    }
+                    options={splitSelectOptions(item.options).map((v) => {
+                      return { value: v, label: v };
+                    })}
                     onChange={(value) => {
                       setValue(item.label, value);
                     }}
