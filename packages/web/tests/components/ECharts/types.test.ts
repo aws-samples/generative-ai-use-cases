@@ -65,21 +65,24 @@ const scalarScatterJson = JSON.stringify({
 let getBoundingClientRectSpy: ReturnType<typeof vi.spyOn>;
 
 // ResizeObserver mock: fires callback immediately with non-zero dimensions on observe()
-const MockResizeObserver = vi.fn((callback: ResizeObserverCallback) => ({
-  observe: vi.fn((target: Element) => {
-    callback(
-      [
-        {
-          target,
-          contentRect: { width: 640, height: 300 } as DOMRectReadOnly,
-        } as ResizeObserverEntry,
-      ],
-      {} as ResizeObserver
-    );
-  }),
-  disconnect: vi.fn(),
-  unobserve: vi.fn(),
-}));
+// Vitest 4 requires a `function` (not an arrow) implementation for mocks called with `new`.
+const MockResizeObserver = vi.fn(function (callback: ResizeObserverCallback) {
+  return {
+    observe: vi.fn((target: Element) => {
+      callback(
+        [
+          {
+            target,
+            contentRect: { width: 640, height: 300 } as DOMRectReadOnly,
+          } as ResizeObserverEntry,
+        ],
+        {} as ResizeObserver
+      );
+    }),
+    disconnect: vi.fn(),
+    unobserve: vi.fn(),
+  };
+});
 global.ResizeObserver = MockResizeObserver as unknown as typeof ResizeObserver;
 
 beforeEach(() => {

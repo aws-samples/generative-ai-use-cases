@@ -25,7 +25,10 @@ import {
   ConversationRole,
   ContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
-import { modelMetadata } from '@generative-ai-use-cases/common';
+import {
+  convertTextDocumentToUtf8,
+  modelMetadata,
+} from '@generative-ai-use-cases/common';
 import {
   applyAutoCacheToMessages,
   applyAutoCacheToSystem,
@@ -50,8 +53,8 @@ const lightWeightModelIds = modelIds.filter(
 const defaultModelConfiguration = lightWeightModelIds[0] || modelIds[0];
 export const defaultModel: Model = {
   type: 'bedrock',
-  modelId: defaultModelConfiguration.modelId,
-  region: defaultModelConfiguration.region,
+  modelId: defaultModelConfiguration?.modelId ?? '',
+  region: defaultModelConfiguration?.region ?? '',
 };
 
 const imageGenerationModels: ModelConfiguration[] = (
@@ -117,6 +120,14 @@ const DEFAULT_128K_DEFAULT_PARAMS: ConverseInferenceParams = {
 const KIMI_K3_DEFAULT_PARAMS: ConverseInferenceParams = {
   inferenceConfig: {
     maxTokens: 120000,
+  },
+};
+
+// temperature / topP are omitted because the model rejects them
+// (see TEXT_IMAGE_NO_SAMPLING in model.ts).
+const KIMI_K3_1_DEFAULT_PARAMS: ConverseInferenceParams = {
+  inferenceConfig: {
+    maxTokens: 128000,
   },
 };
 
@@ -506,7 +517,10 @@ const createConverseCommandInput = (
               format,
               name: toDocumentName(extra.name),
               source: {
-                bytes: Buffer.from(extra.source.data, 'base64'),
+                bytes: convertTextDocumentToUtf8(
+                  Buffer.from(extra.source.data, 'base64'),
+                  format
+                ),
               },
             },
           } as ContentBlock.DocumentMember);
@@ -589,7 +603,8 @@ const createConverseCommandInput = (
       // Adaptive thinking (Claude Opus 4.6+)
       // https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html
       converseCommandInput.additionalModelRequestFields = {
-        thinking: { type: 'adaptive' },
+        // Opus 4.7+ and the 5.x models return no thinking text without display
+        thinking: { type: 'adaptive', display: 'summarized' },
         output_config: {
           effort: model.modelParameters?.reasoningConfig?.effort || 'high',
         },
@@ -2104,6 +2119,38 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  'global.openai.gpt-6.1-sol': {
+    defaultParams: OPENAI_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.openai.gpt-6.1-sol': {
+    defaultParams: OPENAI_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'global.openai.gpt-6.1-terra': {
+    defaultParams: OPENAI_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.openai.gpt-6.1-terra': {
+    defaultParams: OPENAI_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
   'global.openai.gpt-6-sol': {
     defaultParams: OPENAI_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
@@ -2260,6 +2307,24 @@ export const BEDROCK_TEXT_GEN_MODELS: {
   },
   'global.moonshotai.kimi-k3': {
     defaultParams: KIMI_K3_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  // Kimi K3.1 is available only through cross-region inference profiles
+  // (us.moonshotai.kimi-k3.1 / global.moonshotai.kimi-k3.1).
+  'us.moonshotai.kimi-k3.1': {
+    defaultParams: KIMI_K3_1_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'global.moonshotai.kimi-k3.1': {
+    defaultParams: KIMI_K3_1_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
     createConverseStreamCommandInput: createConverseStreamCommandInput,

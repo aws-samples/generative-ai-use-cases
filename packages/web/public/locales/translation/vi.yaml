@@ -319,9 +319,17 @@ drawer:
 error:
   streamingError:
     ACCESS_DENIED: Mô hình được chọn chưa được kích hoạt. Vui lòng kích hoạt mô hình trong bảng điều khiển Amazon Bedrock.
+    CONTEXT_TOO_LONG: Cuộc trò chuyện hoặc tệp đính kèm quá dài để mô hình đọc. Vui lòng giảm nội dung đính kèm (số trang, dòng hoặc trang tính) hoặc bắt đầu cuộc trò chuyện mới.
+    DOCUMENT_TOO_LARGE: Tài liệu quá lớn để gửi. Vui lòng chia nhỏ hoặc giảm nội dung tài liệu rồi thử lại.
+    DUPLICATE_FILE_NAME: Cuộc trò chuyện này có nhiều tệp trùng tên (bao gồm cả tệp đã đính kèm trước đó). Vui lòng đổi tên tệp rồi đính kèm lại, hoặc bắt đầu cuộc trò chuyện mới.
+    EMPTY_MESSAGE: Cuộc trò chuyện chứa một tin nhắn trống nên không thể tiếp tục. Vui lòng bắt đầu cuộc trò chuyện mới.
+    IMAGE_TOO_LARGE: Hình ảnh quá lớn. Mỗi hình ảnh phải nhỏ hơn hoặc bằng 3.75 MB.
+    INVALID_FILE_NAME: Không thể sử dụng tên tệp này. Vui lòng đổi sang tên ngắn chỉ gồm chữ cái và số rồi đính kèm lại.
     PAYLOAD_TOO_LARGE: Tệp đính kèm quá lớn. Vui lòng giảm kích thước tệp hoặc số lượng tệp đính kèm và thử lại.
     THROTTLING: Máy chủ hiện đang có lưu lượng truy cập cao. Vui lòng thử lại sau.
+    TOO_MANY_DOCUMENTS: Có quá nhiều tài liệu được đính kèm. Các tài liệu đã đính kèm trước đó trong cuộc trò chuyện này cũng được tính. Vui lòng giảm số tệp đính kèm hoặc bắt đầu cuộc trò chuyện mới.
     UNKNOWN_ERROR: Đã xảy ra lỗi. Vui lòng thử lại hoặc liên hệ quản trị viên.
+    UNSUPPORTED_FILE_TYPE: Loại tệp này không được hỗ trợ.
 feedback:
   additional_feedback: Nếu bạn có phản hồi khác, vui lòng nhập. (tùy chọn)
   reason_error: Vui lòng chọn lý do.
@@ -558,6 +566,7 @@ meetingMinutes:
   clear_minutes: Xóa biên bản
   custom_prompt: Lời nhắc tùy chỉnh
   custom_prompt_placeholder: Nhập lời nhắc tùy chỉnh để tạo biên bản cuộc họp...
+  edit_in_writer: Chỉnh sửa trong Viết văn
   frequency: Tần suất tạo
   frequency_10min: Mỗi 10 phút
   frequency_1min: Mỗi phút
@@ -743,6 +752,7 @@ summarize:
   text_to_summarize: Văn bản muốn tóm tắt
   title: Tóm tắt
 transcribe:
+  audio_source_lost: Phiên âm đã dừng vì nguồn âm thanh không còn khả dụng
   detailed_parameters: Tham số chi tiết
   direct_input: Nhập trực tiếp
   direct_input_instruction: Vui lòng nhập trực tiếp nội dung nguồn cho biên bản cuộc họp vào vùng "Bản chuyển đổi" bên dưới
@@ -751,6 +761,8 @@ transcribe:
   max_speakers: Max Speakers
   max_speakers_help: Số lượng người nói tối đa được nhận dạng
   mic_input: Đầu vào microphone
+  reconnect_failed: Phiên âm đã dừng vì kết nối lại thất bại. Vui lòng bắt đầu ghi âm lại
+  reconnecting: Kết nối phiên âm bị gián đoạn. Đang tự động kết nối lại
   result_placeholder: Kết quả nhận dạng giọng nói sẽ được hiển thị ở đây
   screen_audio: Âm thanh màn hình
   screen_audio_error: Lỗi âm thanh màn hình
@@ -1092,9 +1104,14 @@ videoAnalyzer:
 voiceChat:
   close: Kết thúc Phiên
   default_system_prompt: You are an AI assistant.
+  gender:
+    feminine: Giọng nữ tính
+    masculine: Giọng nam tính
   im_listening: Hãy phát biểu
+  multilingual: Đa ngôn ngữ
   start: Bắt đầu phiên
   title: Voice Chat
+  voice: Giọng nói
 webcontent:
   additional_context: Ngữ cảnh bổ sung
   additional_context_placeholder: 'Có thể nhập các điểm bổ sung muốn xem xét (ví dụ: tóm tắt)'

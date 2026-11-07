@@ -314,9 +314,17 @@ drawer:
 error:
   streamingError:
     ACCESS_DENIED: 선택한 모델이 활성화되어 있지 않습니다. Amazon Bedrock 콘솔에서 모델을 활성화해 주세요.
+    CONTEXT_TOO_LONG: 대화 또는 첨부 파일이 너무 길어 모델이 읽을 수 없습니다. 첨부 내용(페이지, 행, 시트 수)을 줄이거나 새 채팅을 시작해 주세요.
+    DOCUMENT_TOO_LARGE: 문서가 너무 커서 보낼 수 없습니다. 문서를 나누거나 내용을 줄인 후 다시 시도해 주세요.
+    DUPLICATE_FILE_NAME: 이 대화에 같은 이름의 파일이 여러 개 있습니다(이전에 첨부한 파일 포함). 파일 이름을 바꿔 다시 첨부하거나 새 채팅을 시작해 주세요.
+    EMPTY_MESSAGE: 대화에 빈 메시지가 포함되어 있어 계속할 수 없습니다. 새 채팅을 시작해 주세요.
+    IMAGE_TOO_LARGE: 이미지가 너무 큽니다. 이미지는 파일당 3.75 MB 이하여야 합니다.
+    INVALID_FILE_NAME: 파일 이름을 사용할 수 없습니다. 영문자와 숫자만으로 된 짧은 이름으로 바꾼 후 다시 첨부해 주세요.
     PAYLOAD_TOO_LARGE: 첨부 파일의 크기가 너무 큽니다. 파일 크기 또는 첨부 파일 수를 줄이고 다시 시도해 주세요.
     THROTTLING: 서버에 트래픽이 집중되고 있습니다. 잠시 후 다시 시도해 주세요.
+    TOO_MANY_DOCUMENTS: 첨부된 문서가 너무 많습니다. 이 대화에서 이전에 첨부한 문서도 포함됩니다. 첨부를 줄이거나 새 채팅을 시작해 주세요.
     UNKNOWN_ERROR: 오류가 발생했습니다. 다시 시도하거나 관리자에게 문의해 주세요.
+    UNSUPPORTED_FILE_TYPE: 지원하지 않는 파일 형식입니다.
 feedback:
   additional_feedback: 추가 피드백이 있으시면 여기에 입력해주세요. (선택사항)
   reason_error: 이유를 선택해주세요.
@@ -430,6 +438,7 @@ meetingMinutes:
   clear_minutes: 회의록 지우기
   custom_prompt: 사용자 정의 프롬프트
   custom_prompt_placeholder: 회의록 생성용 사용자 정의 프롬프트를 입력하세요...
+  edit_in_writer: 글쓰기에서 편집
   frequency: 생성 빈도
   frequency_10min: 10분마다
   frequency_1min: 1분마다
@@ -650,6 +659,7 @@ svg:
   show_preview: 미리보기 표시
   svg_error: 'SVG 출력 오류: '
 transcribe:
+  audio_source_lost: 오디오 소스를 더 이상 사용할 수 없어 전사가 중지되었습니다
   detailed_parameters: 세부 매개변수
   direct_input: 직접 입력
   direct_input_instruction: >-
@@ -659,6 +669,8 @@ transcribe:
   max_speakers: 최대 화자 수
   max_speakers_help: 인식할 화자의 최대 수
   mic_input: 마이크 입력
+  reconnect_failed: 재연결에 실패하여 전사가 중지되었습니다. 다시 녹음을 시작해 주세요
+  reconnecting: 전사 연결이 끊어져 자동으로 다시 연결하고 있습니다
   result_placeholder: 음성 인식 결과가 여기에 표시됩니다
   screen_audio: 화면 오디오
   screen_audio_error: 화면 오디오 오류
@@ -857,9 +869,14 @@ videoAnalyzer:
 voiceChat:
   close: 세션 종료
   default_system_prompt: 당신은 AI 어시스턴트입니다.
+  gender:
+    feminine: 여성스러운 음성
+    masculine: 남성스러운 음성
   im_listening: 듣고 있습니다...
+  multilingual: 다국어
   start: 새 세션 시작
   title: 음성 채팅
+  voice: 음성
 webcontent:
   additional_context: 추가 맥락
   additional_context_placeholder: >-

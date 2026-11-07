@@ -23,13 +23,14 @@ export class AgentCoreStack extends Stack {
         env: params.env,
         createGenericRuntime: params.createGenericAgentCoreRuntime,
         createAgentBuilderRuntime: params.agentBuilderEnabled,
+        modelIds: params.modelIds.map((model) => model.modelId),
         isAgentCoreNetworkPrivate: params.isAgentCoreNetworkPrivate,
         agentCoreVpcId: params.agentCoreVpcId,
         agentCoreSubnetIds: params.agentCoreSubnetIds,
         gatewayArns: params.agentCoreGatewayArns ?? undefined,
       });
 
-      // Export runtime info for cross-region access via cdk-remote-stack (only if values exist)
+      // Outputs read by GenerativeAiUseCasesStack via StackOutputs, also across Regions (only if values exist)
       if (
         params.createGenericAgentCoreRuntime &&
         this.genericAgentCore.deployedGenericRuntimeArn

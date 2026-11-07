@@ -11,6 +11,9 @@ on:
     branches: ['main']
     paths-ignore: ['browser-extension/**']
 
+permissions:
+  contents: read
+
 jobs:
   check-lint-build:
     name: 'Check test, lint and build'
@@ -24,9 +27,9 @@ jobs:
       CDK_DEFAULT_ACCOUNT: 123456789012
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'

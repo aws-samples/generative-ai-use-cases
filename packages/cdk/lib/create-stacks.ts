@@ -196,7 +196,8 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
     }
   );
 
-  // Add explicit dependencies for RemoteOutputs
+  // Stacks whose outputs are read via StackOutputs must deploy first
+  // (StackOutputs also adds the dependency itself)
   if (agentStack) {
     generativeAiUseCasesStack.addDependency(agentStack);
   }

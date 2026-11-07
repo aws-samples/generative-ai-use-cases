@@ -56,8 +56,10 @@
       "global.amazon.nova-2-lite-v1:0",
       "us.deepseek.r1-v1:0"
     ],
-    "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:0"],
+    "imageGenerationModelIds": [
+      { "modelId": "stability.stable-image-core-v1:1", "region": "us-west-2" }
+    ],
+    "videoGenerationModelIds": [],
     "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"],
     "endpointNames": [],
     "agentEnabled": false,
@@ -94,6 +96,8 @@
     "closedNetworkVpcIpv4Cidr": "10.0.0.0/16",
     "closedNetworkVpcId": null,
     "closedNetworkSubnetIds": null,
+    "closedNetworkVpcEndpointAzs": null,
+    "closedNetworkApiGatewayVpcEndpointIds": null,
     "closedNetworkCertificateArn": null,
     "closedNetworkDomainName": null,
     "closedNetworkCreateTestEnvironment": true,

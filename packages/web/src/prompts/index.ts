@@ -86,6 +86,13 @@ export type MeetingMinutesParams = {
   diagramOptions?: DiagramOption[];
 };
 
+// Type guard for the 'savedPrompt:<id>' style variants
+export const isSavedPromptStyle = (
+  style: MeetingMinutesParams['style']
+): style is `savedPrompt:${string}` => {
+  return style.startsWith('savedPrompt:');
+};
+
 export type PromptListItem = {
   title: string;
   systemContext: string;

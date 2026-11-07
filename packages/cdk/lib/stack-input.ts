@@ -66,7 +66,9 @@ const baseStackInputSchema = z.object({
         }),
       ])
     )
-    .default(['amazon.nova-canvas-v1:0']),
+    .default([
+      { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
+    ]),
   videoGenerationModelIds: z
     .array(
       z.union([
@@ -77,7 +79,7 @@ const baseStackInputSchema = z.object({
         }),
       ])
     )
-    .default(['amazon.nova-reel-v1:0']),
+    .default([]),
   speechToSpeechModelIds: z
     .array(
       z.union([
@@ -215,6 +217,8 @@ const baseStackInputSchema = z.object({
   closedNetworkVpcIpv4Cidr: z.string().default('10.0.0.0/16'),
   closedNetworkVpcId: z.string().nullish(),
   closedNetworkSubnetIds: z.array(z.string()).nullish(),
+  closedNetworkVpcEndpointAzs: z.array(z.string()).nullish(),
+  closedNetworkApiGatewayVpcEndpointIds: z.array(z.string()).nullish(),
   closedNetworkCertificateArn: z.string().nullish(),
   closedNetworkDomainName: z.string().nullish(),
   closedNetworkCreateTestEnvironment: z.boolean().default(true),

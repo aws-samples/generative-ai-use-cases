@@ -4,7 +4,7 @@
 
 GenU allows you to change settings in parameter.ts or through AWS CDK context.
 
-**Since you can define settings for multiple environments, it is recommended to use parameter.ts when building a new environment. For backward compatibility, parameters are retrieved in the order of context > parameter.ts.**
+**We recommend parameter.ts when building a new environment. You can define settings for multiple environments, and TypeScript type checking catches wrong parameter names and values (in cdk.json, a misspelled key is silently ignored). Updates also cause fewer conflicts in cdk.json. If the environment specified by `env` is defined in parameter.ts, only the values in parameter.ts are used and the parameters in cdk.json are ignored. To move existing settings from cdk.json, see [Update](./UPDATE.md#moving-settings-from-cdkjson-to-parameterts).**
 
 **When using Context: While CDK context can be specified with '-c', this won't trigger frontend builds since no code changes are made. For this asset, it's recommended to change all settings in cdk.json.**
 
@@ -72,6 +72,9 @@ npm run cdk:deploy
 ## Use Case Configuration
 
 ### Enabling RAG Chat (Amazon Kendra) Use Case
+
+> [!IMPORTANT]
+> Amazon Kendra entered maintenance mode on June 30, 2026, and has not accepted new customers since July 30, 2026 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). For new RAG chat deployments, we recommend the Knowledge Base option. To avoid fixed vector store costs, set `ragKnowledgeBaseStorageType` to `s3vectors`.
 
 Set `ragEnabled` to `true`. (Default is `false`)
 
@@ -252,9 +255,11 @@ After deployment is complete, follow these steps to sync the Knowledge Base Data
 1. Open the [Knowledge Base console](https://console.aws.amazon.com/bedrock/home#/knowledge-bases)
 2. Click on generative-ai-use-cases-jp
 3. Select s3-data-source and click Sync
-4. Select web-crawler-data-source and click Sync
 
-When the Status of each data source becomes Available, the process is complete. Files stored in S3 and web pages fetched by the Web Crawler have been ingested and can be searched through the Knowledge Base.
+When the Status becomes Available, the process is complete. Files stored in S3 have been ingested and can be searched through the Knowledge Base.
+
+> [!NOTE]
+> Starting September 30, 2026, connectors such as Web Crawler can no longer be newly created on customer-managed knowledge bases, so the sample web-crawler-data-source is no longer created. See the [Web Crawler data source documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/webcrawl-data-source-connector.html) for details.
 
 > [!NOTE]
 > After enabling RAG Chat (Knowledge Base), if you want to disable it again, set `ragKnowledgeBaseEnabled: false` and redeploy. This will disable RAG Chat (Knowledge Base), but the `RagKnowledgeBaseStack` itself will remain. To completely remove it, open the management console and delete the `RagKnowledgeBaseStack` stack from CloudFormation in the modelRegion.
@@ -344,7 +349,7 @@ To apply changes, follow these steps to delete and recreate the existing Knowled
 
 With the deletion of RagKnowledgeBaseStack, **the S3 bucket for RAG chat and the RAG files stored in it will be deleted**.
 If you have uploaded RAG files to the S3 bucket, back them up and upload them again after redeployment.
-Also, follow the previously mentioned steps to sync the Data sources (s3-data-source, web-crawler-data-source) again.
+Also, follow the previously mentioned steps to sync the Data source (s3-data-source) again.
 
 #### How to check OpenSearch Service Index in the management console
 
@@ -1065,6 +1070,10 @@ As of 2025/03, the multimodal models are:
 "apac.amazon.nova-lite-v1:0",
 "jp.amazon.nova-2-lite-v1:0",
 "global.amazon.nova-2-lite-v1:0",
+"global.openai.gpt-6.1-sol",
+"us.openai.gpt-6.1-sol",
+"global.openai.gpt-6.1-terra",
+"us.openai.gpt-6.1-terra",
 "global.openai.gpt-6-sol",
 "us.openai.gpt-6-sol",
 "global.openai.gpt-6-luna",
@@ -1324,6 +1333,10 @@ This solution supports the following text generation models:
 "global.amazon.nova-2-lite-v1:0",
 "openai.gpt-oss-120b-1:0",
 "openai.gpt-oss-20b-1:0",
+"global.openai.gpt-6.1-sol",
+"us.openai.gpt-6.1-sol",
+"global.openai.gpt-6.1-terra",
+"us.openai.gpt-6.1-terra",
 "global.openai.gpt-6-sol",
 "us.openai.gpt-6-sol",
 "global.openai.gpt-6-luna",
@@ -1343,6 +1356,8 @@ This solution supports the following text generation models:
 "moonshot.kimi-k2-thinking",
 "us.moonshotai.kimi-k3",
 "global.moonshotai.kimi-k3",
+"us.moonshotai.kimi-k3.1",
+"global.moonshotai.kimi-k3.1",
 "nvidia.nemotron-nano-9b-v2",
 "nvidia.nemotron-nano-12b-v2",
 ```
@@ -1350,6 +1365,8 @@ This solution supports the following text generation models:
 This solution supports the following speech-to-speech models:
 
 ```
+amazon.nova-2-5-sonic
+amazon.nova-2-sonic-v1:0
 amazon.nova-sonic-v1:0
 ```
 
@@ -1372,6 +1389,15 @@ This solution supports the following video generation models:
 "amazon.nova-reel-v1:1",
 "luma.ray-v2:0"
 ```
+
+> [!WARNING]
+> `amazon.nova-canvas-v1:0`, `amazon.nova-reel-v1:0` and `amazon.nova-reel-v1:1` reached end of life on 2026-09-30 and can no longer be invoked in any region. Titan Image Generator is no longer offered either. Check [Bedrock model lifecycle](https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html) for the current status.
+>
+> Because of this, the default image generation model is `stability.stable-image-core-v1:1` in us-west-2, and video generation is disabled by default (`videoGenerationModelIds: []`). To use video generation, bootstrap CDK in us-west-2 (`npx -w packages/cdk cdk bootstrap --region us-west-2`) and specify:
+>
+> ```json
+> "videoGenerationModelIds": [{ "modelId": "luma.ray-v2:0", "region": "us-west-2" }]
+> ```
 
 **Please verify that the models you specify are enabled in the specified region.**
 

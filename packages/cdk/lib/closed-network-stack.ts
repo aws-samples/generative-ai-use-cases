@@ -23,6 +23,7 @@ export class ClosedNetworkStack extends Stack {
       closedNetworkVpcId,
       closedNetworkVpcIpv4Cidr,
       closedNetworkSubnetIds,
+      closedNetworkVpcEndpointAzs,
       closedNetworkCertificateArn,
       closedNetworkDomainName,
       closedNetworkCreateTestEnvironment,
@@ -54,6 +55,7 @@ export class ClosedNetworkStack extends Stack {
     const closedVpc = new ClosedVpc(this, 'ClosedVpc', {
       vpcId: closedNetworkVpcId,
       subnetIds: closedNetworkSubnetIds,
+      vpcEndpointAvailabilityZones: closedNetworkVpcEndpointAzs,
       ipv4Cidr: closedNetworkVpcIpv4Cidr,
       domainName: closedNetworkDomainName,
     });
@@ -72,7 +74,7 @@ export class ClosedNetworkStack extends Stack {
         ? `https://${closedVpc.hostedZone.zoneName}`
         : albOrigin;
 
-    // Emitted unconditionally and consumed via cdk-remote-stack RemoteOutputs
+    // Emitted unconditionally and consumed via StackOutputs
     // (not Fn::ImportValue). A plain CfnOutput has no cross-stack export
     // constraint, so toggling closedNetworkDomainName never triggers the
     // "Cannot delete export ... as it is in use" deadlock with the consuming

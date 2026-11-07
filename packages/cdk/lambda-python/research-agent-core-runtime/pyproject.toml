@@ -8,8 +8,18 @@ dependencies = [
   "uvicorn[standard]>=0.30.6",
   "boto3>=1.34.0",
   "aws-opentelemetry-distro>=0.10.1",
+]
+
+[tool.uv]
+# Security floors for transitive dependencies (not imported directly).
+# Raise these when Dependabot reports a vulnerable locked version.
+constraint-dependencies = [
+  "cryptography>=50.0.0",
+  "mcp>=1.30.0,<2",
+  "opentelemetry-api>=1.45.1",
+  "opentelemetry-propagator-jaeger>=1.45.0",
   "python-multipart>=0.0.26",
-  "cryptography>=46.0.7",
+  "urllib3>=2.8.0",
 ]
 
 [dependency-groups]

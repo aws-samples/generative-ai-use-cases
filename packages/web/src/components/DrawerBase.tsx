@@ -36,8 +36,12 @@ const DrawerBase: React.FC<Props> = (props) => {
 
   return (
     <>
+      {/* 100vh on a phone is the height with the browser's toolbars hidden, so
+          the bottom of a fixed full-height drawer (the settings link) sits
+          behind them while they are shown, and the drawer does not scroll.
+          Use the height actually visible where the browser knows it. */}
       <nav
-        className={`bg-aws-squid-ink flex h-screen w-64 flex-col justify-between text-sm text-white  print:hidden`}>
+        className={`bg-aws-squid-ink flex h-screen w-64 flex-col justify-between text-sm text-white supports-[height:100dvh]:h-dvh  print:hidden`}>
         <div className="flex h-full flex-col">
           {props.children}
           <div className="flex flex-none items-center justify-between gap-x-2 border-t border-gray-400 px-3 py-2">

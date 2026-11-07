@@ -21,6 +21,7 @@ import {
   BraveSearchResult,
 } from 'generative-ai-use-cases';
 import { streamingChunk } from './streamingChunk';
+import { classifyStreamingError } from './streamingError';
 import { createUniqueDocumentNamer } from './fileNameUtils';
 import {
   initBedrockAgentClient,
@@ -410,7 +411,7 @@ const bedrockAgentApi: ApiInterface = {
         yield streamingChunk({
           text: '',
           stopReason: 'error',
-          errorCode: 'UNKNOWN_ERROR',
+          errorCode: classifyStreamingError(e),
         });
       }
     }

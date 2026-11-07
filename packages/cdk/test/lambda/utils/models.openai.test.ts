@@ -1,6 +1,10 @@
 import { Model, UnrecordedMessage } from 'generative-ai-use-cases';
 
 const OPENAI_GPT_IDS = [
+  'global.openai.gpt-6.1-sol',
+  'us.openai.gpt-6.1-sol',
+  'global.openai.gpt-6.1-terra',
+  'us.openai.gpt-6.1-terra',
   'global.openai.gpt-6-sol',
   'us.openai.gpt-6-sol',
   'global.openai.gpt-6-luna',
@@ -49,7 +53,7 @@ const createInput = async (model: Model, id: string) => {
   );
 };
 
-describe('OpenAI GPT-6 / GPT-5.6', () => {
+describe('OpenAI GPT-6.1 / GPT-6 / GPT-5.6', () => {
   it.each(OPENAI_GPT_IDS)(
     'should be a supported text model: %s',
     async (id) => {

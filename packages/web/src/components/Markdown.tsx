@@ -8,6 +8,7 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkBreaks from 'remark-breaks';
+import remarkHtmlBreaks from '../utils/remarkHtmlBreaks';
 import ButtonCopy from './ButtonCopy';
 import useRagFile from '../hooks/useRagFile';
 import { PiSpinnerGap } from 'react-icons/pi';
@@ -276,7 +277,7 @@ const Markdown = memo(({ className, prefix, children }: Props) => {
     <ReactMarkdown
       className={`${className ?? ''} prose max-w-full`}
       children={children}
-      remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
+      remarkPlugins={[remarkGfm, remarkBreaks, remarkMath, remarkHtmlBreaks]}
       rehypePlugins={[rehypeKatex]}
       remarkRehypeOptions={{ clobberPrefix: prefix }}
       components={{

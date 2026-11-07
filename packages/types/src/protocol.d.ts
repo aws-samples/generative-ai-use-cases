@@ -24,6 +24,15 @@ import { MeetingMinutesCustomPrompt } from './meetingMinutesCustomPrompt';
 export type StreamingErrorCode =
   | 'THROTTLING'
   | 'ACCESS_DENIED'
+  // Request rejected by Bedrock as invalid (ValidationException), by cause
+  | 'INVALID_FILE_NAME'
+  | 'DUPLICATE_FILE_NAME'
+  | 'TOO_MANY_DOCUMENTS'
+  | 'DOCUMENT_TOO_LARGE'
+  | 'IMAGE_TOO_LARGE'
+  | 'UNSUPPORTED_FILE_TYPE'
+  | 'CONTEXT_TOO_LONG'
+  | 'EMPTY_MESSAGE'
   | 'UNKNOWN_ERROR';
 
 export type StreamingChunk = {

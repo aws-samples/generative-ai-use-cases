@@ -21,6 +21,7 @@ import {
 import { BucketInfo } from 'generative-ai-use-cases';
 import * as path from 'path';
 import { SUPPORTED_CACHE_FIELDS } from '@generative-ai-use-cases/common';
+import { BEDROCK_TEXT_GEN_MODELS } from '../../lambda/utils/models';
 
 export interface AgentCoreRuntimeConfig {
   name: string;
@@ -41,6 +42,8 @@ export interface GenericAgentCoreProps {
   agentCoreVpcId?: string | null;
   agentCoreSubnetIds?: string[] | null;
   gatewayArns?: string[];
+  // The text generation models of this deployment, for their output token limits
+  modelIds?: string[];
 }
 
 interface RuntimeResources {
@@ -79,7 +82,11 @@ export class GenericAgentCore extends Construct {
     this._fileBucket = this.createFileBucket();
 
     // Load configurations
-    const configs = this.loadConfigurations(env, this._fileBucket.bucketName);
+    const configs = this.loadConfigurations(
+      env,
+      this._fileBucket.bucketName,
+      props.modelIds ?? []
+    );
     this.genericRuntimeConfig = configs.generic;
     this.agentBuilderRuntimeConfig = configs.agentBuilder;
 
@@ -141,7 +148,42 @@ export class GenericAgentCore extends Construct {
     });
   }
 
-  private loadConfigurations(env: string, bucketName: string) {
+  /**
+   * The output token limit of each text generation model, as the Converse path
+   * uses it. Without one the runtime leaves maxTokens unset and Bedrock applies
+   * its default of 4,096, so a long answer, or a tool call carrying a large
+   * argument, is cut off with MaxTokensReachedException. Only the models of this
+   * deployment are passed: an environment variable holds at most 2,048 characters.
+   */
+  private modelMaxTokensEnvironment(
+    modelIds: string[]
+  ): Record<string, string> {
+    const limits = Object.fromEntries(
+      modelIds.flatMap((modelId) => {
+        const maxTokens =
+          BEDROCK_TEXT_GEN_MODELS[modelId]?.defaultParams.inferenceConfig
+            ?.maxTokens;
+        return maxTokens ? [[modelId, maxTokens]] : [];
+      })
+    );
+    if (Object.keys(limits).length === 0) {
+      return {};
+    }
+    const value = JSON.stringify(limits);
+    if (value.length > 2048) {
+      throw new Error(
+        `MODEL_MAX_TOKENS is ${value.length} characters, over the 2,048 an AgentCore Runtime environment variable allows. Reduce modelIds.`
+      );
+    }
+    return { MODEL_MAX_TOKENS: value };
+  }
+
+  private loadConfigurations(
+    env: string,
+    bucketName: string,
+    modelIds: string[]
+  ) {
+    const modelMaxTokens = this.modelMaxTokensEnvironment(modelIds);
     return {
       generic: {
         name: `GenUGenericRuntime${env}`,
@@ -154,6 +196,7 @@ export class GenericAgentCore extends Construct {
           FILE_BUCKET: bucketName,
           MCP_CONFIG_PATH: '/var/task/mcp-configs/generic/mcp.json',
           SUPPORTED_CACHE_FIELDS: JSON.stringify(SUPPORTED_CACHE_FIELDS),
+          ...modelMaxTokens,
         },
       },
       agentBuilder: {
@@ -168,6 +211,7 @@ export class GenericAgentCore extends Construct {
           FILE_BUCKET: bucketName,
           MCP_CONFIG_PATH: '/var/task/mcp-configs/agent-builder/mcp.json',
           SUPPORTED_CACHE_FIELDS: JSON.stringify(SUPPORTED_CACHE_FIELDS),
+          ...modelMaxTokens,
         },
       },
     };

@@ -2,6 +2,7 @@ import {
   FeatureFlags,
   PromptCacheField,
   ModelMetadata,
+  SpeechToSpeechVoice,
 } from 'generative-ai-use-cases';
 
 // Manage Model Feature
@@ -698,8 +699,24 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'GPT OSS 20B',
   },
-  // GPT-6 / GPT-5.6: Converse rejects temperature, topP and document blocks.
+  // GPT-6.1 / GPT-6 / GPT-5.6: Converse rejects temperature, topP and document blocks.
   // Only global. and us. inference profiles exist.
+  'global.openai.gpt-6.1-sol': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6.1 Sol',
+  },
+  'us.openai.gpt-6.1-sol': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6.1 Sol',
+  },
+  'global.openai.gpt-6.1-terra': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6.1 Terra',
+  },
+  'us.openai.gpt-6.1-terra': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6.1 Terra',
+  },
   'global.openai.gpt-6-sol': {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-6 Sol',
@@ -783,6 +800,14 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   'global.moonshotai.kimi-k3': {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'Kimi K3',
+  },
+  'us.moonshotai.kimi-k3.1': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'Kimi K3.1',
+  },
+  'global.moonshotai.kimi-k3.1': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'Kimi K3.1',
   },
   // NVIDIA
   'nvidia.nemotron-nano-9b-v2': {
@@ -925,6 +950,83 @@ export const BEDROCK_RERANKING_MODELS = Object.keys(modelMetadata).filter(
 export const BEDROCK_SPEECH_TO_SPEECH_MODELS = Object.keys(
   modelMetadata
 ).filter((model) => modelMetadata[model].flags.speechToSpeech);
+
+// Voices available for each speech-to-speech model.
+// Nova Sonic has no language parameter. The voiceId picks the voice (and its
+// accent); the model answers in the language of the conversation.
+// Sources:
+//   https://docs.aws.amazon.com/nova/latest/nova2-userguide/sonic-language-support.html
+//   https://docs.aws.amazon.com/nova/latest/userguide/available-voices.html
+const voice = (
+  voiceId: string,
+  gender: SpeechToSpeechVoice['gender'],
+  locales: string[],
+  polyglot?: boolean
+): SpeechToSpeechVoice => ({
+  voiceId,
+  gender,
+  locales,
+  ...(polyglot ? { polyglot } : {}),
+});
+
+// Nova 2 Sonic / Nova 2.5 Sonic share the same voice set. tiffany and matthew
+// are polyglot voices that speak every supported language. kiara and arjun are
+// listed for both en-IN and hi-IN, so each voice is one entry with its locales.
+// tiffany is placed first so it is the default selection and keeps backward
+// compatibility with the previously hardcoded voiceId.
+const NOVA_2_SONIC_VOICES: SpeechToSpeechVoice[] = [
+  voice('tiffany', 'feminine', ['en-US'], true),
+  voice('matthew', 'masculine', ['en-US'], true),
+  voice('amy', 'feminine', ['en-GB']),
+  voice('olivia', 'feminine', ['en-AU']),
+  voice('kiara', 'feminine', ['en-IN', 'hi-IN']),
+  voice('arjun', 'masculine', ['en-IN', 'hi-IN']),
+  voice('ambre', 'feminine', ['fr-FR']),
+  voice('florian', 'masculine', ['fr-FR']),
+  voice('beatrice', 'feminine', ['it-IT']),
+  voice('lorenzo', 'masculine', ['it-IT']),
+  voice('tina', 'feminine', ['de-DE']),
+  voice('lennart', 'masculine', ['de-DE']),
+  voice('lupe', 'feminine', ['es-US']),
+  voice('carlos', 'masculine', ['es-US']),
+  voice('carolina', 'feminine', ['pt-BR']),
+  voice('leo', 'masculine', ['pt-BR']),
+];
+
+// Nova Sonic v1 has a smaller voice set (its German feminine voice is greta).
+const NOVA_SONIC_V1_VOICES: SpeechToSpeechVoice[] = [
+  voice('tiffany', 'feminine', ['en-US']),
+  voice('matthew', 'masculine', ['en-US']),
+  voice('amy', 'feminine', ['en-GB']),
+  voice('ambre', 'feminine', ['fr-FR']),
+  voice('florian', 'masculine', ['fr-FR']),
+  voice('beatrice', 'feminine', ['it-IT']),
+  voice('lorenzo', 'masculine', ['it-IT']),
+  voice('greta', 'feminine', ['de-DE']),
+  voice('lennart', 'masculine', ['de-DE']),
+  voice('lupe', 'feminine', ['es-US']),
+  voice('carlos', 'masculine', ['es-US']),
+];
+
+export const SPEECH_TO_SPEECH_VOICES: Record<string, SpeechToSpeechVoice[]> = {
+  'amazon.nova-2-5-sonic': NOVA_2_SONIC_VOICES,
+  'amazon.nova-2-sonic-v1:0': NOVA_2_SONIC_VOICES,
+  'amazon.nova-sonic-v1:0': NOVA_SONIC_V1_VOICES,
+};
+
+export const getSpeechToSpeechVoices = (
+  modelId: string
+): SpeechToSpeechVoice[] => {
+  return SPEECH_TO_SPEECH_VOICES[modelId] ?? [];
+};
+
+// Whether voiceId is one of the voices of the speech-to-speech model
+export const isSpeechToSpeechVoice = (
+  modelId: string,
+  voiceId: string
+): boolean => {
+  return getSpeechToSpeechVoices(modelId).some((v) => v.voiceId === voiceId);
+};
 
 // Prompt caching
 // https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html
