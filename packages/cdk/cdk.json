@@ -58,7 +58,6 @@
     ],
     "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
     "videoGenerationModelIds": ["amazon.nova-reel-v1:0"],
-    "transcribeLanguageOptions": ["ja-JP", "en-US"],
     "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"],
     "endpointNames": [],
     "agentEnabled": false,

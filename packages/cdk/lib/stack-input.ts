@@ -78,9 +78,6 @@ const baseStackInputSchema = z.object({
       ])
     )
     .default(['amazon.nova-reel-v1:0']),
-  // Candidate languages for automatic language identification in
-  // transcription (meeting minutes, voice input, file transcription)
-  transcribeLanguageOptions: z.array(z.string()).default(['ja-JP', 'en-US']),
   speechToSpeechModelIds: z
     .array(
       z.union([
@@ -256,23 +253,6 @@ export const stackInputSchema = baseStackInputSchema
       message:
         'Both VPC ID and Subnet IDs must be provided together for AgentCore network configuration',
       path: ['agentCoreVpcId'],
-    }
-  )
-  .refine(
-    (data) => {
-      // Amazon Transcribe needs at least two candidates, and only one dialect
-      // per language (e.g. not both en-US and en-GB)
-      const languages = data.transcribeLanguageOptions.map(
-        (code) => code.split('-')[0]
-      );
-      return (
-        languages.length >= 2 && new Set(languages).size === languages.length
-      );
-    },
-    {
-      message:
-        'transcribeLanguageOptions needs at least two language codes, with only one dialect per language',
-      path: ['transcribeLanguageOptions'],
     }
   );
 

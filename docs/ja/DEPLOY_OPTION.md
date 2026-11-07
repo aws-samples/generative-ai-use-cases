@@ -983,36 +983,6 @@ const envs: Record<string, Partial<StackInput>> = {
 `speechToSpeechModelIds` に関しては [Amazon Bedrock のモデルを変更する](#amazon-bedrock-のモデルを変更する) をご参照ください。
 デフォルト値は [packages/cdk/lib/stack-input.ts](/packages/cdk/lib/stack-input.ts) をご参照ください。
 
-### 音声認識の言語自動判定の候補を変更する
-
-議事録生成・音声入力・ファイルの文字起こしで言語を「自動」にすると、Amazon Transcribe は `transcribeLanguageOptions` の候補から話されている言語を判定します。デフォルトは `["ja-JP", "en-US"]` です。利用者が話す言語を追加してください（例: 中国語なら `zh-CN`）。
-
-- 言語コードは 2 つ以上、1 言語につき 1 つの方言だけを指定します（`en-US` と `en-GB` を両方は指定できません）。条件を満たさない場合はデプロイが失敗します。
-- 候補が多いほど、短い発話で言語を取り違えやすくなります。Amazon Transcribe は 5 言語以内を推奨しています。
-- 指定できる言語コードは [Supported languages](https://docs.aws.amazon.com/transcribe/latest/dg/supported-languages.html) をご参照ください。
-
-**[parameter.ts](/packages/cdk/parameter.ts) を編集**
-
-```typescript
-// parameter.ts
-const envs: Record<string, Partial<StackInput>> = {
-  dev: {
-    transcribeLanguageOptions: ['ja-JP', 'en-US', 'zh-CN'],
-  },
-};
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "transcribeLanguageOptions": ["ja-JP", "en-US", "zh-CN"]
-  }
-}
-```
-
 ### 画像生成ユースケースの有効化
 
 `imageGenerationModelIds` にモデルを 1 つ以上定義すると有効化されます。

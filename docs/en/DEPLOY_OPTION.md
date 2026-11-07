@@ -964,36 +964,6 @@ This is enabled when you define one or more models in `speechToSpeechModelIds`.
 For `speechToSpeechModelIds`, please refer to [Changing Amazon Bedrock Models](#change-amazon-bedrock-models).
 For default values, please refer to [packages/cdk/lib/stack-input.ts](/packages/cdk/lib/stack-input.ts).
 
-### Changing the Languages for Automatic Speech Recognition
-
-When the language is set to "auto" in meeting minutes, voice input and file transcription, Amazon Transcribe identifies the spoken language from the candidates in `transcribeLanguageOptions`. The default is `["ja-JP", "en-US"]`. Add the languages your users speak, for example `zh-CN` for Chinese.
-
-- Specify at least two language codes, with only one dialect per language (not both `en-US` and `en-GB`). Deployment fails otherwise.
-- More candidates make short utterances easier to misidentify. Amazon Transcribe recommends five languages or fewer.
-- For the supported language codes, see [Supported languages](https://docs.aws.amazon.com/transcribe/latest/dg/supported-languages.html).
-
-**Edit [parameter.ts](/packages/cdk/parameter.ts)**
-
-```typescript
-// parameter.ts
-const envs: Record<string, Partial<StackInput>> = {
-  dev: {
-    transcribeLanguageOptions: ['ja-JP', 'en-US', 'zh-CN'],
-  },
-};
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "transcribeLanguageOptions": ["ja-JP", "en-US", "zh-CN"]
-  }
-}
-```
-
 ### Enabling Image Generation Use Case
 
 This is enabled when you define one or more models in `imageGenerationModelIds`.
