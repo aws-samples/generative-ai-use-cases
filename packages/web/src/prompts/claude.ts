@@ -12,6 +12,7 @@ import {
   WebContentParams,
   DiagramParams,
   MeetingMinutesParams,
+  isSavedPromptStyle,
 } from './index';
 
 import {
@@ -601,10 +602,21 @@ Output only the selected chart type from the <Choice> list, with an exact match,
       );
   },
   meetingMinutesPrompt(params: MeetingMinutesParams): string {
-    if (params.style === 'custom' && params.customPrompt) {
-      return params.customPrompt;
+    // 'custom' and 'savedPrompt:*' styles use the user-provided prompt.
+    // When the prompt body is missing (e.g. still loading), fall back to
+    // the 'transcription' prompt explicitly rather than implicitly.
+    if (params.style === 'custom' || isSavedPromptStyle(params.style)) {
+      return (
+        params.customPrompt ||
+        this.meetingMinutesPrompt({ style: 'transcription' })
+      );
     }
 
+    // Exhaustive switch over built-in styles: every style selectable in
+    // the UI MUST have its own case here. A missing case is a compile
+    // error (see the `never` check in `default`), which prevents styles
+    // from silently falling back to the 'transcription' prompt
+    // (see https://github.com/aws-samples/generative-ai-use-cases/issues/1349).
     switch (params.style) {
       case 'summary':
         return `As a professional meeting facilitator, create a concise summary of the meeting focusing on:
@@ -696,8 +708,18 @@ ${MERMAID_SPECIAL_CHARS_WARNING}
 \`\`\``;
 
       case 'transcription':
-      default:
         return `As a professional translator, please correct filler words and misrecognition in received transcribed text. Please add paragraph breaks if you detect obvious topic changes, and if you find important statements related to the topic, please format them in bold style. For speakers, you must transcribe in received text language.`;
+
+      default: {
+        // Compile-time exhaustiveness check: adding a new style to
+        // MeetingMinutesParams['style'] without a case above is a type
+        // error. At runtime (should never happen), fall back explicitly.
+        const unhandledStyle: never = params.style;
+        console.error(
+          `Unhandled meeting minutes style: ${unhandledStyle}. Falling back to 'transcription'.`
+        );
+        return this.meetingMinutesPrompt({ style: 'transcription' });
+      }
     }
   },
 };

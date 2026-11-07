@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 import { MODELS } from '../hooks/useModel';
 
 const VoiceChatPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     messages,
     isActive,
@@ -36,9 +36,57 @@ const VoiceChatPage: React.FC = () => {
   );
   const [inputSystemPrompt, setInputSystemPrompt] = useState(systemPrompt);
   const { scrollableContainer, setFollowing } = useFollow();
-  const { speechToSpeechModelIds, speechToSpeechModels, modelDisplayName } =
-    MODELS;
+  const {
+    speechToSpeechModelIds,
+    speechToSpeechModels,
+    modelDisplayName,
+    speechToSpeechVoices,
+  } = MODELS;
   const [modelId, setModelId] = useState(speechToSpeechModelIds[0]);
+
+  // Voice options for the selected model. The voice decides the voice and its
+  // accent, not the language of the conversation.
+  const voiceOptions = useMemo(() => {
+    const languageNames = new Intl.DisplayNames(
+      [i18n.resolvedLanguage ?? 'en'],
+      {
+        type: 'language',
+      }
+    );
+    return speechToSpeechVoices(modelId).map((voice) => {
+      const voiceName =
+        voice.voiceId.charAt(0).toUpperCase() + voice.voiceId.slice(1);
+      const gender = t(`voiceChat.gender.${voice.gender}`);
+      const languages = voice.locales
+        .map((locale) => languageNames.of(locale) ?? locale)
+        .join(' / ');
+      const multilingual = voice.polyglot
+        ? ` / ${t('voiceChat.multilingual')}`
+        : '';
+      return {
+        value: voice.voiceId,
+        // e.g. "Tiffany (Feminine-sounding) - American English / Multilingual"
+        label: `${voiceName} (${gender}) - ${languages}${multilingual}`,
+      };
+    });
+  }, [speechToSpeechVoices, modelId, t, i18n.resolvedLanguage]);
+
+  const [voiceId, setVoiceId] = useState(voiceOptions[0]?.value ?? '');
+
+  // Keep the selected voice while the selected model offers it (a language
+  // change rebuilds the labels only), otherwise fall back to the first voice.
+  useEffect(() => {
+    setVoiceId((current) =>
+      voiceOptions.some((o) => o.value === current)
+        ? current
+        : (voiceOptions[0]?.value ?? '')
+    );
+  }, [voiceOptions]);
+
+  // Label of the currently selected voice, shown while a session is active.
+  const selectedVoiceLabel = useMemo(() => {
+    return voiceOptions.find((o) => o.value === voiceId)?.label ?? '';
+  }, [voiceOptions, voiceId]);
   // Define useRef for the cleanup function when leaving the page.
   // To get the latest value without including isActive in the dependency array.
   const isActiveRef = useRef(isActive);
@@ -86,8 +134,15 @@ const VoiceChatPage: React.FC = () => {
           {t('voiceChat.title')}
         </div>
 
+        {isActive && (
+          <div className="mt-1 flex w-full flex-col items-center justify-center text-sm text-gray-500 print:hidden">
+            <div>{modelDisplayName(modelId)}</div>
+            {selectedVoiceLabel && <div>{selectedVoiceLabel}</div>}
+          </div>
+        )}
+
         {isEmpty && !isLoading && !isActive && (
-          <div className="mt-2 flex w-full items-end justify-center lg:mt-0 print:hidden">
+          <div className="mt-2 flex w-full flex-col items-center justify-center gap-2 lg:mt-0 print:hidden">
             <Select
               value={modelId}
               onChange={setModelId}
@@ -95,6 +150,14 @@ const VoiceChatPage: React.FC = () => {
                 return { value: m, label: modelDisplayName(m) };
               })}
             />
+            {voiceOptions.length > 0 && (
+              <Select
+                label={t('voiceChat.voice')}
+                value={voiceId}
+                onChange={setVoiceId}
+                options={voiceOptions}
+              />
+            )}
           </div>
         )}
 
@@ -204,7 +267,7 @@ const VoiceChatPage: React.FC = () => {
                   (m) => m.modelId === modelId
                 );
                 setFollowing(true);
-                startSession(systemPrompt, model!);
+                startSession(systemPrompt, model!, voiceId || undefined);
               }}
               outlined={true}
               disabled={isLoading}>

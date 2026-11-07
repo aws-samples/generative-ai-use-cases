@@ -49,6 +49,7 @@ agent_builder:
   environment_variables: Environment Variables
   environment_variables_label: Environment Variables
   example_github: GitHub
+  export: Export
   external: External
   external_agent_description: Pre-configured external agents with specialized capabilities
   external_agents: External Agents
@@ -63,6 +64,9 @@ agent_builder:
   generate_short: Generate
   generate_with_ai: Generate with AI
   generating_prompt: Generating system prompt...
+  import: Import
+  import_failed: Could not read that file as an agent definition
+  import_model_unavailable: 'The model in the file ({{modelId}}) is not available here, so the first available model was selected instead'
   loading_agent: Loading agent...
   mcp_server_configuration: MCP Server Configuration
   mcp_server_description: >-
@@ -853,6 +857,7 @@ meetingMinutes:
   diagram_options: Diagram Types to Generate
   diagram_sequence: Sequence Diagram (Relationships)
   diagram_timeline: Timeline (Deadlines & Schedule)
+  edit_in_writer: Edit in Writing
   frequency: Generation Frequency
   frequency_10min: Every 10 minutes
   frequency_1min: Every 1 minute
@@ -1091,6 +1096,7 @@ svg:
   show_preview: Show Preview
   svg_error: 'SVG output error: '
 transcribe:
+  audio_source_lost: Transcription stopped because the audio source is no longer available
   detailed_parameters: Detailed parameters
   direct_input: Direct Input
   direct_input_instruction: >-
@@ -1101,6 +1107,8 @@ transcribe:
   max_speakers: Max Speakers
   max_speakers_help: Maximum number of speakers to recognize
   mic_input: Microphone Input
+  reconnect_failed: Transcription stopped because reconnection failed. Please start recording again
+  reconnecting: Transcription connection was interrupted. Reconnecting automatically
   result_placeholder: Speech recognition results will be displayed here
   screen_audio: Screen Audio
   screen_audio_error: Screen Audio Error
@@ -1521,9 +1529,14 @@ videoAnalyzer:
 voiceChat:
   close: Close session
   default_system_prompt: You are an AI assistant.
+  gender:
+    feminine: Feminine-sounding
+    masculine: Masculine-sounding
   im_listening: I'm listening...
+  multilingual: Multilingual
   start: Start new session
   title: Voice Chat
+  voice: Voice
 webcontent:
   additional_context: Additional context
   additional_context_placeholder: You can enter additional points to consider (e.g., summarize)

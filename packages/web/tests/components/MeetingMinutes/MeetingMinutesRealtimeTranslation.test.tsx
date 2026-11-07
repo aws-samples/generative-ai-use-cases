@@ -113,10 +113,18 @@ vi.mock('../../../src/components/Textarea', () => ({
   default: ({
     value,
     onChange,
+    maxHeight,
   }: {
     value: string;
     onChange: (value: string) => void;
-  }) => <textarea value={value} onChange={(e) => onChange(e.target.value)} />,
+    maxHeight?: number;
+  }) => (
+    <textarea
+      value={value}
+      data-max-height={maxHeight}
+      onChange={(e) => onChange(e.target.value)}
+    />
+  ),
 }));
 
 vi.mock(
@@ -271,5 +279,31 @@ describe('MeetingMinutesRealtimeTranslation - translation target language', () =
     expect(secondRecordingCall).toBeDefined();
     // The second recording must use the latest setting (Chinese)
     expect(secondRecordingCall?.[2]).toBe('Chinese');
+  });
+});
+
+describe('MeetingMinutesRealtimeTranslation - translation context', () => {
+  beforeEach(() => {
+    micState.recording = false;
+    micState.rawTranscripts = [];
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  // The generated context is rewritten every minute and can run to hundreds of
+  // characters. Left to grow up to Textarea's default cap, the fields squeeze
+  // the transcript below them (Issue #1684).
+  it('caps the context fields so they scroll instead of pushing the transcript down', () => {
+    // The context fields are shown only while recording
+    micState.recording = true;
+    render(<MeetingMinutesRealtimeTranslation />);
+
+    const contextFields = screen.getAllByRole('textbox');
+    expect(contextFields).toHaveLength(2);
+    for (const field of contextFields) {
+      expect(field.getAttribute('data-max-height')).toBe('80');
+    }
   });
 });

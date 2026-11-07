@@ -50,6 +50,7 @@ agent_builder:
   environment_variables: 環境変数
   environment_variables_label: 環境変数
   example_github: GitHub
+  export: エクスポート
   external: 外部
   external_agent_description: 特別な機能を持つ事前設定済みの外部エージェント
   external_agents: 外部エージェント
@@ -63,6 +64,9 @@ agent_builder:
   generate_short: 生成
   generate_with_ai: AIにより生成する
   generating_prompt: システムプロンプトを生成中...
+  import: インポート
+  import_failed: エージェント定義として読み込めませんでした
+  import_model_unavailable: 'ファイルのモデル（{{modelId}}）はこの環境では使えないため、利用可能な最初のモデルを選択しました'
   loading_agent: エージェントを読み込み中...
   mcp_server_configuration: MCPサーバー設定
   mcp_server_description: エージェントに追加機能を提供するMCPサーバーを選択してください。これらのサーバーはセキュリティのため管理者によって事前設定されています。
@@ -698,6 +702,7 @@ meetingMinutes:
   diagram_options: 生成する図の種類
   diagram_sequence: シーケンス図（関係性）
   diagram_timeline: タイムライン（期限・スケジュール）
+  edit_in_writer: 執筆で編集
   frequency: 生成頻度
   frequency_10min: 10分ごと
   frequency_1min: 1分ごと
@@ -914,6 +919,7 @@ svg:
   show_preview: プレビューを表示
   svg_error: 'SVG出力エラー: '
 transcribe:
+  audio_source_lost: 音声ソースが利用できなくなったため、文字起こしを停止しました
   detailed_parameters: 詳細なパラメータ
   direct_input: 直接入力
   direct_input_instruction: 下の「文字起こし」エリアに議事録の元となるテキストを直接入力してください。
@@ -922,6 +928,8 @@ transcribe:
   max_speakers: Max Speakers
   max_speakers_help: 認識する話者の最大数
   mic_input: マイク入力
+  reconnect_failed: 文字起こしの再接続に失敗したため、停止しました。もう一度録音を開始してください
+  reconnecting: 文字起こしの接続が切断されたため、自動的に再接続しています
   result_placeholder: 音声認識結果がここに表示されます
   screen_audio: スクリーン音声
   screen_audio_error: スクリーン音声エラー
@@ -1253,9 +1261,14 @@ videoAnalyzer:
 voiceChat:
   close: セッションを終了する
   default_system_prompt: You are an AI assistant.
+  gender:
+    feminine: 女性的な声
+    masculine: 男性的な声
   im_listening: 発言してください
+  multilingual: 多言語
   start: セッションを始める
   title: 音声チャット
+  voice: 声
 webcontent:
   additional_context: 追加コンテキスト
   additional_context_placeholder: '追加で考慮してほしい点を入力することができます（例: 要約して）'

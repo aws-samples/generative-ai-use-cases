@@ -25,14 +25,16 @@ import {
   ConversationRole,
   ContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
-import { modelMetadata } from '@generative-ai-use-cases/common';
+import {
+  convertTextDocumentToUtf8,
+  modelMetadata,
+} from '@generative-ai-use-cases/common';
 import {
   applyAutoCacheToMessages,
   applyAutoCacheToSystem,
 } from './promptCache';
 import { getFormatFromMimeType, getMimeTypeFromFileName } from './media';
 import { convertToSafeFilename } from './fileNameUtils';
-import { convertTextDocumentToUtf8 } from './textEncoding';
 
 // Default Models
 
@@ -51,8 +53,8 @@ const lightWeightModelIds = modelIds.filter(
 const defaultModelConfiguration = lightWeightModelIds[0] || modelIds[0];
 export const defaultModel: Model = {
   type: 'bedrock',
-  modelId: defaultModelConfiguration.modelId,
-  region: defaultModelConfiguration.region,
+  modelId: defaultModelConfiguration?.modelId ?? '',
+  region: defaultModelConfiguration?.region ?? '',
 };
 
 const imageGenerationModels: ModelConfiguration[] = (
@@ -591,7 +593,8 @@ const createConverseCommandInput = (
       // Adaptive thinking (Claude Opus 4.6+)
       // https://docs.aws.amazon.com/bedrock/latest/userguide/claude-messages-adaptive-thinking.html
       converseCommandInput.additionalModelRequestFields = {
-        thinking: { type: 'adaptive' },
+        // Opus 4.7+ and the 5.x models return no thinking text without display
+        thinking: { type: 'adaptive', display: 'summarized' },
         output_config: {
           effort: model.modelParameters?.reasoningConfig?.effort || 'high',
         },
@@ -2103,6 +2106,38 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     createConverseCommandInput: createConverseCommandInputWithoutSystemContext,
     createConverseStreamCommandInput:
       createConverseStreamCommandInputWithoutSystemContext,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'global.openai.gpt-6.1-sol': {
+    defaultParams: OPENAI_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.openai.gpt-6.1-sol': {
+    defaultParams: OPENAI_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'global.openai.gpt-6.1-terra': {
+    defaultParams: OPENAI_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'us.openai.gpt-6.1-terra': {
+    defaultParams: OPENAI_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },

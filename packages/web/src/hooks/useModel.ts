@@ -2,6 +2,7 @@ import { Model, ModelConfiguration, AgentInfo } from 'generative-ai-use-cases';
 import {
   CRI_PREFIX_PATTERN,
   modelMetadata,
+  getSpeechToSpeechVoices,
 } from '@generative-ai-use-cases/common';
 
 const modelRegion = import.meta.env.VITE_APP_MODEL_REGION;
@@ -238,4 +239,5 @@ export const MODELS = {
   flowChatEnabled: flows.length > 0,
   speechToSpeechModelIds: speechToSpeechModelIds,
   speechToSpeechModels: speechToSpeechModels,
+  speechToSpeechVoices: getSpeechToSpeechVoices,
 };

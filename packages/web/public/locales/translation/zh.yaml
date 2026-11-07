@@ -462,6 +462,7 @@ meetingMinutes:
   clear_minutes: 清除会议纪要
   custom_prompt: 自定义提示
   custom_prompt_placeholder: 输入用于生成会议纪要的自定义提示...
+  edit_in_writer: 在写作中编辑
   frequency: 生成频率
   frequency_10min: 每10分钟
   frequency_1min: 每分钟
@@ -630,6 +631,7 @@ summarize:
   text_to_summarize: 要摘要的文本
   title: 摘要
 transcribe:
+  audio_source_lost: 由于音频源不再可用，转录已停止
   detailed_parameters: 详细参数
   direct_input: 直接输入
   direct_input_instruction: 请在下方"转录文本"区域中直接输入会议记录的源文本
@@ -638,6 +640,8 @@ transcribe:
   max_speakers: 最大发言人数
   max_speakers_help: 要识别的最大发言人数
   mic_input: 麦克风输入
+  reconnect_failed: 由于重新连接失败，转录已停止。请重新开始录音
+  reconnecting: 转录连接已中断，正在自动重新连接
   result_placeholder: 语音识别结果将显示在这里
   screen_audio: 屏幕音频
   screen_audio_error: 屏幕音频错误：
@@ -939,9 +943,14 @@ videoAnalyzer:
 voiceChat:
   close: 结束会话
   default_system_prompt: 您是一个AI助手。
+  gender:
+    feminine: 偏女性的声音
+    masculine: 偏男性的声音
   im_listening: 请说话
+  multilingual: 多语言
   start: 开始会话
   title: 语音聊天
+  voice: 语音
 webcontent:
   additional_context: 附加上下文
   additional_context_placeholder: 您可以输入希望额外考虑的点（例如：进行摘要）

@@ -23,6 +23,7 @@ export class AgentCoreStack extends Stack {
         env: params.env,
         createGenericRuntime: params.createGenericAgentCoreRuntime,
         createAgentBuilderRuntime: params.agentBuilderEnabled,
+        modelIds: params.modelIds.map((model) => model.modelId),
         isAgentCoreNetworkPrivate: params.isAgentCoreNetworkPrivate,
         agentCoreVpcId: params.agentCoreVpcId,
         agentCoreSubnetIds: params.agentCoreSubnetIds,

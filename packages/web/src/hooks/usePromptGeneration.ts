@@ -12,6 +12,9 @@ import useChatApi from './useChatApi';
 import { parseStreamChunk, extractTextFromChunks } from '../utils/streamParser';
 import {
   buildAgentSystemPromptGeneratorPrompt,
+  BuiltInToolForPrompt,
+  BUILT_IN_TOOLS_START_MARKER,
+  BUILT_IN_TOOLS_END_MARKER,
   MCP_SERVERS_START_MARKER,
   MCP_SERVERS_END_MARKER,
   SYSTEM_PROMPT_START_MARKER,
@@ -23,11 +26,13 @@ export interface UsePromptGenerationParams {
   agentName: string;
   agentDescription: string;
   availableMCPServers: AvailableMCPServer[];
+  availableBuiltInTools?: BuiltInToolForPrompt[];
 }
 
 export interface UsePromptGenerationReturn {
   generatedPrompt: string;
   suggestedMCPServers: string[];
+  suggestedBuiltInTools: string[];
   isGenerating: boolean;
   error: Error | null;
   generate: () => Promise<string>;
@@ -41,24 +46,35 @@ export interface UsePromptGenerationReturn {
  * @param rawOutput - The accumulated raw output from the LLM
  * @returns Array of MCP server names, or null if markers not yet complete
  */
-const parseMCPServers = (rawOutput: string): string[] | null => {
-  const startIndex = rawOutput.indexOf(MCP_SERVERS_START_MARKER);
-  const endIndex = rawOutput.indexOf(MCP_SERVERS_END_MARKER);
+const parseMarkedLines = (
+  rawOutput: string,
+  startMarker: string,
+  endMarker: string
+): string[] | null => {
+  const startIndex = rawOutput.indexOf(startMarker);
+  const endIndex = rawOutput.indexOf(endMarker);
 
   if (startIndex === -1 || endIndex === -1 || endIndex <= startIndex) {
     return null;
   }
 
-  const content = rawOutput.slice(
-    startIndex + MCP_SERVERS_START_MARKER.length,
-    endIndex
-  );
+  const content = rawOutput.slice(startIndex + startMarker.length, endIndex);
 
   return content
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line.length > 0);
 };
+
+const parseMCPServers = (rawOutput: string): string[] | null =>
+  parseMarkedLines(rawOutput, MCP_SERVERS_START_MARKER, MCP_SERVERS_END_MARKER);
+
+const parseBuiltInTools = (rawOutput: string): string[] | null =>
+  parseMarkedLines(
+    rawOutput,
+    BUILT_IN_TOOLS_START_MARKER,
+    BUILT_IN_TOOLS_END_MARKER
+  );
 
 /**
  * Extracts the system prompt content from raw output, handling streaming.
@@ -95,15 +111,25 @@ const extractSystemPrompt = (rawOutput: string): string => {
 export const usePromptGeneration = (
   params: UsePromptGenerationParams
 ): UsePromptGenerationReturn => {
-  const { modelId, agentName, agentDescription, availableMCPServers } = params;
+  const {
+    modelId,
+    agentName,
+    agentDescription,
+    availableMCPServers,
+    availableBuiltInTools,
+  } = params;
   const { predictStream } = useChatApi();
 
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [suggestedMCPServers, setSuggestedMCPServers] = useState<string[]>([]);
+  const [suggestedBuiltInTools, setSuggestedBuiltInTools] = useState<string[]>(
+    []
+  );
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const mcpServersParsedRef = useRef(false);
+  const builtInToolsParsedRef = useRef(false);
 
   /**
    * Generates a system prompt using the LLM.
@@ -117,6 +143,8 @@ export const usePromptGeneration = (
     setGeneratedPrompt('');
     setSuggestedMCPServers([]);
     mcpServersParsedRef.current = false;
+    builtInToolsParsedRef.current = false;
+    setSuggestedBuiltInTools([]);
     abortControllerRef.current = new AbortController();
 
     let rawOutput = '';
@@ -128,6 +156,10 @@ export const usePromptGeneration = (
         description: agentDescription,
         availableMCPServers:
           availableMCPServers.length > 0 ? availableMCPServers : undefined,
+        availableBuiltInTools:
+          availableBuiltInTools && availableBuiltInTools.length > 0
+            ? availableBuiltInTools
+            : undefined,
       });
 
       // Stream the response
@@ -155,6 +187,15 @@ export const usePromptGeneration = (
 
         if (text) {
           rawOutput += text;
+
+          // Try to parse built-in tools once we have the complete section
+          if (!builtInToolsParsedRef.current) {
+            const builtInTools = parseBuiltInTools(rawOutput);
+            if (builtInTools !== null) {
+              setSuggestedBuiltInTools(builtInTools);
+              builtInToolsParsedRef.current = true;
+            }
+          }
 
           // Try to parse MCP servers once we have the complete section
           if (!mcpServersParsedRef.current) {
@@ -189,6 +230,7 @@ export const usePromptGeneration = (
     agentName,
     agentDescription,
     availableMCPServers,
+    availableBuiltInTools,
     predictStream,
   ]);
 
@@ -208,14 +250,17 @@ export const usePromptGeneration = (
   const reset = useCallback(() => {
     setGeneratedPrompt('');
     setSuggestedMCPServers([]);
+    setSuggestedBuiltInTools([]);
     setError(null);
     setIsGenerating(false);
     mcpServersParsedRef.current = false;
+    builtInToolsParsedRef.current = false;
   }, []);
 
   return {
     generatedPrompt,
     suggestedMCPServers,
+    suggestedBuiltInTools,
     isGenerating,
     error,
     generate,

@@ -10,7 +10,7 @@ from strands import Agent as StrandsAgent
 from strands.models import BedrockModel
 
 from . import sandbox
-from .config import extract_model_info, get_code_interpreter_prompt, get_max_iterations, get_system_prompt, supports_prompt_cache, supports_tools_cache
+from .config import extract_model_info, get_code_interpreter_prompt, get_max_iterations, get_max_tokens, get_system_prompt, supports_prompt_cache, supports_tools_cache
 from .tools import ToolManager
 from .types import Message, ModelInfo
 from .utils import (
@@ -88,6 +88,12 @@ class AgentManager:
                 "model_id": model_id,
                 "boto_session": session,
             }
+
+            # Without this Bedrock applies its default of 4,096 output tokens, which
+            # a long answer or a tool call with a large argument runs into.
+            max_tokens = get_max_tokens(model_id)
+            if max_tokens:
+                bedrock_model_params["max_tokens"] = max_tokens
 
             # Only enable caching for officially supported models
             if supports_prompt_cache(model_id):

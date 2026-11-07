@@ -574,6 +574,7 @@ meetingMinutes:
   clear_minutes: ล้างรายงานการประชุม
   custom_prompt: พรอมต์แบบกำหนดเอง
   custom_prompt_placeholder: ป้อนพรอมต์แบบกำหนดเองสำหรับการสร้างรายงานการประชุม...
+  edit_in_writer: แก้ไขในการเขียน
   frequency: ความถี่ในการสร้าง
   frequency_10min: ทุก 10 นาที
   frequency_1min: ทุกนาที
@@ -765,6 +766,7 @@ summarize:
   text_to_summarize: ข้อความที่จะสรุป
   title: สรุป
 transcribe:
+  audio_source_lost: การถอดเสียงหยุดลงเนื่องจากไม่สามารถใช้แหล่งเสียงได้อีกต่อไป
   detailed_parameters: ตั้งค่าขั้นสูงแบบกำหนดเอง
   direct_input: ป้อนข้อมูลโดยตรง
   direct_input_instruction: โปรดป้อนข้อความต้นฉบับสำหรับรายงานการประชุมโดยตรงในพื้นที่ "บันทึกการถอดความ" ด้านล่าง
@@ -773,6 +775,8 @@ transcribe:
   max_speakers: จำนวนผู้พูดสูงสุด
   max_speakers_help: จำนวนผู้พูดสูงสุดในบทสนทนาที่ต้องการแยกแยะ
   mic_input: อินพุตไมโครโฟน
+  reconnect_failed: การถอดเสียงหยุดลงเนื่องจากการเชื่อมต่อใหม่ล้มเหลว กรุณาเริ่มบันทึกอีกครั้ง
+  reconnecting: การเชื่อมต่อการถอดเสียงถูกขัดจังหวะ กำลังเชื่อมต่อใหม่โดยอัตโนมัติ
   result_placeholder: ข้อความที่แปลงจากเสียงของคุณ
   screen_audio: เสียงหน้าจอ
   screen_audio_error: ข้อผิดพลาดเสียงหน้าจอ
@@ -1124,9 +1128,14 @@ videoAnalyzer:
 voiceChat:
   close: ปิดเซสชั่น
   default_system_prompt: You are an AI assistant.
+  gender:
+    feminine: เสียงคล้ายผู้หญิง
+    masculine: เสียงคล้ายผู้ชาย
   im_listening: กำลังฟัง...
+  multilingual: หลายภาษา
   start: เริ่มเซสชันใหม่
   title: Voice Chat
+  voice: เสียง
 webcontent:
   additional_context: บริบทเพิ่มเติม
   additional_context_placeholder: คุณสามารถป้อนประเด็นเพิ่มเติมที่ต้องการพิจารณา (เช่น สรุป)

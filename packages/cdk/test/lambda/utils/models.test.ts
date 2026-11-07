@@ -85,7 +85,7 @@ describe('Claude Opus 5.5', () => {
     expect(input.inferenceConfig?.temperature).toBeUndefined();
     expect(input.inferenceConfig?.topP).toBeUndefined();
     expect(input.additionalModelRequestFields).toEqual({
-      thinking: { type: 'adaptive' },
+      thinking: { type: 'adaptive', display: 'summarized' },
       output_config: { effort: 'xhigh' },
     });
   });
