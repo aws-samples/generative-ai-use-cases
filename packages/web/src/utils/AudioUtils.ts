@@ -23,3 +23,12 @@ export const getTranscribeSampleRate = (contextSampleRate: number): number => {
   }
   return sampleRate;
 };
+
+// Candidates for automatic language identification in Transcribe streaming,
+// used when the caller does not pass its own list.
+export const DEFAULT_TRANSCRIBE_LANGUAGE_OPTIONS = 'en-US,ja-JP,zh-CN';
+
+// Languages written without spaces between words. Transcribe returns their
+// transcript as space-separated items, so the spaces are removed for display.
+export const isLanguageWithoutWordSpaces = (languageCode: string): boolean =>
+  languageCode === 'ja-JP' || languageCode === 'zh-CN';

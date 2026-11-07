@@ -11,7 +11,11 @@ import { Buffer } from 'buffer';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { Transcript } from 'generative-ai-use-cases';
-import { getTranscribeSampleRate } from '../utils/AudioUtils';
+import {
+  getTranscribeSampleRate,
+  DEFAULT_TRANSCRIBE_LANGUAGE_OPTIONS,
+  isLanguageWithoutWordSpaces,
+} from '../utils/AudioUtils';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
@@ -44,10 +48,6 @@ const region = import.meta.env.VITE_APP_REGION;
 const userPoolId = import.meta.env.VITE_APP_USER_POOL_ID;
 const idPoolId = import.meta.env.VITE_APP_IDENTITY_POOL_ID;
 const providerName = `cognito-idp.${region}.amazonaws.com/${userPoolId}`;
-
-// Candidates for language identification when the caller does not pass its
-// own list. Transcribe picks the spoken language from these.
-const DEFAULT_LANGUAGE_OPTIONS = 'en-US,ja-JP,zh-CN';
 
 const useMicrophone = () => {
   const { t } = useTranslation();
@@ -95,8 +95,8 @@ const useMicrophone = () => {
       }
       return prev;
     }, [] as Transcript[]);
-    // If Japanese, remove spaces
-    if (language === 'ja-JP') {
+    // Japanese and Chinese are written without spaces between words
+    if (isLanguageWithoutWordSpaces(language)) {
       return mergedTranscripts.map((item) => ({
         ...item,
         transcript: item.transcript.replace(/ /g, ''),
@@ -169,7 +169,7 @@ const useMicrophone = () => {
         IdentifyMultipleLanguages: true,
         LanguageOptions: languageOptions
           ? languageOptions.join(',')
-          : DEFAULT_LANGUAGE_OPTIONS,
+          : DEFAULT_TRANSCRIBE_LANGUAGE_OPTIONS,
       };
     } else if (languageCode) {
       // Specific language mode
@@ -187,7 +187,7 @@ const useMicrophone = () => {
         IdentifyMultipleLanguages: false,
         LanguageOptions: languageOptions
           ? languageOptions.join(',')
-          : DEFAULT_LANGUAGE_OPTIONS,
+          : DEFAULT_TRANSCRIBE_LANGUAGE_OPTIONS,
       };
     }
 
