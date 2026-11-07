@@ -13,7 +13,7 @@ import { fetchAuthSession } from 'aws-amplify/auth';
 import { Transcript } from 'generative-ai-use-cases';
 import {
   getTranscribeSampleRate,
-  DEFAULT_TRANSCRIBE_LANGUAGE_OPTIONS,
+  getTranscribeLanguageOptions,
   isLanguageWithoutWordSpaces,
 } from '../utils/AudioUtils';
 import { toast } from 'sonner';
@@ -169,7 +169,7 @@ const useMicrophone = () => {
         IdentifyMultipleLanguages: true,
         LanguageOptions: languageOptions
           ? languageOptions.join(',')
-          : DEFAULT_TRANSCRIBE_LANGUAGE_OPTIONS,
+          : getTranscribeLanguageOptions().join(','),
       };
     } else if (languageCode) {
       // Specific language mode
@@ -187,7 +187,7 @@ const useMicrophone = () => {
         IdentifyMultipleLanguages: false,
         LanguageOptions: languageOptions
           ? languageOptions.join(',')
-          : DEFAULT_TRANSCRIBE_LANGUAGE_OPTIONS,
+          : getTranscribeLanguageOptions().join(','),
       };
     }
 

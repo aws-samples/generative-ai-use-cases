@@ -13,6 +13,11 @@ import { useCallback, useState } from 'react';
 import { useSWRConfig } from 'swr';
 import { useTranslation, Trans } from 'react-i18next';
 import { supportedLngs } from '../i18n/config';
+import {
+  TRANSCRIBE_AUTO_DETECT_LANGUAGES,
+  MIN_TRANSCRIBE_LANGUAGE_OPTIONS,
+  MAX_TRANSCRIBE_LANGUAGE_OPTIONS,
+} from '@generative-ai-use-cases/common';
 import useChatList from '../hooks/useChatList';
 import DialogConfirmDeleteAllChats from '../components/DialogConfirmDeleteAllChats';
 
@@ -63,6 +68,8 @@ const Setting = () => {
   const hasUpdate = getHasUpdate();
   const closedPullRequests = getClosedPullRequests();
   const {
+    settingTranscribeLanguageOptions,
+    setSettingTranscribeLanguageOptions,
     settingSubmitCmdOrCtrlEnter,
     setSettingSubmitCmdOrCtrlEnter,
     settingTypingAnimation,
@@ -74,6 +81,18 @@ const Setting = () => {
     settingShowEmail,
     setSettingShowEmail,
   } = useUserSetting();
+
+  const transcribeLanguageLabels: Record<
+    (typeof TRANSCRIBE_AUTO_DETECT_LANGUAGES)[number],
+    string
+  > = {
+    'ja-JP': t('meetingMinutes.language_japanese'),
+    'en-US': t('meetingMinutes.language_english'),
+    'zh-CN': t('meetingMinutes.language_chinese'),
+    'ko-KR': t('meetingMinutes.language_korean'),
+    'th-TH': t('meetingMinutes.language_thai'),
+    'vi-VN': t('meetingMinutes.language_vietnamese'),
+  };
 
   const onClickSignout = useCallback(() => {
     // Delete all SWR cache
@@ -132,6 +151,45 @@ const Setting = () => {
           }
           helpMessage={t('setting.items.language_help')}
           top={true}
+        />
+
+        <SettingItem
+          name={t('setting.items.transcribe_languages')}
+          value={
+            <div className="flex flex-wrap justify-end gap-x-3 gap-y-1">
+              {TRANSCRIBE_AUTO_DETECT_LANGUAGES.map((code) => {
+                const checked = settingTranscribeLanguageOptions.includes(code);
+                // Keep between the minimum and maximum Transcribe accepts
+                const disabled = checked
+                  ? settingTranscribeLanguageOptions.length <=
+                    MIN_TRANSCRIBE_LANGUAGE_OPTIONS
+                  : settingTranscribeLanguageOptions.length >=
+                    MAX_TRANSCRIBE_LANGUAGE_OPTIONS;
+                return (
+                  <label
+                    key={code}
+                    className={`flex items-center gap-1 ${disabled ? 'opacity-50' : 'cursor-pointer'}`}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      disabled={disabled}
+                      onChange={() =>
+                        setSettingTranscribeLanguageOptions(
+                          TRANSCRIBE_AUTO_DETECT_LANGUAGES.filter((c) =>
+                            c === code
+                              ? !checked
+                              : settingTranscribeLanguageOptions.includes(c)
+                          )
+                        )
+                      }
+                    />
+                    {transcribeLanguageLabels[code]}
+                  </label>
+                );
+              })}
+            </div>
+          }
+          helpMessage={t('setting.items.transcribe_languages_help')}
         />
 
         <SettingItem

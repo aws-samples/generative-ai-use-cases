@@ -1,3 +1,5 @@
+import { sanitizeTranscribeLanguageOptions } from '@generative-ai-use-cases/common';
+
 // Range accepted by Amazon Transcribe Streaming for MediaSampleRateHertz
 // https://docs.aws.amazon.com/transcribe/latest/dg/how-input.html
 const MIN_TRANSCRIBE_SAMPLE_RATE_HZ = 8000;
@@ -24,9 +26,30 @@ export const getTranscribeSampleRate = (contextSampleRate: number): number => {
   return sampleRate;
 };
 
-// Candidates for automatic language identification in Transcribe streaming,
-// used when the caller does not pass its own list.
-export const DEFAULT_TRANSCRIBE_LANGUAGE_OPTIONS = 'en-US,ja-JP,zh-CN';
+// localStorage key of the user's candidate languages for automatic language
+// identification (Settings page). The value is a JSON array of codes.
+export const TRANSCRIBE_LANGUAGE_OPTIONS_STORAGE_KEY =
+  'transcribeLanguageOptions';
+
+/** Parse the stored setting; anything invalid falls back to the default. */
+export const parseTranscribeLanguageOptions = (
+  stored: string | null
+): string[] => {
+  try {
+    return sanitizeTranscribeLanguageOptions(JSON.parse(stored ?? ''));
+  } catch {
+    return sanitizeTranscribeLanguageOptions(undefined);
+  }
+};
+
+/**
+ * The user's candidate languages, read at the moment transcription starts so
+ * a change on the Settings page applies to the next recording.
+ */
+export const getTranscribeLanguageOptions = (): string[] =>
+  parseTranscribeLanguageOptions(
+    localStorage.getItem(TRANSCRIBE_LANGUAGE_OPTIONS_STORAGE_KEY)
+  );
 
 // Languages written without spaces between words. Transcribe returns their
 // transcript as space-separated items, so the spaces are removed for display.

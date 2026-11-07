@@ -6,6 +6,7 @@ import {
   LanguageCode,
 } from '@aws-sdk/client-transcribe';
 import { StartTranscriptionRequest } from 'generative-ai-use-cases';
+import { sanitizeTranscribeLanguageOptions } from '@generative-ai-use-cases/common';
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -16,13 +17,18 @@ export const handler = async (
     const userId = event.requestContext.authorizer!.claims.sub;
 
     const { audioUrl, speakerLabel, maxSpeakers, languageCode } = req;
+    // The browser sends the user's candidate languages; only known codes are
+    // used, and a missing or invalid list falls back to Japanese and English
+    const languageOptions = sanitizeTranscribeLanguageOptions(
+      req.languageOptions
+    ) as LanguageCode[];
 
     const uuid = uuidv4();
 
     const command = new StartTranscriptionJobCommand({
       IdentifyLanguage: !languageCode, // Enable auto-detection when no language specified
       LanguageCode: languageCode ? (languageCode as LanguageCode) : undefined, // Use specified language when provided
-      LanguageOptions: !languageCode ? ['ja-JP', 'en-US', 'zh-CN'] : undefined, // Language candidates for auto-detection only
+      LanguageOptions: !languageCode ? languageOptions : undefined, // Language candidates for auto-detection only
       Media: { MediaFileUri: audioUrl },
       TranscriptionJobName: uuid,
       Settings: {
