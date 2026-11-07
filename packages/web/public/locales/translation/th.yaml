@@ -740,6 +740,8 @@ setting:
     show_tools: แสดงเครื่องมือ
     show_use_case_builder: แสดง Use Case Builder
     stats: สถิติ
+    transcribe_languages: ภาษาที่ตรวจจับอัตโนมัติสำหรับการรู้จำเสียง
+    transcribe_languages_help: 'ภาษาที่ใช้เป็นตัวเลือกเมื่อตั้งค่าภาษาการรู้จำเสียงเป็น "อัตโนมัติ" (บันทึกการประชุม การป้อนด้วยเสียง การถอดเสียงจากไฟล์) เลือก 2 ถึง 5 ภาษา ยิ่งเลือกมาก ยิ่งตรวจจับภาษาของคำพูดสั้นๆ ผิดได้ง่าย'
     typing_animation: แอนิเมชันการพิมพ์
     version: เวอร์ชัน
     version_help: อ้างอิงเวอร์ชันใน package.json ของ generative-ai-use-cases

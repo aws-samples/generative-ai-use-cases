@@ -75,21 +75,20 @@ const MeetingMinutesFile: React.FC<MeetingMinutesFileProps> = ({
     []
   );
 
-  // Set language from settings on mount
+  // Start with the UI language. This runs once: re-running it whenever the
+  // selection changes would switch "auto" back to the UI language at once, so
+  // automatic language identification could never be chosen.
+  const initializedLanguage = useRef(false);
   useEffect(() => {
-    if (i18n.resolvedLanguage && languageCode === 'auto') {
-      const mappedLang = getTranscriptionLanguageFromSettings(
-        i18n.resolvedLanguage
-      );
-      if (mappedLang !== 'auto') {
-        setLanguageCode(mappedLang);
-      }
+    if (initializedLanguage.current || !i18n.resolvedLanguage) return;
+    initializedLanguage.current = true;
+    const mappedLang = getTranscriptionLanguageFromSettings(
+      i18n.resolvedLanguage
+    );
+    if (mappedLang !== 'auto') {
+      setLanguageCode(mappedLang);
     }
-  }, [
-    i18n.resolvedLanguage,
-    languageCode,
-    getTranscriptionLanguageFromSettings,
-  ]);
+  }, [i18n.resolvedLanguage, getTranscriptionLanguageFromSettings]);
 
   // Handle file change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

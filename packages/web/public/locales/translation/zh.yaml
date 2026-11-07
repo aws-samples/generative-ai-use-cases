@@ -608,6 +608,8 @@ setting:
     language_help: 可以更改显示语言
     rag_enabled: RAG (Amazon Kendra)已启用
     rag_kb_enabled: RAG (Knowledge Base)已启用
+    transcribe_languages: 语音识别自动检测语言
+    transcribe_languages_help: '当语音识别语言设置为"自动"时（会议记录、语音输入、文件转录），用于检测的候选语言。请选择 2 到 5 种。选择越多，短句越容易被识别为错误的语言。'
     version: 版本
     version_help: 参考generative-ai-use-cases的package.json中的version
   recent_updates: 最近更新

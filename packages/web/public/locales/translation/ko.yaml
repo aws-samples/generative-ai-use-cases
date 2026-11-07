@@ -601,6 +601,8 @@ setting:
     show_tools: 도구 표시
     show_use_case_builder: 사용 사례 빌더 표시
     stats: 통계
+    transcribe_languages: 음성 인식 자동 감지 언어
+    transcribe_languages_help: '음성 인식 언어를 "자동"으로 설정했을 때(회의록, 음성 입력, 파일 문자 변환) 감지 후보로 사용할 언어입니다. 2~5개를 선택하세요. 많이 선택할수록 짧은 발화의 언어를 잘못 감지하기 쉽습니다.'
     typing_animation: 타이핑 애니메이션
     version: 버전
     version_help: generative-ai-use-cases의 package.json 버전 참조
