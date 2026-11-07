@@ -434,6 +434,13 @@ export class Api extends Construct {
     }
     fileBucket.grantWrite(copyVideoJob);
     table.grantWriteData(copyVideoJob);
+    // The API handler (GET /video/generate) starts the copy job once Bedrock
+    // finishes generating a video.
+    apiHandler.addEnvironment(
+      'COPY_VIDEO_JOB_FUNCTION_ARN',
+      copyVideoJob.functionArn
+    );
+    copyVideoJob.grantInvoke(apiHandler);
 
     const optimizePromptFunction = new NodejsFunction(
       this,
