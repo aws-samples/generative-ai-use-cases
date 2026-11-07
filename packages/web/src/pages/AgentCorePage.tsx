@@ -15,6 +15,7 @@ import { useAgentCore } from '../hooks/useAgentCore';
 import { MODELS } from '../hooks/useModel';
 import { PiArrowLeft } from 'react-icons/pi';
 import ButtonIcon from '../components/ButtonIcon';
+import useDropOverlay from '../hooks/useDropOverlay';
 
 // Define file limits for the chat interface
 // File size limits for AgentCore (AgentCore Runtime route: Frontend → AgentCore Runtime → Bedrock Converse API)
@@ -106,7 +107,6 @@ const AgentCorePage: React.FC = () => {
 
   const [selectedArn, setSelectedArn] = useState('');
   const [sessionId] = useState(uuidv4());
-  const [isOver, setIsOver] = useState(false);
   const [writing, setWriting] = useState(false);
 
   const { clear: clearFiles, uploadFiles, uploadedFiles } = useFiles(pathname);
@@ -203,24 +203,13 @@ const AgentCorePage: React.FC = () => {
     // Note: AgentCore doesn't have a direct forceToStop method, so we just update the UI state
   }, []);
 
-  // Handle drag and drop for files
-  const handleDragOver = (event: React.DragEvent) => {
-    event.preventDefault();
-    setIsOver(true);
-  };
-
-  const handleDragLeave = (event: React.DragEvent) => {
-    event.preventDefault();
-    setIsOver(false);
-  };
-
-  const handleDrop = (event: React.DragEvent) => {
-    event.preventDefault();
-    setIsOver(false);
-    if (event.dataTransfer.files) {
-      uploadFiles(Array.from(event.dataTransfer.files), fileLimit, accept);
-    }
-  };
+  // Drop overlay; see useDropOverlay for why it closes on its own.
+  const onDropFiles = useCallback(
+    (files: File[]) => uploadFiles(files, fileLimit, accept),
+    [uploadFiles, accept]
+  );
+  const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
+    useDropOverlay(onDropFiles);
 
   // Prepare runtime options
   const runtimeOptions = useMemo(() => {
@@ -321,6 +310,7 @@ const AgentCorePage: React.FC = () => {
           <div
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            onClick={hideOverlay}
             className="fixed bottom-0 left-0 right-0 top-0 z-[999] bg-slate-300 p-10 text-center">
             <div className="flex h-full w-full items-center justify-center outline-dashed">
               <div className="font-bold">
