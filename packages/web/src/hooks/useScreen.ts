@@ -57,6 +57,27 @@ const useScreenStore = create<{
   };
 });
 
+const isScrollContainer = (el: HTMLElement): boolean => {
+  const overflowY = window.getComputedStyle(el).overflowY;
+  return overflowY === 'auto' || overflowY === 'scroll';
+};
+
+// Scroll the container that holds `anchor` to its top or bottom edge.
+//
+// `anchor.scrollIntoView()` scrolls every scrollable ancestor, and that
+// includes the parent page when GenU is embedded in an iframe: sending a chat
+// message jumped the host page down (#1288). Setting `scrollTop` on the
+// container only moves GenU's own scroll area.
+export const scrollToEdge = (anchor: HTMLElement, edge: 'top' | 'bottom') => {
+  let container = anchor.parentElement;
+  while (container && !isScrollContainer(container)) {
+    container = container.parentElement;
+  }
+  const target =
+    container ?? document.scrollingElement ?? document.documentElement;
+  target.scrollTop = edge === 'top' ? 0 : target.scrollHeight;
+};
+
 const useScreen = () => {
   const {
     isAtBottom,
@@ -130,13 +151,13 @@ const useScreen = () => {
 
   const scrollToBottom = useCallback(() => {
     if (scrollBottomAnchor) {
-      scrollBottomAnchor.scrollIntoView();
+      scrollToEdge(scrollBottomAnchor, 'bottom');
     }
   }, [scrollBottomAnchor]);
 
   const scrollToTop = useCallback(() => {
     if (scrollTopAnchor) {
-      scrollTopAnchor.scrollIntoView();
+      scrollToEdge(scrollTopAnchor, 'top');
     }
   }, [scrollTopAnchor]);
 
