@@ -22,6 +22,7 @@ import Switch from '../components/Switch';
 import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import useFollow from '../hooks/useFollow';
+import usePreventNavigation from '../hooks/usePreventNavigation';
 import { PiArrowClockwiseBold, PiShareFatFill } from 'react-icons/pi';
 import { create } from 'zustand';
 import BedrockIcon from '../assets/bedrock.svg?react';
@@ -108,6 +109,14 @@ const ChatPage: React.FC = () => {
     setSaveSystemContextTitle,
   } = useChatPageState();
   const { pathname, search } = useLocation();
+
+  // Ask before a reload, closing the tab or leaving for another site while
+  // there is an unsent message (#1321). In-app navigation is not blocked: the
+  // draft lives in the useChatPageState store and survives it.
+  usePreventNavigation(content.trim() !== '', {
+    blockInternalNavigation: false,
+  });
+
   const {
     clear: clearFiles,
     uploadedFiles,
