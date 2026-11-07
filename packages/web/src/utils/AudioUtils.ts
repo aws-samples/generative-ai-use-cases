@@ -24,9 +24,36 @@ export const getTranscribeSampleRate = (contextSampleRate: number): number => {
   return sampleRate;
 };
 
+const FALLBACK_TRANSCRIBE_LANGUAGE_OPTIONS = 'ja-JP,en-US';
+
+/**
+ * Read the transcribeLanguageOptions deploy parameter (a JSON array of
+ * language codes) as the comma-separated list Transcribe streaming takes.
+ * The deploy-time validation guarantees at least two codes; anything else
+ * (e.g. a local dev server without the variable) falls back to ja-JP / en-US.
+ */
+export const parseTranscribeLanguageOptions = (raw?: string): string => {
+  try {
+    const codes: unknown = JSON.parse(raw ?? '');
+    if (
+      Array.isArray(codes) &&
+      codes.length >= 2 &&
+      codes.every((c) => typeof c === 'string' && c !== '')
+    ) {
+      return codes.join(',');
+    }
+  } catch {
+    // fall through
+  }
+  return FALLBACK_TRANSCRIBE_LANGUAGE_OPTIONS;
+};
+
 // Candidates for automatic language identification in Transcribe streaming,
 // used when the caller does not pass its own list.
-export const DEFAULT_TRANSCRIBE_LANGUAGE_OPTIONS = 'en-US,ja-JP,zh-CN';
+export const DEFAULT_TRANSCRIBE_LANGUAGE_OPTIONS =
+  parseTranscribeLanguageOptions(
+    import.meta.env.VITE_APP_TRANSCRIBE_LANGUAGE_OPTIONS
+  );
 
 // Languages written without spaces between words. Transcribe returns their
 // transcript as space-separated items, so the spaces are removed for display.

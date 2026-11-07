@@ -75,6 +75,7 @@ export interface BackendApiProps {
   // Transcribe
   readonly audioBucket?: Bucket;
   readonly transcriptBucket?: Bucket;
+  readonly transcribeLanguageOptions: string[];
   // Speech to Speech
   readonly speechToSpeechTaskFunctionArn?: string;
   readonly speechToSpeechModelIds?: ModelConfiguration[];
@@ -241,6 +242,9 @@ export class Api extends Construct {
         // Transcribe
         AUDIO_BUCKET_NAME: props.audioBucket?.bucketName ?? '',
         TRANSCRIPT_BUCKET_NAME: props.transcriptBucket?.bucketName ?? '',
+        TRANSCRIBE_LANGUAGE_OPTIONS: JSON.stringify(
+          props.transcribeLanguageOptions
+        ),
         // Speech to Speech
         SPEECH_TO_SPEECH_TASK_FUNCTION_ARN:
           props.speechToSpeechTaskFunctionArn ?? '',

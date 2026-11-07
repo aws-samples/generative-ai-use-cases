@@ -250,6 +250,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       // Transcribe
       audioBucket: transcribe.audioBucket,
       transcriptBucket: transcribe.transcriptBucket,
+      transcribeLanguageOptions: params.transcribeLanguageOptions,
       // Speech to Speech
       speechToSpeechTaskFunctionArn:
         speechToSpeech.speechToSpeechTaskFunctionArn,
@@ -399,6 +400,7 @@ export class GenerativeAiUseCasesStack extends Stack {
         : undefined,
       // Frontend
       hiddenUseCases: params.hiddenUseCases,
+      transcribeLanguageOptions: params.transcribeLanguageOptions,
       // Custom Domain
       cert: props.cert,
       hostName: params.hostName,
@@ -542,6 +544,10 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     new CfnOutput(this, 'HiddenUseCases', {
       value: JSON.stringify(params.hiddenUseCases),
+    });
+
+    new CfnOutput(this, 'TranscribeLanguageOptions', {
+      value: JSON.stringify(params.transcribeLanguageOptions),
     });
 
     new CfnOutput(this, 'SpeechToSpeechNamespace', {

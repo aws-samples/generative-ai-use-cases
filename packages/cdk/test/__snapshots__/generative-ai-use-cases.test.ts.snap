@@ -5481,6 +5481,9 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "Ref": "DatabaseTableF104A135",
       },
     },
+    "TranscribeLanguageOptions": {
+      "Value": "[\\"ja-JP\\",\\"en-US\\"]",
+    },
     "TranscriptBucketName": {
       "Value": {
         "Ref": "TranscribeTranscriptBucketE67CAF92",
@@ -6129,6 +6132,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
             },
+            "TRANSCRIBE_LANGUAGE_OPTIONS": "[\\"ja-JP\\",\\"en-US\\"]",
             "TRANSCRIPT_BUCKET_NAME": {
               "Ref": "TranscribeTranscriptBucketE67CAF92",
             },
@@ -13500,6 +13504,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
           },
           "VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-sonic-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           "VITE_APP_SPEECH_TO_SPEECH_NAMESPACE": "speech-to-speech",
+          "VITE_APP_TRANSCRIBE_LANGUAGE_OPTIONS": "[\\"ja-JP\\",\\"en-US\\"]",
           "VITE_APP_USER_POOL_CLIENT_ID": {
             "Ref": "AuthUserPoolclientA74673A9",
           },
@@ -19372,6 +19377,9 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "Ref": "DatabaseTableF104A135",
       },
     },
+    "TranscribeLanguageOptions": {
+      "Value": "[\\"ja-JP\\",\\"en-US\\"]",
+    },
     "TranscriptBucketName": {
       "Value": {
         "Ref": "TranscribeTranscriptBucketE67CAF92",
@@ -19981,6 +19989,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
             },
+            "TRANSCRIBE_LANGUAGE_OPTIONS": "[\\"ja-JP\\",\\"en-US\\"]",
             "TRANSCRIPT_BUCKET_NAME": {
               "Ref": "TranscribeTranscriptBucketE67CAF92",
             },
@@ -27205,6 +27214,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
           },
           "VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-sonic-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
           "VITE_APP_SPEECH_TO_SPEECH_NAMESPACE": "speech-to-speech",
+          "VITE_APP_TRANSCRIBE_LANGUAGE_OPTIONS": "[\\"ja-JP\\",\\"en-US\\"]",
           "VITE_APP_USER_POOL_CLIENT_ID": {
             "Ref": "AuthUserPoolclientA74673A9",
           },
