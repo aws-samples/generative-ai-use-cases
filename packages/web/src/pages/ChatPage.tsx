@@ -22,6 +22,9 @@ import Switch from '../components/Switch';
 import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import useFollow from '../hooks/useFollow';
+import useChatPreferences, {
+  pickInitialModelId,
+} from '../hooks/useChatPreferences';
 import { PiArrowClockwiseBold, PiShareFatFill } from 'react-icons/pi';
 import { create } from 'zustand';
 import BedrockIcon from '../assets/bedrock.svg?react';
@@ -153,13 +156,21 @@ const ChatPage: React.FC = () => {
   const prompter = useMemo(() => {
     return getPrompter(modelId);
   }, [modelId]);
+  const {
+    modelId: savedModelId,
+    setModelId: saveModelId,
+    setReasoningConfig: saveReasoningConfig,
+  } = useChatPreferences();
+  // Start from the reasoning settings the user last chose (#923). The effect
+  // below still adapts the type to the selected model's capabilities.
   const [overrideModelParameters, setOverrideModelParameters] =
-    useState<AdditionalModelRequestFields>({
+    useState<AdditionalModelRequestFields>(() => ({
       reasoningConfig: {
         type: 'disabled',
         budgetTokens: DEFAULT_REASONING_BUDGET,
+        ...useChatPreferences.getState().reasoningConfig,
       },
-    });
+    }));
   const [showSetting, setShowSetting] = useState(false);
   const { t } = useTranslation();
   const [forceExpandPromptList, setForceExpandPromptList] = useState<
@@ -257,8 +268,32 @@ const ChatPage: React.FC = () => {
     });
   }, [adaptiveThinking, adaptiveThinkingAlwaysOn, xhighEffort]);
 
+  // Remember the reasoning settings for the next visit. When an always-on
+  // model forced reasoning on, store the user's own "disabled" instead, so
+  // the forced state does not follow them to other models.
   useEffect(() => {
-    const _modelId = !modelId ? availableModels[0] : modelId;
+    const config = overrideModelParameters.reasoningConfig;
+    saveReasoningConfig(
+      reasoningForcedByAlwaysOn.current
+        ? { ...config, type: 'disabled' }
+        : config
+    );
+  }, [overrideModelParameters.reasoningConfig, saveReasoningConfig]);
+
+  // Only an explicit pick is remembered (#1391); a model chosen by default or
+  // by a URL parameter does not replace the user's choice.
+  const onChangeModel = useCallback(
+    (newModelId: string) => {
+      setModelId(newModelId);
+      saveModelId(newModelId);
+    },
+    [setModelId, saveModelId]
+  );
+
+  useEffect(() => {
+    const _modelId = !modelId
+      ? pickInitialModelId(savedModelId, availableModels)!
+      : modelId;
 
     if (search !== '') {
       const params = queryString.parse(search) as ChatPageQueryParams;
@@ -557,7 +592,7 @@ const ChatPage: React.FC = () => {
         <div className="mt-2 flex w-full items-end justify-center lg:mt-0 print:hidden">
           <Select
             value={modelId}
-            onChange={setModelId}
+            onChange={onChangeModel}
             options={availableModels.map((m) => {
               return { value: m, label: modelDisplayName(m) };
             })}
