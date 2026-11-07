@@ -28,17 +28,19 @@ jobs:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'allow-stateful-change') }}
     env:
       SNAPSHOT: packages/cdk/test/__snapshots__/stateful-resources.test.ts.snap
-      BASE_SHA: ${{ github.event.pull_request.base.sha }}
     steps:
+      # The pull_request checkout is a merge commit whose first parent is the
+      # current base branch, so HEAD^1..HEAD is exactly this PR's change.
       - uses: actions/checkout@v7
-      - run: git fetch --depth=1 origin "$BASE_SHA"
+        with:
+          fetch-depth: 2
       - name: Fail on removed or changed stateful resources
         run: |
-          if ! git cat-file -e "$BASE_SHA:$SNAPSHOT" 2>/dev/null; then
+          if ! git cat-file -e "HEAD^1:$SNAPSHOT" 2>/dev/null; then
             echo "No baseline snapshot on the base branch; nothing to compare."
             exit 0
           fi
-          git diff --unified=6 "$BASE_SHA" -- "$SNAPSHOT" > "$RUNNER_TEMP/stateful.diff"
+          git diff --unified=6 HEAD^1 HEAD -- "$SNAPSHOT" > "$RUNNER_TEMP/stateful.diff"
           if ! grep -qE '^-[^-]' "$RUNNER_TEMP/stateful.diff"; then
             echo "No stateful resource is removed, replaced or unprotected."
             exit 0
