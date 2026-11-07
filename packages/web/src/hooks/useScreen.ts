@@ -62,7 +62,9 @@ const isScrollContainer = (el: HTMLElement): boolean => {
   return overflowY === 'auto' || overflowY === 'scroll';
 };
 
-// Scroll the container that holds `anchor` to its top or bottom edge.
+// Scroll the container that holds `anchor` to its top or bottom edge. The
+// anchors live in the `overflow-y-scroll` screen div in App.tsx; containers
+// with `overflow: hidden` are not treated as scroll containers.
 //
 // `anchor.scrollIntoView()` scrolls every scrollable ancestor, and that
 // includes the parent page when GenU is embedded in an iframe: sending a chat

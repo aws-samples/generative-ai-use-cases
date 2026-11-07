@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { scrollToEdge } from '../../src/hooks/useScreen';
+import { createElement } from 'react';
+import { act, render } from '@testing-library/react';
+import useScreen, { scrollToEdge } from '../../src/hooks/useScreen';
 
 // jsdom does no layout, so scrollHeight is stubbed per element.
 const makeContainer = (scrollHeight: number) => {
@@ -13,6 +15,49 @@ const makeContainer = (scrollHeight: number) => {
   document.body.appendChild(container);
   return { container, anchor };
 };
+
+// Renders the hook the way App.tsx does: the scroll container and the anchors
+// inside it, so the hook-level functions can be called as the app calls them.
+const renderScreen = () => {
+  const api: { current?: ReturnType<typeof useScreen> } = {};
+  const Harness = () => {
+    const value = useScreen();
+    api.current = value;
+    return createElement(
+      'div',
+      { ref: value.screen, style: { overflowY: 'scroll' } },
+      createElement(
+        'main',
+        null,
+        createElement('div', { ref: value.scrollTopAnchorRef }),
+        createElement('div', { ref: value.scrollBottomAnchorRef })
+      )
+    );
+  };
+  const { container } = render(createElement(Harness));
+  const scroller = container.firstElementChild as HTMLDivElement;
+  Object.defineProperty(scroller, 'scrollHeight', { value: 900 });
+  return { api, scroller };
+};
+
+describe('useScreen', () => {
+  afterEach(() => {
+    delete (HTMLElement.prototype as Partial<HTMLElement>).scrollIntoView;
+  });
+
+  it('scrolls its own container without scrollIntoView', () => {
+    // scrollIntoView would also scroll a page that embeds GenU in an iframe.
+    const scrollIntoView = vi.fn();
+    HTMLElement.prototype.scrollIntoView = scrollIntoView;
+    const { api, scroller } = renderScreen();
+
+    act(() => api.current!.scrollToBottom());
+    expect(scroller.scrollTop).toBe(900);
+    act(() => api.current!.scrollToTop());
+    expect(scroller.scrollTop).toBe(0);
+    expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+});
 
 describe('scrollToEdge', () => {
   afterEach(() => {
@@ -31,14 +76,6 @@ describe('scrollToEdge', () => {
     container.scrollTop = 500;
     scrollToEdge(anchor, 'top');
     expect(container.scrollTop).toBe(0);
-  });
-
-  it('does not use scrollIntoView, which also scrolls an embedding page', () => {
-    const { anchor } = makeContainer(1200);
-    const spy = vi.fn();
-    anchor.scrollIntoView = spy;
-    scrollToEdge(anchor, 'bottom');
-    expect(spy).not.toHaveBeenCalled();
   });
 
   it('falls back to the document when no scroll container exists', () => {
