@@ -213,7 +213,9 @@ const InputChatContent: React.FC<Props> = (props) => {
           />
         </div>
         <div className="m-2 flex justify-between gap-1">
-          <div className="flex items-center gap-x-1">
+          {/* min-w-0 lets the model selector shrink on narrow screens instead
+              of pushing the send button out of the row. */}
+          <div className="flex min-w-0 items-center gap-x-1">
             {props.fileUpload && (
               <Tooltip
                 message={t('inputs.attachment')}
@@ -259,7 +261,10 @@ const InputChatContent: React.FC<Props> = (props) => {
               <select
                 aria-label={t('inputs.model')}
                 title={t('inputs.model')}
-                className="max-w-[160px] truncate rounded-xl border border-gray-400 bg-white px-2 py-1.5 text-xs text-gray-700 sm:max-w-[240px]"
+                className="min-w-0 max-w-[160px] truncate rounded-xl border border-gray-400 bg-white px-2 py-1.5 text-xs text-gray-700 disabled:opacity-50 sm:max-w-[240px]"
+                // Switching models mid-response would change the model used
+                // for the rest of the turn and for the title.
+                disabled={loading}
                 value={props.modelId}
                 onChange={(e) => props.onModelChange!(e.target.value)}>
                 {props.modelOptions.map((opt) => (
