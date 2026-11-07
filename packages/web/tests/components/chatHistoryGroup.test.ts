@@ -41,6 +41,10 @@ describe('getChatHistoryGroup', () => {
     expect(chatHistoryGroupKey(group)).toBe('2026-3');
   });
 
+  it('puts an unparsable date in today instead of an invalid month', () => {
+    expect(getChatHistoryGroup('not-a-date', now)).toEqual({ kind: 'today' });
+  });
+
   it('treats a future timestamp (clock skew) as today', () => {
     expect(getChatHistoryGroup(at(2026, 11, 8), now).kind).toBe('today');
   });

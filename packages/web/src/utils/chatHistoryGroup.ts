@@ -23,6 +23,9 @@ export const getChatHistoryGroup = (
   now: Date = new Date()
 ): ChatHistoryGroup => {
   const created = new Date(Number(createdDate));
+  // Should not happen (chats always store epoch ms), but an unparsable value
+  // must not produce an invalid month that breaks date formatting.
+  if (isNaN(created.getTime())) return { kind: 'today' };
   const daysAgo = Math.round((startOfDay(now) - startOfDay(created)) / DAY_MS);
   if (daysAgo <= 0) return { kind: 'today' };
   if (daysAgo === 1) return { kind: 'yesterday' };

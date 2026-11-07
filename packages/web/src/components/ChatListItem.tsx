@@ -14,6 +14,7 @@ import { Chat } from 'generative-ai-use-cases';
 import { decomposeId } from '../utils/ChatUtils';
 import { getUseCaseIcon } from '../utils/UseCaseIconMap';
 import DialogConfirmDeleteChat from './DialogConfirmDeleteChat';
+import { useTranslation } from 'react-i18next';
 
 type Props = BaseProps & {
   active: boolean;
@@ -23,6 +24,8 @@ type Props = BaseProps & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdateTitle: (chatId: string, title: string) => Promise<any>;
   highlightWords: string[];
+  /** Short date shown at the right, e.g. "14:05" or "3/12". */
+  dateLabel?: string;
 };
 
 const ChatListItem: React.FC<Props> = (props) => {
@@ -32,11 +35,14 @@ const ChatListItem: React.FC<Props> = (props) => {
     return decomposeId(props.chat.chatId) ?? '';
   }, [props.chat.chatId]);
 
-  // Shown as a tooltip; the list itself is grouped by day (see ChatList).
+  // Full date and time as a tooltip, in the UI language.
+  const { i18n } = useTranslation();
   const createdAt = useMemo(() => {
     const date = new Date(Number(props.chat.createdDate));
-    return isNaN(date.getTime()) ? undefined : date.toLocaleString();
-  }, [props.chat.createdDate]);
+    return isNaN(date.getTime())
+      ? undefined
+      : date.toLocaleString(i18n.resolvedLanguage);
+  }, [props.chat.createdDate, i18n.resolvedLanguage]);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [tempTitle, setTempTitle] = useState('');
@@ -146,6 +152,11 @@ const ChatListItem: React.FC<Props> = (props) => {
             )}
           </div>
           <div className="flex">
+            {!props.active && !editing && props.dateLabel && (
+              <div className="ml-1 shrink-0 text-xs leading-5 text-gray-400">
+                {props.dateLabel}
+              </div>
+            )}
             {props.active && !editing && (
               <>
                 <ButtonIcon

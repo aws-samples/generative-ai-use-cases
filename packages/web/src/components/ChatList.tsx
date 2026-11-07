@@ -59,7 +59,20 @@ const ChatList: React.FC<Props> = (props) => {
       year: 'numeric',
       month: 'long',
     });
-    const groups: { key: string; label: string; chats: Chat[] }[] = [];
+    // Each chat also shows a short date: the time for today, the day otherwise.
+    const timeFormat = new Intl.DateTimeFormat(i18n.resolvedLanguage, {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    const dayFormat = new Intl.DateTimeFormat(i18n.resolvedLanguage, {
+      month: 'numeric',
+      day: 'numeric',
+    });
+    const groups: {
+      key: string;
+      label: string;
+      chats: { chat: Chat; dateLabel?: string }[];
+    }[] = [];
     for (const chat of searchedChats) {
       const group = getChatHistoryGroup(chat.createdDate, now);
       const key = chatHistoryGroupKey(group);
@@ -75,7 +88,11 @@ const ChatList: React.FC<Props> = (props) => {
               }[group.kind];
         groups.push({ key, label, chats: [] });
       }
-      groups[groups.length - 1].chats.push(chat);
+      const created = new Date(Number(chat.createdDate));
+      const dateLabel = isNaN(created.getTime())
+        ? undefined
+        : (group.kind === 'today' ? timeFormat : dayFormat).format(created);
+      groups[groups.length - 1].chats.push({ chat, dateLabel });
     }
     return groups;
   }, [searchedChats, t, i18n.resolvedLanguage]);
@@ -88,10 +105,13 @@ const ChatList: React.FC<Props> = (props) => {
         } flex flex-col items-start gap-0.5 overflow-x-hidden`}>
         {groupedChats.map(({ key, label, chats: groupChats }) => (
           <React.Fragment key={key}>
-            <div className="mt-2 px-2 text-xs text-gray-400 first:mt-0">
+            <div
+              role="heading"
+              aria-level={3}
+              className="mt-2 px-2 text-xs text-gray-400 first:mt-0">
               {label}
             </div>
-            {groupChats.map((chat) => {
+            {groupChats.map(({ chat, dateLabel }) => {
               const _chatId = decomposeId(chat.chatId);
               return (
                 <ChatListItem
@@ -99,6 +119,7 @@ const ChatList: React.FC<Props> = (props) => {
                   className={`${props.className && ''}`}
                   active={chatId === _chatId}
                   chat={chat}
+                  dateLabel={dateLabel}
                   onDelete={onDelete}
                   onUpdateTitle={onUpdateTitle}
                   highlightWords={props.searchWords}
