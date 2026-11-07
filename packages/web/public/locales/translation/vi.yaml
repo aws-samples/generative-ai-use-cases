@@ -320,14 +320,14 @@ error:
   streamingError:
     ACCESS_DENIED: Mô hình được chọn chưa được kích hoạt. Vui lòng kích hoạt mô hình trong bảng điều khiển Amazon Bedrock.
     CONTEXT_TOO_LONG: Cuộc trò chuyện hoặc tệp đính kèm quá dài để mô hình đọc. Vui lòng giảm nội dung đính kèm (số trang, dòng hoặc trang tính) hoặc bắt đầu cuộc trò chuyện mới.
-    DOCUMENT_TOO_LARGE: Tài liệu quá lớn. Mỗi tài liệu phải nhỏ hơn hoặc bằng 4.5 MB.
-    DUPLICATE_FILE_NAME: Có nhiều tệp đính kèm trùng tên. Vui lòng đổi tên hoặc bỏ tệp trùng lặp rồi thử lại.
-    EMPTY_MESSAGE: Tin nhắn đang trống. Vui lòng nhập câu hỏi hoặc yêu cầu.
+    DOCUMENT_TOO_LARGE: Tài liệu quá lớn để gửi. Vui lòng chia nhỏ hoặc giảm nội dung tài liệu rồi thử lại.
+    DUPLICATE_FILE_NAME: Cuộc trò chuyện này có nhiều tệp trùng tên (bao gồm cả tệp đã đính kèm trước đó). Vui lòng đổi tên tệp rồi đính kèm lại, hoặc bắt đầu cuộc trò chuyện mới.
+    EMPTY_MESSAGE: Cuộc trò chuyện chứa một tin nhắn trống nên không thể tiếp tục. Vui lòng bắt đầu cuộc trò chuyện mới.
     IMAGE_TOO_LARGE: Hình ảnh quá lớn. Mỗi hình ảnh phải nhỏ hơn hoặc bằng 3.75 MB.
-    INVALID_FILE_NAME: Tên tệp chứa ký tự không được phép. Vui lòng xóa khoảng trắng toàn chiều rộng, khoảng trắng liên tiếp và tab khỏi tên rồi đính kèm lại.
+    INVALID_FILE_NAME: Không thể sử dụng tên tệp này. Vui lòng đổi sang tên ngắn chỉ gồm chữ cái và số rồi đính kèm lại.
     PAYLOAD_TOO_LARGE: Tệp đính kèm quá lớn. Vui lòng giảm kích thước tệp hoặc số lượng tệp đính kèm và thử lại.
     THROTTLING: Máy chủ hiện đang có lưu lượng truy cập cao. Vui lòng thử lại sau.
-    TOO_MANY_DOCUMENTS: Có quá nhiều tài liệu được đính kèm. Các tài liệu đã đính kèm trước đó trong cuộc trò chuyện này cũng được tính, vì vậy vui lòng bắt đầu cuộc trò chuyện mới và thử lại.
+    TOO_MANY_DOCUMENTS: Có quá nhiều tài liệu được đính kèm. Các tài liệu đã đính kèm trước đó trong cuộc trò chuyện này cũng được tính. Vui lòng giảm số tệp đính kèm hoặc bắt đầu cuộc trò chuyện mới.
     UNKNOWN_ERROR: Đã xảy ra lỗi. Vui lòng thử lại hoặc liên hệ quản trị viên.
     UNSUPPORTED_FILE_TYPE: Loại tệp này không được hỗ trợ.
 feedback:

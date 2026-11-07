@@ -54,6 +54,25 @@ describe('classifyStreamingError', () => {
     expect(classifyStreamingError(e)).toBe('UNKNOWN_ERROR');
   });
 
+  it('classifies an exception event thrown mid-stream as a plain object', () => {
+    // Shape the SDK's event-stream reader throws for an exception frame.
+    expect(
+      classifyStreamingError({
+        message:
+          'The model returned the following errors: prompt is too long: 1011576 tokens > 1000000 maximum',
+      })
+    ).toBe('CONTEXT_TOO_LONG');
+  });
+
+  it('does not classify other named plain objects', () => {
+    expect(
+      classifyStreamingError({
+        name: 'ThrottlingException',
+        message: 'prompt is too long',
+      })
+    ).toBe('UNKNOWN_ERROR');
+  });
+
   it('handles non-Error values', () => {
     expect(classifyStreamingError('boom')).toBe('UNKNOWN_ERROR');
     expect(classifyStreamingError(undefined)).toBe('UNKNOWN_ERROR');

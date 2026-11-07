@@ -25,11 +25,30 @@ const VALIDATION_PATTERNS: [RegExp, StreamingErrorCode][] = [
  * differ between the Bedrock Runtime and Bedrock Agent Runtime clients.
  */
 export const classifyStreamingError = (e: unknown): StreamingErrorCode => {
-  if (!(e instanceof Error) || e.name !== 'ValidationException') {
-    return 'UNKNOWN_ERROR';
-  }
-  const match = VALIDATION_PATTERNS.find(([pattern]) =>
-    pattern.test(e.message)
-  );
+  const message = validationMessage(e);
+  if (message === undefined) return 'UNKNOWN_ERROR';
+  const match = VALIDATION_PATTERNS.find(([pattern]) => pattern.test(message));
   return match ? match[1] : 'UNKNOWN_ERROR';
+};
+
+// The message to classify, if `e` can be a validation error.
+//
+// A request rejected up front throws a ValidationException instance. An
+// exception event inside an already open stream is thrown by the SDK's
+// event-stream reader as a plain `{ message }` object without a name, so
+// that shape is matched too. Other named errors are left alone.
+const validationMessage = (e: unknown): string | undefined => {
+  if (e instanceof Error) {
+    return e.name === 'ValidationException' ? e.message : undefined;
+  }
+  if (typeof e === 'object' && e !== null) {
+    const { name, message } = e as { name?: unknown; message?: unknown };
+    if (
+      typeof message === 'string' &&
+      (name === undefined || name === 'ValidationException')
+    ) {
+      return message;
+    }
+  }
+  return undefined;
 };
