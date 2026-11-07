@@ -28,7 +28,8 @@ describe('Markdown <br> handling', () => {
   it('renders <br> in a table cell as a line break, not as text', () => {
     const container = renderMarkdown(TABLE_WITH_BR);
     const cell = container.querySelectorAll('td')[1];
-    expect(cell.textContent).toBe('step 1step 2step 3done');
+    // react-markdown emits a newline text node after each <br>.
+    expect(cell.textContent).toBe('step 1\nstep 2\nstep 3\ndone');
     expect(cell.querySelectorAll('br')).toHaveLength(3);
     expect(container.textContent).not.toContain('<br');
   });
