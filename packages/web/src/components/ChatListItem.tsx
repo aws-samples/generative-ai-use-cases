@@ -32,6 +32,12 @@ const ChatListItem: React.FC<Props> = (props) => {
     return decomposeId(props.chat.chatId) ?? '';
   }, [props.chat.chatId]);
 
+  // Shown as a tooltip; the list itself is grouped by day (see ChatList).
+  const createdAt = useMemo(() => {
+    const date = new Date(Number(props.chat.createdDate));
+    return isNaN(date.getTime()) ? undefined : date.toLocaleString();
+  }, [props.chat.createdDate]);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const [tempTitle, setTempTitle] = useState('');
 
@@ -112,7 +118,8 @@ const ChatListItem: React.FC<Props> = (props) => {
           props.active && 'bg-aws-sky'
         }
           ${props.className}`}
-        to={`/chat/${chatId}`}>
+        to={`/chat/${chatId}`}
+        title={createdAt}>
         <div
           className={`flex h-8 max-h-5 w-full justify-start overflow-hidden`}>
           <div className="mr-2 ">{getUseCaseIcon(props.chat.usecase)}</div>
