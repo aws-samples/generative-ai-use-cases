@@ -39,6 +39,7 @@ common:
   collapse: ย่อ
   colon: ':'
   complete: เสร็จสิ้น
+  copy_table: คัดลอกตาราง
   create: สร้าง
   delete: ลบ
   enter_text: ป้อนข้อความ
