@@ -107,6 +107,15 @@ def get_supported_cache_fields(model_id: str) -> list[str]:
     return SUPPORTED_CACHE_FIELDS.get(base_model_id, [])
 
 
+# Output token limit of each model, as the Converse path sets it (from CDK)
+MODEL_MAX_TOKENS: dict[str, int] = json.loads(os.environ.get("MODEL_MAX_TOKENS") or "{}")
+
+
+def get_max_tokens(model_id: str) -> int | None:
+    """The output token limit for a model, or None to leave Bedrock's default (4,096)"""
+    return MODEL_MAX_TOKENS.get(model_id)
+
+
 def supports_prompt_cache(model_id: str) -> bool:
     """Check if a model supports prompt caching (system or messages)"""
     return len(get_supported_cache_fields(model_id)) > 0
