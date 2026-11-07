@@ -1,4 +1,11 @@
-import React, { useEffect, useMemo, useState, memo } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  memo,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseProps } from '../@types/common';
 import { default as ReactMarkdown } from 'react-markdown';
@@ -9,8 +16,11 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkBreaks from 'remark-breaks';
 import ButtonCopy from './ButtonCopy';
+import ButtonIcon from './ButtonIcon';
 import useRagFile from '../hooks/useRagFile';
-import { PiSpinnerGap } from 'react-icons/pi';
+import { PiCheck, PiClipboard, PiSpinnerGap } from 'react-icons/pi';
+import copy from 'copy-to-clipboard';
+import { tableToClipboardHtml, tableToTsv } from '../utils/tableClipboard';
 import useFileApi from '../hooks/useFileApi';
 import 'katex/dist/katex.min.css';
 
@@ -192,6 +202,42 @@ const PreRenderer = ({
   return <pre {...rest}>{children}</pre>;
 };
 
+// Tables get a copy button that puts both HTML and tab-separated text on the
+// clipboard, so a paste into Excel or Google Sheets keeps the cells.
+const TableRenderer = ({ children }: ComponentProps<'table'> & ExtraProps) => {
+  const { t } = useTranslation();
+  const tableRef = useRef<HTMLTableElement>(null);
+  const [copied, setCopied] = useState(false);
+
+  const onCopy = useCallback(() => {
+    const table = tableRef.current;
+    if (!table) return;
+    copy(tableToTsv(table), {
+      format: 'text/plain',
+      onCopy: (clipboardData) => {
+        (clipboardData as DataTransfer).setData(
+          'text/html',
+          tableToClipboardHtml(table)
+        );
+      },
+    });
+    setCopied(true);
+    setTimeout(() => setCopied(false), 3000);
+  }, []);
+
+  return (
+    <div className="group relative">
+      <ButtonIcon
+        className="not-prose absolute -top-7 right-0 text-base text-gray-500 lg:opacity-0 lg:focus-visible:opacity-100 lg:group-hover:opacity-100"
+        title={t('common.copy_table')}
+        onClick={onCopy}>
+        {copied ? <PiCheck /> : <PiClipboard />}
+      </ButtonIcon>
+      <table ref={tableRef}>{children}</table>
+    </div>
+  );
+};
+
 // Helper function to check if code is SVG
 const isSvgCode = (code: string): boolean => {
   const trimmed = code.trim();
@@ -287,6 +333,7 @@ const Markdown = memo(({ className, prefix, children }: Props) => {
         ),
         pre: PreRenderer,
         code: CodeRenderer,
+        table: TableRenderer,
       }}
     />
   );
