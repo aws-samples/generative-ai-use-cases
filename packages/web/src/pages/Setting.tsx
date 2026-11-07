@@ -19,6 +19,7 @@ import {
   MAX_TRANSCRIBE_LANGUAGE_OPTIONS,
 } from '@generative-ai-use-cases/common';
 import useChatList from '../hooks/useChatList';
+import useTranscribeLanguageLabels from '../hooks/useTranscribeLanguageLabels';
 import DialogConfirmDeleteAllChats from '../components/DialogConfirmDeleteAllChats';
 
 const ragEnabled: boolean = import.meta.env.VITE_APP_RAG_ENABLED === 'true';
@@ -82,17 +83,7 @@ const Setting = () => {
     setSettingShowEmail,
   } = useUserSetting();
 
-  const transcribeLanguageLabels: Record<
-    (typeof TRANSCRIBE_AUTO_DETECT_LANGUAGES)[number],
-    string
-  > = {
-    'ja-JP': t('meetingMinutes.language_japanese'),
-    'en-US': t('meetingMinutes.language_english'),
-    'zh-CN': t('meetingMinutes.language_chinese'),
-    'ko-KR': t('meetingMinutes.language_korean'),
-    'th-TH': t('meetingMinutes.language_thai'),
-    'vi-VN': t('meetingMinutes.language_vietnamese'),
-  };
+  const transcribeLanguageLabels = useTranscribeLanguageLabels();
 
   const onClickSignout = useCallback(() => {
     // Delete all SWR cache

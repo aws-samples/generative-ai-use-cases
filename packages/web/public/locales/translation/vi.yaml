@@ -554,6 +554,8 @@ language:
   th: tiếng Thái
   zh: Tiếng Trung
 meetingMinutes:
+  auto_detect_candidates: 'Tự động nhận diện từ: {{languages}}'
+  auto_detect_change: Thay đổi trong Cài đặt
   auto_generate: Tự động tạo
   clear_minutes: Xóa biên bản
   custom_prompt: Lời nhắc tùy chỉnh

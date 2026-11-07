@@ -570,6 +570,8 @@ language:
   th: ภาษาไทย
   zh: ภาษาจีน
 meetingMinutes:
+  auto_detect_candidates: 'ตรวจจับอัตโนมัติจาก: {{languages}}'
+  auto_detect_change: เปลี่ยนในการตั้งค่า
   auto_generate: สร้างอัตโนมัติ
   clear_minutes: ล้างรายงานการประชุม
   custom_prompt: พรอมต์แบบกำหนดเอง

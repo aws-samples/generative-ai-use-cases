@@ -691,6 +691,8 @@ mcp_chat:
   loading_message: MCP サーバーと接続しています。時間がかかる場合があります。そのまま待機してください...
   title: MCP チャット
 meetingMinutes:
+  auto_detect_candidates: '自動判定の候補: {{languages}}'
+  auto_detect_change: 設定で変更
   auto_generate: 自動生成
   bidirectional: 双方向翻訳
   both_panel: 両方表示

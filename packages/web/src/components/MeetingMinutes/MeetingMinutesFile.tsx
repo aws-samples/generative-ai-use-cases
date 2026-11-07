@@ -6,6 +6,11 @@ import React, {
   useEffect,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import useUserSetting from '../../hooks/useUserSetting';
+import useTranscribeLanguageLabels, {
+  TranscribeAutoDetectLanguage,
+} from '../../hooks/useTranscribeLanguageLabels';
 import Button from '../Button';
 import ButtonCopy from '../ButtonCopy';
 import ButtonSendToUseCase from '../ButtonSendToUseCase';
@@ -24,7 +29,7 @@ interface MeetingMinutesFileProps {
 const MeetingMinutesFile: React.FC<MeetingMinutesFileProps> = ({
   onTranscriptChange,
 }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Transcription hook
@@ -34,6 +39,10 @@ const MeetingMinutesFile: React.FC<MeetingMinutesFileProps> = ({
   // Internal state management
   const [fileTranscriptText, setFileTranscriptText] = useState('');
   const [languageCode, setLanguageCode] = useState('auto');
+  // Default to automatic language identification; the candidates are the
+  // user's choice on the Settings page, shown under the selector.
+  const { settingTranscribeLanguageOptions } = useUserSetting();
+  const transcribeLanguageLabels = useTranscribeLanguageLabels();
   const [speakerLabel, setSpeakerLabel] = useState(false);
   const [maxSpeakers, setMaxSpeakers] = useState(4);
   const [speakers, setSpeakers] = useState('');
@@ -58,37 +67,6 @@ const MeetingMinutesFile: React.FC<MeetingMinutesFileProps> = ({
       speakers.split(',').map((speaker, idx) => [`spk_${idx}`, speaker.trim()])
     );
   }, [speakers]);
-
-  // Map i18n language to transcription language
-  const getTranscriptionLanguageFromSettings = useCallback(
-    (settingsLang: string): string => {
-      const langMapping: { [key: string]: string } = {
-        ja: 'ja-JP',
-        en: 'en-US',
-        zh: 'zh-CN',
-        ko: 'ko-KR',
-        th: 'th-TH',
-        vi: 'vi-VN',
-      };
-      return langMapping[settingsLang] || 'auto';
-    },
-    []
-  );
-
-  // Start with the UI language. This runs once: re-running it whenever the
-  // selection changes would switch "auto" back to the UI language at once, so
-  // automatic language identification could never be chosen.
-  const initializedLanguage = useRef(false);
-  useEffect(() => {
-    if (initializedLanguage.current || !i18n.resolvedLanguage) return;
-    initializedLanguage.current = true;
-    const mappedLang = getTranscriptionLanguageFromSettings(
-      i18n.resolvedLanguage
-    );
-    if (mappedLang !== 'auto') {
-      setLanguageCode(mappedLang);
-    }
-  }, [i18n.resolvedLanguage, getTranscriptionLanguageFromSettings]);
 
   // Handle file change
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,6 +156,23 @@ const MeetingMinutesFile: React.FC<MeetingMinutesFileProps> = ({
           onChange={setLanguageCode}
           options={languageOptions}
         />
+        {languageCode === 'auto' && (
+          <div className="mt-1 text-xs text-gray-500">
+            {t('meetingMinutes.auto_detect_candidates', {
+              languages: settingTranscribeLanguageOptions
+                .map(
+                  (code) =>
+                    transcribeLanguageLabels[
+                      code as TranscribeAutoDetectLanguage
+                    ] ?? code
+                )
+                .join(', '),
+            })}{' '}
+            <Link to="/setting" className="underline">
+              {t('meetingMinutes.auto_detect_change')}
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Speaker Recognition Parameters */}

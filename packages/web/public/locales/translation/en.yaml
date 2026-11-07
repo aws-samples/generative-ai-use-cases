@@ -846,6 +846,8 @@ mcp_chat:
   loading_message: Connecting to MCP server. This may take some time. Please wait...
   title: MCP Chat
 meetingMinutes:
+  auto_detect_candidates: 'Auto-detect from: {{languages}}'
+  auto_detect_change: Change in Settings
   auto_generate: Auto Generate
   bidirectional: Bidirectional Translation
   both_panel: Both Panels

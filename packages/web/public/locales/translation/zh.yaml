@@ -458,6 +458,8 @@ language:
   ko: 韩语
   zh: 中文
 meetingMinutes:
+  auto_detect_candidates: '自动检测候选: {{languages}}'
+  auto_detect_change: 在设置中更改
   auto_generate: 自动生成
   clear_minutes: 清除会议纪要
   custom_prompt: 自定义提示
