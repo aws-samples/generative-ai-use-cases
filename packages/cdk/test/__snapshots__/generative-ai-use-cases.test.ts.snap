@@ -6097,6 +6097,12 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "Agents",
               ],
             },
+            "COPY_VIDEO_JOB_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "APICopyVideoJobB772026B",
+                "Arn",
+              ],
+            },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
             "CUSTOM_AGENTS_JSON": "[]",
             "GUARDRAIL_IDENTIFIER": {
@@ -6670,6 +6676,32 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                         "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
                       },
                       "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "APICopyVideoJobB772026B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "APICopyVideoJobB772026B",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
                     ],
                   ],
                 },
@@ -19949,6 +19981,12 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "Agents",
               ],
             },
+            "COPY_VIDEO_JOB_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "APICopyVideoJobB772026B",
+                "Arn",
+              ],
+            },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
             "CUSTOM_AGENTS_JSON": "[]",
             "GUARDRAIL_IDENTIFIER": {
@@ -20492,6 +20530,32 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                         "Fn::ImportValue": "VideoTmpBucketStackus-east-1:ExportsOutputRefBucket83908E7781C90AC0",
                       },
                       "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "APICopyVideoJobB772026B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "APICopyVideoJobB772026B",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
                     ],
                   ],
                 },
