@@ -19,7 +19,6 @@ import ModalDialog from '../components/ModalDialog';
 import ModalSystemContext from '../components/ModalSystemContext';
 import ExpandableField from '../components/ExpandableField';
 import Switch from '../components/Switch';
-import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import useFollow from '../hooks/useFollow';
 import { PiArrowClockwiseBold, PiShareFatFill } from 'react-icons/pi';
@@ -148,6 +147,11 @@ const ChatPage: React.FC = () => {
   const { scrollableContainer, setFollowing } = useFollow();
   const { getChatTitle } = useChatList();
   const { allModelIds: availableModels, modelDisplayName } = MODELS;
+  const modelOptions = useMemo(
+    () =>
+      availableModels.map((m) => ({ value: m, label: modelDisplayName(m) })),
+    [availableModels, modelDisplayName]
+  );
   const { data: share, mutate: reloadShare } = findShareId(chatId);
   const modelId = getModelId();
   const prompter = useMemo(() => {
@@ -554,16 +558,6 @@ const ChatPage: React.FC = () => {
           </div>
         )}
 
-        <div className="mt-2 flex w-full items-end justify-center lg:mt-0 print:hidden">
-          <Select
-            value={modelId}
-            onChange={setModelId}
-            options={availableModels.map((m) => {
-              return { value: m, label: modelDisplayName(m) };
-            })}
-          />
-        </div>
-
         {((isEmpty && !loadingMessages) || loadingMessages) && (
           <div className="relative flex h-[calc(100vh-13rem)] flex-col items-center justify-center gap-y-4">
             <BedrockIcon
@@ -699,6 +693,9 @@ const ChatPage: React.FC = () => {
             reasoning={reasoning && !adaptiveThinkingAlwaysOn}
             onReasoningSwitched={onReasoningSwitched}
             reasoningEnabled={reasoningEnabled}
+            modelId={modelId}
+            onModelChange={setModelId}
+            modelOptions={modelOptions}
             setting={setting}
             onSetting={() => {
               setShowSetting(true);
