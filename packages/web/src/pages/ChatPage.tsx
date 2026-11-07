@@ -22,6 +22,7 @@ import Switch from '../components/Switch';
 import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import useFollow from '../hooks/useFollow';
+import useDropOverlay from '../hooks/useDropOverlay';
 import { PiArrowClockwiseBold, PiShareFatFill, PiX } from 'react-icons/pi';
 import ButtonIcon from '../components/ButtonIcon';
 import { create } from 'zustand';
@@ -360,7 +361,6 @@ const ChatPage: React.FC = () => {
   const [deletingShareId, setDeletingShareId] = useState(false);
   const [showShareIdModal, setShowShareIdModal] = useState(false);
   const [showSystemContextModal, setShowSystemContextModal] = useState(false);
-  const [isOver, setIsOver] = useState(false);
 
   const onCreateShareId = useCallback(async () => {
     try {
@@ -508,47 +508,12 @@ const ChatPage: React.FC = () => {
     setOverrideModelParameters,
   ]);
 
-  const handleDragOver = (event: React.DragEvent) => {
-    // When a file is dragged, display the overlay
-    event.preventDefault();
-    setIsOver(true);
-  };
-
-  const handleDragLeave = (event: React.DragEvent) => {
-    // When a file is dragged, hide the overlay
-    event.preventDefault();
-    setIsOver(false);
-  };
-
-  const handleDrop = (event: React.DragEvent) => {
-    // When a file is dropped, add the file
-    event.preventDefault();
-    setIsOver(false);
-    if (event.dataTransfer.files) {
-      // Reflect the file and upload it
-      uploadFiles(Array.from(event.dataTransfer.files), fileLimit, accept);
-    }
-  };
-
-  // The overlay only closes on dragleave or drop over itself. A drag that is
-  // cancelled with Esc, or that just passes over the page and ends elsewhere,
-  // fires neither, which left the overlay covering the chat (#903). Close it
-  // on Esc, on any window-level drop/dragend, and on click.
-  useEffect(() => {
-    if (!isOver) return;
-    const close = () => setIsOver(false);
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
-    };
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('dragend', close);
-    window.addEventListener('drop', close);
-    return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('dragend', close);
-      window.removeEventListener('drop', close);
-    };
-  }, [isOver]);
+  const onDropFiles = useCallback(
+    (files: File[]) => uploadFiles(files, fileLimit, accept),
+    [uploadFiles, accept]
+  );
+  const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
+    useDropOverlay(onDropFiles);
 
   // Initialize forceExpandPromptList to null when the path changes
   useEffect(() => {
@@ -568,12 +533,12 @@ const ChatPage: React.FC = () => {
           <div
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
-            onClick={() => setIsOver(false)}
+            onClick={hideOverlay}
             className="fixed bottom-0 left-0 right-0 top-0 z-[999] bg-slate-300 p-10 text-center">
             <ButtonIcon
               className="absolute right-3 top-3"
               title={t('common.close')}
-              onClick={() => setIsOver(false)}>
+              onClick={hideOverlay}>
               <PiX />
             </ButtonIcon>
             <div className="flex h-full w-full items-center justify-center outline-dashed">
