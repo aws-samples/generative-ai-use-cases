@@ -23,7 +23,6 @@ import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import useFollow from '../hooks/useFollow';
 import usePreventNavigation from '../hooks/usePreventNavigation';
-import NavigationBlockDialog from '../components/NavigationBlockDialog';
 import { PiArrowClockwiseBold, PiShareFatFill } from 'react-icons/pi';
 import { create } from 'zustand';
 import BedrockIcon from '../assets/bedrock.svg?react';
@@ -110,9 +109,12 @@ const ChatPage: React.FC = () => {
   } = useChatPageState();
   const { pathname, search } = useLocation();
 
-  // Ask before leaving (sidebar link, back button, reload, closing the tab)
-  // while there is an unsent message, so a misclick does not lose it (#1321).
-  const blocker = usePreventNavigation(content.trim() !== '');
+  // Ask before a reload, closing the tab or leaving for another site while
+  // there is an unsent message (#1321). In-app navigation is not blocked: the
+  // draft lives in the useChatPageState store and survives it.
+  usePreventNavigation(content.trim() !== '', {
+    blockInternalNavigation: false,
+  });
 
   const {
     clear: clearFiles,
@@ -543,11 +545,6 @@ const ChatPage: React.FC = () => {
 
   return (
     <>
-      <NavigationBlockDialog
-        isOpen={blocker.state === 'blocked'}
-        onCancel={() => blocker.reset?.()}
-        onConfirm={() => blocker.proceed?.()}
-      />
       <div
         onDragOver={fileUpload ? handleDragOver : undefined}
         className={`${!isEmpty ? 'screen:pb-48' : ''} relative`}>

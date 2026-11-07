@@ -6,15 +6,14 @@ import usePreventNavigation from '../../src/hooks/usePreventNavigation';
 const GO = 'go';
 const OTHER = 'other page';
 
-// A page shaped like ChatPage: it blocks while the draft is not blank.
+// Uses the hook with the same options as ChatPage: only reload, closing the
+// tab and leaving the site are guarded, because the chat draft survives
+// in-app navigation.
 const DraftPage = ({ draft }: { draft: string }) => {
-  const blocker = usePreventNavigation(draft.trim() !== '');
-  return (
-    <>
-      <Link to="/other">{GO}</Link>
-      <span data-testid="state">{blocker.state}</span>
-    </>
-  );
+  usePreventNavigation(draft.trim() !== '', {
+    blockInternalNavigation: false,
+  });
+  return <Link to="/other">{GO}</Link>;
 };
 
 const setup = (draft: string) => {
@@ -29,18 +28,25 @@ const setup = (draft: string) => {
   return router;
 };
 
-describe('usePreventNavigation with a chat draft', () => {
-  it('blocks leaving while the draft has text', async () => {
-    const router = setup('half-written question');
-    await act(async () => {
-      screen.getByText(GO).click();
-    });
-    expect(screen.getByTestId('state').textContent).toBe('blocked');
-    expect(router.state.location.pathname).toBe('/chat');
+const fireBeforeUnload = () => {
+  const event = new Event('beforeunload', { cancelable: true });
+  window.dispatchEvent(event);
+  return event;
+};
+
+describe('usePreventNavigation for the chat draft', () => {
+  it('asks before unload while the draft has text', () => {
+    setup('half-written question');
+    expect(fireBeforeUnload().defaultPrevented).toBe(true);
   });
 
-  it('lets the user leave when the draft is blank', async () => {
-    const router = setup('   ');
+  it('does not ask before unload when the draft is blank', () => {
+    setup('   ');
+    expect(fireBeforeUnload().defaultPrevented).toBe(false);
+  });
+
+  it('does not block in-app navigation, which keeps the draft', async () => {
+    const router = setup('half-written question');
     await act(async () => {
       screen.getByText(GO).click();
     });
