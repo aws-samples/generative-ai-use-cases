@@ -16,6 +16,10 @@ chat:
   delete_link_message: 通过删除链接，您可以停止公开对话历史。
   drop_files: 请拖放文件
   history: 对话历史
+  history_last_30_days: 过去 30 天
+  history_last_7_days: 过去 7 天
+  history_today: 今天
+  history_yesterday: 昨天
   initialize: 初始化
   open_link: 打开链接
   prompt_examples: 提示示例

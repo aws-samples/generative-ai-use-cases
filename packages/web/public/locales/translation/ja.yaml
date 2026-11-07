@@ -151,6 +151,10 @@ chat:
   hint_cmd_enter: ⌘ + Enter で送信
   hint_ctrl_enter: Ctrl + Enter で送信
   history: 履歴
+  history_last_30_days: 過去 30 日間
+  history_last_7_days: 過去 7 日間
+  history_today: 今日
+  history_yesterday: 昨日
   initialize: 初期化
   open_link: リンクを開く
   prompt_examples: プロンプト例
