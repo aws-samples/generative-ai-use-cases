@@ -12,7 +12,33 @@ import {
   UnrecordedMessage,
   UploadedFileType,
 } from 'generative-ai-use-cases';
+import { convertTextDocumentToUtf8 } from '@generative-ai-use-cases/common';
 
+/**
+ * Re-encode a text document in a legacy Japanese charset (Shift_JIS, EUC-JP) as
+ * UTF-8, the same way the Converse path does. Bedrock rejects EUC-JP documents
+ * and reads Shift_JIS ones as mojibake, and AgentCore passes the bytes to
+ * Bedrock unchanged. Other formats and UTF-8 come back as they were.
+ */
+const documentBytesAsUtf8 = (
+  base64Data: string,
+  format: string | undefined
+): string => {
+  if (!format) {
+    return base64Data;
+  }
+  const binary = atob(base64Data);
+  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+  const converted = convertTextDocumentToUtf8(bytes, format);
+  if (converted === bytes) {
+    return base64Data;
+  }
+  let out = '';
+  for (let i = 0; i < converted.length; i += 0x8000) {
+    out += String.fromCharCode(...converted.subarray(i, i + 0x8000));
+  }
+  return btoa(out);
+};
 /**
  * Convert GenU messages to Strands format
  */
@@ -95,16 +121,18 @@ const convertExtraDataToStrandsContentBlock = (
         },
       };
 
-    case 'file':
+    case 'file': {
+      const format = getDocumentFormatFromMimeType(data.source.mediaType);
       return {
         document: {
-          format: getDocumentFormatFromMimeType(data.source.mediaType),
+          format,
           name: data.name,
           source: {
-            bytes: base64Data,
+            bytes: documentBytesAsUtf8(base64Data, format),
           },
         },
       };
+    }
 
     case 'video':
       return {
@@ -256,7 +284,16 @@ const convertFileToStrandsContentBlock = async (
   base64Data: string
 ): Promise<StrandsContentBlock | null> => {
   const mimeType = file.type;
-  const fileName = file.name.replace(/[^a-zA-Z0-9\s\-()[\]]/g, 'X');
+  // \s must not be used here: it also matches U+3000 (ideographic space) and tabs,
+  // which Bedrock rejects. Consecutive spaces are rejected as well, and the name
+  // is capped at 200 characters. Leading and trailing spaces are trimmed.
+  const fileName =
+    file.name
+      .replace(/[^a-zA-Z0-9 \-()[\]]/g, 'X')
+      .replace(/ {2,}/g, ' ')
+      .trim()
+      .substring(0, 200)
+      .trimEnd() || 'file';
 
   // Determine file type based on MIME type
   if (mimeType.startsWith('image/')) {
@@ -279,12 +316,13 @@ const convertFileToStrandsContentBlock = async (
     };
   } else {
     // Treat as document
+    const format = getDocumentFormatFromMimeType(mimeType);
     return {
       document: {
-        format: getDocumentFormatFromMimeType(mimeType),
+        format,
         name: fileName,
         source: {
-          bytes: base64Data,
+          bytes: documentBytesAsUtf8(base64Data, format),
         },
       },
     };

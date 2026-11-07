@@ -232,6 +232,14 @@ export class GenerativeAiUseCasesStack extends Stack {
       vpc: props.vpc,
       securityGroups,
       apiGatewayVpcEndpoint: props.apiGatewayVpcEndpoint,
+      additionalApiGatewayVpcEndpoints:
+        params.closedNetworkApiGatewayVpcEndpointIds?.map((vpcEndpointId) =>
+          InterfaceVpcEndpoint.fromInterfaceVpcEndpointAttributes(
+            this,
+            `ApiGatewayVpcEndpoint-${vpcEndpointId}`,
+            { vpcEndpointId, port: 443 }
+          )
+        ),
       // RAG Kendra
       kendraIndexId: rag?.kendraIndexId,
       kendraIndexLanguage: rag?.kendraIndexLanguage,

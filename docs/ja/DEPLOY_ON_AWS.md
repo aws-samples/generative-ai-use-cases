@@ -27,6 +27,7 @@ IDE 下部の Terminal で以下のコマンドを実行します。generative-a
 ```bash
 git clone https://github.com/aws-samples/generative-ai-use-cases
 cd generative-ai-use-cases/
+git switch -c genu $(git describe --tags --abbrev=0)
 ```
 
 その後の手順は [generative-ai-use-cases の README.md](/README.md#デプロイ) の手順に従ってください。以下に、実行コマンドだけを端的に示します。

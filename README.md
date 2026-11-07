@@ -100,6 +100,10 @@ RAG also has the effect of preventing LLMs from providing "plausible but incorre
 GenU provides a RAG Chat use case.
 Two types of information sources are available for RAG Chat: [Amazon Kendra](docs/en/DEPLOY_OPTION.md) and [Knowledge Base](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case).
 When using Amazon Kendra, you can [use manually created S3 Buckets or Kendra Indexes as they are](docs/en/DEPLOY_OPTION.md#using-an-existing-amazon-kendra-index).
+
+> [!IMPORTANT]
+> Amazon Kendra entered maintenance mode on June 30, 2026, and has not accepted new customers since July 30, 2026 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). For new RAG chat deployments, we recommend the Knowledge Base option. To avoid fixed vector store costs, set `ragKnowledgeBaseStorageType` to `s3vectors`.
+
 When using Knowledge Base, advanced RAG features such as [Advanced Parsing](docs/en/DEPLOY_OPTION.md#enabling-advanced-parsing), [Chunk Strategy Selection](docs/en/DEPLOY_OPTION.md#changing-chunking-strategy), [Query Decomposition](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case), and [Reranking](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case) are available.
 Knowledge Base also allows for [Metadata Filter Settings](docs/en/DEPLOY_OPTION.md#metadata-filter-configuration).
 For example, you can meet requirements such as "switching accessible data sources by organization" or "allowing users to set filters from the UI."
@@ -162,7 +166,15 @@ GenU deployment uses [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/)
 - [Deployment method using AWS CloudShell (if preparing your own environment is difficult)](docs/en/DEPLOY_ON_CLOUDSHELL.md)
 - Workshop ([English](https://catalog.workshops.aws/generative-ai-use-cases) / [Japanese](https://catalog.workshops.aws/generative-ai-use-cases-jp))
 
-First, run the following command. All commands should be executed at the repository root.
+Clone the repository and create a branch from the latest release. The main branch can contain changes that are not released yet, so we recommend deploying a [release](https://github.com/aws-samples/generative-ai-use-cases/releases). To update later, see [Update Method](docs/en/UPDATE.md).
+
+```bash
+git clone https://github.com/aws-samples/generative-ai-use-cases
+cd generative-ai-use-cases
+git switch -c genu $(git describe --tags --abbrev=0)
+```
+
+Next, run the following command. All commands should be executed at the repository root.
 
 ```bash
 npm ci

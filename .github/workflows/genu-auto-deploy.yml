@@ -11,12 +11,13 @@ permissions:
 jobs:
   deploy:
     if: >-
-      (github.event.action == 'labeled' && github.event.label.name == 'auto-deploy') ||
-      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'auto-deploy'))
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      ((github.event.action == 'labeled' && github.event.label.name == 'auto-deploy') ||
+      (github.event.action == 'synchronize' && contains(github.event.pull_request.labels.*.name, 'auto-deploy')))
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::047385030331:role/GenUAutoDeployRole
           aws-region: ap-northeast-1
@@ -85,11 +86,14 @@ jobs:
           HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
 
   cleanup:
-    if: github.event.action == 'closed' && contains(github.event.pull_request.labels.*.name, 'auto-deploy')
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.action == 'closed' &&
+      contains(github.event.pull_request.labels.*.name, 'auto-deploy')
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: arn:aws:iam::047385030331:role/GenUAutoDeployRole
           aws-region: ap-northeast-1

@@ -73,6 +73,9 @@ npm run cdk:deploy
 
 ### RAG Chat (Amazon Kendra) 사용 사례 활성화
 
+> [!IMPORTANT]
+> Amazon Kendra는 2026년 6월 30일에 유지 관리 모드로 전환되었으며, 2026년 7월 30일부터 신규 고객을 받지 않습니다 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). 새로 RAG 채팅을 구축하는 경우 Knowledge Base 옵션 사용을 권장합니다. 벡터 스토어의 고정 비용을 피하려면 `ragKnowledgeBaseStorageType`을 `s3vectors`로 설정하십시오.
+
 `ragEnabled`를 `true`로 설정합니다. (기본값은 `false`)
 
 검색 성능을 향상시킬 수 있는 선호 언어로 `kendraIndexLanguage`를 설정할 수도 있습니다.
@@ -167,6 +170,7 @@ arn:aws:kendra:ap-northeast-1:333333333333:index/77777777-3333-4444-aaaa-1111111
 기존 Knowledge Base가 있는 경우 `ragKnowledgeBaseId`를 지식 베이스 ID로 설정합니다. (`null`인 경우 `ragKnowledgeBaseStorageType`에서 지정된 백엔드로 지식 베이스가 생성됩니다)
 
 `ragKnowledgeBaseStorageType`로 벡터 스토어 백엔드를 선택할 수 있습니다. (기본값은 `opensearch`)
+
 - `opensearch`: OpenSearch Serverless 사용 (기존 동작)
 - `s3vectors`: Amazon S3 Vectors 사용 (저비용, 고정 비용 없음)
 
@@ -932,6 +936,10 @@ const envs: Record<string, Partial<StackInput>> = {
 "anthropic.claude-3-opus-20240229-v1:0",
 "anthropic.claude-3-sonnet-20240229-v1:0",
 "anthropic.claude-3-haiku-20240307-v1:0",
+"global.anthropic.claude-opus-5-5",
+"global.anthropic.claude-opus-5",
+"global.anthropic.claude-haiku-5-5",
+"global.anthropic.claude-sonnet-5-5",
 "global.anthropic.claude-sonnet-4-20250514-v1:0",
 "us.anthropic.claude-opus-4-1-20250805-v1:0",
 "us.anthropic.claude-opus-4-20250514-v1:0",
@@ -1098,6 +1106,10 @@ const envs: Record<string, Partial<StackInput>> = {
 "anthropic.claude-3-opus-20240229-v1:0",
 "anthropic.claude-3-sonnet-20240229-v1:0",
 "anthropic.claude-3-haiku-20240307-v1:0",
+"global.anthropic.claude-opus-5-5",
+"global.anthropic.claude-opus-5",
+"global.anthropic.claude-haiku-5-5",
+"global.anthropic.claude-sonnet-5-5",
 "global.anthropic.claude-sonnet-4-20250514-v1:0",
 "us.anthropic.claude-opus-4-1-20250805-v1:0",
 "us.anthropic.claude-opus-4-20250514-v1:0",
@@ -1173,6 +1185,8 @@ const envs: Record<string, Partial<StackInput>> = {
 이 솔루션은 다음 음성-음성 모델을 지원합니다:
 
 ```
+amazon.nova-2-5-sonic
+amazon.nova-2-sonic-v1:0
 amazon.nova-sonic-v1:0
 ```
 

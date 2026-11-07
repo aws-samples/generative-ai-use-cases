@@ -390,6 +390,16 @@ const RagKnowledgeBasePage: React.FC = () => {
     [setContent, updateSystemContext]
   );
 
+  const onChangeModel = useCallback(
+    (newModelId: string) => {
+      if (newModelId !== modelId) {
+        setSessionId(undefined);
+      }
+      setModelId(newModelId);
+    },
+    [modelId, setModelId, setSessionId]
+  );
+
   return (
     <>
       <div className={`${!isEmpty ? 'screen:pb-48' : ''} relative`}>
@@ -400,7 +410,7 @@ const RagKnowledgeBasePage: React.FC = () => {
         <div className="mt-2 flex w-full items-end justify-center lg:mt-0">
           <Select
             value={modelId}
-            onChange={setModelId}
+            onChange={onChangeModel}
             options={availableModels.map((m) => {
               return { value: m, label: modelDisplayName(m) };
             })}
