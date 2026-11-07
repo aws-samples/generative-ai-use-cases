@@ -56,8 +56,10 @@
       "global.amazon.nova-2-lite-v1:0",
       "us.deepseek.r1-v1:0"
     ],
-    "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:0"],
+    "imageGenerationModelIds": [
+      { "modelId": "stability.stable-image-core-v1:1", "region": "us-west-2" }
+    ],
+    "videoGenerationModelIds": [],
     "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"],
     "endpointNames": [],
     "agentEnabled": false,

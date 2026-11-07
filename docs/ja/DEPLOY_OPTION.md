@@ -1405,6 +1405,15 @@ amazon.nova-sonic-v1:0
 "luma.ray-v2:0"
 ```
 
+> [!WARNING]
+> `amazon.nova-canvas-v1:0`、`amazon.nova-reel-v1:0`、`amazon.nova-reel-v1:1` は 2026-09-30 に EOL となり、全リージョンで呼び出せなくなりました。Titan Image Generator も現在は提供されていません。最新の状況は [Bedrock のモデルライフサイクル](https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html)を確認してください。
+>
+> そのため、デフォルトの画像生成モデルは us-west-2 の `stability.stable-image-core-v1:1` です。動画生成はデフォルトで無効です（`videoGenerationModelIds: []`）。動画生成を使う場合は、us-west-2 を CDK Bootstrap したうえで（`npx -w packages/cdk cdk bootstrap --region us-west-2`）、以下のように指定してください。
+>
+> ```json
+> "videoGenerationModelIds": [{ "modelId": "luma.ray-v2:0", "region": "us-west-2" }]
+> ```
+
 **指定したリージョンで指定したモデルが有効化されているかご確認ください。**
 
 ### 複数のリージョンのモデルを同時に利用する
