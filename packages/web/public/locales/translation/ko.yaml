@@ -861,6 +861,7 @@ voiceChat:
     feminine: 여성스러운 음성
     masculine: 남성스러운 음성
   im_listening: 듣고 있습니다...
+  multilingual: 다국어
   start: 새 세션 시작
   title: 음성 채팅
   voice: 음성

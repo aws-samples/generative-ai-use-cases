@@ -2,6 +2,7 @@ import {
   FeatureFlags,
   PromptCacheField,
   ModelMetadata,
+  SpeechToSpeechVoice,
 } from 'generative-ai-use-cases';
 
 // Manage Model Feature
@@ -927,185 +928,63 @@ export const BEDROCK_SPEECH_TO_SPEECH_MODELS = Object.keys(
 ).filter((model) => modelMetadata[model].flags.speechToSpeech);
 
 // Voices available for each speech-to-speech model.
-// Nova Sonic has no independent language parameter; the voiceId determines
-// both the voice and the spoken language. The UI exposes these as a single
-// combined dropdown (language + gender).
+// Nova Sonic has no language parameter. The voiceId picks the voice (and its
+// accent); the model answers in the language of the conversation.
 // Sources:
 //   https://docs.aws.amazon.com/nova/latest/nova2-userguide/sonic-language-support.html
 //   https://docs.aws.amazon.com/nova/latest/userguide/available-voices.html
-type SpeechToSpeechVoiceMetadata = {
-  voiceId: string;
-  // Human readable language name, e.g. 'English (US)'
-  language: string;
-  // BCP-47 locale, e.g. 'en-US'
-  locale: string;
-  gender: 'feminine' | 'masculine';
-};
+const voice = (
+  voiceId: string,
+  gender: SpeechToSpeechVoice['gender'],
+  locales: string[],
+  polyglot?: boolean
+): SpeechToSpeechVoice => ({
+  voiceId,
+  gender,
+  locales,
+  ...(polyglot ? { polyglot } : {}),
+});
 
-// Nova 2 Sonic / Nova 2.5 Sonic share the same voice and locale set.
-// tiffany (en-US) is placed first so it is the default selection and keeps
-// backward compatibility with the previously hardcoded voiceId.
-const NOVA_2_SONIC_VOICES: SpeechToSpeechVoiceMetadata[] = [
-  {
-    voiceId: 'tiffany',
-    language: 'English (US)',
-    locale: 'en-US',
-    gender: 'feminine',
-  },
-  {
-    voiceId: 'matthew',
-    language: 'English (US)',
-    locale: 'en-US',
-    gender: 'masculine',
-  },
-  {
-    voiceId: 'amy',
-    language: 'English (UK)',
-    locale: 'en-GB',
-    gender: 'feminine',
-  },
-  {
-    voiceId: 'olivia',
-    language: 'English (Australia)',
-    locale: 'en-AU',
-    gender: 'feminine',
-  },
-  {
-    voiceId: 'kiara',
-    language: 'English (Indian)',
-    locale: 'en-IN',
-    gender: 'feminine',
-  },
-  {
-    voiceId: 'arjun',
-    language: 'English (Indian)',
-    locale: 'en-IN',
-    gender: 'masculine',
-  },
-  { voiceId: 'ambre', language: 'French', locale: 'fr-FR', gender: 'feminine' },
-  {
-    voiceId: 'florian',
-    language: 'French',
-    locale: 'fr-FR',
-    gender: 'masculine',
-  },
-  {
-    voiceId: 'beatrice',
-    language: 'Italian',
-    locale: 'it-IT',
-    gender: 'feminine',
-  },
-  {
-    voiceId: 'lorenzo',
-    language: 'Italian',
-    locale: 'it-IT',
-    gender: 'masculine',
-  },
-  { voiceId: 'tina', language: 'German', locale: 'de-DE', gender: 'feminine' },
-  {
-    voiceId: 'lennart',
-    language: 'German',
-    locale: 'de-DE',
-    gender: 'masculine',
-  },
-  {
-    voiceId: 'lupe',
-    language: 'Spanish (US)',
-    locale: 'es-US',
-    gender: 'feminine',
-  },
-  {
-    voiceId: 'carlos',
-    language: 'Spanish (US)',
-    locale: 'es-US',
-    gender: 'masculine',
-  },
-  {
-    voiceId: 'carolina',
-    language: 'Portuguese',
-    locale: 'pt-BR',
-    gender: 'feminine',
-  },
-  {
-    voiceId: 'leo',
-    language: 'Portuguese',
-    locale: 'pt-BR',
-    gender: 'masculine',
-  },
-  { voiceId: 'kiara', language: 'Hindi', locale: 'hi-IN', gender: 'feminine' },
-  {
-    voiceId: 'arjun',
-    language: 'Hindi',
-    locale: 'hi-IN',
-    gender: 'masculine',
-  },
+// Nova 2 Sonic / Nova 2.5 Sonic share the same voice set. tiffany and matthew
+// are polyglot voices that speak every supported language. kiara and arjun are
+// listed for both en-IN and hi-IN, so each voice is one entry with its locales.
+// tiffany is placed first so it is the default selection and keeps backward
+// compatibility with the previously hardcoded voiceId.
+const NOVA_2_SONIC_VOICES: SpeechToSpeechVoice[] = [
+  voice('tiffany', 'feminine', ['en-US'], true),
+  voice('matthew', 'masculine', ['en-US'], true),
+  voice('amy', 'feminine', ['en-GB']),
+  voice('olivia', 'feminine', ['en-AU']),
+  voice('kiara', 'feminine', ['en-IN', 'hi-IN']),
+  voice('arjun', 'masculine', ['en-IN', 'hi-IN']),
+  voice('ambre', 'feminine', ['fr-FR']),
+  voice('florian', 'masculine', ['fr-FR']),
+  voice('beatrice', 'feminine', ['it-IT']),
+  voice('lorenzo', 'masculine', ['it-IT']),
+  voice('tina', 'feminine', ['de-DE']),
+  voice('lennart', 'masculine', ['de-DE']),
+  voice('lupe', 'feminine', ['es-US']),
+  voice('carlos', 'masculine', ['es-US']),
+  voice('carolina', 'feminine', ['pt-BR']),
+  voice('leo', 'masculine', ['pt-BR']),
 ];
 
-// Nova Sonic v1 supports a different, smaller voice set (German feminine is greta).
-// tiffany (en-US) is placed first to keep it as the default selection.
-const NOVA_SONIC_V1_VOICES: SpeechToSpeechVoiceMetadata[] = [
-  {
-    voiceId: 'tiffany',
-    language: 'English (US)',
-    locale: 'en-US',
-    gender: 'feminine',
-  },
-  {
-    voiceId: 'matthew',
-    language: 'English (US)',
-    locale: 'en-US',
-    gender: 'masculine',
-  },
-  {
-    voiceId: 'amy',
-    language: 'English (UK)',
-    locale: 'en-GB',
-    gender: 'feminine',
-  },
-  { voiceId: 'ambre', language: 'French', locale: 'fr-FR', gender: 'feminine' },
-  {
-    voiceId: 'florian',
-    language: 'French',
-    locale: 'fr-FR',
-    gender: 'masculine',
-  },
-  {
-    voiceId: 'beatrice',
-    language: 'Italian',
-    locale: 'it-IT',
-    gender: 'feminine',
-  },
-  {
-    voiceId: 'lorenzo',
-    language: 'Italian',
-    locale: 'it-IT',
-    gender: 'masculine',
-  },
-  { voiceId: 'greta', language: 'German', locale: 'de-DE', gender: 'feminine' },
-  {
-    voiceId: 'lennart',
-    language: 'German',
-    locale: 'de-DE',
-    gender: 'masculine',
-  },
-  {
-    voiceId: 'lupe',
-    language: 'Spanish',
-    locale: 'es-US',
-    gender: 'feminine',
-  },
-  {
-    voiceId: 'carlos',
-    language: 'Spanish',
-    locale: 'es-US',
-    gender: 'masculine',
-  },
+// Nova Sonic v1 has a smaller voice set (its German feminine voice is greta).
+const NOVA_SONIC_V1_VOICES: SpeechToSpeechVoice[] = [
+  voice('tiffany', 'feminine', ['en-US']),
+  voice('matthew', 'masculine', ['en-US']),
+  voice('amy', 'feminine', ['en-GB']),
+  voice('ambre', 'feminine', ['fr-FR']),
+  voice('florian', 'masculine', ['fr-FR']),
+  voice('beatrice', 'feminine', ['it-IT']),
+  voice('lorenzo', 'masculine', ['it-IT']),
+  voice('greta', 'feminine', ['de-DE']),
+  voice('lennart', 'masculine', ['de-DE']),
+  voice('lupe', 'feminine', ['es-US']),
+  voice('carlos', 'masculine', ['es-US']),
 ];
 
-export const SPEECH_TO_SPEECH_VOICES: Record<
-  string,
-  SpeechToSpeechVoiceMetadata[]
-> = {
+export const SPEECH_TO_SPEECH_VOICES: Record<string, SpeechToSpeechVoice[]> = {
   'amazon.nova-2-5-sonic': NOVA_2_SONIC_VOICES,
   'amazon.nova-2-sonic-v1:0': NOVA_2_SONIC_VOICES,
   'amazon.nova-sonic-v1:0': NOVA_SONIC_V1_VOICES,
@@ -1113,8 +992,16 @@ export const SPEECH_TO_SPEECH_VOICES: Record<
 
 export const getSpeechToSpeechVoices = (
   modelId: string
-): SpeechToSpeechVoiceMetadata[] => {
+): SpeechToSpeechVoice[] => {
   return SPEECH_TO_SPEECH_VOICES[modelId] ?? [];
+};
+
+// Whether voiceId is one of the voices of the speech-to-speech model
+export const isSpeechToSpeechVoice = (
+  modelId: string,
+  voiceId: string
+): boolean => {
+  return getSpeechToSpeechVoices(modelId).some((v) => v.voiceId === voiceId);
 };
 
 // Prompt caching

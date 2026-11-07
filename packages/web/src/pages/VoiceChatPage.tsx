@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 import { MODELS } from '../hooks/useModel';
 
 const VoiceChatPage: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     messages,
     isActive,
@@ -44,26 +44,43 @@ const VoiceChatPage: React.FC = () => {
   } = MODELS;
   const [modelId, setModelId] = useState(speechToSpeechModelIds[0]);
 
-  // Voice options (combined language + gender) for the selected model
+  // Voice options for the selected model. The voice decides the voice and its
+  // accent, not the language of the conversation.
   const voiceOptions = useMemo(() => {
+    const languageNames = new Intl.DisplayNames(
+      [i18n.resolvedLanguage ?? 'en'],
+      {
+        type: 'language',
+      }
+    );
     return speechToSpeechVoices(modelId).map((voice) => {
-      const gender = t(`voiceChat.gender.${voice.gender}`);
       const voiceName =
         voice.voiceId.charAt(0).toUpperCase() + voice.voiceId.slice(1);
+      const gender = t(`voiceChat.gender.${voice.gender}`);
+      const languages = voice.locales
+        .map((locale) => languageNames.of(locale) ?? locale)
+        .join(' / ');
+      const multilingual = voice.polyglot
+        ? ` / ${t('voiceChat.multilingual')}`
+        : '';
       return {
         value: voice.voiceId,
-        // e.g. "English (US) / en-US / Tiffany (Feminine-sounding)"
-        label: `${voice.language} / ${voice.locale} / ${voiceName} (${gender})`,
+        // e.g. "Tiffany (Feminine-sounding) - American English / Multilingual"
+        label: `${voiceName} (${gender}) - ${languages}${multilingual}`,
       };
     });
-  }, [speechToSpeechVoices, modelId, t]);
+  }, [speechToSpeechVoices, modelId, t, i18n.resolvedLanguage]);
 
   const [voiceId, setVoiceId] = useState(voiceOptions[0]?.value ?? '');
 
-  // Reset the voice selection to the first available voice whenever the
-  // selected model changes (the available voices differ per model).
+  // Keep the selected voice while the selected model offers it (a language
+  // change rebuilds the labels only), otherwise fall back to the first voice.
   useEffect(() => {
-    setVoiceId(voiceOptions[0]?.value ?? '');
+    setVoiceId((current) =>
+      voiceOptions.some((o) => o.value === current)
+        ? current
+        : (voiceOptions[0]?.value ?? '')
+    );
   }, [voiceOptions]);
 
   // Label of the currently selected voice, shown while a session is active.

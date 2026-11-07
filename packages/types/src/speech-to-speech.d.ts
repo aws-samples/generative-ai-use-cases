@@ -26,11 +26,11 @@ export type SpeechToSpeechEvent = {
 // Metadata describing a selectable speech-to-speech voice
 export type SpeechToSpeechVoice = {
   voiceId: string;
-  // Human readable language name, e.g. 'English (US)'
-  language: string;
-  // BCP-47 locale, e.g. 'en-US'
-  locale: string;
+  // BCP-47 locales the voice is listed for, e.g. ['en-IN', 'hi-IN']
+  locales: string[];
   gender: 'feminine' | 'masculine';
+  // The voice speaks every language the model supports
+  polyglot?: boolean;
 };
 
 // Request payload sent from the web client to start a speech-to-speech session
