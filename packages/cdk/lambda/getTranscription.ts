@@ -83,11 +83,11 @@ export const handler = async (
         }, [] as Transcript[])
         .map((item) => ({
           ...item,
-          // There is a space between phrases, so remove it for Japanese
-          transcript:
-            output.results.language_code === 'ja-JP'
-              ? item.transcript.replace(/ /g, '')
-              : item.transcript,
+          // There is a space between phrases; Japanese and Chinese are written
+          // without spaces between words, so remove it for them
+          transcript: ['ja-JP', 'zh-CN'].includes(output.results.language_code)
+            ? item.transcript.replace(/ /g, '')
+            : item.transcript,
         }));
 
       const response: GetTranscriptionResponse = {

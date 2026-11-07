@@ -22,7 +22,7 @@ export const handler = async (
     const command = new StartTranscriptionJobCommand({
       IdentifyLanguage: !languageCode, // Enable auto-detection when no language specified
       LanguageCode: languageCode ? (languageCode as LanguageCode) : undefined, // Use specified language when provided
-      LanguageOptions: !languageCode ? ['ja-JP', 'en-US'] : undefined, // Language candidates for auto-detection only
+      LanguageOptions: !languageCode ? ['ja-JP', 'en-US', 'zh-CN'] : undefined, // Language candidates for auto-detection only
       Media: { MediaFileUri: audioUrl },
       TranscriptionJobName: uuid,
       Settings: {
