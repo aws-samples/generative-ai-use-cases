@@ -22,6 +22,8 @@ import Switch from '../components/Switch';
 import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import useFollow from '../hooks/useFollow';
+import usePreventNavigation from '../hooks/usePreventNavigation';
+import NavigationBlockDialog from '../components/NavigationBlockDialog';
 import { PiArrowClockwiseBold, PiShareFatFill } from 'react-icons/pi';
 import { create } from 'zustand';
 import BedrockIcon from '../assets/bedrock.svg?react';
@@ -107,6 +109,11 @@ const ChatPage: React.FC = () => {
     setSaveSystemContextTitle,
   } = useChatPageState();
   const { pathname, search } = useLocation();
+
+  // Ask before leaving (sidebar link, back button, reload, closing the tab)
+  // while there is an unsent message, so a misclick does not lose it (#1321).
+  const blocker = usePreventNavigation(content.trim() !== '');
+
   const {
     clear: clearFiles,
     uploadedFiles,
@@ -536,6 +543,11 @@ const ChatPage: React.FC = () => {
 
   return (
     <>
+      <NavigationBlockDialog
+        isOpen={blocker.state === 'blocked'}
+        onCancel={() => blocker.reset?.()}
+        onConfirm={() => blocker.proceed?.()}
+      />
       <div
         onDragOver={fileUpload ? handleDragOver : undefined}
         className={`${!isEmpty ? 'screen:pb-48' : ''} relative`}>
