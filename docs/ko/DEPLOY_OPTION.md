@@ -4,7 +4,7 @@
 
 GenU를 사용하면 parameter.ts 또는 AWS CDK context를 통해 설정을 변경할 수 있습니다.
 
-**여러 환경에 대한 설정을 정의할 수 있으므로 새 환경을 구축할 때는 parameter.ts를 사용하는 것을 권장합니다. 하위 호환성을 위해 매개변수는 context > parameter.ts 순서로 검색됩니다.**
+**새 환경을 구축할 때는 parameter.ts를 사용하는 것을 권장합니다. 여러 환경의 설정을 정의할 수 있고, TypeScript 타입 검사로 매개변수 이름이나 값의 오류를 발견할 수 있습니다(cdk.json에서는 이름이 잘못된 항목이 오류 없이 무시됩니다). 또한 업데이트 시 cdk.json에서 충돌이 덜 발생합니다. `env`로 지정한 환경이 parameter.ts에 정의되어 있으면 parameter.ts의 값만 사용되고 cdk.json의 매개변수는 사용되지 않습니다. 이미 cdk.json으로 설정한 경우의 이전 방법은 [업데이트 방법](./UPDATE.md#설정을-cdkjson에서-parameterts로-옮기는-경우)을 참조하세요.**
 
 **Context 사용 시: CDK context는 '-c'로 지정할 수 있지만, 코드 변경이 없으므로 프론트엔드 빌드가 트리거되지 않습니다. 이 자산의 경우 cdk.json에서 모든 설정을 변경하는 것을 권장합니다.**
 
