@@ -5254,14 +5254,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "AgentBuilderAgentCoreRuntimeName",
               ],
             },
             "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "AgentBuilderAgentCoreRuntimeArn",
               ],
             },
@@ -5284,14 +5284,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "GenericAgentCoreRuntimeName",
               ],
             },
             "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "GenericAgentCoreRuntimeArn",
               ],
             },
@@ -5513,7 +5513,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
     "WebUrl": {
       "Value": {
         "Fn::GetAtt": [
-          "ClosedNetworkRemoteOutputs3C6891AF",
+          "ClosedNetworkStackOutputs5CB81F6F",
           "ClosedNetworkWebUrl",
         ],
       },
@@ -6070,14 +6070,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 [
                   {
                     "Fn::GetAtt": [
-                      "ClosedNetworkRemoteOutputs3C6891AF",
+                      "ClosedNetworkStackOutputs5CB81F6F",
                       "ClosedNetworkAlbOrigin",
                     ],
                   },
                   ",",
                   {
                     "Fn::GetAtt": [
-                      "ClosedNetworkRemoteOutputs3C6891AF",
+                      "ClosedNetworkStackOutputs5CB81F6F",
                       "ClosedNetworkWebUrl",
                     ],
                   },
@@ -6093,7 +6093,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             },
             "BUILTIN_AGENTS_JSON": {
               "Fn::GetAtt": [
-                "AgentRemoteOutputs90CFA880",
+                "AgentStackOutputs62D8A811",
                 "Agents",
               ],
             },
@@ -12563,7 +12563,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             },
             "BUILTIN_AGENTS_JSON": {
               "Fn::GetAtt": [
-                "AgentRemoteOutputs90CFA880",
+                "AgentStackOutputs62D8A811",
                 "Agents",
               ],
             },
@@ -12760,7 +12760,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsDE8C59C9",
+                          "AgentCoreStackOutputs657336C2",
                           "GenericAgentCoreRuntimeArn",
                         ],
                       },
@@ -12774,7 +12774,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsDE8C59C9",
+                          "AgentCoreStackOutputs657336C2",
                           "AgentBuilderAgentCoreRuntimeArn",
                         ],
                       },
@@ -12797,546 +12797,45 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
-    "AgentCoreRemoteOutputsDE8C59C9": {
+    "AgentCoreStackOutputs657336C2": {
       "DeletionPolicy": "Delete",
       "Properties": {
+        "OutputKeys": [
+          "GenericAgentCoreRuntimeArn",
+          "GenericAgentCoreRuntimeName",
+          "AgentBuilderAgentCoreRuntimeArn",
+          "AgentBuilderAgentCoreRuntimeName",
+        ],
+        "Region": "us-east-1",
         "ServiceToken": {
           "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244",
+            "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888",
             "Arn",
           ],
         },
+        "StackName": "AgentCoreStack",
         "randomString": "RANDOM-STRING-REPLACED",
-        "regionName": "us-east-1",
-        "stackName": "AgentCoreStack",
       },
-      "Type": "AWS::CloudFormation::CustomResource",
+      "Type": "Custom::GenUStackOutputs",
       "UpdateReplacePolicy": "Delete",
     },
-    "AgentCoreRemoteOutputsMyHandler51F86461": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B",
-        "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "remote-outputs.on_event",
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.9",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 600,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285": {
+    "AgentStackOutputs62D8A811": {
       "DeletionPolicy": "Delete",
       "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
+        "OutputKeys": [
+          "Agents",
         ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "cloudformation:DescribeStacks",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B",
-        "Roles": [
-          {
-            "Ref": "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE",
-        "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (GenerativeAiUseCasesStack/AgentCoreRemoteOutputs/MyProvider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsMyHandler51F86461",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "Handler": "framework.onEvent",
-        "LoggingConfig": {
-          "ApplicationLogLevel": "FATAL",
-          "LogFormat": "JSON",
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventLogRetention1B283935": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 1,
+        "Region": "us-east-1",
         "ServiceToken": {
           "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888",
             "Arn",
           ],
         },
-      },
-      "Type": "Custom::LogRetention",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsMyHandler51F86461",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsMyHandler51F86461",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "AgentCoreRemoteOutputsMyHandler51F86461",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE",
-        "Roles": [
-          {
-            "Ref": "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputs90CFA880": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyProviderframeworkonEventF9C28988",
-            "Arn",
-          ],
-        },
+        "StackName": "WebSearchAgentStack",
         "randomString": "RANDOM-STRING-REPLACED",
-        "regionName": "us-east-1",
-        "stackName": "WebSearchAgentStack",
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandler04E7AFB1": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9",
-        "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "remote-outputs.on_event",
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.9",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 600,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandlerServiceRole44123FB4": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "cloudformation:DescribeStacks",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9",
-        "Roles": [
-          {
-            "Ref": "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventF9C28988": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A",
-        "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (GenerativeAiUseCasesStack/AgentRemoteOutputs/MyProvider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "AgentRemoteOutputsMyHandler04E7AFB1",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "Handler": "framework.onEvent",
-        "LoggingConfig": {
-          "ApplicationLogLevel": "FATAL",
-          "LogFormat": "JSON",
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventLogRetention05F81B10": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "AgentRemoteOutputsMyProviderframeworkonEventF9C28988",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 1,
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "AgentRemoteOutputsMyHandler04E7AFB1",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "AgentRemoteOutputsMyHandler04E7AFB1",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "AgentRemoteOutputsMyHandler04E7AFB1",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A",
-        "Roles": [
-          {
-            "Ref": "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
+      "Type": "Custom::GenUStackOutputs",
       "UpdateReplacePolicy": "Delete",
     },
     "ApiBuildWeb746ABF13": {
@@ -13374,14 +12873,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "AgentBuilderAgentCoreRuntimeName",
                   ],
                 },
                 "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "AgentBuilderAgentCoreRuntimeArn",
                   ],
                 },
@@ -13398,14 +12897,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "GenericAgentCoreRuntimeName",
                   ],
                 },
                 "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "GenericAgentCoreRuntimeArn",
                   ],
                 },
@@ -13438,7 +12937,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
           "VITE_APP_BRANDING_TITLE": "",
           "VITE_APP_BUILTIN_AGENTS_JSON": {
             "Fn::GetAtt": [
-              "AgentRemoteOutputs90CFA880",
+              "AgentStackOutputs62D8A811",
               "Agents",
             ],
           },
@@ -14179,275 +13678,24 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::Cognito::UserPoolClient",
       "UpdateReplacePolicy": "Delete",
     },
-    "ClosedNetworkRemoteOutputs3C6891AF": {
+    "ClosedNetworkStackOutputs5CB81F6F": {
       "DeletionPolicy": "Delete",
       "Properties": {
+        "OutputKeys": [
+          "ClosedNetworkAlbOrigin",
+          "ClosedNetworkWebUrl",
+        ],
+        "Region": "us-east-1",
         "ServiceToken": {
           "Fn::GetAtt": [
-            "ClosedNetworkRemoteOutputsMyProviderframeworkonEvent16B46A52",
+            "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888",
             "Arn",
           ],
         },
+        "StackName": "ClosedNetworkStack",
         "randomString": "RANDOM-STRING-REPLACED",
-        "regionName": "us-east-1",
-        "stackName": "ClosedNetworkStack",
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyHandlerD0F91374": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "ClosedNetworkRemoteOutputsMyHandlerServiceRoleDefaultPolicy10D776F6",
-        "ClosedNetworkRemoteOutputsMyHandlerServiceRole9D1B9391",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "remote-outputs.on_event",
-        "Role": {
-          "Fn::GetAtt": [
-            "ClosedNetworkRemoteOutputsMyHandlerServiceRole9D1B9391",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.9",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 600,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyHandlerServiceRole9D1B9391": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyHandlerServiceRoleDefaultPolicy10D776F6": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "cloudformation:DescribeStacks",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ClosedNetworkRemoteOutputsMyHandlerServiceRoleDefaultPolicy10D776F6",
-        "Roles": [
-          {
-            "Ref": "ClosedNetworkRemoteOutputsMyHandlerServiceRole9D1B9391",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyProviderframeworkonEvent16B46A52": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicyEE9B2FBC",
-        "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRole75061C4F",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (GenerativeAiUseCasesStack/ClosedNetworkRemoteOutputs/MyProvider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "ClosedNetworkRemoteOutputsMyHandlerD0F91374",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "Handler": "framework.onEvent",
-        "LoggingConfig": {
-          "ApplicationLogLevel": "FATAL",
-          "LogFormat": "JSON",
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRole75061C4F",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyProviderframeworkonEventLogRetentionD0B10EBE": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "ClosedNetworkRemoteOutputsMyProviderframeworkonEvent16B46A52",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 1,
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRole75061C4F": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicyEE9B2FBC": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "ClosedNetworkRemoteOutputsMyHandlerD0F91374",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "ClosedNetworkRemoteOutputsMyHandlerD0F91374",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "ClosedNetworkRemoteOutputsMyHandlerD0F91374",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicyEE9B2FBC",
-        "Roles": [
-          {
-            "Ref": "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRole75061C4F",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
+      "Type": "Custom::GenUStackOutputs",
       "UpdateReplacePolicy": "Delete",
     },
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1024MiBB049752D": {
@@ -14622,6 +13870,69 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
+    "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Handler": "__entrypoint__.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "cloudformation:DescribeStacks",
+                  "Effect": "Allow",
+                  "Resource": "*",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "Inline",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Delete",
+    },
     "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
@@ -14790,101 +14101,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "index.handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "logs:PutRetentionPolicy",
-                "logs:DeleteRetentionPolicy",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "Roles": [
-          {
-            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
     "NodejsBuildCustomResourceHandler25648b212c404f09aa65b6bbb0c446591C4101F8": {
@@ -19145,14 +18361,14 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "AgentBuilderAgentCoreRuntimeName",
               ],
             },
             "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "AgentBuilderAgentCoreRuntimeArn",
               ],
             },
@@ -19175,14 +18391,14 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "GenericAgentCoreRuntimeName",
               ],
             },
             "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "GenericAgentCoreRuntimeArn",
               ],
             },
@@ -19945,7 +19161,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             },
             "BUILTIN_AGENTS_JSON": {
               "Fn::GetAtt": [
-                "AgentRemoteOutputs90CFA880",
+                "AgentStackOutputs62D8A811",
                 "Agents",
               ],
             },
@@ -26295,7 +25511,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             },
             "BUILTIN_AGENTS_JSON": {
               "Fn::GetAtt": [
-                "AgentRemoteOutputs90CFA880",
+                "AgentStackOutputs62D8A811",
                 "Agents",
               ],
             },
@@ -26462,7 +25678,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsDE8C59C9",
+                          "AgentCoreStackOutputs657336C2",
                           "GenericAgentCoreRuntimeArn",
                         ],
                       },
@@ -26476,7 +25692,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsDE8C59C9",
+                          "AgentCoreStackOutputs657336C2",
                           "AgentBuilderAgentCoreRuntimeArn",
                         ],
                       },
@@ -26499,546 +25715,45 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
-    "AgentCoreRemoteOutputsDE8C59C9": {
+    "AgentCoreStackOutputs657336C2": {
       "DeletionPolicy": "Delete",
       "Properties": {
+        "OutputKeys": [
+          "GenericAgentCoreRuntimeArn",
+          "GenericAgentCoreRuntimeName",
+          "AgentBuilderAgentCoreRuntimeArn",
+          "AgentBuilderAgentCoreRuntimeName",
+        ],
+        "Region": "us-east-1",
         "ServiceToken": {
           "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244",
+            "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888",
             "Arn",
           ],
         },
+        "StackName": "AgentCoreStack",
         "randomString": "RANDOM-STRING-REPLACED",
-        "regionName": "us-east-1",
-        "stackName": "AgentCoreStack",
       },
-      "Type": "AWS::CloudFormation::CustomResource",
+      "Type": "Custom::GenUStackOutputs",
       "UpdateReplacePolicy": "Delete",
     },
-    "AgentCoreRemoteOutputsMyHandler51F86461": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B",
-        "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "remote-outputs.on_event",
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.9",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 600,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285": {
+    "AgentStackOutputs62D8A811": {
       "DeletionPolicy": "Delete",
       "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
+        "OutputKeys": [
+          "Agents",
         ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "cloudformation:DescribeStacks",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B",
-        "Roles": [
-          {
-            "Ref": "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE",
-        "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (GenerativeAiUseCasesStack/AgentCoreRemoteOutputs/MyProvider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsMyHandler51F86461",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "Handler": "framework.onEvent",
-        "LoggingConfig": {
-          "ApplicationLogLevel": "FATAL",
-          "LogFormat": "JSON",
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventLogRetention1B283935": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 1,
+        "Region": "us-east-1",
         "ServiceToken": {
           "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888",
             "Arn",
           ],
         },
-      },
-      "Type": "Custom::LogRetention",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsMyHandler51F86461",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsMyHandler51F86461",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "AgentCoreRemoteOutputsMyHandler51F86461",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE",
-        "Roles": [
-          {
-            "Ref": "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputs90CFA880": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyProviderframeworkonEventF9C28988",
-            "Arn",
-          ],
-        },
+        "StackName": "WebSearchAgentStack",
         "randomString": "RANDOM-STRING-REPLACED",
-        "regionName": "us-east-1",
-        "stackName": "WebSearchAgentStack",
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandler04E7AFB1": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9",
-        "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "remote-outputs.on_event",
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.9",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 600,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandlerServiceRole44123FB4": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "cloudformation:DescribeStacks",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9",
-        "Roles": [
-          {
-            "Ref": "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventF9C28988": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A",
-        "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (GenerativeAiUseCasesStack/AgentRemoteOutputs/MyProvider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "AgentRemoteOutputsMyHandler04E7AFB1",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "Handler": "framework.onEvent",
-        "LoggingConfig": {
-          "ApplicationLogLevel": "FATAL",
-          "LogFormat": "JSON",
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventLogRetention05F81B10": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "AgentRemoteOutputsMyProviderframeworkonEventF9C28988",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 1,
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "AgentRemoteOutputsMyHandler04E7AFB1",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "AgentRemoteOutputsMyHandler04E7AFB1",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "AgentRemoteOutputsMyHandler04E7AFB1",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A",
-        "Roles": [
-          {
-            "Ref": "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
+      "Type": "Custom::GenUStackOutputs",
       "UpdateReplacePolicy": "Delete",
     },
     "ApiBuildWeb746ABF13": {
@@ -27079,14 +25794,14 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "AgentBuilderAgentCoreRuntimeName",
                   ],
                 },
                 "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "AgentBuilderAgentCoreRuntimeArn",
                   ],
                 },
@@ -27103,14 +25818,14 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "GenericAgentCoreRuntimeName",
                   ],
                 },
                 "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "GenericAgentCoreRuntimeArn",
                   ],
                 },
@@ -27143,7 +25858,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
           "VITE_APP_BRANDING_TITLE": "",
           "VITE_APP_BUILTIN_AGENTS_JSON": {
             "Fn::GetAtt": [
-              "AgentRemoteOutputs90CFA880",
+              "AgentStackOutputs62D8A811",
               "Agents",
             ],
           },
@@ -29035,6 +27750,69 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
+    "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Handler": "__entrypoint__.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "cloudformation:DescribeStacks",
+                  "Effect": "Allow",
+                  "Resource": "*",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "Inline",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Delete",
+    },
     "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
@@ -29179,101 +27957,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         ],
       },
       "Type": "AWS::DynamoDB::Table",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "index.handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "logs:PutRetentionPolicy",
-                "logs:DeleteRetentionPolicy",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "Roles": [
-          {
-            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
     "NodejsBuildCustomResourceHandler25648b212c404f09aa65b6bbb0c446591C4101F8": {
