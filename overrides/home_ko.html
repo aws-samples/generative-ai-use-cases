@@ -1,0 +1,642 @@
+<!--
+  Based on https://github.com/squidfunk/mkdocs-material/blob/master/src/overrides/home.html
+-->
+
+{% extends "main.html" %}
+
+<!-- Render hero under tabs -->
+{% block tabs %} {{ super() }}
+
+<!-- Additional styles for landing page -->
+<style>
+  /* Application header should be static for the landing page */
+  .md-header {
+    position: initial;
+  }
+
+  /* Remove spacing, as we cannot hide it completely */
+  .md-main__inner {
+    margin: 0;
+  }
+
+  /* Hide main content for now */
+  .md-content {
+    display: none;
+  }
+
+  /* Hide table of contents */
+  @media screen and (min-width: 60em) {
+    .md-sidebar--secondary {
+      display: none;
+    }
+  }
+
+  /* Hide navigation */
+  @media screen and (min-width: 76.25em) {
+    .md-sidebar--primary {
+      display: none;
+    }
+  }
+</style>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+<header
+  class="bg-gradient-to-r from-gray-900 to-cyan-700 pb-20 pt-32 text-white">
+  <div class="container mx-auto px-6">
+    <div class="flex flex-col items-center gap-10 md:flex-row">
+      <div class="mb-10 md:mb-0 md:w-1/2">
+        <h1 class="mb-6 text-4xl font-bold md:text-6xl">
+          생성형 AI 사용 사례 (GenU)
+        </h1>
+        <p class="mb-8 text-xl">
+          생성형 AI를 활용한 잘 설계된 비즈니스 사용 사례 모음
+        </p>
+        <div class="flex gap-4">
+          <a
+            href="ABOUT.html"
+            class="inline-flex items-center rounded-full bg-orange-500 px-8 py-3 text-sm hover:bg-orange-600">
+            시작하기
+          </a>
+          <a
+            href="https://github.com/aws-samples/generative-ai-use-cases"
+            class="inline-flex items-center rounded-full border border-orange-500 px-8 py-3 text-sm text-orange-500 hover:bg-orange-600 hover:text-white">
+            <i class="fab fa-github mr-2"></i>GitHub
+          </a>
+        </div>
+      </div>
+      <div class="md:w-1/2">
+        <img
+          src="../assets/images/sc_lp_en.png"
+          alt="GenU 스크린샷"
+          class="rounded-lg shadow-xl" />
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="features" class="py-20">
+  <div class="container mx-auto px-6">
+    <h2 class="mb-16 text-center text-3xl font-bold">주요 기능</h2>
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-3">
+      <div class="text-center">
+        <div
+          class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
+          <i class="fas fa-robot text-2xl text-orange-500"></i>
+        </div>
+        <h3 class="mb-4 text-xl font-semibold">다양한 사용 사례</h3>
+        <p class="text-sm text-gray-600">
+          채팅, RAG, 텍스트 생성 등 다양한 비즈니스 시나리오를 다룹니다
+        </p>
+      </div>
+      <div class="text-center">
+        <div
+          class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
+          <i class="fas fa-shield-alt text-2xl text-orange-500"></i>
+        </div>
+        <h3 class="mb-4 text-xl font-semibold">안전한 구현</h3>
+        <p class="text-sm text-gray-600">
+          Amazon Bedrock을 사용한 안전한 AI 사용 기반
+        </p>
+      </div>
+      <div class="text-center">
+        <div
+          class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100">
+          <i class="fas fa-code text-2xl text-orange-500"></i>
+        </div>
+        <h3 class="mb-4 text-xl font-semibold">커스터마이징 가능</h3>
+        <p class="text-sm text-gray-600">사용 사례 빌더로 맞춤형 기능 추가</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="usecases" class="bg-gray-50 py-20">
+  <div class="container mx-auto px-6">
+    <h2 class="mb-16 text-center text-3xl font-bold">사용 사례</h2>
+    <div class="swiper usecase-swiper">
+      <div class="swiper-wrapper pb-10">
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_chat.gif"
+              alt="채팅"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">채팅</h3>
+            <p class="text-sm text-gray-600">
+              대규모 언어 모델(LLM)이 채팅 형식으로 서로 상호작용할 수 있습니다.
+              LLM이 직접 상호작용할 수 있는 플랫폼 덕분에 새로운 사용 사례와
+              세부적인 사용 사례에 빠르게 대응할 수 있습니다. 또한 프롬프트
+              엔지니어링을 위한 검증 환경으로도 효과적입니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_usecase_builder.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">사용 사례 빌더</h3>
+            <p class="text-sm text-gray-600">
+              이 기능을 사용하면 자연어로 프롬프트 템플릿을 설명하여 자신만의
+              사용 사례를 만들 수 있습니다. 프롬프트 템플릿에서 사용 사례 화면이
+              자동으로 생성되므로 코드를 변경하거나 커스터마이징할 필요가
+              없습니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_rag.gif"
+              alt="RAG 채팅"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">RAG 채팅</h3>
+            <p class="text-sm text-gray-600">
+              RAG는 LLM이 잘 다루지 못하는 최신 정보나 도메인 지식을 제공하여
+              LLM이 증거를 바탕으로 답변을 생성할 수 있게 하는 기술입니다. 예를
+              들어, 내부 문서를 LLM에 전달하면 내부 문의를 자동화할 수 있습니다.
+              이 저장소는 Amazon Kendra 또는 Knowledge Bases를 사용하여 정보를
+              가져옵니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_agent.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">에이전트 채팅</h3>
+            <p class="text-sm text-gray-600">
+              에이전트는 LLM이 API에 연결하여 다양한 작업을 수행할 수 있게 하는
+              기술입니다. 이 솔루션은 샘플 구현으로 검색 엔진을 사용하여 필요한
+              정보를 검색하고 답변하는 에이전트를 구현합니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_flow_chat.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">플로우 채팅</h3>
+            <p class="text-sm text-gray-600">
+              Amazon Bedrock Flows를 사용하면 프롬프트, 기반 모델 및 기타 AWS
+              서비스를 연결하여 워크플로를 만들 수 있습니다. 플로우 채팅 사용
+              사례를 통해 미리 생성된 플로우를 선택하고 실행하는 채팅을 사용할
+              수 있습니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_voice_chat.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">음성 채팅</h3>
+            <p class="text-sm text-gray-600">
+              음성 채팅에서는 생성형 AI와 양방향 음성 채팅을 할 수 있습니다.
+              자연스러운 대화와 마찬가지로 AI가 말하는 동안 끼어들어 말할 수도
+              있습니다. 또한 시스템 프롬프트를 설정하여 특정 역할을 가진 AI와
+              음성 대화를 할 수 있습니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_summarize.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">요약</h3>
+            <p class="text-sm text-gray-600">
+              LLM은 대량의 텍스트를 요약하는 데 뛰어납니다. 텍스트를 요약할 뿐만
+              아니라 텍스트를 컨텍스트로 제공하여 대화형 형태로 필요한 정보를
+              검색할 수도 있습니다. 예를 들어, 계약서를 읽고 "XXX의 조건은
+              무엇인가요?" 및 "YYY의 금액은 얼마인가요?"와 같은 정보를 검색할 수
+              있습니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_generate_meeting_minutes.gif"
+              alt="회의록 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">회의록 생성</h3>
+            <p class="text-sm text-gray-600">
+              오디오 녹음이나 실시간 전사에서 회의록을 자동으로 생성합니다.
+              프롬프트 엔지니어링 없이도 전사, 뉴스페이퍼 또는 FAQ 스타일 중에서
+              선택할 수 있습니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_writer.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">글쓰기</h3>
+            <p class="text-sm text-gray-600">
+              LLM은 글쓰기와 교정을 도와줄 수 있습니다. 오타와 오류를 확인하는
+              것 외에도 글의 흐름과 내용 개선을 제안하고 더 중립적인 관점에서
+              객관적인 시각을 제공할 수 있습니다. 다른 사람에게 보여주기 전에
+              사용자가 스스로 눈치채지 못했을 수 있는 부분을 확인하여 품질을
+              향상시킬 것으로 기대됩니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_translate.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">번역</h3>
+            <p class="text-sm text-gray-600">
+              여러 언어를 학습한 LLM은 번역도 할 수 있습니다. 단순히 번역하는 것
+              외에도 캐주얼함과 대상 계층과 같은 다양한 지정된 컨텍스트 정보를
+              번역에 반영할 수 있습니다. 예를 들어, 계약서를 번역하면 여러
+              언어로 번역할 수 있습니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_web_content.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">웹 콘텐츠 추출</h3>
+            <p class="text-sm text-gray-600">
+              LLM은 블로그와 문서와 같은 웹 콘텐츠를 추출할 수 있습니다.
+              불필요한 정보를 제거하고 완전한 기사로 형식을 지정합니다. 추출된
+              콘텐츠는 요약 및 번역과 같은 다른 사용 사례에서 사용할 수
+              있습니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_generate_image.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">이미지 생성</h3>
+            <p class="text-sm text-gray-600">
+              LLM은 텍스트와 이미지를 기반으로 이미지를 생성할 수 있습니다.
+              아이디어를 시각화하고 디자인 작업을 개선하는 데 도움이 될 수
+              있습니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_generate_video.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">비디오 생성</h3>
+            <p class="text-sm text-gray-600">
+              LLM은 텍스트를 기반으로 비디오를 생성할 수 있습니다. 아이디어를
+              시각화하고 디자인 작업을 개선하는 데 도움이 될 수 있습니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_video_analyzer.gif"
+              alt="텍스트 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">비디오 분석</h3>
+            <p class="text-sm text-gray-600">
+              LLM은 텍스트뿐만 아니라 이미지도 입력하여 비디오를 분석할 수
+              있습니다. 이 기능을 사용하면 이미지 프레임과 텍스트를 입력으로
+              하여 비디오를 분석할 수 있습니다.
+            </p>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="rounded-lg bg-white p-6 shadow-lg">
+            <img
+              src="../assets/images/usecase_generate_diagram.gif"
+              alt="다이어그램 생성"
+              class="mb-4 w-full rounded-lg" />
+            <h3 class="mb-2 text-xl font-semibold">다이어그램 생성</h3>
+            <p class="text-sm text-gray-600">
+              LLM은 자연어 설명, 문서 및 코드에서 플로우차트, 시퀀스 다이어그램,
+              마인드맵과 같은 다이어그램을 생성할 수 있습니다. 복잡한 관계를
+              시각화하고 더 효율적으로 이해하는 데 도움이 될 수 있습니다.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<section id="customers" class="py-20">
+  <div class="container mx-auto px-6">
+    <h2 class="mb-16 text-center text-3xl font-bold">고객사</h2>
+    <div class="swiper customer-swiper">
+      <div class="swiper-wrapper pb-10">
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/yasashii-te/">
+            <img
+              src="../assets/images/cases/yasashiite_logo.png"
+              alt="야사시이테"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU 덕분에 사용자에게 부가가치를 제공하고 직원의 업무 효율성을
+              향상시킬 수 있었습니다. 직원들의 "이전 업무"가 즐거운 업무로
+              변화하면서 "순조로운 운영"에서 "흥미진진한 업무"로 계속 발전하고
+              있습니다!
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/takihyo/">
+            <img
+              src="../assets/images/cases/TAKIHYO_logo.png"
+              alt="타키효"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              생성형 AI를 활용하여 내부 업무 효율성을 달성하고 450시간 이상의
+              업무를 단축했습니다. Amazon Bedrock을 의류 디자인 등에 적용하고
+              디지털 인재 개발을 촉진했습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/salsonido_case.png">
+            <img
+              src="../assets/images/cases/salsonido_logo.png"
+              alt="살소니도"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              솔루션으로 제공되는 GenU를 활용하여 생성형 AI로 비즈니스 프로세스
+              개선을 빠르게 시작할 수 있었습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/tamura-ss_case.png">
+            <img
+              src="../assets/images/cases/tamura-ss_logo.png"
+              alt="タムラ製作所"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              AWS가 Github에 공개한 애플리케이션 샘플은 즉시 테스트 가능한
+              기능이 풍부하여 우리의 요구에 맞는 기능을 선택하기 쉬웠고, 최종
+              시스템의 개발 시간을 단축할 수 있었습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/jdsc_case.png">
+            <img
+              src="../assets/images/cases/jdsc_logo.png"
+              alt="JDSC"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Bedrock을 통해 데이터를 안전하게 사용하고 LLM을 활용할 수
+              있습니다. 또한 우리의 요구에 최적화된 모델로 전환하여 비용을
+              절감하면서 속도와 정확성을 향상시킬 수 있었습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://cloudpack.jp/casestudy/302.html?_gl=1*17hkazh*_gcl_au*ODA5MDk3NzI0LjE3MTM0MTQ2MDU">
+            <img
+              src="../assets/images/cases/iret_logo.png"
+              alt="아이레ット 주식회사"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              생성형 AI 활용을 위한 회사의 지식을 축적하고 체계화하기 위해
+              AWS에서 공개한 Generative AI Use Cases를 사용하여 사용 사례
+              사이트를 개발했습니다. 이 프로젝트의 설계, 구축 및 개발을
+              아이레ット 회사에서 지원했습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/idealog_case.png">
+            <img
+              src="../assets/images/cases/idealog_logo.jpg"
+              alt="아이데아로그"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              기존의 생성형 AI 도구보다 훨씬 더 비즈니스 효율성을 향상시킬 수
+              있다고 느낍니다. Amazon Bedrock을 사용하고 있어 보안 측면에서도
+              안전합니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/estyle_case.png">
+            <img
+              src="../assets/images/cases/estyle_logo.png"
+              alt="에스타일"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU는 짧은 시간 내에 생성형 AI 환경을 구축하고 회사 내 지식
+              공유를 촉진하는 데 도움이 되었습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/meidensha_case.png">
+            <img
+              src="../assets/images/cases/meidensha_logo.svg"
+              alt="명전사"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Bedrock과 Amazon Kendra를 통해 생성형 AI 환경을 빠르고
+              안전하게 구축할 수 있었습니다. 또한 회의록 자동 생성과 내부 정보
+              검색을 통해 직원의 효율성 향상에 기여하고 있습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/st-grp_case.png">
+            <img
+              src="../assets/images/cases/st-grp_logo.jpg"
+              alt="산쿄리츠잔 주식회사"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Kendra를 통해 회사에 묻혀있던 정보를 빠르게 검색할 수
+              있었습니다. GenU는 회의록 자동 생성과 같이 우리가 원하는 기능을
+              빠르게 제공하는 데 도움이 되었습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/oisix/">
+            <img
+              src="../assets/images/cases/oisixradaichi_logo.png"
+              alt="오이식스・라・다이치 주식회사"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU는 리소스, 프로젝트 구조, 외부 지원 및 인재 개발을 구조화하는
+              데 도움이 되었습니다. 이를 통해 회사에서 생성형 AI의 이미지를
+              이해할 수 있었습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://aws.amazon.com/jp/solutions/case-studies/san-a/">
+            <img
+              src="../assets/images/cases/san-a_logo.png"
+              alt="주식회사 산에이"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              Amazon Bedrock은 회사별 환경의 클라우드 마이그레이션을 가속화하는
+              데 도움이 되었습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/onecompath_case.png">
+            <img
+              src="../assets/images/cases/onecompath_logo.png"
+              alt="주식회사 ONE COMPATH"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              GenU를 활용하여 회사 전체의 생성형 AI 기반을 빠르게 구축할 수
+              있었습니다. 이를 통해 기획 부서가 독립적으로 PoC를 개발할 수 있게
+              되어 비즈니스 창출 사이클이 가속화되었고, 개발 부서는 더 중요한
+              비즈니스 이니셔티브에 리소스를 집중할 수 있었습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="https://www.serverworks.co.jp/case/mee.html?utm_source=github&utm_medium=external-media&utm_campaign=github_external-media_GenU">
+            <img
+              src="../assets/images/cases/mee_logo.jpg"
+              alt="미쓰비시전기엔지니어링 주식회사"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              생성형 AI 개발 경험이 없는 팀 멤버들이 ServerWorks의 지도하에
+              GenU를 사용하여 단 3개월 만에 RAG 시스템을 성공적으로
+              구축했습니다. GenU의 아키텍처를 참조로 활용하여 헬프데스크 매뉴얼
+              검색 작업의 효율성 향상을 달성하고 사내 개발 역량을 실현했습니다.
+            </p>
+          </a>
+        </div>
+        <div class="swiper-slide">
+          <a
+            class="flex flex-col items-center"
+            href="../assets/images/cases/orbitics_case.png">
+            <img
+              src="../assets/images/cases/orbitics_logo.png"
+              alt="Orbitics株式会社"
+              class="mb-4 h-16 object-contain" />
+            <p class="text-center text-sm text-gray-600">
+              놀라울 정도로 짧은 기간에 개발할 수 있었습니다. 획득한 개발 기술을
+              다양한 사업 영역에 확대 적용하여 조직 전체의 업무 효율화를 목표로
+              전략적으로 활용해 나갈 것입니다
+            </p>
+          </a>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  new Swiper('.usecase-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+
+  new Swiper('.customer-swiper', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    breakpoints: {
+      640: {
+        slidesPerView: 2,
+      },
+      1024: {
+        slidesPerView: 3,
+      },
+    },
+  });
+</script>
+
+<footer class="text-center text-gray-600">
+  이 페이지는 GenU summit-2024 브랜치의 웹사이트 작성 사용 사례로
+  작성되었습니다.
+</footer>
+
+{% endblock %}
+
+<!-- Content -->
+{% block content %}{% endblock %}
