@@ -45,6 +45,10 @@ const userPoolId = import.meta.env.VITE_APP_USER_POOL_ID;
 const idPoolId = import.meta.env.VITE_APP_IDENTITY_POOL_ID;
 const providerName = `cognito-idp.${region}.amazonaws.com/${userPoolId}`;
 
+// Candidates for language identification when the caller does not pass its
+// own list. Transcribe picks the spoken language from these.
+const DEFAULT_LANGUAGE_OPTIONS = 'en-US,ja-JP,zh-CN';
+
 const useMicrophone = () => {
   const { t } = useTranslation();
   const micStreamRef = useRef<MicrophoneStream>();
@@ -165,7 +169,7 @@ const useMicrophone = () => {
         IdentifyMultipleLanguages: true,
         LanguageOptions: languageOptions
           ? languageOptions.join(',')
-          : 'en-US,ja-JP',
+          : DEFAULT_LANGUAGE_OPTIONS,
       };
     } else if (languageCode) {
       // Specific language mode
@@ -183,7 +187,7 @@ const useMicrophone = () => {
         IdentifyMultipleLanguages: false,
         LanguageOptions: languageOptions
           ? languageOptions.join(',')
-          : 'en-US,ja-JP',
+          : DEFAULT_LANGUAGE_OPTIONS,
       };
     }
 
