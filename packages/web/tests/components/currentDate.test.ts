@@ -11,6 +11,12 @@ describe('currentDateLine', () => {
     );
   });
 
+  it('leaves out the time zone when the browser does not report one', () => {
+    expect(currentDateLine(now, '')).toBe(
+      "Today's date is 2026-11-07 (Saturday)."
+    );
+  });
+
   it('does not include the time, so it changes only once a day', () => {
     const later = new Date(2026, 10, 7, 23, 59);
     expect(currentDateLine(later, 'UTC')).toBe(currentDateLine(now, 'UTC'));

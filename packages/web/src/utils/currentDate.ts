@@ -21,10 +21,13 @@ const pad = (n: number) => String(n).padStart(2, '0');
  */
 export const currentDateLine = (
   now: Date = new Date(),
-  timeZone: string = Intl.DateTimeFormat().resolvedOptions().timeZone
+  timeZone: string | undefined = Intl.DateTimeFormat().resolvedOptions()
+    .timeZone
 ): string => {
   const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
-  return `Today's date is ${date} (${WEEKDAYS[now.getDay()]}, time zone: ${timeZone}).`;
+  // Older engines may not report a time zone; then it is left out.
+  const zone = timeZone ? `, time zone: ${timeZone}` : '';
+  return `Today's date is ${date} (${WEEKDAYS[now.getDay()]}${zone}).`;
 };
 
 /**
