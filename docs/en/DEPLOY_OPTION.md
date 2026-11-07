@@ -4,7 +4,7 @@
 
 GenU allows you to change settings in parameter.ts or through AWS CDK context.
 
-**Since you can define settings for multiple environments, it is recommended to use parameter.ts when building a new environment. For backward compatibility, parameters are retrieved in the order of context > parameter.ts.**
+**We recommend parameter.ts when building a new environment. You can define settings for multiple environments, and TypeScript type checking catches wrong parameter names and values (in cdk.json, a misspelled key is silently ignored). Updates also cause fewer conflicts in cdk.json. If the environment specified by `env` is defined in parameter.ts, only the values in parameter.ts are used and the parameters in cdk.json are ignored. To move existing settings from cdk.json, see [Update](./UPDATE.md#moving-settings-from-cdkjson-to-parameterts).**
 
 **When using Context: While CDK context can be specified with '-c', this won't trigger frontend builds since no code changes are made. For this asset, it's recommended to change all settings in cdk.json.**
 
