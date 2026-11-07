@@ -562,6 +562,8 @@ language:
   th: tiếng Thái
   zh: Tiếng Trung
 meetingMinutes:
+  auto_detect_candidates: 'Tự động nhận diện từ: {{languages}}'
+  auto_detect_change: Thay đổi trong Cài đặt
   auto_generate: Tự động tạo
   clear_minutes: Xóa biên bản
   custom_prompt: Lời nhắc tùy chỉnh
@@ -724,6 +726,8 @@ setting:
     rag_kb_enabled: RAG (Knowledge Base) được bật
     show_tools: Hiển thị công cụ
     show_use_case_builder: Hiển thị Use Case Builder
+    transcribe_languages: Ngôn ngữ tự động nhận diện cho nhận dạng giọng nói
+    transcribe_languages_help: 'Các ngôn ngữ dùng làm lựa chọn khi ngôn ngữ nhận dạng giọng nói được đặt là "tự động" (biên bản cuộc họp, nhập bằng giọng nói, chép lời từ tệp). Chọn từ 2 đến 5 ngôn ngữ. Chọn càng nhiều thì câu nói ngắn càng dễ bị nhận nhầm ngôn ngữ.'
     typing_animation: Hiệu ứng đánh máy
     version: Phiên bản
     version_help: Tham chiếu đến version trong package.json của generative-ai-use-cases

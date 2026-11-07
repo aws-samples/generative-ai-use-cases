@@ -854,6 +854,8 @@ mcp_chat:
   loading_message: Connecting to MCP server. This may take some time. Please wait...
   title: MCP Chat
 meetingMinutes:
+  auto_detect_candidates: 'Auto-detect from: {{languages}}'
+  auto_detect_change: Change in Settings
   auto_generate: Auto Generate
   bidirectional: Bidirectional Translation
   both_panel: Both Panels
@@ -1053,6 +1055,8 @@ setting:
     show_tools: Show Tools
     show_use_case_builder: Show Use Case Builder
     stats: Statistics
+    transcribe_languages: Auto-detect languages for speech recognition
+    transcribe_languages_help: 'Languages to choose from when the speech recognition language is set to "auto" (meeting minutes, voice input, file transcription). Choose 2 to 5. The more languages you choose, the more often short utterances are misidentified.'
     typing_animation: Typing Animation
     version: Version
     version_help: Referencing the version in package.json of generative-ai-use-cases

@@ -192,6 +192,9 @@ export type StartTranscriptionRequest = {
   speakerLabel: boolean;
   maxSpeakers: number;
   languageCode?: string;
+  // Candidates for automatic language identification (used when languageCode
+  // is not set); the user's setting
+  languageOptions?: string[];
 };
 
 export type StartTranscriptionResponse = {

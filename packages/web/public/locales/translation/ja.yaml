@@ -699,6 +699,8 @@ mcp_chat:
   loading_message: MCP サーバーと接続しています。時間がかかる場合があります。そのまま待機してください...
   title: MCP チャット
 meetingMinutes:
+  auto_detect_candidates: '自動判定の候補: {{languages}}'
+  auto_detect_change: 設定で変更
   auto_generate: 自動生成
   bidirectional: 双方向翻訳
   both_panel: 両方表示
@@ -879,6 +881,8 @@ setting:
     show_tools: ツールの表示
     show_use_case_builder: ユースケースビルダーの表示
     stats: 利用統計
+    transcribe_languages: 音声認識の自動判定言語
+    transcribe_languages_help: 音声認識の言語を「自動」にしたとき（議事録生成・音声入力・ファイルの文字起こし）に、判定の候補とする言語です。2〜5 個選んでください。多く選ぶほど、短い発話で言語を取り違えやすくなります。
     typing_animation: タイピングアニメーション
     version: バージョン
     version_help: generative-ai-use-cases の package.json の version を参照しています
