@@ -70,6 +70,14 @@ export const getItemsFromPlaceholders = (
   );
 };
 
+// Split the options of a select item. Whitespace around each option is
+// dropped so that `{{select:label:A, B}}` offers "B" rather than " B",
+// which input examples and typed values can match.
+export const splitSelectOptions = (options?: string): string[] => {
+  if (!options) return [];
+  return options.split(',').map((o) => o.trim());
+};
+
 export const getTextFormItemsFromItems = (
   items: BuilderItem[]
 ): BuilderItem[] => {
