@@ -244,9 +244,17 @@ drawer:
 error:
   streamingError:
     ACCESS_DENIED: 所选模型尚未启用。请在 Amazon Bedrock 控制台中启用该模型。
+    CONTEXT_TOO_LONG: 对话或附件过长，模型无法读取。请减少附件内容（页数、行数或工作表数）或开始新的对话。
+    DOCUMENT_TOO_LARGE: 文档过大，无法发送。请拆分文档或减少内容后重试。
+    DUPLICATE_FILE_NAME: 本次对话中有多个同名文件（包括之前附加的文件）。请重命名文件后重新附加，或开始新的对话。
+    EMPTY_MESSAGE: 对话中包含空消息，无法继续。请开始新的对话。
+    IMAGE_TOO_LARGE: 图片过大。每张图片不能超过 3.75 MB。
+    INVALID_FILE_NAME: 无法使用该文件名。请改为仅包含英文字母和数字的简短名称后重新附加。
     PAYLOAD_TOO_LARGE: 附件文件过大。请减小文件大小或附件数量后重试。
     THROTTLING: 服务器当前流量较高。请稍后重试。
+    TOO_MANY_DOCUMENTS: 附加的文档过多。本次对话中之前附加的文档也会计入。请减少附件或开始新的对话。
     UNKNOWN_ERROR: 发生错误。请重试或联系管理员。
+    UNSUPPORTED_FILE_TYPE: 不支持此文件类型。
 feedback:
   additional_feedback: 如果您有其他反馈，请输入。(可选)
   reason_error: 请选择原因。
