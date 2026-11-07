@@ -21,6 +21,10 @@ import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
 import useUserSetting from '../hooks/useUserSetting';
 import Tooltip from './Tooltip';
+import {
+  createPastedTextFile,
+  shouldAttachPastedText,
+} from '../utils/pastedText';
 
 type Props = {
   content: string;
@@ -103,8 +107,21 @@ const InputChatContent: React.FC<Props> = (props) => {
       uploadFiles(Array.from(files), props.fileLimit, props.accept);
       // Since the file name is also pasted when the file is pasted, stop the default behavior
       pasteEvent.preventDefault();
+      return;
     }
-    // If there is no file, stop the default behavior (paste text)
+
+    // Long text is attached as a text file so that the message stays small
+    // enough to be saved in full
+    const text = pasteEvent.clipboardData.getData('text/plain');
+    if (props.fileLimit && shouldAttachPastedText(text, props.accept)) {
+      uploadFiles(
+        [createPastedTextFile(text)],
+        props.fileLimit,
+        props.accept ?? []
+      );
+      pasteEvent.preventDefault();
+    }
+    // Otherwise, keep the default behavior (paste text)
   };
 
   const loading = useMemo(() => {
