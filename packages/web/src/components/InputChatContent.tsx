@@ -43,6 +43,10 @@ type Props = {
   reasoning?: boolean;
   onReasoningSwitched?: () => void;
   reasoningEnabled?: boolean;
+  /** Model selector in the input toolbar, reachable without scrolling up. */
+  modelId?: string;
+  onModelChange?: (modelId: string) => void;
+  modelOptions?: { value: string; label: string }[];
 } & (
   | {
       hideReset?: false;
@@ -209,7 +213,7 @@ const InputChatContent: React.FC<Props> = (props) => {
           />
         </div>
         <div className="m-2 flex justify-between gap-1">
-          <div className="flex gap-x-1">
+          <div className="flex items-center gap-x-1">
             {props.fileUpload && (
               <Tooltip
                 message={t('inputs.attachment')}
@@ -250,6 +254,20 @@ const InputChatContent: React.FC<Props> = (props) => {
                   isEnabled={!!props.reasoningEnabled}
                 />
               </Tooltip>
+            )}
+            {props.modelId && props.onModelChange && props.modelOptions && (
+              <select
+                aria-label={t('inputs.model')}
+                title={t('inputs.model')}
+                className="max-w-[160px] truncate rounded-xl border border-gray-400 bg-white px-2 py-1.5 text-xs text-gray-700 sm:max-w-[240px]"
+                value={props.modelId}
+                onChange={(e) => props.onModelChange!(e.target.value)}>
+                {props.modelOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
             )}
           </div>
           <div className="flex items-center gap-x-2">
