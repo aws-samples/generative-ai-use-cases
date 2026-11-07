@@ -11,6 +11,7 @@ from mcp import StdioServerParameters, stdio_client
 from strands import tool
 from strands.tools.mcp import MCPClient
 
+from . import sandbox
 from .config import WORKSPACE_DIR, get_aws_credentials, get_uv_environment
 
 # Import strands-agents code interpreter tool
@@ -53,6 +54,8 @@ class ToolManager:
         self.mcp_tools = None
         self.session_id = None
         self.trace_id = None
+        # The code interpreter of the current request, if code execution is on
+        self.code_interpreter = None
 
     def set_session_info(self, session_id: str, trace_id: str):
         """Set session and trace IDs for tool operations"""
@@ -161,6 +164,15 @@ class ToolManager:
             if not filepath.startswith(WORKSPACE_DIR):
                 raise ValueError(f"{filepath} does not appear to be a file under the {WORKSPACE_DIR} directory. Files to be uploaded must exist under {WORKSPACE_DIR}.")
 
+            # A file made by the code interpreter is in its sandbox, not here.
+            # Bring it over so it can be uploaded like any other.
+            if not os.path.exists(filepath) and self.code_interpreter is not None:
+                data = sandbox.read_file(self.code_interpreter, filepath)
+                if data is not None:
+                    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+                    with open(filepath, "wb") as f:
+                        f.write(data)
+
             try:
                 filename = os.path.basename(filepath)
                 key = f"agentcore/{trace_id}/{filename}"
@@ -185,6 +197,7 @@ class ToolManager:
                 aws_creds = get_aws_credentials()
                 region = aws_creds.get("AWS_REGION", "us-east-1")
                 code_interpreter = AgentCoreCodeInterpreter(region=region)
+                self.code_interpreter = code_interpreter
                 code_interpreter_tools.append(code_interpreter.code_interpreter)
                 logger.info("Added code_interpreter tool (AgentCoreCodeInterpreter)")
             except Exception as e:
@@ -210,6 +223,7 @@ class ToolManager:
         logger.info(f"mcp_servers parameter: {mcp_servers} (type: {type(mcp_servers)})")
 
         all_tools = []
+        self.code_interpreter = None
 
         # Handle MCP servers based on parameter
         if mcp_servers is None:
