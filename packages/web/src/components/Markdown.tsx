@@ -147,13 +147,32 @@ const ImageRenderer = ({
   const [src, setSrc] = useState(srcProp);
   const [error, setError] = useState<string | null>(null);
 
+  // These hooks return new functions on every render. Keep the latest ones in
+  // refs so that the signed URL is fetched only when the image source changes,
+  // not on every render (e.g. each streamed chunk, or the setSrc below).
+  const isS3UrlRef = useRef(isS3Url);
+  isS3UrlRef.current = isS3Url;
+  const getSignedUrlRef = useRef(getFileDownloadSignedUrl);
+  getSignedUrlRef.current = getFileDownloadSignedUrl;
+
   useEffect(() => {
-    if (isS3Url(srcProp ?? '')) {
-      getFileDownloadSignedUrl(srcProp ?? '')
-        .then((url) => setSrc(url))
-        .catch((e: Error) => setError(e.message));
+    if (!isS3UrlRef.current(srcProp ?? '')) {
+      setSrc(srcProp);
+      return;
     }
-  }, [getFileDownloadSignedUrl, isS3Url, srcProp]);
+    let cancelled = false;
+    getSignedUrlRef
+      .current(srcProp ?? '')
+      .then((url) => {
+        if (!cancelled) setSrc(url);
+      })
+      .catch((e: Error) => {
+        if (!cancelled) setError(e.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [srcProp]);
 
   if (error) {
     return (
