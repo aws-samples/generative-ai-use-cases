@@ -803,8 +803,9 @@ const useChatState = create<{
 
       replaceMessages(id, messages);
 
-      // The server stamped updatedDate; mirror it in the cached history so
-      // the chat moves to the top without refetching every loaded page.
+      // The server stamped updatedDate. Move the chat up in the cached history
+      // right away, then refetch: the refetch started by setPredictedTitle
+      // above was sent before the save and may still return the old date.
       mutateListChat(
         (pages) =>
           pages &&
@@ -817,7 +818,7 @@ const useChatState = create<{
               }
             }
           }),
-        { revalidate: false }
+        { revalidate: true }
       );
       return true;
     } catch (e) {
