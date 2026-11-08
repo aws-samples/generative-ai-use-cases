@@ -629,6 +629,7 @@ image:
   load_error: '[Image error: {{error}}]'
 inputs:
   attachment: Attachment
+  model: Model
   reasoning: Extended thinking
   setting: Setting
 landing:
