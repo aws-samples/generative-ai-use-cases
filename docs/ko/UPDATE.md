@@ -109,6 +109,15 @@ npm install
 git add package-lock.json
 ```
 
+### 설정을 cdk.json에서 parameter.ts로 옮기는 경우
+
+[parameter.ts](/packages/cdk/parameter.ts)의 `envs`에 환경을 정의하면 해당 환경에서는 [cdk.json](/packages/cdk/cdk.json)의 매개변수가 사용되지 않으며, parameter.ts에 작성하지 않은 항목은 기본값이 됩니다. 옮길 때는 다음 사항에 주의하세요.
+
+- cdk.json에서 기본값을 변경한 매개변수는 모두 옮기세요. 누락된 항목은 기본값으로 돌아갑니다. 예를 들어 `ragKnowledgeBaseEnabled: true`가 누락되면 Knowledge Base 스택이 삭제됩니다.
+- 환경 이름(`env`)은 변경하지 마세요. 환경 이름은 스택 이름에 포함되므로 변경하면 다른 스택이 생성됩니다. `-c env=` 없이 배포하는 경우 `''` 환경으로 정의합니다.
+- parameter.ts에는 `dev`, `staging`, `prod`가 빈 상태로 정의되어 있습니다. 이 환경 이름으로 배포하는 경우 cdk.json의 매개변수는 이미 사용되지 않습니다.
+- 옮긴 후 `npm run cdk:diff`를 실행하여 옮기기 전과 같은 변경사항만 표시되는지 확인한 후 재배포하세요.
+
 ### 문제 해결
 
 | 표시되는 메시지                                                           | 원인과 해결 방법                                                                                                                                                                                                                          |

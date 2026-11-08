@@ -26,6 +26,7 @@ import {
   BEDROCK_VIDEO_GEN_MODELS,
 } from './models';
 import { streamingChunk } from './streamingChunk';
+import { classifyStreamingError } from './streamingError';
 import { initBedrockRuntimeClient } from './bedrockClient';
 
 const MODEL_REGION = process.env.MODEL_REGION as string;
@@ -171,7 +172,7 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
         yield streamingChunk({
           text: '',
           stopReason: 'error',
-          errorCode: 'UNKNOWN_ERROR',
+          errorCode: classifyStreamingError(e),
         });
       }
     }

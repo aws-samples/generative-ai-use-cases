@@ -1,6 +1,10 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { handler } from '../../lambda/createMessages';
-import { batchCreateMessages, findChatById } from '../../lambda/repository';
+import {
+  batchCreateMessages,
+  findChatById,
+  setChatUpdatedDate,
+} from '../../lambda/repository';
 import { RecordedMessage, ToBeRecordedMessage } from 'generative-ai-use-cases';
 
 // Mock the repository
@@ -10,6 +14,9 @@ const mockedBatchCreateMessages = batchCreateMessages as jest.MockedFunction<
 >;
 const mockedFindChatById = findChatById as jest.MockedFunction<
   typeof findChatById
+>;
+const mockedSetChatUpdatedDate = setChatUpdatedDate as jest.MockedFunction<
+  typeof setChatUpdatedDate
 >;
 
 // Mock the environment variable
@@ -105,6 +112,46 @@ describe('createMessages Lambda handler', () => {
     expect(JSON.parse(result.body)).toEqual({
       messages: expectedRecordedMessages,
     });
+    // The chat record found above is stamped with the time of last activity.
+    expect(mockedSetChatUpdatedDate).toHaveBeenCalledWith(
+      `user#${userId}`,
+      '1234567890'
+    );
+  });
+
+  test('still returns the saved messages when updatedDate fails', async () => {
+    const userId = 'testUser';
+    const chatId = 'chat123';
+    mockedFindChatById.mockResolvedValue({
+      id: `user#${userId}`,
+      createdDate: '1234567890',
+      chatId: `chat#${chatId}`,
+      usecase: '',
+      title: '',
+      updatedDate: '',
+    });
+    mockedBatchCreateMessages.mockResolvedValue([]);
+    mockedSetChatUpdatedDate.mockRejectedValue(new Error('throttled'));
+
+    const result = await handler(
+      createAPIGatewayProxyEvent(
+        {
+          messages: [
+            {
+              messageId: 'msg123',
+              role: 'user',
+              content: 'Hello',
+              usecase: 'test',
+            },
+          ],
+        },
+        chatId,
+        userId
+      )
+    );
+
+    expect(result.statusCode).toBe(200);
+    expect(JSON.parse(result.body)).toEqual({ messages: [] });
   });
 
   test('allows JSON extraData for RAG Knowledge Base filters', async () => {

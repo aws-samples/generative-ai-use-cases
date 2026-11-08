@@ -1,0 +1,534 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stateful resources S3 Vectors knowledge base 1`] = `
+{
+  "AgentCoreStack/GenericAgentCoreAgentCoreFileBucket0430DA42": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/APIFileBucket8FB29855": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/ApiWebCloudfrontLoggingBucketAccessLogFF7274FB": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/ApiWebCloudfrontLoggingBucketD22C7B67": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/ApiWebS3Bucket26EF98D6": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/ApiWebS3LoggingBucket16DF416B": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/AuthIdentityPool659E7F64": {
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::Cognito::IdentityPool",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/AuthUserPool8115E87F": {
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::Cognito::UserPool",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/DatabaseStatsTable9C709761": {
+    "DeletionPolicy": "Delete",
+    "ImportSourceSpecification": null,
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH",
+      },
+      {
+        "AttributeName": "userId",
+        "KeyType": "RANGE",
+      },
+    ],
+    "TableName": null,
+    "Type": "AWS::DynamoDB::Table",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/DatabaseTableF104A135": {
+    "DeletionPolicy": "Delete",
+    "ImportSourceSpecification": null,
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH",
+      },
+      {
+        "AttributeName": "createdDate",
+        "KeyType": "RANGE",
+      },
+    ],
+    "TableName": null,
+    "Type": "AWS::DynamoDB::Table",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/RagDataSourceAccessLogsBucket19E6B2F2": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/RagDataSourceBucket091872DB": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/TranscribeAudioBucket39DFF290": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/TranscribeTranscriptBucketE67CAF92": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/UseCaseBuilderUseCaseBuilderTable449740F3": {
+    "DeletionPolicy": "Delete",
+    "ImportSourceSpecification": null,
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH",
+      },
+      {
+        "AttributeName": "dataType",
+        "KeyType": "RANGE",
+      },
+    ],
+    "TableName": null,
+    "Type": "AWS::DynamoDB::Table",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "RagKnowledgeBaseStack/DataSourceAccessLogsBucketE5273C2E": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "RagKnowledgeBaseStack/DataSourceBucket9FA93E04": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "RagKnowledgeBaseStack/KnowledgeBase": {
+    "DeletionPolicy": null,
+    "StorageConfiguration": {
+      "S3VectorsConfiguration": {
+        "IndexArn": "arn:aws:s3vectors:us-east-1:123456890123:bucket/generative-ai-use-cases-jp-s3vectors/index/generative-ai-use-cases-jp-s3vectors-index",
+        "VectorBucketArn": "arn:aws:s3vectors:us-east-1:123456890123:bucket/generative-ai-use-cases-jp-s3vectors",
+      },
+      "Type": "S3_VECTORS",
+    },
+    "Type": "AWS::Bedrock::KnowledgeBase",
+    "UpdateReplacePolicy": null,
+  },
+  "RagKnowledgeBaseStack/S3VectorBucket": {
+    "DeletionPolicy": null,
+    "EncryptionConfiguration": null,
+    "Type": "AWS::S3Vectors::VectorBucket",
+    "UpdateReplacePolicy": null,
+    "VectorBucketName": "generative-ai-use-cases-jp-s3vectors",
+  },
+  "RagKnowledgeBaseStack/S3VectorIndex": {
+    "DataType": "float32",
+    "DeletionPolicy": null,
+    "Dimension": 1024,
+    "DistanceMetric": "cosine",
+    "EncryptionConfiguration": null,
+    "IndexName": "generative-ai-use-cases-jp-s3vectors-index",
+    "MetadataConfiguration": {
+      "NonFilterableMetadataKeys": [
+        "AMAZON_BEDROCK_TEXT",
+        "AMAZON_BEDROCK_METADATA",
+      ],
+    },
+    "Type": "AWS::S3Vectors::Index",
+    "UpdateReplacePolicy": null,
+    "VectorBucketArn": null,
+    "VectorBucketName": "generative-ai-use-cases-jp-s3vectors",
+  },
+  "VideoTmpBucketStackus-east-1/Bucket83908E77": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "WebSearchAgentStack/AgentBucket77F66FF4": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+}
+`;
+
+exports[`stateful resources closed network mode 1`] = `
+{
+  "AgentCoreStack/GenericAgentCoreAgentCoreFileBucket0430DA42": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "ClosedNetworkStack/ClosedWebWebBucket6C6180EC": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/APIFileBucket8FB29855": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/AuthIdentityPool659E7F64": {
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::Cognito::IdentityPool",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/AuthUserPool8115E87F": {
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::Cognito::UserPool",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/DatabaseStatsTable9C709761": {
+    "DeletionPolicy": "Delete",
+    "ImportSourceSpecification": null,
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH",
+      },
+      {
+        "AttributeName": "userId",
+        "KeyType": "RANGE",
+      },
+    ],
+    "TableName": null,
+    "Type": "AWS::DynamoDB::Table",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/DatabaseTableF104A135": {
+    "DeletionPolicy": "Delete",
+    "ImportSourceSpecification": null,
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH",
+      },
+      {
+        "AttributeName": "createdDate",
+        "KeyType": "RANGE",
+      },
+    ],
+    "TableName": null,
+    "Type": "AWS::DynamoDB::Table",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/RagDataSourceAccessLogsBucket19E6B2F2": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/RagDataSourceBucket091872DB": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/TranscribeAudioBucket39DFF290": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/TranscribeTranscriptBucketE67CAF92": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/UseCaseBuilderUseCaseBuilderTable449740F3": {
+    "DeletionPolicy": "Delete",
+    "ImportSourceSpecification": null,
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH",
+      },
+      {
+        "AttributeName": "dataType",
+        "KeyType": "RANGE",
+      },
+    ],
+    "TableName": null,
+    "Type": "AWS::DynamoDB::Table",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "RagKnowledgeBaseStack/Collection": {
+    "CollectionGroupName": null,
+    "DeletionPolicy": null,
+    "EncryptionConfig": null,
+    "Name": "generative-ai-use-cases-jp",
+    "StandbyReplicas": "DISABLED",
+    "Tags": null,
+    "Type": "VECTORSEARCH",
+    "UpdateReplacePolicy": null,
+  },
+  "RagKnowledgeBaseStack/DataSourceAccessLogsBucketE5273C2E": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "RagKnowledgeBaseStack/DataSourceBucket9FA93E04": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "RagKnowledgeBaseStack/KnowledgeBase": {
+    "DeletionPolicy": null,
+    "StorageConfiguration": {
+      "OpensearchServerlessConfiguration": {
+        "CollectionArn": {
+          "Fn::GetAtt": [
+            "Collection",
+            "Arn",
+          ],
+        },
+        "FieldMapping": {
+          "MetadataField": "AMAZON_BEDROCK_METADATA",
+          "TextField": "AMAZON_BEDROCK_TEXT_CHUNK",
+          "VectorField": "bedrock-knowledge-base-default-vector",
+        },
+        "VectorIndexName": "bedrock-knowledge-base-default",
+      },
+      "Type": "OPENSEARCH_SERVERLESS",
+    },
+    "Type": "AWS::Bedrock::KnowledgeBase",
+    "UpdateReplacePolicy": null,
+  },
+  "VideoTmpBucketStackus-east-1/Bucket83908E77": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "WebSearchAgentStack/AgentBucket77F66FF4": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+}
+`;
+
+exports[`stateful resources default 1`] = `
+{
+  "AgentCoreStack/GenericAgentCoreAgentCoreFileBucket0430DA42": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/APIFileBucket8FB29855": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/ApiWebCloudfrontLoggingBucketAccessLogFF7274FB": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/ApiWebCloudfrontLoggingBucketD22C7B67": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/ApiWebS3Bucket26EF98D6": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/ApiWebS3LoggingBucket16DF416B": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/AuthIdentityPool659E7F64": {
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::Cognito::IdentityPool",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/AuthUserPool8115E87F": {
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::Cognito::UserPool",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/DatabaseStatsTable9C709761": {
+    "DeletionPolicy": "Delete",
+    "ImportSourceSpecification": null,
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH",
+      },
+      {
+        "AttributeName": "userId",
+        "KeyType": "RANGE",
+      },
+    ],
+    "TableName": null,
+    "Type": "AWS::DynamoDB::Table",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/DatabaseTableF104A135": {
+    "DeletionPolicy": "Delete",
+    "ImportSourceSpecification": null,
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH",
+      },
+      {
+        "AttributeName": "createdDate",
+        "KeyType": "RANGE",
+      },
+    ],
+    "TableName": null,
+    "Type": "AWS::DynamoDB::Table",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/RagDataSourceAccessLogsBucket19E6B2F2": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/RagDataSourceBucket091872DB": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/TranscribeAudioBucket39DFF290": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/TranscribeTranscriptBucketE67CAF92": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "GenerativeAiUseCasesStack/UseCaseBuilderUseCaseBuilderTable449740F3": {
+    "DeletionPolicy": "Delete",
+    "ImportSourceSpecification": null,
+    "KeySchema": [
+      {
+        "AttributeName": "id",
+        "KeyType": "HASH",
+      },
+      {
+        "AttributeName": "dataType",
+        "KeyType": "RANGE",
+      },
+    ],
+    "TableName": null,
+    "Type": "AWS::DynamoDB::Table",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "RagKnowledgeBaseStack/Collection": {
+    "CollectionGroupName": null,
+    "DeletionPolicy": null,
+    "EncryptionConfig": null,
+    "Name": "generative-ai-use-cases-jp",
+    "StandbyReplicas": "DISABLED",
+    "Tags": null,
+    "Type": "VECTORSEARCH",
+    "UpdateReplacePolicy": null,
+  },
+  "RagKnowledgeBaseStack/DataSourceAccessLogsBucketE5273C2E": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "RagKnowledgeBaseStack/DataSourceBucket9FA93E04": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "RagKnowledgeBaseStack/KnowledgeBase": {
+    "DeletionPolicy": null,
+    "StorageConfiguration": {
+      "OpensearchServerlessConfiguration": {
+        "CollectionArn": {
+          "Fn::GetAtt": [
+            "Collection",
+            "Arn",
+          ],
+        },
+        "FieldMapping": {
+          "MetadataField": "AMAZON_BEDROCK_METADATA",
+          "TextField": "AMAZON_BEDROCK_TEXT_CHUNK",
+          "VectorField": "bedrock-knowledge-base-default-vector",
+        },
+        "VectorIndexName": "bedrock-knowledge-base-default",
+      },
+      "Type": "OPENSEARCH_SERVERLESS",
+    },
+    "Type": "AWS::Bedrock::KnowledgeBase",
+    "UpdateReplacePolicy": null,
+  },
+  "VideoTmpBucketStackus-east-1/Bucket83908E77": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+  "WebSearchAgentStack/AgentBucket77F66FF4": {
+    "BucketName": null,
+    "DeletionPolicy": "Delete",
+    "Type": "AWS::S3::Bucket",
+    "UpdateReplacePolicy": "Delete",
+  },
+}
+`;

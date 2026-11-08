@@ -10,6 +10,7 @@ import {
   TokenUsageStats,
 } from 'generative-ai-use-cases';
 import * as crypto from 'crypto';
+import { capMessageToItemLimit } from './utils/messageSize';
 
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
@@ -360,9 +361,11 @@ export const batchCreateMessages = async (
   const createdDate = Date.now();
   const feedback = 'none';
 
+  // Oversized messages are shrunk to fit DynamoDB's item limit. The shrunken
+  // copy is also what is returned, so the client shows what was stored.
   const items: RecordedMessage[] = messages.map(
     (m: ToBeRecordedMessage, i: number) => {
-      return {
+      return capMessageToItemLimit({
         id: chatId,
         createdDate: m.createdDate ?? `${createdDate + i}#0`,
         messageId: m.messageId,
@@ -375,7 +378,7 @@ export const batchCreateMessages = async (
         usecase: m.usecase,
         llmType: m.llmType ?? '',
         metadata: m.metadata,
-      };
+      });
     }
   );
 
@@ -427,6 +430,29 @@ export const setChatTitle = async (
     })
   );
   return res.Attributes as Chat;
+};
+
+/**
+ * Record when a chat last received messages, so the history can be ordered by
+ * last activity. Stored as epoch milliseconds, like `createdDate`.
+ */
+export const setChatUpdatedDate = async (
+  id: string,
+  createdDate: string
+): Promise<void> => {
+  await dynamoDbDocument.send(
+    new UpdateCommand({
+      TableName: TABLE_NAME,
+      Key: {
+        id: id,
+        createdDate: createdDate,
+      },
+      UpdateExpression: 'set updatedDate = :updatedDate',
+      // Never create a stray item if the chat was deleted in the meantime.
+      ConditionExpression: 'attribute_exists(id)',
+      ExpressionAttributeValues: { ':updatedDate': `${Date.now()}` },
+    })
+  );
 };
 
 export const updateFeedback = async (

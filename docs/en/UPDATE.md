@@ -109,6 +109,15 @@ npm install
 git add package-lock.json
 ```
 
+### Moving settings from cdk.json to parameter.ts
+
+When an environment is defined in `envs` in [parameter.ts](/packages/cdk/parameter.ts), the parameters in [cdk.json](/packages/cdk/cdk.json) are not used for that environment, and every parameter that parameter.ts leaves out takes its default value. When you move your settings:
+
+- Move every parameter you changed from its default in cdk.json. A parameter you leave out goes back to its default. For example, leaving out `ragKnowledgeBaseEnabled: true` deletes the Knowledge Base stack.
+- Keep the environment name (`env`). It is part of the stack names, so a different name creates new stacks. If you deploy without `-c env=`, define the environment as `''`.
+- parameter.ts already defines `dev`, `staging` and `prod`, empty. If you deploy with one of these names, the parameters in cdk.json are already not used.
+- After moving, run `npm run cdk:diff` and check that it shows the same changes as before the move. Then redeploy.
+
 ### Troubleshooting
 
 | Message                                                                   | Cause and fix                                                                                                                                                                                                                      |

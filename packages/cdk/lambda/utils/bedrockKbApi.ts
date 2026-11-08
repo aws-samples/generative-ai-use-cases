@@ -22,6 +22,7 @@ import {
   getDynamicFilters,
 } from '@generative-ai-use-cases/common';
 import { streamingChunk } from './streamingChunk';
+import { classifyStreamingError } from './streamingError';
 import { verifyToken } from './auth';
 import { initBedrockAgentRuntimeClient } from './bedrockClient';
 
@@ -366,7 +367,7 @@ $output_format_instructions$`;
         yield streamingChunk({
           text: '',
           stopReason: 'error',
-          errorCode: 'UNKNOWN_ERROR',
+          errorCode: classifyStreamingError(e),
         });
       }
     }

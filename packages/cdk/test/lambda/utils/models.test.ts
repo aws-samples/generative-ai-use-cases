@@ -1,4 +1,4 @@
-import { Model, UnrecordedMessage } from 'generative-ai-use-cases';
+import { ExtraData, Model, UnrecordedMessage } from 'generative-ai-use-cases';
 
 const OPUS_5_5_IDS = [
   'global.anthropic.claude-opus-5-5',
@@ -99,5 +99,40 @@ describe('Claude Opus 5.5', () => {
     expect(input.messages?.at(-1)?.content?.at(-1)).toEqual({
       cachePoint: { type: 'default' },
     });
+  });
+});
+
+describe('document names', () => {
+  it('gives files with the same name distinct names across turns', async () => {
+    const { BEDROCK_TEXT_GEN_MODELS } =
+      await import('../../../lambda/utils/models');
+    const modelId = 'global.anthropic.claude-opus-5-5';
+    const config = BEDROCK_TEXT_GEN_MODELS[modelId];
+    const file = (data: string): ExtraData => ({
+      type: 'file',
+      name: 'report.txt',
+      source: { type: 'base64', mediaType: 'text/plain', data },
+    });
+    const conversation: UnrecordedMessage[] = [
+      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'user', content: 'first', extraData: [file('YQ==')] },
+      { role: 'assistant', content: 'ok' },
+      {
+        role: 'user',
+        content: 'updated',
+        extraData: [file('Yg=='), file('Yw==')],
+      },
+    ];
+    const input = config.createConverseCommandInput(
+      conversation,
+      '/chat',
+      { type: 'bedrock', modelId },
+      config.defaultParams,
+      config.usecaseParams
+    );
+    const names = (input.messages ?? []).flatMap((m) =>
+      (m.content ?? []).flatMap((c) => (c.document ? [c.document.name] : []))
+    );
+    expect(names).toEqual(['report', 'report (2)', 'report (3)']);
   });
 });

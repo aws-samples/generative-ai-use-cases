@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { MediaFormat } from '@aws-sdk/client-transcribe';
 import useTranscribeApi from './useTranscribeApi';
+import { getTranscribeLanguageOptions } from '../utils/AudioUtils';
 
 const useTranscribeState = create<{
   loading: boolean;
@@ -66,6 +67,9 @@ const useTranscribeState = create<{
       speakerLabel: speakerLabel,
       maxSpeakers: maxSpeakers,
       languageCode: languageCode,
+      languageOptions: languageCode
+        ? undefined
+        : getTranscribeLanguageOptions(),
     });
 
     set(() => ({

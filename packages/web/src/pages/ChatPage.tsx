@@ -26,12 +26,14 @@ import useChatPreferences, {
   pickInitialModelId,
   sanitizeReasoningConfig,
 } from '../hooks/useChatPreferences';
+import usePreventNavigation from '../hooks/usePreventNavigation';
 import { PiArrowClockwiseBold, PiShareFatFill } from 'react-icons/pi';
 import { create } from 'zustand';
 import BedrockIcon from '../assets/bedrock.svg?react';
 import { ChatPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import { getPrompter } from '../prompts';
+import { withCurrentDate } from '../utils/currentDate';
 import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
 import {
@@ -111,6 +113,14 @@ const ChatPage: React.FC = () => {
     setSaveSystemContextTitle,
   } = useChatPageState();
   const { pathname, search } = useLocation();
+
+  // Ask before a reload, closing the tab or leaving for another site while
+  // there is an unsent message (#1321). In-app navigation is not blocked: the
+  // draft lives in the useChatPageState store and survives it.
+  usePreventNavigation(content.trim() !== '', {
+    blockInternalNavigation: false,
+  });
+
   const {
     clear: clearFiles,
     uploadedFiles,
@@ -334,7 +344,7 @@ const ChatPage: React.FC = () => {
     const success = await postChat(
       prompter.chatPrompt({ content: savedContent }),
       false,
-      undefined,
+      withCurrentDate,
       undefined,
       undefined,
       fileUpload ? uploadedFiles : undefined,
@@ -360,7 +370,7 @@ const ChatPage: React.FC = () => {
   const onRetry = useCallback(() => {
     retryGeneration(
       undefined,
-      undefined,
+      withCurrentDate,
       undefined,
       undefined,
       undefined,
@@ -387,7 +397,7 @@ const ChatPage: React.FC = () => {
       editChat(
         modifiedPrompt,
         false,
-        undefined,
+        withCurrentDate,
         undefined,
         undefined,
         undefined,
