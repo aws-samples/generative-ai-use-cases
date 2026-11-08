@@ -530,6 +530,7 @@ image:
   load_error: '[画像エラー: {{error}}]'
 inputs:
   attachment: 添付ファイル
+  model: モデル
   reasoning: 深く考える
   setting: 設定
 landing:
