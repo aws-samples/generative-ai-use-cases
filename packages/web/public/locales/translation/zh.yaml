@@ -256,7 +256,7 @@ error:
     EMPTY_MESSAGE: 对话中包含空消息，无法继续。请开始新的对话。
     IMAGE_TOO_LARGE: 图片过大。每张图片不能超过 3.75 MB。
     INVALID_FILE_NAME: 无法使用该文件名。请改为仅包含英文字母和数字的简短名称后重新附加。
-    PAYLOAD_TOO_LARGE: 附件文件过大。请减小文件大小或附件数量后重试。
+    PAYLOAD_TOO_LARGE: 附件总大小过大，无法发送。本次对话中之前附加的文件每次也会一起发送，并计入总大小。请移除或缩小新的附件，或开始新的对话。
     THROTTLING: 服务器当前流量较高。请稍后重试。
     TOO_MANY_DOCUMENTS: 附加的文档过多。本次对话中之前附加的文档也会计入。请减少附件或开始新的对话。
     UNKNOWN_ERROR: 发生错误。请重试或联系管理员。

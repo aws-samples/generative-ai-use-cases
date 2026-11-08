@@ -128,6 +128,7 @@ const ChatPage: React.FC = () => {
     uploadedFiles,
     uploadFiles,
     base64Cache,
+    restore: restoreFiles,
   } = useFiles(pathname);
   const { chatId } = useParams();
 
@@ -355,6 +356,7 @@ const ChatPage: React.FC = () => {
   const onSend = useCallback(async () => {
     setFollowing(true);
     const savedContent = content;
+    const savedFiles = uploadedFiles;
     setContent('');
     clearFiles();
     const success = await postChat(
@@ -371,7 +373,10 @@ const ChatPage: React.FC = () => {
       overrideModelParameters
     );
     if (!success) {
+      // Give back what was cleared, so the user can change the attachments
+      // (e.g. remove one that made the request too large) and send again
       setContent(savedContent);
+      restoreFiles(savedFiles);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

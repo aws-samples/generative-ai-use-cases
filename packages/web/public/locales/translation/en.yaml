@@ -487,7 +487,7 @@ error:
     EMPTY_MESSAGE: The conversation contains an empty message and cannot be continued. Please start a new chat.
     IMAGE_TOO_LARGE: An image is too large. Each image must be 3.75 MB or smaller.
     INVALID_FILE_NAME: A file name cannot be used. Rename the file to a short name using only letters and numbers, then attach it again.
-    PAYLOAD_TOO_LARGE: The attached file is too large. Please reduce the file size or number of attachments and try again.
+    PAYLOAD_TOO_LARGE: The attachments are too large to send together. Files attached earlier in this conversation are sent again with each message and count toward the limit. Remove or shrink the new attachment, or start a new chat.
     THROTTLING: The server is currently experiencing high traffic. Please try again later.
     TOO_MANY_DOCUMENTS: Too many documents are attached. Attachments earlier in this conversation also count. Attach fewer documents, or start a new chat.
     UNKNOWN_ERROR: An error occurred. Please try again or contact the administrator.

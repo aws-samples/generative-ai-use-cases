@@ -331,7 +331,7 @@ error:
     EMPTY_MESSAGE: Cuộc trò chuyện chứa một tin nhắn trống nên không thể tiếp tục. Vui lòng bắt đầu cuộc trò chuyện mới.
     IMAGE_TOO_LARGE: Hình ảnh quá lớn. Mỗi hình ảnh phải nhỏ hơn hoặc bằng 3.75 MB.
     INVALID_FILE_NAME: Không thể sử dụng tên tệp này. Vui lòng đổi sang tên ngắn chỉ gồm chữ cái và số rồi đính kèm lại.
-    PAYLOAD_TOO_LARGE: Tệp đính kèm quá lớn. Vui lòng giảm kích thước tệp hoặc số lượng tệp đính kèm và thử lại.
+    PAYLOAD_TOO_LARGE: Tổng dung lượng tệp đính kèm quá lớn để gửi. Các tệp đã đính kèm trước đó trong cuộc trò chuyện này cũng được gửi lại mỗi lần và được tính vào tổng. Vui lòng bỏ hoặc thu nhỏ tệp đính kèm mới, hoặc bắt đầu cuộc trò chuyện mới.
     THROTTLING: Máy chủ hiện đang có lưu lượng truy cập cao. Vui lòng thử lại sau.
     TOO_MANY_DOCUMENTS: Có quá nhiều tài liệu được đính kèm. Các tài liệu đã đính kèm trước đó trong cuộc trò chuyện này cũng được tính. Vui lòng giảm số tệp đính kèm hoặc bắt đầu cuộc trò chuyện mới.
     UNKNOWN_ERROR: Đã xảy ra lỗi. Vui lòng thử lại hoặc liên hệ quản trị viên.
