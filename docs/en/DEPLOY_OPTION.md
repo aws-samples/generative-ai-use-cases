@@ -2100,6 +2100,9 @@ The default guardrail applies sensitive information filters that have proven eff
 > [!NOTE]
 > If you want to disable guardrails after enabling them, set `guardrailEnabled: false` and redeploy. This will disable guardrails when calling generative AI, but the guardrail itself will remain. You can completely remove it by opening the management console and deleting the `GuardrailStack` stack from CloudFormation in the modelRegion. Having the guardrail remain doesn't incur costs, but it's best to delete unused resources.
 
+> [!WARNING]
+> The guardrail is created in `modelRegion` only. With `guardrailEnabled: true`, a model in `modelIds` whose region is not `modelRegion` fails with `The guardrail identifier or version provided in the request does not exist.`, because that region has no guardrail. When you enable guardrails, use `modelRegion` as the region of your text generation models.
+
 ## Cost-Related Settings
 
 ### Set Schedule for Automatic Creation and Deletion of Kendra Index
