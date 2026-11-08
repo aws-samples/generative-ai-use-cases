@@ -109,6 +109,15 @@ npm install
 git add package-lock.json
 ```
 
+### 設定を cdk.json から parameter.ts に移す場合
+
+[parameter.ts](/packages/cdk/parameter.ts) の `envs` に環境を定義すると、その環境では [cdk.json](/packages/cdk/cdk.json) のパラメータは使われず、parameter.ts に書いていない項目はデフォルト値になります。移す際は以下に注意してください。
+
+- cdk.json でデフォルトから変更しているパラメータは、すべて移してください。漏れた項目はデフォルト値に戻ります。たとえば `ragKnowledgeBaseEnabled: true` が漏れると、Knowledge Base のスタックが削除されます。
+- 環境名 (`env`) は変えないでください。環境名はスタック名に含まれるため、変えると別のスタックが作成されます。`-c env=` を付けずにデプロイしている場合は `''` の環境として定義します。
+- parameter.ts には `dev`、`staging`、`prod` が空の状態で定義されています。これらの環境名でデプロイしている場合、cdk.json のパラメータはすでに使われていません。
+- 移した後に `npm run cdk:diff` を実行し、移す前と同じ差分しか出ないことを確認してから再デプロイしてください。
+
 ### うまくいかない場合
 
 | 表示されるメッセージ                                                      | 原因と対処                                                                                                                                                                                                                             |

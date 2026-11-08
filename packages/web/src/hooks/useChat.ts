@@ -802,6 +802,24 @@ const useChatState = create<{
       });
 
       replaceMessages(id, messages);
+
+      // The server stamped updatedDate. Move the chat up in the cached history
+      // right away, then refetch: the refetch started by setPredictedTitle
+      // above was sent before the save and may still return the old date.
+      mutateListChat(
+        (pages) =>
+          pages &&
+          produce(pages, (draft) => {
+            for (const page of draft) {
+              const chat = page.data.find((c) => c.chatId === chatId);
+              if (chat) {
+                chat.updatedDate = `${Date.now()}`;
+                break;
+              }
+            }
+          }),
+        { revalidate: true }
+      );
       return true;
     } catch (e) {
       console.error(e);

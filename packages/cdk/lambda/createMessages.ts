@@ -1,6 +1,10 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { CreateMessagesRequest, ExtraData } from 'generative-ai-use-cases';
-import { batchCreateMessages, findChatById } from './repository';
+import {
+  batchCreateMessages,
+  findChatById,
+  setChatUpdatedDate,
+} from './repository';
 
 const FILE_UPLOAD_BUCKET_NAME = process.env.BUCKET_NAME!;
 
@@ -152,6 +156,14 @@ export const handler = async (
     }
 
     const messages = await batchCreateMessages(req.messages, userId, chatId);
+
+    // The messages are already saved, so a failure here must not fail the
+    // request; the chat just keeps its previous position in the history.
+    try {
+      await setChatUpdatedDate(chat.id, chat.createdDate);
+    } catch (error) {
+      console.log('Failed to update updatedDate', error);
+    }
 
     return {
       statusCode: 200,

@@ -28,6 +28,10 @@ chat:
   hint_cmd_enter: ⌘ + Enter로 전송
   hint_ctrl_enter: Ctrl + Enter로 전송
   history: 기록
+  history_last_30_days: 지난 30일
+  history_last_7_days: 지난 7일
+  history_today: 오늘
+  history_yesterday: 어제
   initialize: 초기화
   model_parameters: 모델 매개변수
   open_link: 링크 열기
@@ -50,6 +54,7 @@ common:
   collapse: 접기
   colon: ':'
   complete: 완료
+  copy_table: 표 복사
   create: 생성
   delete: 삭제
   enter_text: 텍스트 입력
@@ -314,9 +319,17 @@ drawer:
 error:
   streamingError:
     ACCESS_DENIED: 선택한 모델이 활성화되어 있지 않습니다. Amazon Bedrock 콘솔에서 모델을 활성화해 주세요.
+    CONTEXT_TOO_LONG: 대화 또는 첨부 파일이 너무 길어 모델이 읽을 수 없습니다. 첨부 내용(페이지, 행, 시트 수)을 줄이거나 새 채팅을 시작해 주세요.
+    DOCUMENT_TOO_LARGE: 문서가 너무 커서 보낼 수 없습니다. 문서를 나누거나 내용을 줄인 후 다시 시도해 주세요.
+    DUPLICATE_FILE_NAME: 이 대화에 같은 이름의 파일이 여러 개 있습니다(이전에 첨부한 파일 포함). 파일 이름을 바꿔 다시 첨부하거나 새 채팅을 시작해 주세요.
+    EMPTY_MESSAGE: 대화에 빈 메시지가 포함되어 있어 계속할 수 없습니다. 새 채팅을 시작해 주세요.
+    IMAGE_TOO_LARGE: 이미지가 너무 큽니다. 이미지는 파일당 3.75 MB 이하여야 합니다.
+    INVALID_FILE_NAME: 파일 이름을 사용할 수 없습니다. 영문자와 숫자만으로 된 짧은 이름으로 바꾼 후 다시 첨부해 주세요.
     PAYLOAD_TOO_LARGE: 첨부 파일의 크기가 너무 큽니다. 파일 크기 또는 첨부 파일 수를 줄이고 다시 시도해 주세요.
     THROTTLING: 서버에 트래픽이 집중되고 있습니다. 잠시 후 다시 시도해 주세요.
+    TOO_MANY_DOCUMENTS: 첨부된 문서가 너무 많습니다. 이 대화에서 이전에 첨부한 문서도 포함됩니다. 첨부를 줄이거나 새 채팅을 시작해 주세요.
     UNKNOWN_ERROR: 오류가 발생했습니다. 다시 시도하거나 관리자에게 문의해 주세요.
+    UNSUPPORTED_FILE_TYPE: 지원하지 않는 파일 형식입니다.
 feedback:
   additional_feedback: 추가 피드백이 있으시면 여기에 입력해주세요. (선택사항)
   reason_error: 이유를 선택해주세요.
@@ -426,6 +439,8 @@ mcp_chat:
   loading_message: MCP 서버에 연결 중입니다. 시간이 걸릴 수 있습니다. 기다려주세요...
   title: MCP 채팅
 meetingMinutes:
+  auto_detect_candidates: '자동 감지 후보: {{languages}}'
+  auto_detect_change: 설정에서 변경
   auto_generate: 자동 생성
   clear_minutes: 회의록 지우기
   custom_prompt: 사용자 정의 프롬프트
@@ -601,6 +616,8 @@ setting:
     show_tools: 도구 표시
     show_use_case_builder: 사용 사례 빌더 표시
     stats: 통계
+    transcribe_languages: 음성 인식 자동 감지 언어
+    transcribe_languages_help: '음성 인식 언어를 "자동"으로 설정했을 때(회의록, 음성 입력, 파일 문자 변환) 감지 후보로 사용할 언어입니다. 2~5개를 선택하세요. 많이 선택할수록 짧은 발화의 언어를 잘못 감지하기 쉽습니다.'
     typing_animation: 타이핑 애니메이션
     version: 버전
     version_help: generative-ai-use-cases의 package.json 버전 참조

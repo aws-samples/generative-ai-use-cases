@@ -16,6 +16,10 @@ chat:
   delete_link_message: 通过删除链接，您可以停止公开对话历史。
   drop_files: 请拖放文件
   history: 对话历史
+  history_last_30_days: 过去 30 天
+  history_last_7_days: 过去 7 天
+  history_today: 今天
+  history_yesterday: 昨天
   initialize: 初始化
   open_link: 打开链接
   prompt_examples: 提示示例
@@ -36,6 +40,7 @@ common:
   collapse: 折叠
   colon: ':'
   complete: 完成
+  copy_table: 复制表格
   create: 创建
   delete: 删除
   enter_text: 请输入
@@ -244,9 +249,17 @@ drawer:
 error:
   streamingError:
     ACCESS_DENIED: 所选模型尚未启用。请在 Amazon Bedrock 控制台中启用该模型。
+    CONTEXT_TOO_LONG: 对话或附件过长，模型无法读取。请减少附件内容（页数、行数或工作表数）或开始新的对话。
+    DOCUMENT_TOO_LARGE: 文档过大，无法发送。请拆分文档或减少内容后重试。
+    DUPLICATE_FILE_NAME: 本次对话中有多个同名文件（包括之前附加的文件）。请重命名文件后重新附加，或开始新的对话。
+    EMPTY_MESSAGE: 对话中包含空消息，无法继续。请开始新的对话。
+    IMAGE_TOO_LARGE: 图片过大。每张图片不能超过 3.75 MB。
+    INVALID_FILE_NAME: 无法使用该文件名。请改为仅包含英文字母和数字的简短名称后重新附加。
     PAYLOAD_TOO_LARGE: 附件文件过大。请减小文件大小或附件数量后重试。
     THROTTLING: 服务器当前流量较高。请稍后重试。
+    TOO_MANY_DOCUMENTS: 附加的文档过多。本次对话中之前附加的文档也会计入。请减少附件或开始新的对话。
     UNKNOWN_ERROR: 发生错误。请重试或联系管理员。
+    UNSUPPORTED_FILE_TYPE: 不支持此文件类型。
 feedback:
   additional_feedback: 如果您有其他反馈，请输入。(可选)
   reason_error: 请选择原因。
@@ -458,6 +471,8 @@ language:
   ko: 韩语
   zh: 中文
 meetingMinutes:
+  auto_detect_candidates: '自动检测候选: {{languages}}'
+  auto_detect_change: 在设置中更改
   auto_generate: 自动生成
   clear_minutes: 清除会议纪要
   custom_prompt: 自定义提示
@@ -608,6 +623,8 @@ setting:
     language_help: 可以更改显示语言
     rag_enabled: RAG (Amazon Kendra)已启用
     rag_kb_enabled: RAG (Knowledge Base)已启用
+    transcribe_languages: 语音识别自动检测语言
+    transcribe_languages_help: '当语音识别语言设置为"自动"时（会议记录、语音输入、文件转录），用于检测的候选语言。请选择 2 到 5 种。选择越多，短句越容易被识别为错误的语言。'
     version: 版本
     version_help: 参考generative-ai-use-cases的package.json中的version
   recent_updates: 最近更新

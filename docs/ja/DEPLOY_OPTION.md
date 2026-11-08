@@ -4,7 +4,7 @@
 
 GenU は、parameter.ts もしくは AWS CDK の context で設定を変更します。
 
-**複数環境の設定を定義できるため、新規に構築する場合は parameter.ts での指定を推奨します。後方互換性のために context > parameter.ts の順でパラメータを取得するようになっています。**
+**新規に構築する場合は parameter.ts での指定を推奨します。複数環境の設定を定義でき、TypeScript の型チェックでパラメータ名や値の誤りに気づけます (cdk.json では、名前を間違えた項目は何もエラーにならず無視されます)。また、アップデート時に cdk.json がコンフリクトしにくくなります。`env` で指定した環境が parameter.ts に定義されている場合は parameter.ts の値だけが使われ、cdk.json のパラメータは使われません。すでに cdk.json で設定している場合の移行方法は [アップデート方法](./UPDATE.md#設定を-cdkjson-から-parameterts-に移す場合) を参照してください。**
 
 **Context を使う場合: CDK の context は '-c' でも指定できますが、その場合コードベースに変更が入らずフロントエンドのビルドが実施されないため、このアセットに関しては全ての設定は cdk.json の設定を変更することを推奨します。**
 
@@ -257,9 +257,11 @@ npx -w packages/cdk cdk bootstrap --region us-east-1
 1. [Knowledge Base のコンソール画面](https://console.aws.amazon.com/bedrock/home#/knowledge-bases) を開く
 1. generative-ai-use-cases-jp をクリック
 1. s3-data-source を選択し、Sync をクリック
-1. web-crawler-data-source を選択し、Sync をクリック
 
-それぞれの Status が Available になれば完了です。S3 に保存されているファイルおよび Web Crawler で取得したウェブページが取り込まれ、Knowledge Base から検索できます。
+Status が Available になれば完了です。S3 に保存されているファイルが取り込まれ、Knowledge Base から検索できます。
+
+> [!NOTE]
+> 2026 年 9 月 30 日以降、customer-managed Knowledge Base では Web Crawler などのコネクタを新規作成できなくなったため、以前サンプルとして作成していた web-crawler-data-source は作成しません。詳細は [Web Crawler データソースのドキュメント](https://docs.aws.amazon.com/bedrock/latest/userguide/webcrawl-data-source-connector.html) を参照してください。
 
 > [!NOTE]
 > RAG チャット (Knowledge Base) の設定を有効後に、再度無効化する場合は、`ragKnowledgeBaseEnabled: false` にして再デプロイすれば RAG チャット (Knowledge Base) は無効化されますが、`RagKnowledgeBaseStack` 自体は残ります。マネージメントコンソールを開き、modelRegion の CloudFormation から `RagKnowledgeBaseStack` というスタックを削除することで完全に消去ができます。
@@ -362,7 +364,7 @@ chunkingConfiguration: {
 
 RagKnowledgeBaseStack の削除に伴い、**RAG チャット用の S3 バケットや格納されている RAG 用のファイルが削除**されます。
 S3 バケット内にアップロードした RAG 用のファイルが存在する場合は、退避したあとに再度アップロードしてください。
-また、前述した手順に従い Data source (s3-data-source, web-crawler-data-source) を再度 Sync してください。
+また、前述した手順に従い Data source (s3-data-source) を再度 Sync してください。
 
 #### OpenSearch Service の Index をマネージメントコンソールで確認する方法
 
@@ -1373,6 +1375,8 @@ const envs: Record<string, Partial<StackInput>> = {
 "moonshot.kimi-k2-thinking",
 "us.moonshotai.kimi-k3",
 "global.moonshotai.kimi-k3",
+"us.moonshotai.kimi-k3.1",
+"global.moonshotai.kimi-k3.1",
 "nvidia.nemotron-nano-9b-v2",
 "nvidia.nemotron-nano-12b-v2",
 ```
@@ -1404,6 +1408,15 @@ amazon.nova-sonic-v1:0
 "amazon.nova-reel-v1:1",
 "luma.ray-v2:0"
 ```
+
+> [!WARNING]
+> `amazon.nova-canvas-v1:0`、`amazon.nova-reel-v1:0`、`amazon.nova-reel-v1:1` は 2026-09-30 に EOL となり、全リージョンで呼び出せなくなりました。Titan Image Generator も現在は提供されていません。最新の状況は [Bedrock のモデルライフサイクル](https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html)を確認してください。
+>
+> そのため、デフォルトの画像生成モデルは us-west-2 の `stability.stable-image-core-v1:1` です。動画生成はデフォルトで無効です（`videoGenerationModelIds: []`）。動画生成を使う場合は、us-west-2 を CDK Bootstrap したうえで（`npx -w packages/cdk cdk bootstrap --region us-west-2`）、以下のように指定してください。
+>
+> ```json
+> "videoGenerationModelIds": [{ "modelId": "luma.ray-v2:0", "region": "us-west-2" }]
+> ```
 
 **指定したリージョンで指定したモデルが有効化されているかご確認ください。**
 

@@ -6,6 +6,11 @@ import React, {
   useEffect,
 } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import useUserSetting from '../../hooks/useUserSetting';
+import useTranscribeLanguageLabels, {
+  TranscribeAutoDetectLanguage,
+} from '../../hooks/useTranscribeLanguageLabels';
 import { LanguageCode } from '@aws-sdk/client-transcribe-streaming';
 import { Transcript } from 'generative-ai-use-cases';
 import Select from '../Select';
@@ -39,7 +44,7 @@ interface MeetingMinutesTranscriptionProps {
 const MeetingMinutesTranscription: React.FC<
   MeetingMinutesTranscriptionProps
 > = ({ onTranscriptChange, onRecordingStateChange }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
   const isAtBottomRef = useRef<boolean>(true);
 
@@ -73,6 +78,10 @@ const MeetingMinutesTranscription: React.FC<
 
   // Internal state management
   const [languageCode, setLanguageCode] = useState('auto');
+  // Default to automatic language identification; the candidates are the
+  // user's choice on the Settings page, shown under the selector.
+  const { settingTranscribeLanguageOptions } = useUserSetting();
+  const transcribeLanguageLabels = useTranscribeLanguageLabels();
   const [speakerLabel, setSpeakerLabel] = useState(false);
   const [maxSpeakers, setMaxSpeakers] = useState(4);
   const [speakers, setSpeakers] = useState('');
@@ -105,38 +114,6 @@ const MeetingMinutesTranscription: React.FC<
       speakers.split(',').map((speaker, idx) => [`spk_${idx}`, speaker.trim()])
     );
   }, [speakers]);
-
-  // Map i18n language to transcription language
-  const getTranscriptionLanguageFromSettings = useCallback(
-    (settingsLang: string): string => {
-      const langMapping: { [key: string]: string } = {
-        ja: 'ja-JP',
-        en: 'en-US',
-        zh: 'zh-CN',
-        ko: 'ko-KR',
-        th: 'th-TH',
-        vi: 'vi-VN',
-      };
-      return langMapping[settingsLang] || 'auto';
-    },
-    []
-  );
-
-  // Set language from settings on mount
-  useEffect(() => {
-    if (i18n.resolvedLanguage && languageCode === 'auto') {
-      const mappedLang = getTranscriptionLanguageFromSettings(
-        i18n.resolvedLanguage
-      );
-      if (mappedLang !== 'auto') {
-        setLanguageCode(mappedLang);
-      }
-    }
-  }, [
-    i18n.resolvedLanguage,
-    languageCode,
-    getTranscriptionLanguageFromSettings,
-  ]);
 
   // Helper function to format time in MM:SS format
   const formatTime = useCallback((seconds: number): string => {
@@ -366,6 +343,23 @@ const MeetingMinutesTranscription: React.FC<
               fullWidth
               notItem
             />
+            {languageCode === 'auto' && (
+              <div className="mt-1 text-xs text-gray-500">
+                {t('meetingMinutes.auto_detect_candidates', {
+                  languages: settingTranscribeLanguageOptions
+                    .map(
+                      (code) =>
+                        transcribeLanguageLabels[
+                          code as TranscribeAutoDetectLanguage
+                        ] ?? code
+                    )
+                    .join(', '),
+                })}{' '}
+                <Link to="/setting" className="underline">
+                  {t('meetingMinutes.auto_detect_change')}
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </MeetingMinutesSettingsPanel>

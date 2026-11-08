@@ -162,6 +162,10 @@ chat:
   hint_cmd_enter: ⌘ + Enter to Submit
   hint_ctrl_enter: Ctrl + Enter to Submit
   history: History
+  history_last_30_days: Previous 30 days
+  history_last_7_days: Previous 7 days
+  history_today: Today
+  history_yesterday: Yesterday
   initialize: Initialize
   open_link: Open Link
   prompt_examples: Prompt Examples
@@ -186,6 +190,7 @@ common:
   collapse: Collapse
   colon: ':'
   complete: Complete
+  copy_table: Copy table
   create: Create
   default: Default
   delete: Delete
@@ -475,9 +480,17 @@ drawer:
 error:
   streamingError:
     ACCESS_DENIED: The selected model is not enabled. Please enable the model in the Amazon Bedrock console.
+    CONTEXT_TOO_LONG: The conversation or attachments are too long for the model. Reduce the attachment (fewer pages, rows or sheets) or start a new chat.
+    DOCUMENT_TOO_LARGE: A document is too large to send. Split it or reduce its content and try again.
+    DUPLICATE_FILE_NAME: Two or more files in this conversation have the same name, including files attached earlier. Rename the file and attach it again, or start a new chat.
+    EMPTY_MESSAGE: The conversation contains an empty message and cannot be continued. Please start a new chat.
+    IMAGE_TOO_LARGE: An image is too large. Each image must be 3.75 MB or smaller.
+    INVALID_FILE_NAME: A file name cannot be used. Rename the file to a short name using only letters and numbers, then attach it again.
     PAYLOAD_TOO_LARGE: The attached file is too large. Please reduce the file size or number of attachments and try again.
     THROTTLING: The server is currently experiencing high traffic. Please try again later.
+    TOO_MANY_DOCUMENTS: Too many documents are attached. Attachments earlier in this conversation also count. Attach fewer documents, or start a new chat.
     UNKNOWN_ERROR: An error occurred. Please try again or contact the administrator.
+    UNSUPPORTED_FILE_TYPE: This file type is not supported.
 feedback:
   additional_feedback: If you have any additional feedback, please enter it here. (optional)
   reason_error: Please select a reason.
@@ -846,6 +859,8 @@ mcp_chat:
   loading_message: Connecting to MCP server. This may take some time. Please wait...
   title: MCP Chat
 meetingMinutes:
+  auto_detect_candidates: 'Auto-detect from: {{languages}}'
+  auto_detect_change: Change in Settings
   auto_generate: Auto Generate
   bidirectional: Bidirectional Translation
   both_panel: Both Panels
@@ -1045,6 +1060,8 @@ setting:
     show_tools: Show Tools
     show_use_case_builder: Show Use Case Builder
     stats: Statistics
+    transcribe_languages: Auto-detect languages for speech recognition
+    transcribe_languages_help: 'Languages to choose from when the speech recognition language is set to "auto" (meeting minutes, voice input, file transcription). Choose 2 to 5. The more languages you choose, the more often short utterances are misidentified.'
     typing_animation: Typing Animation
     version: Version
     version_help: Referencing the version in package.json of generative-ai-use-cases

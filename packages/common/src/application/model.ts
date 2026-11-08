@@ -801,6 +801,14 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'Kimi K3',
   },
+  'us.moonshotai.kimi-k3.1': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'Kimi K3.1',
+  },
+  'global.moonshotai.kimi-k3.1': {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'Kimi K3.1',
+  },
   // NVIDIA
   'nvidia.nemotron-nano-9b-v2': {
     flags: MODEL_FEATURE.TEXT_ONLY,

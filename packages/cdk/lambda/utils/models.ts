@@ -34,7 +34,7 @@ import {
   applyAutoCacheToSystem,
 } from './promptCache';
 import { getFormatFromMimeType, getMimeTypeFromFileName } from './media';
-import { convertToSafeFilename } from './fileNameUtils';
+import { createUniqueDocumentNamer } from './fileNameUtils';
 
 // Default Models
 
@@ -120,6 +120,14 @@ const DEFAULT_128K_DEFAULT_PARAMS: ConverseInferenceParams = {
 const KIMI_K3_DEFAULT_PARAMS: ConverseInferenceParams = {
   inferenceConfig: {
     maxTokens: 120000,
+  },
+};
+
+// temperature / topP are omitted because the model rejects them
+// (see TEXT_IMAGE_NO_SAMPLING in model.ts).
+const KIMI_K3_1_DEFAULT_PARAMS: ConverseInferenceParams = {
+  inferenceConfig: {
+    maxTokens: 128000,
   },
 };
 
@@ -480,6 +488,8 @@ const createConverseCommandInput = (
 
   // Add the string of user role and assistant role other than the system role to the conversation
   messages = messages.filter((message) => message.role !== 'system');
+  // Document names must be unique across the whole request, past turns included
+  const toDocumentName = createUniqueDocumentNamer();
   const conversation = messages.map((message) => {
     const contentBlocks: ContentBlock[] = [];
 
@@ -505,7 +515,7 @@ const createConverseCommandInput = (
           contentBlocks.push({
             document: {
               format,
-              name: convertToSafeFilename(extra.name),
+              name: toDocumentName(extra.name),
               source: {
                 bytes: convertTextDocumentToUtf8(
                   Buffer.from(extra.source.data, 'base64'),
@@ -2297,6 +2307,24 @@ export const BEDROCK_TEXT_GEN_MODELS: {
   },
   'global.moonshotai.kimi-k3': {
     defaultParams: KIMI_K3_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  // Kimi K3.1 is available only through cross-region inference profiles
+  // (us.moonshotai.kimi-k3.1 / global.moonshotai.kimi-k3.1).
+  'us.moonshotai.kimi-k3.1': {
+    defaultParams: KIMI_K3_1_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'global.moonshotai.kimi-k3.1': {
+    defaultParams: KIMI_K3_1_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
     createConverseStreamCommandInput: createConverseStreamCommandInput,

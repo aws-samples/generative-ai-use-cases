@@ -66,7 +66,9 @@ const baseStackInputSchema = z.object({
         }),
       ])
     )
-    .default(['amazon.nova-canvas-v1:0']),
+    .default([
+      { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
+    ]),
   videoGenerationModelIds: z
     .array(
       z.union([
@@ -77,7 +79,7 @@ const baseStackInputSchema = z.object({
         }),
       ])
     )
-    .default(['amazon.nova-reel-v1:0']),
+    .default([]),
   speechToSpeechModelIds: z
     .array(
       z.union([

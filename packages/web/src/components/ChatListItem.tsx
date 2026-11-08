@@ -14,6 +14,8 @@ import { Chat } from 'generative-ai-use-cases';
 import { decomposeId } from '../utils/ChatUtils';
 import { getUseCaseIcon } from '../utils/UseCaseIconMap';
 import DialogConfirmDeleteChat from './DialogConfirmDeleteChat';
+import { useTranslation } from 'react-i18next';
+import { getChatActivityDate } from '../utils/chatHistoryGroup';
 
 type Props = BaseProps & {
   active: boolean;
@@ -23,6 +25,8 @@ type Props = BaseProps & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onUpdateTitle: (chatId: string, title: string) => Promise<any>;
   highlightWords: string[];
+  /** Short date shown at the right, e.g. "14:05" or "3/12". */
+  dateLabel?: string;
 };
 
 const ChatListItem: React.FC<Props> = (props) => {
@@ -31,6 +35,16 @@ const ChatListItem: React.FC<Props> = (props) => {
   const chatId = useMemo(() => {
     return decomposeId(props.chat.chatId) ?? '';
   }, [props.chat.chatId]);
+
+  // Full date and time of the last activity as a tooltip, in the UI language.
+  const { i18n } = useTranslation();
+  const activityDate = getChatActivityDate(props.chat);
+  const activeAt = useMemo(() => {
+    const date = new Date(Number(activityDate));
+    return isNaN(date.getTime())
+      ? undefined
+      : date.toLocaleString(i18n.resolvedLanguage);
+  }, [activityDate, i18n.resolvedLanguage]);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [tempTitle, setTempTitle] = useState('');
@@ -112,7 +126,8 @@ const ChatListItem: React.FC<Props> = (props) => {
           props.active && 'bg-aws-sky'
         }
           ${props.className}`}
-        to={`/chat/${chatId}`}>
+        to={`/chat/${chatId}`}
+        title={activeAt}>
         <div
           className={`flex h-8 max-h-5 w-full justify-start overflow-hidden`}>
           <div className="mr-2 ">{getUseCaseIcon(props.chat.usecase)}</div>
@@ -139,6 +154,11 @@ const ChatListItem: React.FC<Props> = (props) => {
             )}
           </div>
           <div className="flex">
+            {!props.active && !editing && props.dateLabel && (
+              <div className="ml-1 shrink-0 text-xs leading-5 text-gray-400">
+                {props.dateLabel}
+              </div>
+            )}
             {props.active && !editing && (
               <>
                 <ButtonIcon
