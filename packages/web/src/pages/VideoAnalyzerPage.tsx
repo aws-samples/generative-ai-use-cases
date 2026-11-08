@@ -5,7 +5,7 @@ import React, {
   useRef,
   useMemo,
 } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useChat from '../hooks/useChat';
 import useTyping from '../hooks/useTyping';
@@ -70,6 +70,7 @@ const VideoAnalyzerPage: React.FC = () => {
   const callbackRef = useRef<() => void>();
   const { getSignedUrl, uploadFile } = useFileApi();
   const { pathname, search } = useLocation();
+  const navigate = useNavigate();
   const {
     getModelId,
     setModelId,
@@ -95,11 +96,16 @@ const VideoAnalyzerPage: React.FC = () => {
           ? params.modelId!
           : _modelId
       );
+      // Clear query params after consuming to prevent re-application
+      navigate(pathname, { replace: true });
     } else {
       setModelId(_modelId);
     }
+    // Apply the query string once, as AgentChatPage does, not each time the
+    // model changes: a page opened from a link would otherwise put the text
+    // and the model in the URL back whenever the user picks another model.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setContent, modelId, visionModelIds, search]);
+  }, [setContent, visionModelIds, search]);
 
   useEffect(() => {
     setTypingTextInput(analysis);

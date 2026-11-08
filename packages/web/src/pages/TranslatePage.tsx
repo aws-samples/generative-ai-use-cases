@@ -5,7 +5,7 @@ import React, {
   useState,
   useRef,
 } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import ButtonIcon from '../components/ButtonIcon';
@@ -105,6 +105,8 @@ const TranslatePage: React.FC = () => {
   } = useMicrophone();
 
   const { pathname, search } = useLocation();
+
+  const navigate = useNavigate();
   const {
     getModelId,
     setModelId,
@@ -149,18 +151,16 @@ const TranslatePage: React.FC = () => {
           ? params.modelId!
           : _modelId
       );
+      // Clear query params after consuming to prevent re-application
+      navigate(pathname, { replace: true });
     } else {
       setModelId(_modelId);
     }
+    // Apply the query string once, as AgentChatPage does, not each time the
+    // model changes: a page opened from a link would otherwise put the text
+    // and the model in the URL back whenever the user picks another model.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    setSentence,
-    setAdditionalContext,
-    setLanguage,
-    modelId,
-    availableModels,
-    search,
-  ]);
+  }, [setSentence, setAdditionalContext, setLanguage, availableModels, search]);
 
   useEffect(() => {
     setTypingTextInput(translatedSentence);
