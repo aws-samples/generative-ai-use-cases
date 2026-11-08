@@ -13,7 +13,13 @@ vi.mock('react-i18next', () => ({
 vi.mock('../../src/hooks/useRagFile', () => ({
   default: () => ({
     downloadDoc: vi.fn(),
-    isS3Url: (url: string) => url.includes('.amazonaws.com/'),
+    isS3Url: (url: string) => {
+      try {
+        return new URL(url).hostname.endsWith('.amazonaws.com');
+      } catch {
+        return false;
+      }
+    },
   }),
 }));
 vi.mock('../../src/hooks/useFileApi', () => ({
