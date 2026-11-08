@@ -29,7 +29,7 @@ import FeedbackForm from './FeedbackForm';
 import Textarea from './Textarea';
 import useFiles from '../hooks/useFiles';
 import { useTranslation } from 'react-i18next';
-import { parseMessageDate } from '../utils/messageDate';
+import { formatRelativeTime, parseMessageDate } from '../utils/messageDate';
 
 type Props = BaseProps & {
   idx?: number;
@@ -51,12 +51,14 @@ const ChatMessage: React.FC<Props> = (props) => {
     return props.chatContent;
   }, [props]);
 
-  // When the message was sent, in the UI language. Hidden until it is saved.
+  // When the message was sent, relative ("3 hours ago") with the full date and
+  // time on hover, in the UI language. Hidden until the message is saved.
   const sentAt = useMemo(() => {
     const date = parseMessageDate(props.chatContent?.createdDate);
     if (!date) return undefined;
     return {
-      label: new Intl.DateTimeFormat(i18n.resolvedLanguage, {
+      relative: formatRelativeTime(date, new Date(), i18n.resolvedLanguage),
+      full: new Intl.DateTimeFormat(i18n.resolvedLanguage, {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -314,12 +316,12 @@ const ChatMessage: React.FC<Props> = (props) => {
         </div>
 
         <div className="mt-1 flex items-start justify-end pr-8 lg:pr-14">
-          {/* Aligned with the message text: 36px icon + ml-5. */}
           {sentAt && chatContent?.role !== 'system' && (
             <time
               dateTime={sentAt.iso}
-              className="ml-14 mr-auto self-center text-xs text-gray-400">
-              {sentAt.label}
+              title={sentAt.full}
+              className="mr-1 self-center text-xs text-gray-400">
+              {sentAt.relative}
             </time>
           )}
           <div className="flex items-start print:hidden">
