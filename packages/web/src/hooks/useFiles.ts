@@ -36,6 +36,7 @@ const useFilesState = create<{
     accept: string[]
   ) => Promise<boolean>;
   clear: (id: string) => void;
+  restore: (id: string, files: UploadedFileType[]) => void;
   base64Cache: Record<string, string>;
   getFileDownloadSignedUrl: (
     s3Url: string,
@@ -51,6 +52,16 @@ const useFilesState = create<{
       }),
       errorMessagesDict: produce(state.errorMessagesDict, (draft) => {
         draft[id] = [];
+      }),
+    }));
+  };
+
+  // Put files back in the input, e.g. after a send that failed. The files
+  // stay in S3 when the input is cleared, so the same entries can be reused.
+  const restore = (id: string, files: UploadedFileType[]) => {
+    set((state) => ({
+      uploadedFilesDict: produce(state.uploadedFilesDict, (draft) => {
+        draft[id] = files;
       }),
     }));
   };
@@ -417,6 +428,7 @@ const useFilesState = create<{
 
   return {
     clear,
+    restore,
     uploadedFilesDict: {},
     errorMessagesDict: {},
     uploadFiles,
@@ -432,6 +444,7 @@ const useFiles = (id: string) => {
     uploadFiles,
     checkFiles,
     clear,
+    restore,
     uploadedFilesDict,
     deleteUploadedFile,
     errorMessagesDict,
@@ -449,6 +462,7 @@ const useFiles = (id: string) => {
     ),
     errorMessages: errorMessagesDict[id] ?? [],
     clear: () => clear(id),
+    restore: (files: UploadedFileType[]) => restore(id, files),
     uploadedFiles: uploadedFilesDict[id] ?? [],
     deleteUploadedFile: (
       fileId: string,
