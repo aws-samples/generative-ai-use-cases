@@ -4,21 +4,11 @@ import {
 } from 'generative-ai-use-cases';
 import RangeSlider from './RangeSlider';
 import { useTranslation } from 'react-i18next';
+import { EFFORT_OPTIONS } from '../utils/reasoningEffort';
 
 const MIN_REASONING_BUDGET = 1024; // Claude 3.7 Sonnet minimum value
 const MAX_REASONING_BUDGET = 32768; // Temporary value
 const REASONING_BUDGET_STEP = 1024;
-
-const EFFORT_OPTIONS: {
-  value: 'max' | 'xhigh' | 'high' | 'medium' | 'low';
-  label: string;
-}[] = [
-  { value: 'max', label: 'Max' },
-  { value: 'xhigh', label: 'X-High' },
-  { value: 'high', label: 'High' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'low', label: 'Low' },
-];
 
 export const ModelParameters: React.FC<{
   modelFeatureFlags: FeatureFlags;
