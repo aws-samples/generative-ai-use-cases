@@ -36,6 +36,7 @@ common:
   collapse: 折叠
   colon: ':'
   complete: 完成
+  copy_table: 复制表格
   create: 创建
   delete: 删除
   enter_text: 请输入

@@ -50,6 +50,7 @@ common:
   collapse: 접기
   colon: ':'
   complete: 완료
+  copy_table: 표 복사
   create: 생성
   delete: 삭제
   enter_text: 텍스트 입력

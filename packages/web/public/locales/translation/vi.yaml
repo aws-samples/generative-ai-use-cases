@@ -39,6 +39,7 @@ common:
   collapse: Thu gọn
   colon: ':'
   complete: Hoàn thành
+  copy_table: Sao chép bảng
   create: Tạo
   delete: Xóa
   enter_text: Vui lòng nhập

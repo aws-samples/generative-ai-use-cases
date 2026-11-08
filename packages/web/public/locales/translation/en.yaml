@@ -186,6 +186,7 @@ common:
   collapse: Collapse
   colon: ':'
   complete: Complete
+  copy_table: Copy table
   create: Create
   default: Default
   delete: Delete

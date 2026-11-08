@@ -175,6 +175,7 @@ common:
   collapse: 折りたたみ
   colon: ':'
   complete: 完了
+  copy_table: 表をコピー
   create: 作成
   default: デフォルト
   delete: 削除
