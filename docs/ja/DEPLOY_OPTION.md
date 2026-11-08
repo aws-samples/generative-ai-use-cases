@@ -1169,6 +1169,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // ダイアグラム生成を非表示
       meetingMinutes: true, // 議事録生成を非表示
       voiceChat: true, // 音声チャットを非表示
+      textToSpeech: true, // 音声ファイル作成を非表示
     },
   },
 };
@@ -1191,11 +1192,16 @@ const envs: Record<string, Partial<StackInput>> = {
       "videoAnalyzer": true,
       "diagram": true,
       "meetingMinutes": true,
-      "voiceChat": true
+      "voiceChat": true,
+      "textToSpeech": true
     }
   }
 }
 ```
+
+音声ファイル作成について: 生成した音声ファイルは共有のファイルバケット (`BUCKET_NAME`) に保存され、チャットの添付ファイルと同様に**自動では削除されません**。ダウンロード用の署名付き URL の有効期限は 3600 秒ですが、オブジェクト自体は手動で削除するまで (管理者が S3 ライフサイクルルールを追加した場合はそのルールに従って削除されるまで) バケットに残ります。
+
+音声ファイル作成の SSML 入力: 入力モードを「SSML」に切り替えると、`<break>` (休止)、`<sub>` (置換読み)、`<phoneme>` (発音) などの SSML タグを使って、読み方や間を指定できます。SSML ガイドと挿入ツールが画面に表示されます。選択中のエンジンが対応していないタグ (例: neural エンジンの `<emphasis>`) や、Amazon Polly が一切対応していないタグは、リクエスト前に拒否されます。SSML モードでは、課金対象の文字数 (タグを除く) が 3000 文字以下、タグを含むテキスト全体が 6000 文字以下である必要があり、長い休止や遅い速度は音声を長くするため、Amazon Polly の 10 分の上限に達することがあります。詳しくは [Amazon Polly の SSML のドキュメント](https://docs.aws.amazon.com/polly/latest/dg/ssml.html) を参照してください。 生成されるファイル名は `speech-<voice>-<yyyyMMdd>-<HHmmss>.<ext>` (例: `speech-kazuha-20261108-173045.mp3`) です。ダウンロード時にファイル名が重複しないよう、タイムスタンプにはブラウザのローカルタイムゾーンの時刻が使われ、サーバーは有効な `yyyyMMdd-HHmmss` の値のみ受け付けます (それ以外の場合は現在の UTC 時刻を使用します)。
 
 ## ユースケースビルダーの設定
 

@@ -663,6 +663,7 @@ navigation:
   speechRecognition: แปลงเสียงพูดเป็นข้อความ
   summary: สรุป
   textGeneration: การสร้างข้อความ
+  textToSpeech: สร้างไฟล์เสียง
   translation: การแปล
   videoAnalysis: การวิเคราะห์วิดีโอ
   videoGeneration: การสร้างวิดีโอ
@@ -782,6 +783,117 @@ summarize:
   result_placeholder: ข้อความที่สรุปจะแสดงที่นี่
   text_to_summarize: ข้อความที่จะสรุป
   title: สรุป
+textToSpeech:
+  audio_label: เสียงที่สร้างขึ้น
+  character_count: '{{current}} / {{max}} ตัวอักษร'
+  description: สร้างเสียงด้วย Amazon Polly
+  download: ดาวน์โหลด
+  duration_note: Amazon Polly จะตัดเสียงที่ยาวเกิน 10 นาที หากตั้งความเร็วช้าหรือข้อความยาว ส่วนท้ายอาจขาดหายไป ในกรณีนั้นโปรดแบ่งข้อความ
+  engine: เอนจิน
+  error_engine_not_supported: เอนจินที่เลือกไม่รองรับเสียงที่เลือก หรือไม่สามารถใช้ได้ในภูมิภาคของสแตกนี้ (เช่น เสียง Long-form ใช้ได้เฉพาะใน us-east-1) โปรดเลือกเอนจินหรือเสียงอื่น
+  error_generic: สร้างเสียงไม่สำเร็จ โปรดลองอีกครั้งในภายหลัง
+  error_internal_error: เกิดข้อผิดพลาดบนเซิร์ฟเวอร์ โปรดลองอีกครั้งในภายหลัง
+  error_invalid_next_token: โทเค็นการแบ่งหน้าไม่ถูกต้อง โปรดโหลดหน้าใหม่
+  error_invalid_request: คำขอไม่ถูกต้อง โปรดตรวจสอบข้อมูลที่ป้อน
+  error_invalid_sample_rate: อัตราการสุ่มตัวอย่างไม่ถูกต้องสำหรับรูปแบบเอาต์พุตที่เลือก
+  error_invalid_ssml: SSML ไม่ถูกต้อง โปรดตรวจสอบไวยากรณ์และการสะกดของแท็ก
+  error_language_not_supported: เสียงที่เลือกไม่รองรับภาษาที่เลือก โปรดเลือกภาษาหรือเสียงอื่น
+  error_polly_access_denied: 'เซิร์ฟเวอร์ไม่ได้รับอนุญาตให้เรียกใช้ Amazon Polly โปรดแจ้งผู้ดูแลระบบให้ตรวจสอบสิทธิ์ IAM polly:SynthesizeSpeech และ polly:DescribeVoices'
+  error_polly_service_failure: Amazon Polly ล้มเหลวชั่วคราว โปรดลองอีกครั้งในภายหลัง
+  error_storage_error: บันทึกไฟล์เสียงที่สร้างไม่สำเร็จ โปรดลองอีกครั้งในภายหลัง
+  error_text_too_long: ข้อความเกินขีดจำกัดของ Amazon Polly (รวม 6000 ตัวอักษร และ 3000 ตัวอักษรที่คิดค่าบริการ) โปรดทำให้ข้อความสั้นลง
+  error_throttled: มีคำขอไปยัง Amazon Polly มากเกินไป (ประมาณ 8 คำขอต่อวินาทีต่อบัญชีและภูมิภาคสำหรับเสียง Neural และ Generative) โปรดรอสักครู่แล้วลองอีกครั้ง
+  format: รูปแบบเอาต์พุต
+  generate: สร้างเสียง
+  input_mode: โหมดการป้อนข้อมูล
+  input_mode_ssml: SSML
+  input_mode_text: ข้อความธรรมดา
+  input_text: ข้อความที่จะแปลงเป็นเสียง
+  language: ภาษา
+  load_voices_error: ไม่สามารถโหลดรายการเสียงได้ โปรดโหลดหน้าใหม่
+  speed: ความเร็ว ({{speed}} เท่า)
+  ssml_billed_hint: จำนวนอักขระที่เรียกเก็บเงิน ไม่รวมแท็ก
+  ssml_duration_note: ในโหมด SSML การหยุดนาน (<break>) หรืออัตราความเร็วที่ช้า (<prosody rate>) จะทำให้เสียงยาวขึ้นและอาจถึงขีดจำกัด 10 นาที
+  ssml_guide_button: คู่มือ SSML
+  ssml_guide_close: ปิด
+  ssml_guide_desc_auto_breaths: เพิ่มเสียงหายใจ (เฉพาะเอนจิน standard)
+  ssml_guide_desc_break: 'แทรกการหยุดได้สูงสุด 10 วินาที ระบุ time="500ms" หรือ strength="strong"'
+  ssml_guide_desc_drc: 'ใช้การบีบอัดช่วงไดนามิก (standard, neural และ long-form)'
+  ssml_guide_desc_emphasis: เน้นคำ (เฉพาะเอนจิน standard)
+  ssml_guide_desc_lang: อ่านข้อความเป็นภาษาอื่น
+  ssml_guide_desc_mark: วางเครื่องหมายที่กำหนดเอง (ไม่มีผลต่อไฟล์เสียง)
+  ssml_guide_desc_p: ระบุย่อหน้า (มีการหยุดที่นานขึ้นตามหลัง)
+  ssml_guide_desc_phoneme_ipa: ระบุการออกเสียงด้วย IPA หรือ X-SAMPA (ภาษาอื่นที่ไม่ใช่ญี่ปุ่นและจีน) ต้องมีทั้ง alphabet และ ph
+  ssml_guide_desc_phoneme_yomigana: ระบุการออกเสียง ภาษาญี่ปุ่นใช้ x-amazon-yomigana หรือ x-amazon-pron-kana ภาษาจีนกลางใช้ x-amazon-pinyin
+  ssml_guide_desc_prosody: 'เปลี่ยนอัตราการพูด (20% ถึง 200%) และระดับเสียง ระดับเสียงสูงต่ำ (pitch) รองรับเฉพาะเอนจิน standard สำหรับเสียง generative ใช้ได้เฉพาะรอบประโยคที่สมบูรณ์'
+  ssml_guide_desc_s: ระบุประโยค
+  ssml_guide_desc_say_as: 'กำหนดวิธีอ่านตัวเลข วันที่ เบอร์โทรศัพท์ ฯลฯ เมื่อใช้ interpret-as="characters" กับเสียง neural ประโยคนั้นจะอ่านด้วยเสียง standard แต่ยังคิดค่าบริการเป็น neural'
+  ssml_guide_desc_speak: องค์ประกอบราก จะถูกเพิ่มโดยอัตโนมัติหากข้อความไม่ได้ขึ้นต้นด้วยแท็กนี้
+  ssml_guide_desc_sub: อ่านตามคำอ่าน (alias) แทนข้อความที่เขียน เช่น ชื่อผลิตภัณฑ์และตัวย่อ
+  ssml_guide_desc_w: เลือกการออกเสียงตามชนิดของคำ (role)
+  ssml_guide_desc_whispered: พูดกระซิบ (เฉพาะเอนจิน standard)
+  ssml_guide_engines: แท็กและเอนจินที่รองรับ
+  ssml_guide_howto_closing: 'ต้องปิดทุกแท็ก (<p>...</p> หรือ <break time="1s"/>) และต้องซ้อนแท็กให้ถูกต้อง'
+  ssml_guide_howto_heading: วิธีเขียน SSML
+  ssml_guide_howto_reserved: 'ในโหมด SSML ข้อความจะไม่ถูกหลีก (escape) โดยอัตโนมัติ ให้เขียน & เป็น &amp;, < เป็น &lt;, > เป็น &gt; และ '' เป็น &apos; ภายในค่าแอตทริบิวต์ที่อยู่ในเครื่องหมายคำพูดคู่ ให้เขียน " เป็น &quot;'
+  ssml_guide_howto_speak: SSML คือ XML ให้ครอบข้อความทั้งหมดด้วย <speak>...</speak> หากข้อความไม่ได้ขึ้นต้นด้วย <speak> เครื่องมือจะเพิ่มให้โดยอัตโนมัติ
+  ssml_guide_insert: แทรก
+  ssml_guide_length: การหยุดนานและอัตราความเร็วที่ช้าทำให้เสียงยาวขึ้น และ Amazon Polly จะตัดเสียงหลังจาก 10 นาทีโดยไม่แสดงข้อผิดพลาด แท็กไม่ถูกเรียกเก็บเงิน (สูงสุด 3000 อักขระ) แต่ข้อความทั้งหมดรวมแท็กจำกัดไว้ที่ 6000 อักขระ
+  ssml_guide_title: คู่มือ SSML
+  ssml_issue_break_time: 'ความยาวการหยุด "{{value}}" ไม่ถูกต้อง ใช้ 10s (10000ms) หรือน้อยกว่า'
+  ssml_issue_forbidden_tag: 'ไม่สามารถใช้ {{tag}} กับ Amazon Polly ได้'
+  ssml_issue_malformed: "SSML ไม่ถูกต้องตามรูปแบบ ตรวจสอบว่าปิดทุกแท็ก ซ้อนแท็กถูกต้อง และหลีกอักขระสงวน (& < > ') แล้ว"
+  ssml_issue_phoneme_attrs: <phoneme> ต้องมีทั้งแอตทริบิวต์ alphabet และ ph
+  ssml_issue_prosody_pitch: 'เอนจิน {{engine}} ไม่รองรับแอตทริบิวต์ pitch ของ <prosody>'
+  ssml_issue_prosody_rate: 'อัตราความเร็ว "{{value}}" ไม่ถูกต้อง ใช้ 20% ถึง 200% หรือ x-slow, slow, medium, fast, x-fast'
+  ssml_issue_unknown_tag: '{{tag}} ไม่ใช่แท็ก SSML ที่รองรับ'
+  ssml_issue_unsupported_tag: 'เอนจิน {{engine}} ไม่รองรับ {{tag}} ลบแท็กนี้หรือเลือกเอนจินอื่น'
+  ssml_issue_warn_prosody_generative: สำหรับเสียง generative <prosody> ใช้ได้เฉพาะรอบประโยคที่สมบูรณ์
+  ssml_issue_warn_say_as_characters: 'เมื่อใช้ interpret-as="characters" กับเสียง neural จะอ่านด้วยเสียง standard แต่ยังคิดค่าบริการเป็น neural'
+  ssml_option_alphabet: ชนิดของสัญลักษณ์การออกเสียง
+  ssml_option_lang: ภาษาของข้อความ
+  ssml_option_pause: ความยาวการหยุด
+  ssml_option_prosody: อัตราความเร็วหรือระดับเสียง
+  ssml_option_say_as: วิธีอ่าน
+  ssml_placeholder_alias: คำอ่าน
+  ssml_placeholder_reading: การออกเสียง
+  ssml_placeholder_text: ข้อความ
+  ssml_prosody_rate_110: 'ความเร็ว 110%'
+  ssml_prosody_rate_120: 'ความเร็ว 120%'
+  ssml_prosody_rate_80: 'ความเร็ว 80%'
+  ssml_prosody_rate_90: 'ความเร็ว 90%'
+  ssml_prosody_volume_loud: ระดับเสียง ดัง
+  ssml_prosody_volume_soft: ระดับเสียง เบา
+  ssml_say_as_cardinal: จำนวน
+  ssml_say_as_date: วันที่
+  ssml_say_as_digits: อ่านทีละหลัก
+  ssml_say_as_ordinal: ลำดับที่
+  ssml_say_as_telephone: เบอร์โทรศัพท์
+  ssml_speed_note: 'กำหนดความเร็วด้วยแท็ก <prosody rate="...">'
+  ssml_support_full: รองรับ
+  ssml_support_none: ไม่รองรับ
+  ssml_support_partial: รองรับบางส่วน
+  ssml_text_placeholder: 'ป้อน SSML ตัวอย่าง: สวัสดี<break time="500ms"/>โลก'
+  ssml_too_long_billed: จำนวนอักขระที่เรียกเก็บเงิน (ไม่รวมแท็ก) เกินขีดจำกัด
+  ssml_too_long_total: 'ข้อความทั้งหมดรวมแท็กเกิน {{max}} อักขระ'
+  ssml_tool_lang: ภาษา
+  ssml_tool_paragraph: ย่อหน้า
+  ssml_tool_pause: หยุด
+  ssml_tool_phoneme: การออกเสียง
+  ssml_tool_prosody: ความเร็ว/ระดับเสียง
+  ssml_tool_say_as: วิธีอ่าน
+  ssml_tool_sentence: ประโยค
+  ssml_tool_sub: แทนที่คำอ่าน
+  ssml_tool_unsupported: 'เอนจิน {{engine}} ไม่รองรับ {{tag}}'
+  ssml_toolbar_label: เครื่องมือแทรก SSML
+  ssml_total_count: 'ทั้งหมดรวมแท็ก: {{current}} / {{max}} อักขระ'
+  ssml_validation_label: ผลการตรวจสอบ SSML
+  status_done: สร้างเสียงเสร็จสมบูรณ์
+  status_generating: กำลังสร้างเสียง
+  text_placeholder: ป้อนข้อความที่จะแปลงเป็นเสียง
+  title: สร้างไฟล์เสียง
+  too_long: ข้อความยาวเกินไป
+  voice: เสียง
 transcribe:
   audio_source_lost: การถอดเสียงหยุดลงเนื่องจากไม่สามารถใช้แหล่งเสียงได้อีกต่อไป
   detailed_parameters: ตั้งค่าขั้นสูงแบบกำหนดเอง

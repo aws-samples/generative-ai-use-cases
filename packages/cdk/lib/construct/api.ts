@@ -313,6 +313,15 @@ export class Api extends Construct {
       })
     );
 
+    // Grant Polly permissions for the text-to-speech tool
+    apiHandler.role?.addToPrincipalPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['polly:SynthesizeSpeech', 'polly:DescribeVoices'],
+        resources: ['*'],
+      })
+    );
+
     // Grant Lambda invoke permission for Speech to Speech
     if (props.speechToSpeechTaskFunctionArn) {
       apiHandler.role?.addToPrincipalPolicy(
@@ -758,6 +767,11 @@ export class Api extends Construct {
     transcribe.addResource('start').addMethod('POST');
     transcribe.addResource('url').addMethod('POST');
     transcribe.addResource('result').addResource('{jobName}').addMethod('GET');
+
+    // --- Routes for Polly text-to-speech ---
+    const polly = api.root.addResource('polly');
+    polly.addResource('voices').addMethod('GET');
+    polly.addResource('synthesize').addMethod('POST');
 
     // --- Routes from SpeechToSpeech Construct (v5) ---
     api.root.addResource('speech-to-speech').addMethod('POST');

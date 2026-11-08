@@ -959,6 +959,7 @@ navigation:
   speechRecognition: Speech Recognition
   summary: Summary
   textGeneration: Text Generation
+  textToSpeech: Audio File Creation
   translation: Translation
   videoAnalysis: Video Analysis
   videoGeneration: Video Generation
@@ -1113,6 +1114,117 @@ svg:
   show_code: Show Code
   show_preview: Show Preview
   svg_error: 'SVG output error: '
+textToSpeech:
+  audio_label: Generated audio
+  character_count: '{{current}} / {{max}} characters'
+  description: Audio is generated with Amazon Polly.
+  download: Download
+  duration_note: 'Amazon Polly cuts off audio longer than 10 minutes. With a slow speed or long text, the end may be missing; split the text in that case.'
+  engine: Engine
+  error_engine_not_supported: "The selected engine is not compatible with the selected voice, or is not available in this stack's Region (for example, Long-form voices are available only in us-east-1). Choose another engine or voice."
+  error_generic: Failed to generate the audio. Try again later.
+  error_internal_error: An error occurred on the server. Try again later.
+  error_invalid_next_token: The pagination token is invalid. Reload the page.
+  error_invalid_request: The request is invalid. Check your input.
+  error_invalid_sample_rate: The sample rate is not valid for the selected output format.
+  error_invalid_ssml: The SSML is invalid. Check the tag syntax and spelling.
+  error_language_not_supported: The selected language is not supported by the selected voice. Choose another language or voice.
+  error_polly_access_denied: 'The server is not allowed to call Amazon Polly. Ask the administrator to check the IAM permissions polly:SynthesizeSpeech and polly:DescribeVoices.'
+  error_polly_service_failure: Amazon Polly failed temporarily. Try again later.
+  error_storage_error: Failed to save the generated audio file. Try again later.
+  error_text_too_long: The text exceeds the Amazon Polly limit (6000 characters in total and 3000 billed characters). Shorten the text.
+  error_throttled: Too many requests to Amazon Polly (about 8 requests per second per account and Region for neural and generative voices). Wait a moment and try again.
+  format: Output format
+  generate: Generate audio
+  input_mode: Input mode
+  input_mode_ssml: SSML
+  input_mode_text: Plain text
+  input_text: Text to convert to speech
+  language: Language
+  load_voices_error: Failed to load the voice list. Please reload the page.
+  speed: Speed ({{speed}}x)
+  ssml_billed_hint: 'billed characters, tags excluded'
+  ssml_duration_note: 'In SSML mode, long pauses (<break>) and slow rates (<prosody rate>) make the audio longer and can hit the 10-minute limit.'
+  ssml_guide_button: SSML guide
+  ssml_guide_close: Close
+  ssml_guide_desc_auto_breaths: Adds the sound of breathing (standard engine only).
+  ssml_guide_desc_break: 'Inserts a pause of up to 10 seconds. Use time="500ms" or strength="strong".'
+  ssml_guide_desc_drc: 'Applies dynamic range compression (standard, neural and long-form).'
+  ssml_guide_desc_emphasis: Emphasizes words (standard engine only).
+  ssml_guide_desc_lang: Reads the text in another language.
+  ssml_guide_desc_mark: Places a custom marker (no audible effect in the audio file).
+  ssml_guide_desc_p: Marks a paragraph (a longer pause follows it).
+  ssml_guide_desc_phoneme_ipa: Gives the pronunciation in IPA or X-SAMPA (languages other than Japanese and Chinese). Both alphabet and ph are required.
+  ssml_guide_desc_phoneme_yomigana: 'Gives the pronunciation. Japanese uses x-amazon-yomigana or x-amazon-pron-kana, Mandarin uses x-amazon-pinyin.'
+  ssml_guide_desc_prosody: 'Changes the speaking rate (20% to 200%) and volume. Pitch is supported only by the standard engine. With generative voices, use it only around full sentences.'
+  ssml_guide_desc_s: Marks a sentence.
+  ssml_guide_desc_say_as: 'Controls how numbers, dates, telephone numbers and so on are read. With a neural voice, interpret-as="characters" is read by the standard voice but billed as neural.'
+  ssml_guide_desc_speak: The root element. It is added automatically when the text does not start with it.
+  ssml_guide_desc_sub: 'Reads the alias instead of the written text, for example for product names and abbreviations.'
+  ssml_guide_desc_w: Selects the pronunciation by part of speech (role).
+  ssml_guide_desc_whispered: Whispers (standard engine only).
+  ssml_guide_engines: Supported tags and engines
+  ssml_guide_howto_closing: 'Every tag must be closed (<p>...</p> or <break time="1s"/>) and tags must be nested properly.'
+  ssml_guide_howto_heading: How to write SSML
+  ssml_guide_howto_reserved: 'The text is NOT escaped automatically in SSML mode. Write & as &amp;, < as &lt;, > as &gt; and '' as &apos;. Inside a double-quoted attribute value, write " as &quot;.'
+  ssml_guide_howto_speak: 'SSML is XML. Wrap the text with <speak>...</speak>. If the text does not start with <speak>, the tool adds it for you.'
+  ssml_guide_insert: Insert
+  ssml_guide_length: 'Long pauses and slow rates make the audio longer, and Amazon Polly cuts the audio after 10 minutes without an error. Tags are not billed (3000 characters at most), but the whole text including tags is limited to 6000 characters.'
+  ssml_guide_title: SSML guide
+  ssml_issue_break_time: 'The pause "{{value}}" is not valid. Use 10s (10000ms) or less.'
+  ssml_issue_forbidden_tag: '{{tag}} cannot be used with Amazon Polly.'
+  ssml_issue_malformed: "The SSML is not well-formed. Check that every tag is closed, tags are nested properly and reserved characters (& < > ') are escaped."
+  ssml_issue_phoneme_attrs: <phoneme> needs both the alphabet and ph attributes.
+  ssml_issue_prosody_pitch: 'The pitch attribute of <prosody> is not supported by the {{engine}} engine.'
+  ssml_issue_prosody_rate: 'The rate "{{value}}" is not valid. Use 20% to 200%, or x-slow, slow, medium, fast, x-fast.'
+  ssml_issue_unknown_tag: '{{tag}} is not a supported SSML tag.'
+  ssml_issue_unsupported_tag: '{{tag}} is not supported by the {{engine}} engine. Remove it or choose another engine.'
+  ssml_issue_warn_prosody_generative: 'With generative voices, <prosody> works only around full sentences.'
+  ssml_issue_warn_say_as_characters: 'With a neural voice, interpret-as="characters" is read by the standard voice but billed as neural.'
+  ssml_option_alphabet: Phonetic alphabet
+  ssml_option_lang: Language of the text
+  ssml_option_pause: Length of the pause
+  ssml_option_prosody: Rate or volume
+  ssml_option_say_as: How to read
+  ssml_placeholder_alias: reading
+  ssml_placeholder_reading: pronunciation
+  ssml_placeholder_text: text
+  ssml_prosody_rate_110: 'Rate 110%'
+  ssml_prosody_rate_120: 'Rate 120%'
+  ssml_prosody_rate_80: 'Rate 80%'
+  ssml_prosody_rate_90: 'Rate 90%'
+  ssml_prosody_volume_loud: Volume loud
+  ssml_prosody_volume_soft: Volume soft
+  ssml_say_as_cardinal: Number
+  ssml_say_as_date: Date
+  ssml_say_as_digits: Digits
+  ssml_say_as_ordinal: Ordinal
+  ssml_say_as_telephone: Telephone
+  ssml_speed_note: 'Set the speed with the <prosody rate="..."> tag.'
+  ssml_support_full: supported
+  ssml_support_none: not supported
+  ssml_support_partial: partly supported
+  ssml_text_placeholder: 'Enter SSML. Example: Hello<break time="500ms"/>world'
+  ssml_too_long_billed: The billed characters (tags excluded) exceed the limit.
+  ssml_too_long_total: 'The whole text including tags exceeds {{max}} characters.'
+  ssml_tool_lang: Language
+  ssml_tool_paragraph: Paragraph
+  ssml_tool_pause: Pause
+  ssml_tool_phoneme: Pronunciation
+  ssml_tool_prosody: Prosody
+  ssml_tool_say_as: Say as
+  ssml_tool_sentence: Sentence
+  ssml_tool_sub: Substitute
+  ssml_tool_unsupported: '{{tag}} is not supported by the {{engine}} engine.'
+  ssml_toolbar_label: SSML insert tools
+  ssml_total_count: 'Whole text with tags: {{current}} / {{max}}'
+  ssml_validation_label: SSML check result
+  status_done: Audio generation completed
+  status_generating: Generating audio
+  text_placeholder: Enter the text to convert to speech
+  title: Audio File Creation
+  too_long: The text is too long.
+  voice: Voice
 transcribe:
   audio_source_lost: Transcription stopped because the audio source is no longer available
   detailed_parameters: Detailed parameters

@@ -520,6 +520,7 @@ navigation:
   speechRecognition: 음성 인식
   summary: 요약
   textGeneration: 텍스트 생성
+  textToSpeech: 음성 파일 생성
   translation: 번역
   videoAnalysis: 비디오 분석
   videoGeneration: 비디오 생성
@@ -667,6 +668,117 @@ svg:
   show_code: 코드 표시
   show_preview: 미리보기 표시
   svg_error: 'SVG 출력 오류: '
+textToSpeech:
+  audio_label: 생성된 음성
+  character_count: '{{current}} / {{max}} 자'
+  description: Amazon Polly를 사용하여 음성 파일을 생성합니다.
+  download: 다운로드
+  duration_note: Amazon Polly는 10분을 초과하는 음성을 중간에 잘라냅니다. 속도를 느리게 하거나 텍스트가 길면 끝부분이 누락될 수 있으므로 텍스트를 나누어 주세요.
+  engine: 엔진
+  error_engine_not_supported: '선택한 엔진이 선택한 음성과 호환되지 않거나 이 스택의 리전에서 사용할 수 없습니다 (예: Long-form 음성은 us-east-1에서만 사용할 수 있습니다). 다른 엔진 또는 음성을 선택하세요.'
+  error_generic: 음성을 생성하지 못했습니다. 나중에 다시 시도하세요.
+  error_internal_error: 서버에서 오류가 발생했습니다. 나중에 다시 시도하세요.
+  error_invalid_next_token: 페이지 토큰이 올바르지 않습니다. 페이지를 새로고침하세요.
+  error_invalid_request: 요청이 올바르지 않습니다. 입력 내용을 확인하세요.
+  error_invalid_sample_rate: 선택한 출력 형식에 유효하지 않은 샘플 레이트입니다.
+  error_invalid_ssml: SSML이 올바르지 않습니다. 태그 구문과 철자를 확인하세요.
+  error_language_not_supported: 선택한 언어는 선택한 음성에서 지원되지 않습니다. 다른 언어 또는 음성을 선택하세요.
+  error_polly_access_denied: '서버에 Amazon Polly를 호출할 권한이 없습니다. 관리자에게 IAM 권한 polly:SynthesizeSpeech 및 polly:DescribeVoices를 확인하도록 요청하세요.'
+  error_polly_service_failure: Amazon Polly에서 일시적인 장애가 발생했습니다. 나중에 다시 시도하세요.
+  error_storage_error: 생성된 음성 파일을 저장하지 못했습니다. 나중에 다시 시도하세요.
+  error_text_too_long: '텍스트가 Amazon Polly 제한(요청 전체 6000자, 과금 대상 3000자)을 초과했습니다. 텍스트를 줄이세요.'
+  error_throttled: Amazon Polly에 대한 요청이 너무 많습니다 (Neural 및 Generative 음성은 계정 및 리전당 초당 약 8건). 잠시 기다린 후 다시 시도하세요.
+  format: 출력 형식
+  generate: 음성 생성
+  input_mode: 입력 모드
+  input_mode_ssml: SSML
+  input_mode_text: 일반 텍스트
+  input_text: 음성으로 변환할 텍스트
+  language: 언어
+  load_voices_error: 음성 목록을 불러오지 못했습니다. 페이지를 새로고침하세요.
+  speed: 속도 ({{speed}}배)
+  ssml_billed_hint: '과금 대상 문자 수, 태그 제외'
+  ssml_duration_note: SSML 모드에서는 긴 일시 정지(<break>)나 느린 속도(<prosody rate>)로 인해 오디오가 길어져 10분 제한에 도달할 수 있습니다.
+  ssml_guide_button: SSML 가이드
+  ssml_guide_close: 닫기
+  ssml_guide_desc_auto_breaths: 숨 쉬는 소리를 추가합니다(standard 엔진만 해당).
+  ssml_guide_desc_break: '최대 10초의 일시 정지를 넣습니다. time="500ms" 또는 strength="strong"을 지정합니다.'
+  ssml_guide_desc_drc: '다이내믹 레인지 압축을 적용합니다(standard, neural, long-form).'
+  ssml_guide_desc_emphasis: 단어를 강조합니다(standard 엔진만 해당).
+  ssml_guide_desc_lang: 텍스트를 다른 언어로 읽습니다.
+  ssml_guide_desc_mark: 사용자 지정 마커를 배치합니다(음성 파일에는 영향이 없습니다).
+  ssml_guide_desc_p: 단락을 나타냅니다(뒤에 더 긴 일시 정지가 들어갑니다).
+  ssml_guide_desc_phoneme_ipa: IPA 또는 X-SAMPA로 발음을 지정합니다(일본어와 중국어 이외의 언어). alphabet과 ph가 모두 필요합니다.
+  ssml_guide_desc_phoneme_yomigana: '발음을 지정합니다. 일본어는 x-amazon-yomigana 또는 x-amazon-pron-kana, 중국어(표준 중국어)는 x-amazon-pinyin을 사용합니다.'
+  ssml_guide_desc_prosody: '말하는 속도(20%~200%)와 음량을 바꿉니다. 음높이는 standard 엔진만 지원합니다. generative 음성에서는 문장 전체를 감쌀 때만 사용할 수 있습니다.'
+  ssml_guide_desc_s: 문장을 나타냅니다.
+  ssml_guide_desc_say_as: '숫자, 날짜, 전화번호 등을 읽는 방법을 지정합니다. neural 음성에서 interpret-as="characters"를 사용하면 해당 문장은 standard 음성으로 읽히지만 neural로 과금됩니다.'
+  ssml_guide_desc_speak: 루트 요소입니다. 텍스트가 이것으로 시작하지 않으면 자동으로 추가됩니다.
+  ssml_guide_desc_sub: 적힌 글자 대신 alias의 읽기로 읽습니다. 제품명이나 약어 등에 사용합니다.
+  ssml_guide_desc_w: 품사(role)에 따라 발음을 선택합니다.
+  ssml_guide_desc_whispered: 속삭이는 목소리로 읽습니다(standard 엔진만 해당).
+  ssml_guide_engines: 지원하는 태그와 엔진
+  ssml_guide_howto_closing: '모든 태그를 닫아야 합니다(<p>...</p> 또는 <break time="1s"/>). 태그의 중첩도 올바르게 되어 있어야 합니다.'
+  ssml_guide_howto_heading: SSML 작성 방법
+  ssml_guide_howto_reserved: 'SSML 모드에서는 텍스트가 자동으로 이스케이프되지 않습니다. &는 &amp;, <는 &lt;, >는 &gt;, ''는 &apos;로 작성하세요. 큰따옴표로 감싼 속성 값 안에서는 "를 &quot;로 작성합니다.'
+  ssml_guide_howto_speak: SSML은 XML입니다. 텍스트 전체를 <speak>...</speak>로 감싸세요. 텍스트가 <speak>로 시작하지 않으면 자동으로 추가됩니다.
+  ssml_guide_insert: 삽입
+  ssml_guide_length: '긴 일시 정지나 느린 속도를 사용하면 오디오가 길어지며, Amazon Polly는 10분을 넘는 부분을 오류 없이 잘라냅니다. 태그는 과금 대상이 아니지만(최대 3000자), 태그를 포함한 전체 텍스트는 6000자까지입니다.'
+  ssml_guide_title: SSML 가이드
+  ssml_issue_break_time: '일시 정지 길이 "{{value}}"이(가) 올바르지 않습니다. 10s(10000ms) 이하로 지정하세요.'
+  ssml_issue_forbidden_tag: '{{tag}}은(는) Amazon Polly에서 사용할 수 없습니다.'
+  ssml_issue_malformed: "SSML 형식이 올바르지 않습니다. 모든 태그가 닫혀 있는지, 태그 중첩이 올바른지, 예약 문자(& < > ')가 이스케이프되어 있는지 확인하세요."
+  ssml_issue_phoneme_attrs: <phoneme>에는 alphabet과 ph 속성이 모두 필요합니다.
+  ssml_issue_prosody_pitch: '<prosody>의 pitch 속성은 {{engine}} 엔진에서 지원되지 않습니다.'
+  ssml_issue_prosody_rate: '속도 "{{value}}"이(가) 올바르지 않습니다. 20%~200% 또는 x-slow, slow, medium, fast, x-fast를 지정하세요.'
+  ssml_issue_unknown_tag: '{{tag}}은(는) 지원되는 SSML 태그가 아닙니다.'
+  ssml_issue_unsupported_tag: '{{tag}}은(는) {{engine}} 엔진에서 지원되지 않습니다. 삭제하거나 다른 엔진을 선택하세요.'
+  ssml_issue_warn_prosody_generative: generative 음성에서 <prosody>는 문장 전체를 감쌀 때만 동작합니다.
+  ssml_issue_warn_say_as_characters: 'neural 음성에서 interpret-as="characters"를 사용하면 standard 음성으로 읽히지만 neural로 과금됩니다.'
+  ssml_option_alphabet: 발음 기호 종류
+  ssml_option_lang: 텍스트의 언어
+  ssml_option_pause: 일시 정지 길이
+  ssml_option_prosody: 속도 또는 음량
+  ssml_option_say_as: 읽는 방법
+  ssml_placeholder_alias: 읽기
+  ssml_placeholder_reading: 발음
+  ssml_placeholder_text: 텍스트
+  ssml_prosody_rate_110: '속도 110%'
+  ssml_prosody_rate_120: '속도 120%'
+  ssml_prosody_rate_80: '속도 80%'
+  ssml_prosody_rate_90: '속도 90%'
+  ssml_prosody_volume_loud: 음량 크게
+  ssml_prosody_volume_soft: 음량 작게
+  ssml_say_as_cardinal: 숫자
+  ssml_say_as_date: 날짜
+  ssml_say_as_digits: 한 자리씩 읽기
+  ssml_say_as_ordinal: 서수
+  ssml_say_as_telephone: 전화번호
+  ssml_speed_note: '속도는 <prosody rate="..."> 태그로 지정하세요.'
+  ssml_support_full: 지원
+  ssml_support_none: 미지원
+  ssml_support_partial: 일부 지원
+  ssml_text_placeholder: 'SSML을 입력하세요. 예: 안녕하세요<break time="500ms"/>세계'
+  ssml_too_long_billed: 과금 대상 문자 수(태그 제외)가 제한을 초과했습니다.
+  ssml_too_long_total: '태그를 포함한 전체 텍스트가 {{max}}자를 초과했습니다.'
+  ssml_tool_lang: 언어
+  ssml_tool_paragraph: 단락
+  ssml_tool_pause: 일시 정지
+  ssml_tool_phoneme: 발음
+  ssml_tool_prosody: 속도·음량
+  ssml_tool_say_as: 읽는 방법
+  ssml_tool_sentence: 문장
+  ssml_tool_sub: 대체 읽기
+  ssml_tool_unsupported: '{{tag}}은(는) {{engine}} 엔진에서 지원되지 않습니다.'
+  ssml_toolbar_label: SSML 삽입 도구
+  ssml_total_count: '태그를 포함한 전체: {{current}} / {{max}}자'
+  ssml_validation_label: SSML 확인 결과
+  status_done: 음성 생성이 완료되었습니다
+  status_generating: 음성을 생성하는 중입니다
+  text_placeholder: 음성으로 변환할 텍스트를 입력하세요
+  title: 음성 파일 생성
+  too_long: 텍스트가 너무 깁니다.
+  voice: 음성
 transcribe:
   audio_source_lost: 오디오 소스를 더 이상 사용할 수 없어 전사가 중지되었습니다
   detailed_parameters: 세부 매개변수

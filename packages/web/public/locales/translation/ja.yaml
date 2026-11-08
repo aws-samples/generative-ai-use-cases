@@ -805,6 +805,7 @@ navigation:
   speechRecognition: 音声認識
   summary: 要約
   textGeneration: 文章生成
+  textToSpeech: 音声ファイル作成
   translation: 翻訳
   videoAnalysis: 映像分析
   videoGeneration: 動画生成
@@ -936,6 +937,117 @@ svg:
   show_code: コードを表示
   show_preview: プレビューを表示
   svg_error: 'SVG出力エラー: '
+textToSpeech:
+  audio_label: 生成された音声
+  character_count: '{{current}} / {{max}} 文字'
+  description: Amazon Polly を使って音声ファイルを生成します。
+  download: ダウンロード
+  duration_note: Amazon Polly は 10 分を超える音声を途中で打ち切ります。速度を遅くした場合や文章が長い場合は、末尾が欠けることがあるので、テキストを分割してください。
+  engine: エンジン
+  error_engine_not_supported: '選択したエンジンは、選択した音声と互換性がないか、このスタックのリージョンでは利用できません (例: Long-form の音声は us-east-1 でのみ利用できます)。別のエンジンまたは音声を選択してください。'
+  error_generic: 音声ファイルを生成できませんでした。しばらくしてから再試行してください。
+  error_internal_error: サーバーでエラーが発生しました。しばらくしてから再試行してください。
+  error_invalid_next_token: ページ送りトークンが無効です。ページを再読み込みしてください。
+  error_invalid_request: リクエストの内容が正しくありません。入力内容を確認してください。
+  error_invalid_sample_rate: サンプルレートが出力形式に対して無効です。
+  error_invalid_ssml: SSML が無効です。タグの構文とスペルを確認してください。
+  error_language_not_supported: 選択した言語は、選択した音声ではサポートされていません。別の言語または音声を選択してください。
+  error_polly_access_denied: 'サーバーに Amazon Polly を呼び出す権限がありません。管理者に IAM 権限 polly:SynthesizeSpeech と polly:DescribeVoices を確認するよう依頼してください。'
+  error_polly_service_failure: Amazon Polly で一時的な障害が発生しました。しばらくしてから再試行してください。
+  error_storage_error: 生成した音声ファイルの保存に失敗しました。しばらくしてから再試行してください。
+  error_text_too_long: テキストが Amazon Polly の上限を超えています (リクエスト全体で 6000 文字、課金対象 3000 文字)。テキストを短くしてください。
+  error_throttled: Amazon Polly へのリクエストが多すぎます (Neural と Generative の音声は、アカウントとリージョンごとに毎秒 8 リクエスト程度)。しばらく待ってから再試行してください。
+  format: 出力形式
+  generate: 音声を生成
+  input_mode: 入力モード
+  input_mode_ssml: SSML
+  input_mode_text: プレーンテキスト
+  input_text: 音声に変換するテキスト
+  language: 言語
+  load_voices_error: 音声の一覧を取得できませんでした。ページを再読み込みしてください。
+  speed: 速度 ({{speed}}倍)
+  ssml_billed_hint: 課金対象の文字数 (タグを除く)
+  ssml_duration_note: SSML モードでは、長い休止 (<break>) や遅い速度 (<prosody rate>) によって音声が長くなり、10 分の上限に達することがあります。
+  ssml_guide_button: SSML ガイド
+  ssml_guide_close: 閉じる
+  ssml_guide_desc_auto_breaths: 息継ぎの音を加えます (standard エンジンのみ)。
+  ssml_guide_desc_break: '最大 10 秒の休止を入れます。time="500ms" や strength="strong" を指定します。'
+  ssml_guide_desc_drc: ダイナミックレンジ圧縮を適用します (standard、neural、long-form)。
+  ssml_guide_desc_emphasis: 単語を強調します (standard エンジンのみ)。
+  ssml_guide_desc_lang: テキストを別の言語で読み上げます。
+  ssml_guide_desc_mark: 任意のマーカーを置きます (音声ファイルには影響しません)。
+  ssml_guide_desc_p: 段落を示します (後ろに長めの休止が入ります)。
+  ssml_guide_desc_phoneme_ipa: IPA または X-SAMPA で発音を指定します (日本語・中国語以外の言語)。alphabet と ph の両方が必要です。
+  ssml_guide_desc_phoneme_yomigana: 発音を指定します。日本語は x-amazon-yomigana または x-amazon-pron-kana、中国語 (北京語) は x-amazon-pinyin を使います。
+  ssml_guide_desc_prosody: '話す速度 (20% から 200%) と音量を変えます。ピッチは standard エンジンのみ対応です。generative の音声では、文全体を囲む場合のみ使えます。'
+  ssml_guide_desc_s: 文を示します。
+  ssml_guide_desc_say_as: '数字、日付、電話番号などの読み方を指定します。neural の音声で interpret-as="characters" を使うと、その文は standard の音声で読まれますが、課金は neural として扱われます。'
+  ssml_guide_desc_speak: ルート要素です。テキストがこれで始まらない場合は、自動的に追加されます。
+  ssml_guide_desc_sub: 書かれた文字の代わりに alias の読みで読み上げます。商品名や略語などに使います。
+  ssml_guide_desc_w: 品詞 (role) によって発音を選びます。
+  ssml_guide_desc_whispered: ささやき声にします (standard エンジンのみ)。
+  ssml_guide_engines: 対応タグとエンジン
+  ssml_guide_howto_closing: 'すべてのタグを閉じてください (<p>...</p> や <break time="1s"/>)。タグの入れ子も正しくする必要があります。'
+  ssml_guide_howto_heading: SSML の書き方
+  ssml_guide_howto_reserved: 'SSML モードでは、テキストは自動ではエスケープされません。& は &amp;、< は &lt;、> は &gt;、'' は &apos; と書いてください。ダブルクォートで囲んだ属性値の中では、" を &quot; と書きます。'
+  ssml_guide_howto_speak: SSML は XML です。テキスト全体を <speak>...</speak> で囲みます。テキストが <speak> で始まらない場合は、自動的に追加されます。
+  ssml_guide_insert: 挿入
+  ssml_guide_length: 長い休止や遅い速度を使うと音声が長くなり、Amazon Polly は 10 分を超えた部分をエラーなしで打ち切ります。タグは課金対象外です (最大 3000 文字) が、タグを含むテキスト全体は 6000 文字までです。
+  ssml_guide_title: SSML ガイド
+  ssml_issue_break_time: '休止の長さ「{{value}}」が正しくありません。10s (10000ms) 以下にしてください。'
+  ssml_issue_forbidden_tag: '{{tag}} は Amazon Polly では使えません。'
+  ssml_issue_malformed: "SSML の形式が正しくありません。すべてのタグが閉じられているか、入れ子が正しいか、予約文字 (& < > ') がエスケープされているかを確認してください。"
+  ssml_issue_phoneme_attrs: <phoneme> には alphabet と ph の両方の属性が必要です。
+  ssml_issue_prosody_pitch: '<prosody> の pitch 属性は {{engine}} エンジンでは使えません。'
+  ssml_issue_prosody_rate: '速度「{{value}}」が正しくありません。20% から 200%、または x-slow、slow、medium、fast、x-fast を指定してください。'
+  ssml_issue_unknown_tag: '{{tag}} は対応している SSML タグではありません。'
+  ssml_issue_unsupported_tag: '{{tag}} は {{engine}} エンジンでは使えません。削除するか、別のエンジンを選択してください。'
+  ssml_issue_warn_prosody_generative: generative の音声では、<prosody> は文全体を囲む場合のみ有効です。
+  ssml_issue_warn_say_as_characters: 'neural の音声で interpret-as="characters" を使うと、standard の音声で読まれますが、課金は neural として扱われます。'
+  ssml_option_alphabet: 発音記号の種類
+  ssml_option_lang: テキストの言語
+  ssml_option_pause: 休止の長さ
+  ssml_option_prosody: 速度または音量
+  ssml_option_say_as: 読み方
+  ssml_placeholder_alias: 読み
+  ssml_placeholder_reading: 発音
+  ssml_placeholder_text: テキスト
+  ssml_prosody_rate_110: '速度 110%'
+  ssml_prosody_rate_120: '速度 120%'
+  ssml_prosody_rate_80: '速度 80%'
+  ssml_prosody_rate_90: '速度 90%'
+  ssml_prosody_volume_loud: 音量 大
+  ssml_prosody_volume_soft: 音量 小
+  ssml_say_as_cardinal: 数値
+  ssml_say_as_date: 日付
+  ssml_say_as_digits: 数字を一桁ずつ
+  ssml_say_as_ordinal: 序数
+  ssml_say_as_telephone: 電話番号
+  ssml_speed_note: '速度は <prosody rate="..."> タグで指定してください。'
+  ssml_support_full: 対応
+  ssml_support_none: 非対応
+  ssml_support_partial: 一部対応
+  ssml_text_placeholder: 'SSML を入力してください。例: こんにちは<break time="500ms"/>世界'
+  ssml_too_long_billed: 課金対象の文字数 (タグを除く) が上限を超えています。
+  ssml_too_long_total: 'タグを含むテキスト全体が {{max}} 文字を超えています。'
+  ssml_tool_lang: 言語
+  ssml_tool_paragraph: 段落
+  ssml_tool_pause: 休止
+  ssml_tool_phoneme: 発音
+  ssml_tool_prosody: 速度・音量
+  ssml_tool_say_as: 読み方
+  ssml_tool_sentence: 文
+  ssml_tool_sub: 置換読み
+  ssml_tool_unsupported: '{{tag}} は {{engine}} エンジンでは使えません。'
+  ssml_toolbar_label: SSML 挿入ツール
+  ssml_total_count: 'タグを含む全体: {{current}} / {{max}} 文字'
+  ssml_validation_label: SSML の確認結果
+  status_done: 音声の生成が完了しました
+  status_generating: 音声を生成しています
+  text_placeholder: 音声に変換するテキストを入力してください
+  title: 音声ファイル作成
+  too_long: テキストが長すぎます。
+  voice: 音声
 transcribe:
   audio_source_lost: 音声ソースが利用できなくなったため、文字起こしを停止しました
   detailed_parameters: 詳細なパラメータ
