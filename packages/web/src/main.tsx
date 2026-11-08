@@ -26,6 +26,7 @@ import GenerateImagePage from './pages/GenerateImagePage';
 import GenerateVideoPage from './pages/GenerateVideoPage';
 import OptimizePromptPage from './pages/OptimizePromptPage';
 import TranscribePage from './pages/TranscribePage';
+import TextractPage from './pages/TextractPage';
 import MeetingMinutesPage from './pages/MeetingMinutesPage';
 import AgentChatPage from './pages/AgentChatPage';
 import FlowChatPage from './pages/FlowChatPage';
@@ -165,6 +166,12 @@ const routes: RouteObject[] = [
     path: '/transcribe',
     element: <TranscribePage />,
   },
+  enabled('textract')
+    ? {
+        path: '/textract',
+        element: <TextractPage />,
+      }
+    : null,
   {
     path: '/flow-chat',
     element: <FlowChatPage />,

@@ -954,6 +954,7 @@ navigation:
   speechRecognition: Speech Recognition
   summary: Summary
   textGeneration: Text Generation
+  textract: Text Extraction
   translation: Translation
   videoAnalysis: Video Analysis
   videoGeneration: Video Generation
@@ -1108,6 +1109,40 @@ svg:
   show_code: Show Code
   show_preview: Show Preview
   svg_error: 'SVG output error: '
+textract:
+  clear: Clear
+  col_box: Box (left, top, width, height) [0-1]
+  col_box_px: Box in pixels (left, top, width, height)
+  col_confidence: Confidence (%)
+  col_text: Text
+  copy_text: Copy Text
+  description: Upload an image or a one-page PDF/TIFF. Amazon Textract detects text and shows each line or word with its confidence and bounding box.
+  detecting: Detecting text...
+  download_csv: Download CSV
+  download_json: Download JSON
+  drop_hint: You can also drag and drop a file here.
+  error_failed: Failed to extract text. Please try again.
+  error_title: Error
+  error_too_large: The file is too large. The maximum size is {{size}} MB.
+  error_unsupported_type: Unsupported file type. Please select a .jpg, .jpeg, .png, .pdf, .tif or .tiff file.
+  file_upload: File Upload
+  full_text: Whole document text
+  min_confidence: 'Minimum confidence: {{value}}%'
+  no_results: No text was detected (or all rows are hidden by the confidence filter).
+  overlay_unavailable: The bounding box overlay is not available for PDF/TIFF files. See the table for the detected text and coordinates.
+  preview_alt: Preview of {{name}}
+  preview_title: Preview
+  region_used: 'Textract region: {{region}}'
+  results_title: Results
+  run: Extract Text
+  selected_file: 'Selected file: {{name}}'
+  supported_files: 'Supported: JPEG, PNG, one-page PDF, one-page TIFF (up to {{size}} MB)'
+  table_caption: Detected text ({{count}} rows)
+  title: Text Extraction
+  uploading: Uploading...
+  view_label: Display unit
+  view_lines: Lines
+  view_words: Words
 transcribe:
   audio_source_lost: Transcription stopped because the audio source is no longer available
   detailed_parameters: Detailed parameters

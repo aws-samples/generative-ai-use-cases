@@ -800,6 +800,7 @@ navigation:
   speechRecognition: 音声認識
   summary: 要約
   textGeneration: 文章生成
+  textract: 文字抽出
   translation: 翻訳
   videoAnalysis: 映像分析
   videoGeneration: 動画生成
@@ -931,6 +932,40 @@ svg:
   show_code: コードを表示
   show_preview: プレビューを表示
   svg_error: 'SVG出力エラー: '
+textract:
+  clear: クリア
+  col_box: ボックス (left, top, width, height) [0-1]
+  col_box_px: ピクセル座標 (left, top, width, height)
+  col_confidence: 信頼度 (%)
+  col_text: テキスト
+  copy_text: テキストをコピー
+  description: 画像または 1 ページの PDF/TIFF をアップロードしてください。Amazon Textract が文字を検出し、各行・各単語の信頼度とバウンディングボックスを表示します。
+  detecting: 文字を検出中...
+  download_csv: CSV をダウンロード
+  download_json: JSON をダウンロード
+  drop_hint: ここにファイルをドラッグ & ドロップすることもできます。
+  error_failed: 文字の抽出に失敗しました。もう一度お試しください。
+  error_title: エラー
+  error_too_large: ファイルサイズが大きすぎます。最大サイズは {{size}} MB です。
+  error_unsupported_type: 未対応のファイル形式です。.jpg, .jpeg, .png, .pdf, .tif, .tiff のいずれかを選択してください。
+  file_upload: ファイルアップロード
+  full_text: ドキュメント全体のテキスト
+  min_confidence: '最小信頼度: {{value}}%'
+  no_results: 文字が検出されませんでした (または信頼度フィルタにより全ての行が非表示です)。
+  overlay_unavailable: PDF/TIFF ではバウンディングボックスの重ね表示はできません。検出されたテキストと座標は表をご覧ください。
+  preview_alt: '{{name}} のプレビュー'
+  preview_title: プレビュー
+  region_used: 'Textract のリージョン: {{region}}'
+  results_title: 結果
+  run: 文字を抽出
+  selected_file: '選択中のファイル: {{name}}'
+  supported_files: '対応形式: JPEG, PNG, 1 ページの PDF, 1 ページの TIFF (最大 {{size}} MB)'
+  table_caption: 検出されたテキスト ({{count}} 件)
+  title: 文字抽出
+  uploading: アップロード中...
+  view_label: 表示単位
+  view_lines: 行
+  view_words: 単語
 transcribe:
   audio_source_lost: 音声ソースが利用できなくなったため、文字起こしを停止しました
   detailed_parameters: 詳細なパラメータ

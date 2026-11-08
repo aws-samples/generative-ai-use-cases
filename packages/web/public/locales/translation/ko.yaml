@@ -516,6 +516,7 @@ navigation:
   speechRecognition: 음성 인식
   summary: 요약
   textGeneration: 텍스트 생성
+  textract: 텍스트 추출
   translation: 번역
   videoAnalysis: 비디오 분석
   videoGeneration: 비디오 생성
@@ -663,6 +664,40 @@ svg:
   show_code: 코드 표시
   show_preview: 미리보기 표시
   svg_error: 'SVG 출력 오류: '
+textract:
+  clear: 지우기
+  col_box: 박스 (left, top, width, height) [0-1]
+  col_box_px: 픽셀 좌표 (left, top, width, height)
+  col_confidence: 신뢰도 (%)
+  col_text: 텍스트
+  copy_text: 텍스트 복사
+  description: 이미지 또는 1페이지 PDF/TIFF를 업로드하세요. Amazon Textract가 텍스트를 감지하고 각 줄과 단어의 신뢰도 및 바운딩 박스를 표시합니다.
+  detecting: 텍스트 감지 중...
+  download_csv: CSV 다운로드
+  download_json: JSON 다운로드
+  drop_hint: 여기에 파일을 드래그 앤 드롭할 수도 있습니다.
+  error_failed: 텍스트 추출에 실패했습니다. 다시 시도해 주세요.
+  error_title: 오류
+  error_too_large: 파일이 너무 큽니다. 최대 크기는 {{size}} MB입니다.
+  error_unsupported_type: 지원하지 않는 파일 형식입니다. .jpg, .jpeg, .png, .pdf, .tif, .tiff 파일을 선택하세요.
+  file_upload: 파일 업로드
+  full_text: 문서 전체 텍스트
+  min_confidence: '최소 신뢰도: {{value}}%'
+  no_results: 감지된 텍스트가 없습니다 (또는 신뢰도 필터로 모든 행이 숨겨졌습니다).
+  overlay_unavailable: PDF/TIFF에서는 바운딩 박스 오버레이를 사용할 수 없습니다. 감지된 텍스트와 좌표는 표를 확인하세요.
+  preview_alt: '{{name}} 미리보기'
+  preview_title: 미리보기
+  region_used: 'Textract 리전: {{region}}'
+  results_title: 결과
+  run: 텍스트 추출
+  selected_file: '선택한 파일: {{name}}'
+  supported_files: '지원 형식: JPEG, PNG, 1페이지 PDF, 1페이지 TIFF (최대 {{size}} MB)'
+  table_caption: 감지된 텍스트 ({{count}}행)
+  title: 텍스트 추출
+  uploading: 업로드 중...
+  view_label: 표시 단위
+  view_lines: 줄
+  view_words: 단어
 transcribe:
   audio_source_lost: 오디오 소스를 더 이상 사용할 수 없어 전사가 중지되었습니다
   detailed_parameters: 세부 매개변수

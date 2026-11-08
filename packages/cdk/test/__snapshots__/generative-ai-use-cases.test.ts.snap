@@ -5661,7 +5661,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A5021233d9d47c7d1a915f2f1b9e08e397756df": {
+    "APIApiDeployment3A5021239613913e1eee1ca58e33096148296645": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -5763,6 +5763,11 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "APIApisystemcontextsOPTIONS0D2703AA",
         "APIApisystemcontextsPOST3883EC4A",
         "APIApisystemcontexts57785227",
+        "APIApitextractdetectOPTIONSF7F51D29",
+        "APIApitextractdetectPOSTB65198AA",
+        "APIApitextractdetectBE0F2360",
+        "APIApitextractOPTIONSA159D2F0",
+        "APIApitextract6137151B",
         "APIApitokenusageGETF4970022",
         "APIApitokenusageOPTIONS59BB9297",
         "APIApitokenusageD4EF3867",
@@ -5896,6 +5901,9 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "APIApisystemcontextsGET7ECB64D3",
         "APIApisystemcontextsOPTIONS0D2703AA",
         "APIApisystemcontextsPOST3883EC4A",
+        "APIApitextractdetectOPTIONSF7F51D29",
+        "APIApitextractdetectPOSTB65198AA",
+        "APIApitextractOPTIONSA159D2F0",
         "APIApitokenusageGETF4970022",
         "APIApitokenusageOPTIONS59BB9297",
         "APIApitranscribeOPTIONS5030955A",
@@ -5950,7 +5958,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A5021233d9d47c7d1a915f2f1b9e08e397756df",
+          "Ref": "APIApiDeployment3A5021239613913e1eee1ca58e33096148296645",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -6105,6 +6113,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
             },
+            "TEXTRACT_REGION": "us-east-1",
             "TRANSCRIPT_BUCKET_NAME": {
               "Ref": "TranscribeTranscriptBucketE67CAF92",
             },
@@ -6594,6 +6603,11 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "transcribe:ListTranscriptionJobs",
                 "transcribe:TagResource",
               ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": "textract:DetectDocumentText",
               "Effect": "Allow",
               "Resource": "*",
             },
@@ -10111,6 +10125,166 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         },
         "ResourceId": {
           "Ref": "APIApisystemcontextssystemContextIdtitleD469F521",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitextract6137151B": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "APIApiFFA96F67",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "textract",
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitextractOPTIONSA159D2F0": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": {
+          "IntegrationResponses": [
+            {
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Credentials": "'true'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Credentials": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": {
+          "Ref": "APIApitextract6137151B",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitextractdetectBE0F2360": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ParentId": {
+          "Ref": "APIApitextract6137151B",
+        },
+        "PathPart": "detect",
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitextractdetectOPTIONSF7F51D29": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": {
+          "IntegrationResponses": [
+            {
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Credentials": "'true'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Credentials": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": {
+          "Ref": "APIApitextractdetectBE0F2360",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitextractdetectPOSTB65198AA": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "APIAuthorizer9DCC037B",
+        },
+        "HttpMethod": "POST",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "APIApiHandler18BC61F9",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "APIApitextractdetectBE0F2360",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -18778,7 +18952,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A502123b4d122413b06aa1dcc09b7c3e41b73c2": {
+    "APIApiDeployment3A50212312e0a09c2cff1d788bced8af608aea65": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -18880,6 +19054,11 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "APIApisystemcontextsOPTIONS0D2703AA",
         "APIApisystemcontextsPOST3883EC4A",
         "APIApisystemcontexts57785227",
+        "APIApitextractdetectOPTIONSF7F51D29",
+        "APIApitextractdetectPOSTB65198AA",
+        "APIApitextractdetectBE0F2360",
+        "APIApitextractOPTIONSA159D2F0",
+        "APIApitextract6137151B",
         "APIApitokenusageGETF4970022",
         "APIApitokenusageOPTIONS59BB9297",
         "APIApitokenusageD4EF3867",
@@ -19013,6 +19192,9 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "APIApisystemcontextsGET7ECB64D3",
         "APIApisystemcontextsOPTIONS0D2703AA",
         "APIApisystemcontextsPOST3883EC4A",
+        "APIApitextractdetectOPTIONSF7F51D29",
+        "APIApitextractdetectPOSTB65198AA",
+        "APIApitextractOPTIONSA159D2F0",
         "APIApitokenusageGETF4970022",
         "APIApitokenusageOPTIONS59BB9297",
         "APIApitranscribeOPTIONS5030955A",
@@ -19067,7 +19249,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A502123b4d122413b06aa1dcc09b7c3e41b73c2",
+          "Ref": "APIApiDeployment3A50212312e0a09c2cff1d788bced8af608aea65",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -19175,6 +19357,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "TABLE_NAME": {
               "Ref": "DatabaseTableF104A135",
             },
+            "TEXTRACT_REGION": "us-east-1",
             "TRANSCRIPT_BUCKET_NAME": {
               "Ref": "TranscribeTranscriptBucketE67CAF92",
             },
@@ -19634,6 +19817,11 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "transcribe:ListTranscriptionJobs",
                 "transcribe:TagResource",
               ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            {
+              "Action": "textract:DetectDocumentText",
               "Effect": "Allow",
               "Resource": "*",
             },
@@ -23151,6 +23339,166 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         },
         "ResourceId": {
           "Ref": "APIApisystemcontextssystemContextIdtitleD469F521",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitextract6137151B": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "APIApiFFA96F67",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "textract",
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitextractOPTIONSA159D2F0": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": {
+          "IntegrationResponses": [
+            {
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Credentials": "'true'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Credentials": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": {
+          "Ref": "APIApitextract6137151B",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitextractdetectBE0F2360": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ParentId": {
+          "Ref": "APIApitextract6137151B",
+        },
+        "PathPart": "detect",
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitextractdetectOPTIONSF7F51D29": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": {
+          "IntegrationResponses": [
+            {
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Credentials": "'true'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Credentials": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": {
+          "Ref": "APIApitextractdetectBE0F2360",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitextractdetectPOSTB65198AA": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "APIAuthorizer9DCC037B",
+        },
+        "HttpMethod": "POST",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "APIApiHandler18BC61F9",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "APIApitextractdetectBE0F2360",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",

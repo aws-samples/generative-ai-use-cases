@@ -1146,6 +1146,40 @@ const envs: Record<string, Partial<StackInput>> = {
 
 Prompt optimization のサポート状況は [こちら](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-optimize.html) をご参照ください。
 
+### 文字抽出ツールの有効化
+
+文字抽出ツールは、画像または 1 ページの PDF/TIFF から Amazon Textract (`DetectDocumentText`) で文字を検出し、各行・各単語の信頼度とバウンディングボックスを表示します。
+デフォルトで表示されます。非表示にする場合は `hiddenUseCases.textract` を指定します (後述の「特定のユースケースを非表示にする」を参照)。
+
+Amazon Textract を呼び出すリージョンは `textractRegion` で指定します。`null` (デフォルト) の場合は GenU をデプロイしたリージョンが使用されます。
+
+> [!NOTE]
+> Amazon Textract は全てのリージョンで利用できるわけではありません。`textractRegion` を設定する前に[対応リージョン](https://docs.aws.amazon.com/general/latest/gr/textract.html)をご確認ください。`ap-northeast-1` (東京) は指定可能な値です。
+> アップロードしたドキュメントは指定したリージョンに送信されるため、データレジデンシー要件にご留意ください。
+> アップロードされたファイルはバイト列として Amazon Textract に渡されるため、Textract のリージョンはファイル用バケットのリージョンと異なっていても構いません。アップロードされたファイルは文字検出の直後にバケットから削除されます。
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    textractRegion: 'ap-northeast-1',
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+{
+  "context": {
+    "textractRegion": "ap-northeast-1"
+  }
+}
+```
+
 ### 特定のユースケースを非表示にする
 
 以下のオプションで指定できるユースケースは非表示にできます。
@@ -1169,6 +1203,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // ダイアグラム生成を非表示
       meetingMinutes: true, // 議事録生成を非表示
       voiceChat: true, // 音声チャットを非表示
+      textract: true, // 文字抽出を非表示
     },
   },
 };
@@ -1191,7 +1226,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "videoAnalyzer": true,
       "diagram": true,
       "meetingMinutes": true,
-      "voiceChat": true
+      "voiceChat": true,
+      "textract": true
     }
   }
 }

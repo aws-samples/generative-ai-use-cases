@@ -1127,6 +1127,40 @@ There is no direct option to enable the prompt optimization tool, but the parame
 
 For Prompt optimization support status, please refer to [this link](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-optimize.html).
 
+### Enabling the Text Extraction Tool
+
+The Text Extraction tool detects text in an image or a one-page PDF/TIFF with Amazon Textract (`DetectDocumentText`) and shows each line/word with its confidence and bounding box.
+The tool is displayed by default and can be hidden with `hiddenUseCases.textract` (see "Hiding Specific Use Cases" below).
+
+The region used to call Amazon Textract is set with `textractRegion`. If it is `null` (default), the region where GenU is deployed is used.
+
+> [!NOTE]
+> Amazon Textract is not available in every region. Please check the [supported regions](https://docs.aws.amazon.com/general/latest/gr/textract.html) before setting `textractRegion`. `ap-northeast-1` (Tokyo) is a valid value.
+> Uploaded documents are sent to the region you specify, so please consider your data residency requirements.
+> The uploaded file is passed to Amazon Textract as bytes, so the Textract region may differ from the region of the file bucket. The uploaded file is deleted from the bucket right after text detection.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    textractRegion: 'ap-northeast-1',
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+{
+  "context": {
+    "textractRegion": "ap-northeast-1"
+  }
+}
+```
+
 ### Hiding Specific Use Cases
 
 You can hide use cases with the following options.
@@ -1150,6 +1184,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // Hide diagram generation
       meetingMinutes: true, // Hide meeting minutes generation
       voiceChat: true, // Hide voice chat
+      textract: true, // Hide text extraction
     },
   },
 };
@@ -1172,7 +1207,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "videoAnalyzer": true,
       "diagram": true,
       "meetingMinutes": true,
-      "voiceChat": true
+      "voiceChat": true,
+      "textract": true
     }
   }
 }
