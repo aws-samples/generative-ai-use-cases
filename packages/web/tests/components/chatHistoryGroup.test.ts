@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import {
   chatHistoryGroupKey,
+  getChatActivityDate,
   getChatHistoryGroup,
+  sortChatsByActivity,
 } from '../../src/utils/chatHistoryGroup';
 
 // Local-time dates, matching how the browser draws day boundaries.
@@ -47,5 +49,57 @@ describe('getChatHistoryGroup', () => {
 
   it('treats a future timestamp (clock skew) as today', () => {
     expect(getChatHistoryGroup(at(2026, 11, 8), now).kind).toBe('today');
+  });
+});
+
+describe('getChatActivityDate', () => {
+  it('uses updatedDate when it is set', () => {
+    expect(
+      getChatActivityDate({ createdDate: '100', updatedDate: '200' })
+    ).toBe('200');
+  });
+
+  it('falls back to createdDate for chats saved before updatedDate existed', () => {
+    expect(getChatActivityDate({ createdDate: '100', updatedDate: '' })).toBe(
+      '100'
+    );
+  });
+});
+
+describe('sortChatsByActivity', () => {
+  it('moves an old chat that was used recently above newer idle chats', () => {
+    // API order: newest createdDate first.
+    const chats = [
+      { chatId: 'new', createdDate: at(2026, 11, 5), updatedDate: '' },
+      {
+        chatId: 'old-but-active',
+        createdDate: at(2026, 3, 1),
+        updatedDate: at(2026, 11, 7, 8),
+      },
+    ];
+    expect(sortChatsByActivity(chats).map((c) => c.chatId)).toEqual([
+      'old-but-active',
+      'new',
+    ]);
+  });
+
+  it('keeps the API order for equal times and does not mutate the input', () => {
+    const chats = [
+      { chatId: 'a', createdDate: '100', updatedDate: '' },
+      { chatId: 'b', createdDate: '100', updatedDate: '' },
+    ];
+    expect(sortChatsByActivity(chats).map((c) => c.chatId)).toEqual(['a', 'b']);
+    expect(chats.map((c) => c.chatId)).toEqual(['a', 'b']);
+  });
+
+  it('sorts unparsable dates last', () => {
+    const chats = [
+      { chatId: 'bad', createdDate: 'x', updatedDate: '' },
+      { chatId: 'ok', createdDate: '100', updatedDate: '' },
+    ];
+    expect(sortChatsByActivity(chats).map((c) => c.chatId)).toEqual([
+      'ok',
+      'bad',
+    ]);
   });
 });

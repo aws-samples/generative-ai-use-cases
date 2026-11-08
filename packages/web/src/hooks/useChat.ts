@@ -802,6 +802,23 @@ const useChatState = create<{
       });
 
       replaceMessages(id, messages);
+
+      // The server stamped updatedDate; mirror it in the cached history so
+      // the chat moves to the top without refetching every loaded page.
+      mutateListChat(
+        (pages) =>
+          pages &&
+          produce(pages, (draft) => {
+            for (const page of draft) {
+              const chat = page.data.find((c) => c.chatId === chatId);
+              if (chat) {
+                chat.updatedDate = `${Date.now()}`;
+                break;
+              }
+            }
+          }),
+        { revalidate: false }
+      );
       return true;
     } catch (e) {
       console.error(e);

@@ -15,6 +15,7 @@ import { decomposeId } from '../utils/ChatUtils';
 import { getUseCaseIcon } from '../utils/UseCaseIconMap';
 import DialogConfirmDeleteChat from './DialogConfirmDeleteChat';
 import { useTranslation } from 'react-i18next';
+import { getChatActivityDate } from '../utils/chatHistoryGroup';
 
 type Props = BaseProps & {
   active: boolean;
@@ -35,14 +36,15 @@ const ChatListItem: React.FC<Props> = (props) => {
     return decomposeId(props.chat.chatId) ?? '';
   }, [props.chat.chatId]);
 
-  // Full date and time as a tooltip, in the UI language.
+  // Full date and time of the last activity as a tooltip, in the UI language.
   const { i18n } = useTranslation();
-  const createdAt = useMemo(() => {
-    const date = new Date(Number(props.chat.createdDate));
+  const activityDate = getChatActivityDate(props.chat);
+  const activeAt = useMemo(() => {
+    const date = new Date(Number(activityDate));
     return isNaN(date.getTime())
       ? undefined
       : date.toLocaleString(i18n.resolvedLanguage);
-  }, [props.chat.createdDate, i18n.resolvedLanguage]);
+  }, [activityDate, i18n.resolvedLanguage]);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [tempTitle, setTempTitle] = useState('');
@@ -125,7 +127,7 @@ const ChatListItem: React.FC<Props> = (props) => {
         }
           ${props.className}`}
         to={`/chat/${chatId}`}
-        title={createdAt}>
+        title={activeAt}>
         <div
           className={`flex h-8 max-h-5 w-full justify-start overflow-hidden`}>
           <div className="mr-2 ">{getUseCaseIcon(props.chat.usecase)}</div>

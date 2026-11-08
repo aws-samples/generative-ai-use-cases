@@ -8,7 +8,9 @@ import { useTranslation } from 'react-i18next';
 import { Chat } from 'generative-ai-use-cases';
 import {
   chatHistoryGroupKey,
+  getChatActivityDate,
   getChatHistoryGroup,
+  sortChatsByActivity,
 } from '../utils/chatHistoryGroup';
 
 type Props = BaseProps & {
@@ -52,7 +54,7 @@ const ChatList: React.FC<Props> = (props) => {
     });
   }, [props.searchWords, chats]);
 
-  // Chats arrive newest first, so consecutive chats share a section.
+  // Sorted by last activity, so consecutive chats share a section.
   const groupedChats = useMemo(() => {
     const now = new Date();
     const monthFormat = new Intl.DateTimeFormat(i18n.resolvedLanguage, {
@@ -73,8 +75,9 @@ const ChatList: React.FC<Props> = (props) => {
       label: string;
       chats: { chat: Chat; dateLabel?: string }[];
     }[] = [];
-    for (const chat of searchedChats) {
-      const group = getChatHistoryGroup(chat.createdDate, now);
+    for (const chat of sortChatsByActivity(searchedChats)) {
+      const activityDate = getChatActivityDate(chat);
+      const group = getChatHistoryGroup(activityDate, now);
       const key = chatHistoryGroupKey(group);
       if (groups.length === 0 || groups[groups.length - 1].key !== key) {
         const label =
@@ -88,10 +91,10 @@ const ChatList: React.FC<Props> = (props) => {
               }[group.kind];
         groups.push({ key, label, chats: [] });
       }
-      const created = new Date(Number(chat.createdDate));
-      const dateLabel = isNaN(created.getTime())
+      const active = new Date(Number(activityDate));
+      const dateLabel = isNaN(active.getTime())
         ? undefined
-        : (group.kind === 'today' ? timeFormat : dayFormat).format(created);
+        : (group.kind === 'today' ? timeFormat : dayFormat).format(active);
       groups[groups.length - 1].chats.push({ chat, dateLabel });
     }
     return groups;

@@ -429,6 +429,29 @@ export const setChatTitle = async (
   return res.Attributes as Chat;
 };
 
+/**
+ * Record when a chat last received messages, so the history can be ordered by
+ * last activity. Stored as epoch milliseconds, like `createdDate`.
+ */
+export const setChatUpdatedDate = async (
+  id: string,
+  createdDate: string
+): Promise<void> => {
+  await dynamoDbDocument.send(
+    new UpdateCommand({
+      TableName: TABLE_NAME,
+      Key: {
+        id: id,
+        createdDate: createdDate,
+      },
+      UpdateExpression: 'set updatedDate = :updatedDate',
+      // Never create a stray item if the chat was deleted in the meantime.
+      ConditionExpression: 'attribute_exists(id)',
+      ExpressionAttributeValues: { ':updatedDate': `${Date.now()}` },
+    })
+  );
+};
+
 export const updateFeedback = async (
   _chatId: string,
   feedbackData: UpdateFeedbackRequest
