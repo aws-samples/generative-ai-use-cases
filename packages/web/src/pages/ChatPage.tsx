@@ -21,6 +21,10 @@ import ExpandableField from '../components/ExpandableField';
 import Switch from '../components/Switch';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import useFollow from '../hooks/useFollow';
+import useChatPreferences, {
+  pickInitialModelId,
+  sanitizeReasoningConfig,
+} from '../hooks/useChatPreferences';
 import useDropOverlay from '../hooks/useDropOverlay';
 import usePreventNavigation from '../hooks/usePreventNavigation';
 import { PiArrowClockwiseBold, PiShareFatFill, PiX } from 'react-icons/pi';
@@ -169,13 +173,23 @@ const ChatPage: React.FC = () => {
   const prompter = useMemo(() => {
     return getPrompter(modelId);
   }, [modelId]);
+  const {
+    modelId: savedModelId,
+    setModelId: saveModelId,
+    setReasoningConfig: saveReasoningConfig,
+  } = useChatPreferences();
+  // Start from the reasoning settings the user last chose (#923). The effect
+  // below still adapts the type to the selected model's capabilities.
   const [overrideModelParameters, setOverrideModelParameters] =
-    useState<AdditionalModelRequestFields>({
+    useState<AdditionalModelRequestFields>(() => ({
       reasoningConfig: {
         type: 'disabled',
         budgetTokens: DEFAULT_REASONING_BUDGET,
+        ...sanitizeReasoningConfig(
+          useChatPreferences.getState().reasoningConfig
+        ),
       },
-    });
+    }));
   const [showSetting, setShowSetting] = useState(false);
   const { t } = useTranslation();
   const [forceExpandPromptList, setForceExpandPromptList] = useState<
@@ -244,6 +258,9 @@ const ChatPage: React.FC = () => {
   // reasoning is force-enabled while the model is selected, and the user's
   // original disabled state is restored when switching away.
   useEffect(() => {
+    // Wait for the model. Before it is set the flags are all false, and
+    // normalizing against them would turn a restored 'xhigh' into 'high'.
+    if (!modelId) return;
     setOverrideModelParameters((prev) => {
       const config = prev.reasoningConfig;
       const enabled = config.type === 'enabled' || config.type === 'adaptive';
@@ -271,10 +288,39 @@ const ChatPage: React.FC = () => {
         reasoningConfig: { ...config, type: newType, effort: newEffort },
       };
     });
-  }, [adaptiveThinking, adaptiveThinkingAlwaysOn, xhighEffort]);
+  }, [modelId, adaptiveThinking, adaptiveThinkingAlwaysOn, xhighEffort]);
+
+  // Apply a reasoning change the user made and remember it (#923). Only
+  // explicit changes are saved; the per-model adjustments above are not, so
+  // a value the user chose (e.g. 'xhigh') is not overwritten by a model that
+  // cannot use it. When an always-on model forced reasoning on, the user's
+  // own "disabled" is stored instead.
+  const setAndRememberModelParameters = useCallback(
+    (params: AdditionalModelRequestFields) => {
+      setOverrideModelParameters(params);
+      saveReasoningConfig(
+        reasoningForcedByAlwaysOn.current
+          ? { ...params.reasoningConfig, type: 'disabled' }
+          : params.reasoningConfig
+      );
+    },
+    [saveReasoningConfig]
+  );
+
+  // Only an explicit pick is remembered (#1391); a model chosen by default or
+  // by a URL parameter does not replace the user's choice.
+  const onChangeModel = useCallback(
+    (newModelId: string) => {
+      setModelId(newModelId);
+      saveModelId(newModelId);
+    },
+    [setModelId, saveModelId]
+  );
 
   useEffect(() => {
-    const _modelId = !modelId ? availableModels[0] : modelId;
+    const _modelId = !modelId
+      ? pickInitialModelId(savedModelId, availableModels)!
+      : modelId;
 
     if (search !== '') {
       const params = queryString.parse(search) as ChatPageQueryParams;
@@ -499,7 +545,7 @@ const ChatPage: React.FC = () => {
 
   const onReasoningSwitched = useCallback(() => {
     if (reasoningEnabled) {
-      setOverrideModelParameters({
+      setAndRememberModelParameters({
         ...overrideModelParameters,
         reasoningConfig: {
           ...overrideModelParameters.reasoningConfig,
@@ -507,7 +553,7 @@ const ChatPage: React.FC = () => {
         },
       });
     } else {
-      setOverrideModelParameters({
+      setAndRememberModelParameters({
         ...overrideModelParameters,
         reasoningConfig: {
           ...overrideModelParameters.reasoningConfig,
@@ -519,7 +565,7 @@ const ChatPage: React.FC = () => {
     reasoningEnabled,
     adaptiveThinking,
     overrideModelParameters,
-    setOverrideModelParameters,
+    setAndRememberModelParameters,
   ]);
 
   const onDropFiles = useCallback(
@@ -697,7 +743,7 @@ const ChatPage: React.FC = () => {
             onReasoningSwitched={onReasoningSwitched}
             reasoningEnabled={reasoningEnabled}
             modelId={modelId}
-            onModelChange={setModelId}
+            onModelChange={onChangeModel}
             modelOptions={modelOptions}
             setting={setting}
             onSetting={() => {
@@ -784,7 +830,7 @@ const ChatPage: React.FC = () => {
             <ModelParameters
               modelFeatureFlags={MODELS.getModelMetadata(modelId).flags}
               overrideModelParameters={overrideModelParameters}
-              setOverrideModelParameters={setOverrideModelParameters}
+              setOverrideModelParameters={setAndRememberModelParameters}
             />
           </div>
         )}
