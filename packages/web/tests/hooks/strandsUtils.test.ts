@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   convertFilesToStrandsContentBlocks,
   convertToStrandsFormat,
+  makeDocumentNamesUnique,
 } from '../../src/utils/strandsUtils';
 
 // A short CSV ("item,amount" / "travel,1200" in Japanese) in each encoding
@@ -73,5 +74,56 @@ describe('strandsUtils - text documents in legacy Japanese charsets', () => {
     const sent =
       block && 'document' in block ? block.document.source.bytes : '';
     expect(new TextDecoder().decode(fromBase64(sent))).toBe(TEXT);
+  });
+});
+
+describe('strandsUtils - makeDocumentNamesUnique', () => {
+  const doc = (name: string) => ({
+    document: { format: 'pdf' as const, name, source: { bytes: 'AA==' } },
+  });
+  const names = (blocks: { document?: { name?: string } }[]) =>
+    blocks.map((b) => b.document?.name);
+
+  it('numbers repeated names in the prompt', () => {
+    const { prompt } = makeDocumentNamesUnique(
+      [],
+      [{ text: 'compare' }, doc('reportXpdf'), doc('reportXpdf')]
+    );
+    expect(names(prompt)).toEqual([undefined, 'reportXpdf', 'reportXpdf (2)']);
+  });
+
+  it('separates Japanese names of the same length', async () => {
+    // Both names become "XXXXXpdf" after sanitising
+    const blocks = await convertFilesToStrandsContentBlocks([
+      // eslint-disable-next-line i18nhelper/no-jp-string
+      new File(['a'], 'レポート.pdf', { type: 'application/pdf' }),
+      // eslint-disable-next-line i18nhelper/no-jp-string
+      new File(['b'], '議事録案.pdf', { type: 'application/pdf' }),
+    ]);
+    const { prompt } = makeDocumentNamesUnique([], blocks);
+    expect(names(prompt)).toEqual(['XXXXXpdf', 'XXXXXpdf (2)']);
+  });
+
+  it('counts names across earlier messages and the prompt', () => {
+    const { messages, prompt } = makeDocumentNamesUnique(
+      [
+        { role: 'user', content: [{ text: 'first' }, doc('a')] },
+        { role: 'assistant', content: [{ text: 'ok' }] },
+      ],
+      [{ text: 'again' }, doc('a'), doc('a (2)')]
+    );
+    expect(names(messages[0].content)).toEqual([undefined, 'a']);
+    expect(names(prompt)).toEqual([undefined, 'a (2)', 'a (2) (2)']);
+  });
+
+  it('keeps names within 200 characters and leaves unique names alone', () => {
+    const long = 'x'.repeat(200);
+    const original = doc('unique');
+    const { prompt } = makeDocumentNamesUnique(
+      [],
+      [original, doc(long), doc(long)]
+    );
+    expect(prompt[0]).toBe(original);
+    expect(prompt[2].document?.name).toBe('x'.repeat(196) + ' (2)');
   });
 });
