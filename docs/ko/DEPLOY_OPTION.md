@@ -1904,6 +1904,9 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!NOTE]
 > 가드레일을 활성화한 후 비활성화하려면 `guardrailEnabled: false`로 설정하고 재배포합니다. 이렇게 하면 생성형 AI 호출 시 가드레일이 비활성화되지만 가드레일 자체는 남아있습니다. 관리 콘솔을 열고 modelRegion의 CloudFormation에서 `GuardrailStack` 스택을 삭제하여 완전히 제거할 수 있습니다. 가드레일이 남아있어도 비용이 발생하지 않지만 사용하지 않는 리소스는 삭제하는 것이 좋습니다.
 
+> [!WARNING]
+> 가드레일은 `modelRegion`에만 생성됩니다. `guardrailEnabled: true`일 때 `modelIds`에서 `modelRegion` 이외의 리전을 지정한 모델을 사용하면, 해당 리전에 가드레일이 없으므로 `The guardrail identifier or version provided in the request does not exist.` 오류가 발생합니다. 가드레일을 활성화하는 경우 텍스트 생성 모델의 리전을 `modelRegion`으로 맞춰 주세요.
+
 ## 비용 관련 설정
 
 ### Kendra 인덱스 자동 생성 및 삭제 일정 설정

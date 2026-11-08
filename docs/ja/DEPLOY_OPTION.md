@@ -2111,6 +2111,9 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!NOTE]
 > ガードレールの設定を有効後に、再度無効化する場合は、`guardrailEnabled: false` にして再デプロイすれば生成 AI を呼び出す際にガードレールは無効化されますが、ガードレール自体は残ります。マネージメントコンソールを開き、modelRegion の CloudFormation から `GuardrailStack` というスタックを削除することで完全に消去ができます。ガードレールが残ること自体にコストは発生しませんが、使用しないリソースは削除するのが望ましいです。
 
+> [!WARNING]
+> ガードレールは `modelRegion` にだけ作成されます。`guardrailEnabled: true` のときに `modelIds` で `modelRegion` 以外のリージョンを指定したモデルを使うと、そのリージョンにガードレールが無いため `The guardrail identifier or version provided in the request does not exist.` というエラーになります。ガードレールを有効にする場合は、テキスト生成モデルのリージョンを `modelRegion` に揃えてください。
+
 ## コスト関連設定
 
 ### Kendraのインデックスを自動で作成・削除するスケジュールを設定する
