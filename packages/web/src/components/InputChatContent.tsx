@@ -261,7 +261,10 @@ const InputChatContent: React.FC<Props> = (props) => {
               <select
                 aria-label={t('inputs.model')}
                 title={t('inputs.model')}
-                className="min-w-0 max-w-[160px] truncate rounded-xl border border-gray-400 bg-white px-2 py-1.5 text-xs text-gray-700 disabled:opacity-50 sm:max-w-[240px]"
+                // h-[38px] matches the attachment button (20px icon + p-2 +
+                // border). pr-8 leaves room for the caret that
+                // @tailwindcss/forms draws as a background image on the right.
+                className="h-[38px] min-w-0 max-w-[160px] truncate rounded-xl border border-gray-400 bg-white py-0 pl-3 pr-8 text-xs text-gray-700 disabled:opacity-50 sm:max-w-[240px]"
                 // Switching models mid-response would change the model used
                 // for the rest of the turn and for the title.
                 disabled={loading}
