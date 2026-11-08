@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Card from '../components/Card';
 import Button from '../components/Button';
 import ExpandableField from '../components/ExpandableField';
@@ -67,6 +67,7 @@ const SummarizePage: React.FC = () => {
     clear,
   } = useSummarizePageState();
   const { pathname, search } = useLocation();
+  const navigate = useNavigate();
   const {
     getModelId,
     setModelId,
@@ -103,11 +104,16 @@ const SummarizePage: React.FC = () => {
           ? params.modelId!
           : _modelId
       );
+      // Clear query params after consuming to prevent re-application
+      navigate(pathname, { replace: true });
     } else {
       setModelId(_modelId);
     }
+    // Apply the query string once, as AgentChatPage does, not each time the
+    // model changes: a page opened from a link would otherwise put the text
+    // and the model in the URL back whenever the user picks another model.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setSentence, setAdditionalContext, modelId, availableModels, search]);
+  }, [setSentence, setAdditionalContext, availableModels, search]);
 
   useEffect(() => {
     setTypingTextInput(summarizedSentence);

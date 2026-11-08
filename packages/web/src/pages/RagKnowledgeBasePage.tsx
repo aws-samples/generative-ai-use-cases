@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import InputChatContent from '../components/InputChatContent';
 import ChatMessage from '../components/ChatMessage';
 import Select from '../components/Select';
@@ -105,6 +105,7 @@ const RagKnowledgeBasePage: React.FC = () => {
     setSaveSystemContextTitle,
   } = useRagKnowledgeBasePageState();
   const { pathname, search } = useLocation();
+  const navigate = useNavigate();
   const {
     getModelId,
     setModelId,
@@ -213,11 +214,16 @@ const RagKnowledgeBasePage: React.FC = () => {
           ? params.modelId!
           : _modelId
       );
+      // Clear query params after consuming to prevent re-application
+      navigate(pathname, { replace: true });
     } else {
       setModelId(_modelId);
     }
+    // Apply the query string once, as AgentChatPage does, not each time the
+    // model changes: a page opened from a link would otherwise put the text
+    // and the model in the URL back whenever the user picks another model.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [availableModels, modelId, search, setContent]);
+  }, [availableModels, search, setContent]);
 
   const getExtraDataFromFilters = useCallback(() => {
     return filters

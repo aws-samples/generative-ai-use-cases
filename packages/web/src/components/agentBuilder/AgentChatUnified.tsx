@@ -18,6 +18,7 @@ import {
 } from 'react-icons/pi';
 import ButtonIcon from '../ButtonIcon';
 import Select from '../Select';
+import useDropOverlay from '../../hooks/useDropOverlay';
 
 // Define file limits for the chat interface
 // File size limits for AgentCore (AgentCore Runtime route: Frontend → AgentCore Runtime → Bedrock Converse API)
@@ -100,7 +101,6 @@ const AgentChatUnified: React.FC<AgentChatProps> = ({
 
   const [chatContent, setChatContent] = useState('');
   const [initialized, setInitialized] = useState(false);
-  const [isOver, setIsOver] = useState(false);
 
   // Get models from MODELS
   const { modelIds: availableModels, modelDisplayName } = MODELS;
@@ -240,24 +240,13 @@ Please respond as this agent with the specified behavior and personality.`;
     clearFiles();
   }, [clearChat, clearFiles]);
 
-  // Handle drag and drop for files
-  const handleDragOver = (event: React.DragEvent) => {
-    event.preventDefault();
-    setIsOver(true);
-  };
-
-  const handleDragLeave = (event: React.DragEvent) => {
-    event.preventDefault();
-    setIsOver(false);
-  };
-
-  const handleDrop = (event: React.DragEvent) => {
-    event.preventDefault();
-    setIsOver(false);
-    if (event.dataTransfer.files) {
-      uploadFiles(Array.from(event.dataTransfer.files), fileLimit, accept);
-    }
-  };
+  // Drop overlay; see useDropOverlay for why it closes on its own.
+  const onDropFiles = useCallback(
+    (files: File[]) => uploadFiles(files, fileLimit, accept),
+    [uploadFiles, accept]
+  );
+  const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
+    useDropOverlay(onDropFiles);
 
   // Render unified header with all controls
   const renderUnifiedHeader = () => (
@@ -377,6 +366,7 @@ Please respond as this agent with the specified behavior and personality.`;
       <div
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        onClick={hideOverlay}
         className={`${layout === 'card' ? 'absolute inset-0' : 'fixed bottom-0 left-0 right-0 top-0'} z-[999] bg-slate-300/75 p-10 text-center`}>
         <div className="flex h-full w-full items-center justify-center outline-dashed">
           <div className="font-bold">{t('chat.drop_files')}</div>

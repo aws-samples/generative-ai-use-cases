@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import InputChatContent from '../components/InputChatContent';
 import useChat from '../hooks/useChat';
@@ -16,6 +16,7 @@ import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
 import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
+import useDropOverlay from '../hooks/useDropOverlay';
 
 // File size limits for Agent Chat (Lambda route: API Gateway → Lambda → Bedrock Agent)
 // - Lambda synchronous payload limit: 6MB
@@ -99,7 +100,6 @@ const AgentChatPage: React.FC = () => {
     return getPrompter(modelId);
   }, [modelId]);
 
-  const [isOver, setIsOver] = useState(false);
   const {
     clear: clearFiles,
     uploadedFiles,
@@ -206,31 +206,13 @@ const AgentChatPage: React.FC = () => {
     return messages;
   }, [messages]);
 
-  const handleDragOver = (event: React.DragEvent) => {
-    // When a file is dragged, display the overlay
-    event.preventDefault();
-    setIsOver(true);
-  };
-
-  const handleDragLeave = (event: React.DragEvent) => {
-    // When a file is dragged, hide the overlay
-    event.preventDefault();
-    setIsOver(false);
-  };
-
-  const handleDrop = (event: React.DragEvent) => {
-    // When a file is dropped, add the file
-    event.preventDefault();
-    setIsOver(false);
-    if (event.dataTransfer.files) {
-      // Reflect the file and upload it
-      uploadFiles(
-        Array.from(event.dataTransfer.files),
-        fileLimit,
-        fileLimit.accept.doc
-      );
-    }
-  };
+  // Drop overlay; see useDropOverlay for why it closes on its own.
+  const onDropFiles = useCallback(
+    (files: File[]) => uploadFiles(files, fileLimit, fileLimit.accept.doc),
+    [uploadFiles]
+  );
+  const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
+    useDropOverlay(onDropFiles);
 
   return (
     <>
@@ -245,6 +227,7 @@ const AgentChatPage: React.FC = () => {
           <div
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            onClick={hideOverlay}
             className="fixed bottom-0 left-0 right-0 top-0 z-[999] bg-slate-300 p-10 text-center">
             <div className="flex h-full w-full items-center justify-center outline-dashed">
               <div className="font-bold">{t('agent.drop_files')}</div>

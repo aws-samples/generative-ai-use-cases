@@ -25,8 +25,10 @@ import useChatPreferences, {
   pickInitialModelId,
   sanitizeReasoningConfig,
 } from '../hooks/useChatPreferences';
+import useDropOverlay from '../hooks/useDropOverlay';
 import usePreventNavigation from '../hooks/usePreventNavigation';
-import { PiArrowClockwiseBold, PiShareFatFill } from 'react-icons/pi';
+import { PiArrowClockwiseBold, PiShareFatFill, PiX } from 'react-icons/pi';
+import ButtonIcon from '../components/ButtonIcon';
 import { create } from 'zustand';
 import BedrockIcon from '../assets/bedrock.svg?react';
 import { ChatPageQueryParams } from '../@types/navigate';
@@ -419,7 +421,6 @@ const ChatPage: React.FC = () => {
   const [deletingShareId, setDeletingShareId] = useState(false);
   const [showShareIdModal, setShowShareIdModal] = useState(false);
   const [showSystemContextModal, setShowSystemContextModal] = useState(false);
-  const [isOver, setIsOver] = useState(false);
 
   const onCreateShareId = useCallback(async () => {
     try {
@@ -567,27 +568,12 @@ const ChatPage: React.FC = () => {
     setAndRememberModelParameters,
   ]);
 
-  const handleDragOver = (event: React.DragEvent) => {
-    // When a file is dragged, display the overlay
-    event.preventDefault();
-    setIsOver(true);
-  };
-
-  const handleDragLeave = (event: React.DragEvent) => {
-    // When a file is dragged, hide the overlay
-    event.preventDefault();
-    setIsOver(false);
-  };
-
-  const handleDrop = (event: React.DragEvent) => {
-    // When a file is dropped, add the file
-    event.preventDefault();
-    setIsOver(false);
-    if (event.dataTransfer.files) {
-      // Reflect the file and upload it
-      uploadFiles(Array.from(event.dataTransfer.files), fileLimit, accept);
-    }
-  };
+  const onDropFiles = useCallback(
+    (files: File[]) => uploadFiles(files, fileLimit, accept),
+    [uploadFiles, accept]
+  );
+  const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
+    useDropOverlay(onDropFiles);
 
   // Initialize forceExpandPromptList to null when the path changes
   useEffect(() => {
@@ -607,7 +593,14 @@ const ChatPage: React.FC = () => {
           <div
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            onClick={hideOverlay}
             className="fixed bottom-0 left-0 right-0 top-0 z-[999] bg-slate-300 p-10 text-center">
+            <ButtonIcon
+              className="absolute right-3 top-3"
+              title={t('common.close')}
+              onClick={hideOverlay}>
+              <PiX />
+            </ButtonIcon>
             <div className="flex h-full w-full items-center justify-center outline-dashed">
               <div className="font-bold">{t('chat.drop_files')}</div>
             </div>
