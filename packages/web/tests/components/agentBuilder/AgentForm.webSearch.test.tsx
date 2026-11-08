@@ -23,10 +23,16 @@ vi.mock('../../../src/hooks/useMCPServers', () => ({
   default: () => [],
 }));
 
+// Built-in tools the AI suggests, set per test
+const promptGeneration = vi.hoisted(() => ({
+  suggestedBuiltInTools: [] as string[],
+}));
+
 vi.mock('../../../src/hooks/usePromptGeneration', () => ({
   default: () => ({
     generatedPrompt: '',
     suggestedMCPServers: [],
+    suggestedBuiltInTools: promptGeneration.suggestedBuiltInTools,
     isGenerating: false,
     error: undefined,
     generate: vi.fn(),
@@ -60,12 +66,21 @@ const webSearchCheckbox = () =>
 describe('AgentForm web search tool', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    promptGeneration.suggestedBuiltInTools = [];
+    // The Textarea re-measures its height with a ResizeObserver, which jsdom lacks
+    vi.stubGlobal(
+      'ResizeObserver',
+      vi.fn(function () {
+        return { observe: vi.fn(), disconnect: vi.fn() };
+      })
+    );
     // Web search is provisioned at deploy time
     vi.stubEnv('VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED', 'true');
   });
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
   });
 
   it('renders the web search checkbox with its label and description', () => {
@@ -122,5 +137,21 @@ describe('AgentForm web search tool', () => {
 
     expect(webSearchCheckbox().checked).toBe(true);
     expect(codeExecution.checked).toBe(false);
+  });
+
+  it('turns web search on when the AI suggests it', () => {
+    promptGeneration.suggestedBuiltInTools = ['webSearch'];
+    renderForm();
+
+    expect(webSearchCheckbox().checked).toBe(true);
+  });
+
+  it('keeps web search off when the AI suggests it but it is not deployed', () => {
+    vi.stubEnv('VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED', 'false');
+    promptGeneration.suggestedBuiltInTools = ['webSearch'];
+    const { onFormDataChange } = renderForm();
+
+    const lastCall = onFormDataChange.mock.calls.at(-1);
+    expect((lastCall?.[0] as AgentFormData).webSearchEnabled).toBe(false);
   });
 });
