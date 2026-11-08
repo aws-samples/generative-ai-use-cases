@@ -24,6 +24,9 @@ import { MeetingMinutesCustomPrompt } from './meetingMinutesCustomPrompt';
 export type StreamingErrorCode =
   | 'THROTTLING'
   | 'ACCESS_DENIED'
+  // A resource the agent or knowledge base calls failed (DependencyFailedException),
+  // e.g. an action group's Lambda function
+  | 'DEPENDENCY_FAILED'
   // Request rejected by Bedrock as invalid (ValidationException), by cause
   | 'INVALID_FILE_NAME'
   | 'DUPLICATE_FILE_NAME'

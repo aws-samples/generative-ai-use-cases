@@ -358,10 +358,12 @@ $output_format_instructions$`;
           errorCode: 'THROTTLING',
         });
       } else if (e instanceof DependencyFailedException) {
+        // Not an access problem: a resource it calls (e.g. an action group's
+        // Lambda function) failed (#912)
         yield streamingChunk({
           text: '',
           stopReason: 'error',
-          errorCode: 'ACCESS_DENIED',
+          errorCode: 'DEPENDENCY_FAILED',
         });
       } else {
         yield streamingChunk({

@@ -250,6 +250,7 @@ error:
   streamingError:
     ACCESS_DENIED: 所选模型尚未启用。请在 Amazon Bedrock 控制台中启用该模型。
     CONTEXT_TOO_LONG: 对话或附件过长，模型无法读取。请减少附件内容（页数、行数或工作表数）或开始新的对话。
+    DEPENDENCY_FAILED: 代理或知识库调用的资源（例如操作组的 Lambda 函数）发生错误。请检查其配置和日志，然后重试。
     DOCUMENT_TOO_LARGE: 文档过大，无法发送。请拆分文档或减少内容后重试。
     DUPLICATE_FILE_NAME: 本次对话中有多个同名文件（包括之前附加的文件）。请重命名文件后重新附加，或开始新的对话。
     EMPTY_MESSAGE: 对话中包含空消息，无法继续。请开始新的对话。
