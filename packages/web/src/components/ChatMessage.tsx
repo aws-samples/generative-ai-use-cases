@@ -29,6 +29,7 @@ import FeedbackForm from './FeedbackForm';
 import Textarea from './Textarea';
 import useFiles from '../hooks/useFiles';
 import { useTranslation } from 'react-i18next';
+import { formatRelativeTime, parseMessageDate } from '../utils/messageDate';
 
 type Props = BaseProps & {
   idx?: number;
@@ -45,10 +46,28 @@ type Props = BaseProps & {
 };
 
 const ChatMessage: React.FC<Props> = (props) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const chatContent = useMemo(() => {
     return props.chatContent;
   }, [props]);
+
+  // When the message was sent, relative ("3 hours ago") with the full date and
+  // time on hover, in the UI language. Hidden until the message is saved.
+  const sentAt = useMemo(() => {
+    const date = parseMessageDate(props.chatContent?.createdDate);
+    if (!date) return undefined;
+    return {
+      relative: formatRelativeTime(date, new Date(), i18n.resolvedLanguage),
+      full: new Intl.DateTimeFormat(i18n.resolvedLanguage, {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(date),
+      iso: date.toISOString(),
+    };
+  }, [props.chatContent?.createdDate, i18n.resolvedLanguage]);
 
   const { pathname } = useLocation();
   const { sendFeedback } = useChat(pathname);
@@ -296,85 +315,95 @@ const ChatMessage: React.FC<Props> = (props) => {
           </div>
         </div>
 
-        <div className="mt-1 flex items-start justify-end pr-8 lg:pr-14 print:hidden">
-          {chatContent?.role === 'system' && !props.hideSaveSystemContext && (
-            <ButtonIcon
-              className="text-gray-400"
-              onClick={() => {
-                props.setSaveSystemContext?.(chatContent?.content || '');
-                props.setShowSystemContextModal?.(true);
-              }}>
-              <PiFloppyDisk />
-            </ButtonIcon>
+        <div className="mt-1 flex items-start justify-end pr-8 lg:pr-14">
+          {sentAt && chatContent?.role !== 'system' && (
+            <time
+              dateTime={sentAt.iso}
+              title={sentAt.full}
+              className="mr-1 self-center text-xs text-gray-400">
+              {sentAt.relative}
+            </time>
           )}
-          {chatContent?.role === 'user' && props.editable && (
-            <>
-              {editing ? (
-                <>
-                  <ButtonIcon
-                    onClick={() => {
-                      setEditing(false);
-                    }}>
-                    <PiX className="text-red-500" />
-                  </ButtonIcon>
-                  <ButtonIcon
-                    onClick={() => {
-                      if (props.onCommitEdit) {
-                        setEditing(false);
-                        props.onCommitEdit(editingPrompt);
-                      }
-                    }}>
-                    <PiCheck className="text-green-500" />
-                  </ButtonIcon>
-                </>
-              ) : (
-                <ButtonIcon
-                  onClick={() => {
-                    setEditingPrompt(chatContent?.content ?? '');
-                    setEditing(true);
-                  }}>
-                  <PiNotePencil className="text-gray-400" />
-                </ButtonIcon>
-              )}
-            </>
-          )}
-          {chatContent?.role === 'assistant' &&
-            !props.loading &&
-            !props.hideFeedback && (
+          <div className="flex items-start print:hidden">
+            {chatContent?.role === 'system' && !props.hideSaveSystemContext && (
+              <ButtonIcon
+                className="text-gray-400"
+                onClick={() => {
+                  props.setSaveSystemContext?.(chatContent?.content || '');
+                  props.setShowSystemContextModal?.(true);
+                }}>
+                <PiFloppyDisk />
+              </ButtonIcon>
+            )}
+            {chatContent?.role === 'user' && props.editable && (
               <>
-                {props.allowRetry && (
-                  <ButtonIcon
-                    className="mr-0.5 text-gray-400"
-                    onClick={() => props.retryGeneration?.()}>
-                    <PiArrowClockwise />
-                  </ButtonIcon>
-                )}
-                <ButtonCopy
-                  className="mr-0.5 text-gray-400"
-                  text={chatContent?.content || ''}
-                />
-                {chatContent && (
+                {editing ? (
                   <>
-                    <ButtonFeedback
-                      className="mx-0.5"
-                      feedback="good"
-                      message={chatContent}
-                      disabled={disabled}
+                    <ButtonIcon
                       onClick={() => {
-                        handleFeedbackClick('good');
-                      }}
-                    />
-                    <ButtonFeedback
-                      className="ml-0.5"
-                      feedback="bad"
-                      message={chatContent}
-                      disabled={disabled}
-                      onClick={() => handleFeedbackClick('bad')}
-                    />
+                        setEditing(false);
+                      }}>
+                      <PiX className="text-red-500" />
+                    </ButtonIcon>
+                    <ButtonIcon
+                      onClick={() => {
+                        if (props.onCommitEdit) {
+                          setEditing(false);
+                          props.onCommitEdit(editingPrompt);
+                        }
+                      }}>
+                      <PiCheck className="text-green-500" />
+                    </ButtonIcon>
                   </>
+                ) : (
+                  <ButtonIcon
+                    onClick={() => {
+                      setEditingPrompt(chatContent?.content ?? '');
+                      setEditing(true);
+                    }}>
+                    <PiNotePencil className="text-gray-400" />
+                  </ButtonIcon>
                 )}
               </>
             )}
+            {chatContent?.role === 'assistant' &&
+              !props.loading &&
+              !props.hideFeedback && (
+                <>
+                  {props.allowRetry && (
+                    <ButtonIcon
+                      className="mr-0.5 text-gray-400"
+                      onClick={() => props.retryGeneration?.()}>
+                      <PiArrowClockwise />
+                    </ButtonIcon>
+                  )}
+                  <ButtonCopy
+                    className="mr-0.5 text-gray-400"
+                    text={chatContent?.content || ''}
+                  />
+                  {chatContent && (
+                    <>
+                      <ButtonFeedback
+                        className="mx-0.5"
+                        feedback="good"
+                        message={chatContent}
+                        disabled={disabled}
+                        onClick={() => {
+                          handleFeedbackClick('good');
+                        }}
+                      />
+                      <ButtonFeedback
+                        className="ml-0.5"
+                        feedback="bad"
+                        message={chatContent}
+                        disabled={disabled}
+                        onClick={() => handleFeedbackClick('bad')}
+                      />
+                    </>
+                  )}
+                </>
+              )}
+          </div>
         </div>
         <div>
           {showFeedbackForm && (

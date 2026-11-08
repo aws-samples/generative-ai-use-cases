@@ -18,6 +18,10 @@ chat:
   hint_cmd_enter: ⌘ + Enter để gửi
   hint_ctrl_enter: Ctrl + Enter để gửi
   history: Lịch sử
+  history_last_30_days: 30 ngày trước
+  history_last_7_days: 7 ngày trước
+  history_today: Hôm nay
+  history_yesterday: Hôm qua
   initialize: Khởi tạo
   open_link: Mở liên kết
   prompt_examples: Ví dụ prompt

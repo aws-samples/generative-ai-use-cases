@@ -162,6 +162,10 @@ chat:
   hint_cmd_enter: ⌘ + Enter to Submit
   hint_ctrl_enter: Ctrl + Enter to Submit
   history: History
+  history_last_30_days: Previous 30 days
+  history_last_7_days: Previous 7 days
+  history_today: Today
+  history_yesterday: Yesterday
   initialize: Initialize
   open_link: Open Link
   prompt_examples: Prompt Examples
