@@ -639,6 +639,14 @@ const GenerateImagePage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imageGenModelIds, modelIds, search, setChatContent, setImageGenModelId]);
 
+  // clear() resets the image model to '', so pick the default again, as
+  // GenerateVideoPage does
+  useEffect(() => {
+    if (imageGenModelId === '') {
+      setImageGenModelId(imageGenModelIds[0]);
+    }
+  }, [imageGenModelId, imageGenModelIds, setImageGenModelId]);
+
   const generateRandomSeed = useCallback(() => {
     return Math.floor(Math.random() * 4294967295);
   }, []);
