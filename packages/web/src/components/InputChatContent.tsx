@@ -258,24 +258,36 @@ const InputChatContent: React.FC<Props> = (props) => {
               </Tooltip>
             )}
             {props.modelId && props.onModelChange && props.modelOptions && (
-              <select
-                aria-label={t('inputs.model')}
-                title={t('inputs.model')}
-                // h-[38px] matches the attachment button (20px icon + p-2 +
-                // border). pr-8 leaves room for the caret that
-                // @tailwindcss/forms draws as a background image on the right.
-                className="h-[38px] min-w-0 max-w-[160px] truncate rounded-xl border border-gray-400 bg-white py-0 pl-3 pr-8 text-xs text-gray-700 disabled:opacity-50 sm:max-w-[240px]"
-                // Switching models mid-response would change the model used
-                // for the rest of the turn and for the title.
-                disabled={loading}
-                value={props.modelId}
-                onChange={(e) => props.onModelChange!(e.target.value)}>
-                {props.modelOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              // A native select is as wide as its longest option. The hidden
+              // span holds only the selected label, with the same padding,
+              // border and font, so the box fits the current model; the
+              // select is laid over it.
+              <div className="relative min-w-0 max-w-[160px] sm:max-w-[240px]">
+                <span
+                  aria-hidden="true"
+                  className="invisible block h-[38px] truncate whitespace-nowrap border pl-3 pr-8 text-xs leading-[36px]">
+                  {props.modelOptions.find((o) => o.value === props.modelId)
+                    ?.label ?? props.modelId}
+                </span>
+                <select
+                  aria-label={t('inputs.model')}
+                  title={t('inputs.model')}
+                  // h-[38px] matches the attachment button (20px icon + p-2 +
+                  // border). pr-8 leaves room for the caret that
+                  // @tailwindcss/forms draws as a background image on the right.
+                  className="absolute inset-0 h-[38px] w-full truncate rounded-xl border border-gray-400 bg-white py-0 pl-3 pr-8 text-xs text-gray-700 disabled:opacity-50"
+                  // Switching models mid-response would change the model used
+                  // for the rest of the turn and for the title.
+                  disabled={loading}
+                  value={props.modelId}
+                  onChange={(e) => props.onModelChange!(e.target.value)}>
+                  {props.modelOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             )}
           </div>
           <div className="flex items-center gap-x-2">
