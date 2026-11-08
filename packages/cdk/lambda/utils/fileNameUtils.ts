@@ -50,3 +50,34 @@ export const convertToSafeFilename = (filename: string): string => {
   const base = safeName.substring(0, room).trimEnd() || 'file';
   return `${base}_${hash}`;
 };
+
+/**
+ * Create a function that returns a safe document name that is unique within
+ * one request.
+ *
+ * Converse rejects a request in which two documents share a name
+ * ("Messages can't contain duplicate document names"), and the check covers
+ * the whole request, including earlier turns of the conversation that are
+ * sent again. Attaching a file with the same name twice (in one message or in
+ * different turns) would otherwise break the rest of the conversation.
+ *
+ * The first occurrence keeps its name, later ones get " (2)", " (3)" and so
+ * on. Messages are always sent in the same order, so a file gets the same
+ * name on every turn.
+ */
+export const createUniqueDocumentNamer = (): ((filename: string) => string) => {
+  const usedNames = new Set<string>();
+  return (filename: string): string => {
+    const safeName = convertToSafeFilename(filename);
+    let name = safeName;
+    for (let n = 2; usedNames.has(name); n++) {
+      const suffix = ` (${n})`;
+      name =
+        safeName
+          .substring(0, MAX_DOCUMENT_NAME_LENGTH - suffix.length)
+          .trimEnd() + suffix;
+    }
+    usedNames.add(name);
+    return name;
+  };
+};

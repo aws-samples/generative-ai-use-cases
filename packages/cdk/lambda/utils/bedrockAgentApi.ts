@@ -22,7 +22,7 @@ import {
 } from 'generative-ai-use-cases';
 import { streamingChunk } from './streamingChunk';
 import { classifyStreamingError } from './streamingError';
-import { convertToSafeFilename } from './fileNameUtils';
+import { createUniqueDocumentNamer } from './fileNameUtils';
 import {
   initBedrockAgentClient,
   initBedrockAgentRuntimeClient,
@@ -134,6 +134,8 @@ const bedrockAgentApi: ApiInterface = {
       const agentId = agentMap[model.modelId].agentId;
       const agentAliasId = agentMap[model.modelId].aliasId;
       const agentConfig = await getagentConfig(agentId, agentAliasId);
+      // Give files with the same name distinct names, as for Converse documents
+      const toFileName = createUniqueDocumentNamer();
 
       // Invoke Agent
       const command = new InvokeAgentCommand({
@@ -156,7 +158,7 @@ const bedrockAgentApi: ApiInterface = {
           files: messages
             .flatMap((m: UnrecordedMessage) => {
               return m.extraData?.map((file) => ({
-                name: convertToSafeFilename(file.name),
+                name: toFileName(file.name),
                 source: {
                   sourceType: 'BYTE_CONTENT',
                   byteContent: {
