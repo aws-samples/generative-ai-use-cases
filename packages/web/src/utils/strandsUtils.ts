@@ -342,6 +342,12 @@ const MAX_DOCUMENT_NAME_LENGTH = 200;
  * the turn. The first occurrence keeps its name, later ones get " (2)",
  * " (3)" and so on, the same as the Converse path. Blocks are returned as
  * copies, only the renamed documents change.
+ *
+ * Today the AgentCore path does not resend earlier attachments (the stored
+ * user message has no extraData, and convertToStrandsFormat is called without
+ * the base64 cache), so in practice only names within the prompt collide.
+ * Earlier messages are included so that the names stay unique if their
+ * attachments are sent again in the future.
  */
 export const makeDocumentNamesUnique = (
   messages: StrandsMessage[],

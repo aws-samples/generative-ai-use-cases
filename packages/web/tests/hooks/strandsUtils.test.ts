@@ -104,7 +104,9 @@ describe('strandsUtils - makeDocumentNamesUnique', () => {
     expect(names(prompt)).toEqual(['XXXXXpdf', 'XXXXXpdf (2)']);
   });
 
-  it('counts names across earlier messages and the prompt', () => {
+  // Earlier messages carry no documents on the AgentCore path today; this
+  // covers the case where their attachments are sent again in the future.
+  it('also counts names in earlier messages, if they carry documents', () => {
     const { messages, prompt } = makeDocumentNamesUnique(
       [
         { role: 'user', content: [{ text: 'first' }, doc('a')] },
