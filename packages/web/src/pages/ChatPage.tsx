@@ -37,6 +37,7 @@ import { getPrompter } from '../prompts';
 import { withCurrentDate } from '../utils/currentDate';
 import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
+import { effortLabel } from '../utils/reasoningEffort';
 import {
   AdditionalModelRequestFields,
   FileLimit,
@@ -278,8 +279,17 @@ const ChatPage: React.FC = () => {
         newType = adaptiveThinking ? 'adaptive' : 'enabled';
       }
 
+      // A model without xhigh gets high. Back on a model with xhigh, the
+      // user's saved xhigh comes back: the high was only this adjustment.
+      const savedEffort = sanitizeReasoningConfig(
+        useChatPreferences.getState().reasoningConfig
+      ).effort;
       const newEffort =
-        config.effort === 'xhigh' && !xhighEffort ? 'high' : config.effort;
+        config.effort === 'xhigh' && !xhighEffort
+          ? 'high'
+          : config.effort === 'high' && xhighEffort && savedEffort === 'xhigh'
+            ? 'xhigh'
+            : config.effort;
       if (config.type === newType && config.effort === newEffort) {
         return prev;
       }
@@ -746,6 +756,13 @@ const ChatPage: React.FC = () => {
             onModelChange={onChangeModel}
             modelOptions={modelOptions}
             setting={setting}
+            settingLabel={
+              setting &&
+              adaptiveThinking &&
+              overrideModelParameters.reasoningConfig.type !== 'disabled'
+                ? effortLabel(overrideModelParameters.reasoningConfig.effort)
+                : undefined
+            }
             onSetting={() => {
               setShowSetting(true);
             }}
