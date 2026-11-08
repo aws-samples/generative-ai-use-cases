@@ -156,6 +156,8 @@ const ImageRenderer = ({
   getSignedUrlRef.current = getFileDownloadSignedUrl;
 
   useEffect(() => {
+    // A new source starts without the previous source's error
+    setError(null);
     if (!isS3UrlRef.current(srcProp ?? '')) {
       setSrc(srcProp);
       return;

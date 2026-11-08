@@ -74,4 +74,62 @@ describe('Markdown S3 images', () => {
       'https://example.com/a.png'
     );
   });
+
+  it('ignores a signed URL that arrives after the source changed', async () => {
+    const OTHER = 'https://bucket.s3.us-east-1.amazonaws.com/images/b.png';
+    let resolveFirst: (url: string) => void = () => {};
+    getSignedUrl.mockImplementation((url: string) =>
+      url === S3_IMAGE
+        ? new Promise<string>((resolve) => (resolveFirst = resolve))
+        : Promise.resolve('https://signed/b')
+    );
+
+    const { container, rerender } = renderMarkdown(`![a](${S3_IMAGE})`);
+    rerender(tree(`![b](${OTHER})`));
+    await waitFor(() =>
+      expect(container.querySelector('img')?.getAttribute('src')).toBe(
+        'https://signed/b'
+      )
+    );
+
+    // The first request finishes late and must not replace the newer image.
+    resolveFirst('https://signed/a');
+    await new Promise((r) => setTimeout(r, 20));
+    expect(container.querySelector('img')?.getAttribute('src')).toBe(
+      'https://signed/b'
+    );
+  });
+
+  it('follows a source that changes from S3 to a non-S3 URL', async () => {
+    const { container, rerender } = renderMarkdown(`![a](${S3_IMAGE})`);
+    await waitFor(() =>
+      expect(container.querySelector('img')?.getAttribute('src')).toBe(
+        'https://signed/1'
+      )
+    );
+
+    rerender(tree('![a](https://example.com/a.png)'));
+    await waitFor(() =>
+      expect(container.querySelector('img')?.getAttribute('src')).toBe(
+        'https://example.com/a.png'
+      )
+    );
+    expect(getSignedUrl).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows the image again when the source changes after an error', async () => {
+    getSignedUrl.mockRejectedValueOnce(new Error('boom'));
+    const { container, rerender } = renderMarkdown(`![a](${S3_IMAGE})`);
+    await waitFor(() =>
+      expect(container.textContent).toContain('image.load_error')
+    );
+
+    rerender(tree('![a](https://example.com/a.png)'));
+    await waitFor(() =>
+      expect(container.querySelector('img')?.getAttribute('src')).toBe(
+        'https://example.com/a.png'
+      )
+    );
+    expect(container.textContent).not.toContain('image.load_error');
+  });
 });
