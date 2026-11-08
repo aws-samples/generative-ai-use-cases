@@ -325,6 +325,7 @@ error:
   streamingError:
     ACCESS_DENIED: Mô hình được chọn chưa được kích hoạt. Vui lòng kích hoạt mô hình trong bảng điều khiển Amazon Bedrock.
     CONTEXT_TOO_LONG: Cuộc trò chuyện hoặc tệp đính kèm quá dài để mô hình đọc. Vui lòng giảm nội dung đính kèm (số trang, dòng hoặc trang tính) hoặc bắt đầu cuộc trò chuyện mới.
+    DEPENDENCY_FAILED: Tài nguyên mà tác tử hoặc cơ sở tri thức gọi đến (chẳng hạn như hàm Lambda của nhóm hành động) đã gặp lỗi. Vui lòng kiểm tra cấu hình và nhật ký, sau đó thử lại.
     DOCUMENT_TOO_LARGE: Tài liệu quá lớn để gửi. Vui lòng chia nhỏ hoặc giảm nội dung tài liệu rồi thử lại.
     DUPLICATE_FILE_NAME: Cuộc trò chuyện này có nhiều tệp trùng tên (bao gồm cả tệp đã đính kèm trước đó). Vui lòng đổi tên tệp rồi đính kèm lại, hoặc bắt đầu cuộc trò chuyện mới.
     EMPTY_MESSAGE: Cuộc trò chuyện chứa một tin nhắn trống nên không thể tiếp tục. Vui lòng bắt đầu cuộc trò chuyện mới.

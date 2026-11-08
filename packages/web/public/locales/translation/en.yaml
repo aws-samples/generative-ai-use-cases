@@ -481,6 +481,7 @@ error:
   streamingError:
     ACCESS_DENIED: The selected model is not enabled. Please enable the model in the Amazon Bedrock console.
     CONTEXT_TOO_LONG: The conversation or attachments are too long for the model. Reduce the attachment (fewer pages, rows or sheets) or start a new chat.
+    DEPENDENCY_FAILED: A resource called by the agent or knowledge base (such as an action group's Lambda function) failed. Check its configuration and logs, then try again.
     DOCUMENT_TOO_LARGE: A document is too large to send. Split it or reduce its content and try again.
     DUPLICATE_FILE_NAME: Two or more files in this conversation have the same name, including files attached earlier. Rename the file and attach it again, or start a new chat.
     EMPTY_MESSAGE: The conversation contains an empty message and cannot be continued. Please start a new chat.
