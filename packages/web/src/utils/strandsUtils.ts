@@ -329,6 +329,58 @@ const convertFileToStrandsContentBlock = async (
   }
 };
 
+// DocumentBlock.name is at most 200 characters
+const MAX_DOCUMENT_NAME_LENGTH = 200;
+
+/**
+ * Give every document in a request a unique name.
+ *
+ * Bedrock rejects a request in which two documents share a name
+ * ("Messages can't contain duplicate document names"), and the check covers
+ * every message in the request. Two files with the same name, or two Japanese
+ * names of the same length (both become e.g. "XXXXXpdf"), would otherwise fail
+ * the turn. The first occurrence keeps its name, later ones get " (2)",
+ * " (3)" and so on, the same as the Converse path. Blocks are returned as
+ * copies, only the renamed documents change.
+ *
+ * Today the AgentCore path does not resend earlier attachments (the stored
+ * user message has no extraData, and convertToStrandsFormat is called without
+ * the base64 cache), so in practice only names within the prompt collide.
+ * Earlier messages are included so that the names stay unique if their
+ * attachments are sent again in the future.
+ */
+export const makeDocumentNamesUnique = (
+  messages: StrandsMessage[],
+  prompt: StrandsContentBlock[]
+): { messages: StrandsMessage[]; prompt: StrandsContentBlock[] } => {
+  const usedNames = new Set<string>();
+  const rename = (block: StrandsContentBlock): StrandsContentBlock => {
+    if (!('document' in block) || !block.document.name) {
+      return block;
+    }
+    const baseName = block.document.name;
+    let name = baseName;
+    for (let n = 2; usedNames.has(name); n++) {
+      const suffix = ` (${n})`;
+      name =
+        baseName
+          .substring(0, MAX_DOCUMENT_NAME_LENGTH - suffix.length)
+          .trimEnd() + suffix;
+    }
+    usedNames.add(name);
+    return name === baseName
+      ? block
+      : { ...block, document: { ...block.document, name } };
+  };
+  return {
+    messages: messages.map((message) => ({
+      ...message,
+      content: message.content.map(rename),
+    })),
+    prompt: prompt.map(rename),
+  };
+};
+
 /**
  * Convert Strands messages back to GenU format
  */
