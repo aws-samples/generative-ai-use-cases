@@ -253,4 +253,62 @@ describe('GenerativeAiUseCases', () => {
       })
     ).not.toThrow();
   });
+
+  test('allowedDevOrigins is appended to the API CORS allow list', () => {
+    const app = new cdk.App({ context: appContext });
+    const params = processedStackInputSchema.parse({
+      ...stackInput,
+      allowedDevOrigins: ['http://localhost:5173'],
+    });
+
+    const { generativeAiUseCasesStack } = createStacks(app, params);
+    if (!generativeAiUseCasesStack) {
+      throw new Error('Stack was not created');
+    }
+
+    const template = Template.fromStack(generativeAiUseCasesStack);
+    const functions = template.findResources('AWS::Lambda::Function');
+    const allowedOrigins = Object.values(functions)
+      .map(
+        (fn) =>
+          (
+            fn.Properties?.Environment?.Variables as
+              | Record<string, unknown>
+              | undefined
+          )?.ALLOWED_ORIGINS
+      )
+      .filter((value): value is { 'Fn::Join': unknown[] } => Boolean(value));
+
+    // The deployed web URL is a token, so only the literal part is asserted:
+    // the dev origin must be joined onto the CloudFront origin, not replace it.
+    expect(allowedOrigins).toHaveLength(1);
+    expect(JSON.stringify(allowedOrigins[0])).toContain(
+      ',http://localhost:5173'
+    );
+  });
+
+  test('allowedDevOrigins rejects values that are not origins', () => {
+    // The API handler compares the Origin header exactly, so a path or a
+    // trailing slash would silently never match.
+    expect(() =>
+      stackInputSchema.parse({
+        ...stackInput,
+        allowedDevOrigins: ['http://localhost:5173/'],
+      })
+    ).toThrow();
+
+    expect(() =>
+      stackInputSchema.parse({
+        ...stackInput,
+        allowedDevOrigins: ['localhost:5173'],
+      })
+    ).toThrow();
+
+    expect(() =>
+      stackInputSchema.parse({
+        ...stackInput,
+        allowedDevOrigins: ['http://localhost:5173', 'https://example.com'],
+      })
+    ).not.toThrow();
+  });
 });
