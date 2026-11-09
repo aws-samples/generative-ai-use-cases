@@ -459,6 +459,9 @@ export class GenerativeAiUseCasesStack extends Stack {
       allowedOrigins = [albOrigin, closedWebUrl];
       displayWebUrl = closedWebUrl;
     }
+    // Opt-in extra origins (local development). Empty by default, so the API
+    // only answers the deployed frontend unless a developer asks otherwise.
+    allowedOrigins = [...allowedOrigins, ...params.allowedDevOrigins];
     api.apiHandler.addEnvironment('ALLOWED_ORIGINS', allowedOrigins.join(','));
 
     // Cfn Outputs

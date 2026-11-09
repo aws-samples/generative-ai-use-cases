@@ -199,6 +199,19 @@ const baseStackInputSchema = z.object({
       })
     )
     .default([]),
+  // Additional origins allowed to call the API, on top of the deployed web URL.
+  // Intended for local frontend development (`npm run web:devw`), which serves
+  // the SPA from http://localhost:5173 while calling the deployed API.
+  allowedDevOrigins: z
+    .array(
+      z
+        .string()
+        .regex(
+          /^https?:\/\/[^/\s]+$/,
+          'allowedDevOrigins must be an origin such as http://localhost:5173 (scheme + host, no path or trailing slash)'
+        )
+    )
+    .default([]),
   // WAF
   allowedIpV4AddressRanges: z.array(z.string()).nullish(),
   allowedIpV6AddressRanges: z.array(z.string()).nullish(),
