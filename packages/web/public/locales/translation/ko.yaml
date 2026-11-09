@@ -343,6 +343,7 @@ feedback:
 files:
   error:
     fileCountExceeded: 파일 수를 {{maxCount}}개 이하로 제한해주세요
+    fileCountExceededInChat: 이 대화에는 이전에 첨부한 문서가 이미 {{previousCount}}개 있습니다. 하나의 대화에 첨부할 수 있는 문서는 {{maxCount}}개까지입니다. 첨부를 줄이거나 새 채팅을 시작해 주세요.
     fileSizeExceeded: '{{fileName}}이(가) 최대 파일 크기 {{maxSize}} MB를 초과합니다.'
     imageCountExceeded: 이미지 파일 수를 {{maxCount}}개 이하로 제한해주세요
     invalidExtension: >-

@@ -89,6 +89,9 @@ export type FileLimit = {
     video: string[];
   };
   maxFileCount: number;
+  // Documents attached earlier in the same conversation. They are sent again
+  // with every message, so they count toward maxFileCount (#1685).
+  previousFileCount?: number;
   maxFileSizeMB: number;
   maxImageFileCount: number;
   maxImageFileSizeMB: number;

@@ -348,6 +348,7 @@ feedback:
 files:
   error:
     fileCountExceeded: Số lượng file phải không quá {{maxCount}} file.
+    fileCountExceededInChat: Cuộc trò chuyện này đã có {{previousCount}} tài liệu được đính kèm trước đó, và mỗi cuộc trò chuyện chỉ có tối đa {{maxCount}} tài liệu. Vui lòng giảm số tệp đính kèm hoặc bắt đầu cuộc trò chuyện mới.
     fileSizeExceeded: Kích thước file phải không quá {{maxSize}} MB.
     imageCountExceeded: Số lượng ảnh phải không quá {{maxCount}} ảnh.
     invalidExtension: '{{fileName}} có đuôi file không được phép. Các đuôi file được phép là {{acceptedExtensions}}.'

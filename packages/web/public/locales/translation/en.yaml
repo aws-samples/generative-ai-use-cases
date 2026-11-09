@@ -504,6 +504,7 @@ feedback:
 files:
   error:
     fileCountExceeded: Please limit files to {{maxCount}} or fewer
+    fileCountExceededInChat: This chat already has {{previousCount}} documents attached earlier, and a chat can have up to {{maxCount}} documents. Attach fewer documents, or start a new chat.
     fileSizeExceeded: '{{fileName}} exceeds the maximum file size of {{maxSize}} MB.'
     imageCountExceeded: Please limit image files to {{maxCount}} or fewer
     invalidExtension: >-

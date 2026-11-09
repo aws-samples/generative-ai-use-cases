@@ -442,6 +442,7 @@ feedback:
 files:
   error:
     fileCountExceeded: ファイル数は {{maxCount}} 個以下にしてください。
+    fileCountExceededInChat: この会話では、これまでに書類を {{previousCount}} 個添付しています。1つの会話で添付できる書類は {{maxCount}} 個までです。添付を減らすか、新しいチャットを開始してください。
     fileSizeExceeded: ファイルサイズは {{maxSize}} MB 以下にしてください。
     imageCountExceeded: 画像数は {{maxCount}} 個以下にしてください。
     invalidExtension: '{{fileName}} は許可されていない拡張子です。許可されている拡張子は {{acceptedExtensions}} です。'

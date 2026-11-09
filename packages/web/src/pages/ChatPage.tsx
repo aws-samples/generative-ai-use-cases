@@ -226,6 +226,19 @@ const ChatPage: React.FC = () => {
   const fileUpload = useMemo(() => {
     return accept.length > 0;
   }, [accept]);
+  // Documents attached earlier in this chat are sent again with every
+  // message, and Bedrock rejects a request with more than 5 documents (#1685)
+  const previousFileCount = useMemo(
+    () =>
+      rawMessages
+        .flatMap((m) => m.extraData ?? [])
+        .filter((data) => data.type === 'file').length,
+    [rawMessages]
+  );
+  const chatFileLimit = useMemo(
+    () => ({ ...fileLimit, previousFileCount }),
+    [previousFileCount]
+  );
   const reasoning = useMemo(() => {
     return MODELS.getModelMetadata(modelId).flags.reasoning ?? false;
   }, [modelId]);
@@ -584,8 +597,8 @@ const ChatPage: React.FC = () => {
   ]);
 
   const onDropFiles = useCallback(
-    (files: File[]) => uploadFiles(files, fileLimit, accept),
-    [uploadFiles, accept]
+    (files: File[]) => uploadFiles(files, chatFileLimit, accept),
+    [uploadFiles, chatFileLimit, accept]
   );
   const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
     useDropOverlay(onDropFiles);
@@ -752,7 +765,7 @@ const ChatPage: React.FC = () => {
             }}
             onReset={onReset}
             fileUpload={fileUpload}
-            fileLimit={fileLimit}
+            fileLimit={chatFileLimit}
             accept={accept}
             reasoning={reasoning && !adaptiveThinkingAlwaysOn}
             onReasoningSwitched={onReasoningSwitched}
