@@ -15,6 +15,15 @@ from src.utils import process_messages, process_prompt
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+DEFAULT_MODE = "technical-research"
+
+# Supported research modes and their prompt files under prompts/
+MODE_PROMPT_FILES = {
+    "technical-research": "technical-research.md",
+    "mini-research": "mini-research.md",
+    "general-research": "general-research.md",
+}
+
 
 class IterationLimitExceededError(Exception):
     """Exception raised when iteration limit is exceeded"""
@@ -45,7 +54,12 @@ class AgentManager:
 
     def load_mode_prompt(self, mode: str) -> str:
         """Load system prompt for specified mode"""
-        prompt_path = os.path.join(os.path.dirname(__file__), "..", "prompts", f"{mode}.md")
+        prompt_file = MODE_PROMPT_FILES.get(mode)
+        if prompt_file is None:
+            logger.warning(f"Unknown mode {mode!r}, falling back to {DEFAULT_MODE}")
+            mode = DEFAULT_MODE
+            prompt_file = MODE_PROMPT_FILES[DEFAULT_MODE]
+        prompt_path = os.path.join(os.path.dirname(__file__), "..", "prompts", prompt_file)
         try:
             with open(prompt_path, "r", encoding="utf-8") as f:
                 content = f.read()
@@ -91,7 +105,7 @@ class AgentManager:
             logger.info(f"Initial prompt: {len(full_prompt)} chars, {len(messages)} previous messages")
 
             # Load mode-specific system prompt
-            effective_mode = mode or 'technical-research'
+            effective_mode = mode or DEFAULT_MODE
             mode_system_prompt = self.load_mode_prompt(effective_mode)
             logger.info(f"Using mode: {effective_mode}")
 
