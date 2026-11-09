@@ -136,7 +136,7 @@ const baseStackInputSchema = z.object({
   ragKnowledgeBaseAdvancedParsing: z.boolean().default(false),
   ragKnowledgeBaseAdvancedParsingModelId: z
     .string()
-    .default('anthropic.claude-3-sonnet-20240229-v1:0'),
+    .default('global.anthropic.claude-sonnet-4-6'),
   ragKnowledgeBaseBinaryVector: z.boolean().default(false),
   queryDecompositionEnabled: z.boolean().default(false),
   rerankingModelId: z.string().nullish(),

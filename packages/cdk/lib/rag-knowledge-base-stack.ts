@@ -9,6 +9,7 @@ import * as s3Deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { ProcessedStackInput } from './stack-input';
 import { LAMBDA_RUNTIME_NODEJS, TAG_KEY } from '../consts';
+import { bedrockModelArn } from './utils/model-id-utils';
 
 const UUID = '339C5FED-A1B5-43B6-B40A-5E8E59E5734D';
 
@@ -525,7 +526,11 @@ export class RagKnowledgeBaseStack extends Stack {
               parsingConfiguration: {
                 parsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
                 bedrockFoundationModelConfiguration: {
-                  modelArn: `arn:aws:bedrock:${this.region}::foundation-model/${ragKnowledgeBaseAdvancedParsingModelId}`,
+                  modelArn: bedrockModelArn({
+                    modelId: ragKnowledgeBaseAdvancedParsingModelId as string,
+                    region: this.region,
+                    account: this.account,
+                  }),
                   parsingPrompt: {
                     parsingPromptText: PARSING_PROMPT,
                   },

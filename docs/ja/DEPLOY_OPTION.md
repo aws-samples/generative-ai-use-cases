@@ -185,7 +185,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: false,
     ragKnowledgeBaseAdvancedParsingModelId:
-      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
     ragKnowledgeBaseBinaryVector: false,
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
@@ -203,7 +203,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseId": "XXXXXXXXXX",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": false,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "ragKnowledgeBaseBinaryVector": false,
     "embeddingModelId": "amazon.titan-embed-text-v2:0",
     "rerankingModelId": "amazon.rerank-v1:0",
@@ -272,9 +272,8 @@ Status が Available になれば完了です。S3 に保存されているフ�
 
 - `ragKnowledgeBaseAdvancedParsing` : `true` で Advanced Parsing を有効化
 - `ragKnowledgeBaseAdvancedParsingModelId` : 情報を抽出するときに利用するモデル ID を指定
-  - サポートしているモデル (2024/08 現在)
-    - `anthropic.claude-3-sonnet-20240229-v1:0`
-    - `anthropic.claude-3-haiku-20240307-v1:0`
+  - Claude・Amazon Nova・Llama 4 のビジョン対応モデルが利用できます（[Supported models and Regions for parsing](https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-supported.html)）
+  - `modelRegion` で利用できるモデル ID か、`global.anthropic.claude-sonnet-4-6`（デフォルト）や `jp.anthropic.claude-sonnet-4-6` のようなクロスリージョン推論プロファイル ID を指定します。ドキュメントを特定の地域の外に出したくない場合は、地域を限定したプロファイル（`us.` / `eu.` / `jp.` など）を選んでください。
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
@@ -287,7 +286,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: true,
     ragKnowledgeBaseAdvancedParsingModelId:
-      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
     ragKnowledgeBaseBinaryVector: false,
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
@@ -304,7 +303,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseId": "XXXXXXXXXX",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": true,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "ragKnowledgeBaseBinaryVector": false,
     "embeddingModelId": "amazon.titan-embed-text-v2:0"
   }
