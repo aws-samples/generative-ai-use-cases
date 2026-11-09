@@ -5,10 +5,10 @@ import { handler } from '../../lambda/getWebText';
 jest.mock('util', () => ({
   promisify: jest.fn().mockImplementation(() => {
     return (hostname: string) => {
-      if (hostname.includes('example-internal.com')) {
+      if (hostname === 'example-internal.com') {
         return Promise.resolve({ address: '192.168.1.1', family: 4 });
       }
-      if (hostname.includes('non-existent-domain.com')) {
+      if (hostname === 'non-existent-domain.com') {
         return Promise.reject(new Error('DNS resolution failed'));
       }
       return Promise.resolve({ address: '8.8.8.8', family: 4 });
