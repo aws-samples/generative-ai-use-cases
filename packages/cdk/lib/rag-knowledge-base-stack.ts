@@ -419,6 +419,26 @@ export class RagKnowledgeBaseStack extends Stack {
       })
     );
 
+    // Bedrock looks up the inference profile with the Knowledge Base role
+    // when Advanced Parsing uses a cross-Region inference profile.
+    const parsingModelArn = bedrockModelArn({
+      modelId: ragKnowledgeBaseAdvancedParsingModelId as string,
+      region: this.region,
+      account: this.account,
+    });
+    if (
+      ragKnowledgeBaseAdvancedParsing &&
+      parsingModelArn.includes(':inference-profile/')
+    ) {
+      knowledgeBaseRole.addToPolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          resources: [parsingModelArn],
+          actions: ['bedrock:GetInferenceProfile'],
+        })
+      );
+    }
+
     if (!useS3Vectors && collection) {
       knowledgeBaseRole.addToPolicy(
         new iam.PolicyStatement({
@@ -526,11 +546,7 @@ export class RagKnowledgeBaseStack extends Stack {
               parsingConfiguration: {
                 parsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
                 bedrockFoundationModelConfiguration: {
-                  modelArn: bedrockModelArn({
-                    modelId: ragKnowledgeBaseAdvancedParsingModelId as string,
-                    region: this.region,
-                    account: this.account,
-                  }),
+                  modelArn: parsingModelArn,
                   parsingPrompt: {
                     parsingPromptText: PARSING_PROMPT,
                   },
