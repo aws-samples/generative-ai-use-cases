@@ -185,7 +185,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: false,
     ragKnowledgeBaseAdvancedParsingModelId:
-      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
@@ -202,7 +202,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseId": "XXXXXXXXXX",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": false,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "embeddingModelId": "amazon.titan-embed-text-v2:0",
     "rerankingModelId": "amazon.rerank-v1:0",
     "queryDecompositionEnabled": true
@@ -270,9 +270,8 @@ You can enable the [Advanced Parsing feature](https://docs.aws.amazon.com/bedroc
 
 - `ragKnowledgeBaseAdvancedParsing`: Set to `true` to enable Advanced Parsing
 - `ragKnowledgeBaseAdvancedParsingModelId`: Specify the model ID used for extracting information
-  - Supported models (as of 2024/08)
-    - `anthropic.claude-3-sonnet-20240229-v1:0`
-    - `anthropic.claude-3-haiku-20240307-v1:0`
+  - Claude, Amazon Nova and Llama 4 vision models can be used ([Supported models and Regions for parsing](https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-supported.html))
+  - Specify either a model ID available in `modelRegion` or a cross-Region inference profile ID such as `global.anthropic.claude-sonnet-4-6` (default) or `jp.anthropic.claude-sonnet-4-6`. Choose a Region-scoped profile (`us.` / `eu.` / `jp.` ...) if documents must not leave a geography.
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
@@ -285,7 +284,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: true,
     ragKnowledgeBaseAdvancedParsingModelId:
-      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
@@ -301,7 +300,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseId": "XXXXXXXXXX",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": true,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "embeddingModelId": "amazon.titan-embed-text-v2:0"
   }
 }
