@@ -46,6 +46,7 @@ import {
 import ModelParameters from '../components/ModelParameters';
 import { AcceptedDotExtensions } from '../utils/MediaUtils';
 import { useTranslation } from 'react-i18next';
+import useAcceptedExtensions from '../hooks/useAcceptedExtensions';
 
 // File size limits for Chat (Lambda route: API Gateway → Lambda → Bedrock Converse API)
 // - Lambda synchronous payload limit: 6MB
@@ -214,15 +215,7 @@ const ChatPage: React.FC = () => {
     }
   }, [chatId, getChatTitle, t]);
 
-  const accept = useMemo(() => {
-    if (!modelId) return [];
-    const feature = MODELS.getModelMetadata(modelId);
-    return [
-      ...(feature.flags.doc ? fileLimit.accept.doc : []),
-      ...(feature.flags.image ? fileLimit.accept.image : []),
-      ...(feature.flags.video ? fileLimit.accept.video : []),
-    ];
-  }, [modelId]);
+  const accept = useAcceptedExtensions(fileLimit, modelId);
   const fileUpload = useMemo(() => {
     return accept.length > 0;
   }, [accept]);
