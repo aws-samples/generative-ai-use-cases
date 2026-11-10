@@ -21,6 +21,7 @@
 | closedNetworkDomainName                  | GenU의 도메인 이름. Private Hosted Zone은 CDK에서 생성되므로 수동 생성이 필요하지 않습니다. `closedNetworkCertificateArn`과 `closedNetworkDomainName`은 함께 지정하거나 둘 다 생략해야 합니다.                                                             |
 | closedNetworkCreateTestEnvironment       | 테스트 환경을 생성할지 여부. 기본적으로 생성됩니다. 필요하지 않으면 false를 지정하세요. 테스트 환경은 EC2 Windows 인스턴스로 생성되며 Fleet Manager를 통해 액세스됩니다. (자세한 절차는 나중에 설명됩니다.)                                                |
 | closedNetworkTestEnvironmentInstanceType | 검증용 Windows 인스턴스의 인스턴스 유형. 기본값은 `r6i.large`. `t3.large` 등으로 지정하면 검증 환경 비용을 줄일 수 있음.                                                                                                                                   |
+| closedNetworkAdditionalVpcEndpoints      | 활성화된 기능이 필요로 하지 않아도 생성할 Interface VPC Endpoint를 `closed-vpc.ts`의 이름으로 지정 (예: `['Kendra']`). 가져온 VPC(`closedNetworkVpcId`)의 다른 워크로드가 해당 VPC Endpoint를 사용하는 경우에 지정. 기본값은 `[]`.                         |
 | closedNetworkCreateResolverEndpoint      | Route53 Resolver 엔드포인트를 생성할지 여부. 기본값은 true입니다.                                                                                                                                                                                          |
 
 ## 현재 제한사항
@@ -31,7 +32,8 @@
 - 다양한 리소스가 생성되므로 기존 VPC를 가져올 때는 가능한 한 깨끗한 환경을 사용하는 것이 좋습니다.
 - SAML 통합은 사용할 수 없습니다.
 - Voice Chat 사용 사례는 현재 사용할 수 없습니다.
-- AgentCore Chat 사용 사례는 현재 사용할 수 없습니다.
+- AgentCore (`agentBuilderEnabled` / `createGenericAgentCoreRuntime`)를 활성화하면 AgentCore Runtime이 폐쇄 네트워크 VPC 안에 배포되며, `agentCoreRegion`은 `region`과 같아야 합니다. Research Agent (`researchAgentEnabled`)는 런타임에 인터넷 연결이 필요하므로 폐쇄 네트워크 모드에서 활성화할 수 없습니다.
+- AgentCore Runtime의 VPC 모드는 리전 내 일부 AZ만 지원합니다(예: us-east-1의 `use1-az1`, `use1-az2`, `use1-az4`). 런타임 생성에 실패하면 `closedNetworkSubnetIds`로 지원되는 AZ의 서브넷을 지정하세요.
 
 ## 폐쇄 네트워크 모드에서 사용할 수 있는 기능
 
@@ -47,9 +49,9 @@
 | AgentCore (에이전트 빌더, 범용 런타임)                                                                      | △         | 폐쇄 네트워크 VPC 안에서 동작합니다. 인터넷이 필요한 도구(웹 검색, URL 가져오기, 외부 API를 호출하거나 실행 시 npm/PyPI에서 패키지를 가져오는 MCP 서버)는 동작하지 않습니다. |
 | MCP 채팅                                                                                                    | △         | 인터넷이 필요한 MCP 서버는 동작하지 않습니다.                                                                                                                                |
 | 음성 채팅                                                                                                   | ❌ (숨김) |                                                                                                                                                                              |
-| 웹 콘텐츠 추출                                                                                              | ❌ (숨김) | 웹 페이지를 가져오려면 인터넷 연결이 필요합니다.                                                                                                                             |
+| 웹 콘텐츠 추출                                                                                              | △         | 폐쇄 네트워크 VPC에서 접근할 수 있는 페이지(사내 페이지 등)만 가져올 수 있습니다. 인터넷 페이지는 가져올 수 없습니다.                                                        |
 | 검색 에이전트 (`searchAgentEnabled`)                                                                        | ❌        | 외부 검색 API를 호출합니다.                                                                                                                                                  |
-| Research Agent (`researchAgentEnabled`)                                                                     | ❌        | 런타임이 PUBLIC 네트워크 모드입니다.                                                                                                                                         |
+| Research Agent (`researchAgentEnabled`)                                                                     | ❌ (오류) | 런타임에 인터넷 연결이 필요하므로 `closedNetworkMode`와 함께 활성화하면 `cdk synth`가 실패합니다.                                                                            |
 | SAML 연동                                                                                                   | ❌        |                                                                                                                                                                              |
 | `allowedIpV4AddressRanges` / `allowedIpV6AddressRanges` / `allowedCountryCodes` / `hostName` / `domainName` | ❌ (무시) | CloudFront와 WAF를 생성하지 않습니다. 사용자 지정 도메인은 `closedNetworkDomainName`을 사용하세요.                                                                           |
 
@@ -57,17 +59,21 @@
 
 Interface형 VPC Endpoint는 엔드포인트별·AZ별로 과금되므로, 활성화한 기능에 필요한 것만 생성합니다. 기능을 비활성화하고 다시 배포하면 해당 VPC Endpoint는 삭제됩니다.
 
-| VPC Endpoint                                                                                                                                                  | 생성 조건                                                                                                           |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `execute-api`, `lambda`, `cognito-idp`, `cognito-identity`, `s3` (Interface), `bedrock-runtime`, `bedrock-agent-runtime`, `ecr.api`, `ecr.dkr`, `logs`, `sts` | 항상                                                                                                                |
-| `s3`, `dynamodb` (Gateway형, 무료)                                                                                                                            | 항상                                                                                                                |
-| `transcribe`                                                                                                                                                  | 음성 인식 또는 회의록 생성을 숨기지 않음                                                                            |
-| `transcribestreaming`                                                                                                                                         | 음성 인식, 회의록 생성, 번역 중 하나를 숨기지 않음                                                                  |
-| `polly`                                                                                                                                                       | 번역을 숨기지 않음                                                                                                  |
-| `bedrock-agentcore`, `bedrock-agentcore-gateway`, `secretsmanager`                                                                                            | `agentBuilderEnabled`, `createGenericAgentCoreRuntime`, `researchAgentEnabled`, `agentCoreExternalRuntimes` 중 하나 |
-| `bedrock-agent`                                                                                                                                               | `agentEnabled`, `searchAgentEnabled`, `agents` 중 하나                                                              |
-| `kendra`                                                                                                                                                      | `ragEnabled`                                                                                                        |
-| `ssm`, `ssmmessages`, `ec2messages`                                                                                                                           | `closedNetworkCreateTestEnvironment`                                                                                |
+> [!WARNING]
+> 기존 폐쇄 네트워크 환경을 업데이트하면 비활성화된 기능의 VPC Endpoint가 삭제됩니다. `closedNetworkVpcId`로 가져온 VPC의 다른 워크로드가 해당 VPC Endpoint(프라이빗 DNS 이름)를 사용하는 경우 배포 전에 `closedNetworkAdditionalVpcEndpoints`에 지정하세요.
+
+| VPC Endpoint                                                                                                                                                  | 생성 조건                                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `execute-api`, `lambda`, `cognito-idp`, `cognito-identity`, `s3` (Interface), `bedrock-runtime`, `bedrock-agent-runtime`, `ecr.api`, `ecr.dkr`, `logs`, `sts` | 항상                                                                                                       |
+| `s3`, `dynamodb` (Gateway형, 무료)                                                                                                                            | 항상                                                                                                       |
+| `transcribe`                                                                                                                                                  | 음성 인식 또는 회의록 생성을 숨기지 않음                                                                   |
+| `transcribestreaming`                                                                                                                                         | 음성 인식, 회의록 생성, 번역 중 하나를 숨기지 않음                                                         |
+| `polly`                                                                                                                                                       | 번역을 숨기지 않음                                                                                         |
+| `bedrock-agentcore`                                                                                                                                           | `agentBuilderEnabled`, `createGenericAgentCoreRuntime`, `agentCoreExternalRuntimes` 중 하나                |
+| `bedrock-agentcore.gateway`                                                                                                                                   | `agentBuilderEnabled` 또는 `agentCoreGatewayArns` (런타임 내 MCP 서버가 AgentCore Gateway를 호출하는 경우) |
+| `bedrock-agent`                                                                                                                                               | `agentEnabled`, `searchAgentEnabled`, `agents` 중 하나                                                     |
+| `kendra`                                                                                                                                                      | `ragEnabled`                                                                                               |
+| `ssm`, `ssmmessages`, `ec2messages`                                                                                                                           | `closedNetworkCreateTestEnvironment`                                                                       |
 
 ## 고정비 목안
 
@@ -87,7 +93,7 @@ ap-northeast-1 구성 예(VPC 신규 생성, 2 AZ):
 | 구성                                                                                                                                                                        | Interface VPC Endpoint 수   | 월 고정비 |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | --------- |
 | 기본값 (검증 환경과 Resolver Endpoint 있음, RAG / Agent 없음)                                                                                                               | (14 + 검증 환경용 3) × 2 AZ | 약 $747   |
-| 기본값 + 에이전트 빌더                                                                                                                                                      | (17 + 3) × 2 AZ             | 약 $808   |
+| 기본값 + 에이전트 빌더                                                                                                                                                      | (16 + 3) × 2 AZ             | 약 $788   |
 | 최소 구성: `closedNetworkCreateTestEnvironment: false`, `closedNetworkCreateResolverEndpoint: false`, `closedNetworkVpcEndpointAzs`로 1 AZ, 음성 인식·회의록 생성·번역 숨김 | 11 × 1 AZ                   | 약 $141   |
 
 가장 큰 항목은 검증용 인스턴스와 Resolver Endpoint입니다. 기존 DNS를 통해 자사 네트워크에서 접속하는 경우 둘 다 비활성화하세요. `closedNetworkVpcEndpointAzs`로 AZ를 1개로 지정하면 VPC Endpoint 비용이 절반이 되지만 가용성은 낮아집니다.

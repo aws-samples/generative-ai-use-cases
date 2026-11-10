@@ -236,6 +236,9 @@ const baseStackInputSchema = z.object({
   closedNetworkDomainName: z.string().nullish(),
   closedNetworkCreateTestEnvironment: z.boolean().default(true),
   closedNetworkTestEnvironmentInstanceType: z.string().default('r6i.large'),
+  // Interface VPC Endpoints to create even when no enabled feature needs them
+  // (names as in closed-vpc.ts, e.g. 'Kendra'), such as ones other workloads in an imported VPC use
+  closedNetworkAdditionalVpcEndpoints: z.array(z.string()).default([]),
   closedNetworkCreateResolverEndpoint: z.boolean().default(true),
 });
 
@@ -293,7 +296,12 @@ export const stackInputSchema = baseStackInputSchema
         'agentCoreRegion must equal region when closedNetworkMode=true (the AgentCore Runtime shares the closed VPC, which exists in a single region)',
       path: ['agentCoreRegion'],
     }
-  );
+  )
+  .refine((data) => !(data.closedNetworkMode && data.researchAgentEnabled), {
+    message:
+      'researchAgentEnabled cannot be used with closedNetworkMode=true (the research agent runtime needs internet access)',
+    path: ['researchAgentEnabled'],
+  });
 
 // schema after conversion
 export const processedStackInputSchema = baseStackInputSchema.extend({

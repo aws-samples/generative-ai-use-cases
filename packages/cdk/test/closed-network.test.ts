@@ -48,7 +48,6 @@ describe('requiredClosedNetworkVpcEndpoints', () => {
         'Polly',
         'AgentCore',
         'AgentCoreGateway',
-        'SecretsManager',
         'BedrockAgentApi',
         'Kendra',
       ])
@@ -71,6 +70,47 @@ describe('requiredClosedNetworkVpcEndpoints', () => {
       })
     );
     expect(endpoints).toContain('AgentCore');
+    expect(endpoints).not.toContain('AgentCoreGateway');
+  });
+
+  test('adds the AgentCore Gateway endpoint only when a gateway can be called', () => {
+    expect(
+      requiredClosedNetworkVpcEndpoints(
+        params({ createGenericAgentCoreRuntime: true })
+      )
+    ).not.toContain('AgentCoreGateway');
+    expect(
+      requiredClosedNetworkVpcEndpoints(
+        params({
+          createGenericAgentCoreRuntime: true,
+          agentCoreGatewayArns: [
+            'arn:aws:bedrock-agentcore:ap-northeast-1:1:gateway/g',
+          ],
+        })
+      )
+    ).toContain('AgentCoreGateway');
+  });
+
+  test('keeps the endpoints listed in closedNetworkAdditionalVpcEndpoints', () => {
+    const endpoints = requiredClosedNetworkVpcEndpoints(
+      params({ closedNetworkAdditionalVpcEndpoints: ['Kendra', 'Lambda'] })
+    );
+    expect(endpoints).toContain('Kendra');
+    expect(endpoints.filter((e) => e === 'Lambda')).toHaveLength(1);
+  });
+});
+
+describe('closed network parameter validation', () => {
+  test('rejects the research agent', () => {
+    expect(() => params({ researchAgentEnabled: true })).toThrow(
+      /researchAgentEnabled/
+    );
+  });
+
+  test('rejects an AgentCore region other than region', () => {
+    expect(() =>
+      params({ agentBuilderEnabled: true, agentCoreRegion: 'us-east-1' })
+    ).toThrow(/agentCoreRegion/);
   });
 });
 
@@ -85,6 +125,14 @@ describe('closedNetworkWarnings', () => {
           mcpEnabled: true,
           allowedCountryCodes: ['JP'],
           hostName: 'genu',
+          agentCoreVpcId: 'vpc-1',
+          agentCoreSubnetIds: ['subnet-1'],
+          agentCoreExternalRuntimes: [
+            {
+              name: 'remote',
+              arn: 'arn:aws:bedrock-agentcore:us-east-1:1:runtime/r',
+            },
+          ],
           speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
           imageGenerationModelIds: [
             {
@@ -106,6 +154,8 @@ describe('closedNetworkWarnings', () => {
         'genu:closedNetwork:imageModelRegion',
         'genu:closedNetwork:webContent',
         'genu:closedNetwork:testEnvironment',
+        'genu:closedNetwork:agentCoreVpcId',
+        'genu:closedNetwork:externalRuntimeRegion',
       ])
     );
   });
@@ -156,7 +206,6 @@ describe('closedNetworkWebConfig', () => {
       hiddenUseCases: {
         summarize: true,
         voiceChat: true,
-        webContent: true,
         video: true,
       },
       imageGenerationModelIds: [{ modelId: 'a', region: 'ap-northeast-1' }],

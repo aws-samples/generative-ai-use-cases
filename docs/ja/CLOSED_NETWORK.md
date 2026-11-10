@@ -22,6 +22,7 @@
 | closedNetworkDomainName                  | GenU のドメイン名。Private Hosted Zone は CDK が生成するため、手動作成不要。`closedNetworkCertificateArn` と `closedNetworkDomainName` は両方指定するか、両方指定しないかのどちらかである必要あり。                                                                                                        |
 | closedNetworkCreateTestEnvironment       | 検証環境を作成するかどうか。デフォルトで作成する。必要ない場合は false を指定する。検証環境は EC2 の Windows インスタンスとして作成し、Fleet Manager 経由でアクセスする。(詳細な手順は後述。)                                                                                                              |
 | closedNetworkTestEnvironmentInstanceType | 検証用 Windows インスタンスのインスタンスタイプ。デフォルトは `r6i.large`。`t3.large` などにすると検証環境の費用を下げられる。                                                                                                                                                                             |
+| closedNetworkAdditionalVpcEndpoints      | 有効な機能が必要としない場合でも作成する Interface VPC Endpoint を `closed-vpc.ts` の名前で指定する (例: `['Kendra']`)。インポートした VPC (`closedNetworkVpcId`) の他のワークロードがその VPC Endpoint を使っている場合に指定する。デフォルトは `[]`。                                                    |
 | closedNetworkCreateResolverEndpoint      | Route53 の Resolver Endpoint を生成するかどうか。デフォルトで true。                                                                                                                                                                                                                                       |
 
 ## アーキテクチャ
@@ -33,7 +34,7 @@
 - デプロイはインターネットに疎通可能な環境で行う必要があります。また、動作検証環境にはマネージメントコンソールからアクセスするため、その場合もインターネット疎通が必要になります。
 - デプロイには、通常モードのデプロイと同様の環境が必要です。具体的には、AWS IAM ユーザーの設定、Node.js、Docker が必要です。
 - GenU がデプロイされるリージョンとモデルのリージョンは同一である必要があります。GenU を ap-northeast-1 にデプロイし、us-east-1 のモデルを利用するといったことは現状できません。
-- AgentCore (`agentBuilderEnabled` / `createGenericAgentCoreRuntime`) を有効化する場合、`agentCoreRegion` も同一リージョンである必要があります。閉域モードでは閉域 VPC を AgentCore Runtime が共有するため、別リージョンへのデプロイはできません (指定がない場合は自動的に `region` と同一になります)。Research Agent (`researchAgentEnabled`) は AgentCore Runtime が現状 PUBLIC ネットワーク固定のため、閉域モードでは利用できません。
+- AgentCore (`agentBuilderEnabled` / `createGenericAgentCoreRuntime`) を有効化する場合、`agentCoreRegion` も同一リージョンである必要があります。閉域モードでは閉域 VPC を AgentCore Runtime が共有するため、別リージョンへのデプロイはできません (指定がない場合は自動的に `region` と同一になります)。Research Agent (`researchAgentEnabled`) はランタイムにインターネット接続が必要なため、閉域モードでは有効にできません。
 - 様々なリソースを作成するため、既存の VPC をインポートする場合は可能な限り clean な環境を利用することを推奨します。
 - SAML 連携は利用できません。
 - Voice Chat のユースケースは現状利用できません。
@@ -45,11 +46,13 @@
 VPC Endpoint は閉域 VPC に下記が自動作成されるため、AgentCore Runtime からの通信および ブラウザからの InvokeAgentRuntime はすべて VPC 内で完結します。
 
 - `bedrock-agentcore` (Runtime データプレーン / コントロールプレーン)
-- `bedrock-agentcore-gateway` (AgentCore Gateway 呼び出し)
+- `bedrock-agentcore.gateway` (ランタイム内の MCP サーバーからの AgentCore Gateway 呼び出し。`agentBuilderEnabled` または `agentCoreGatewayArns` のときに作成)
 - `bedrock-runtime` (Foundation Model 呼び出し)
 - `ecr` / `ecr-docker` (Runtime イメージの Pull)
 - `logs` (CloudWatch Logs)
 - `s3` (Gateway Endpoint。FileBucket やデータソースへのアクセス)
+
+AgentCore Runtime は閉域 VPC のサブネットに配置されます。AgentCore Runtime の VPC モードは、リージョン内の一部の AZ のみに対応しています (例: us-east-1 では `use1-az1`、`use1-az2`、`use1-az4`)。ランタイムの作成に失敗する場合は、`closedNetworkSubnetIds` で対応 AZ のサブネットを指定するか、既存の VPC をインポートしてください。詳細は [Configure Amazon Bedrock AgentCore Runtime for VPC](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agentcore-vpc.html) を参照してください。
 
 ## 閉域モードで利用できる機能
 
@@ -65,9 +68,9 @@ VPC Endpoint は閉域 VPC に下記が自動作成されるため、AgentCore R
 | AgentCore (エージェントビルダー、汎用ランタイム)                                                            | △           | 閉域 VPC 内で動作します。インターネットが必要なツール (Web 検索、URL 取得、外部 API を呼ぶ MCP サーバーや実行時に npm/PyPI からパッケージを取得する MCP サーバー) は動作しません。 |
 | MCP チャット                                                                                                | △           | インターネットが必要な MCP サーバーは動作しません。                                                                                                                                |
 | 音声チャット                                                                                                | ❌ (非表示) |                                                                                                                                                                                    |
-| Web コンテンツ抽出                                                                                          | ❌ (非表示) | Web ページの取得にインターネット接続が必要です。                                                                                                                                   |
+| Web コンテンツ抽出                                                                                          | △           | 閉域 VPC から到達できるページ (社内ページなど) のみ取得できます。インターネット上のページは取得できません。                                                                        |
 | 検索エージェント (`searchAgentEnabled`)                                                                     | ❌          | 外部の検索 API を呼び出します。                                                                                                                                                    |
-| Research Agent (`researchAgentEnabled`)                                                                     | ❌          | ランタイムが PUBLIC ネットワークモードです。                                                                                                                                       |
+| Research Agent (`researchAgentEnabled`)                                                                     | ❌ (エラー) | ランタイムにインターネット接続が必要なため、`closedNetworkMode` と同時に有効にすると `cdk synth` がエラーになります。                                                              |
 | SAML 連携                                                                                                   | ❌          |                                                                                                                                                                                    |
 | `allowedIpV4AddressRanges` / `allowedIpV6AddressRanges` / `allowedCountryCodes` / `hostName` / `domainName` | ❌ (無視)   | CloudFront と WAF を作成しないため無視されます。独自ドメインは `closedNetworkDomainName` を利用してください。                                                                      |
 
@@ -75,17 +78,21 @@ VPC Endpoint は閉域 VPC に下記が自動作成されるため、AgentCore R
 
 Interface 型の VPC Endpoint はエンドポイントごと・AZ ごとに課金されるため、有効にした機能に必要なものだけを作成します。機能を無効にして再デプロイすると、その VPC Endpoint は削除されます。
 
-| VPC Endpoint                                                                                                                                                  | 作成される条件                                                                                                         |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `execute-api`、`lambda`、`cognito-idp`、`cognito-identity`、`s3` (Interface)、`bedrock-runtime`、`bedrock-agent-runtime`、`ecr.api`、`ecr.dkr`、`logs`、`sts` | 常に作成                                                                                                               |
-| `s3`、`dynamodb` (Gateway 型、無料)                                                                                                                           | 常に作成                                                                                                               |
-| `transcribe`                                                                                                                                                  | 音声認識または議事録生成を非表示にしていない                                                                           |
-| `transcribestreaming`                                                                                                                                         | 音声認識、議事録生成、翻訳のいずれかを非表示にしていない                                                               |
-| `polly`                                                                                                                                                       | 翻訳を非表示にしていない                                                                                               |
-| `bedrock-agentcore`、`bedrock-agentcore-gateway`、`secretsmanager`                                                                                            | `agentBuilderEnabled`、`createGenericAgentCoreRuntime`、`researchAgentEnabled`、`agentCoreExternalRuntimes` のいずれか |
-| `bedrock-agent`                                                                                                                                               | `agentEnabled`、`searchAgentEnabled`、`agents` のいずれか                                                              |
-| `kendra`                                                                                                                                                      | `ragEnabled`                                                                                                           |
-| `ssm`、`ssmmessages`、`ec2messages`                                                                                                                           | `closedNetworkCreateTestEnvironment`                                                                                   |
+> [!WARNING]
+> 既存の閉域環境を更新すると、無効な機能の VPC Endpoint は削除されます。`closedNetworkVpcId` でインポートした VPC の他のワークロードがそれらの VPC Endpoint (プライベート DNS 名) を使っている場合は、デプロイ前に `closedNetworkAdditionalVpcEndpoints` に指定してください。
+
+| VPC Endpoint                                                                                                                                                  | 作成される条件                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `execute-api`、`lambda`、`cognito-idp`、`cognito-identity`、`s3` (Interface)、`bedrock-runtime`、`bedrock-agent-runtime`、`ecr.api`、`ecr.dkr`、`logs`、`sts` | 常に作成                                                                                                         |
+| `s3`、`dynamodb` (Gateway 型、無料)                                                                                                                           | 常に作成                                                                                                         |
+| `transcribe`                                                                                                                                                  | 音声認識または議事録生成を非表示にしていない                                                                     |
+| `transcribestreaming`                                                                                                                                         | 音声認識、議事録生成、翻訳のいずれかを非表示にしていない                                                         |
+| `polly`                                                                                                                                                       | 翻訳を非表示にしていない                                                                                         |
+| `bedrock-agentcore`                                                                                                                                           | `agentBuilderEnabled`、`createGenericAgentCoreRuntime`、`agentCoreExternalRuntimes` のいずれか                   |
+| `bedrock-agentcore.gateway`                                                                                                                                   | `agentBuilderEnabled` または `agentCoreGatewayArns` (ランタイム内の MCP サーバーが AgentCore Gateway を呼ぶ場合) |
+| `bedrock-agent`                                                                                                                                               | `agentEnabled`、`searchAgentEnabled`、`agents` のいずれか                                                        |
+| `kendra`                                                                                                                                                      | `ragEnabled`                                                                                                     |
+| `ssm`、`ssmmessages`、`ec2messages`                                                                                                                           | `closedNetworkCreateTestEnvironment`                                                                             |
 
 ## 固定費の目安
 
@@ -105,7 +112,7 @@ ap-northeast-1 での構成例 (VPC を新規作成、2 AZ):
 | 構成                                                                                                                                                                           | Interface VPC Endpoint の数 | 月額固定費 |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- | ---------- |
 | デフォルト (検証環境と Resolver Endpoint あり、RAG / Agent なし)                                                                                                               | (14 + 検証環境用 3) × 2 AZ  | 約 $747    |
-| デフォルト + エージェントビルダー                                                                                                                                              | (17 + 3) × 2 AZ             | 約 $808    |
+| デフォルト + エージェントビルダー                                                                                                                                              | (16 + 3) × 2 AZ             | 約 $788    |
 | 最小構成: `closedNetworkCreateTestEnvironment: false`、`closedNetworkCreateResolverEndpoint: false`、`closedNetworkVpcEndpointAzs` で 1 AZ、音声認識・議事録生成・翻訳を非表示 | 11 × 1 AZ                   | 約 $141    |
 
 大きいのは検証用インスタンスと Resolver Endpoint です。既存の DNS 経由で自社ネットワークから接続する場合は、どちらも無効にしてください。`closedNetworkVpcEndpointAzs` で AZ を 1 つにすると VPC Endpoint の費用は半分になりますが、可用性は下がります。
@@ -219,19 +226,18 @@ Certificate body には ssl.crt の中身、Certificate private key には ssl.k
 
 クライアントから名前解決が必要なエンドポイントは以下の通りです。`<>` で囲まれた箇所は実際の値に置き換えが必要です。
 
-| サービス名                  | 役割                         | エンドポイント                                              | エンドポイントの確認方法                                  |
-| --------------------------- | ---------------------------- | ----------------------------------------------------------- | --------------------------------------------------------- |
-| Application Load Balancer   | Web 静的ファイルのサーバー   | 独自ドメイン or internal-\<aaa>.\<region>.elb.amazonaws.com | ClosedNetworkStack の出力の ClosedNetworkWebUrl で確認    |
-| API Gateway                 | メインの API                 | \<xxx>.execute-api.\<region>.amazonaws.com                  | **GenerativeAiUseCasesStack** の出力の ApiEndpoint で確認 |
-| Cognito User Pool           | 認証                         | cognito-idp.\<region>.amazonaws.com                         | エンドポイントは固定                                      |
-| Cognito Identity Pool       | 一時認証情報の取得           | cognito-identity.\<region>.amazonaws.com                    | エンドポイントは固定                                      |
-| Amazon S3                   | 署名付き URL                 | s3.\<region>.amazonaws.com                                  | エンドポイントは固定                                      |
-| AWS Lambda                  | ストリーミング出力           | lambda.\<region>.amazonaws.com                              | エンドポイントは固定                                      |
-| Amazon Transcribe           | 文字起こし                   | transcribe.\<region>.amazonaws.com                          | エンドポイントは固定                                      |
-| Amazon Transcribe Streaming | リアルタイム文字起こし       | transcribestreaming.\<region>.amazonaws.com                 | エンドポイントは固定                                      |
-| Amazon Polly                | 文字の読み上げ               | polly.\<region>.amazonaws.com                               | エンドポイントは固定                                      |
-| Bedrock AgentCore Runtime   | AgentCore Runtime の実行     | bedrock-agentcore.\<region>.amazonaws.com                   | エンドポイントは固定                                      |
-| Bedrock AgentCore Gateway   | AgentCore Gateway の呼び出し | bedrock-agentcore-gateway.\<region>.amazonaws.com           | エンドポイントは固定                                      |
+| サービス名                  | 役割                       | エンドポイント                                              | エンドポイントの確認方法                                  |
+| --------------------------- | -------------------------- | ----------------------------------------------------------- | --------------------------------------------------------- |
+| Application Load Balancer   | Web 静的ファイルのサーバー | 独自ドメイン or internal-\<aaa>.\<region>.elb.amazonaws.com | ClosedNetworkStack の出力の ClosedNetworkWebUrl で確認    |
+| API Gateway                 | メインの API               | \<xxx>.execute-api.\<region>.amazonaws.com                  | **GenerativeAiUseCasesStack** の出力の ApiEndpoint で確認 |
+| Cognito User Pool           | 認証                       | cognito-idp.\<region>.amazonaws.com                         | エンドポイントは固定                                      |
+| Cognito Identity Pool       | 一時認証情報の取得         | cognito-identity.\<region>.amazonaws.com                    | エンドポイントは固定                                      |
+| Amazon S3                   | 署名付き URL               | s3.\<region>.amazonaws.com                                  | エンドポイントは固定                                      |
+| AWS Lambda                  | ストリーミング出力         | lambda.\<region>.amazonaws.com                              | エンドポイントは固定                                      |
+| Amazon Transcribe           | 文字起こし                 | transcribe.\<region>.amazonaws.com                          | エンドポイントは固定                                      |
+| Amazon Transcribe Streaming | リアルタイム文字起こし     | transcribestreaming.\<region>.amazonaws.com                 | エンドポイントは固定                                      |
+| Amazon Polly                | 文字の読み上げ             | polly.\<region>.amazonaws.com                               | エンドポイントは固定                                      |
+| Bedrock AgentCore Runtime   | AgentCore Runtime の実行   | bedrock-agentcore.\<region>.amazonaws.com                   | エンドポイントは固定                                      |
 
 上の表のすべてのエンドポイントのリゾルバー (フォワーダー) として Resolver Endpoint の IP アドレスを指定するように DNS サーバーの設定を変更してください。
 Resolver Endpoint の IP アドレスは、[Route53](https://console.aws.amazon.com/route53resolver) を開き、Inbound endpoints を選択して、作成したエンドポイントをクリックすることで確認できます。

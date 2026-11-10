@@ -17,6 +17,9 @@ type ClosedNetworkParams = Pick<
   | 'createGenericAgentCoreRuntime'
   | 'researchAgentEnabled'
   | 'agentCoreExternalRuntimes'
+  | 'agentCoreGatewayArns'
+  | 'agentCoreVpcId'
+  | 'closedNetworkAdditionalVpcEndpoints'
   | 'mcpEnabled'
   | 'samlAuthEnabled'
   | 'allowedIpV4AddressRanges'
@@ -54,7 +57,6 @@ export const OPTIONAL_VPC_ENDPOINTS = [
   'Polly',
   'AgentCore',
   'AgentCoreGateway',
-  'SecretsManager',
   'BedrockAgentApi',
   'Kendra',
 ] as const;
@@ -93,9 +95,11 @@ export const requiredClosedNetworkVpcEndpoints = (
     // Read aloud (Translate)
     Polly: isVisible(params, 'translate'),
     AgentCore: isAgentCoreUsed(params),
-    AgentCoreGateway: isAgentCoreUsed(params),
-    // AgentCore Gateway reads API key secrets
-    SecretsManager: isAgentCoreUsed(params),
+    // MCP servers in the runtime call an AgentCore Gateway: configured gateways,
+    // or the Agent Builder MCP presets that point at one
+    AgentCoreGateway:
+      (params.agentCoreGatewayArns?.length ?? 0) > 0 ||
+      params.agentBuilderEnabled,
     // GetAgentAlias / ListAgentActionGroups for Bedrock Agents
     BedrockAgentApi:
       params.agentEnabled ||
@@ -103,10 +107,15 @@ export const requiredClosedNetworkVpcEndpoints = (
       (params.agents?.length ?? 0) > 0,
     Kendra: params.ragEnabled,
   };
-  return [
+  const selected: string[] = [
     ...ALWAYS_REQUIRED_VPC_ENDPOINTS,
     ...OPTIONAL_VPC_ENDPOINTS.filter((name) => optional[name]),
   ];
+  // Endpoints kept on request, e.g. ones that other workloads in an imported VPC use
+  for (const name of params.closedNetworkAdditionalVpcEndpoints ?? []) {
+    if (!selected.includes(name)) selected.push(name);
+  }
+  return selected as ClosedNetworkVpcEndpointName[];
 };
 
 const regionOf = (model: ModelIdOrConfig, defaultRegion: string) =>
@@ -160,7 +169,7 @@ export const closedNetworkWarnings = (
   if (isVisible(params, 'webContent')) {
     add(
       'webContent',
-      'Web Content Extraction needs internet access and is hidden in the UI. Set hiddenUseCases.webContent to true to silence this warning.'
+      'Web Content Extraction can only fetch pages reachable from the closed VPC (for example, intranet pages), not the internet. Set hiddenUseCases.webContent to true if you do not need it.'
     );
   }
   if (params.samlAuthEnabled) {
@@ -178,10 +187,19 @@ export const closedNetworkWarnings = (
       'AgentCore Runtime runs inside the closed VPC. Tools that need the internet (web search, URL fetch, MCP servers that call external APIs or install packages from npm/PyPI at run time) do not work. MCP servers on your own network and AWS services with VPC endpoints do.'
     );
   }
-  if (params.researchAgentEnabled) {
+  if (params.agentCoreVpcId) {
     add(
-      'researchAgent',
-      'The research agent runtime uses the PUBLIC network mode and searches the internet, so it does not keep traffic inside the closed network.'
+      'agentCoreVpcId',
+      'agentCoreVpcId / agentCoreSubnetIds are ignored in closed network mode. The AgentCore Runtime uses the closed VPC.'
+    );
+  }
+  const otherRegionRuntimes = (params.agentCoreExternalRuntimes ?? [])
+    .filter((r) => r.arn.split(':')[3] && r.arn.split(':')[3] !== params.region)
+    .map((r) => r.name);
+  if (otherRegionRuntimes.length > 0) {
+    add(
+      'externalRuntimeRegion',
+      `External AgentCore runtimes outside ${params.region} cannot be reached through the closed VPC: ${otherRegionRuntimes.join(', ')}`
     );
   }
   if (params.mcpEnabled) {
@@ -219,7 +237,7 @@ type WebModelConfig = { modelId: string; region: string };
 
 /**
  * What the web app is told about use cases and media models. In closed network mode,
- * use cases that cannot work are hidden, and image/video models outside the app region
+ * Voice Chat (no VPC endpoint for its AppSync Events API) is hidden, and image/video models outside the app region
  * (unreachable from the closed VPC) are dropped; the use case is hidden when none remain.
  */
 export const closedNetworkWebConfig = ({
@@ -244,7 +262,6 @@ export const closedNetworkWebConfig = ({
     hiddenUseCases: {
       ...hiddenUseCases,
       voiceChat: true,
-      webContent: true,
       ...(image.length === 0 ? { image: true } : {}),
       ...(video.length === 0 ? { video: true } : {}),
     },

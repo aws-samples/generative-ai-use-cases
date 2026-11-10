@@ -10,6 +10,7 @@ const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
   TranscribeStreaming: ec2.InterfaceVpcEndpointAwsService.TRANSCRIBE_STREAMING,
   Polly: ec2.InterfaceVpcEndpointAwsService.POLLY,
   AgentCore: ec2.InterfaceVpcEndpointAwsService.BEDROCK_AGENTCORE,
+  // MCP servers in the runtime that call an AgentCore Gateway
   AgentCoreGateway:
     ec2.InterfaceVpcEndpointAwsService.BEDROCK_AGENTCORE_GATEWAY,
   // Cognito VPC Endpoints (Private Link)
@@ -26,9 +27,6 @@ const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
   CloudWatchLogs: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
   Kendra: ec2.InterfaceVpcEndpointAwsService.KENDRA,
   Sts: ec2.InterfaceVpcEndpointAwsService.STS,
-  // Required by AgentCore Gateway to read API key secrets at invocation time,
-  // and by the API Key Credential Provider creation flow to read user secrets.
-  SecretsManager: ec2.InterfaceVpcEndpointAwsService.SECRETS_MANAGER,
 };
 
 export interface ClosedVpcProps {
