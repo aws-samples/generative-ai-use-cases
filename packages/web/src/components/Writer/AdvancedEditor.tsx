@@ -13,7 +13,13 @@ import {
   type JSONContent,
   handleCommandNavigation,
 } from 'novel';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import {
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useCallback,
+  useRef,
+} from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { defaultExtensions } from './extensions';
 import { ColorSelector } from './selectors/ColorSelector';
@@ -35,6 +41,7 @@ import { Editor } from '@tiptap/react';
 import Select from '../Select';
 import { MODELS } from '../../hooks/useModel';
 import { AICommentManager, useComments } from './extensions/AIComments';
+import { layoutCommentCards } from './lib/commentLayout';
 import ButtonCopy from '../ButtonCopy';
 import DiffMatchPatch from 'diff-match-patch';
 import { DocumentComment } from 'generative-ai-use-cases';
@@ -137,10 +144,14 @@ const TailwindAdvancedEditor: React.FC<Props> = ({ initialSentence }) => {
   const [openAI, setOpenAI] = useState(false);
 
   const { comments, commentState, filteredComments, loading } = useComments();
-  const [commentPosition, setCommentPosition] = useState<number[]>([]);
+  const [commentLayout, setCommentLayout] = useState<{
+    tops: Record<number, number>;
+    height: number;
+  }>({ tops: {}, height: 0 });
 
   const [editorRef, setEditorRef] = useState<Editor | null>(null);
   const commentRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const commentListRef = useRef<HTMLDivElement | null>(null);
 
   // Set the comment manager when the editor is initialized
   const handleEditorCreated = useCallback(
@@ -167,40 +178,65 @@ const TailwindAdvancedEditor: React.FC<Props> = ({ initialSentence }) => {
     return new XMLSerializer().serializeToString(doc);
   };
 
-  // Function to recalculate the comment positions
-  const recalculateCommentPositions = useCallback(() => {
-    if (!editorRef || !commentManager) return;
+  // Place each comment next to the text it points at. This runs after the
+  // cards are on the screen, so it uses their real heights, and again
+  // whenever the text moves (edit, replace, removed comment, resize).
+  const layoutComments = useCallback(() => {
+    const list = commentListRef.current;
+    if (!list || !editorRef || !commentManager) return;
 
-    const positions = comments.map((comment) => {
-      const matches = commentManager.findTextPosition(comment.excerpt);
-      if (matches.length === 0) return 0;
-
-      const { from } = matches[0];
-      const coords = editorRef.view.coordsAtPos(from);
-      const editorRect = editorRef.view.dom.getBoundingClientRect();
-
-      return coords.top - editorRect.top;
-    });
-
-    setCommentPosition(positions);
-  }, [commentManager, editorRef, comments]);
-
-  // recalculate with debaounce when window size changed
-  const debouncedRecalculateCommentPositions = useDebouncedCallback(
-    () => recalculateCommentPositions(),
-    100
-  );
-  useEffect(() => {
-    window.addEventListener('resize', debouncedRecalculateCommentPositions);
-    return () => {
-      window.removeEventListener(
-        'resize',
-        debouncedRecalculateCommentPositions
-      );
+    const listTop = list.getBoundingClientRect().top;
+    const shown = comments
+      .map((comment, idx) => ({ comment, idx }))
+      .filter(({ comment }) => !commentState[comment.excerpt]);
+    const { tops, height } = layoutCommentCards(
+      shown.map(({ comment, idx }) => {
+        const matches = commentManager.findTextPosition(comment.excerpt);
+        return {
+          textTop:
+            matches.length > 0
+              ? editorRef.view.coordsAtPos(matches[0].from).top - listTop
+              : null,
+          height: commentRefs.current[idx]?.offsetHeight ?? 0,
+        };
+      })
+    );
+    const next = {
+      tops: Object.fromEntries(shown.map(({ idx }, i) => [idx, tops[i]])),
+      height,
     };
-  }, [debouncedRecalculateCommentPositions]);
+    setCommentLayout((prev) =>
+      prev.height === next.height &&
+      JSON.stringify(prev.tops) === JSON.stringify(next.tops)
+        ? prev
+        : next
+    );
+  }, [commentManager, editorRef, comments, commentState]);
 
-  // Recalculate the comment positions when the editor is updated
+  // When comments are added, removed, or the spinner shows or hides
+  useLayoutEffect(() => {
+    layoutComments();
+  }, [layoutComments, loading]);
+
+  // When the text changes
+  useEffect(() => {
+    if (!editorRef) return;
+    editorRef.on('update', layoutComments);
+    return () => {
+      editorRef.off('update', layoutComments);
+    };
+  }, [editorRef, layoutComments]);
+
+  // When the window size changes
+  const debouncedLayoutComments = useDebouncedCallback(layoutComments, 100);
+  useEffect(() => {
+    window.addEventListener('resize', debouncedLayoutComments);
+    return () => {
+      window.removeEventListener('resize', debouncedLayoutComments);
+    };
+  }, [debouncedLayoutComments]);
+
+  // Save the content when the editor is updated
   const debouncedUpdates = useDebouncedCallback(
     async (editor: EditorInstance) => {
       setCharsCount(editor.storage.characterCount.characters());
@@ -222,11 +258,6 @@ const TailwindAdvancedEditor: React.FC<Props> = ({ initialSentence }) => {
     },
     500
   );
-
-  // Recalculate the comment positions when the comments are updated
-  useEffect(() => {
-    recalculateCommentPositions();
-  }, [comments, recalculateCommentPositions]);
 
   // Set the initial content
   // (when initialSentence is given, the content is set as markdown in
@@ -395,47 +426,24 @@ const TailwindAdvancedEditor: React.FC<Props> = ({ initialSentence }) => {
               </div>
             )}
 
-            {commentManager &&
-              comments.map((comment, idx) => {
-                if (commentState[comment.excerpt]) return null;
-
-                const position = commentPosition[idx];
-
-                // Find the comment immediately before the displayed comment
-                let prevDisplayedIndex = idx - 1;
-                let lastDisplayedPosition = 0;
-
-                // Get the actual position of the comment immediately before the displayed comment
-                while (prevDisplayedIndex >= 0) {
-                  if (!commentState[comments[prevDisplayedIndex].excerpt]) {
-                    const prevRef = commentRefs.current[prevDisplayedIndex];
-                    if (prevRef) {
-                      const rect = prevRef.getBoundingClientRect();
-                      const editorRect =
-                        editorRef?.view.dom.getBoundingClientRect();
-                      if (editorRect) {
-                        lastDisplayedPosition = rect.bottom - editorRect.top;
-                        break;
-                      }
-                    }
-                  }
-                  prevDisplayedIndex--;
-                }
-
-                // Calculate the height of the spacer (the difference between the actual position and the displayed position)
-                const spacerHeight = Math.max(
-                  0,
-                  position - lastDisplayedPosition
-                );
-
-                return (
-                  <div key={`${comment.excerpt}-${idx}`}>
-                    {spacerHeight > 0 && (
-                      <div style={{ height: spacerHeight }} />
-                    )}
+            <div
+              ref={commentListRef}
+              className="relative"
+              style={{ height: commentLayout.height }}>
+              {commentManager &&
+                comments.map((comment, idx) => {
+                  if (commentState[comment.excerpt]) return null;
+                  const top = commentLayout.tops[idx];
+                  return (
                     <div
+                      key={`${comment.excerpt}-${idx}`}
                       ref={(el) => (commentRefs.current[idx] = el)}
-                      className="pb-2">
+                      className="absolute left-0 right-0 pb-2"
+                      // Hidden until placed, for a card that just arrived
+                      style={{
+                        top: top ?? 0,
+                        visibility: top === undefined ? 'hidden' : undefined,
+                      }}>
                       <CommentItem
                         comment={comment}
                         onReplace={() => {
@@ -447,9 +455,9 @@ const TailwindAdvancedEditor: React.FC<Props> = ({ initialSentence }) => {
                         onClick={() => commentManager.focusComment(comment)}
                       />
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+            </div>
 
             {commentManager && filteredComments.length > 0 && !loading && (
               <div className="mt-4 flex justify-end gap-3">
