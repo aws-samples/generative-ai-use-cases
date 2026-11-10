@@ -26,6 +26,19 @@ except ImportError as e:
 
 logger = logging.getLogger(__name__)
 
+# Pinned for reproducible behavior. Check PyPI regularly for new stable versions.
+MCP_PROXY_FOR_AWS_VERSION = "1.6.4"
+
+# The Web Search connector exposes its tool without a description, so one is
+# supplied to help the model choose between multiple search tools.
+WEB_SEARCH_TOOL_DESCRIPTION = (
+    "Search the web for current information using Amazon Bedrock AgentCore Web Search. "
+    "Queries are processed within AWS and are not sent to third party search engines. "
+    "Returns titles, source URLs, publication dates and relevant snippets. "
+    "Use this when an answer depends on recent or citable information, and cite the "
+    "returned source URLs in the answer."
+)
+
 
 def _create_mcp_client(server_name: str, server_config: dict, uv_env: dict) -> tuple[str, MCPClient | None]:
     """Create and start an MCP client (for parallel execution)"""
@@ -192,12 +205,62 @@ class ToolManager:
 
         return code_interpreter_tools
 
-    def get_tools_with_options(self, code_execution_enabled: bool = False, mcp_servers=None) -> list[Any]:
+    def get_web_search_tools(self) -> list[Any]:
+        """Get AgentCore Web Search tools through the Gateway connector.
+
+        The Gateway URL is provided by the WEB_SEARCH_GATEWAY_URL environment
+        variable. Requests are signed with SigV4 by mcp-proxy-for-aws using the
+        credentials already present in the runtime environment.
+        """
+        gateway_url = os.environ.get("WEB_SEARCH_GATEWAY_URL", "").strip()
+        if not gateway_url:
+            logger.warning("WEB_SEARCH_GATEWAY_URL is not set, skipping web search tools")
+            return []
+
+        server_config = {
+            "command": "uvx",
+            "args": [f"mcp-proxy-for-aws@{MCP_PROXY_FOR_AWS_VERSION}", gateway_url],
+        }
+
+        _, client = _create_mcp_client("agentcore-web-search", server_config, get_uv_environment())
+        if client is None:
+            logger.warning("Failed to create MCP client for web search")
+            return []
+
+        try:
+            web_search_tools = client.list_tools_sync()
+            for tool in web_search_tools:
+                self._ensure_tool_description(tool)
+            logger.info(f"Added {len(web_search_tools)} web search tools (AgentCore Web Search)")
+            return web_search_tools
+        except Exception as e:
+            logger.warning(f"Failed to list web search tools: {e}")
+            return []
+
+    @staticmethod
+    def _ensure_tool_description(tool: Any) -> None:
+        """Fill in a description when the connector does not provide one.
+
+        The Web Search connector currently exposes its tool without a description.
+        Without it the model has little to go on when several search tools are
+        available, so a description is supplied here.
+        """
+        mcp_tool = getattr(tool, "mcp_tool", None)
+        if mcp_tool is None or getattr(mcp_tool, "description", None):
+            return
+        try:
+            mcp_tool.description = WEB_SEARCH_TOOL_DESCRIPTION
+            logger.info(f"Filled in description for tool: {getattr(tool, 'tool_name', '')}")
+        except Exception as e:
+            logger.warning(f"Failed to set tool description: {e}")
+
+    def get_tools_with_options(self, code_execution_enabled: bool = False, web_search_enabled: bool = False, mcp_servers=None) -> list[Any]:
         """
         Get tools with optional code execution and MCP servers.
 
         Args:
             code_execution_enabled: Whether to include code interpreter tools
+            web_search_enabled: Whether to include AgentCore Web Search tools
             mcp_servers: MCP server configurations
                 - None: Load default MCP servers from mcp.json
                 - []: Empty list, no MCP servers (File Upload only)
@@ -206,7 +269,7 @@ class ToolManager:
         Returns:
             List of all available tools
         """
-        logger.info(f"get_tools_with_options called with code_execution_enabled={code_execution_enabled}")
+        logger.info(f"get_tools_with_options called with code_execution_enabled={code_execution_enabled}, web_search_enabled={web_search_enabled}")
         logger.info(f"mcp_servers parameter: {mcp_servers} (type: {type(mcp_servers)})")
 
         all_tools = []
@@ -241,7 +304,17 @@ class ToolManager:
             code_interpreter_tools = self.get_code_interpreter_tool()
             all_tools.extend(code_interpreter_tools)
 
+        # Add web search tools if enabled
+        web_search_tools = []
+        if web_search_enabled:
+            web_search_tools = self.get_web_search_tools()
+            all_tools.extend(web_search_tools)
+
         # Log final tool count
-        logger.info(f"Total tools loaded: {len(all_tools)} (MCP: {len(mcp_tools)}, Built-in: 1, Code Interpreter: {len(code_interpreter_tools)} - {'enabled' if code_execution_enabled else 'disabled'})")
+        logger.info(
+            f"Total tools loaded: {len(all_tools)} (MCP: {len(mcp_tools)}, Built-in: 1, "
+            f"Code Interpreter: {len(code_interpreter_tools)} - {'enabled' if code_execution_enabled else 'disabled'}, "
+            f"Web Search: {len(web_search_tools)} - {'enabled' if web_search_enabled else 'disabled'})"
+        )
 
         return all_tools

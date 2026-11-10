@@ -44,6 +44,9 @@ export interface GenericAgentCoreProps {
   gatewayArns?: string[];
   // The text generation models of this deployment, for their output token limits
   modelIds?: string[];
+  // Gateway URL for the AgentCore Web Search connector.
+  // When set, the agent builder runtime can use the web search tool.
+  webSearchGatewayUrl?: string;
 }
 
 interface RuntimeResources {
@@ -74,6 +77,7 @@ export class GenericAgentCore extends Construct {
       agentCoreVpcId = null,
       agentCoreSubnetIds = null,
       gatewayArns,
+      webSearchGatewayUrl,
     } = props;
 
     this.gatewayArns = gatewayArns;
@@ -85,7 +89,8 @@ export class GenericAgentCore extends Construct {
     const configs = this.loadConfigurations(
       env,
       this._fileBucket.bucketName,
-      props.modelIds ?? []
+      props.modelIds ?? [],
+      webSearchGatewayUrl
     );
     this.genericRuntimeConfig = configs.generic;
     this.agentBuilderRuntimeConfig = configs.agentBuilder;
@@ -181,7 +186,8 @@ export class GenericAgentCore extends Construct {
   private loadConfigurations(
     env: string,
     bucketName: string,
-    modelIds: string[]
+    modelIds: string[],
+    webSearchGatewayUrl?: string
   ) {
     const modelMaxTokens = this.modelMaxTokensEnvironment(modelIds);
     return {
@@ -212,6 +218,9 @@ export class GenericAgentCore extends Construct {
           MCP_CONFIG_PATH: '/var/task/mcp-configs/agent-builder/mcp.json',
           SUPPORTED_CACHE_FIELDS: JSON.stringify(SUPPORTED_CACHE_FIELDS),
           ...modelMaxTokens,
+          ...(webSearchGatewayUrl && {
+            WEB_SEARCH_GATEWAY_URL: webSearchGatewayUrl,
+          }),
         },
       },
     };
