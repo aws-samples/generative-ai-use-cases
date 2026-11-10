@@ -235,7 +235,7 @@ const baseStackInputSchema = z.object({
   closedNetworkCertificateArn: z.string().nullish(),
   closedNetworkDomainName: z.string().nullish(),
   closedNetworkCreateTestEnvironment: z.boolean().default(true),
-  closedNetworkTestEnvironmentInstanceType: z.string().default('r6i.large'),
+  closedNetworkTestEnvironmentInstanceType: z.string().default('t3.large'),
   // Interface VPC Endpoints to create even when no enabled feature needs them
   // (names as in closed-vpc.ts, e.g. 'Kendra'), such as ones other workloads in an imported VPC use
   closedNetworkAdditionalVpcEndpoints: z.array(z.string()).default([]),

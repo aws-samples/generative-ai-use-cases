@@ -21,7 +21,7 @@
 | closedNetworkCertificateArn              | GenU にドメインを付与する場合に指定する ACM の ARN。ACM は手動で生成する。指定しない場合、GenU は Application Load Balancer のデフォルトのエンドポイントで公開される。                                                                                                                                     |
 | closedNetworkDomainName                  | GenU のドメイン名。Private Hosted Zone は CDK が生成するため、手動作成不要。`closedNetworkCertificateArn` と `closedNetworkDomainName` は両方指定するか、両方指定しないかのどちらかである必要あり。                                                                                                        |
 | closedNetworkCreateTestEnvironment       | 検証環境を作成するかどうか。デフォルトで作成する。必要ない場合は false を指定する。検証環境は EC2 の Windows インスタンスとして作成し、Fleet Manager 経由でアクセスする。(詳細な手順は後述。)                                                                                                              |
-| closedNetworkTestEnvironmentInstanceType | 検証用 Windows インスタンスのインスタンスタイプ。デフォルトは `r6i.large`。`t3.large` などにすると検証環境の費用を下げられる。                                                                                                                                                                             |
+| closedNetworkTestEnvironmentInstanceType | 検証用 Windows インスタンスのインスタンスタイプ。デフォルトは `t3.large` (v5.6 より前は `r6i.large`)。                                                                                                                                                                                                     |
 | closedNetworkAdditionalVpcEndpoints      | 有効な機能が必要としない場合でも作成する Interface VPC Endpoint を `closed-vpc.ts` の名前で指定する (例: `['Kendra']`)。インポートした VPC (`closedNetworkVpcId`) の他のワークロードがその VPC Endpoint を使っている場合に指定する。デフォルトは `[]`。                                                    |
 | closedNetworkCreateResolverEndpoint      | Route53 の Resolver Endpoint を生成するかどうか。デフォルトで true。                                                                                                                                                                                                                                       |
 
@@ -98,21 +98,21 @@ Interface 型の VPC Endpoint はエンドポイントごと・AZ ごとに課�
 
 閉域モードで作成されるリソースの月額固定費です (730 時間、AWS Price List API のオンデマンド料金、2026-11-10 時点)。Amazon Bedrock や Lambda などの従量課金、VPC Endpoint のデータ処理料金 ($0.01/GB)、ALB の LCU は含みません。最新の料金は [AWS Pricing Calculator](https://calculator.aws/) で確認してください。
 
-| リソース                                                | ap-northeast-1 | us-east-1 |
-| ------------------------------------------------------- | -------------- | --------- |
-| Interface VPC Endpoint (1 エンドポイント・1 AZ あたり)  | $10.22         | $7.30     |
-| Route 53 Resolver インバウンドエンドポイント (ENI 2 つ) | $182.50        | $182.50   |
-| Application Load Balancer (時間料金)                    | $17.74         | $16.43    |
-| Web アプリ用 Fargate タスク (0.25 vCPU / 0.5 GB × 1)    | $11.25         | $9.01     |
-| 検証用 Windows インスタンス `r6i.large` + gp3 100 GB    | $187.72        | $167.14   |
-| 検証用 Windows インスタンス `t3.large` + gp3 100 GB     | $109.17        | $88.88    |
+| リソース                                                                       | ap-northeast-1 | us-east-1 |
+| ------------------------------------------------------------------------------ | -------------- | --------- |
+| Interface VPC Endpoint (1 エンドポイント・1 AZ あたり)                         | $10.22         | $7.30     |
+| Route 53 Resolver インバウンドエンドポイント (ENI 2 つ)                        | $182.50        | $182.50   |
+| Application Load Balancer (時間料金)                                           | $17.74         | $16.43    |
+| Web アプリ用 Fargate タスク (0.25 vCPU / 0.5 GB × 1)                           | $11.25         | $9.01     |
+| 検証用 Windows インスタンス `r6i.large` (v5.6 より前のデフォルト) + gp3 100 GB | $187.72        | $167.14   |
+| 検証用 Windows インスタンス `t3.large` (デフォルト) + gp3 100 GB               | $109.17        | $88.88    |
 
 ap-northeast-1 での構成例 (VPC を新規作成、2 AZ):
 
 | 構成                                                                                                                                                                           | Interface VPC Endpoint の数 | 月額固定費 |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- | ---------- |
-| デフォルト (検証環境と Resolver Endpoint あり、RAG / Agent なし)                                                                                                               | (14 + 検証環境用 3) × 2 AZ  | 約 $747    |
-| デフォルト + エージェントビルダー                                                                                                                                              | (16 + 3) × 2 AZ             | 約 $788    |
+| デフォルト (検証環境と Resolver Endpoint あり、RAG / Agent なし)                                                                                                               | (14 + 検証環境用 3) × 2 AZ  | 約 $668    |
+| デフォルト + エージェントビルダー                                                                                                                                              | (16 + 3) × 2 AZ             | 約 $709    |
 | 最小構成: `closedNetworkCreateTestEnvironment: false`、`closedNetworkCreateResolverEndpoint: false`、`closedNetworkVpcEndpointAzs` で 1 AZ、音声認識・議事録生成・翻訳を非表示 | 11 × 1 AZ                   | 約 $141    |
 
 大きいのは検証用インスタンスと Resolver Endpoint です。既存の DNS 経由で自社ネットワークから接続する場合は、どちらも無効にしてください。`closedNetworkVpcEndpointAzs` で AZ を 1 つにすると VPC Endpoint の費用は半分になりますが、可用性は下がります。
@@ -193,6 +193,17 @@ Windows 内で Edge ブラウザを開き、ClosedNetworkStack の ClosedNetwork
 
 検証インスタンスは自動停止しないため、検証が完了したら EC2 を開いて対象インスタンスを手動で停止してください。
 また、検証環境そのものが不要であれば、closedNetworkCreateTestEnvironment を false にしてデプロイし直すことで、削除可能です。
+
+v5.6 でデフォルトのインスタンスタイプを `r6i.large` から `t3.large` に変更しました。既存環境を更新すると、検証インスタンスは新しいタイプで停止・起動されます。以前のタイプを使い続ける場合は `closedNetworkTestEnvironmentInstanceType: 'r6i.large'` を指定してください。
+
+### 自分の PC から接続する (VPN)
+
+検証インスタンスは、デプロイ直後にすぐ動作を確認するためのものです。複数人での検証や本番利用では、ネットワーク経由で閉域 VPC に接続し、`closedNetworkCreateTestEnvironment` を false にしてください。
+
+- **既存のオンプレミスネットワーク**: AWS Site-to-Site VPN または AWS Direct Connect で接続し、[オンプレから接続する場合の DNS サーバーの設定について](#オンプレから接続する場合の-dns-サーバーの設定について) に従って DNS を設定します。
+- **個人の PC**: [AWS Client VPN](https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/what-is.html) を使うと、各自のブラウザで GenU を利用できます。VPC Endpoint のプライベート DNS 名を解決できるよう、Client VPN エンドポイントの DNS サーバーに VPC の DNS (VPC の CIDR のベース + 2、例: `10.0.0.2`) を指定してください。ap-northeast-1 では、サブネット関連付け 1 時間あたり $0.15 (1 サブネットで月約 $110) と接続 1 時間あたり $0.05 がかかります (2026-11-10 時点)。Client VPN には ACM のサーバー証明書と相互認証または SAML 認証が必要で、GenU では作成しません。
+
+AWS Verified Access は利用できません。ブラウザは API Gateway、Cognito、S3、Lambda などの AWS サービスのエンドポイントを直接呼び出しますが、これらは Verified Access の背後に置けないためです。
 
 ## 閉域 GenU に独自のドメインを設定する
 

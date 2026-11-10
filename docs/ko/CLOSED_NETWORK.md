@@ -20,7 +20,7 @@
 | closedNetworkCertificateArn              | GenU에 도메인을 할당할 때 지정할 ACM ARN. ACM은 수동으로 생성해야 합니다. 지정하지 않으면 GenU는 Application Load Balancer의 기본 엔드포인트로 게시됩니다.                                                                                                 |
 | closedNetworkDomainName                  | GenU의 도메인 이름. Private Hosted Zone은 CDK에서 생성되므로 수동 생성이 필요하지 않습니다. `closedNetworkCertificateArn`과 `closedNetworkDomainName`은 함께 지정하거나 둘 다 생략해야 합니다.                                                             |
 | closedNetworkCreateTestEnvironment       | 테스트 환경을 생성할지 여부. 기본적으로 생성됩니다. 필요하지 않으면 false를 지정하세요. 테스트 환경은 EC2 Windows 인스턴스로 생성되며 Fleet Manager를 통해 액세스됩니다. (자세한 절차는 나중에 설명됩니다.)                                                |
-| closedNetworkTestEnvironmentInstanceType | 검증용 Windows 인스턴스의 인스턴스 유형. 기본값은 `r6i.large`. `t3.large` 등으로 지정하면 검증 환경 비용을 줄일 수 있음.                                                                                                                                   |
+| closedNetworkTestEnvironmentInstanceType | 검증용 Windows 인스턴스의 인스턴스 유형. 기본값은 `t3.large` (v5.6 이전은 `r6i.large`).                                                                                                                                                                    |
 | closedNetworkAdditionalVpcEndpoints      | 활성화된 기능이 필요로 하지 않아도 생성할 Interface VPC Endpoint를 `closed-vpc.ts`의 이름으로 지정 (예: `['Kendra']`). 가져온 VPC(`closedNetworkVpcId`)의 다른 워크로드가 해당 VPC Endpoint를 사용하는 경우에 지정. 기본값은 `[]`.                         |
 | closedNetworkCreateResolverEndpoint      | Route53 Resolver 엔드포인트를 생성할지 여부. 기본값은 true입니다.                                                                                                                                                                                          |
 
@@ -79,21 +79,21 @@ Interface형 VPC Endpoint는 엔드포인트별·AZ별로 과금되므로, 활�
 
 폐쇄 네트워크 모드에서 생성되는 리소스의 월 고정비입니다(730시간, AWS Price List API의 온디맨드 요금, 2026-11-10 기준). Amazon Bedrock, Lambda 등의 종량 과금, VPC Endpoint 데이터 처리 요금($0.01/GB), ALB LCU는 포함하지 않습니다. 최신 요금은 [AWS Pricing Calculator](https://calculator.aws/)에서 확인하세요.
 
-| 리소스                                           | ap-northeast-1 | us-east-1 |
-| ------------------------------------------------ | -------------- | --------- |
-| Interface VPC Endpoint (엔드포인트 1개·AZ 1개당) | $10.22         | $7.30     |
-| Route 53 Resolver 인바운드 엔드포인트 (ENI 2개)  | $182.50        | $182.50   |
-| Application Load Balancer (시간 요금)            | $17.74         | $16.43    |
-| 웹 앱용 Fargate 태스크 (0.25 vCPU / 0.5 GB × 1)  | $11.25         | $9.01     |
-| 검증용 Windows 인스턴스 `r6i.large` + gp3 100 GB | $187.72        | $167.14   |
-| 검증용 Windows 인스턴스 `t3.large` + gp3 100 GB  | $109.17        | $88.88    |
+| 리소스                                                              | ap-northeast-1 | us-east-1 |
+| ------------------------------------------------------------------- | -------------- | --------- |
+| Interface VPC Endpoint (엔드포인트 1개·AZ 1개당)                    | $10.22         | $7.30     |
+| Route 53 Resolver 인바운드 엔드포인트 (ENI 2개)                     | $182.50        | $182.50   |
+| Application Load Balancer (시간 요금)                               | $17.74         | $16.43    |
+| 웹 앱용 Fargate 태스크 (0.25 vCPU / 0.5 GB × 1)                     | $11.25         | $9.01     |
+| 검증용 Windows 인스턴스 `r6i.large` (v5.6 이전 기본값) + gp3 100 GB | $187.72        | $167.14   |
+| 검증용 Windows 인스턴스 `t3.large` (기본값) + gp3 100 GB            | $109.17        | $88.88    |
 
 ap-northeast-1 구성 예(VPC 신규 생성, 2 AZ):
 
 | 구성                                                                                                                                                                        | Interface VPC Endpoint 수   | 월 고정비 |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | --------- |
-| 기본값 (검증 환경과 Resolver Endpoint 있음, RAG / Agent 없음)                                                                                                               | (14 + 검증 환경용 3) × 2 AZ | 약 $747   |
-| 기본값 + 에이전트 빌더                                                                                                                                                      | (16 + 3) × 2 AZ             | 약 $788   |
+| 기본값 (검증 환경과 Resolver Endpoint 있음, RAG / Agent 없음)                                                                                                               | (14 + 검증 환경용 3) × 2 AZ | 약 $668   |
+| 기본값 + 에이전트 빌더                                                                                                                                                      | (16 + 3) × 2 AZ             | 약 $709   |
 | 최소 구성: `closedNetworkCreateTestEnvironment: false`, `closedNetworkCreateResolverEndpoint: false`, `closedNetworkVpcEndpointAzs`로 1 AZ, 음성 인식·회의록 생성·번역 숨김 | 11 × 1 AZ                   | 약 $141   |
 
 가장 큰 항목은 검증용 인스턴스와 Resolver Endpoint입니다. 기존 DNS를 통해 자사 네트워크에서 접속하는 경우 둘 다 비활성화하세요. `closedNetworkVpcEndpointAzs`로 AZ를 1개로 지정하면 VPC Endpoint 비용이 절반이 되지만 가용성은 낮아집니다.
@@ -174,6 +174,17 @@ Windows 내에서 Edge 브라우저를 열고 ClosedNetworkStack의 WebUrl 출�
 
 검증 인스턴스는 자동으로 중지되지 않으므로 검증 완료 후 EC2에서 해당 인스턴스를 수동으로 중지하세요.
 또한 검증 환경 자체가 필요하지 않은 경우 closedNetworkCreateTestEnvironment를 false로 설정하고 재배포하여 삭제할 수 있습니다.
+
+v5.6에서 기본 인스턴스 유형을 `r6i.large`에서 `t3.large`로 변경했습니다. 기존 환경을 업데이트하면 검증 인스턴스가 새 유형으로 중지·시작됩니다. 이전 유형을 계속 사용하려면 `closedNetworkTestEnvironmentInstanceType: 'r6i.large'`를 지정하세요.
+
+### 자신의 PC에서 접속하기 (VPN)
+
+검증 인스턴스는 배포 직후 바로 동작을 확인하기 위한 것입니다. 여러 명이 검증하거나 운영 환경에서 사용할 때는 네트워크를 통해 폐쇄 네트워크 VPC에 접속하고 `closedNetworkCreateTestEnvironment`를 false로 설정하세요.
+
+- **기존 온프레미스 네트워크**: AWS Site-to-Site VPN 또는 AWS Direct Connect로 연결하고, 온프레미스 연결을 위한 DNS 서버 구성에 따라 DNS를 설정합니다.
+- **개인 PC**: [AWS Client VPN](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html)을 사용하면 각자의 브라우저에서 GenU를 사용할 수 있습니다. VPC Endpoint의 프라이빗 DNS 이름을 확인할 수 있도록 Client VPN 엔드포인트의 DNS 서버에 VPC DNS(VPC CIDR 기준 + 2, 예: `10.0.0.2`)를 지정하세요. ap-northeast-1에서는 서브넷 연결 1시간당 $0.15(서브넷 1개로 월 약 $110)와 연결 1시간당 $0.05가 부과됩니다(2026-11-10 기준). Client VPN에는 ACM 서버 인증서와 상호 인증 또는 SAML 인증이 필요하며, GenU는 이를 생성하지 않습니다.
+
+AWS Verified Access는 사용할 수 없습니다. 브라우저가 API Gateway, Cognito, S3, Lambda 등 AWS 서비스 엔드포인트를 직접 호출하는데, 이들은 Verified Access 뒤에 둘 수 없기 때문입니다.
 
 ## 폐쇄 네트워크 GenU에 사용자 정의 도메인 설정
 

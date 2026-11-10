@@ -2560,7 +2560,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 1`] = `
         "ImageId": {
           "Ref": "SsmParameterValueawsserviceamiwindowslatestWindowsServer2025EnglishFullBaseC96584B6F00A464EAD1953AFF4B05118Parameter",
         },
-        "InstanceType": "r6i.large",
+        "InstanceType": "t3.large",
         "KeyName": {
           "Ref": "WindowsRdpWindowsKeyPair02415E47",
         },
