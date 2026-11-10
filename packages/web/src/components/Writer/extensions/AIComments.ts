@@ -5,6 +5,7 @@ import useWriter from '../../../hooks/useWriter';
 import { removeAIHighlight } from 'novel';
 import { toast } from 'sonner';
 import { TFunction } from 'i18next';
+import { buildExcerptRegex } from '../lib/excerptRegex';
 
 const REGEX_BRACKET = /\{(?:[^{}])*\}/g;
 const REGEX_ZENKAKU =
@@ -66,15 +67,8 @@ export class AICommentManager {
     const doc = this.editor.state.doc;
     const matches: { from: number; to: number }[] = [];
 
-    // Escape the regular expression
-    const escapedSearchText = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    // Allow flexible matching of newlines and spaces
-    const searchRegex = new RegExp(
-      escapedSearchText
-        .replace(/\n/g, '[\\s\\n]*') // Match newlines with any whitespace or newline
-        .replace(/\s+/g, '[\\s\\n]*'), // Match spaces with any whitespace or newline
-      'g'
-    );
+    const searchRegex = buildExcerptRegex(searchText);
+    if (!searchRegex) return matches;
 
     // Collect the text and position information
     let fullText = '';
