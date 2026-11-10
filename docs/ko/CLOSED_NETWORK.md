@@ -184,8 +184,6 @@ v5.6에서 기본 인스턴스 유형을 `r6i.large`에서 `t3.large`로 변경�
 - **기존 온프레미스 네트워크**: AWS Site-to-Site VPN 또는 AWS Direct Connect로 연결하고, 온프레미스 연결을 위한 DNS 서버 구성에 따라 DNS를 설정합니다.
 - **개인 PC**: [AWS Client VPN](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html)을 사용하면 각자의 브라우저에서 GenU를 사용할 수 있습니다. VPC Endpoint의 프라이빗 DNS 이름을 확인할 수 있도록 Client VPN 엔드포인트의 DNS 서버에 VPC DNS(VPC CIDR 기준 + 2, 예: `10.0.0.2`)를 지정하세요. ap-northeast-1에서는 서브넷 연결 1시간당 $0.15(서브넷 1개로 월 약 $110)와 연결 1시간당 $0.05가 부과됩니다(2026-11-10 기준). Client VPN에는 ACM 서버 인증서와 상호 인증 또는 SAML 인증이 필요하며, GenU는 이를 생성하지 않습니다.
 
-AWS Verified Access는 사용할 수 없습니다. 브라우저가 API Gateway, Cognito, S3, Lambda 등 AWS 서비스 엔드포인트를 직접 호출하는데, 이들은 Verified Access 뒤에 둘 수 없기 때문입니다.
-
 ## 폐쇄 네트워크 GenU에 사용자 정의 도메인 설정
 
 ### 인증서 획득

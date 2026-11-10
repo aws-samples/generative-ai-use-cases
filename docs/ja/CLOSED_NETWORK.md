@@ -203,8 +203,6 @@ v5.6 でデフォルトのインスタンスタイプを `r6i.large` から `t3.
 - **既存のオンプレミスネットワーク**: AWS Site-to-Site VPN または AWS Direct Connect で接続し、[オンプレから接続する場合の DNS サーバーの設定について](#オンプレから接続する場合の-dns-サーバーの設定について) に従って DNS を設定します。
 - **個人の PC**: [AWS Client VPN](https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/what-is.html) を使うと、各自のブラウザで GenU を利用できます。VPC Endpoint のプライベート DNS 名を解決できるよう、Client VPN エンドポイントの DNS サーバーに VPC の DNS (VPC の CIDR のベース + 2、例: `10.0.0.2`) を指定してください。ap-northeast-1 では、サブネット関連付け 1 時間あたり $0.15 (1 サブネットで月約 $110) と接続 1 時間あたり $0.05 がかかります (2026-11-10 時点)。Client VPN には ACM のサーバー証明書と相互認証または SAML 認証が必要で、GenU では作成しません。
 
-AWS Verified Access は利用できません。ブラウザは API Gateway、Cognito、S3、Lambda などの AWS サービスのエンドポイントを直接呼び出しますが、これらは Verified Access の背後に置けないためです。
-
 ## 閉域 GenU に独自のドメインを設定する
 
 ### 証明書の取得

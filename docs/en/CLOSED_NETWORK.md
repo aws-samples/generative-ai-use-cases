@@ -202,8 +202,6 @@ The test instance is meant for a quick check right after deployment. For checks 
 - **Existing on-premises network**: connect through AWS Site-to-Site VPN or AWS Direct Connect, and configure DNS as described in [DNS Server Configuration for On-Premises Connection](#dns-server-configuration-for-on-premises-connection).
 - **Individual PCs**: [AWS Client VPN](https://docs.aws.amazon.com/vpn/latest/clientvpn-admin/what-is.html) lets each user open GenU in their own browser. Set the DNS server of the Client VPN endpoint to the VPC DNS (the VPC CIDR base + 2, for example `10.0.0.2`) so that the private DNS names of the VPC endpoints resolve. In ap-northeast-1 it costs $0.15 per subnet association hour (about $110/month for one subnet) plus $0.05 per connection hour (as of 2026-11-10). Client VPN needs a server certificate in ACM and mutual or SAML authentication; GenU does not create it.
 
-AWS Verified Access is not suitable: the browser calls API Gateway, Cognito, S3, Lambda and other AWS service endpoints directly, and they cannot be placed behind Verified Access.
-
 ## Setting a Custom Domain for Closed Network GenU
 
 ### Obtaining a Certificate
