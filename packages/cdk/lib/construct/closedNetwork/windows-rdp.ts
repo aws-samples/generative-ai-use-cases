@@ -12,6 +12,8 @@ const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
 export interface WindowsRdpProps {
   readonly vpc: ec2.IVpc;
   readonly subnetIds?: string[] | null;
+  readonly vpcEndpointAvailabilityZones?: string[] | null;
+  readonly instanceType: string;
 }
 
 export class WindowsRdp extends Construct {
@@ -44,6 +46,17 @@ export class WindowsRdp extends Construct {
       ec2.Port.tcp(443)
     );
 
+    // Same AZ selection as the other Interface VPC Endpoints (closedNetworkVpcEndpointAzs)
+    const endpointSubnetFilters: ec2.SubnetFilter[] = [];
+    if (props.subnetIds) {
+      endpointSubnetFilters.push(ec2.SubnetFilter.byIds(props.subnetIds));
+    }
+    if (props.vpcEndpointAvailabilityZones?.length) {
+      endpointSubnetFilters.push(
+        ec2.SubnetFilter.availabilityZones(props.vpcEndpointAvailabilityZones)
+      );
+    }
+
     for (const [name, service] of Object.entries(VPC_ENDPOINTS)) {
       const vpcEndpoint = new ec2.InterfaceVpcEndpoint(
         this,
@@ -52,11 +65,10 @@ export class WindowsRdp extends Construct {
           vpc: props.vpc,
           service,
           subnets: props.subnetIds
-            ? {
-                subnetFilters: [ec2.SubnetFilter.byIds(props.subnetIds)],
-              }
+            ? { subnetFilters: endpointSubnetFilters }
             : {
                 subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+                subnetFilters: endpointSubnetFilters,
               },
           securityGroups: [vpcEndpointSecurityGroup],
           privateDnsEnabled: true,
@@ -87,10 +99,7 @@ export class WindowsRdp extends Construct {
             subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
           },
       securityGroup: windowsSecurityGroup,
-      instanceType: ec2.InstanceType.of(
-        ec2.InstanceClass.MEMORY6_INTEL,
-        ec2.InstanceSize.LARGE
-      ),
+      instanceType: new ec2.InstanceType(props.instanceType),
       machineImage: ec2.MachineImage.latestWindows(
         ec2.WindowsVersion.WINDOWS_SERVER_2025_ENGLISH_FULL_BASE
       ),

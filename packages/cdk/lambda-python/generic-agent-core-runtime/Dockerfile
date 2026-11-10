@@ -17,6 +17,13 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 # Pre-install mcp-remote for faster startup
 RUN npm install -g mcp-remote
 
+# Pre-install mcp-proxy-for-aws so it works without runtime PyPI access
+# (required for closed network mode where the runtime VPC has no internet egress).
+# UV_TOOL_BIN_DIR=/usr/local/bin places the binary on PATH so mcp.json can call
+# `mcp-proxy-for-aws` directly without going through `uvx` (which would re-fetch
+# from PyPI at every invocation due to UV_NO_CACHE=1).
+RUN UV_TOOL_BIN_DIR=/usr/local/bin UV_TOOL_DIR=/usr/local/uv-tools uv tool install mcp-proxy-for-aws
+
 # Copy dependency files
 COPY pyproject.toml .python-version uv.lock ./
 # Install Python dependencies

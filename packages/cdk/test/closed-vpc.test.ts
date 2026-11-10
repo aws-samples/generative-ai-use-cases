@@ -53,6 +53,34 @@ describe('ClosedVpc', () => {
     expect(counts.every((c) => c === 2)).toBe(true);
   });
 
+  test('creates only the listed Interface VPC Endpoints', () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, 'TestStack', {
+      env: { account: '123456789012', region: 'ap-northeast-1' },
+    });
+    new ClosedVpc(stack, 'ClosedVpc', {
+      ipv4Cidr: '10.0.0.0/16',
+      vpcEndpointNames: ['ApiGateway', 'Bedrock'],
+    });
+    expect(
+      getInterfaceEndpointSubnetCounts(Template.fromStack(stack))
+    ).toHaveLength(2);
+  });
+
+  test('throws on an unknown Interface VPC Endpoint name', () => {
+    const app = new cdk.App();
+    const stack = new cdk.Stack(app, 'TestStack', {
+      env: { account: '123456789012', region: 'ap-northeast-1' },
+    });
+    expect(
+      () =>
+        new ClosedVpc(stack, 'ClosedVpc', {
+          ipv4Cidr: '10.0.0.0/16',
+          vpcEndpointNames: ['ApiGateway', 'Typo'],
+        })
+    ).toThrow(/Typo/);
+  });
+
   test('throws when the specified AZ does not exist', () => {
     expect(() => createTemplate(['dummy1z'])).toThrow();
   });

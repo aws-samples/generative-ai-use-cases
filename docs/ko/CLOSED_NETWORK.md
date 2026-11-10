@@ -9,18 +9,19 @@
 
 폐쇄 네트워크 모드와 관련된 옵션은 `closedNetwork` 접두사를 가집니다. 다음은 옵션 목록입니다:
 
-| 매개변수                              | 설명                                                                                                                                                                                                                                                       |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| closedNetworkMode                     | 폐쇄 네트워크 모드를 활성화할지 여부. true는 폐쇄 네트워크 모드를 활성화합니다. 기본값은 false입니다.                                                                                                                                                      |
-| closedNetworkVpcIpv4Cidr              | 새 VPC를 생성할 때 지정할 IPv4 CIDR. 기본값은 10.0.0.0/16입니다.                                                                                                                                                                                           |
-| closedNetworkVpcId                    | 기존 VPC를 가져올 때의 VPC ID. 지정하지 않으면 새 VPC가 생성됩니다.                                                                                                                                                                                        |
-| closedNetworkSubnetIds                | GenU 관련 리소스가 배포될 여러 서브넷 ID를 지정합니다. ALB, Fargate 작업, VPC 엔드포인트, Resolver 엔드포인트가 생성됩니다. 지정하지 않으면 격리된 서브넷이 선택됩니다. 배열에 2개 이상의 서브넷 ID를 지정하세요.                                          |
-| closedNetworkVpcEndpointAzs           | 인터페이스 VPC 엔드포인트를 생성할 AZ 배열 (예: `['ap-northeast-1a']`). 하나만 지정 시 비용 절감 (가용성 하락). 기본값 null은 전체 AZ. ALB 등 다른 리소스에는 영향 없음. `closedNetworkSubnetIds` 병용 시 둘 다 일치하는 서브넷만 사용.                    |
-| closedNetworkApiGatewayVpcEndpointIds | API Gateway 리소스 정책에서 추가로 허용할 VPC 엔드포인트 ID 배열입니다. GenU가 생성하는 API Gateway VPC 엔드포인트는 항상 허용됩니다. 다른 VPC나 다른 계정의 VPC 엔드포인트(예: 집약 VPC의 공유 엔드포인트)를 통해 API Gateway를 호출하는 경우 지정합니다. |
-| closedNetworkCertificateArn           | GenU에 도메인을 할당할 때 지정할 ACM ARN. ACM은 수동으로 생성해야 합니다. 지정하지 않으면 GenU는 Application Load Balancer의 기본 엔드포인트로 게시됩니다.                                                                                                 |
-| closedNetworkDomainName               | GenU의 도메인 이름. Private Hosted Zone은 CDK에서 생성되므로 수동 생성이 필요하지 않습니다. `closedNetworkCertificateArn`과 `closedNetworkDomainName`은 함께 지정하거나 둘 다 생략해야 합니다.                                                             |
-| closedNetworkCreateTestEnvironment    | 테스트 환경을 생성할지 여부. 기본적으로 생성됩니다. 필요하지 않으면 false를 지정하세요. 테스트 환경은 EC2 Windows 인스턴스로 생성되며 Fleet Manager를 통해 액세스됩니다. (자세한 절차는 나중에 설명됩니다.)                                                |
-| closedNetworkCreateResolverEndpoint   | Route53 Resolver 엔드포인트를 생성할지 여부. 기본값은 true입니다.                                                                                                                                                                                          |
+| 매개변수                                 | 설명                                                                                                                                                                                                                                                       |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| closedNetworkMode                        | 폐쇄 네트워크 모드를 활성화할지 여부. true는 폐쇄 네트워크 모드를 활성화합니다. 기본값은 false입니다.                                                                                                                                                      |
+| closedNetworkVpcIpv4Cidr                 | 새 VPC를 생성할 때 지정할 IPv4 CIDR. 기본값은 10.0.0.0/16입니다.                                                                                                                                                                                           |
+| closedNetworkVpcId                       | 기존 VPC를 가져올 때의 VPC ID. 지정하지 않으면 새 VPC가 생성됩니다.                                                                                                                                                                                        |
+| closedNetworkSubnetIds                   | GenU 관련 리소스가 배포될 여러 서브넷 ID를 지정합니다. ALB, Fargate 작업, VPC 엔드포인트, Resolver 엔드포인트가 생성됩니다. 지정하지 않으면 격리된 서브넷이 선택됩니다. 배열에 2개 이상의 서브넷 ID를 지정하세요.                                          |
+| closedNetworkVpcEndpointAzs              | 인터페이스 VPC 엔드포인트를 생성할 AZ 배열 (예: `['ap-northeast-1a']`). 하나만 지정 시 비용 절감 (가용성 하락). 기본값 null은 전체 AZ. ALB 등 다른 리소스에는 영향 없음. `closedNetworkSubnetIds` 병용 시 둘 다 일치하는 서브넷만 사용.                    |
+| closedNetworkApiGatewayVpcEndpointIds    | API Gateway 리소스 정책에서 추가로 허용할 VPC 엔드포인트 ID 배열입니다. GenU가 생성하는 API Gateway VPC 엔드포인트는 항상 허용됩니다. 다른 VPC나 다른 계정의 VPC 엔드포인트(예: 집약 VPC의 공유 엔드포인트)를 통해 API Gateway를 호출하는 경우 지정합니다. |
+| closedNetworkCertificateArn              | GenU에 도메인을 할당할 때 지정할 ACM ARN. ACM은 수동으로 생성해야 합니다. 지정하지 않으면 GenU는 Application Load Balancer의 기본 엔드포인트로 게시됩니다.                                                                                                 |
+| closedNetworkDomainName                  | GenU의 도메인 이름. Private Hosted Zone은 CDK에서 생성되므로 수동 생성이 필요하지 않습니다. `closedNetworkCertificateArn`과 `closedNetworkDomainName`은 함께 지정하거나 둘 다 생략해야 합니다.                                                             |
+| closedNetworkCreateTestEnvironment       | 테스트 환경을 생성할지 여부. 기본적으로 생성됩니다. 필요하지 않으면 false를 지정하세요. 테스트 환경은 EC2 Windows 인스턴스로 생성되며 Fleet Manager를 통해 액세스됩니다. (자세한 절차는 나중에 설명됩니다.)                                                |
+| closedNetworkTestEnvironmentInstanceType | 검증용 Windows 인스턴스의 인스턴스 유형. 기본값은 `r6i.large`. `t3.large` 등으로 지정하면 검증 환경 비용을 줄일 수 있음.                                                                                                                                   |
+| closedNetworkCreateResolverEndpoint      | Route53 Resolver 엔드포인트를 생성할지 여부. 기본값은 true입니다.                                                                                                                                                                                          |
 
 ## 현재 제한사항
 
@@ -31,6 +32,65 @@
 - SAML 통합은 사용할 수 없습니다.
 - Voice Chat 사용 사례는 현재 사용할 수 없습니다.
 - AgentCore Chat 사용 사례는 현재 사용할 수 없습니다.
+
+## 폐쇄 네트워크 모드에서 사용할 수 있는 기능
+
+폐쇄 네트워크 모드에서 동작하지 않는 설정은 `cdk synth` / `cdk deploy` 시 Warning으로 표시됩니다(ID는 `genu:closedNetwork:`로 시작). "숨김"으로 표시된 유스케이스는 UI에서 자동으로 숨겨집니다.
+
+| 기능                                                                                                        | 지원      | 비고                                                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 채팅, 문장 생성, 요약, 집필, 번역, 다이어그램 생성, 영상 분석, 유스케이스 빌더                              | ✅        |                                                                                                                                                                              |
+| 음성 인식, 회의록 생성                                                                                      | ✅        |                                                                                                                                                                              |
+| RAG (Knowledge Base), RAG (Kendra)                                                                          | ✅        |                                                                                                                                                                              |
+| Agent (Bedrock Agents), Flows                                                                               | ✅        |                                                                                                                                                                              |
+| 이미지 생성, 동영상 생성                                                                                    | △         | `region`의 모델만 사용할 수 있습니다. 다른 리전의 모델은 표시되지 않으며, 남는 모델이 없으면 유스케이스가 숨겨집니다.                                                        |
+| AgentCore (에이전트 빌더, 범용 런타임)                                                                      | △         | 폐쇄 네트워크 VPC 안에서 동작합니다. 인터넷이 필요한 도구(웹 검색, URL 가져오기, 외부 API를 호출하거나 실행 시 npm/PyPI에서 패키지를 가져오는 MCP 서버)는 동작하지 않습니다. |
+| MCP 채팅                                                                                                    | △         | 인터넷이 필요한 MCP 서버는 동작하지 않습니다.                                                                                                                                |
+| 음성 채팅                                                                                                   | ❌ (숨김) |                                                                                                                                                                              |
+| 웹 콘텐츠 추출                                                                                              | ❌ (숨김) | 웹 페이지를 가져오려면 인터넷 연결이 필요합니다.                                                                                                                             |
+| 검색 에이전트 (`searchAgentEnabled`)                                                                        | ❌        | 외부 검색 API를 호출합니다.                                                                                                                                                  |
+| Research Agent (`researchAgentEnabled`)                                                                     | ❌        | 런타임이 PUBLIC 네트워크 모드입니다.                                                                                                                                         |
+| SAML 연동                                                                                                   | ❌        |                                                                                                                                                                              |
+| `allowedIpV4AddressRanges` / `allowedIpV6AddressRanges` / `allowedCountryCodes` / `hostName` / `domainName` | ❌ (무시) | CloudFront와 WAF를 생성하지 않습니다. 사용자 지정 도메인은 `closedNetworkDomainName`을 사용하세요.                                                                           |
+
+## 생성되는 VPC Endpoint
+
+Interface형 VPC Endpoint는 엔드포인트별·AZ별로 과금되므로, 활성화한 기능에 필요한 것만 생성합니다. 기능을 비활성화하고 다시 배포하면 해당 VPC Endpoint는 삭제됩니다.
+
+| VPC Endpoint                                                                                                                                                  | 생성 조건                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `execute-api`, `lambda`, `cognito-idp`, `cognito-identity`, `s3` (Interface), `bedrock-runtime`, `bedrock-agent-runtime`, `ecr.api`, `ecr.dkr`, `logs`, `sts` | 항상                                                                                                                |
+| `s3`, `dynamodb` (Gateway형, 무료)                                                                                                                            | 항상                                                                                                                |
+| `transcribe`                                                                                                                                                  | 음성 인식 또는 회의록 생성을 숨기지 않음                                                                            |
+| `transcribestreaming`                                                                                                                                         | 음성 인식, 회의록 생성, 번역 중 하나를 숨기지 않음                                                                  |
+| `polly`                                                                                                                                                       | 번역을 숨기지 않음                                                                                                  |
+| `bedrock-agentcore`, `bedrock-agentcore-gateway`, `secretsmanager`                                                                                            | `agentBuilderEnabled`, `createGenericAgentCoreRuntime`, `researchAgentEnabled`, `agentCoreExternalRuntimes` 중 하나 |
+| `bedrock-agent`                                                                                                                                               | `agentEnabled`, `searchAgentEnabled`, `agents` 중 하나                                                              |
+| `kendra`                                                                                                                                                      | `ragEnabled`                                                                                                        |
+| `ssm`, `ssmmessages`, `ec2messages`                                                                                                                           | `closedNetworkCreateTestEnvironment`                                                                                |
+
+## 고정비 목안
+
+폐쇄 네트워크 모드에서 생성되는 리소스의 월 고정비입니다(730시간, AWS Price List API의 온디맨드 요금, 2026-11-10 기준). Amazon Bedrock, Lambda 등의 종량 과금, VPC Endpoint 데이터 처리 요금($0.01/GB), ALB LCU는 포함하지 않습니다. 최신 요금은 [AWS Pricing Calculator](https://calculator.aws/)에서 확인하세요.
+
+| 리소스                                           | ap-northeast-1 | us-east-1 |
+| ------------------------------------------------ | -------------- | --------- |
+| Interface VPC Endpoint (엔드포인트 1개·AZ 1개당) | $10.22         | $7.30     |
+| Route 53 Resolver 인바운드 엔드포인트 (ENI 2개)  | $182.50        | $182.50   |
+| Application Load Balancer (시간 요금)            | $17.74         | $16.43    |
+| 웹 앱용 Fargate 태스크 (0.25 vCPU / 0.5 GB × 1)  | $11.25         | $9.01     |
+| 검증용 Windows 인스턴스 `r6i.large` + gp3 100 GB | $187.72        | $167.14   |
+| 검증용 Windows 인스턴스 `t3.large` + gp3 100 GB  | $109.17        | $88.88    |
+
+ap-northeast-1 구성 예(VPC 신규 생성, 2 AZ):
+
+| 구성                                                                                                                                                                        | Interface VPC Endpoint 수   | 월 고정비 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | --------- |
+| 기본값 (검증 환경과 Resolver Endpoint 있음, RAG / Agent 없음)                                                                                                               | (14 + 검증 환경용 3) × 2 AZ | 약 $747   |
+| 기본값 + 에이전트 빌더                                                                                                                                                      | (17 + 3) × 2 AZ             | 약 $808   |
+| 최소 구성: `closedNetworkCreateTestEnvironment: false`, `closedNetworkCreateResolverEndpoint: false`, `closedNetworkVpcEndpointAzs`로 1 AZ, 음성 인식·회의록 생성·번역 숨김 | 11 × 1 AZ                   | 약 $141   |
+
+가장 큰 항목은 검증용 인스턴스와 Resolver Endpoint입니다. 기존 DNS를 통해 자사 네트워크에서 접속하는 경우 둘 다 비활성화하세요. `closedNetworkVpcEndpointAzs`로 AZ를 1개로 지정하면 VPC Endpoint 비용이 절반이 되지만 가용성은 낮아집니다.
 
 ## 유효한 구성 파일 예시
 

@@ -235,6 +235,7 @@ const baseStackInputSchema = z.object({
   closedNetworkCertificateArn: z.string().nullish(),
   closedNetworkDomainName: z.string().nullish(),
   closedNetworkCreateTestEnvironment: z.boolean().default(true),
+  closedNetworkTestEnvironmentInstanceType: z.string().default('r6i.large'),
   closedNetworkCreateResolverEndpoint: z.boolean().default(true),
 });
 
@@ -268,6 +269,29 @@ export const stackInputSchema = baseStackInputSchema
       message:
         'Both VPC ID and Subnet IDs must be provided together for AgentCore network configuration',
       path: ['agentCoreVpcId'],
+    }
+  )
+  .refine(
+    (data) => {
+      // In closed network mode, AgentCore must run in the same region as the closed VPC
+      const agentCoreEnabled =
+        data.agentBuilderEnabled ||
+        data.createGenericAgentCoreRuntime ||
+        data.researchAgentEnabled;
+      if (
+        data.closedNetworkMode &&
+        agentCoreEnabled &&
+        data.agentCoreRegion &&
+        data.agentCoreRegion !== data.region
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        'agentCoreRegion must equal region when closedNetworkMode=true (the AgentCore Runtime shares the closed VPC, which exists in a single region)',
+      path: ['agentCoreRegion'],
     }
   );
 
