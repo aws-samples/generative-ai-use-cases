@@ -35,6 +35,7 @@ export class AgentCoreStack extends Stack {
         vpc: props.vpc,
         subnets: props.subnets,
         gatewayArns: params.agentCoreGatewayArns ?? undefined,
+        closedNetworkMode: params.closedNetworkMode,
       });
 
       // Outputs read by GenerativeAiUseCasesStack via StackOutputs, also across Regions (only if values exist)

@@ -46,6 +46,9 @@ export interface GenericAgentCoreProps {
   vpc?: IVpc;
   subnets?: ISubnet[];
   gatewayArns?: string[];
+  // Closed network mode: the generic runtime starts no default MCP servers,
+  // since they are downloaded from npm/PyPI or call internet endpoints
+  closedNetworkMode?: boolean;
   // The text generation models of this deployment, for their output token limits
   modelIds?: string[];
 }
@@ -80,6 +83,7 @@ export class GenericAgentCore extends Construct {
       vpc: providedVpc,
       subnets: providedSubnets,
       gatewayArns,
+      closedNetworkMode = false,
     } = props;
 
     this.gatewayArns = gatewayArns;
@@ -91,7 +95,8 @@ export class GenericAgentCore extends Construct {
     const configs = this.loadConfigurations(
       env,
       this._fileBucket.bucketName,
-      props.modelIds ?? []
+      props.modelIds ?? [],
+      closedNetworkMode
     );
     this.genericRuntimeConfig = configs.generic;
     this.agentBuilderRuntimeConfig = configs.agentBuilder;
@@ -196,7 +201,8 @@ export class GenericAgentCore extends Construct {
   private loadConfigurations(
     env: string,
     bucketName: string,
-    modelIds: string[]
+    modelIds: string[],
+    closedNetworkMode: boolean
   ) {
     const modelMaxTokens = this.modelMaxTokensEnvironment(modelIds);
     return {
@@ -209,7 +215,9 @@ export class GenericAgentCore extends Construct {
         serverProtocol: 'HTTP',
         environmentVariables: {
           FILE_BUCKET: bucketName,
-          MCP_CONFIG_PATH: '/var/task/mcp-configs/generic/mcp.json',
+          MCP_CONFIG_PATH: closedNetworkMode
+            ? '/var/task/mcp-configs/closed-network/mcp.json'
+            : '/var/task/mcp-configs/generic/mcp.json',
           SUPPORTED_CACHE_FIELDS: JSON.stringify(SUPPORTED_CACHE_FIELDS),
           ...modelMaxTokens,
         },
