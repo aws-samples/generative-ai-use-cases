@@ -231,6 +231,7 @@ export class GenerativeAiUseCasesStack extends Stack {
     // API
     const api = new Api(this, 'API', {
       modelRegion: params.modelRegion,
+      textractRegion: params.textractRegion ?? this.region,
       modelIds: params.modelIds,
       imageGenerationModelIds: params.imageGenerationModelIds,
       videoGenerationModelIds: params.videoGenerationModelIds,

@@ -1013,6 +1013,40 @@ const envs: Record<string, Partial<StackInput>> = {
 
 프롬프트 최적화 지원 상태는 [이 링크](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management-optimize.html)를 참조하세요.
 
+### 텍스트 추출 도구 활성화
+
+텍스트 추출 도구는 이미지 또는 1페이지 PDF/TIFF에서 Amazon Textract(`DetectDocumentText`)로 텍스트를 감지하고 각 줄/단어의 신뢰도와 바운딩 박스를 표시합니다.
+기본적으로 표시되며, 숨기려면 `hiddenUseCases.textract`를 지정합니다(아래 "특정 사용 사례 숨기기" 참조).
+
+Amazon Textract를 호출하는 리전은 `textractRegion`으로 지정합니다. `null`(기본값)인 경우 GenU를 배포한 리전이 사용됩니다.
+
+> [!NOTE]
+> Amazon Textract는 모든 리전에서 사용할 수 있는 것은 아닙니다. `textractRegion`을 설정하기 전에 [지원 리전](https://docs.aws.amazon.com/general/latest/gr/textract.html)을 확인하세요. `ap-northeast-1`(도쿄)은 지정 가능한 값입니다.
+> 업로드한 문서는 지정한 리전으로 전송되므로 데이터 레지던시 요건을 고려하세요.
+> 업로드한 파일은 바이트로 Amazon Textract에 전달되므로 Textract 리전은 파일 버킷의 리전과 달라도 됩니다. 업로드한 파일은 텍스트 감지 직후 버킷에서 삭제됩니다.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    textractRegion: 'ap-northeast-1',
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+{
+  "context": {
+    "textractRegion": "ap-northeast-1"
+  }
+}
+```
+
 ### 특정 사용 사례 숨기기
 
 다음 옵션으로 사용 사례를 숨길 수 있습니다.
@@ -1036,6 +1070,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // 다이어그램 생성 숨기기
       meetingMinutes: true, // 회의록 생성 숨기기
       voiceChat: true, // 음성 채팅 숨기기
+      textract: true, // 텍스트 추출 숨기기
     },
   },
 };
@@ -1058,7 +1093,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "videoAnalyzer": true,
       "diagram": true,
       "meetingMinutes": true,
-      "voiceChat": true
+      "voiceChat": true,
+      "textract": true
     }
   }
 }

@@ -30,6 +30,7 @@
 - 다양한 리소스가 생성되므로 기존 VPC를 가져올 때는 가능한 한 깨끗한 환경을 사용하는 것이 좋습니다.
 - SAML 통합은 사용할 수 없습니다.
 - Voice Chat 사용 사례는 현재 사용할 수 없습니다.
+- 텍스트 추출 도구는 지원되지 않습니다. Amazon Textract용 VPC 엔드포인트는 생성되지 않습니다. `hiddenUseCases: { textract: true }`로 숨기세요.
 - AgentCore Chat 사용 사례는 현재 사용할 수 없습니다.
 
 ## 유효한 구성 파일 예시

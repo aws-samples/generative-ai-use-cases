@@ -648,6 +648,7 @@ navigation:
   speechRecognition: Nhận dạng giọng nói
   summary: Tóm tắt
   textGeneration: Tạo văn bản
+  textract: Trích xuất văn bản
   translation: Dịch thuật
   videoAnalysis: Phân tích video
   videoGeneration: Tạo video
@@ -762,6 +763,40 @@ summarize:
   result_placeholder: Văn bản được tóm tắt sẽ được hiển thị ở đây
   text_to_summarize: Văn bản muốn tóm tắt
   title: Tóm tắt
+textract:
+  clear: Xóa
+  col_box: Khung (left, top, width, height) [0-1]
+  col_box_px: Khung theo pixel (left, top, width, height)
+  col_confidence: Độ tin cậy (%)
+  col_text: Văn bản
+  copy_text: Sao chép văn bản
+  description: Tải lên hình ảnh hoặc PDF/TIFF một trang. Amazon Textract phát hiện văn bản và hiển thị độ tin cậy cùng khung bao của từng dòng hoặc từ.
+  detecting: Đang phát hiện văn bản...
+  download_csv: Tải CSV
+  download_json: Tải JSON
+  drop_hint: Bạn cũng có thể kéo và thả tệp vào đây.
+  error_failed: Không thể trích xuất văn bản. Vui lòng thử lại.
+  error_title: Lỗi
+  error_too_large: Tệp quá lớn. Kích thước tối đa là {{size}} MB.
+  error_unsupported_type: Loại tệp không được hỗ trợ. Vui lòng chọn tệp .jpg, .jpeg, .png, .pdf, .tif hoặc .tiff.
+  file_upload: Tải tệp lên
+  full_text: Văn bản của toàn bộ tài liệu
+  min_confidence: 'Độ tin cậy tối thiểu: {{value}}%'
+  no_results: Không phát hiện văn bản (hoặc tất cả các hàng bị bộ lọc độ tin cậy ẩn).
+  overlay_unavailable: Không thể hiển thị khung bao chồng lên PDF/TIFF. Xem bảng để biết văn bản và tọa độ đã phát hiện.
+  preview_alt: Xem trước {{name}}
+  preview_title: Xem trước
+  region_used: 'Vùng Textract: {{region}}'
+  results_title: Kết quả
+  run: Trích xuất văn bản
+  selected_file: 'Tệp đã chọn: {{name}}'
+  supported_files: 'Hỗ trợ: JPEG, PNG, PDF một trang, TIFF một trang (tối đa {{size}} MB)'
+  table_caption: Văn bản đã phát hiện ({{count}} hàng)
+  title: Trích xuất văn bản
+  uploading: Đang tải lên...
+  view_label: Đơn vị hiển thị
+  view_lines: Dòng
+  view_words: Từ
 transcribe:
   audio_source_lost: Phiên âm đã dừng vì nguồn âm thanh không còn khả dụng
   detailed_parameters: Tham số chi tiết

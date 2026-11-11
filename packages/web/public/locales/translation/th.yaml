@@ -665,6 +665,7 @@ navigation:
   speechRecognition: แปลงเสียงพูดเป็นข้อความ
   summary: สรุป
   textGeneration: การสร้างข้อความ
+  textract: ดึงข้อความ
   translation: การแปล
   videoAnalysis: การวิเคราะห์วิดีโอ
   videoGeneration: การสร้างวิดีโอ
@@ -784,6 +785,40 @@ summarize:
   result_placeholder: ข้อความที่สรุปจะแสดงที่นี่
   text_to_summarize: ข้อความที่จะสรุป
   title: สรุป
+textract:
+  clear: ล้าง
+  col_box: กรอบ (left, top, width, height) [0-1]
+  col_box_px: กรอบเป็นพิกเซล (left, top, width, height)
+  col_confidence: ความเชื่อมั่น (%)
+  col_text: ข้อความ
+  copy_text: คัดลอกข้อความ
+  description: อัปโหลดรูปภาพหรือ PDF/TIFF หนึ่งหน้า Amazon Textract จะตรวจจับข้อความและแสดงความเชื่อมั่นและกรอบล้อมของแต่ละบรรทัดหรือคำ
+  detecting: กำลังตรวจจับข้อความ...
+  download_csv: ดาวน์โหลด CSV
+  download_json: ดาวน์โหลด JSON
+  drop_hint: คุณสามารถลากและวางไฟล์ที่นี่ได้เช่นกัน
+  error_failed: ดึงข้อความไม่สำเร็จ โปรดลองอีกครั้ง
+  error_title: ข้อผิดพลาด
+  error_too_large: ไฟล์ใหญ่เกินไป ขนาดสูงสุดคือ {{size}} MB
+  error_unsupported_type: ไม่รองรับประเภทไฟล์นี้ โปรดเลือกไฟล์ .jpg, .jpeg, .png, .pdf, .tif หรือ .tiff
+  file_upload: อัปโหลดไฟล์
+  full_text: ข้อความของทั้งเอกสาร
+  min_confidence: 'ความเชื่อมั่นขั้นต่ำ: {{value}}%'
+  no_results: ไม่พบข้อความ (หรือทุกแถวถูกซ่อนโดยตัวกรองความเชื่อมั่น)
+  overlay_unavailable: ไม่สามารถแสดงกรอบล้อมซ้อนบน PDF/TIFF ได้ โปรดดูข้อความและพิกัดที่ตรวจพบในตาราง
+  preview_alt: ตัวอย่างของ {{name}}
+  preview_title: ตัวอย่าง
+  region_used: 'รีเจียนของ Textract: {{region}}'
+  results_title: ผลลัพธ์
+  run: ดึงข้อความ
+  selected_file: 'ไฟล์ที่เลือก: {{name}}'
+  supported_files: 'รองรับ: JPEG, PNG, PDF หนึ่งหน้า, TIFF หนึ่งหน้า (สูงสุด {{size}} MB)'
+  table_caption: ข้อความที่ตรวจพบ ({{count}} แถว)
+  title: ดึงข้อความ
+  uploading: กำลังอัปโหลด...
+  view_label: หน่วยการแสดงผล
+  view_lines: บรรทัด
+  view_words: คำ
 transcribe:
   audio_source_lost: การถอดเสียงหยุดลงเนื่องจากไม่สามารถใช้แหล่งเสียงได้อีกต่อไป
   detailed_parameters: ตั้งค่าขั้นสูงแบบกำหนดเอง

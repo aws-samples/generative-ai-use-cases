@@ -553,6 +553,7 @@ navigation:
   speechRecognition: 语音识别
   summary: 摘要
   textGeneration: 文本生成
+  textract: 文字提取
   translation: 翻译
   videoAnalysis: 视频分析
   videoGeneration: 视频生成
@@ -649,6 +650,40 @@ summarize:
   result_placeholder: 摘要将显示在这里
   text_to_summarize: 要摘要的文本
   title: 摘要
+textract:
+  clear: 清除
+  col_box: 边界框 (left, top, width, height) [0-1]
+  col_box_px: 像素坐标 (left, top, width, height)
+  col_confidence: 置信度 (%)
+  col_text: 文字
+  copy_text: 复制文字
+  description: 上传图片或单页 PDF/TIFF。Amazon Textract 会检测文字，并显示每一行或每个单词的置信度和边界框。
+  detecting: 正在检测文字...
+  download_csv: 下载 CSV
+  download_json: 下载 JSON
+  drop_hint: 也可以将文件拖放到此处。
+  error_failed: 文字提取失败，请重试。
+  error_title: 错误
+  error_too_large: 文件过大。最大大小为 {{size}} MB。
+  error_unsupported_type: 不支持的文件类型。请选择 .jpg、.jpeg、.png、.pdf、.tif 或 .tiff 文件。
+  file_upload: 上传文件
+  full_text: 整个文档的文字
+  min_confidence: 最低置信度：{{value}}%
+  no_results: 未检测到文字（或所有行都被置信度过滤器隐藏）。
+  overlay_unavailable: PDF/TIFF 不支持边界框叠加显示。检测到的文字和坐标请参见表格。
+  preview_alt: '{{name}} 的预览'
+  preview_title: 预览
+  region_used: Textract 区域：{{region}}
+  results_title: 结果
+  run: 提取文字
+  selected_file: 已选择的文件：{{name}}
+  supported_files: 支持格式：JPEG、PNG、单页 PDF、单页 TIFF（最大 {{size}} MB）
+  table_caption: 检测到的文字（{{count}} 行）
+  title: 文字提取
+  uploading: 上传中...
+  view_label: 显示单位
+  view_lines: 行
+  view_words: 单词
 transcribe:
   audio_source_lost: 由于音频源不再可用，转录已停止
   detailed_parameters: 详细参数

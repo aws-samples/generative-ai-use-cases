@@ -41,6 +41,7 @@
     "@aws-sdk/client-s3": "^3.1012.0",
     "@aws-sdk/client-sagemaker-runtime": "^3.1012.0",
     "@aws-sdk/client-sts": "^3.988.0",
+    "@aws-sdk/client-textract": "^3.1012.0",
     "@aws-sdk/client-transcribe": "^3.1012.0",
     "@aws-sdk/client-transcribe-streaming": "^3.1012.0",
     "@aws-sdk/credential-providers": "^3.1012.0",
