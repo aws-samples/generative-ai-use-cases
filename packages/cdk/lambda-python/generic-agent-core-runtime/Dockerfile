@@ -19,10 +19,10 @@ RUN npm install -g mcp-remote
 
 # Pre-install mcp-proxy-for-aws so it works without runtime PyPI access
 # (required for closed network mode where the runtime VPC has no internet egress).
-# UV_TOOL_DIR is set for the whole image so that `uvx mcp-proxy-for-aws` in mcp.json
-# finds this installation at run time instead of downloading it again.
-ENV UV_TOOL_DIR=/usr/local/uv-tools UV_TOOL_BIN_DIR=/usr/local/bin
-RUN uv tool install mcp-proxy-for-aws
+# The binary is placed on PATH (/usr/local/bin) and mcp.json calls it directly.
+# `uvx` would not find it: the runtime starts MCP servers with its own UV_TOOL_DIR
+# (see get_uv_environment), so uvx would download the package again.
+RUN UV_TOOL_BIN_DIR=/usr/local/bin UV_TOOL_DIR=/usr/local/uv-tools uv tool install mcp-proxy-for-aws
 
 # Copy dependency files
 COPY pyproject.toml .python-version uv.lock ./

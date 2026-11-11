@@ -76,9 +76,8 @@
       }
     },
     "tavily-gateway": {
-      "command": "uvx",
+      "command": "mcp-proxy-for-aws",
       "args": [
-        "mcp-proxy-for-aws",
         "https://<your-gateway-id>.gateway.bedrock-agentcore.<region>.amazonaws.com/mcp"
       ],
       "metadata": {
