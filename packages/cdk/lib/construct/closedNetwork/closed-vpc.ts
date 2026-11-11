@@ -29,6 +29,27 @@ const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
   Sts: ec2.InterfaceVpcEndpointAwsService.STS,
 };
 
+/**
+ * Subnet filter that keeps only the given AZs for Interface VPC Endpoints.
+ *
+ * On the first synth pass the AZ (or imported VPC) context is not looked up yet and
+ * the VPC reports placeholder AZs (dummy1a, ...). Filtering real AZ names against them
+ * matches no subnet and fails before the CLI can look the context up, so the filter is
+ * skipped on that pass; the next pass, with the real AZs, applies it.
+ */
+export const endpointAzFilter = (
+  vpc: ec2.IVpc,
+  availabilityZones?: string[] | null
+): ec2.SubnetFilter | undefined => {
+  if (!availabilityZones?.length) return undefined;
+  const contextPending =
+    vpc.availabilityZones.every((az) => az.startsWith('dummy')) &&
+    !availabilityZones.every((az) => az.startsWith('dummy'));
+  return contextPending
+    ? undefined
+    : ec2.SubnetFilter.availabilityZones(availabilityZones);
+};
+
 export interface ClosedVpcProps {
   readonly vpcId?: string | null;
   readonly subnetIds?: string[] | null;
@@ -116,10 +137,9 @@ export class ClosedVpc extends Construct {
     if (props.subnetIds) {
       subnetFilters.push(ec2.SubnetFilter.byIds(props.subnetIds));
     }
-    if (props.vpcEndpointAvailabilityZones?.length) {
-      subnetFilters.push(
-        ec2.SubnetFilter.availabilityZones(props.vpcEndpointAvailabilityZones)
-      );
+    const azFilter = endpointAzFilter(vpc, props.vpcEndpointAvailabilityZones);
+    if (azFilter) {
+      subnetFilters.push(azFilter);
     }
 
     const vpcEndpointNames =

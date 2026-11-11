@@ -2,6 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { endpointAzFilter } from './closed-vpc';
 
 const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
   Ssm: ec2.InterfaceVpcEndpointAwsService.SSM,
@@ -51,10 +52,12 @@ export class WindowsRdp extends Construct {
     if (props.subnetIds) {
       endpointSubnetFilters.push(ec2.SubnetFilter.byIds(props.subnetIds));
     }
-    if (props.vpcEndpointAvailabilityZones?.length) {
-      endpointSubnetFilters.push(
-        ec2.SubnetFilter.availabilityZones(props.vpcEndpointAvailabilityZones)
-      );
+    const azFilter = endpointAzFilter(
+      props.vpc,
+      props.vpcEndpointAvailabilityZones
+    );
+    if (azFilter) {
+      endpointSubnetFilters.push(azFilter);
     }
 
     for (const [name, service] of Object.entries(VPC_ENDPOINTS)) {

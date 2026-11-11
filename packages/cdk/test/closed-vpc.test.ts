@@ -81,6 +81,13 @@ describe('ClosedVpc', () => {
     ).toThrow(/Typo/);
   });
 
+  test('does not fail before the AZ context is looked up', () => {
+    // The first synth pass sees placeholder AZs; real AZ names must not fail it
+    const template = createTemplate(['ap-northeast-1a']);
+    const counts = getInterfaceEndpointSubnetCounts(template);
+    expect(counts.length).toBeGreaterThan(0);
+  });
+
   test('throws when the specified AZ does not exist', () => {
     expect(() => createTemplate(['dummy1z'])).toThrow();
   });
