@@ -76,14 +76,20 @@ export const getParams = (app: cdk.App): ProcessedStackInput => {
       params.endpointNames,
       params.modelRegion
     ),
-    // Process agentCoreRegion: null -> modelRegion
-    agentCoreRegion: params.agentCoreRegion || params.modelRegion,
-    // Compute isAgentCoreNetworkPrivate from VPC configuration
-    isAgentCoreNetworkPrivate: !!(
-      params.agentCoreVpcId &&
-      params.agentCoreSubnetIds &&
-      params.agentCoreSubnetIds.length > 0
-    ),
+    // Process agentCoreRegion: null -> modelRegion (forced to region in closed mode)
+    agentCoreRegion: params.closedNetworkMode
+      ? params.region
+      : params.agentCoreRegion || params.modelRegion,
+    // Compute isAgentCoreNetworkPrivate.
+    // In closed network mode, AgentCore Runtime is always private (uses the closed VPC).
+    // Otherwise, private mode is enabled when both agentCoreVpcId and agentCoreSubnetIds are provided.
+    isAgentCoreNetworkPrivate:
+      params.closedNetworkMode ||
+      !!(
+        params.agentCoreVpcId &&
+        params.agentCoreSubnetIds &&
+        params.agentCoreSubnetIds.length > 0
+      ),
     // Load branding configuration
     brandingConfig: loadBrandingConfig(),
   };

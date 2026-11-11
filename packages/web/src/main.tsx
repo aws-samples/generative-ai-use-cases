@@ -161,10 +161,12 @@ const routes: RouteObject[] = [
         element: <OptimizePromptPage />,
       }
     : null,
-  {
-    path: '/transcribe',
-    element: <TranscribePage />,
-  },
+  enabled('transcribe')
+    ? {
+        path: '/transcribe',
+        element: <TranscribePage />,
+      }
+    : null,
   {
     path: '/flow-chat',
     element: <FlowChatPage />,
