@@ -14,6 +14,7 @@ const VALIDATION_PATTERNS: [RegExp, StreamingErrorCode][] = [
   [/more than \d+ documents/i, 'TOO_MANY_DOCUMENTS'],
   [/maximum document size is/i, 'DOCUMENT_TOO_LARGE'],
   [/image exceeds .*maximum/i, 'IMAGE_TOO_LARGE'],
+  [/image dimensions exceed/i, 'IMAGE_DIMENSIONS_TOO_LARGE'],
   [/unsupported mime type/i, 'UNSUPPORTED_FILE_TYPE'],
   [/prompt is too long|input is too long/i, 'CONTEXT_TOO_LONG'],
   [/text content blocks must be non-empty/i, 'EMPTY_MESSAGE'],
