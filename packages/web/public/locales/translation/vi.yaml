@@ -329,6 +329,7 @@ error:
     DOCUMENT_TOO_LARGE: Tài liệu quá lớn để gửi. Vui lòng chia nhỏ hoặc giảm nội dung tài liệu rồi thử lại.
     DUPLICATE_FILE_NAME: Cuộc trò chuyện này có nhiều tệp trùng tên (bao gồm cả tệp đã đính kèm trước đó). Vui lòng đổi tên tệp rồi đính kèm lại, hoặc bắt đầu cuộc trò chuyện mới.
     EMPTY_MESSAGE: Cuộc trò chuyện chứa một tin nhắn trống nên không thể tiếp tục. Vui lòng bắt đầu cuộc trò chuyện mới.
+    IMAGE_DIMENSIONS_TOO_LARGE: Chiều rộng hoặc chiều cao của hình ảnh quá lớn. Mỗi cạnh phải nhỏ hơn hoặc bằng 8000 pixel (3000 pixel khi cuộc trò chuyện có nhiều hình ảnh, kể cả các hình ảnh đã đính kèm trước đó). Vui lòng thu nhỏ hình ảnh rồi đính kèm lại, hoặc bắt đầu cuộc trò chuyện mới.
     IMAGE_TOO_LARGE: Hình ảnh quá lớn. Mỗi hình ảnh phải nhỏ hơn hoặc bằng 3.75 MB.
     INVALID_FILE_NAME: Không thể sử dụng tên tệp này. Vui lòng đổi sang tên ngắn chỉ gồm chữ cái và số rồi đính kèm lại.
     PAYLOAD_TOO_LARGE: Tổng dung lượng tệp đính kèm quá lớn để gửi. Các tệp đã đính kèm trước đó trong cuộc trò chuyện này cũng được gửi lại mỗi lần và được tính vào tổng. Vui lòng bỏ hoặc thu nhỏ tệp đính kèm mới, hoặc bắt đầu cuộc trò chuyện mới.

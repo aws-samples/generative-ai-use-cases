@@ -26,6 +26,14 @@ describe('classifyStreamingError', () => {
       'DOCUMENT_TOO_LARGE',
     ],
     [
+      'The model returned the following errors: messages.0.content.0.image.source.bytes: At least one of the image dimensions exceed max allowed size: 8000 pixels',
+      'IMAGE_DIMENSIONS_TOO_LARGE',
+    ],
+    [
+      'The model returned the following errors: messages.0.content.20.image.source.base64.data: At least one of the image dimensions exceed max allowed size for many-image requests: 3000 pixels',
+      'IMAGE_DIMENSIONS_TOO_LARGE',
+    ],
+    [
       'Unsupported MIME type: application/x-bat. Retry your request with a supported file type: xlsx, txt, pdf, csv, md, doc, html, xls, docx',
       'UNSUPPORTED_FILE_TYPE',
     ],
