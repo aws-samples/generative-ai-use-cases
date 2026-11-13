@@ -12,6 +12,7 @@ import {
   PiImages,
   PiVideoLight,
   PiSpeakerHighBold,
+  PiWaveform,
   PiGear,
   PiGlobe,
   PiX,
@@ -273,6 +274,14 @@ const App: React.FC = () => {
           label: t('navigation.speechRecognition'),
           to: '/transcribe',
           icon: <PiSpeakerHighBold />,
+          display: 'tool' as const,
+        }
+      : null,
+    enabled('textToSpeech')
+      ? {
+          label: t('navigation.textToSpeech'),
+          to: '/text-to-speech',
+          icon: <PiWaveform />,
           display: 'tool' as const,
         }
       : null,

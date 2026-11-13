@@ -1036,6 +1036,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // 다이어그램 생성 숨기기
       meetingMinutes: true, // 회의록 생성 숨기기
       voiceChat: true, // 음성 채팅 숨기기
+      textToSpeech: true, // 음성 파일 생성 숨기기
     },
   },
 };
@@ -1058,11 +1059,16 @@ const envs: Record<string, Partial<StackInput>> = {
       "videoAnalyzer": true,
       "diagram": true,
       "meetingMinutes": true,
-      "voiceChat": true
+      "voiceChat": true,
+      "textToSpeech": true
     }
   }
 }
 ```
+
+음성 파일 생성 관련: 생성된 음성 파일은 공유 파일 버킷(`BUCKET_NAME`)에 저장되며, 채팅 첨부 파일과 마찬가지로 **자동으로 삭제되지 않습니다**. 다운로드용 서명된 URL은 3600초 후에 만료되지만, 객체 자체는 수동으로 삭제할 때까지(관리자가 S3 수명 주기 규칙을 추가한 경우 해당 규칙에 따라 삭제될 때까지) 버킷에 남아 있습니다.
+
+음성 파일 생성의 SSML 입력: 입력 모드를 "SSML"로 전환하면 `<break>`(일시 정지), `<sub>`(대체 읽기), `<phoneme>`(발음) 등의 SSML 태그로 발음과 끊어 읽기를 지정할 수 있습니다. 화면에 SSML 가이드와 삽입 도구가 표시됩니다. 선택한 엔진이 지원하지 않는 태그(예: neural 엔진의 `<emphasis>`)와 Amazon Polly가 전혀 지원하지 않는 태그는 요청 전에 거부됩니다. SSML 모드에서는 과금 대상 문자 수(태그 제외)가 3000자 이하, 태그를 포함한 전체 텍스트가 6000자 이하여야 하며, 긴 일시 정지나 느린 속도는 오디오를 길게 만들어 Amazon Polly의 10분 제한에 도달할 수 있습니다. 자세한 내용은 [Amazon Polly SSML 문서](https://docs.aws.amazon.com/polly/latest/dg/ssml.html)를 참조하세요. 생성되는 파일 이름은 `speech-<voice>-<yyyyMMdd>-<HHmmss>.<ext>`(예: `speech-kazuha-20261108-173045.mp3`)입니다. 다운로드 시 파일 이름이 겹치지 않도록 타임스탬프에는 브라우저의 로컬 시간대 시각이 사용되며, 서버는 유효한 `yyyyMMdd-HHmmss` 값만 허용합니다(그렇지 않으면 현재 UTC 시각을 사용합니다).
 
 ## Use Case Builder 구성
 

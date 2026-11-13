@@ -553,6 +553,7 @@ navigation:
   speechRecognition: 语音识别
   summary: 摘要
   textGeneration: 文本生成
+  textToSpeech: 创建音频文件
   translation: 翻译
   videoAnalysis: 视频分析
   videoGeneration: 视频生成
@@ -649,6 +650,117 @@ summarize:
   result_placeholder: 摘要将显示在这里
   text_to_summarize: 要摘要的文本
   title: 摘要
+textToSpeech:
+  audio_label: 生成的音频
+  character_count: '{{current}} / {{max}} 个字符'
+  description: 使用 Amazon Polly 生成音频。
+  download: 下载
+  duration_note: Amazon Polly 会截断超过 10 分钟的音频。语速较慢或文本较长时，结尾可能会缺失，请拆分文本。
+  engine: 引擎
+  error_engine_not_supported: 所选引擎与所选语音不兼容，或在此堆栈的区域中不可用（例如，Long-form 语音仅在 us-east-1 中可用）。请选择其他引擎或语音。
+  error_generic: 生成音频失败。请稍后再试。
+  error_internal_error: 服务器发生错误。请稍后再试。
+  error_invalid_next_token: 分页令牌无效。请重新加载页面。
+  error_invalid_request: 请求无效。请检查输入内容。
+  error_invalid_sample_rate: 采样率对所选输出格式无效。
+  error_invalid_ssml: SSML 无效。请检查标签语法和拼写。
+  error_language_not_supported: 所选语音不支持所选语言。请选择其他语言或语音。
+  error_polly_access_denied: '服务器无权调用 Amazon Polly。请让管理员检查 IAM 权限 polly:SynthesizeSpeech 和 polly:DescribeVoices。'
+  error_polly_service_failure: Amazon Polly 暂时出现故障。请稍后再试。
+  error_storage_error: 保存生成的音频文件失败。请稍后再试。
+  error_text_too_long: 文本超出 Amazon Polly 的限制（请求总计 6000 个字符，计费 3000 个字符）。请缩短文本。
+  error_throttled: 对 Amazon Polly 的请求过多（Neural 和 Generative 语音每个账户和区域约每秒 8 个请求）。请稍候再试。
+  format: 输出格式
+  generate: 生成音频
+  input_mode: 输入模式
+  input_mode_ssml: SSML
+  input_mode_text: 纯文本
+  input_text: 要转换为语音的文本
+  language: 语言
+  load_voices_error: 无法加载语音列表。请重新加载页面。
+  speed: 语速 ({{speed}}倍)
+  ssml_billed_hint: 计费字符数，不含标签
+  ssml_duration_note: 在 SSML 模式下，较长的停顿 (<break>) 或较慢的语速 (<prosody rate>) 会使音频变长，可能达到 10 分钟的上限。
+  ssml_guide_button: SSML 指南
+  ssml_guide_close: 关闭
+  ssml_guide_desc_auto_breaths: 添加呼吸声 (仅限 standard 引擎)。
+  ssml_guide_desc_break: '插入最长 10 秒的停顿。可指定 time="500ms" 或 strength="strong"。'
+  ssml_guide_desc_drc: 应用动态范围压缩 (standard、neural、long-form)。
+  ssml_guide_desc_emphasis: 强调词语 (仅限 standard 引擎)。
+  ssml_guide_desc_lang: 用另一种语言朗读文本。
+  ssml_guide_desc_mark: 放置自定义标记 (对音频文件没有影响)。
+  ssml_guide_desc_p: 表示段落 (其后会有较长的停顿)。
+  ssml_guide_desc_phoneme_ipa: 用 IPA 或 X-SAMPA 指定发音 (日语和中文以外的语言)。alphabet 和 ph 都是必需的。
+  ssml_guide_desc_phoneme_yomigana: 指定发音。日语使用 x-amazon-yomigana 或 x-amazon-pron-kana，普通话使用 x-amazon-pinyin。
+  ssml_guide_desc_prosody: '改变语速 (20% 到 200%) 和音量。音高仅 standard 引擎支持。generative 语音只能用于包围完整的句子。'
+  ssml_guide_desc_s: 表示句子。
+  ssml_guide_desc_say_as: '指定数字、日期、电话号码等的读法。在 neural 语音中使用 interpret-as="characters" 时，该句会由 standard 语音朗读，但仍按 neural 计费。'
+  ssml_guide_desc_speak: 根元素。如果文本不是以它开头，会自动添加。
+  ssml_guide_desc_sub: 用 alias 的读音代替书写的文字朗读，例如产品名称和缩写。
+  ssml_guide_desc_w: 根据词性 (role) 选择发音。
+  ssml_guide_desc_whispered: 用耳语朗读 (仅限 standard 引擎)。
+  ssml_guide_engines: 支持的标签和引擎
+  ssml_guide_howto_closing: '所有标签都必须闭合 (<p>...</p> 或 <break time="1s"/>)，并且标签必须正确嵌套。'
+  ssml_guide_howto_heading: SSML 的写法
+  ssml_guide_howto_reserved: '在 SSML 模式下，文本不会被自动转义。请将 & 写作 &amp;，< 写作 &lt;，> 写作 &gt;，'' 写作 &apos;。在双引号括起的属性值中，请将 " 写作 &quot;。'
+  ssml_guide_howto_speak: SSML 是 XML。请用 <speak>...</speak> 包围整个文本。如果文本不是以 <speak> 开头，会自动添加。
+  ssml_guide_insert: 插入
+  ssml_guide_length: 较长的停顿和较慢的语速会使音频变长，Amazon Polly 会在 10 分钟后截断音频且不会报错。标签不计费 (最多 3000 个字符)，但包含标签的整个文本最多 6000 个字符。
+  ssml_guide_title: SSML 指南
+  ssml_issue_break_time: '停顿时长“{{value}}”无效。请指定 10s (10000ms) 以内。'
+  ssml_issue_forbidden_tag: 'Amazon Polly 无法使用 {{tag}}。'
+  ssml_issue_malformed: "SSML 格式不正确。请确认所有标签都已闭合、标签嵌套正确，并且保留字符 (& < > ') 已转义。"
+  ssml_issue_phoneme_attrs: <phoneme> 需要同时具有 alphabet 和 ph 属性。
+  ssml_issue_prosody_pitch: '{{engine}} 引擎不支持 <prosody> 的 pitch 属性。'
+  ssml_issue_prosody_rate: '语速“{{value}}”无效。请指定 20% 到 200%，或 x-slow、slow、medium、fast、x-fast。'
+  ssml_issue_unknown_tag: '{{tag}} 不是受支持的 SSML 标签。'
+  ssml_issue_unsupported_tag: '{{engine}} 引擎不支持 {{tag}}。请删除它或选择其他引擎。'
+  ssml_issue_warn_prosody_generative: 在 generative 语音中，<prosody> 只对完整句子有效。
+  ssml_issue_warn_say_as_characters: '在 neural 语音中使用 interpret-as="characters" 时，会由 standard 语音朗读，但仍按 neural 计费。'
+  ssml_option_alphabet: 音标类型
+  ssml_option_lang: 文本的语言
+  ssml_option_pause: 停顿时长
+  ssml_option_prosody: 语速或音量
+  ssml_option_say_as: 读法
+  ssml_placeholder_alias: 读音
+  ssml_placeholder_reading: 发音
+  ssml_placeholder_text: 文本
+  ssml_prosody_rate_110: '语速 110%'
+  ssml_prosody_rate_120: '语速 120%'
+  ssml_prosody_rate_80: '语速 80%'
+  ssml_prosody_rate_90: '语速 90%'
+  ssml_prosody_volume_loud: 音量 大
+  ssml_prosody_volume_soft: 音量 小
+  ssml_say_as_cardinal: 数值
+  ssml_say_as_date: 日期
+  ssml_say_as_digits: 逐位读数字
+  ssml_say_as_ordinal: 序数
+  ssml_say_as_telephone: 电话号码
+  ssml_speed_note: '请使用 <prosody rate="..."> 标签指定语速。'
+  ssml_support_full: 支持
+  ssml_support_none: 不支持
+  ssml_support_partial: 部分支持
+  ssml_text_placeholder: '请输入 SSML。示例：你好<break time="500ms"/>世界'
+  ssml_too_long_billed: 计费字符数 (不含标签) 超过上限。
+  ssml_too_long_total: '包含标签的整个文本超过 {{max}} 个字符。'
+  ssml_tool_lang: 语言
+  ssml_tool_paragraph: 段落
+  ssml_tool_pause: 停顿
+  ssml_tool_phoneme: 发音
+  ssml_tool_prosody: 语速/音量
+  ssml_tool_say_as: 读法
+  ssml_tool_sentence: 句子
+  ssml_tool_sub: 替换读音
+  ssml_tool_unsupported: '{{engine}} 引擎不支持 {{tag}}。'
+  ssml_toolbar_label: SSML 插入工具
+  ssml_total_count: '包含标签的整体: {{current}} / {{max}} 个字符'
+  ssml_validation_label: SSML 检查结果
+  status_done: 音频生成完成
+  status_generating: 正在生成音频
+  text_placeholder: 请输入要转换为语音的文本
+  title: 创建音频文件
+  too_long: 文本过长。
+  voice: 语音
 transcribe:
   audio_source_lost: 由于音频源不再可用，转录已停止
   detailed_parameters: 详细参数

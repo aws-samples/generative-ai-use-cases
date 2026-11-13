@@ -648,6 +648,7 @@ navigation:
   speechRecognition: Nhận dạng giọng nói
   summary: Tóm tắt
   textGeneration: Tạo văn bản
+  textToSpeech: Tạo tệp âm thanh
   translation: Dịch thuật
   videoAnalysis: Phân tích video
   videoGeneration: Tạo video
@@ -762,6 +763,117 @@ summarize:
   result_placeholder: Văn bản được tóm tắt sẽ được hiển thị ở đây
   text_to_summarize: Văn bản muốn tóm tắt
   title: Tóm tắt
+textToSpeech:
+  audio_label: Âm thanh đã tạo
+  character_count: '{{current}} / {{max}} ký tự'
+  description: Âm thanh được tạo bằng Amazon Polly.
+  download: Tải xuống
+  duration_note: 'Amazon Polly cắt âm thanh dài hơn 10 phút. Với tốc độ chậm hoặc văn bản dài, phần cuối có thể bị thiếu; hãy chia nhỏ văn bản trong trường hợp đó.'
+  engine: Công cụ
+  error_engine_not_supported: 'Engine đã chọn không tương thích với giọng nói đã chọn hoặc không khả dụng ở Region của stack này (ví dụ: giọng Long-form chỉ khả dụng ở us-east-1). Hãy chọn engine hoặc giọng nói khác.'
+  error_generic: Không thể tạo âm thanh. Hãy thử lại sau.
+  error_internal_error: Đã xảy ra lỗi trên máy chủ. Hãy thử lại sau.
+  error_invalid_next_token: Token phân trang không hợp lệ. Hãy tải lại trang.
+  error_invalid_request: Yêu cầu không hợp lệ. Hãy kiểm tra nội dung đã nhập.
+  error_invalid_sample_rate: Tần số lấy mẫu không hợp lệ với định dạng đầu ra đã chọn.
+  error_invalid_ssml: SSML không hợp lệ. Hãy kiểm tra cú pháp và chính tả của thẻ.
+  error_language_not_supported: Giọng nói đã chọn không hỗ trợ ngôn ngữ đã chọn. Hãy chọn ngôn ngữ hoặc giọng nói khác.
+  error_polly_access_denied: 'Máy chủ không được phép gọi Amazon Polly. Hãy nhờ quản trị viên kiểm tra quyền IAM polly:SynthesizeSpeech và polly:DescribeVoices.'
+  error_polly_service_failure: Amazon Polly gặp lỗi tạm thời. Hãy thử lại sau.
+  error_storage_error: Không thể lưu tệp âm thanh đã tạo. Hãy thử lại sau.
+  error_text_too_long: Văn bản vượt quá giới hạn của Amazon Polly (tổng 6000 ký tự và 3000 ký tự tính phí). Hãy rút ngắn văn bản.
+  error_throttled: Quá nhiều yêu cầu tới Amazon Polly (khoảng 8 yêu cầu mỗi giây cho mỗi tài khoản và Region với giọng neural và generative). Hãy đợi một lát rồi thử lại.
+  format: Định dạng đầu ra
+  generate: Tạo âm thanh
+  input_mode: Chế độ nhập
+  input_mode_ssml: SSML
+  input_mode_text: Văn bản thuần
+  input_text: Văn bản cần chuyển thành giọng nói
+  language: Ngôn ngữ
+  load_voices_error: Không thể tải danh sách giọng nói. Vui lòng tải lại trang.
+  speed: Tốc độ ({{speed}}x)
+  ssml_billed_hint: 'số ký tự tính phí, không gồm thẻ'
+  ssml_duration_note: 'Ở chế độ SSML, các khoảng dừng dài (<break>) hoặc tốc độ chậm (<prosody rate>) làm âm thanh dài hơn và có thể chạm giới hạn 10 phút.'
+  ssml_guide_button: Hướng dẫn SSML
+  ssml_guide_close: Đóng
+  ssml_guide_desc_auto_breaths: Thêm tiếng thở (chỉ công cụ standard).
+  ssml_guide_desc_break: 'Chèn khoảng dừng tối đa 10 giây. Chỉ định time="500ms" hoặc strength="strong".'
+  ssml_guide_desc_drc: 'Áp dụng nén dải động (standard, neural và long-form).'
+  ssml_guide_desc_emphasis: Nhấn mạnh từ (chỉ công cụ standard).
+  ssml_guide_desc_lang: Đọc văn bản bằng ngôn ngữ khác.
+  ssml_guide_desc_mark: Đặt dấu đánh dấu tùy chỉnh (không ảnh hưởng đến tệp âm thanh).
+  ssml_guide_desc_p: Đánh dấu một đoạn văn (sau đó có khoảng dừng dài hơn).
+  ssml_guide_desc_phoneme_ipa: Chỉ định cách phát âm bằng IPA hoặc X-SAMPA (các ngôn ngữ khác tiếng Nhật và tiếng Trung). Cần có cả alphabet và ph.
+  ssml_guide_desc_phoneme_yomigana: 'Chỉ định cách phát âm. Tiếng Nhật dùng x-amazon-yomigana hoặc x-amazon-pron-kana, tiếng Quan Thoại dùng x-amazon-pinyin.'
+  ssml_guide_desc_prosody: 'Thay đổi tốc độ nói (20% đến 200%) và âm lượng. Cao độ (pitch) chỉ được công cụ standard hỗ trợ. Với giọng generative, chỉ dùng quanh các câu hoàn chỉnh.'
+  ssml_guide_desc_s: Đánh dấu một câu.
+  ssml_guide_desc_say_as: 'Quy định cách đọc số, ngày, số điện thoại, v.v. Với giọng neural, interpret-as="characters" sẽ được đọc bằng giọng standard nhưng vẫn tính phí như neural.'
+  ssml_guide_desc_speak: Phần tử gốc. Được tự động thêm khi văn bản không bắt đầu bằng thẻ này.
+  ssml_guide_desc_sub: 'Đọc theo cách đọc alias thay cho văn bản đã viết, ví dụ tên sản phẩm và chữ viết tắt.'
+  ssml_guide_desc_w: Chọn cách phát âm theo từ loại (role).
+  ssml_guide_desc_whispered: Nói thì thầm (chỉ công cụ standard).
+  ssml_guide_engines: Thẻ và công cụ được hỗ trợ
+  ssml_guide_howto_closing: 'Mọi thẻ phải được đóng (<p>...</p> hoặc <break time="1s"/>) và các thẻ phải lồng nhau đúng cách.'
+  ssml_guide_howto_heading: Cách viết SSML
+  ssml_guide_howto_reserved: 'Ở chế độ SSML, văn bản KHÔNG được tự động thoát ký tự. Hãy viết & thành &amp;, < thành &lt;, > thành &gt; và '' thành &apos;. Bên trong giá trị thuộc tính đặt trong dấu nháy kép, hãy viết " thành &quot;.'
+  ssml_guide_howto_speak: 'SSML là XML. Hãy bao toàn bộ văn bản bằng <speak>...</speak>. Nếu văn bản không bắt đầu bằng <speak>, công cụ sẽ tự động thêm vào.'
+  ssml_guide_insert: Chèn
+  ssml_guide_length: 'Khoảng dừng dài và tốc độ chậm làm âm thanh dài hơn, và Amazon Polly cắt âm thanh sau 10 phút mà không báo lỗi. Thẻ không bị tính phí (tối đa 3000 ký tự), nhưng toàn bộ văn bản gồm cả thẻ bị giới hạn ở 6000 ký tự.'
+  ssml_guide_title: Hướng dẫn SSML
+  ssml_issue_break_time: 'Độ dài khoảng dừng "{{value}}" không hợp lệ. Hãy dùng 10s (10000ms) trở xuống.'
+  ssml_issue_forbidden_tag: 'Không thể dùng {{tag}} với Amazon Polly.'
+  ssml_issue_malformed: "SSML không đúng định dạng. Hãy kiểm tra mọi thẻ đã được đóng, các thẻ lồng nhau đúng và các ký tự dành riêng (& < > ') đã được thoát."
+  ssml_issue_phoneme_attrs: <phoneme> cần có cả hai thuộc tính alphabet và ph.
+  ssml_issue_prosody_pitch: 'Công cụ {{engine}} không hỗ trợ thuộc tính pitch của <prosody>.'
+  ssml_issue_prosody_rate: 'Tốc độ "{{value}}" không hợp lệ. Hãy dùng 20% đến 200%, hoặc x-slow, slow, medium, fast, x-fast.'
+  ssml_issue_unknown_tag: '{{tag}} không phải là thẻ SSML được hỗ trợ.'
+  ssml_issue_unsupported_tag: 'Công cụ {{engine}} không hỗ trợ {{tag}}. Hãy xóa thẻ này hoặc chọn công cụ khác.'
+  ssml_issue_warn_prosody_generative: 'Với giọng generative, <prosody> chỉ hoạt động quanh các câu hoàn chỉnh.'
+  ssml_issue_warn_say_as_characters: 'Với giọng neural, interpret-as="characters" được đọc bằng giọng standard nhưng vẫn tính phí như neural.'
+  ssml_option_alphabet: Loại bảng phiên âm
+  ssml_option_lang: Ngôn ngữ của văn bản
+  ssml_option_pause: Độ dài khoảng dừng
+  ssml_option_prosody: Tốc độ hoặc âm lượng
+  ssml_option_say_as: Cách đọc
+  ssml_placeholder_alias: cách đọc
+  ssml_placeholder_reading: phát âm
+  ssml_placeholder_text: văn bản
+  ssml_prosody_rate_110: 'Tốc độ 110%'
+  ssml_prosody_rate_120: 'Tốc độ 120%'
+  ssml_prosody_rate_80: 'Tốc độ 80%'
+  ssml_prosody_rate_90: 'Tốc độ 90%'
+  ssml_prosody_volume_loud: Âm lượng to
+  ssml_prosody_volume_soft: Âm lượng nhỏ
+  ssml_say_as_cardinal: Số
+  ssml_say_as_date: Ngày
+  ssml_say_as_digits: Từng chữ số
+  ssml_say_as_ordinal: Số thứ tự
+  ssml_say_as_telephone: Số điện thoại
+  ssml_speed_note: 'Hãy đặt tốc độ bằng thẻ <prosody rate="...">.'
+  ssml_support_full: hỗ trợ
+  ssml_support_none: không hỗ trợ
+  ssml_support_partial: hỗ trợ một phần
+  ssml_text_placeholder: 'Nhập SSML. Ví dụ: Xin chào<break time="500ms"/>thế giới'
+  ssml_too_long_billed: Số ký tự tính phí (không gồm thẻ) vượt quá giới hạn.
+  ssml_too_long_total: 'Toàn bộ văn bản gồm cả thẻ vượt quá {{max}} ký tự.'
+  ssml_tool_lang: Ngôn ngữ
+  ssml_tool_paragraph: Đoạn văn
+  ssml_tool_pause: Tạm dừng
+  ssml_tool_phoneme: Phát âm
+  ssml_tool_prosody: Tốc độ/âm lượng
+  ssml_tool_say_as: Cách đọc
+  ssml_tool_sentence: Câu
+  ssml_tool_sub: Thay cách đọc
+  ssml_tool_unsupported: 'Công cụ {{engine}} không hỗ trợ {{tag}}.'
+  ssml_toolbar_label: Công cụ chèn SSML
+  ssml_total_count: 'Toàn bộ gồm thẻ: {{current}} / {{max}} ký tự'
+  ssml_validation_label: Kết quả kiểm tra SSML
+  status_done: Đã tạo xong âm thanh
+  status_generating: Đang tạo âm thanh
+  text_placeholder: Nhập văn bản cần chuyển thành giọng nói
+  title: Tạo tệp âm thanh
+  too_long: Văn bản quá dài.
+  voice: Giọng nói
 transcribe:
   audio_source_lost: Phiên âm đã dừng vì nguồn âm thanh không còn khả dụng
   detailed_parameters: Tham số chi tiết
