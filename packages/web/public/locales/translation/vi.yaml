@@ -1,3 +1,13 @@
+admin:
+  description: 'Lượng token của mọi người dùng theo dữ liệu GenU ghi lại. Để phân tích chi tiết, hãy dùng CloudWatch Logs Insights trên nhật ký gọi mô hình của Bedrock.'
+  download_csv: Tải xuống CSV
+  executions: Số lần thực thi
+  last_n_days: '{{days}} ngày qua'
+  load_failed: Không tải được dữ liệu sử dụng.
+  period: Khoảng thời gian
+  scope_note: Chỉ tính phần tạo văn bản mà GenU lưu cùng tin nhắn trò chuyện. Không bao gồm tác tử (Bedrock Agents, AgentCore) và tạo ảnh hoặc video.
+  title: Quản trị
+  user: Người dùng
 agent:
   drop_files: Thả file để tải lên
   title: Chat Agent

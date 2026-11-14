@@ -1,3 +1,13 @@
+admin:
+  description: GenU가 기록한 모든 사용자의 토큰 사용량입니다. 자세한 분석은 Bedrock 모델 호출 로그를 CloudWatch Logs Insights로 집계하세요.
+  download_csv: CSV 다운로드
+  executions: 실행 횟수
+  last_n_days: '최근 {{days}}일'
+  load_failed: 사용량을 불러오지 못했습니다.
+  period: 기간
+  scope_note: GenU가 채팅 메시지와 함께 저장한 텍스트 생성분만 집계합니다. 에이전트(Bedrock Agents, AgentCore)와 이미지·동영상 생성은 포함되지 않습니다.
+  title: 관리
+  user: 사용자
 agent:
   drop_files: 파일을 드롭하여 업로드
   title: 에이전트 채팅

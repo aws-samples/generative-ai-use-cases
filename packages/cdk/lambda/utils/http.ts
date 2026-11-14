@@ -18,6 +18,16 @@ export const requireUserName = (request: Request): string => {
   return userName;
 };
 
+/** The caller's Cognito `sub`, or undefined without Cognito claims. */
+export const getUserSub = (request: Request): string | undefined =>
+  claims(request)?.sub || undefined;
+
+/** The raw id token the web client sends in `Authorization`. */
+export const idTokenFromRequest = (request: Request): string | undefined => {
+  const value = request.headers['authorization'];
+  return value ? value.replace(/^Bearer\s+/i, '') : undefined;
+};
+
 /** The caller's Cognito `sub`. */
 export const requireUserSub = (request: Request): string => {
   const sub = claims(request)?.sub;

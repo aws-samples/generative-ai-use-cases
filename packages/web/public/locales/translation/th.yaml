@@ -1,3 +1,13 @@
+admin:
+  description: ปริมาณการใช้โทเค็นของผู้ใช้ทุกคนจากบันทึกที่ GenU เก็บไว้ สำหรับการวิเคราะห์โดยละเอียด ให้ใช้ CloudWatch Logs Insights กับบันทึกการเรียกใช้โมเดลของ Bedrock
+  download_csv: ดาวน์โหลด CSV
+  executions: จำนวนครั้งที่เรียกใช้
+  last_n_days: '{{days}} วันที่ผ่านมา'
+  load_failed: โหลดข้อมูลการใช้งานไม่สำเร็จ
+  period: ช่วงเวลา
+  scope_note: นับเฉพาะการสร้างข้อความที่ GenU บันทึกพร้อมข้อความแชท ไม่รวมเอเจนต์ (Bedrock Agents, AgentCore) และการสร้างรูปภาพหรือวิดีโอ
+  title: ผู้ดูแลระบบ
+  user: ผู้ใช้
 agent:
   drop_files: วางไฟล์เพื่ออัปโหลด
   title: Agent Chat

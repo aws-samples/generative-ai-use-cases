@@ -1,3 +1,13 @@
+admin:
+  description: GenU が記録している全ユーザーのトークン利用量です。詳しい分析は、Bedrock のモデル呼び出しログを CloudWatch Logs Insights で集計してください。
+  download_csv: CSV をダウンロード
+  executions: 実行回数
+  last_n_days: '過去 {{days}} 日'
+  load_failed: 利用量を読み込めませんでした。
+  period: 期間
+  scope_note: GenU がチャットのメッセージと一緒に保存したテキスト生成の分だけを数えています。エージェント（Bedrock Agents、AgentCore）や画像・動画の生成は含みません。
+  title: 管理
+  user: ユーザー
 agent:
   drop_files: ファイルをドロップしてアップロード
   title: Agent チャット

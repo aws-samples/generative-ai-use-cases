@@ -25,3 +25,14 @@ export const verifyToken = async (
     return undefined;
   }
 };
+
+/** Cognito group whose members may use the admin API and pages. */
+export const SYSTEM_ADMIN_GROUP = 'SystemAdminGroup';
+
+/** True when the verified id token puts the caller in the admin group. */
+export const isSystemAdmin = (
+  payload: CognitoIdTokenPayload | undefined
+): boolean => {
+  const groups = payload?.['cognito:groups'];
+  return Array.isArray(groups) && groups.includes(SYSTEM_ADMIN_GROUP);
+};

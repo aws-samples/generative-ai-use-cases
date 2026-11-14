@@ -803,3 +803,26 @@ export const aggregateTokenUsage = async (
     throw error;
   }
 };
+
+/** Every user's token usage record for one day (YYYY-MM-DD). */
+export const listTokenUsageForDate = async (
+  date: string
+): Promise<TokenUsageStats[]> => {
+  const items: TokenUsageStats[] = [];
+  let exclusiveStartKey: QueryCommandInput['ExclusiveStartKey'] = undefined;
+  // A query page stops at 1 MB; a busy day can take several pages.
+  do {
+    const res: QueryCommandOutput = await dynamoDbDocument.send(
+      new QueryCommand({
+        TableName: STATS_TABLE_NAME,
+        KeyConditionExpression: '#id = :id',
+        ExpressionAttributeNames: { '#id': 'id' },
+        ExpressionAttributeValues: { ':id': `stats#${date}` },
+        ExclusiveStartKey: exclusiveStartKey,
+      })
+    );
+    items.push(...((res.Items ?? []) as TokenUsageStats[]));
+    exclusiveStartKey = res.LastEvaluatedKey;
+  } while (exclusiveStartKey);
+  return items;
+};

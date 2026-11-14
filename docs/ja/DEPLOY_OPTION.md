@@ -2270,6 +2270,53 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!NOTE]
 > モニタリング用のダッシュボードを有効後に、再度無効化する場合は、`dashboard: false` にして再デプロイすればモニタリング用ダッシュボードは無効化されますが、`GenerativeAiUseCasesDashboardStack` 自体は残ります。マネージメントコンソールを開き、modelRegion の CloudFormation から `GenerativeAiUseCasesDashboardStack` というスタックを削除することで完全に消去ができます。
 
+### ユーザー別・ユースケース別に集計する
+
+GenU は Bedrock の呼び出しに次のタグ（[requestMetadata](https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-request-metadata.html)）を付けています。タグはモデル呼び出しログに記録されます。
+
+| キー           | 値                                                   |
+| -------------- | ---------------------------------------------------- |
+| `genu`         | `genu`（GenU からの呼び出しの目印）                  |
+| `genu_user`    | Cognito ユーザーの `sub`                             |
+| `genu_usecase` | ユースケース（`chat`、`rag` など、画面のパスの先頭） |
+
+ダッシュボードには、ユーザー別とユースケース別の集計（Tokens by User / Tokens by Use Case）が入っています。同じクエリが CloudWatch Logs Insights の「保存されたクエリ」に `GenU/<スタック名>/TokensByUser` と `GenU/<スタック名>/TokensByUseCase` として登録されるので、期間を変えたり条件を足したりして使えます。`genu_user` は Cognito の `sub` なので、部署などで集計する場合は Cognito のユーザー属性と結合してください。
+
+ダッシュボードを使わず、既存のロググループにモデル呼び出しログを出している場合も、同じタグで集計できます。
+
+```
+filter requestMetadata.genu = 'genu'
+| fields requestMetadata.genu_user as user, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc
+```
+
+> [!NOTE]
+>
+> - タグが付くのは、Converse API と InvokeModel API で呼び出すモデル（チャット、文章生成などのテキスト生成と画像生成）です。動画生成（StartAsyncInvoke）、Bedrock Agents、Knowledge Base、AgentCore の呼び出しには付きません。
+> - モデル呼び出しログはリージョンごとに記録されます。`modelIds` で複数のリージョンのモデルを使っている場合は、リージョンごとにログの出力を設定し、リージョンごとに集計してください。1 つの場所でまとめて集計したい場合は、AWS Organizations を使っていれば [CloudWatch Logs の集約](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html)で複数のリージョンのログを 1 つのリージョンに集められます。
+> - モデル呼び出しログには、既定でプロンプトと回答の本文も記録されます。保存期間と閲覧できる人を確認してください。
+
+## 管理者ページ
+
+全ユーザーのトークン利用量を、GenU の画面で確認できます（画面の左下の盾のアイコン）。表示されるのは、GenU がチャットのメッセージと一緒に保存した利用量（統計ページと同じデータ）で、過去 7 日・30 日・90 日を選べます。ユーザー別の集計は CSV でダウンロードできます。
+
+管理者ページを開けるのは、Cognito のユーザープールの `SystemAdminGroup` グループに入っているユーザーだけです。グループはデプロイ時に作られます。ユーザーをグループに追加するには、[Amazon Cognito のコンソール](https://console.aws.amazon.com/cognito/home)でユーザープールを開いて「グループ」から追加するか、次のコマンドを実行します。
+
+```bash
+aws cognito-idp admin-add-user-to-group \
+  --user-pool-id <ユーザープール ID> \
+  --username <ユーザー名> \
+  --group-name SystemAdminGroup
+```
+
+グループに追加したあと、そのユーザーはサインインし直すと管理者ページを開けるようになります。
+
+> [!NOTE]
+>
+> - エージェント（Bedrock Agents、AgentCore）や画像・動画の生成の利用量は含みません。これらも含めて集計する場合は、上の「ユーザー別・ユースケース別に集計する」のとおり CloudWatch Logs Insights を使ってください。
+> - ユーザープールにすでに `SystemAdminGroup` という名前のグループがある場合は、デプロイが失敗します。先にそのグループを削除するか、名前を変えてください。
+
 ## カスタムドメインの使用
 
 Web サイトの URL としてカスタムドメインを使用することができます。同一 AWS アカウントの Route53 にパブリックホストゾーンが作成済みであることが必要です。パブリックホストゾーンについてはこちらをご参照ください: [パブリックホストゾーンの使用 - Amazon Route 53](https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/AboutHZWorkingWith.html)

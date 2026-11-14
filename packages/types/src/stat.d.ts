@@ -45,3 +45,23 @@ export interface GetTokenUsageEvent {
     };
   };
 }
+
+/** One user's totals over the requested period (the `overall` values). */
+export interface UserTokenUsageTotals {
+  userId: string;
+  /** From Cognito; missing when the user no longer exists or was not looked up. */
+  email?: string;
+  executions: number;
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadInputTokens: number;
+  cacheWriteInputTokens: number;
+}
+
+/** `GET /admin/token-usage`: every user's usage over a date range. */
+export interface GetAdminTokenUsageResponse {
+  /** Per day, all users added together (`userId` is `*`). */
+  daily: TokenUsageStats[];
+  /** Per user, sorted by input + output tokens, largest first. */
+  users: UserTokenUsageTotals[];
+}

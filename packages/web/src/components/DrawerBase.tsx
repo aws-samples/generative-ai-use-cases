@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import useSWR from 'swr';
 import useVersion from '../hooks/useVersion';
 import IconWithDot from './IconWithDot';
-import { PiChartBar, PiGear } from 'react-icons/pi';
+import { PiChartBar, PiGear, PiShieldCheck } from 'react-icons/pi';
+import useIsAdmin from '../hooks/useIsAdmin';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import useUserSetting from '../hooks/useUserSetting';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +19,7 @@ const DrawerBase: React.FC<Props> = (props) => {
   const { getHasUpdate } = useVersion();
   const { settingShowEmail } = useUserSetting();
   const { t } = useTranslation();
+  const isAdmin = useIsAdmin();
 
   // The first argument is not required, but if it is not included, the request will not be made, so 'user' string is entered
   const { data } = useSWR('user', () => {
@@ -49,6 +51,11 @@ const DrawerBase: React.FC<Props> = (props) => {
               <div className="truncate text-xs">{email}</div>
             )}
             <div className="grow" />
+            {isAdmin && (
+              <Link to="/admin" title={t('admin.title')}>
+                <PiShieldCheck className="text-lg" />
+              </Link>
+            )}
             <Link to="/stats" title={t('stat.title')}>
               <PiChartBar className="text-lg" />
             </Link>

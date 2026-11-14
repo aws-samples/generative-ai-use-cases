@@ -1,5 +1,6 @@
 import { Duration } from 'aws-cdk-lib';
 import {
+  CfnUserPoolGroup,
   UserPool,
   UserPoolClient,
   UserPoolOperation,
@@ -123,6 +124,15 @@ export class Auth extends Construct {
         checkEmailDomainFunction
       );
     }
+
+    // GenU administrators: members can open the admin page (all-user usage).
+    // Add users to this group in the Cognito console or with the CLI.
+    // Same name and construct id as v6, so the group carries over on upgrade.
+    new CfnUserPoolGroup(this, 'AdminGroup', {
+      userPoolId: userPool.userPoolId,
+      groupName: 'SystemAdminGroup',
+      description: 'GenU administrators with access to the admin page',
+    });
 
     this.client = client;
     this.userPool = userPool;

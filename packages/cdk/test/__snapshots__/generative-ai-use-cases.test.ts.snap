@@ -13294,6 +13294,18 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::WAFv2::WebACLAssociation",
       "UpdateReplacePolicy": "Delete",
     },
+    "AuthAdminGroup9B286F1A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "GenU administrators with access to the admin page",
+        "GroupName": "SystemAdminGroup",
+        "UserPoolId": {
+          "Ref": "AuthUserPool8115E87F",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
     "AuthIdentityPool659E7F64": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
@@ -15600,7 +15612,23 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 7`] = `
               {
                 "Ref": "LogGroupF5B46931",
               },
-              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}}]}",
+              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":0,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by User\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId\\\\n| sort inputTokens desc\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":12,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by Use Case\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId\\\\n| sort inputTokens desc\\"}}]}",
             ],
           ],
         },
@@ -15614,6 +15642,36 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 7`] = `
       },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
+    },
+    "TokensByUseCaseQuery8D6E560E": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUseCase",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
+    },
+    "TokensByUserQuery424E1E77": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUser",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
     },
   },
   "Rules": {
@@ -27161,6 +27219,18 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::S3::BucketPolicy",
       "UpdateReplacePolicy": "Delete",
     },
+    "AuthAdminGroup9B286F1A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "GenU administrators with access to the admin page",
+        "GroupName": "SystemAdminGroup",
+        "UserPoolId": {
+          "Ref": "AuthUserPool8115E87F",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
     "AuthIdentityPool659E7F64": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
@@ -29393,7 +29463,23 @@ exports[`GenerativeAiUseCases matches the snapshot 7`] = `
               {
                 "Ref": "LogGroupF5B46931",
               },
-              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}}]}",
+              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":0,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by User\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId\\\\n| sort inputTokens desc\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":12,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by Use Case\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId\\\\n| sort inputTokens desc\\"}}]}",
             ],
           ],
         },
@@ -29407,6 +29493,36 @@ exports[`GenerativeAiUseCases matches the snapshot 7`] = `
       },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
+    },
+    "TokensByUseCaseQuery8D6E560E": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUseCase",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
+    },
+    "TokensByUserQuery424E1E77": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUser",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
     },
   },
   "Rules": {
