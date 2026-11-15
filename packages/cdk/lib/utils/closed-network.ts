@@ -173,7 +173,10 @@ export const closedNetworkWarnings = (
     );
   }
   if (params.samlAuthEnabled) {
-    add('saml', 'SAML authentication is not available in closed network mode.');
+    add(
+      'saml',
+      'SAML authentication is not available in closed network mode. Cognito sign-in through a user pool domain cannot be reached through VPC endpoints, and a user pool with a domain cannot be used through the Cognito VPC endpoint, so sign-in may fail for all users.'
+    );
   }
   if (params.searchAgentEnabled || params.searchApiKey) {
     add(
