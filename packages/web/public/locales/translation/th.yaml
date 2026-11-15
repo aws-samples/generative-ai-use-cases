@@ -349,6 +349,7 @@ feedback:
 files:
   error:
     fileCountExceeded: 'โปรดจำกัดไฟล์ไม่เกิน {{maxCount}} ไฟล์'
+    fileCountExceededInChat: แชทนี้มีเอกสารที่แนบไว้ก่อนหน้าแล้ว {{previousCount}} ไฟล์ และแชทหนึ่งแนบเอกสารได้สูงสุด {{maxCount}} ไฟล์ กรุณาลดจำนวนไฟล์แนบหรือเริ่มแชทใหม่
     fileSizeExceeded: '{{fileName}} เกินขนาดไฟล์สูงสุดที่ {{maxSize}} MB'
     imageCountExceeded: 'โปรดจำกัดไฟล์รูปภาพไม่เกิน {{maxCount}} ไฟล์'
     invalidExtension: >-

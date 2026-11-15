@@ -4,6 +4,7 @@ import { UploadedFileType } from 'generative-ai-use-cases';
 import useFiles from '../../src/hooks/useFiles';
 
 vi.mock('../../src/hooks/useFileApi', () => ({ default: () => ({}) }));
+vi.mock('i18next', () => ({ default: { t: (key: string) => key } }));
 
 const uploaded = (name: string): UploadedFileType => ({
   id: name,
@@ -47,5 +48,68 @@ describe('useFiles restore', () => {
     expect(chat.result.current.uploadedFiles.map((f) => f.name)).toEqual([
       'chat.pdf',
     ]);
+  });
+});
+
+describe('useFiles document count across a conversation (#1685)', () => {
+  const fileLimit = {
+    accept: { doc: ['.pdf'], image: ['.png'], video: [] },
+    maxFileCount: 5,
+    maxFileSizeMB: 4.5,
+    maxImageFileCount: 20,
+    maxImageFileSizeMB: 3.75,
+    maxVideoFileCount: 1,
+    maxVideoFileSizeMB: 1000,
+  };
+  const accept = ['.pdf', '.png'];
+  const image = (name: string): UploadedFileType => ({
+    ...uploaded(name),
+    file: new File(['x'], name, { type: 'image/png' }),
+    type: 'image',
+    mimeType: 'image/png',
+  });
+
+  // checkFiles validates what is in the input against the given limit
+  const check = async (
+    files: UploadedFileType[],
+    previousFileCount?: number
+  ) => {
+    const { result } = renderHook(() => useFiles('/chat/count'));
+    act(() => result.current.restore(files));
+    await act(() =>
+      result.current.checkFiles({ ...fileLimit, previousFileCount }, accept)
+    );
+    return result.current;
+  };
+
+  it('allows 5 documents in a new chat', async () => {
+    const files = ['1', '2', '3', '4', '5'].map((n) => uploaded(`${n}.pdf`));
+    expect((await check(files)).errorMessages).toEqual([]);
+  });
+
+  it('counts the documents attached earlier in the chat', async () => {
+    const files = ['1', '2', '3'].map((n) => uploaded(`${n}.pdf`));
+
+    expect((await check(files, 2)).errorMessages).toEqual([]);
+
+    const over = await check(files, 3);
+    expect(over.errorMessages).toEqual(['files.error.fileCountExceededInChat']);
+    // Only the documents past the limit are marked
+    expect(over.uploadedFiles.map((f) => f.errorMessages.length)).toEqual([
+      0, 0, 1,
+    ]);
+  });
+
+  it('keeps the usual message when nothing was attached before', async () => {
+    const files = ['1', '2', '3', '4', '5', '6'].map((n) =>
+      uploaded(`${n}.pdf`)
+    );
+    expect((await check(files, 0)).errorMessages).toEqual([
+      'files.error.fileCountExceeded',
+    ]);
+  });
+
+  it('does not count earlier documents against images', async () => {
+    expect((await check([image('a.png')], 5)).errorMessages).toEqual([]);
   });
 });

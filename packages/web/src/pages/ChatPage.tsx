@@ -46,6 +46,7 @@ import {
 import ModelParameters from '../components/ModelParameters';
 import { AcceptedDotExtensions } from '../utils/MediaUtils';
 import { useTranslation } from 'react-i18next';
+import useAcceptedExtensions from '../hooks/useAcceptedExtensions';
 
 // File size limits for Chat (Lambda route: API Gateway → Lambda → Bedrock Converse API)
 // - Lambda synchronous payload limit: 6MB
@@ -214,18 +215,23 @@ const ChatPage: React.FC = () => {
     }
   }, [chatId, getChatTitle, t]);
 
-  const accept = useMemo(() => {
-    if (!modelId) return [];
-    const feature = MODELS.getModelMetadata(modelId);
-    return [
-      ...(feature.flags.doc ? fileLimit.accept.doc : []),
-      ...(feature.flags.image ? fileLimit.accept.image : []),
-      ...(feature.flags.video ? fileLimit.accept.video : []),
-    ];
-  }, [modelId]);
+  const accept = useAcceptedExtensions(fileLimit, modelId);
   const fileUpload = useMemo(() => {
     return accept.length > 0;
   }, [accept]);
+  // Documents attached earlier in this chat are sent again with every
+  // message, and Bedrock rejects a request with more than 5 documents (#1685)
+  const previousFileCount = useMemo(
+    () =>
+      rawMessages
+        .flatMap((m) => m.extraData ?? [])
+        .filter((data) => data.type === 'file').length,
+    [rawMessages]
+  );
+  const chatFileLimit = useMemo(
+    () => ({ ...fileLimit, previousFileCount }),
+    [previousFileCount]
+  );
   const reasoning = useMemo(() => {
     return MODELS.getModelMetadata(modelId).flags.reasoning ?? false;
   }, [modelId]);
@@ -584,8 +590,8 @@ const ChatPage: React.FC = () => {
   ]);
 
   const onDropFiles = useCallback(
-    (files: File[]) => uploadFiles(files, fileLimit, accept),
-    [uploadFiles, accept]
+    (files: File[]) => uploadFiles(files, chatFileLimit, accept),
+    [uploadFiles, chatFileLimit, accept]
   );
   const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
     useDropOverlay(onDropFiles);
@@ -752,7 +758,7 @@ const ChatPage: React.FC = () => {
             }}
             onReset={onReset}
             fileUpload={fileUpload}
-            fileLimit={fileLimit}
+            fileLimit={chatFileLimit}
             accept={accept}
             reasoning={reasoning && !adaptiveThinkingAlwaysOn}
             onReasoningSwitched={onReasoningSwitched}

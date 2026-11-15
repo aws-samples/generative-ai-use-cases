@@ -41,6 +41,7 @@ import { AcceptedDotExtensions } from '../../utils/MediaUtils';
 import { PiPaperclip, PiSpinnerGap } from 'react-icons/pi';
 import { useTranslation } from 'react-i18next';
 import useDropOverlay from '../../hooks/useDropOverlay';
+import useAcceptedExtensions from '../../hooks/useAcceptedExtensions';
 
 const ragEnabled: boolean = import.meta.env.VITE_APP_RAG_ENABLED === 'true';
 const ragKnowledgeBaseEnabled: boolean =
@@ -421,15 +422,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
     [setValue]
   );
 
-  const accept = useMemo(() => {
-    if (!modelId) return [];
-    const feature = MODELS.getModelMetadata(modelId);
-    return [
-      ...(feature.flags.doc ? fileLimit.accept.doc : []),
-      ...(feature.flags.image ? fileLimit.accept.image : []),
-      ...(feature.flags.video ? fileLimit.accept.video : []),
-    ];
-  }, [modelId]);
+  const accept = useAcceptedExtensions(fileLimit, modelId);
 
   useEffect(() => {
     checkFiles(fileLimit, accept);
