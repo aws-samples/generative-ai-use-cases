@@ -89,6 +89,10 @@ export default defineConfig(({ mode }) => ({
     }),
   ],
   test: {
+    // Keep memory bounded when several worktrees run tests at the same time
+    // (the default is the number of CPU cores minus one). Override with
+    // `--maxWorkers`.
+    maxWorkers: 4,
     projects: [
       {
         extends: true,
