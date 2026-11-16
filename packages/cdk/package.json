@@ -38,6 +38,7 @@
     "@aws-sdk/client-dynamodb": "^3.1012.0",
     "@aws-sdk/client-kendra": "^3.1012.0",
     "@aws-sdk/client-lambda": "^3.1012.0",
+    "@aws-sdk/client-polly": "^3.1012.0",
     "@aws-sdk/client-s3": "^3.1012.0",
     "@aws-sdk/client-sagemaker-runtime": "^3.1012.0",
     "@aws-sdk/client-sts": "^3.988.0",

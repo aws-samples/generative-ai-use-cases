@@ -1149,6 +1149,7 @@ const envs: Record<string, Partial<StackInput>> = {
       diagram: true, // Hide diagram generation
       meetingMinutes: true, // Hide meeting minutes generation
       voiceChat: true, // Hide voice chat
+      textToSpeech: true, // Hide audio file creation
     },
   },
 };
@@ -1171,11 +1172,16 @@ const envs: Record<string, Partial<StackInput>> = {
       "videoAnalyzer": true,
       "diagram": true,
       "meetingMinutes": true,
-      "voiceChat": true
+      "voiceChat": true,
+      "textToSpeech": true
     }
   }
 }
 ```
+
+About audio file creation: Generated audio files are saved in the shared file bucket (`BUCKET_NAME`) and are **not deleted automatically**, the same as chat attachments. The presigned download URL expires after 3600 seconds, but the object itself remains in the bucket until it is removed manually (or by an S3 lifecycle rule if the administrator adds one).
+
+SSML input for audio file creation: Switch the input mode to "SSML" to control pronunciation and pauses with SSML tags such as `<break>` (pause), `<sub>` (substitute reading) and `<phoneme>` (pronunciation). An SSML guide and insert tools are shown on the page. Tags that the selected engine does not support (for example `<emphasis>` with the neural engine) and tags that Amazon Polly never supports are rejected before the request is sent. In SSML mode, the billed characters (tags excluded) must be 3000 or less and the whole text including tags must be 6000 characters or less. Long pauses and slow rates make the audio longer, so the 10-minute limit of Amazon Polly can be reached. For details, see the [Amazon Polly SSML documentation](https://docs.aws.amazon.com/polly/latest/dg/ssml.html). The generated file is named `speech-<voice>-<yyyyMMdd>-<HHmmss>.<ext>` (for example `speech-kazuha-20261108-173045.mp3`); the timestamp is in the browser's local time zone so that downloads do not collide, and the server accepts only a valid `yyyyMMdd-HHmmss` value (otherwise it uses the current UTC time).
 
 ## Use Case Builder Configuration
 
