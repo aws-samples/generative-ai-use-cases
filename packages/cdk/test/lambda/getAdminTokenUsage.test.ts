@@ -4,6 +4,8 @@ import { handler, MAX_DAYS } from '../../lambda/getAdminTokenUsage';
 import { listTokenUsageForDate } from '../../lambda/repository';
 import { verifyToken } from '../../lambda/utils/auth';
 import { getUserEmail } from '../../lambda/agentBuilder/utils/auth-utils';
+import { resetConfiguredRegions } from '../../lambda/utils/modelPricing';
+import { MODEL_PRICING } from '../../lambda/utils/modelPricing.generated';
 
 jest.mock('../../lambda/repository');
 jest.mock('../../lambda/agentBuilder/utils/auth-utils');
@@ -46,6 +48,9 @@ beforeEach(() => {
   mocked(verifyToken).mockResolvedValue(admin as never);
   mocked(listTokenUsageForDate).mockResolvedValue([]);
   mocked(getUserEmail).mockImplementation(async (id) => `${id}@example.com`);
+  process.env.MODEL_REGION = 'us-east-1';
+  process.env.MODEL_IDS = '[]';
+  resetConfiguredRegions();
 });
 
 describe('GET /admin/token-usage', () => {
@@ -117,6 +122,33 @@ describe('GET /admin/token-usage', () => {
         executions: 3,
       }),
     ]);
+  });
+
+  test('estimates the cost of priced models and lists unpriced ones', async () => {
+    const opus = 'global.anthropic.claude-opus-5-5';
+    mocked(listTokenUsageForDate).mockResolvedValue([
+      stats('2026-11-01', 'alice', 1000, 2000, opus),
+      stats('2026-11-01', 'bob', 500, 500, 'unknown.model'),
+    ]);
+    const res = await call({ startDate: '2026-11-01', endDate: '2026-11-01' });
+    const body = JSON.parse(res.body);
+    const price = MODEL_PRICING['us-east-1']['Claude Opus 5.5'].global!;
+    const expected =
+      (1000 * price.inputPer1k + 2000 * price.outputPer1k) / 1000;
+
+    expect(body.estimatedCostUsd).toBeCloseTo(expected, 10);
+    expect(body.pricingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(body.models).toEqual([
+      expect.objectContaining({ modelId: opus, estimatedCostUsd: expected }),
+      expect.not.objectContaining({ estimatedCostUsd: expect.anything() }),
+    ]);
+    const alice = body.users.find(
+      (u: { userId: string }) => u.userId === 'alice'
+    );
+    const bob = body.users.find((u: { userId: string }) => u.userId === 'bob');
+    expect(alice.estimatedCostUsd).toBeCloseTo(expected, 10);
+    expect(alice.lastActiveDate).toBe('2026-11-01');
+    expect(bob.estimatedCostUsd).toBe(0);
   });
 
   test('accepts the longest allowed range', async () => {

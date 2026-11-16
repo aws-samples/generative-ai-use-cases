@@ -1,13 +1,25 @@
 admin:
+  active_users: 活跃用户
+  cost_note: 预估费用按调用各模型的区域的 AWS 标价（按需，USD）计算，不包括折扣、Savings Plans 和免费套餐。实际费用请在 AWS Cost Explorer 中查看。
   description: GenU 记录的所有用户的令牌用量。如需详细分析，请使用 CloudWatch Logs Insights 查询 Bedrock 模型调用日志。
   download_csv: 下载 CSV
+  estimated_cost: 预估费用
   executions: 执行次数
+  last_active: 最后使用
   last_n_days: '最近 {{days}} 天'
   load_failed: 无法加载用量。
+  model: 模型
+  models_heading: 按模型
+  no_price: 无价格
   period: 期间
+  pricing_note: '{{date}} 的标价'
   scope_note: 仅统计 GenU 随聊天消息保存的文本生成用量。不包括代理（Bedrock Agents、AgentCore）以及图像或视频生成。
+  search_users: 搜索用户
   title: 管理
+  tokens: '令牌（输入 + 输出）'
+  unpriced_models: '没有标价、未计入费用的模型：{{models}}'
   user: 用户
+  users_heading: 按用户
 agent:
   drop_files: 拖放文件上传
   title: Agent 聊天

@@ -3,7 +3,13 @@ import { GetAdminTokenUsageResponse } from 'generative-ai-use-cases';
 import { idTokenFromRequest, queryParams, sendJson } from './utils/http';
 import { isSystemAdmin, verifyToken } from './utils/auth';
 import { listTokenUsageForDate } from './repository';
-import { datesInRange, sumByDate, totalsByUser } from './utils/tokenUsage';
+import {
+  datesInRange,
+  sumByDate,
+  totalsByModel,
+  totalsByUser,
+} from './utils/tokenUsage';
+import { MODEL_PRICING_DATE } from './utils/modelPricing';
 import { getUserEmail } from './agentBuilder/utils/auth-utils';
 
 /** Longest range one request may read (one query per day). */
@@ -83,9 +89,16 @@ export const handler = async (
     if (emails[index]) user.email = emails[index];
   });
 
+  const models = totalsByModel(records);
   const body: GetAdminTokenUsageResponse = {
     daily: sumByDate(dates, records),
     users,
+    models,
+    estimatedCostUsd: models.reduce(
+      (sum, model) => sum + (model.estimatedCostUsd ?? 0),
+      0
+    ),
+    pricingDate: MODEL_PRICING_DATE,
   };
   return sendJson(response, 200, body);
 };

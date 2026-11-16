@@ -1,13 +1,25 @@
 admin:
+  active_users: 利用ユーザー数
+  cost_note: 推定コストは、各モデルを呼び出しているリージョンの AWS の定価（オンデマンド、USD）で計算しています。割引、Savings Plans、無料枠は反映されません。実際の請求額は AWS Cost Explorer で確認してください。
   description: GenU が記録している全ユーザーのトークン利用量です。詳しい分析は、Bedrock のモデル呼び出しログを CloudWatch Logs Insights で集計してください。
   download_csv: CSV をダウンロード
+  estimated_cost: 推定コスト
   executions: 実行回数
+  last_active: 最終利用日
   last_n_days: '過去 {{days}} 日'
   load_failed: 利用量を読み込めませんでした。
+  model: モデル
+  models_heading: モデル別
+  no_price: 価格不明
   period: 期間
+  pricing_note: '{{date}} 時点の定価'
   scope_note: GenU がチャットのメッセージと一緒に保存したテキスト生成の分だけを数えています。エージェント（Bedrock Agents、AgentCore）や画像・動画の生成は含みません。
+  search_users: ユーザーを検索
   title: 管理
+  tokens: 'トークン（入力 + 出力）'
+  unpriced_models: '定価がないためコストに含めていないモデル: {{models}}'
   user: ユーザー
+  users_heading: ユーザー別
 agent:
   drop_files: ファイルをドロップしてアップロード
   title: Agent チャット

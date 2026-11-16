@@ -1,13 +1,25 @@
 admin:
+  active_users: Người dùng hoạt động
+  cost_note: 'Chi phí ước tính dùng giá niêm yết của AWS (theo yêu cầu, USD) tại Region gọi từng mô hình. Không tính chiết khấu, Savings Plans và bậc miễn phí; xem chi phí thực tế trong AWS Cost Explorer.'
   description: 'Lượng token của mọi người dùng theo dữ liệu GenU ghi lại. Để phân tích chi tiết, hãy dùng CloudWatch Logs Insights trên nhật ký gọi mô hình của Bedrock.'
   download_csv: Tải xuống CSV
+  estimated_cost: Chi phí ước tính
   executions: Số lần thực thi
+  last_active: Lần dùng gần nhất
   last_n_days: '{{days}} ngày qua'
   load_failed: Không tải được dữ liệu sử dụng.
+  model: Mô hình
+  models_heading: Theo mô hình
+  no_price: Không có giá
   period: Khoảng thời gian
+  pricing_note: 'Giá niêm yết ngày {{date}}'
   scope_note: Chỉ tính phần tạo văn bản mà GenU lưu cùng tin nhắn trò chuyện. Không bao gồm tác tử (Bedrock Agents, AgentCore) và tạo ảnh hoặc video.
+  search_users: Tìm người dùng
   title: Quản trị
+  tokens: 'Token (đầu vào + đầu ra)'
+  unpriced_models: 'Mô hình không có giá niêm yết, không tính vào chi phí: {{models}}'
   user: Người dùng
+  users_heading: Theo người dùng
 agent:
   drop_files: Thả file để tải lên
   title: Chat Agent

@@ -56,6 +56,10 @@ export interface UserTokenUsageTotals {
   outputTokens: number;
   cacheReadInputTokens: number;
   cacheWriteInputTokens: number;
+  /** Cost of the user's priced models only. */
+  estimatedCostUsd: number;
+  /** Last day (YYYY-MM-DD) with usage in the period. */
+  lastActiveDate: string;
 }
 
 /** `GET /admin/token-usage`: every user's usage over a date range. */
@@ -64,4 +68,38 @@ export interface GetAdminTokenUsageResponse {
   daily: TokenUsageStats[];
   /** Per user, sorted by input + output tokens, largest first. */
   users: UserTokenUsageTotals[];
+  /** Per model, largest estimated cost (then tokens) first. */
+  models: ModelTokenUsageTotals[];
+  /** Total estimated cost of the priced models. */
+  estimatedCostUsd: number;
+  /** Date of the list prices (YYYY-MM-DD). */
+  pricingDate: string;
+}
+
+/** List price of a model, USD per 1,000 tokens (on-demand). */
+export interface ModelPrice {
+  inputPer1k: number;
+  outputPer1k: number;
+  cacheReadPer1k?: number;
+  cacheWritePer1k?: number;
+}
+
+/** A model's prices in one Region. */
+export interface ModelPrices {
+  /** In-Region and geographic cross-Region inference (us., jp., ...). */
+  regional?: ModelPrice;
+  /** Global cross-Region inference (global.). */
+  global?: ModelPrice;
+}
+
+/** Usage and estimated cost of one model over the period. */
+export interface ModelTokenUsageTotals {
+  modelId: string;
+  executions: number;
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadInputTokens: number;
+  cacheWriteInputTokens: number;
+  /** Missing when GenU has no list price for the model. */
+  estimatedCostUsd?: number;
 }

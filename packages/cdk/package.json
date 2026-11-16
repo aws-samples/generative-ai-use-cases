@@ -9,7 +9,8 @@
     "cdk": "cdk",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "lambda-build-dryrun": "tsc --noEmit --skipLibCheck",
-    "postinstall": "npm ci --prefix custom-resources/opensearch-index && npm ci --prefix custom-resources/apply-tags && npm ci --prefix fargate-s3-server"
+    "postinstall": "npm ci --prefix custom-resources/opensearch-index && npm ci --prefix custom-resources/apply-tags && npm ci --prefix fargate-s3-server",
+    "pricing:update": "ts-node scripts/model-pricing/update.ts"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.137",

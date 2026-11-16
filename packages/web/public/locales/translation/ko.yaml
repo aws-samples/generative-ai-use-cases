@@ -1,13 +1,25 @@
 admin:
+  active_users: 이용 사용자 수
+  cost_note: '예상 비용은 각 모델을 호출하는 리전의 AWS 정가(온디맨드, USD)로 계산합니다. 할인, Savings Plans, 프리 티어는 반영되지 않습니다. 실제 청구 금액은 AWS Cost Explorer에서 확인하세요.'
   description: GenU가 기록한 모든 사용자의 토큰 사용량입니다. 자세한 분석은 Bedrock 모델 호출 로그를 CloudWatch Logs Insights로 집계하세요.
   download_csv: CSV 다운로드
+  estimated_cost: 예상 비용
   executions: 실행 횟수
+  last_active: 마지막 이용일
   last_n_days: '최근 {{days}}일'
   load_failed: 사용량을 불러오지 못했습니다.
+  model: 모델
+  models_heading: 모델별
+  no_price: 가격 없음
   period: 기간
+  pricing_note: '{{date}} 기준 정가'
   scope_note: GenU가 채팅 메시지와 함께 저장한 텍스트 생성분만 집계합니다. 에이전트(Bedrock Agents, AgentCore)와 이미지·동영상 생성은 포함되지 않습니다.
+  search_users: 사용자 검색
   title: 관리
+  tokens: '토큰(입력 + 출력)'
+  unpriced_models: '정가가 없어 비용에 포함하지 않은 모델: {{models}}'
   user: 사용자
+  users_heading: 사용자별
 agent:
   drop_files: 파일을 드롭하여 업로드
   title: 에이전트 채팅
