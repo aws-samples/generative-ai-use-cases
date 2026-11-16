@@ -69,6 +69,7 @@
     "searchApiKey": "",
     "agents": [],
     "inlineAgents": false,
+    "textractRegion": null,
     "mcpEnabled": false,
     "flows": [],
     "agentBuilderEnabled": false,

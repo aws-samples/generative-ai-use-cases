@@ -11,6 +11,7 @@ export type HiddenUseCases = {
   meetingMinutes?: boolean;
   voiceChat?: boolean;
   transcribe?: boolean;
+  textract?: boolean;
 };
 
 export type HiddenUseCasesKeys = keyof HiddenUseCases;

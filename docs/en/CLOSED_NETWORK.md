@@ -34,6 +34,7 @@ Options related to closed network mode have the `closedNetwork` prefix. The foll
 - Since various resources are created, when importing an existing VPC, it's recommended to use as clean an environment as possible.
 - SAML integration is not available.
 - Voice Chat use case is currently not available.
+- The Text Extraction tool is not supported. No VPC endpoint for Amazon Textract is created. Hide it with `hiddenUseCases: { textract: true }`.
 
 ## Example of Valid Configuration File
 

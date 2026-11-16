@@ -78,6 +78,8 @@ export const getParams = (app: cdk.App): ProcessedStackInput => {
     ),
     // Process agentCoreRegion: null -> modelRegion
     agentCoreRegion: params.agentCoreRegion || params.modelRegion,
+    // Process textractRegion: null -> region (stack region)
+    textractRegion: params.textractRegion || params.region,
     // Compute isAgentCoreNetworkPrivate from VPC configuration
     isAgentCoreNetworkPrivate: !!(
       params.agentCoreVpcId &&
