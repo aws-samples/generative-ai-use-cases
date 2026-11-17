@@ -6480,11 +6480,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6555,11 +6550,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6683,11 +6673,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6721,11 +6706,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6759,11 +6739,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6815,11 +6790,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6853,11 +6823,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -19520,11 +19485,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -19595,11 +19555,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -19723,11 +19678,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -19761,11 +19711,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -19799,11 +19744,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -19855,11 +19795,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -19893,11 +19828,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
