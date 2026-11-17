@@ -143,6 +143,14 @@ describe('GET /admin/token-usage', () => {
       (1000 * price.inputPer1k + 2000 * price.outputPer1k) / 1000;
 
     expect(body.estimatedCostUsd).toBeCloseTo(expected, 10);
+    expect(body.daily[0].estimatedCostUsd.overall).toBeCloseTo(expected, 10);
+    expect(body.daily[0].estimatedCostUsd[`model#${opus}`]).toBeCloseTo(
+      expected,
+      10
+    );
+    expect(body.daily[0].estimatedCostUsd).not.toHaveProperty(
+      'model#unknown.model'
+    );
     expect(body.pricingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     expect(body.models).toEqual([
       expect.objectContaining({ modelId: opus, estimatedCostUsd: expected }),

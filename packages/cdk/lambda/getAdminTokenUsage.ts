@@ -8,6 +8,7 @@ import {
   sumByDate,
   totalsByModel,
   totalsByUser,
+  withEstimatedCost,
 } from './utils/tokenUsage';
 import { MODEL_PRICING_DATE } from './utils/modelPricing';
 import { getUserEmail } from './agentBuilder/utils/auth-utils';
@@ -124,7 +125,7 @@ export const handler = async (
 
   const models = totalsByModel(records);
   const body: GetAdminTokenUsageResponse = {
-    daily: sumByDate(dates, records),
+    daily: sumByDate(dates, records).map(withEstimatedCost),
     users,
     models,
     estimatedCostUsd: models.reduce(

@@ -105,6 +105,21 @@ export const totalTokens = (counts: Omit<Counts, 'executions'>): number =>
 
 const byTokens = (a: Counts, b: Counts) => totalTokens(b) - totalTokens(a);
 
+/** The record with `estimatedCostUsd` (overall and per priced model) added. */
+export const withEstimatedCost = (record: TokenUsageStats): TokenUsageStats => {
+  const estimatedCostUsd: Record<string, number> & { overall: number } = {
+    overall: 0,
+  };
+  for (const [modelId, counts] of modelCounts(record)) {
+    const price = priceOf(modelId);
+    if (!price) continue;
+    const cost = costOf(price, counts);
+    estimatedCostUsd[`${MODEL_PREFIX}${modelId}`] = cost;
+    estimatedCostUsd.overall += cost;
+  }
+  return { ...record, estimatedCostUsd };
+};
+
 /** Each user's totals and estimated cost, most tokens first. */
 export const totalsByUser = (
   records: TokenUsageStats[]

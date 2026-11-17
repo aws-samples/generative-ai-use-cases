@@ -26,6 +26,14 @@ export interface TokenUsageStats {
     overall: number;
     [key: string]: number;
   };
+  /**
+   * Estimated cost (USD, list prices) of the priced models: `overall` and
+   * `model#{modelId}`. Added by the API; not stored.
+   */
+  estimatedCostUsd?: {
+    overall: number;
+    [key: string]: number;
+  };
 }
 
 export interface GetTokenUsageEvent {

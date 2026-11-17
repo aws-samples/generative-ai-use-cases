@@ -945,11 +945,15 @@ sketch:
 stat:
   cache_read_tokens: キャッシュ読込
   cache_write_tokens: キャッシュ書込
+  daily_estimated_cost: 日別の推定コスト
   daily_token_usage: 利用トークン
+  estimated_cost_last_7_days: 過去 7 日の推定コスト
+  estimated_cost_note: AWS の定価での目安です。実際の請求額とは異なります
   input_tokens: 入力
   last_7_days: 過去7日
   model_executions: モデル実行回数
   no_data_available: データがありません
+  other_models: その他のモデル
   output_tokens: 出力
   title: 統計
   usecase_distribution: ユースケース実行回数

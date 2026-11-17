@@ -1122,11 +1122,15 @@ sketch:
 stat:
   cache_read_tokens: Cache Read Tokens
   cache_write_tokens: Cache Write Tokens
+  daily_estimated_cost: Estimated cost per day
   daily_token_usage: Daily Token Usage
+  estimated_cost_last_7_days: 'Estimated cost, last 7 days'
+  estimated_cost_note: At AWS list prices; actual charges may differ
   input_tokens: Input Tokens
   last_7_days: Last 7 Days
   model_executions: Model Executions
   no_data_available: No data available
+  other_models: Other models
   output_tokens: Output Tokens
   title: Statistics
   usecase_distribution: Usecase Distribution

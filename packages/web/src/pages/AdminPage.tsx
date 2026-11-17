@@ -29,6 +29,9 @@ import useAdminApi from '../hooks/useAdminApi';
 const TokensTimeSeriesChart = lazy(
   () => import('../components/charts/TokensTimeSeriesChart')
 );
+const CostTimeSeriesChart = lazy(
+  () => import('../components/charts/CostTimeSeriesChart')
+);
 const UsecaseDistributionChart = lazy(
   () => import('../components/charts/UsecaseDistributionChart')
 );
@@ -566,6 +569,10 @@ const AdminPage: React.FC = () => {
 
           <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
             <Suspense fallback={<div>{t('common.loading')}</div>}>
+              <CostTimeSeriesChart
+                data={usage.daily}
+                title={t('stat.daily_estimated_cost')}
+              />
               <TokensTimeSeriesChart
                 data={usage.daily}
                 title={t('stat.daily_token_usage')}
