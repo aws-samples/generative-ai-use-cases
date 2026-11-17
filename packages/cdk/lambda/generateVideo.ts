@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { requireUserName, sendResponse } from './utils/http';
+import { requireUserName, sendJson } from './utils/http';
 import { GenerateVideoRequest } from 'generative-ai-use-cases';
 import api from './utils/api';
 import { defaultVideoGenerationModel } from './utils/models';
@@ -20,13 +20,9 @@ export const handler = async (
 
     const res = await createJob(userId, invocationArn, req);
 
-    return sendResponse(response, 200, JSON.stringify(res));
+    return sendJson(response, 200, res);
   } catch (error) {
     console.log(error);
-    return sendResponse(
-      response,
-      500,
-      JSON.stringify({ message: (error as Error).message })
-    );
+    return sendJson(response, 500, { message: (error as Error).message });
   }
 };

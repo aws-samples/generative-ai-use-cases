@@ -94,29 +94,24 @@ chat/
 
 #### Express ルートハンドラー（API Gateway 経由）
 
-ユーザーは `utils/http.ts` の `requireUserName` / `requireUserSub` で取得する（`api/middleware.ts` が Lambda Web Adapter から受け取った request context だけを見る）。レスポンスは `sendResponse` で返す。
+ユーザーは `utils/http.ts` の `requireUserName` / `requireUserSub` で取得する（`api/middleware.ts` が Lambda Web Adapter から受け取った request context だけを見る）。レスポンスは `sendJson`（値を `JSON.stringify` する）か `sendText`（文字列をそのまま返す。空なら本文なし）で返す。
 
 ```typescript
 // ✅ 良い例
 import { Request, Response } from 'express';
-import { requireUserName, sendResponse } from './utils/http';
+import { requireUserName, sendJson } from './utils/http';
 
 export const handler = async (
   request: Request,
   response: Response
 ): Promise<void> => {
-  try {
-    const userId = requireUserName(request);
-    const result = await businessLogic(
-      userId,
-      request.params.chatId,
-      request.body
-    );
-    return sendResponse(response, 200, result);
-  } catch (error) {
-    console.log(error);
-    return sendResponse(response, 500, { message: 'Internal Server Error' });
-  }
+  const userId = requireUserName(request);
+  const result = await businessLogic(
+    userId,
+    request.params.chatId,
+    request.body
+  );
+  return sendJson(response, 200, result);
 };
 ```
 
@@ -302,108 +297,38 @@ export const handler = async (event: APIGatewayProxyEvent) => {
 
 ### 7. エラーハンドリング
 
-**概要**: try-catchで例外を捕捉し、適切なHTTPステータスコードとエラーメッセージを返す
+**概要**: 想定外の例外はハンドラーで catch しない。ルーターが `route()` で包むので、`route()` がログを出して `500 { message: 'Internal Server Error' }` を返す。ハンドラーは、利用者に別の答えを返す失敗だけを扱う
 
 ```typescript
-// ✅ 良い例 - 基本的なエラーハンドリング
-export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
-  try {
-    const userId: string =
-      event.requestContext.authorizer!.claims['cognito:username'];
-    const result = await businessLogic(userId);
+// ✅ 良い例 - 想定外の失敗は route() に任せる
+router.get('/:chatId', route(findChatByIdHandler));
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify(result),
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+export const handler = async (
+  request: Request,
+  response: Response
+): Promise<void> => {
+  const chat = await findChatById(
+    requireUserName(request),
+    request.params.chatId
+  );
+  if (chat === null) {
+    // 想定内の失敗は、ステータスを選んでハンドラーで返す
+    return sendJson(response, 404, { message: 'Not found' });
   }
+  return sendJson(response, 200, { chat });
 };
 
-// ✅ 良い例 - エラー種別による分岐
+// ✅ 良い例 - エラー内容を利用者に返す必要があるときだけ catch する
 try {
-  const result = await businessLogic();
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: JSON.stringify(result),
-  };
+  return sendText(response, 200, await generateImage(request.body));
 } catch (error) {
   console.log(error);
-
-  // エラー種別による処理分岐
-  if (error instanceof ValidationError) {
-    return {
-      statusCode: 400,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Invalid input' }),
-    };
-  }
-
-  return {
-    statusCode: 500,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: JSON.stringify({ message: 'Internal Server Error' }),
-  };
+  return sendJson(response, 500, { message: (error as Error).message });
 }
 
-// ❌ 悪い例 - エラーハンドリングなし
-export const handler = async (event: APIGatewayProxyEvent) => {
-  const result = await businessLogic(); // エラー時に例外が伝播
-  return { statusCode: 200, body: JSON.stringify(result) };
-};
-
-// ❌ 悪い例 - 不適切なステータスコード
+// ❌ 悪い例 - 想定外の失敗を 200 で返す
 catch (error) {
-  return { statusCode: 200, body: JSON.stringify({ error: 'Failed' }) };
-}
-```
-
-#### レスポンス構造の統一
-
-```typescript
-// 成功レスポンス
-{
-  statusCode: 200,
-  headers: {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-  },
-  body: JSON.stringify(data),
-}
-
-// エラーレスポンス
-{
-  statusCode: 500,
-  headers: {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-  },
-  body: JSON.stringify({ message: 'Error message' }),
+  return sendJson(response, 200, { error: 'Failed' });
 }
 ```
 
@@ -515,17 +440,12 @@ export const handler = async (
   request: Request,
   response: Response
 ): Promise<void> => {
-  try {
-    // Cognitoからユーザー情報を取得
-    const userId = requireUserName(request);
+  // Cognitoからユーザー情報を取得
+  const userId = requireUserName(request);
 
-    // userIdを使ってデータアクセスを制御
-    const userChats = await getChatsByUserId(userId);
-    return sendResponse(response, 200, { chats: userChats });
-  } catch (error) {
-    console.log(error);
-    return sendResponse(response, 500, { message: 'Internal Server Error' });
-  }
+  // userIdを使ってデータアクセスを制御
+  const userChats = await getChatsByUserId(userId);
+  return sendJson(response, 200, { chats: userChats });
 };
 
 // ✅ 良い例 - repository層での認可制御
@@ -546,7 +466,7 @@ export const getChatsByUserId = async (userId: string): Promise<Chat[]> => {
 export const handler = async (request: Request, response: Response) => {
   // userIdを取得せずに全データを返す
   const allChats = await getAllChats(); // 他ユーザーのデータも含む
-  return sendResponse(response, 200, { chats: allChats });
+  return sendJson(response, 200, { chats: allChats });
 };
 
 // ❌ 悪い例 - クライアントから送信されたuserIdを信頼

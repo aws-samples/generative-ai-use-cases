@@ -30,28 +30,34 @@ export const queryParams = (request: Request): Record<string, string> =>
   request.query as Record<string, string>;
 
 /**
- * Send a JSON response: objects are serialized, strings are sent as they are
- * (signed URLs and base64 images are plain strings the client reads as text).
- * An empty body or 204 sends no body.
+ * Send `body` as it is, with the JSON content type the web client expects
+ * (signed URLs and base64 images are plain strings it reads as text). An empty
+ * body or 204 sends no body.
  */
-export const sendResponse = (
+export const sendText = (
   response: Response,
   statusCode: number,
-  body: unknown = ''
+  body = ''
 ): void => {
-  const text = typeof body === 'string' ? body : JSON.stringify(body);
-  if (statusCode === 204 || !text) {
+  if (statusCode === 204 || !body) {
     response.status(statusCode).send();
     return;
   }
   response.setHeader('Content-Type', 'application/json');
-  response.status(statusCode).send(text);
+  response.status(statusCode).send(body);
 };
+
+/** Send `value` serialized with `JSON.stringify`. */
+export const sendJson = (
+  response: Response,
+  statusCode: number,
+  value: unknown
+): void => sendText(response, statusCode, JSON.stringify(value));
 
 /**
  * Express 4 does not await handlers, so a rejected promise would never reach
- * an error handler. Answer it here with the same body the API always sent for
- * an unhandled failure (no error details).
+ * an error handler. Answer it here with the 500 body the handlers send, without
+ * error details; handlers only catch errors they answer differently.
  */
 export const route = (
   handler: (request: Request, response: Response) => Promise<void>
@@ -63,6 +69,6 @@ export const route = (
         next(error);
         return;
       }
-      response.status(500).json({ error: 'Internal server error' });
+      sendJson(response, 500, { message: 'Internal Server Error' });
     });
   }) as RequestHandler;

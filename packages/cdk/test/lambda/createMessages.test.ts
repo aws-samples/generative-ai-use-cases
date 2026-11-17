@@ -393,8 +393,8 @@ describe('createMessages Lambda handler', () => {
     const userId = 'testUser';
     const chatId = 'chat123';
 
-    // Spy on console.log to avoid cluttering test output
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    // route() logs the error with console.error
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
     // Set up mock to throw an error
     mockedFindChatById.mockImplementation(() => {
@@ -412,9 +412,9 @@ describe('createMessages Lambda handler', () => {
     expect(JSON.parse(result.body)).toEqual({
       message: 'Internal Server Error',
     });
-    expect(consoleLogSpy).toHaveBeenCalled();
+    expect(consoleErrorSpy).toHaveBeenCalled();
 
     // Restore the spy
-    consoleLogSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
   });
 });

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { sendResponse } from './utils/http';
+import { sendJson } from './utils/http';
 import { RetrieveCommand } from '@aws-sdk/client-bedrock-agent-runtime';
 import { RetrieveKnowledgeBaseRequest } from 'generative-ai-use-cases';
 import { initBedrockAgentRuntimeClient } from './utils/bedrockClient';
@@ -15,11 +15,7 @@ export const handler = async (
   const query = req.query;
 
   if (!query) {
-    return sendResponse(
-      response,
-      400,
-      JSON.stringify({ error: 'query is not specified' })
-    );
+    return sendJson(response, 400, { error: 'query is not specified' });
   }
 
   const client = await initBedrockAgentRuntimeClient({ region: MODEL_REGION });
@@ -35,5 +31,5 @@ export const handler = async (
   });
   const retrieveRes = await client.send(retrieveCommand);
 
-  return sendResponse(response, 200, JSON.stringify(retrieveRes));
+  return sendJson(response, 200, retrieveRes);
 };

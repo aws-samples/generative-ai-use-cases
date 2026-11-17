@@ -6,71 +6,62 @@ import {
 import { setChatTitle } from './repository';
 import api from './utils/api';
 import { defaultModel } from './utils/models';
-import { sendResponse } from './utils/http';
+import { sendText } from './utils/http';
 
 export const handler = async (
   request: Request,
   response: Response
 ): Promise<void> => {
-  try {
-    if (!request.body) {
-      throw new Error('Request body is missing');
-    }
-
-    const req = request.body as PredictTitleRequest;
-
-    console.log(
-      'predictTitle request:',
-      JSON.stringify({
-        hasPrompt: !!req.prompt,
-        chatId: req.chat?.chatId,
-        chatPK: req.chat?.id,
-        createdDate: req.chat?.createdDate,
-        usecase: req.chat?.usecase,
-        id: req.id,
-      })
-    );
-
-    // Validation
-    if (!req.prompt || !req.chat?.id || !req.chat?.createdDate || !req.id) {
-      throw new Error('Invalid request format');
-    }
-
-    // Use the lightweight default model for title generation
-    const model = defaultModel;
-
-    // Add a question for title setting
-    const messages: UnrecordedMessage[] = [
-      {
-        role: 'user',
-        content: req.prompt,
-      },
-    ];
-
-    // When adding a new model, the default Claude prompter is used, so the output may be enclosed in <output></output>
-    // Some reasoning models (e.g. Opus 4.5) may also output <thinking>...</thinking> before the actual title.
-    // Extract specifically from <output> tags if present, otherwise strip all XML tags.
-    const rawTitle =
-      (await api['bedrock'].invoke?.(model, messages, req.id)) ?? '';
-    const outputMatch = rawTitle.match(/<output>([\s\S]*?)<\/output>/);
-    const title = outputMatch
-      ? outputMatch[1].trim()
-      : rawTitle.replace(/<([^>]+)>[\s\S]*?<\/\1>/g, '').trim();
-
-    await setChatTitle(
-      req.chat.id,
-      req.chat.createdDate,
-      title,
-      req.chat.usecase
-    );
-
-    return sendResponse(response, 200, title);
-  } catch (error) {
-    console.log(error);
-    return sendResponse(
-      response,
-      500,
-      JSON.stringify({ message: 'Internal Server Error' })
-    );
+  if (!request.body) {
+    throw new Error('Request body is missing');
   }
+
+  const req = request.body as PredictTitleRequest;
+
+  console.log(
+    'predictTitle request:',
+    JSON.stringify({
+      hasPrompt: !!req.prompt,
+      chatId: req.chat?.chatId,
+      chatPK: req.chat?.id,
+      createdDate: req.chat?.createdDate,
+      usecase: req.chat?.usecase,
+      id: req.id,
+    })
+  );
+
+  // Validation
+  if (!req.prompt || !req.chat?.id || !req.chat?.createdDate || !req.id) {
+    throw new Error('Invalid request format');
+  }
+
+  // Use the lightweight default model for title generation
+  const model = defaultModel;
+
+  // Add a question for title setting
+  const messages: UnrecordedMessage[] = [
+    {
+      role: 'user',
+      content: req.prompt,
+    },
+  ];
+
+  // When adding a new model, the default Claude prompter is used, so the output may be enclosed in <output></output>
+  // Some reasoning models (e.g. Opus 4.5) may also output <thinking>...</thinking> before the actual title.
+  // Extract specifically from <output> tags if present, otherwise strip all XML tags.
+  const rawTitle =
+    (await api['bedrock'].invoke?.(model, messages, req.id)) ?? '';
+  const outputMatch = rawTitle.match(/<output>([\s\S]*?)<\/output>/);
+  const title = outputMatch
+    ? outputMatch[1].trim()
+    : rawTitle.replace(/<([^>]+)>[\s\S]*?<\/\1>/g, '').trim();
+
+  await setChatTitle(
+    req.chat.id,
+    req.chat.createdDate,
+    title,
+    req.chat.usecase
+  );
+
+  return sendText(response, 200, title);
 };

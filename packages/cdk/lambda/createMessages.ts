@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { requireUserName, sendResponse } from './utils/http';
+import { requireUserName, sendJson } from './utils/http';
 import { CreateMessagesRequest, ExtraData } from 'generative-ai-use-cases';
 import {
   batchCreateMessages,
@@ -115,64 +115,43 @@ export const handler = async (
   request: Request,
   response: Response
 ): Promise<void> => {
-  try {
-    const req: CreateMessagesRequest = request.body ?? {};
-    const userId: string = requireUserName(request);
-    const chatId = request.params.chatId;
+  const req: CreateMessagesRequest = request.body ?? {};
+  const userId: string = requireUserName(request);
+  const chatId = request.params.chatId;
 
-    // Authorization check: Verify if the specified chat belongs to the user
-    const chat = await findChatById(userId, chatId);
-    if (chat === null) {
-      return sendResponse(
-        response,
-        403,
-        JSON.stringify({
-          message: 'You do not have permission to post messages in the chat.',
-        })
-      );
-    }
+  // Authorization check: Verify if the specified chat belongs to the user
+  const chat = await findChatById(userId, chatId);
+  if (chat === null) {
+    return sendJson(response, 403, {
+      message: 'You do not have permission to post messages in the chat.',
+    });
+  }
 
-    if (req.messages) {
-      for (const message of req.messages) {
-        if (message.extraData && message.extraData.length > 0) {
-          for (const extra of message.extraData) {
-            if (!isValidExtraData(extra, FILE_UPLOAD_BUCKET_NAME)) {
-              return sendResponse(
-                response,
-                400,
-                JSON.stringify({
-                  message: 'Invalid extraData',
-                })
-              );
-            }
+  if (req.messages) {
+    for (const message of req.messages) {
+      if (message.extraData && message.extraData.length > 0) {
+        for (const extra of message.extraData) {
+          if (!isValidExtraData(extra, FILE_UPLOAD_BUCKET_NAME)) {
+            return sendJson(response, 400, {
+              message: 'Invalid extraData',
+            });
           }
         }
       }
     }
-
-    const messages = await batchCreateMessages(req.messages, userId, chatId);
-
-    // The messages are already saved, so a failure here must not fail the
-    // request; the chat just keeps its previous position in the history.
-    try {
-      await setChatUpdatedDate(chat.id, chat.createdDate);
-    } catch (error) {
-      console.log('Failed to update updatedDate', error);
-    }
-
-    return sendResponse(
-      response,
-      200,
-      JSON.stringify({
-        messages,
-      })
-    );
-  } catch (error) {
-    console.log(error);
-    return sendResponse(
-      response,
-      500,
-      JSON.stringify({ message: 'Internal Server Error' })
-    );
   }
+
+  const messages = await batchCreateMessages(req.messages, userId, chatId);
+
+  // The messages are already saved, so a failure here must not fail the
+  // request; the chat just keeps its previous position in the history.
+  try {
+    await setChatUpdatedDate(chat.id, chat.createdDate);
+  } catch (error) {
+    console.log('Failed to update updatedDate', error);
+  }
+
+  return sendJson(response, 200, {
+    messages,
+  });
 };

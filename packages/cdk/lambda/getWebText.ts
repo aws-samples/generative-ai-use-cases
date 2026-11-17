@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { queryParams, sendResponse } from './utils/http';
+import { queryParams, sendJson } from './utils/http';
 import { parse } from 'node-html-parser';
 import sanitizeHtml from 'sanitize-html';
 import { URL } from 'url';
@@ -110,55 +110,38 @@ export const handler = async (
   request: Request,
   response: Response
 ): Promise<void> => {
-  try {
-    const url = queryParams(request).url;
+  const url = queryParams(request).url;
 
-    if (!url) {
-      return sendResponse(
-        response,
-        400,
-        JSON.stringify({ message: 'url is missing' })
-      );
-    }
-
-    // Validate URL safety
-    const validation = await validateUrl(url);
-    if (!validation.valid) {
-      return sendResponse(
-        response,
-        403,
-        JSON.stringify({
-          message: validation.message || 'Access denied',
-        })
-      );
-    }
-
-    // Execute request if URL is confirmed safe
-    const res = await fetch(url);
-    const html = await res.text();
-    // Fix invalid tags
-    const cleanHtml = sanitizeHtml(html, {
-      // body and html are removed by default, so this option prevents that
-      allowedTags: [...sanitizeHtml.defaults.allowedTags, 'body', 'html'],
-    });
-    const root = parse(cleanHtml, {
-      comment: false,
-      blockTextElements: {
-        script: false,
-        noScript: false,
-        style: false,
-        pre: false,
-      },
-    });
-    const text = root?.querySelector('body')?.removeWhitespace().text;
-
-    return sendResponse(response, 200, JSON.stringify({ text }));
-  } catch (error) {
-    console.log(error);
-    return sendResponse(
-      response,
-      500,
-      JSON.stringify({ message: 'Internal Server Error' })
-    );
+  if (!url) {
+    return sendJson(response, 400, { message: 'url is missing' });
   }
+
+  // Validate URL safety
+  const validation = await validateUrl(url);
+  if (!validation.valid) {
+    return sendJson(response, 403, {
+      message: validation.message || 'Access denied',
+    });
+  }
+
+  // Execute request if URL is confirmed safe
+  const res = await fetch(url);
+  const html = await res.text();
+  // Fix invalid tags
+  const cleanHtml = sanitizeHtml(html, {
+    // body and html are removed by default, so this option prevents that
+    allowedTags: [...sanitizeHtml.defaults.allowedTags, 'body', 'html'],
+  });
+  const root = parse(cleanHtml, {
+    comment: false,
+    blockTextElements: {
+      script: false,
+      noScript: false,
+      style: false,
+      pre: false,
+    },
+  });
+  const text = root?.querySelector('body')?.removeWhitespace().text;
+
+  return sendJson(response, 200, { text });
 };

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { sendResponse } from './utils/http';
+import { sendJson } from './utils/http';
 import {
   AttributeFilter,
   KendraClient,
@@ -18,11 +18,7 @@ export const handler = async (
   const query = req.query;
 
   if (!query) {
-    return sendResponse(
-      response,
-      400,
-      JSON.stringify({ error: 'query is not specified' })
-    );
+    return sendJson(response, 400, { error: 'query is not specified' });
   }
 
   // The default language is English, so language settings must be done.
@@ -48,5 +44,5 @@ export const handler = async (
 
   const retrieveRes = await kendra.send(retrieveCommand);
 
-  return sendResponse(response, 200, JSON.stringify(retrieveRes));
+  return sendJson(response, 200, retrieveRes);
 };
