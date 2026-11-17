@@ -2287,7 +2287,7 @@ filter requestMetadata.genu = 'genu'
 
 ## Admin Page
 
-The admin page shows every user's token usage in GenU (the shield icon at the bottom left). It shows the usage GenU saves with chat messages (the same data as the stats page) for the last 7, 30 or 90 days, and the per-user totals can be downloaded as CSV.
+The admin page shows every user's token usage in GenU (the shield icon at the bottom left). It shows the usage GenU saves with chat messages (the same data as the stats page) for the last 7, 30 or 90 days, and the per-user totals can be downloaded as CSV. Selecting users in the per-user table (up to 50) narrows the cards, the per-model table and the charts to those users. Token counts add input, output, cache read and cache write tokens.
 
 Only users in the `SystemAdminGroup` group of the Cognito user pool can open the admin page. The group is created on deployment. To add a user, open the user pool in the [Amazon Cognito console](https://console.aws.amazon.com/cognito/home) and add the user under "Groups", or run:
 

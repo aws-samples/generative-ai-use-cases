@@ -1,6 +1,11 @@
 import { TokenUsageStats } from 'generative-ai-use-cases';
 import { invokeHandler } from './api/testApp';
-import { handler, MAX_DAYS } from '../../lambda/getAdminTokenUsage';
+import {
+  clearEmailCache,
+  handler,
+  MAX_DAYS,
+  MAX_FILTER_USERS,
+} from '../../lambda/getAdminTokenUsage';
 import { listTokenUsageForDate } from '../../lambda/repository';
 import { verifyToken } from '../../lambda/utils/auth';
 import { getUserEmail } from '../../lambda/agentBuilder/utils/auth-utils';
@@ -48,6 +53,7 @@ beforeEach(() => {
   mocked(verifyToken).mockResolvedValue(admin as never);
   mocked(listTokenUsageForDate).mockResolvedValue([]);
   mocked(getUserEmail).mockImplementation(async (id) => `${id}@example.com`);
+  clearEmailCache();
   process.env.MODEL_REGION = 'us-east-1';
   process.env.MODEL_IDS = '[]';
   resetConfiguredRegions();
@@ -149,6 +155,100 @@ describe('GET /admin/token-usage', () => {
     expect(alice.estimatedCostUsd).toBeCloseTo(expected, 10);
     expect(alice.lastActiveDate).toBe('2026-11-01');
     expect(bob.estimatedCostUsd).toBe(0);
+  });
+
+  test('narrows every total to the selected users', async () => {
+    mocked(listTokenUsageForDate).mockResolvedValue([
+      stats('2026-11-01', 'alice', 10, 1, 'm1'),
+      stats('2026-11-01', 'bob', 100, 10, 'm2'),
+      stats('2026-11-01', 'carol', 1000, 100, 'm3'),
+    ]);
+    const res = await call({
+      startDate: '2026-11-01',
+      endDate: '2026-11-01',
+      userIds: 'alice,carol',
+    });
+    const body = JSON.parse(res.body);
+    expect(body.users.map((u: { userId: string }) => u.userId)).toEqual([
+      'carol',
+      'alice',
+    ]);
+    expect(
+      body.models.map((m: { modelId: string }) => m.modelId).sort()
+    ).toEqual(['m1', 'm3']);
+    expect(body.daily[0].inputTokens.overall).toBe(1010);
+    expect(body.daily[0].executions.overall).toBe(2);
+  });
+
+  test('rejects more selected users than allowed', async () => {
+    const userIds = Array.from(
+      { length: MAX_FILTER_USERS + 1 },
+      (_, i) => `u${i}`
+    ).join(',');
+    const res = await call({
+      startDate: '2026-11-01',
+      endDate: '2026-11-01',
+      userIds,
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('orders users by all four token kinds', async () => {
+    const withCache = stats('2026-11-01', 'cached', 1, 1);
+    withCache.cacheReadInputTokens.overall = 10000;
+    mocked(listTokenUsageForDate).mockResolvedValue([
+      stats('2026-11-01', 'plain', 1000, 1000),
+      withCache,
+    ]);
+    const res = await call({ startDate: '2026-11-01', endDate: '2026-11-01' });
+    expect(
+      JSON.parse(res.body).users.map((u: { userId: string }) => u.userId)
+    ).toEqual(['cached', 'plain']);
+  });
+
+  test.each([100, 500])(
+    'looks up every email for %i users with at most 10 calls in flight',
+    async (count) => {
+      const ids = Array.from({ length: count }, (_, i) => `user${i}`);
+      mocked(listTokenUsageForDate).mockImplementation(async (date) =>
+        ids.map((id) => stats(date, id, 10, 1))
+      );
+      let inFlight = 0;
+      let peak = 0;
+      mocked(getUserEmail).mockImplementation(async (id) => {
+        inFlight++;
+        peak = Math.max(peak, inFlight);
+        await new Promise((resolve) => setTimeout(resolve, 1));
+        inFlight--;
+        return `${id}@example.com`;
+      });
+
+      const res = await call({
+        startDate: '2026-10-01',
+        endDate: '2026-10-30',
+      });
+      const body = JSON.parse(res.body);
+
+      expect(res.statusCode).toBe(200);
+      expect(body.users).toHaveLength(count);
+      expect(body.users.every((u: { email?: string }) => u.email)).toBe(true);
+      expect(getUserEmail).toHaveBeenCalledTimes(count);
+      expect(peak).toBeLessThanOrEqual(10);
+      expect(body.daily).toHaveLength(30);
+      expect(body.daily[0].executions.overall).toBe(count);
+      // The web client reads this in one response; keep it well under the
+      // API Gateway payload limit.
+      expect(res.body.length).toBeLessThan(1_000_000);
+    }
+  );
+
+  test('reuses looked-up emails on the next request', async () => {
+    mocked(listTokenUsageForDate).mockResolvedValue([
+      stats('2026-11-01', 'alice', 1, 1),
+    ]);
+    await call({ startDate: '2026-11-01', endDate: '2026-11-01' });
+    await call({ startDate: '2026-11-01', endDate: '2026-11-01' });
+    expect(getUserEmail).toHaveBeenCalledTimes(1);
   });
 
   test('accepts the longest allowed range', async () => {

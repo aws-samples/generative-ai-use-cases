@@ -1,22 +1,30 @@
 admin:
   active_users: ผู้ใช้ที่ใช้งาน
+  clear_filter: แสดงผู้ใช้ทั้งหมด
   cost_note: 'ค่าใช้จ่ายโดยประมาณคำนวณจากราคาปกติของ AWS (ออนดีมานด์, USD) ของรีเจียนที่เรียกใช้แต่ละโมเดล ไม่รวมส่วนลด Savings Plans และ Free Tier ดูค่าใช้จ่ายจริงได้ใน AWS Cost Explorer'
   description: ปริมาณการใช้โทเค็นของผู้ใช้ทุกคนจากบันทึกที่ GenU เก็บไว้ สำหรับการวิเคราะห์โดยละเอียด ให้ใช้ CloudWatch Logs Insights กับบันทึกการเรียกใช้โมเดลของ Bedrock
   download_csv: ดาวน์โหลด CSV
   estimated_cost: ค่าใช้จ่ายโดยประมาณ
   executions: จำนวนครั้งที่เรียกใช้
+  filter_selected: 'สรุปเฉพาะ {{users}} คนที่เลือก'
+  filtered_to_users: 'กำลังแสดงยอดรวมของผู้ใช้ {{users}} คนที่เลือก'
   last_active: ใช้งานล่าสุด
   last_n_days: '{{days}} วันที่ผ่านมา'
   load_failed: โหลดข้อมูลการใช้งานไม่สำเร็จ
   model: โมเดล
   models_heading: ตามโมเดล
+  next: ถัดไป
   no_price: ไม่มีราคา
+  page_range: '{{from}}–{{to}} จาก {{total}}'
   period: ช่วงเวลา
+  previous: ก่อนหน้า
   pricing_note: 'ราคาปกติ ณ วันที่ {{date}}'
   scope_note: นับเฉพาะการสร้างข้อความที่ GenU บันทึกพร้อมข้อความแชท ไม่รวมเอเจนต์ (Bedrock Agents, AgentCore) และการสร้างรูปภาพหรือวิดีโอ
   search_users: ค้นหาผู้ใช้
+  select_page: เลือกผู้ใช้ทั้งหมดในหน้านี้
   title: ผู้ดูแลระบบ
-  tokens: 'โทเค็น (อินพุต + เอาต์พุต)'
+  tokens: โทเค็น (อินพุต เอาต์พุต และแคช)
+  too_many_selected: 'เลือกได้สูงสุด {{max}} คน'
   unpriced_models: 'โมเดลที่ไม่มีราคาปกติและไม่ได้รวมในค่าใช้จ่าย: {{models}}'
   user: ผู้ใช้
   users_heading: ตามผู้ใช้

@@ -96,10 +96,16 @@ const recordCost = (record: TokenUsageStats): number => {
   return cost;
 };
 
-const byTokens = (a: Counts, b: Counts) =>
-  b.inputTokens + b.outputTokens - (a.inputTokens + a.outputTokens);
+/** Input, output, cache read and cache write tokens added together. */
+export const totalTokens = (counts: Omit<Counts, 'executions'>): number =>
+  counts.inputTokens +
+  counts.outputTokens +
+  counts.cacheReadInputTokens +
+  counts.cacheWriteInputTokens;
 
-/** Each user's totals and estimated cost, largest token use first. */
+const byTokens = (a: Counts, b: Counts) => totalTokens(b) - totalTokens(a);
+
+/** Each user's totals and estimated cost, most tokens first. */
 export const totalsByUser = (
   records: TokenUsageStats[]
 ): UserTokenUsageTotals[] => {

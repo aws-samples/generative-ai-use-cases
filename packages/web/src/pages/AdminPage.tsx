@@ -9,7 +9,13 @@ import React, {
 import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { format, subDays } from 'date-fns';
-import { PiCaretDown, PiCaretUp, PiMagnifyingGlass } from 'react-icons/pi';
+import {
+  PiCaretDown,
+  PiCaretUp,
+  PiFunnel,
+  PiMagnifyingGlass,
+  PiX,
+} from 'react-icons/pi';
 import {
   GetAdminTokenUsageResponse,
   UserTokenUsageTotals,
@@ -29,6 +35,9 @@ const UsecaseDistributionChart = lazy(
 
 // The API reads at most 93 days per request.
 const RANGES = ['7', '30', '90'] as const;
+// The API narrows the totals to at most this many users.
+const MAX_FILTER_USERS = 50;
+const PAGE_SIZE = 50;
 
 type SortKey =
   | 'estimatedCostUsd'
@@ -37,8 +46,17 @@ type SortKey =
   | 'lastActiveDate'
   | 'user';
 
-const tokensOf = (user: { inputTokens: number; outputTokens: number }) =>
-  user.inputTokens + user.outputTokens;
+/** Input, output, cache read and cache write tokens added together. */
+const tokensOf = (counts: {
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadInputTokens: number;
+  cacheWriteInputTokens: number;
+}) =>
+  counts.inputTokens +
+  counts.outputTokens +
+  counts.cacheReadInputTokens +
+  counts.cacheWriteInputTokens;
 
 const usd = (value: number) =>
   `$${value.toLocaleString(undefined, {
@@ -114,6 +132,10 @@ const AdminPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [failed, setFailed] = useState(false);
   const [search, setSearch] = useState('');
+  // Users ticked in the table, and the users the totals are narrowed to.
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [filterUserIds, setFilterUserIds] = useState<string[]>([]);
+  const [page, setPage] = useState(0);
   const [sort, setSort] = useState<{ key: SortKey; desc: boolean }>({
     key: 'estimatedCostUsd',
     desc: true,
@@ -134,7 +156,7 @@ const AdminPage: React.FC = () => {
     const { startDate, endDate } = range();
     setLoading(true);
     setFailed(false);
-    getAdminTokenUsage(startDate, endDate)
+    getAdminTokenUsage(startDate, endDate, filterUserIds)
       .then((data) => {
         if (!cancelled) setUsage(data);
       })
@@ -152,7 +174,7 @@ const AdminPage: React.FC = () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAdmin, days]);
+  }, [isAdmin, days, filterUserIds]);
 
   const totals = useMemo(() => {
     const users = usage?.users ?? [];
@@ -194,6 +216,31 @@ const AdminPage: React.FC = () => {
     });
   }, [usage, search, sort]);
 
+  useEffect(() => setPage(0), [usage, search, sort]);
+  const pageCount = Math.max(1, Math.ceil(users.length / PAGE_SIZE));
+  const pageUsers = users.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  const toggleSelected = (userIds: string[], on: boolean) =>
+    setSelected((current) => {
+      const next = new Set(current);
+      for (const id of userIds) {
+        if (on) next.add(id);
+        else next.delete(id);
+      }
+      return next;
+    });
+  const pageAllSelected =
+    pageUsers.length > 0 && pageUsers.every((u) => selected.has(u.userId));
+
+  const applyFilter = () => {
+    setFilterUserIds([...selected]);
+    setSelected(new Set());
+  };
+  const clearFilter = () => {
+    setFilterUserIds([]);
+    setSelected(new Set());
+  };
+
   const onSort = useCallback((key: SortKey) => {
     setSort((current) =>
       current.key === key
@@ -224,11 +271,6 @@ const AdminPage: React.FC = () => {
 
   const modelName = (modelId: string) =>
     modelMetadata[modelId]?.displayName ?? modelId;
-  const maxCost = Math.max(
-    ...(usage?.users ?? []).map((user) => user.estimatedCostUsd),
-    0
-  );
-
   return (
     <div className="px-4 py-6 lg:px-8">
       <div className="mb-2 text-center text-xl font-semibold">
@@ -260,6 +302,22 @@ const AdminPage: React.FC = () => {
 
       {!loading && usage && (
         <>
+          {filterUserIds.length > 0 && (
+            <div className="mb-3 flex flex-wrap items-center gap-2 rounded border border-blue-200 bg-blue-50 px-3 py-2 text-sm">
+              <PiFunnel />
+              <span>
+                {t('admin.filtered_to_users', {
+                  users: filterUserIds.length,
+                })}
+              </span>
+              <button
+                className="inline-flex items-center gap-1 text-blue-700 hover:underline"
+                onClick={clearFilter}>
+                <PiX />
+                {t('admin.clear_filter')}
+              </button>
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <Card
               label={t('admin.estimated_cost')}
@@ -291,20 +349,52 @@ const AdminPage: React.FC = () => {
 
           <div className="mb-2 mt-8 flex flex-wrap items-center justify-between gap-2">
             <div className="font-semibold">{t('admin.users_heading')}</div>
-            <div className="relative">
-              <PiMagnifyingGlass className="absolute left-2 top-2.5 text-gray-400" />
-              <input
-                className="rounded border py-1.5 pl-7 pr-2 text-sm"
-                value={search}
-                placeholder={t('admin.search_users')}
-                onChange={(event) => setSearch(event.target.value)}
-              />
+            <div className="flex flex-wrap items-center gap-2">
+              {selected.size > 0 && (
+                <>
+                  <Button
+                    outlined
+                    disabled={selected.size > MAX_FILTER_USERS}
+                    onClick={applyFilter}>
+                    {t('admin.filter_selected', { users: selected.size })}
+                  </Button>
+                  {selected.size > MAX_FILTER_USERS && (
+                    <span className="text-xs text-red-600">
+                      {t('admin.too_many_selected', {
+                        max: MAX_FILTER_USERS,
+                      })}
+                    </span>
+                  )}
+                </>
+              )}
+              <div className="relative">
+                <PiMagnifyingGlass className="absolute left-2 top-2.5 text-gray-400" />
+                <input
+                  className="rounded border py-1.5 pl-7 pr-2 text-sm"
+                  value={search}
+                  placeholder={t('admin.search_users')}
+                  onChange={(event) => setSearch(event.target.value)}
+                />
+              </div>
             </div>
           </div>
           <div className="overflow-x-auto rounded border">
             <table className="w-full text-sm">
               <thead className="bg-gray-100 text-left">
                 <tr>
+                  <th className="w-8 px-3 py-2">
+                    <input
+                      type="checkbox"
+                      aria-label={t('admin.select_page')}
+                      checked={pageAllSelected}
+                      onChange={(event) =>
+                        toggleSelected(
+                          pageUsers.map((u) => u.userId),
+                          event.target.checked
+                        )
+                      }
+                    />
+                  </th>
                   <SortHeader
                     label={t('admin.user')}
                     column="user"
@@ -316,6 +406,7 @@ const AdminPage: React.FC = () => {
                     column="estimatedCostUsd"
                     sort={sort}
                     onSort={onSort}
+                    right
                   />
                   <SortHeader
                     label={t('admin.executions')}
@@ -343,13 +434,23 @@ const AdminPage: React.FC = () => {
               <tbody>
                 {users.length === 0 && (
                   <tr>
-                    <td className="px-3 py-4 text-center" colSpan={5}>
+                    <td className="px-3 py-4 text-center" colSpan={6}>
                       {t('stat.no_data_available')}
                     </td>
                   </tr>
                 )}
-                {users.map((user) => (
+                {pageUsers.map((user) => (
                   <tr key={user.userId} className="border-t">
+                    <td className="px-3 py-2">
+                      <input
+                        type="checkbox"
+                        aria-label={user.email ?? user.userId}
+                        checked={selected.has(user.userId)}
+                        onChange={(event) =>
+                          toggleSelected([user.userId], event.target.checked)
+                        }
+                      />
+                    </td>
                     <td className="px-3 py-2">
                       <div>{user.email ?? user.userId}</div>
                       {user.email && (
@@ -358,30 +459,8 @@ const AdminPage: React.FC = () => {
                         </div>
                       )}
                     </td>
-                    <td className="px-3 py-2">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-24 rounded bg-gray-100">
-                          <div
-                            className="bg-aws-smile h-2 rounded"
-                            style={{
-                              width: `${maxCost > 0 ? (user.estimatedCostUsd / maxCost) * 100 : 0}%`,
-                            }}
-                          />
-                        </div>
-                        <span className="tabular-nums">
-                          {usd(user.estimatedCostUsd)}
-                        </span>
-                        {usage.estimatedCostUsd > 0 && (
-                          <span className="text-xs text-gray-500">
-                            {(
-                              user.estimatedCostUsd / usage.estimatedCostUsd
-                            ).toLocaleString(undefined, {
-                              style: 'percent',
-                              maximumFractionDigits: 0,
-                            })}
-                          </span>
-                        )}
-                      </div>
+                    <td className="px-3 py-2 text-right tabular-nums">
+                      {usd(user.estimatedCostUsd)}
                     </td>
                     <td className="px-3 py-2 text-right tabular-nums">
                       {user.executions.toLocaleString()}
@@ -397,6 +476,30 @@ const AdminPage: React.FC = () => {
               </tbody>
             </table>
           </div>
+
+          {users.length > PAGE_SIZE && (
+            <div className="mt-2 flex items-center justify-end gap-2 text-sm">
+              <span className="text-gray-500">
+                {t('admin.page_range', {
+                  from: page * PAGE_SIZE + 1,
+                  to: Math.min((page + 1) * PAGE_SIZE, users.length),
+                  total: users.length,
+                })}
+              </span>
+              <Button
+                outlined
+                disabled={page === 0}
+                onClick={() => setPage(page - 1)}>
+                {t('admin.previous')}
+              </Button>
+              <Button
+                outlined
+                disabled={page >= pageCount - 1}
+                onClick={() => setPage(page + 1)}>
+                {t('admin.next')}
+              </Button>
+            </div>
+          )}
 
           <div className="mb-2 mt-8 font-semibold">
             {t('admin.models_heading')}
@@ -420,6 +523,9 @@ const AdminPage: React.FC = () => {
                   </th>
                   <th className="px-3 py-2 text-right">
                     {t('stat.cache_read_tokens')}
+                  </th>
+                  <th className="px-3 py-2 text-right">
+                    {t('stat.cache_write_tokens')}
                   </th>
                 </tr>
               </thead>
@@ -448,6 +554,9 @@ const AdminPage: React.FC = () => {
                     </td>
                     <td className="px-3 py-2 text-right tabular-nums">
                       {model.cacheReadInputTokens.toLocaleString()}
+                    </td>
+                    <td className="px-3 py-2 text-right tabular-nums">
+                      {model.cacheWriteInputTokens.toLocaleString()}
                     </td>
                   </tr>
                 ))}

@@ -14,9 +14,28 @@ import { getUserEmail } from './agentBuilder/utils/auth-utils';
 
 /** Longest range one request may read (one query per day). */
 export const MAX_DAYS = 93;
-/** Users whose email is looked up per request; the rest show their user id. */
-const MAX_EMAIL_LOOKUPS = 300;
+/** Most users one request may narrow the totals to (`userIds`). */
+export const MAX_FILTER_USERS = 50;
+/** Calls in flight to DynamoDB and to Cognito. */
 const LOOKUP_CONCURRENCY = 10;
+/** Emails are kept this long, so changing the period does not look them up again. */
+const EMAIL_CACHE_TTL_MS = 10 * 60 * 1000;
+
+const emailCache = new Map<
+  string,
+  { email: string | undefined; expiresAt: number }
+>();
+
+const lookupEmail = async (userId: string): Promise<string | undefined> => {
+  const cached = emailCache.get(userId);
+  if (cached && cached.expiresAt > Date.now()) return cached.email;
+  const email = await getUserEmail(userId);
+  emailCache.set(userId, { email, expiresAt: Date.now() + EMAIL_CACHE_TTL_MS });
+  return email;
+};
+
+/** Only for tests. */
+export const clearEmailCache = (): void => emailCache.clear();
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -47,8 +66,9 @@ const mapLimit = async <T, R>(
 };
 
 /**
- * `GET /admin/token-usage?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD`: every
- * user's token usage from the Stats table. Only members of the admin Cognito
+ * `GET /admin/token-usage?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD[&userIds=a,b]`:
+ * every user's token usage from the Stats table. With `userIds`, every total
+ * (daily, per user, per model, cost) counts only those users. Only members of the admin Cognito
  * group, read from the verified id token, may call it.
  */
 export const handler = async (
@@ -76,16 +96,29 @@ export const handler = async (
     });
   }
 
+  const userIds = (queryParams(request).userIds ?? '')
+    .split(',')
+    .map((id) => id.trim())
+    .filter(Boolean);
+  if (userIds.length > MAX_FILTER_USERS) {
+    return sendJson(response, 400, {
+      message: `At most ${MAX_FILTER_USERS} users can be selected`,
+    });
+  }
+  const only = userIds.length > 0 ? new Set(userIds) : undefined;
+
+  // Each day is one query, paged by listTokenUsageForDate.
   const records = (
     await mapLimit(dates, LOOKUP_CONCURRENCY, listTokenUsageForDate)
-  ).flat();
+  )
+    .flat()
+    .filter((record) => !only || only.has(record.userId));
 
   const users = totalsByUser(records);
-  const looked = users.slice(0, MAX_EMAIL_LOOKUPS);
-  const emails = await mapLimit(looked, LOOKUP_CONCURRENCY, (user) =>
-    getUserEmail(user.userId)
+  const emails = await mapLimit(users, LOOKUP_CONCURRENCY, (user) =>
+    lookupEmail(user.userId)
   );
-  looked.forEach((user, index) => {
+  users.forEach((user, index) => {
     if (emails[index]) user.email = emails[index];
   });
 

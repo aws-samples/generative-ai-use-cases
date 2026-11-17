@@ -1,22 +1,30 @@
 admin:
   active_users: Active users
+  clear_filter: Show all users
   cost_note: 'The estimated cost uses AWS list prices (on-demand, USD) for the Region each model is called in. Discounts, Savings Plans and free tiers are not reflected; see AWS Cost Explorer for actual charges.'
   description: 'Token usage of every user, from the usage records GenU keeps. For detailed analysis, use CloudWatch Logs Insights on the Bedrock model invocation logs.'
   download_csv: Download CSV
   estimated_cost: Estimated cost
   executions: Executions
+  filter_selected: 'Show totals for {{users}} selected'
+  filtered_to_users: 'Totals for {{users}} selected users'
   last_active: Last active
   last_n_days: 'Last {{days}} days'
   load_failed: Could not load the usage.
   model: Model
   models_heading: By model
+  next: Next
   no_price: No price
+  page_range: '{{from}}–{{to}} of {{total}}'
   period: Period
+  previous: Previous
   pricing_note: 'List prices as of {{date}}'
   scope_note: Counts only the text generation GenU saves with chat messages. Agents (Bedrock Agents, AgentCore) and image or video generation are not included.
   search_users: Search users
+  select_page: Select the users on this page
   title: Admin
-  tokens: 'Tokens (input + output)'
+  tokens: 'Tokens (input, output and cache)'
+  too_many_selected: 'Select up to {{max}} users'
   unpriced_models: 'No list price, not included in the cost: {{models}}'
   user: User
   users_heading: By user
