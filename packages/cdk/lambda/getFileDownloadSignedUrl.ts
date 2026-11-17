@@ -1,16 +1,20 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { GetFileDownloadSignedUrlRequest } from 'generative-ai-use-cases';
 import { initKnowledgeBaseS3Client } from './utils/bedrockClient';
+import { queryParams, sendResponse } from './utils/http';
 
 const MODEL_REGION = process.env.MODEL_REGION as string;
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    const req = event.queryStringParameters as GetFileDownloadSignedUrlRequest;
+    const req = queryParams(
+      request
+    ) as unknown as GetFileDownloadSignedUrlRequest;
 
     // We pass `s3Type` parameter since Knowledge Base may need to reference S3 in a different account
     // default and agentcore currently reside in same account and region is specifed in request
@@ -28,23 +32,13 @@ export const handler = async (
 
     const signedUrl = await getSignedUrl(client, command, { expiresIn: 60 });
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: signedUrl,
-    };
+    return sendResponse(response, 200, signedUrl);
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(
+      response,
+      500,
+      JSON.stringify({ message: 'Internal Server Error' })
+    );
   }
 };

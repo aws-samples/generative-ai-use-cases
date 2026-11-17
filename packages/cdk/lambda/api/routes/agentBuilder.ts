@@ -1,5 +1,4 @@
 import { Router, Request, Response } from 'express';
-import { APIGatewayProxyEvent } from 'aws-lambda';
 import {
   handleCreateAgent,
   handleGetAgent,
@@ -11,8 +10,7 @@ import {
   handleListFavoriteAgents,
   handleToggleAgentFavorite,
 } from '../../agentBuilder/handlers/agent-handlers';
-import { getUserIdFromEvent } from '../../agentBuilder/utils/auth-utils';
-import { createEvent } from './helpers';
+import { requireUserName } from '../../utils/http';
 import {
   CreateAgentRequest,
   CloneAgentRequest,
@@ -22,8 +20,7 @@ import {
 export const router = Router();
 
 // Helper: extract userId from request
-const getUserId = (req: Request) =>
-  getUserIdFromEvent(createEvent(req) as APIGatewayProxyEvent);
+const getUserId = (req: Request) => requireUserName(req);
 
 // Helper: extract pagination params
 const getPagination = (req: Request) => ({

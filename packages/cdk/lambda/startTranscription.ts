@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { requireUserSub, sendResponse } from './utils/http';
 import {
   TranscribeClient,
   StartTranscriptionJobCommand,
@@ -9,12 +10,13 @@ import { StartTranscriptionRequest } from 'generative-ai-use-cases';
 import { sanitizeTranscribeLanguageOptions } from '@generative-ai-use-cases/common';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
     const client = new TranscribeClient({});
-    const req: StartTranscriptionRequest = JSON.parse(event.body!);
-    const userId = event.requestContext.authorizer!.claims.sub;
+    const req: StartTranscriptionRequest = request.body ?? {};
+    const userId = requireUserSub(request);
 
     const { audioUrl, speakerLabel, maxSpeakers, languageCode } = req;
     // The browser sends the user's candidate languages; only known codes are
@@ -45,25 +47,19 @@ export const handler = async (
     });
     const res = await client.send(command);
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
+    return sendResponse(
+      response,
+      200,
+      JSON.stringify({
         jobName: res.TranscriptionJob!.TranscriptionJobName,
-      }),
-    };
+      })
+    );
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(
+      response,
+      500,
+      JSON.stringify({ message: 'Internal Server Error' })
+    );
   }
 };

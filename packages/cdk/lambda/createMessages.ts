@@ -1,4 +1,5 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { requireUserName, sendResponse } from './utils/http';
 import { CreateMessagesRequest, ExtraData } from 'generative-ai-use-cases';
 import {
   batchCreateMessages,
@@ -111,27 +112,24 @@ const isValidExtraData = (extra: ExtraData, bucketName: string): boolean => {
 };
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    const req: CreateMessagesRequest = JSON.parse(event.body!);
-    const userId: string =
-      event.requestContext.authorizer!.claims['cognito:username'];
-    const chatId = event.pathParameters!.chatId!;
+    const req: CreateMessagesRequest = request.body ?? {};
+    const userId: string = requireUserName(request);
+    const chatId = request.params.chatId;
 
     // Authorization check: Verify if the specified chat belongs to the user
     const chat = await findChatById(userId, chatId);
     if (chat === null) {
-      return {
-        statusCode: 403,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({
+      return sendResponse(
+        response,
+        403,
+        JSON.stringify({
           message: 'You do not have permission to post messages in the chat.',
-        }),
-      };
+        })
+      );
     }
 
     if (req.messages) {
@@ -139,16 +137,13 @@ export const handler = async (
         if (message.extraData && message.extraData.length > 0) {
           for (const extra of message.extraData) {
             if (!isValidExtraData(extra, FILE_UPLOAD_BUCKET_NAME)) {
-              return {
-                statusCode: 400,
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Access-Control-Allow-Origin': '*',
-                },
-                body: JSON.stringify({
+              return sendResponse(
+                response,
+                400,
+                JSON.stringify({
                   message: 'Invalid extraData',
-                }),
-              };
+                })
+              );
             }
           }
         }
@@ -165,25 +160,19 @@ export const handler = async (
       console.log('Failed to update updatedDate', error);
     }
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
+    return sendResponse(
+      response,
+      200,
+      JSON.stringify({
         messages,
-      }),
-    };
+      })
+    );
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(
+      response,
+      500,
+      JSON.stringify({ message: 'Internal Server Error' })
+    );
   }
 };

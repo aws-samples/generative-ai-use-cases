@@ -1,33 +1,24 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { requireUserName, sendResponse } from '../utils/http';
 import { deleteUseCase } from './useCaseBuilderRepository';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    const userId: string =
-      event.requestContext.authorizer!.claims['cognito:username'];
-    const useCaseId = event.pathParameters!.useCaseId!;
+    const userId: string = requireUserName(request);
+    const useCaseId = request.params.useCaseId;
 
     await deleteUseCase(userId, useCaseId);
 
-    return {
-      statusCode: 204,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: '',
-    };
+    return sendResponse(response, 204, '');
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(
+      response,
+      500,
+      JSON.stringify({ message: 'Internal Server Error' })
+    );
   }
 };

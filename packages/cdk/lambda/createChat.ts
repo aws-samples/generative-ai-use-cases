@@ -1,33 +1,28 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { requireUserName, sendResponse } from './utils/http';
 import { createChat } from './repository';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    const userId: string =
-      event.requestContext.authorizer!.claims['cognito:username'];
+    const userId: string = requireUserName(request);
     const chat = await createChat(userId);
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
+    return sendResponse(
+      response,
+      200,
+      JSON.stringify({
         chat,
-      }),
-    };
+      })
+    );
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(
+      response,
+      500,
+      JSON.stringify({ message: 'Internal Server Error' })
+    );
   }
 };

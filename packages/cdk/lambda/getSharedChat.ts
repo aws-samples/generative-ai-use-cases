@@ -1,22 +1,17 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { sendResponse } from './utils/http';
 import { findUserIdAndChatId, findChatById, listMessages } from './repository';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    const shareId = event.pathParameters!.shareId!;
+    const shareId = request.params.shareId;
     const res = await findUserIdAndChatId(shareId);
 
     if (res === null) {
-      return {
-        statusCode: 404,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: '',
-      };
+      return sendResponse(response, 404, '');
     }
 
     const userId = res.userId;
@@ -30,26 +25,20 @@ export const handler = async (
     );
     const messages = await listMessages(chatId.split('#')[1]);
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
+    return sendResponse(
+      response,
+      200,
+      JSON.stringify({
         chat,
         messages,
-      }),
-    };
+      })
+    );
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(
+      response,
+      500,
+      JSON.stringify({ message: 'Internal Server Error' })
+    );
   }
 };

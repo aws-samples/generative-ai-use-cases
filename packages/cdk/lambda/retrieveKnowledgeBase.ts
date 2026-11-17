@@ -1,4 +1,5 @@
-import * as lambda from 'aws-lambda';
+import { Request, Response } from 'express';
+import { sendResponse } from './utils/http';
 import { RetrieveCommand } from '@aws-sdk/client-bedrock-agent-runtime';
 import { RetrieveKnowledgeBaseRequest } from 'generative-ai-use-cases';
 import { initBedrockAgentRuntimeClient } from './utils/bedrockClient';
@@ -7,20 +8,18 @@ const KNOWLEDGE_BASE_ID = process.env.KNOWLEDGE_BASE_ID;
 const MODEL_REGION = process.env.MODEL_REGION as string;
 
 export const handler = async (
-  event: lambda.APIGatewayProxyEvent
-): Promise<lambda.APIGatewayProxyResult> => {
-  const req = JSON.parse(event.body!) as RetrieveKnowledgeBaseRequest;
+  request: Request,
+  response: Response
+): Promise<void> => {
+  const req = (request.body ?? {}) as RetrieveKnowledgeBaseRequest;
   const query = req.query;
 
   if (!query) {
-    return {
-      statusCode: 400,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ error: 'query is not specified' }),
-    };
+    return sendResponse(
+      response,
+      400,
+      JSON.stringify({ error: 'query is not specified' })
+    );
   }
 
   const client = await initBedrockAgentRuntimeClient({ region: MODEL_REGION });
@@ -36,12 +35,5 @@ export const handler = async (
   });
   const retrieveRes = await client.send(retrieveCommand);
 
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: JSON.stringify(retrieveRes),
-  };
+  return sendResponse(response, 200, JSON.stringify(retrieveRes));
 };

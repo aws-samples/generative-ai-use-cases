@@ -19,9 +19,9 @@
 packages/cdk/lambda/
 ├── api/                             # Express Monolith（API Gateway 経由の API）
 │   ├── index.ts                     # Express アプリのエントリーポイント
+│   ├── middleware.ts                # CORS・request context・エラーハンドラー
 │   ├── run.sh                       # LWA 起動スクリプト
 │   └── routes/                      # ルート定義
-│       ├── helpers.ts               # 暫定アダプター（後述）
 │       ├── chats.ts                 # /chats ルート
 │       ├── predict.ts               # /predict ルート
 │       └── ...                      # 機能別ルートファイル
@@ -56,23 +56,15 @@ packages/cdk/lambda/
 - **データアクセス層**: repository.tsで一元管理、機能別に必要な場合のみ分離
 - **共通処理**: utils/配下に外部サービス別に分割
 
-#### 暫定アダプター（helpers.ts）について
+#### Express ルートとハンドラー
 
-現在、既存のハンドラー（`APIGatewayProxyEvent` ベース）を Express ルートに接続するため、`api/routes/helpers.ts` の `wrapHandler` で暫定的にアダプターを使用している。今後、各ハンドラーを Express ネイティブ（`req/res`）に段階的にリファクタリングし、このアダプターを廃止する予定。
+各ハンドラーは Express ネイティブ（`(request, response) => Promise<void>`）で、ルートは `utils/http.ts` の `route()` で登録する。`route()` は reject された Promise を 500 に変換する（Express 4 はハンドラーを await しないため必須）。
 
 ```typescript
-// 現状（暫定）: wrapHandler で既存ハンドラーをラップ
 import { handler as createChatHandler } from '../../createChat';
-import { wrapHandler } from './helpers';
+import { route } from '../../utils/http';
 
-router.post('/', wrapHandler(createChatHandler));
-
-// 将来（目標）: Express ネイティブなルートハンドラー
-router.post('/', async (req: Request, res: Response) => {
-  const userId = getUserId(req);
-  const result = await createChat(userId, req.body);
-  res.json(result);
-});
+router.post('/', route(createChatHandler));
 ```
 
 #### フォルダ分離の判断基準
@@ -102,26 +94,34 @@ chat/
 
 #### Express ルートハンドラー（API Gateway 経由）
 
-現在は暫定アダプター経由で既存ハンドラーを使用しているが、新規実装やリファクタリング時は Express ネイティブで実装する。
+ユーザーは `utils/http.ts` の `requireUserName` / `requireUserSub` で取得する（`api/middleware.ts` が Lambda Web Adapter から受け取った request context だけを見る）。レスポンスは `sendResponse` で返す。
 
 ```typescript
-// ✅ 良い例 - Express ネイティブなルートハンドラー（目標形式）
-import { Router, Request, Response } from 'express';
+// ✅ 良い例
+import { Request, Response } from 'express';
+import { requireUserName, sendResponse } from './utils/http';
 
-export const router = Router();
-
-router.post('/', async (req: Request, res: Response) => {
+export const handler = async (
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    const userId =
-      req.apiGateway.event.requestContext.authorizer.claims['cognito:username'];
-    const result = await businessLogic(userId, req.body);
-    res.json(result);
+    const userId = requireUserName(request);
+    const result = await businessLogic(
+      userId,
+      request.params.chatId,
+      request.body
+    );
+    return sendResponse(response, 200, result);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.log(error);
+    return sendResponse(response, 500, { message: 'Internal Server Error' });
   }
-});
+};
 ```
+
+- パスパラメーターは `request.params`、クエリは `queryParams(request)`、ボディは `request.body`（パース済み）
+- テストは `test/lambda/api/testApp.ts` の `invokeHandler` / `callApi` で、本番と同じミドルウェアを通して呼ぶ
 
 #### 直接 invoke 用 Lambda ハンドラー
 
@@ -512,35 +512,19 @@ const chatHistory = await getChatHistory(chatId);
 ```typescript
 // ✅ 良い例 - 適切な認可処理
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
     // Cognitoからユーザー情報を取得
-    const userId: string =
-      event.requestContext.authorizer!.claims['cognito:username'];
+    const userId = requireUserName(request);
 
     // userIdを使ってデータアクセスを制御
     const userChats = await getChatsByUserId(userId);
-    const userMessages = await getMessagesByUserIdAndChatId(userId, chatId);
-
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ chats: userChats }),
-    };
+    return sendResponse(response, 200, { chats: userChats });
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(response, 500, { message: 'Internal Server Error' });
   }
 };
 
@@ -559,19 +543,15 @@ export const getChatsByUserId = async (userId: string): Promise<Chat[]> => {
 };
 
 // ❌ 悪い例 - 認可制御なし
-export const handler = async (event: APIGatewayProxyEvent) => {
+export const handler = async (request: Request, response: Response) => {
   // userIdを取得せずに全データを返す
   const allChats = await getAllChats(); // 他ユーザーのデータも含む
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ chats: allChats }),
-  };
+  return sendResponse(response, 200, { chats: allChats });
 };
 
 // ❌ 悪い例 - クライアントから送信されたuserIdを信頼
-export const handler = async (event: APIGatewayProxyEvent) => {
-  const requestBody = JSON.parse(event.body || '{}');
-  const userId = requestBody.userId; // クライアントから送信された値を使用（危険）
+export const handler = async (request: Request, response: Response) => {
+  const userId = request.body.userId; // クライアントから送信された値を使用（危険）
 
   const userChats = await getChatsByUserId(userId);
   // 他ユーザーのデータにアクセス可能

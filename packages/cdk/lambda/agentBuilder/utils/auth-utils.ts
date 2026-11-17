@@ -1,4 +1,3 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
 import {
   CognitoIdentityProviderClient,
   AdminGetUserCommand,
@@ -7,17 +6,6 @@ import {
 
 // VPC Endpoint with Private DNS enabled will automatically resolve to the correct endpoint
 const cognitoClient = new CognitoIdentityProviderClient({});
-
-/**
- * Extract user ID from API Gateway event
- */
-export function getUserIdFromEvent(event: APIGatewayProxyEvent): string {
-  const userId = event.requestContext.authorizer!.claims['cognito:username'];
-  if (!userId) {
-    throw new Error('User not authenticated');
-  }
-  return userId;
-}
 
 /**
  * Get user email from Cognito

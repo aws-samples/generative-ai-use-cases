@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
 import {
   PredictTitleRequest,
   UnrecordedMessage,
@@ -6,16 +6,18 @@ import {
 import { setChatTitle } from './repository';
 import api from './utils/api';
 import { defaultModel } from './utils/models';
+import { sendResponse } from './utils/http';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    if (!event.body) {
+    if (!request.body) {
       throw new Error('Request body is missing');
     }
 
-    const req = JSON.parse(event.body) as PredictTitleRequest;
+    const req = request.body as PredictTitleRequest;
 
     console.log(
       'predictTitle request:',
@@ -62,23 +64,13 @@ export const handler = async (
       req.chat.usecase
     );
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: title,
-    };
+    return sendResponse(response, 200, title);
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(
+      response,
+      500,
+      JSON.stringify({ message: 'Internal Server Error' })
+    );
   }
 };

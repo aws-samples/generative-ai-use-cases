@@ -1,16 +1,10 @@
 import { Router } from 'express';
 import { handler as minutesCustomPromptHandler } from '../../meetingMinutes/minutesCustomPrompt';
-import { wrapHandler } from './helpers';
+import { route } from '../../utils/http';
 
 export const router = Router();
 
-router.get('/custom-prompts', wrapHandler(minutesCustomPromptHandler));
-router.post('/custom-prompts', wrapHandler(minutesCustomPromptHandler));
-router.put(
-  '/custom-prompts/:id',
-  wrapHandler(minutesCustomPromptHandler, (req) => ({ id: req.params.id }))
-);
-router.delete(
-  '/custom-prompts/:id',
-  wrapHandler(minutesCustomPromptHandler, (req) => ({ id: req.params.id }))
-);
+router.get('/custom-prompts', route(minutesCustomPromptHandler));
+router.post('/custom-prompts', route(minutesCustomPromptHandler));
+router.put('/custom-prompts/:id', route(minutesCustomPromptHandler));
+router.delete('/custom-prompts/:id', route(minutesCustomPromptHandler));

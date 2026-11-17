@@ -1,4 +1,5 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { sendResponse } from './utils/http';
 import {
   LambdaClient,
   InvokeCommand,
@@ -8,25 +9,23 @@ import { SpeechToSpeechSessionRequest } from 'generative-ai-use-cases';
 import { isSpeechToSpeechVoice } from '@generative-ai-use-cases/common';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
     const { channel, model, voiceId }: SpeechToSpeechSessionRequest =
-      JSON.parse(event.body!);
+      request.body ?? {};
 
     // The voiceId is passed to Bedrock as is, so accept only the voices of the model
     if (
       voiceId !== undefined &&
       !isSpeechToSpeechVoice(model?.modelId ?? '', voiceId)
     ) {
-      return {
-        statusCode: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({ message: 'Invalid voiceId' }),
-      };
+      return sendResponse(
+        response,
+        400,
+        JSON.stringify({ message: 'Invalid voiceId' })
+      );
     }
 
     const lambda = new LambdaClient({});
@@ -39,23 +38,13 @@ export const handler = async (
       })
     );
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ channel }),
-    };
+    return sendResponse(response, 200, JSON.stringify({ channel }));
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(
+      response,
+      500,
+      JSON.stringify({ message: 'Internal Server Error' })
+    );
   }
 };

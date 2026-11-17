@@ -1,4 +1,4 @@
-import { Router, Request } from 'express';
+import { Router } from 'express';
 import { handler as createChatHandler } from '../../createChat';
 import { handler as listChatsHandler } from '../../listChats';
 import { handler as findChatByIdHandler } from '../../findChatById';
@@ -7,17 +7,15 @@ import { handler as updateTitleHandler } from '../../updateTitle';
 import { handler as listMessagesHandler } from '../../listMessages';
 import { handler as createMessagesHandler } from '../../createMessages';
 import { handler as updateFeedbackHandler } from '../../updateFeedback';
-import { wrapHandler } from './helpers';
+import { route } from '../../utils/http';
 
 export const router = Router();
 
-const chatId = (req: Request) => ({ chatId: req.params.chatId });
-
-router.post('/', wrapHandler(createChatHandler));
-router.get('/', wrapHandler(listChatsHandler));
-router.get('/:chatId', wrapHandler(findChatByIdHandler, chatId));
-router.delete('/:chatId', wrapHandler(deleteChatHandler, chatId));
-router.put('/:chatId/title', wrapHandler(updateTitleHandler, chatId));
-router.get('/:chatId/messages', wrapHandler(listMessagesHandler, chatId));
-router.post('/:chatId/messages', wrapHandler(createMessagesHandler, chatId));
-router.post('/:chatId/feedbacks', wrapHandler(updateFeedbackHandler, chatId));
+router.post('/', route(createChatHandler));
+router.get('/', route(listChatsHandler));
+router.get('/:chatId', route(findChatByIdHandler));
+router.delete('/:chatId', route(deleteChatHandler));
+router.put('/:chatId/title', route(updateTitleHandler));
+router.get('/:chatId/messages', route(listMessagesHandler));
+router.post('/:chatId/messages', route(createMessagesHandler));
+router.post('/:chatId/feedbacks', route(updateFeedbackHandler));

@@ -1,12 +1,14 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
 import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { DeleteFileRequest } from 'generative-ai-use-cases';
+import { sendResponse } from './utils/http';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    const req = event.pathParameters as DeleteFileRequest;
+    const req = request.params as DeleteFileRequest;
 
     const client = new S3Client({});
     const command = new DeleteObjectCommand({
@@ -16,23 +18,13 @@ export const handler = async (
 
     await client.send(command);
 
-    return {
-      statusCode: 204,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: '',
-    };
+    return sendResponse(response, 204, '');
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(
+      response,
+      500,
+      JSON.stringify({ message: 'Internal Server Error' })
+    );
   }
 };

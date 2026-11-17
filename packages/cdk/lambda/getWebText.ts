@@ -1,4 +1,5 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { queryParams, sendResponse } from './utils/http';
 import { parse } from 'node-html-parser';
 import sanitizeHtml from 'sanitize-html';
 import { URL } from 'url';
@@ -106,35 +107,30 @@ async function validateUrl(
 }
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    const url = event?.queryStringParameters?.url;
+    const url = queryParams(request).url;
 
     if (!url) {
-      return {
-        statusCode: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({ message: 'url is missing' }),
-      };
+      return sendResponse(
+        response,
+        400,
+        JSON.stringify({ message: 'url is missing' })
+      );
     }
 
     // Validate URL safety
     const validation = await validateUrl(url);
     if (!validation.valid) {
-      return {
-        statusCode: 403,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({
+      return sendResponse(
+        response,
+        403,
+        JSON.stringify({
           message: validation.message || 'Access denied',
-        }),
-      };
+        })
+      );
     }
 
     // Execute request if URL is confirmed safe
@@ -156,23 +152,13 @@ export const handler = async (
     });
     const text = root?.querySelector('body')?.removeWhitespace().text;
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ text }),
-    };
+    return sendResponse(response, 200, JSON.stringify({ text }));
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+    return sendResponse(
+      response,
+      500,
+      JSON.stringify({ message: 'Internal Server Error' })
+    );
   }
 };
