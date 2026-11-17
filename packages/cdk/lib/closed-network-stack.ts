@@ -1,10 +1,14 @@
-import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
+import { Annotations, CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { ProcessedStackInput } from './stack-input';
 import { ClosedVpc, ClosedWeb, WindowsRdp, Resolver } from './construct';
 import { REMOTE_OUTPUT_KEYS } from './remote-output-keys';
+import {
+  closedNetworkWarnings,
+  requiredClosedNetworkVpcEndpoints,
+} from './utils/closed-network';
 
 export interface ClosedNetworkStackProps extends StackProps {
   readonly params: ProcessedStackInput;
@@ -13,6 +17,7 @@ export interface ClosedNetworkStackProps extends StackProps {
 
 export class ClosedNetworkStack extends Stack {
   public readonly vpc: ec2.IVpc;
+  public readonly closedVpc: ClosedVpc;
   public readonly apiGatewayVpcEndpoint: ec2.InterfaceVpcEndpoint;
   public readonly webBucket: s3.Bucket;
 
@@ -28,6 +33,7 @@ export class ClosedNetworkStack extends Stack {
       closedNetworkDomainName,
       closedNetworkCreateTestEnvironment,
       closedNetworkCreateResolverEndpoint,
+      closedNetworkTestEnvironmentInstanceType,
       modelRegion,
       modelIds,
     } = props.params;
@@ -58,7 +64,12 @@ export class ClosedNetworkStack extends Stack {
       vpcEndpointAvailabilityZones: closedNetworkVpcEndpointAzs,
       ipv4Cidr: closedNetworkVpcIpv4Cidr,
       domainName: closedNetworkDomainName,
+      vpcEndpointNames: requiredClosedNetworkVpcEndpoints(props.params),
     });
+
+    for (const warning of closedNetworkWarnings(props.params, modelRegion)) {
+      Annotations.of(this).addWarningV2(warning.id, warning.message);
+    }
 
     const closedWeb = new ClosedWeb(this, 'ClosedWeb', {
       vpc: closedVpc.vpc,
@@ -103,10 +114,13 @@ export class ClosedNetworkStack extends Stack {
       new WindowsRdp(this, 'WindowsRdp', {
         vpc: closedVpc.vpc,
         subnetIds: closedNetworkSubnetIds,
+        vpcEndpointAvailabilityZones: closedNetworkVpcEndpointAzs,
+        instanceType: closedNetworkTestEnvironmentInstanceType,
       });
     }
 
     this.vpc = closedVpc.vpc;
+    this.closedVpc = closedVpc;
     this.webBucket = closedWeb.bucket;
     this.apiGatewayVpcEndpoint = closedVpc.apiGatewayVpcEndpoint;
   }

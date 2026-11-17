@@ -10,6 +10,9 @@ const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
   TranscribeStreaming: ec2.InterfaceVpcEndpointAwsService.TRANSCRIBE_STREAMING,
   Polly: ec2.InterfaceVpcEndpointAwsService.POLLY,
   AgentCore: ec2.InterfaceVpcEndpointAwsService.BEDROCK_AGENTCORE,
+  // MCP servers in the runtime that call an AgentCore Gateway
+  AgentCoreGateway:
+    ec2.InterfaceVpcEndpointAwsService.BEDROCK_AGENTCORE_GATEWAY,
   // Cognito VPC Endpoints (Private Link)
   CognitoIdp: ec2.InterfaceVpcEndpointAwsService.COGNITO_IDP,
   CognitoIdentity: new ec2.InterfaceVpcEndpointAwsService('cognito-identity'),
@@ -26,16 +29,40 @@ const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
   Sts: ec2.InterfaceVpcEndpointAwsService.STS,
 };
 
+/**
+ * Subnet filter that keeps only the given AZs for Interface VPC Endpoints.
+ *
+ * On the first synth pass the AZ (or imported VPC) context is not looked up yet and
+ * the VPC reports placeholder AZs (dummy1a, ...). Filtering real AZ names against them
+ * matches no subnet and fails before the CLI can look the context up, so the filter is
+ * skipped on that pass; the next pass, with the real AZs, applies it.
+ */
+export const endpointAzFilter = (
+  vpc: ec2.IVpc,
+  availabilityZones?: string[] | null
+): ec2.SubnetFilter | undefined => {
+  if (!availabilityZones?.length) return undefined;
+  const contextPending =
+    vpc.availabilityZones.every((az) => az.startsWith('dummy')) &&
+    !availabilityZones.every((az) => az.startsWith('dummy'));
+  return contextPending
+    ? undefined
+    : ec2.SubnetFilter.availabilityZones(availabilityZones);
+};
+
 export interface ClosedVpcProps {
   readonly vpcId?: string | null;
   readonly subnetIds?: string[] | null;
   readonly vpcEndpointAvailabilityZones?: string[] | null;
   readonly ipv4Cidr: string;
   readonly domainName?: string | null;
+  // Interface VPC Endpoints to create. All of them when omitted.
+  readonly vpcEndpointNames?: string[];
 }
 
 export class ClosedVpc extends Construct {
   public readonly vpc: ec2.IVpc;
+  public readonly subnets: ec2.ISubnet[];
   public readonly apiGatewayVpcEndpoint: ec2.InterfaceVpcEndpoint;
   public readonly hostedZone: PrivateHostedZone | undefined;
 
@@ -60,6 +87,13 @@ export class ClosedVpc extends Construct {
         ],
       });
     }
+
+    // Resolve the subnet set used by VPC endpoints; reused by other constructs (e.g. AgentCore Runtime)
+    this.subnets = props.subnetIds
+      ? props.subnetIds.map((subnetId, index) =>
+          ec2.Subnet.fromSubnetId(this, `ClosedSubnet${index}`, subnetId)
+        )
+      : vpc.isolatedSubnets;
 
     vpc.addGatewayEndpoint('S3GatewayEndpoint', {
       service: ec2.GatewayVpcEndpointAwsService.S3,
@@ -103,13 +137,21 @@ export class ClosedVpc extends Construct {
     if (props.subnetIds) {
       subnetFilters.push(ec2.SubnetFilter.byIds(props.subnetIds));
     }
-    if (props.vpcEndpointAvailabilityZones?.length) {
-      subnetFilters.push(
-        ec2.SubnetFilter.availabilityZones(props.vpcEndpointAvailabilityZones)
-      );
+    const azFilter = endpointAzFilter(vpc, props.vpcEndpointAvailabilityZones);
+    if (azFilter) {
+      subnetFilters.push(azFilter);
     }
 
-    for (const [name, service] of Object.entries(VPC_ENDPOINTS)) {
+    const vpcEndpointNames =
+      props.vpcEndpointNames ?? Object.keys(VPC_ENDPOINTS);
+    const unknown = vpcEndpointNames.filter((name) => !(name in VPC_ENDPOINTS));
+    if (unknown.length > 0) {
+      throw new Error(`Unknown closed network VPC endpoints: ${unknown}`);
+    }
+
+    for (const [name, service] of Object.entries(VPC_ENDPOINTS).filter(
+      ([name]) => vpcEndpointNames.includes(name)
+    )) {
       const vpcEndpoint = new ec2.InterfaceVpcEndpoint(
         this,
         `VpcEndpoint${name}`,
