@@ -14,7 +14,11 @@ jest.mock('@aws-sdk/lib-dynamodb', () => {
 process.env.TABLE_NAME = 'test-table';
 process.env.STATS_TABLE_NAME = 'test-stats-table';
 
-import { findChatById, findSystemContextById } from '../../lambda/repository';
+import {
+  findChatById,
+  findSystemContextById,
+  listMessages,
+} from '../../lambda/repository';
 
 beforeEach(() => {
   mockSend.mockReset();
@@ -109,5 +113,24 @@ describe('findSystemContextById', () => {
     await findSystemContextById('user-1', 'sc-1');
 
     expect(mockSend.mock.calls[0][0].input.ScanIndexForward).toBe(false);
+  });
+});
+
+describe('listMessages', () => {
+  // A query page stops at 1 MB, so a long chat spans several pages.
+  it('returns the messages of every page', async () => {
+    mockSend
+      .mockResolvedValueOnce({
+        Items: [{ messageId: 'm1' }],
+        LastEvaluatedKey: { id: 'page-2' },
+      })
+      .mockResolvedValueOnce({ Items: [{ messageId: 'm2' }] });
+
+    const result = await listMessages('abc');
+
+    expect(result).toEqual([{ messageId: 'm1' }, { messageId: 'm2' }]);
+    expect(mockSend.mock.calls[1][0].input.ExclusiveStartKey).toEqual({
+      id: 'page-2',
+    });
   });
 });
