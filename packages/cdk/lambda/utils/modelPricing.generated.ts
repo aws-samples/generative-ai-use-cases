@@ -4,7 +4,7 @@
 // cross-Region inference), global (global cross-Region inference) }.
 import { ModelPrices } from 'generative-ai-use-cases';
 
-export const MODEL_PRICING_DATE = '2026-11-16';
+export const MODEL_PRICING_DATE = '2026-11-17';
 
 export const MODEL_PRICING: Record<string, Record<string, ModelPrices>> = {
   'us-east-1': {
@@ -1681,6 +1681,12 @@ export const MODEL_PRICING: Record<string, Record<string, ModelPrices>> = {
       regional: {
         inputPer1k: 0.004,
         outputPer1k: 0.012,
+      },
+    },
+    'Mistral Large 2 (24.07)': {
+      regional: {
+        inputPer1k: 0.002,
+        outputPer1k: 0.006,
       },
     },
     'Pixtral Large (25.02)': {

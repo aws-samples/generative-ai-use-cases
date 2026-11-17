@@ -10,7 +10,7 @@
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "lambda-build-dryrun": "tsc --noEmit --skipLibCheck",
     "postinstall": "npm ci --prefix custom-resources/opensearch-index && npm ci --prefix custom-resources/apply-tags && npm ci --prefix fargate-s3-server",
-    "pricing:update": "ts-node scripts/model-pricing/update.ts"
+    "pricing:update": "ts-node scripts/model-pricing/update.ts && prettier --write lambda/utils/modelPricing.generated.ts"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.137",

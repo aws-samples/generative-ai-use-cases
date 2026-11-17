@@ -45,6 +45,7 @@ export const ALIASES: Record<string, string> = {
   'NVIDIA Nemotron Nano 9B v2': 'NVIDIA Nemotron Nano 2',
   'NVIDIA Nemotron Nano 12B v2 VL BF16': 'NVIDIA Nemotron Nano 2 VL',
   'Pixtral Large (25.02)': 'Pixtral Large 25.02',
+  'Mistral Large 2 (24.07)': 'Mistral Large 2407',
 };
 const OUTPUT = join(__dirname, '../../lambda/utils/modelPricing.generated.ts');
 
