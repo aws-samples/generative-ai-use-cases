@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { invokeHandler, InvokeParams } from './api/testApp';
 import { handler } from '../../lambda/createShareId';
 import { createShareId, findChatById } from '../../lambda/repository';
 import { ShareId, UserIdAndChatId } from 'generative-ai-use-cases';
@@ -12,23 +12,16 @@ const mockedFindChatById = findChatById as jest.MockedFunction<
   typeof findChatById
 >;
 
-// Helper function to create APIGatewayProxyEvent
+// Request for the handler under test
 function createAPIGatewayProxyEvent(
   chatId?: string,
   userId?: string
-): APIGatewayProxyEvent {
+): InvokeParams {
   return {
-    pathParameters: chatId ? { chatId } : {},
-    requestContext: {
-      authorizer: userId
-        ? {
-            claims: {
-              'cognito:username': userId,
-            },
-          }
-        : undefined,
-    },
-  } as APIGatewayProxyEvent;
+    method: 'POST',
+    path: chatId ? { chatId } : {},
+    user: userId,
+  };
 }
 
 describe('createShareId Lambda handler', () => {
@@ -74,7 +67,10 @@ describe('createShareId Lambda handler', () => {
     });
 
     // Execute test
-    const result = await handler(createAPIGatewayProxyEvent(chatId, userId));
+    const result = await invokeHandler(
+      handler,
+      createAPIGatewayProxyEvent(chatId, userId)
+    );
 
     // Verify results
     expect(result.statusCode).toBe(200);
@@ -95,7 +91,10 @@ describe('createShareId Lambda handler', () => {
     mockedFindChatById.mockResolvedValue(null);
 
     // Execute test
-    const result = await handler(createAPIGatewayProxyEvent(chatId, userId));
+    const result = await invokeHandler(
+      handler,
+      createAPIGatewayProxyEvent(chatId, userId)
+    );
 
     // Verify results
     expect(result.statusCode).toBe(403);
@@ -127,7 +126,10 @@ describe('createShareId Lambda handler', () => {
     mockedCreateShareId.mockRejectedValue(new Error('Database error'));
 
     // Execute test
-    const result = await handler(createAPIGatewayProxyEvent(chatId, userId));
+    const result = await invokeHandler(
+      handler,
+      createAPIGatewayProxyEvent(chatId, userId)
+    );
 
     // Restore console.log
     console.log = originalConsoleLog;
@@ -149,7 +151,7 @@ describe('createShareId Lambda handler', () => {
 
     // No chatId provided in this test
     const event = createAPIGatewayProxyEvent(undefined, userId);
-    const result = await handler(event);
+    const result = await invokeHandler(handler, event);
 
     // Restore console.log
     console.log = originalConsoleLog;

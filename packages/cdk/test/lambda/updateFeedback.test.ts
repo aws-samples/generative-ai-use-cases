@@ -1,4 +1,4 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { invokeHandler, InvokeParams } from './api/testApp';
 import { handler } from '../../lambda/updateFeedback';
 import { listMessages, updateFeedback } from '../../lambda/repository';
 import {
@@ -15,25 +15,18 @@ const mockedUpdateFeedback = updateFeedback as jest.MockedFunction<
   typeof updateFeedback
 >;
 
-// Helper function to create APIGatewayProxyEvent
+// Request for the handler under test
 function createAPIGatewayProxyEvent(
   body: unknown | null,
   chatId?: string,
   userId?: string
-): APIGatewayProxyEvent {
+): InvokeParams {
   return {
-    body: body ? JSON.stringify(body) : null,
-    pathParameters: chatId ? { chatId } : {},
-    requestContext: {
-      authorizer: userId
-        ? {
-            claims: {
-              'cognito:username': userId,
-            },
-          }
-        : undefined,
-    },
-  } as APIGatewayProxyEvent;
+    method: 'POST',
+    body: body ?? undefined,
+    path: chatId ? { chatId } : {},
+    user: userId,
+  };
 }
 
 describe('updateFeedback Lambda handler', () => {
@@ -81,7 +74,8 @@ describe('updateFeedback Lambda handler', () => {
     mockedUpdateFeedback.mockResolvedValue(mockUpdatedMessage);
 
     // Execute test
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent(updateFeedbackRequest, chatId, userId)
     );
 
@@ -116,7 +110,8 @@ describe('updateFeedback Lambda handler', () => {
     mockedListMessages.mockResolvedValue([]);
 
     // Execute test
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent(updateFeedbackRequest, chatId, userId)
     );
 
@@ -165,7 +160,8 @@ describe('updateFeedback Lambda handler', () => {
     mockedListMessages.mockResolvedValue(mockMessages);
 
     // Execute test
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent(updateFeedbackRequest, chatId, userId)
     );
 
@@ -200,7 +196,8 @@ describe('updateFeedback Lambda handler', () => {
     console.log = jest.fn();
 
     // Execute test
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent(updateFeedbackRequest, chatId, userId)
     );
 
@@ -225,7 +222,8 @@ describe('updateFeedback Lambda handler', () => {
     console.log = jest.fn();
 
     // No body provided in this test
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent(null, chatId, userId)
     );
 

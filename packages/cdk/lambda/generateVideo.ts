@@ -1,16 +1,17 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { requireUserName, sendJson } from './utils/http';
 import { GenerateVideoRequest } from 'generative-ai-use-cases';
 import api from './utils/api';
 import { defaultVideoGenerationModel } from './utils/models';
 import { createJob } from './repositoryVideoJob';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    const userId: string =
-      event.requestContext.authorizer!.claims['cognito:username'];
-    const req: GenerateVideoRequest = JSON.parse(event.body!);
+    const userId: string = requireUserName(request);
+    const req: GenerateVideoRequest = request.body ?? {};
     const model = req.model || defaultVideoGenerationModel;
     const invocationArn = await api[model.type].generateVideo(
       model,
@@ -19,23 +20,9 @@ export const handler = async (
 
     const res = await createJob(userId, invocationArn, req);
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify(res),
-    };
+    return sendJson(response, 200, res);
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: (error as Error).message }),
-    };
+    return sendJson(response, 500, { message: (error as Error).message });
   }
 };

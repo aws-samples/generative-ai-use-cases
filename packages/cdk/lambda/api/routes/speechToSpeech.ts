@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { handler as startSpeechToSpeechSessionHandler } from '../../startSpeechToSpeechSession';
-import { wrapHandler } from './helpers';
+import { route } from '../../utils/http';
 
 export const router = Router();
 
-router.post('/', wrapHandler(startSpeechToSpeechSessionHandler));
+router.post('/', route(startSpeechToSpeechSessionHandler));

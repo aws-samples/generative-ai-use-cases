@@ -1,23 +1,13 @@
-import { Router, Request } from 'express';
+import { Router } from 'express';
 import { handler as createSystemContextHandler } from '../../createSystemContext';
 import { handler as listSystemContextsHandler } from '../../listSystemContexts';
 import { handler as deleteSystemContextHandler } from '../../deleteSystemContext';
 import { handler as updateSystemContextTitleHandler } from '../../updateSystemContextTitle';
-import { wrapHandler } from './helpers';
+import { route } from '../../utils/http';
 
 export const router = Router();
 
-const scId = (req: Request) => ({
-  systemContextId: req.params.systemContextId,
-});
-
-router.post('/', wrapHandler(createSystemContextHandler));
-router.get('/', wrapHandler(listSystemContextsHandler));
-router.delete(
-  '/:systemContextId',
-  wrapHandler(deleteSystemContextHandler, scId)
-);
-router.put(
-  '/:systemContextId/title',
-  wrapHandler(updateSystemContextTitleHandler, scId)
-);
+router.post('/', route(createSystemContextHandler));
+router.get('/', route(listSystemContextsHandler));
+router.delete('/:systemContextId', route(deleteSystemContextHandler));
+router.put('/:systemContextId/title', route(updateSystemContextTitleHandler));

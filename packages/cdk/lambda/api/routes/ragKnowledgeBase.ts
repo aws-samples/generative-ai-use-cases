@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { handler as retrieveKnowledgeBaseHandler } from '../../retrieveKnowledgeBase';
-import { wrapHandler } from './helpers';
+import { route } from '../../utils/http';
 
 export const router = Router();
 
-router.post('/retrieve', wrapHandler(retrieveKnowledgeBaseHandler));
+router.post('/retrieve', route(retrieveKnowledgeBaseHandler));

@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { handler as predictHandler } from '../../predict';
 import { handler as predictTitleHandler } from '../../predictTitle';
-import { wrapHandler } from './helpers';
+import { route } from '../../utils/http';
 
 export const router = Router();
 
-router.post('/', wrapHandler(predictHandler));
-router.post('/title', wrapHandler(predictTitleHandler));
+router.post('/', route(predictHandler));
+router.post('/title', route(predictTitleHandler));

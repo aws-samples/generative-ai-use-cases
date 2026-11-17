@@ -1,4 +1,5 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { queryParams, sendJson } from './utils/http';
 import { parse } from 'node-html-parser';
 import sanitizeHtml from 'sanitize-html';
 import { URL } from 'url';
@@ -106,73 +107,41 @@ async function validateUrl(
 }
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
-  try {
-    const url = event?.queryStringParameters?.url;
+  request: Request,
+  response: Response
+): Promise<void> => {
+  const url = queryParams(request).url;
 
-    if (!url) {
-      return {
-        statusCode: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({ message: 'url is missing' }),
-      };
-    }
-
-    // Validate URL safety
-    const validation = await validateUrl(url);
-    if (!validation.valid) {
-      return {
-        statusCode: 403,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({
-          message: validation.message || 'Access denied',
-        }),
-      };
-    }
-
-    // Execute request if URL is confirmed safe
-    const res = await fetch(url);
-    const html = await res.text();
-    // Fix invalid tags
-    const cleanHtml = sanitizeHtml(html, {
-      // body and html are removed by default, so this option prevents that
-      allowedTags: [...sanitizeHtml.defaults.allowedTags, 'body', 'html'],
-    });
-    const root = parse(cleanHtml, {
-      comment: false,
-      blockTextElements: {
-        script: false,
-        noScript: false,
-        style: false,
-        pre: false,
-      },
-    });
-    const text = root?.querySelector('body')?.removeWhitespace().text;
-
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ text }),
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+  if (!url) {
+    return sendJson(response, 400, { message: 'url is missing' });
   }
+
+  // Validate URL safety
+  const validation = await validateUrl(url);
+  if (!validation.valid) {
+    return sendJson(response, 403, {
+      message: validation.message || 'Access denied',
+    });
+  }
+
+  // Execute request if URL is confirmed safe
+  const res = await fetch(url);
+  const html = await res.text();
+  // Fix invalid tags
+  const cleanHtml = sanitizeHtml(html, {
+    // body and html are removed by default, so this option prevents that
+    allowedTags: [...sanitizeHtml.defaults.allowedTags, 'body', 'html'],
+  });
+  const root = parse(cleanHtml, {
+    comment: false,
+    blockTextElements: {
+      script: false,
+      noScript: false,
+      style: false,
+      pre: false,
+    },
+  });
+  const text = root?.querySelector('body')?.removeWhitespace().text;
+
+  return sendJson(response, 200, { text });
 };
