@@ -1,10 +1,10 @@
 admin:
   active_users: ผู้ใช้ที่ใช้งาน
   clear_filter: แสดงผู้ใช้ทั้งหมด
-  cost_note: 'ค่าใช้จ่ายโดยประมาณคำนวณจากราคาปกติของ AWS (ออนดีมานด์, USD) ของรีเจียนที่เรียกใช้แต่ละโมเดล ไม่รวมส่วนลด Savings Plans และ Free Tier ดูค่าใช้จ่ายจริงได้ใน AWS Cost Explorer'
+  cost: ค่าใช้จ่าย
+  cost_note: 'ค่าใช้จ่ายคำนวณจากราคาปกติของ AWS (ออนดีมานด์, USD) ของรีเจียนที่เรียกใช้แต่ละโมเดล ไม่รวมส่วนลด Savings Plans และ Free Tier ดูค่าใช้จ่ายจริงได้ใน AWS Cost Explorer'
   description: ปริมาณการใช้โทเค็นของผู้ใช้ทุกคนจากบันทึกที่ GenU เก็บไว้ สำหรับการวิเคราะห์โดยละเอียด ให้ใช้ CloudWatch Logs Insights กับบันทึกการเรียกใช้โมเดลของ Bedrock
   download_csv: ดาวน์โหลด CSV
-  estimated_cost: ค่าใช้จ่ายโดยประมาณ
   executions: จำนวนครั้งที่เรียกใช้
   filter_selected: 'สรุปเฉพาะ {{users}} คนที่เลือก'
   filtered_to_users: 'กำลังแสดงยอดรวมของผู้ใช้ {{users}} คนที่เลือก'

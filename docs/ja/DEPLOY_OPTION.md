@@ -2312,7 +2312,7 @@ aws cognito-idp admin-add-user-to-group \
 
 グループに追加したあと、そのユーザーはサインインし直すと管理者ページを開けるようになります。
 
-管理者ページの推定コストは、GenU に含まれている AWS の定価表（オンデマンド、USD）で計算します。各モデルを呼び出しているリージョンの価格を使い、`global.` で始まるモデルは global の価格を使います。定価表は GenU のリリースごとに更新されます。リリースを待たずに最新の定価にしたい場合は、次のコマンドで定価表（`packages/cdk/lambda/utils/modelPricing.generated.ts`）を作り直してからデプロイしてください。
+管理者ページと統計ページのコストは、GenU に含まれている AWS の定価表（オンデマンド、USD）で計算します。各モデルを呼び出しているリージョンの価格を使い、`global.` で始まるモデルは global の価格を使います。定価表は GenU のリリースごとに更新されます。リリースを待たずに最新の定価にしたい場合は、次のコマンドで定価表（`packages/cdk/lambda/utils/modelPricing.generated.ts`）を作り直してからデプロイしてください。
 
 ```bash
 npm -w packages/cdk run pricing:update
@@ -2321,7 +2321,7 @@ npm -w packages/cdk run pricing:update
 > [!NOTE]
 >
 > - エージェント（Bedrock Agents、AgentCore）や画像・動画の生成の利用量は含みません。これらも含めて集計する場合は、上の「ユーザー別・ユースケース別に集計する」のとおり CloudWatch Logs Insights を使ってください。
-> - 推定コストは定価での目安です。割引、Savings Plans、無料枠は反映されません。実際の請求額は AWS Cost Explorer で確認してください。定価表にないモデルはコストに含まれず、画面に「価格不明」と表示されます。
+> - コストは定価での目安です。割引、Savings Plans、無料枠は反映されません。実際の請求額は AWS Cost Explorer で確認してください。定価表にないモデルはコストに含まれず、画面に「価格不明」と表示されます。
 > - ユーザープールにすでに `SystemAdminGroup` という名前のグループがある場合は、デプロイが失敗します。先にそのグループを削除するか、名前を変えてください。
 
 ## カスタムドメインの使用

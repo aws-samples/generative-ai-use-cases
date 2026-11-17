@@ -1,10 +1,10 @@
 admin:
   active_users: 이용 사용자 수
   clear_filter: 전체 사용자로 돌아가기
-  cost_note: '예상 비용은 각 모델을 호출하는 리전의 AWS 정가(온디맨드, USD)로 계산합니다. 할인, Savings Plans, 프리 티어는 반영되지 않습니다. 실제 청구 금액은 AWS Cost Explorer에서 확인하세요.'
+  cost: 비용
+  cost_note: '비용은 각 모델을 호출하는 리전의 AWS 정가(온디맨드, USD)로 계산합니다. 할인, Savings Plans, 프리 티어는 반영되지 않습니다. 실제 청구 금액은 AWS Cost Explorer에서 확인하세요.'
   description: GenU가 기록한 모든 사용자의 토큰 사용량입니다. 자세한 분석은 Bedrock 모델 호출 로그를 CloudWatch Logs Insights로 집계하세요.
   download_csv: CSV 다운로드
-  estimated_cost: 예상 비용
   executions: 실행 횟수
   filter_selected: '선택한 {{users}}명으로 집계'
   filtered_to_users: '선택한 {{users}}명의 집계를 표시하고 있습니다'
@@ -675,9 +675,8 @@ sketch:
 stat:
   cache_read_tokens: 캐시 읽기 토큰
   cache_write_tokens: 캐시 쓰기 토큰
-  daily_estimated_cost: 일별 예상 비용
+  daily_cost: 일별 비용
   daily_token_usage: 일일 토큰 사용량
-  estimated_cost_last_7_days: 최근 7일 예상 비용
   estimated_cost_note: AWS 정가 기준 추정치이며 실제 청구 금액과 다를 수 있습니다
   input_tokens: 입력 토큰
   last_7_days: 지난 7일

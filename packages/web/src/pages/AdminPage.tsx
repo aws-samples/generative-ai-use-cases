@@ -323,7 +323,7 @@ const AdminPage: React.FC = () => {
           )}
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             <Card
-              label={t('admin.estimated_cost')}
+              label={t('admin.cost')}
               value={usd(usage.estimatedCostUsd)}
               note={t('admin.pricing_note', { date: usage.pricingDate })}
             />
@@ -405,7 +405,7 @@ const AdminPage: React.FC = () => {
                     onSort={onSort}
                   />
                   <SortHeader
-                    label={t('admin.estimated_cost')}
+                    label={t('admin.cost')}
                     column="estimatedCostUsd"
                     sort={sort}
                     onSort={onSort}
@@ -512,9 +512,7 @@ const AdminPage: React.FC = () => {
               <thead className="bg-gray-100 text-left">
                 <tr>
                   <th className="px-3 py-2">{t('admin.model')}</th>
-                  <th className="px-3 py-2 text-right">
-                    {t('admin.estimated_cost')}
-                  </th>
+                  <th className="px-3 py-2 text-right">{t('admin.cost')}</th>
                   <th className="px-3 py-2 text-right">
                     {t('admin.executions')}
                   </th>
@@ -571,7 +569,7 @@ const AdminPage: React.FC = () => {
             <Suspense fallback={<div>{t('common.loading')}</div>}>
               <CostTimeSeriesChart
                 data={usage.daily}
-                title={t('stat.daily_estimated_cost')}
+                title={t('stat.daily_cost')}
               />
               <TokensTimeSeriesChart
                 data={usage.daily}

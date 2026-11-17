@@ -2300,7 +2300,7 @@ aws cognito-idp admin-add-user-to-group \
 
 The user can open the admin page after signing in again.
 
-The admin page estimates cost with the AWS list prices (on-demand, USD) included in GenU, for the Region each model is called in; models starting with `global.` use the global price. The price table is updated with each GenU release. To use the latest list prices without waiting for a release, regenerate the table (`packages/cdk/lambda/utils/modelPricing.generated.ts`) and deploy:
+The admin and stats pages compute cost with the AWS list prices (on-demand, USD) included in GenU, for the Region each model is called in; models starting with `global.` use the global price. The price table is updated with each GenU release. To use the latest list prices without waiting for a release, regenerate the table (`packages/cdk/lambda/utils/modelPricing.generated.ts`) and deploy:
 
 ```bash
 npm -w packages/cdk run pricing:update
@@ -2309,7 +2309,7 @@ npm -w packages/cdk run pricing:update
 > [!NOTE]
 >
 > - Usage of agents (Bedrock Agents, AgentCore) and image or video generation is not included. To include it, use CloudWatch Logs Insights as described in "Usage by User and Use Case" above.
-> - The estimated cost uses list prices. Discounts, Savings Plans and free tiers are not reflected; see AWS Cost Explorer for actual charges. Models missing from the price table are left out of the cost and shown as "No price".
+> - Cost uses list prices. Discounts, Savings Plans and free tiers are not reflected; see AWS Cost Explorer for actual charges. Models missing from the price table are left out of the cost and shown as "No price".
 > - If the user pool already has a group named `SystemAdminGroup`, the deployment fails. Delete or rename that group first.
 
 ## Using a Custom Domain

@@ -1,10 +1,10 @@
 admin:
   active_users: Người dùng hoạt động
   clear_filter: Hiện tất cả người dùng
-  cost_note: 'Chi phí ước tính dùng giá niêm yết của AWS (theo yêu cầu, USD) tại Region gọi từng mô hình. Không tính chiết khấu, Savings Plans và bậc miễn phí; xem chi phí thực tế trong AWS Cost Explorer.'
+  cost: Chi phí
+  cost_note: 'Chi phí dùng giá niêm yết của AWS (theo yêu cầu, USD) tại Region gọi từng mô hình. Không tính chiết khấu, Savings Plans và bậc miễn phí; xem chi phí thực tế trong AWS Cost Explorer.'
   description: 'Lượng token của mọi người dùng theo dữ liệu GenU ghi lại. Để phân tích chi tiết, hãy dùng CloudWatch Logs Insights trên nhật ký gọi mô hình của Bedrock.'
   download_csv: Tải xuống CSV
-  estimated_cost: Chi phí ước tính
   executions: Số lần thực thi
   filter_selected: 'Tổng hợp {{users}} người đã chọn'
   filtered_to_users: 'Đang hiển thị tổng của {{users}} người dùng đã chọn'

@@ -1,10 +1,10 @@
 admin:
   active_users: 活跃用户
   clear_filter: 显示全部用户
-  cost_note: 预估费用按调用各模型的区域的 AWS 标价（按需，USD）计算，不包括折扣、Savings Plans 和免费套餐。实际费用请在 AWS Cost Explorer 中查看。
+  cost: 费用
+  cost_note: 费用按调用各模型的区域的 AWS 标价（按需，USD）计算，不包括折扣、Savings Plans 和免费套餐。实际费用请在 AWS Cost Explorer 中查看。
   description: GenU 记录的所有用户的令牌用量。如需详细分析，请使用 CloudWatch Logs Insights 查询 Bedrock 模型调用日志。
   download_csv: 下载 CSV
-  estimated_cost: 预估费用
   executions: 执行次数
   filter_selected: '按所选 {{users}} 位用户汇总'
   filtered_to_users: '正在显示所选 {{users}} 位用户的汇总'
