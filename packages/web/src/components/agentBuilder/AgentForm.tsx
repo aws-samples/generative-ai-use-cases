@@ -20,6 +20,7 @@ export interface AgentFormData {
   modelId: string;
   mcpServers: string[];
   codeExecutionEnabled: boolean;
+  webSearchEnabled: boolean;
   isPublic: boolean;
   tags: string[];
 }
@@ -46,6 +47,11 @@ const AgentForm: React.FC<AgentFormProps> = ({
   const { t } = useTranslation();
   const { modelIds: availableModels, modelDisplayName } = MODELS;
 
+  // Web search is provisioned at deploy time, so hide the option when it is off
+  const webSearchEnabledByDeployment =
+    import.meta.env.VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED ===
+    'true';
+
   // Built-in tools offered to the AI so that it can suggest them.
   // Add an entry here when a new built-in tool is introduced.
   const availableBuiltInTools = useMemo(
@@ -55,8 +61,17 @@ const AgentForm: React.FC<AgentFormProps> = ({
         name: t('agent_builder.code_execution'),
         description: t('agent_builder.code_execution_description'),
       },
+      ...(webSearchEnabledByDeployment
+        ? [
+            {
+              id: 'webSearch',
+              name: t('agent_builder.web_search'),
+              description: t('agent_builder.web_search_description'),
+            },
+          ]
+        : []),
     ],
-    [t]
+    [t, webSearchEnabledByDeployment]
   );
 
   // Form state
@@ -68,6 +83,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
       availableModels[0] || 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
     mcpServers: [],
     codeExecutionEnabled: false,
+    webSearchEnabled: false,
     isPublic: false,
     tags: [],
   });
@@ -114,9 +130,12 @@ const AgentForm: React.FC<AgentFormProps> = ({
       setFormData((prev) => ({
         ...prev,
         codeExecutionEnabled: suggestedBuiltInTools.includes('codeExecution'),
+        webSearchEnabled:
+          webSearchEnabledByDeployment &&
+          suggestedBuiltInTools.includes('webSearch'),
       }));
     }
-  }, [suggestedBuiltInTools]);
+  }, [suggestedBuiltInTools, webSearchEnabledByDeployment]);
 
   // Update formData.modelId when availableModels becomes available
   useEffect(() => {
@@ -138,6 +157,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
         modelId: initialData.modelId || availableModels[0] || '',
         mcpServers: initialData.mcpServers || [],
         codeExecutionEnabled: initialData.codeExecutionEnabled || false,
+        webSearchEnabled: initialData.webSearchEnabled || false,
         isPublic: initialData.isPublic || false,
         tags: initialData.tags || [],
       });
@@ -390,6 +410,33 @@ const AgentForm: React.FC<AgentFormProps> = ({
               </p>
             </div>
           </div>
+
+          {webSearchEnabledByDeployment && (
+            <div className="flex items-start space-x-3">
+              <input
+                type="checkbox"
+                id="webSearchEnabled"
+                checked={formData.webSearchEnabled}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    webSearchEnabled: e.target.checked,
+                  })
+                }
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <div className="flex-1">
+                <label
+                  htmlFor="webSearchEnabled"
+                  className="block cursor-pointer text-sm font-medium text-gray-700">
+                  {t('agent_builder.enable_web_search')}
+                </label>
+                <p className="mt-1 text-xs text-gray-500">
+                  {t('agent_builder.web_search_description')}
+                </p>
+              </div>
+            </div>
+          )}
 
           <div className="flex items-start space-x-3">
             <input
