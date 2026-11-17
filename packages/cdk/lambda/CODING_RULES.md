@@ -94,7 +94,7 @@ chat/
 
 #### Express ルートハンドラー（API Gateway 経由）
 
-ユーザーは `utils/http.ts` の `requireUserName` / `requireUserSub` で取得する（`api/middleware.ts` が Lambda Web Adapter から受け取った request context だけを見る）。レスポンスは `sendJson`（値を `JSON.stringify` する）か `sendText`（文字列をそのまま返す。空なら本文なし）で返す。
+ユーザーは `utils/http.ts` の `requireUserName` / `requireUserSub` で取得する（`api/middleware.ts` が Lambda Web Adapter から受け取った request context だけを見る）。claims がなければ throw し、`route()` が 500 を返す（request context がない要求は middleware が先に 401 で返す）。レスポンスは `sendJson`（値を `JSON.stringify` する）か `sendText`（文字列をそのまま返す。空なら本文なし）で返す。
 
 ```typescript
 // ✅ 良い例
@@ -151,7 +151,6 @@ export const handler = async (
       body: JSON.stringify({ message: 'Internal Server Error' }),
     };
   }
-};
 };
 
 // ❌ 悪い例 - 型定義なし、エラーハンドリングなし
@@ -340,7 +339,7 @@ catch (error) {
 // ✅ 良い例 - 一般的なステータスコード
 200: // 成功
 400: // バリデーションエラー
-401: // 認証エラー
+401: // 認証エラー（API Gateway と api/middleware.ts が返す。ハンドラーでは返さない）
 403: // 認可エラー
 404: // リソースが見つからない
 500: // サーバー内部エラー
@@ -484,6 +483,8 @@ export const handler = async (request: Request, response: Response) => {
 - **データアクセス**: 全てのクエリでuserIdによるフィルタリングを実装
 - **禁止**: クライアントから送信されたuserIdの使用
 - **原則**: ユーザーは自分のデータのみにアクセス可能
+
+### 12. パフォーマンス
 
 **概要**: 不要な処理を避け、効率的な実装を心がける
 

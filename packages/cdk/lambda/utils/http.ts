@@ -32,18 +32,18 @@ export const queryParams = (request: Request): Record<string, string> =>
 /**
  * Send `body` as it is, with the JSON content type the web client expects
  * (signed URLs and base64 images are plain strings it reads as text). An empty
- * body or 204 sends no body.
+ * body sends no body; Express drops the content type of a 204 itself.
  */
 export const sendText = (
   response: Response,
   statusCode: number,
   body = ''
 ): void => {
-  if (statusCode === 204 || !body) {
+  response.setHeader('Content-Type', 'application/json');
+  if (!body) {
     response.status(statusCode).send();
     return;
   }
-  response.setHeader('Content-Type', 'application/json');
   response.status(statusCode).send(body);
 };
 

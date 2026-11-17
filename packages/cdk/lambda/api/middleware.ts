@@ -90,10 +90,15 @@ export const errorHandler = (
   err: Error,
   _req: express.Request,
   res: express.Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _next: express.NextFunction
+  next: express.NextFunction
 ) => {
   console.error('Express error:', err);
+  // A response that has started cannot change its status; Express's default
+  // handler closes the connection instead.
+  if (res.headersSent) {
+    next(err);
+    return;
+  }
   res
     .status(500)
     .json({ error: 'Internal server error', message: err.message });

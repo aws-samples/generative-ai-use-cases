@@ -10,7 +10,7 @@ import {
   handleListFavoriteAgents,
   handleToggleAgentFavorite,
 } from '../../agentBuilder/handlers/agent-handlers';
-import { requireUserName } from '../../utils/http';
+import { queryParams, requireUserName } from '../../utils/http';
 import {
   CreateAgentRequest,
   CloneAgentRequest,
@@ -23,11 +23,13 @@ export const router = Router();
 const getUserId = (req: Request) => requireUserName(req);
 
 // Helper: extract pagination params
-const getPagination = (req: Request) => ({
-  exclusiveStartKey:
-    (req.query.exclusiveStartKey as string) || (req.query.nextToken as string),
-  limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
-});
+const getPagination = (req: Request) => {
+  const query = queryParams(req);
+  return {
+    exclusiveStartKey: query.exclusiveStartKey || query.nextToken,
+    limit: query.limit ? parseInt(query.limit, 10) : undefined,
+  };
+};
 
 // Helper: wrap agentBuilder handler with common error handling
 const agentRoute =

@@ -614,7 +614,8 @@ describe('API routes', () => {
     });
     expect(res.statusCode).toBe(c.status);
     expect(res.body).toBe(c.responseBody);
-    if (c.responseBody !== '') {
+    // Every answer but a 204 carries the JSON content type, even when empty
+    if (c.status !== 204) {
       expect(res.headers['content-type']).toMatch(/^application\/json/);
     }
     for (const [fn, args] of c.calls ?? []) {
