@@ -61,6 +61,9 @@ type Props = {
     }
 ) & {
     setting?: boolean;
+    // Shown beside the settings button, so the current setting (e.g. the
+    // reasoning effort) can be seen without opening it.
+    settingLabel?: string;
     onSetting?: () => void;
   };
 
@@ -318,6 +321,9 @@ const InputChatContent: React.FC<Props> = (props) => {
                   onClick={props.onSetting ?? (() => {})}
                   className="text-gray-500">
                   <PiSlidersHorizontal />
+                  {props.settingLabel && (
+                    <span className="ml-1 text-xs">{props.settingLabel}</span>
+                  )}
                 </ButtonIcon>
               </Tooltip>
             )}

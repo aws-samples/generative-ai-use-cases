@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { handler as generateImageHandler } from '../../generateImage';
-import { wrapHandler } from './helpers';
+import { route } from '../../utils/http';
 
 export const router = Router();
 
-router.post('/generate', wrapHandler(generateImageHandler));
+router.post('/generate', route(generateImageHandler));

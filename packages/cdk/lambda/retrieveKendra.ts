@@ -1,4 +1,5 @@
-import * as lambda from 'aws-lambda';
+import { Request, Response } from 'express';
+import { sendJson } from './utils/http';
 import {
   AttributeFilter,
   KendraClient,
@@ -10,20 +11,14 @@ const INDEX_ID = process.env.INDEX_ID;
 const LANGUAGE = process.env.LANGUAGE;
 
 export const handler = async (
-  event: lambda.APIGatewayProxyEvent
-): Promise<lambda.APIGatewayProxyResult> => {
-  const req = JSON.parse(event.body!) as RetrieveKendraRequest;
+  request: Request,
+  response: Response
+): Promise<void> => {
+  const req = (request.body ?? {}) as RetrieveKendraRequest;
   const query = req.query;
 
   if (!query) {
-    return {
-      statusCode: 400,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ error: 'query is not specified' }),
-    };
+    return sendJson(response, 400, { error: 'query is not specified' });
   }
 
   // The default language is English, so language settings must be done.
@@ -49,12 +44,5 @@ export const handler = async (
 
   const retrieveRes = await kendra.send(retrieveCommand);
 
-  return {
-    statusCode: 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-    },
-    body: JSON.stringify(retrieveRes),
-  };
+  return sendJson(response, 200, retrieveRes);
 };

@@ -1717,6 +1717,33 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 1`] = `
       },
       "Type": "AWS::EC2::VPCEndpoint",
     },
+    "ClosedVpcVpcEndpointAgentCoreGateway2554684E": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "ClosedVpcSecurityGroup985DC3EC",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.us-east-1.bedrock-agentcore.gateway",
+        "SubnetIds": [
+          {
+            "Ref": "ClosedVpcisolatedSubnet1Subnet2EF6D3F3",
+          },
+          {
+            "Ref": "ClosedVpcisolatedSubnet2SubnetB169C8D3",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "ClosedVpcC15583C9",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
     "ClosedVpcVpcEndpointApiGateway6200AA11": {
       "Properties": {
         "PrivateDnsEnabled": true,
@@ -3231,7 +3258,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 1`] = `
         "ImageId": {
           "Ref": "SsmParameterValueawsserviceamiwindowslatestWindowsServer2025EnglishFullBaseC96584B6F00A464EAD1953AFF4B05118Parameter",
         },
-        "InstanceType": "r6i.large",
+        "InstanceType": "t3.large",
         "KeyName": {
           "Ref": "WindowsRdpWindowsKeyPair02415E47",
         },
@@ -5699,7 +5726,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 4`] = `
           "FILE_BUCKET": {
             "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
           },
-          "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
+          "MCP_CONFIG_PATH": "/var/task/mcp-configs/closed-network/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
           "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
@@ -6029,7 +6056,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Value": "W10=",
     },
     "HiddenUseCases": {
-      "Value": "{}",
+      "Value": "{\\"voiceChat\\":true}",
     },
     "IdPoolId": {
       "Value": {
@@ -7178,11 +7205,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -7253,11 +7275,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -7306,7 +7323,10 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               },
             },
             {
-              "Action": "cognito-idp:AdminGetUser",
+              "Action": [
+                "cognito-idp:AdminGetUser",
+                "cognito-idp:ListUsers",
+              ],
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
@@ -7381,11 +7401,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -7419,11 +7434,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -7457,11 +7467,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -7513,11 +7518,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -7551,11 +7551,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -13651,7 +13646,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               "Arn",
             ],
           },
-          "VITE_APP_HIDDEN_USE_CASES": "{}",
+          "VITE_APP_HIDDEN_USE_CASES": "{\\"voiceChat\\":true}",
           "VITE_APP_IDENTITY_POOL_ID": {
             "Ref": "AuthIdentityPool659E7F64",
           },
@@ -13999,6 +13994,18 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         },
       },
       "Type": "AWS::WAFv2::WebACLAssociation",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "AuthAdminGroup9B286F1A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "GenU administrators with access to the admin page",
+        "GroupName": "SystemAdminGroup",
+        "UserPoolId": {
+          "Ref": "AuthUserPool8115E87F",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolGroup",
       "UpdateReplacePolicy": "Delete",
     },
     "AuthIdentityPool659E7F64": {
@@ -16307,7 +16314,23 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 7`] = `
               {
                 "Ref": "LogGroupF5B46931",
               },
-              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}}]}",
+              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":0,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by User\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId\\\\n| sort inputTokens desc\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":12,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by Use Case\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId\\\\n| sort inputTokens desc\\"}}]}",
             ],
           ],
         },
@@ -16321,6 +16344,36 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 7`] = `
       },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
+    },
+    "TokensByUseCaseQuery8D6E560E": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUseCase",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
+    },
+    "TokensByUserQuery424E1E77": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUser",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
     },
   },
   "Rules": {
@@ -20219,11 +20272,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20294,11 +20342,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20347,7 +20390,10 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               },
             },
             {
-              "Action": "cognito-idp:AdminGetUser",
+              "Action": [
+                "cognito-idp:AdminGetUser",
+                "cognito-idp:ListUsers",
+              ],
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
@@ -20422,11 +20468,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20460,11 +20501,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20498,11 +20534,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20554,11 +20585,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20592,11 +20618,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -27904,6 +27925,18 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::S3::BucketPolicy",
       "UpdateReplacePolicy": "Delete",
     },
+    "AuthAdminGroup9B286F1A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "GenU administrators with access to the admin page",
+        "GroupName": "SystemAdminGroup",
+        "UserPoolId": {
+          "Ref": "AuthUserPool8115E87F",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
     "AuthIdentityPool659E7F64": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
@@ -30136,7 +30169,23 @@ exports[`GenerativeAiUseCases matches the snapshot 7`] = `
               {
                 "Ref": "LogGroupF5B46931",
               },
-              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}}]}",
+              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":0,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by User\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId\\\\n| sort inputTokens desc\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":12,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by Use Case\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId\\\\n| sort inputTokens desc\\"}}]}",
             ],
           ],
         },
@@ -30150,6 +30199,36 @@ exports[`GenerativeAiUseCases matches the snapshot 7`] = `
       },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
+    },
+    "TokensByUseCaseQuery8D6E560E": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUseCase",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
+    },
+    "TokensByUserQuery424E1E77": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUser",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
     },
   },
   "Rules": {

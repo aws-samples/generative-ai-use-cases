@@ -22,6 +22,20 @@ npm run web:devw
 > [!TIP]
 > If you want to switch and use a different backend environment, change the context.env in cdk.json or specify it as a command line argument like `npm run web:devw --env=dev2`.
 
+> [!IMPORTANT]
+> The deployed API only accepts requests from the deployed frontend's origin, so add your local origin to `allowedDevOrigins` and deploy. Without it the browser console shows a CORS error (`No 'Access-Control-Allow-Origin' header is present on the requested resource`) and API calls such as saving the conversation history fail.
+>
+> ```typescript
+> // packages/cdk/parameter.ts
+> const envs: Record<string, Partial<StackInput>> = {
+>   dev: {
+>     allowedDevOrigins: ['http://localhost:5173'],
+>   },
+> };
+> ```
+>
+> Use the scheme + host (+ port) form; a trailing slash or a path will never match. Leaving this unset is recommended for production environments.
+
 ### Windows Users
 
 For Windows users, we have prepared a PowerShell script `web_devw_win.ps1` to set up the development environment, which can be launched with `web:devww` (with one extra `w`). This script is similar to `setup-env.sh` but adapted for PowerShell, requiring the `aws` command but not `jq`.

@@ -23,6 +23,20 @@ npm run web:devw
 > [!TIP]
 > バックエンドの環境を切り替えて利用したい際は、cdk.json の context.env を変更するか、`npm run web:devw --env=dev2` のようにコマンドライン引数で指定してください。
 
+> [!IMPORTANT]
+> デプロイされた API はデプロイされたフロントエンドのオリジンからのリクエストのみを受け付けるため、`allowedDevOrigins` にローカルのオリジンを追加してデプロイしてください。設定しない場合、ブラウザのコンソールに `No 'Access-Control-Allow-Origin' header is present on the requested resource` という CORS エラーが表示され、会話履歴の保存などの API 呼び出しが失敗します。
+>
+> ```typescript
+> // packages/cdk/parameter.ts
+> const envs: Record<string, Partial<StackInput>> = {
+>   dev: {
+>     allowedDevOrigins: ['http://localhost:5173'],
+>   },
+> };
+> ```
+>
+> スキーム + ホスト（+ ポート）の形式で指定してください（末尾のスラッシュやパスを含めると一致しません）。本番環境では設定しないことを推奨します。
+
 ### Windows ユーザー
 
 Windows ユーザー用に開発環境を立ち上げる PowerShell スクリプト `web_devw_win.ps1` を用意しており、`web:devww` から起動できます (`w` が一つ多い)。`setup-env.sh` を PowerShell に置き換えたのに近いスクリプトで、`aws` コマンドは必要ですが `jq` は必要ありません。

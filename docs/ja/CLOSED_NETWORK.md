@@ -10,18 +10,20 @@
 
 閉域モードに関するオプションは `closedNetwork` プレフィックスがついています。以下がオプション一覧です。
 
-| パラメータ                            | 説明                                                                                                                                                                                                                                                                                                       |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| closedNetworkMode                     | 閉域モードにするかどうか。true だと閉域モード。デフォルトは false。                                                                                                                                                                                                                                        |
-| closedNetworkVpcIpv4Cidr              | VPC を新規作成する場合に指定する IPv4 の CIDR。デフォルトでは 10.0.0.0/16。                                                                                                                                                                                                                                |
-| closedNetworkVpcId                    | VPC をインポートする場合の VPC ID。こちらを指定しないと VPC は新規作成になる。                                                                                                                                                                                                                             |
-| closedNetworkSubnetIds                | GenU 関連のリソースをデプロイする Subnet の ID を複数指定。ALB、Fargate タスク、VPC Endpoint、Resolver Endpoint が作成される。こちらは指定しないと Isolated な Subnet が選択される。2 つ以上の Subnet ID を配列で指定する。                                                                                |
-| closedNetworkVpcEndpointAzs           | インターフェース型 VPC エンドポイントを作成する AZ を配列で指定する（例: `['ap-northeast-1a']`）。1 つのみ指定すると費用を削減できる（可用性は下がる）。デフォルトは null で全 AZ。ALB など他のリソースには影響しない。`closedNetworkSubnetIds` と併用時は両方に一致する Subnet のみ対象。                 |
-| closedNetworkApiGatewayVpcEndpointIds | API Gateway のリソースポリシーで追加で許可する VPC エンドポイント ID の配列。GenU が作成する API Gateway 用の VPC エンドポイントは、指定の有無にかかわらず許可される。別の VPC や別のアカウントにある VPC エンドポイント（集約 VPC の共有エンドポイントなど）を経由して API Gateway を呼ぶ場合に指定する。 |
-| closedNetworkCertificateArn           | GenU にドメインを付与する場合に指定する ACM の ARN。ACM は手動で生成する。指定しない場合、GenU は Application Load Balancer のデフォルトのエンドポイントで公開される。                                                                                                                                     |
-| closedNetworkDomainName               | GenU のドメイン名。Private Hosted Zone は CDK が生成するため、手動作成不要。`closedNetworkCertificateArn` と `closedNetworkDomainName` は両方指定するか、両方指定しないかのどちらかである必要あり。                                                                                                        |
-| closedNetworkCreateTestEnvironment    | 検証環境を作成するかどうか。デフォルトで作成する。必要ない場合は false を指定する。検証環境は EC2 の Windows インスタンスとして作成し、Fleet Manager 経由でアクセスする。(詳細な手順は後述。)                                                                                                              |
-| closedNetworkCreateResolverEndpoint   | Route53 の Resolver Endpoint を生成するかどうか。デフォルトで true。                                                                                                                                                                                                                                       |
+| パラメータ                               | 説明                                                                                                                                                                                                                                                                                                       |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| closedNetworkMode                        | 閉域モードにするかどうか。true だと閉域モード。デフォルトは false。                                                                                                                                                                                                                                        |
+| closedNetworkVpcIpv4Cidr                 | VPC を新規作成する場合に指定する IPv4 の CIDR。デフォルトでは 10.0.0.0/16。                                                                                                                                                                                                                                |
+| closedNetworkVpcId                       | VPC をインポートする場合の VPC ID。こちらを指定しないと VPC は新規作成になる。                                                                                                                                                                                                                             |
+| closedNetworkSubnetIds                   | GenU 関連のリソースをデプロイする Subnet の ID を複数指定。ALB、Fargate タスク、VPC Endpoint、Resolver Endpoint が作成される。こちらは指定しないと Isolated な Subnet が選択される。2 つ以上の Subnet ID を配列で指定する。                                                                                |
+| closedNetworkVpcEndpointAzs              | インターフェース型 VPC エンドポイントを作成する AZ を配列で指定する（例: `['ap-northeast-1a']`）。1 つのみ指定すると費用を削減できる（可用性は下がる）。デフォルトは null で全 AZ。ALB など他のリソースには影響しない。`closedNetworkSubnetIds` と併用時は両方に一致する Subnet のみ対象。                 |
+| closedNetworkApiGatewayVpcEndpointIds    | API Gateway のリソースポリシーで追加で許可する VPC エンドポイント ID の配列。GenU が作成する API Gateway 用の VPC エンドポイントは、指定の有無にかかわらず許可される。別の VPC や別のアカウントにある VPC エンドポイント（集約 VPC の共有エンドポイントなど）を経由して API Gateway を呼ぶ場合に指定する。 |
+| closedNetworkCertificateArn              | GenU にドメインを付与する場合に指定する ACM の ARN。ACM は手動で生成する。指定しない場合、GenU は Application Load Balancer のデフォルトのエンドポイントで公開される。                                                                                                                                     |
+| closedNetworkDomainName                  | GenU のドメイン名。Private Hosted Zone は CDK が生成するため、手動作成不要。`closedNetworkCertificateArn` と `closedNetworkDomainName` は両方指定するか、両方指定しないかのどちらかである必要あり。                                                                                                        |
+| closedNetworkCreateTestEnvironment       | 検証環境を作成するかどうか。デフォルトで作成する。必要ない場合は false を指定する。検証環境は EC2 の Windows インスタンスとして作成し、Fleet Manager 経由でアクセスする。(詳細な手順は後述。)                                                                                                              |
+| closedNetworkTestEnvironmentInstanceType | 検証用 Windows インスタンスのインスタンスタイプ。デフォルトは `t3.large` (v5.6 より前は `r6i.large`)。                                                                                                                                                                                                     |
+| closedNetworkAdditionalVpcEndpoints      | 有効な機能が必要としない場合でも作成する Interface VPC Endpoint を `closed-vpc.ts` の名前で指定する (例: `['Kendra']`)。インポートした VPC (`closedNetworkVpcId`) の他のワークロードがその VPC Endpoint を使っている場合に指定する。デフォルトは `[]`。                                                    |
+| closedNetworkCreateResolverEndpoint      | Route53 の Resolver Endpoint を生成するかどうか。デフォルトで true。                                                                                                                                                                                                                                       |
 
 ## アーキテクチャ
 
@@ -32,9 +34,88 @@
 - デプロイはインターネットに疎通可能な環境で行う必要があります。また、動作検証環境にはマネージメントコンソールからアクセスするため、その場合もインターネット疎通が必要になります。
 - デプロイには、通常モードのデプロイと同様の環境が必要です。具体的には、AWS IAM ユーザーの設定、Node.js、Docker が必要です。
 - GenU がデプロイされるリージョンとモデルのリージョンは同一である必要があります。GenU を ap-northeast-1 にデプロイし、us-east-1 のモデルを利用するといったことは現状できません。
+- AgentCore (`agentBuilderEnabled` / `createGenericAgentCoreRuntime`) を有効化する場合、`agentCoreRegion` も同一リージョンである必要があります。閉域モードでは閉域 VPC を AgentCore Runtime が共有するため、別リージョンへのデプロイはできません (指定がない場合は自動的に `region` と同一になります)。Research Agent (`researchAgentEnabled`) はランタイムにインターネット接続が必要なため、閉域モードでは有効にできません。
 - 様々なリソースを作成するため、既存の VPC をインポートする場合は可能な限り clean な環境を利用することを推奨します。
 - SAML 連携は利用できません。
 - Voice Chat のユースケースは現状利用できません。
+
+## 閉域モードでの AgentCore
+
+`closedNetworkMode: true` かつ `agentBuilderEnabled` または `createGenericAgentCoreRuntime` を有効化した場合、AgentCore Runtime は自動的に PRIVATE ネットワーク構成 (`isAgentCoreNetworkPrivate=true`) でデプロイされ、閉域 VPC とサブネットを ClosedNetworkStack から共有します。`agentCoreVpcId` / `agentCoreSubnetIds` を別途指定する必要はありません。
+
+VPC Endpoint は閉域 VPC に下記が自動作成されるため、AgentCore Runtime からの通信および ブラウザからの InvokeAgentRuntime はすべて VPC 内で完結します。
+
+- `bedrock-agentcore` (Runtime データプレーン / コントロールプレーン)
+- `bedrock-agentcore.gateway` (ランタイム内の MCP サーバーからの AgentCore Gateway 呼び出し。`agentBuilderEnabled` または `agentCoreGatewayArns` のときに作成)
+- `bedrock-runtime` (Foundation Model 呼び出し)
+- `ecr` / `ecr-docker` (Runtime イメージの Pull)
+- `logs` (CloudWatch Logs)
+- `s3` (Gateway Endpoint。FileBucket やデータソースへのアクセス)
+
+AgentCore Runtime は閉域 VPC のサブネットに配置されます。AgentCore Runtime の VPC モードは、リージョン内の一部の AZ のみに対応しています (例: us-east-1 では `use1-az1`、`use1-az2`、`use1-az4`)。ランタイムの作成に失敗する場合は、`closedNetworkSubnetIds` で対応 AZ のサブネットを指定するか、既存の VPC をインポートしてください。詳細は [Configure Amazon Bedrock AgentCore Runtime for VPC](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agentcore-vpc.html) を参照してください。
+
+## 閉域モードで利用できる機能
+
+閉域モードで動作しない設定は、`cdk synth` / `cdk deploy` 時に Warning として表示されます（ID は `genu:closedNetwork:` で始まります）。「非表示」とあるユースケースは UI から自動で非表示になります。
+
+| 機能                                                                                                        | 対応        | 補足                                                                                                                                                                               |
+| ----------------------------------------------------------------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| チャット、文章生成、要約、執筆、翻訳、ダイアグラム生成、映像分析、ユースケースビルダー                      | ✅          |                                                                                                                                                                                    |
+| 音声認識、議事録生成                                                                                        | ✅          |                                                                                                                                                                                    |
+| RAG (Knowledge Base)、RAG (Kendra)                                                                          | ✅          |                                                                                                                                                                                    |
+| Agent (Bedrock Agents)、Flows                                                                               | ✅          |                                                                                                                                                                                    |
+| 画像生成、動画生成                                                                                          | △           | `region` のモデルのみ利用できます。他リージョンのモデルは表示されず、1 つも残らない場合はユースケースごと非表示になります。                                                        |
+| AgentCore (エージェントビルダー、汎用ランタイム)                                                            | △           | 閉域 VPC 内で動作します。インターネットが必要なツール (Web 検索、URL 取得、外部 API を呼ぶ MCP サーバーや実行時に npm/PyPI からパッケージを取得する MCP サーバー) は動作しません。 |
+| MCP チャット                                                                                                | △           | インターネットが必要な MCP サーバーは動作しません。                                                                                                                                |
+| 音声チャット                                                                                                | ❌ (非表示) |                                                                                                                                                                                    |
+| Web コンテンツ抽出                                                                                          | △           | 閉域 VPC から到達できるページ (社内ページなど) のみ取得できます。インターネット上のページは取得できません。                                                                        |
+| 検索エージェント (`searchAgentEnabled`)                                                                     | ❌          | 外部の検索 API を呼び出します。                                                                                                                                                    |
+| Research Agent (`researchAgentEnabled`)                                                                     | ❌ (エラー) | ランタイムにインターネット接続が必要なため、`closedNetworkMode` と同時に有効にすると `cdk synth` がエラーになります。                                                              |
+| SAML 連携                                                                                                   | ❌          |                                                                                                                                                                                    |
+| `allowedIpV4AddressRanges` / `allowedIpV6AddressRanges` / `allowedCountryCodes` / `hostName` / `domainName` | ❌ (無視)   | CloudFront と WAF を作成しないため無視されます。独自ドメインは `closedNetworkDomainName` を利用してください。                                                                      |
+
+## 作成される VPC Endpoint
+
+Interface 型の VPC Endpoint はエンドポイントごと・AZ ごとに課金されるため、有効にした機能に必要なものだけを作成します。機能を無効にして再デプロイすると、その VPC Endpoint は削除されます。
+
+> [!WARNING]
+> 既存の閉域環境を更新すると、無効な機能の VPC Endpoint は削除されます。`closedNetworkVpcId` でインポートした VPC の他のワークロードがそれらの VPC Endpoint (プライベート DNS 名) を使っている場合は、デプロイ前に `closedNetworkAdditionalVpcEndpoints` に指定してください。
+
+| VPC Endpoint                                                                                                                                                  | 作成される条件                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `execute-api`、`lambda`、`cognito-idp`、`cognito-identity`、`s3` (Interface)、`bedrock-runtime`、`bedrock-agent-runtime`、`ecr.api`、`ecr.dkr`、`logs`、`sts` | 常に作成                                                                                                         |
+| `s3`、`dynamodb` (Gateway 型、無料)                                                                                                                           | 常に作成                                                                                                         |
+| `transcribe`                                                                                                                                                  | 音声認識または議事録生成を非表示にしていない                                                                     |
+| `transcribestreaming`                                                                                                                                         | 音声認識、議事録生成、翻訳のいずれかを非表示にしていない                                                         |
+| `polly`                                                                                                                                                       | 翻訳を非表示にしていない                                                                                         |
+| `bedrock-agentcore`                                                                                                                                           | `agentBuilderEnabled`、`createGenericAgentCoreRuntime`、`agentCoreExternalRuntimes` のいずれか                   |
+| `bedrock-agentcore.gateway`                                                                                                                                   | `agentBuilderEnabled` または `agentCoreGatewayArns` (ランタイム内の MCP サーバーが AgentCore Gateway を呼ぶ場合) |
+| `bedrock-agent`                                                                                                                                               | `agentEnabled`、`searchAgentEnabled`、`agents` のいずれか                                                        |
+| `kendra`                                                                                                                                                      | `ragEnabled`                                                                                                     |
+| `ssm`、`ssmmessages`、`ec2messages`                                                                                                                           | `closedNetworkCreateTestEnvironment`                                                                             |
+
+## 固定費の目安
+
+閉域モードで作成されるリソースの月額固定費です (730 時間、AWS Price List API のオンデマンド料金、2026-11-10 時点)。Amazon Bedrock や Lambda などの従量課金、VPC Endpoint のデータ処理料金 ($0.01/GB)、ALB の LCU は含みません。最新の料金は [AWS Pricing Calculator](https://calculator.aws/) で確認してください。
+
+| リソース                                                                       | ap-northeast-1 | us-east-1 |
+| ------------------------------------------------------------------------------ | -------------- | --------- |
+| Interface VPC Endpoint (1 エンドポイント・1 AZ あたり)                         | $10.22         | $7.30     |
+| Route 53 Resolver インバウンドエンドポイント (ENI 2 つ)                        | $182.50        | $182.50   |
+| Application Load Balancer (時間料金)                                           | $17.74         | $16.43    |
+| Web アプリ用 Fargate タスク (0.25 vCPU / 0.5 GB × 1)                           | $11.25         | $9.01     |
+| 検証用 Windows インスタンス `r6i.large` (v5.6 より前のデフォルト) + gp3 100 GB | $187.72        | $167.14   |
+| 検証用 Windows インスタンス `t3.large` (デフォルト) + gp3 100 GB               | $109.17        | $88.88    |
+
+ap-northeast-1 での構成例 (VPC を新規作成、2 AZ):
+
+| 構成                                                                                                                                                                           | Interface VPC Endpoint の数 | 月額固定費 |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------- | ---------- |
+| デフォルト (検証環境と Resolver Endpoint あり、RAG / Agent なし)                                                                                                               | (14 + 検証環境用 3) × 2 AZ  | 約 $668    |
+| デフォルト + エージェントビルダー                                                                                                                                              | (16 + 3) × 2 AZ             | 約 $709    |
+| 最小構成: `closedNetworkCreateTestEnvironment: false`、`closedNetworkCreateResolverEndpoint: false`、`closedNetworkVpcEndpointAzs` で 1 AZ、音声認識・議事録生成・翻訳を非表示 | 11 × 1 AZ                   | 約 $141    |
+
+大きいのは検証用インスタンスと Resolver Endpoint です。既存の DNS 経由で自社ネットワークから接続する場合は、どちらも無効にしてください。`closedNetworkVpcEndpointAzs` で AZ を 1 つにすると VPC Endpoint の費用は半分になりますが、可用性は下がります。
 
 ## 有効な設定ファイルの例
 
@@ -112,6 +193,15 @@ Windows 内で Edge ブラウザを開き、ClosedNetworkStack の ClosedNetwork
 
 検証インスタンスは自動停止しないため、検証が完了したら EC2 を開いて対象インスタンスを手動で停止してください。
 また、検証環境そのものが不要であれば、closedNetworkCreateTestEnvironment を false にしてデプロイし直すことで、削除可能です。
+
+v5.6 でデフォルトのインスタンスタイプを `r6i.large` から `t3.large` に変更しました。既存環境を更新すると、検証インスタンスは新しいタイプで停止・起動されます。以前のタイプを使い続ける場合は `closedNetworkTestEnvironmentInstanceType: 'r6i.large'` を指定してください。
+
+### 自分の PC から接続する (VPN)
+
+検証インスタンスは、デプロイ直後にすぐ動作を確認するためのものです。複数人での検証や本番利用では、ネットワーク経由で閉域 VPC に接続し、`closedNetworkCreateTestEnvironment` を false にしてください。
+
+- **既存のオンプレミスネットワーク**: AWS Site-to-Site VPN または AWS Direct Connect で接続し、[オンプレから接続する場合の DNS サーバーの設定について](#オンプレから接続する場合の-dns-サーバーの設定について) に従って DNS を設定します。
+- **個人の PC**: [AWS Client VPN](https://docs.aws.amazon.com/ja_jp/vpn/latest/clientvpn-admin/what-is.html) を使うと、各自のブラウザで GenU を利用できます。VPC Endpoint のプライベート DNS 名を解決できるよう、Client VPN エンドポイントの DNS サーバーに VPC の DNS (VPC の CIDR のベース + 2、例: `10.0.0.2`) を指定してください。ap-northeast-1 では、サブネット関連付け 1 時間あたり $0.15 (1 サブネットで月約 $110) と接続 1 時間あたり $0.05 がかかります (2026-11-10 時点)。Client VPN には ACM のサーバー証明書と相互認証または SAML 認証が必要で、GenU では作成しません。
 
 ## 閉域 GenU に独自のドメインを設定する
 

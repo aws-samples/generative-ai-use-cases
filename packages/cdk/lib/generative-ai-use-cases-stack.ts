@@ -28,6 +28,7 @@ import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { AgentCoreStack } from './agent-core-stack';
 import { ResearchAgentCoreStack } from './research-agent-core-stack';
 import { ClosedNetworkStack } from './closed-network-stack';
+import { closedNetworkWebConfig } from './utils/closed-network';
 import * as path from 'path';
 import { StackOutputs } from './construct/stack-outputs';
 import { REMOTE_OUTPUT_KEYS } from './remote-output-keys';
@@ -353,6 +354,14 @@ export class GenerativeAiUseCasesStack extends Stack {
     }
 
     // Web Frontend
+    // In closed network mode, hide what cannot work there and drop unreachable models
+    const webConfig = closedNetworkWebConfig({
+      closedNetworkMode: params.closedNetworkMode,
+      region: this.region,
+      hiddenUseCases: params.hiddenUseCases,
+      imageGenerationModelIds: api.imageGenerationModelIds,
+      videoGenerationModelIds: api.videoGenerationModelIds,
+    });
     const web = new Web(this, 'Api', {
       // Auth
       userPoolId: auth.userPool.userPoolId,
@@ -376,8 +385,8 @@ export class GenerativeAiUseCasesStack extends Stack {
       webAclId: props.webAclId,
       modelRegion: api.modelRegion,
       modelIds: api.modelIds,
-      imageGenerationModelIds: api.imageGenerationModelIds,
-      videoGenerationModelIds: api.videoGenerationModelIds,
+      imageGenerationModelIds: webConfig.imageGenerationModelIds,
+      videoGenerationModelIds: webConfig.videoGenerationModelIds,
       endpointNames: api.endpointNames,
       builtinAgentsJson: agentsJson || '[]',
       customAgentsJson: JSON.stringify(params.agents),
@@ -419,7 +428,7 @@ export class GenerativeAiUseCasesStack extends Stack {
           }
         : undefined,
       // Frontend
-      hiddenUseCases: params.hiddenUseCases,
+      hiddenUseCases: webConfig.hiddenUseCases,
       // Custom Domain
       cert: props.cert,
       hostName: params.hostName,
@@ -460,6 +469,9 @@ export class GenerativeAiUseCasesStack extends Stack {
       allowedOrigins = [albOrigin, closedWebUrl];
       displayWebUrl = closedWebUrl;
     }
+    // Opt-in extra origins (local development). Empty by default, so the API
+    // only answers the deployed frontend unless a developer asks otherwise.
+    allowedOrigins = [...allowedOrigins, ...params.allowedDevOrigins];
     api.apiHandler.addEnvironment('ALLOWED_ORIGINS', allowedOrigins.join(','));
 
     // Cfn Outputs
@@ -528,11 +540,11 @@ export class GenerativeAiUseCasesStack extends Stack {
     });
 
     new CfnOutput(this, 'ImageGenerateModelIds', {
-      value: JSON.stringify(api.imageGenerationModelIds),
+      value: JSON.stringify(webConfig.imageGenerationModelIds),
     });
 
     new CfnOutput(this, 'VideoGenerateModelIds', {
-      value: JSON.stringify(api.videoGenerationModelIds),
+      value: JSON.stringify(webConfig.videoGenerationModelIds),
     });
 
     new CfnOutput(this, 'EndpointNames', {
@@ -564,7 +576,7 @@ export class GenerativeAiUseCasesStack extends Stack {
     });
 
     new CfnOutput(this, 'HiddenUseCases', {
-      value: JSON.stringify(params.hiddenUseCases),
+      value: JSON.stringify(webConfig.hiddenUseCases),
     });
 
     new CfnOutput(this, 'SpeechToSpeechNamespace', {

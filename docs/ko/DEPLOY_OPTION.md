@@ -186,7 +186,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: false,
     ragKnowledgeBaseAdvancedParsingModelId:
-      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
@@ -203,7 +203,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseId": "XXXXXXXXXX",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": false,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "embeddingModelId": "amazon.titan-embed-text-v2:0",
     "rerankingModelId": "amazon.rerank-v1:0",
     "queryDecompositionEnabled": true
@@ -271,9 +271,8 @@ Status가 Available이 되면 프로세스가 완료됩니다. S3에 저장된 �
 
 - `ragKnowledgeBaseAdvancedParsing`: 고급 파싱을 활성화하려면 `true`로 설정
 - `ragKnowledgeBaseAdvancedParsingModelId`: 정보 추출에 사용되는 모델 ID 지정
-  - 지원되는 모델 (2024/08 기준)
-    - `anthropic.claude-3-sonnet-20240229-v1:0`
-    - `anthropic.claude-3-haiku-20240307-v1:0`
+  - Claude, Amazon Nova, Llama 4 비전 모델을 사용할 수 있습니다 ([Supported models and Regions for parsing](https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-supported.html))
+  - `modelRegion`에서 사용 가능한 모델 ID 또는 `global.anthropic.claude-sonnet-4-6`(기본값), `jp.anthropic.claude-sonnet-4-6`와 같은 교차 리전 추론 프로필 ID를 지정합니다. 문서가 특정 지역 밖으로 나가지 않아야 하는 경우 지역 한정 프로필(`us.` / `eu.` / `jp.` 등)을 선택하세요.
 
 **[parameter.ts](/packages/cdk/parameter.ts) 편집**
 
@@ -286,7 +285,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: true,
     ragKnowledgeBaseAdvancedParsingModelId:
-      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
@@ -302,7 +301,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseId": "XXXXXXXXXX",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": true,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "embeddingModelId": "amazon.titan-embed-text-v2:0"
   }
 }
@@ -1903,6 +1902,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 > [!NOTE]
 > 가드레일을 활성화한 후 비활성화하려면 `guardrailEnabled: false`로 설정하고 재배포합니다. 이렇게 하면 생성형 AI 호출 시 가드레일이 비활성화되지만 가드레일 자체는 남아있습니다. 관리 콘솔을 열고 modelRegion의 CloudFormation에서 `GuardrailStack` 스택을 삭제하여 완전히 제거할 수 있습니다. 가드레일이 남아있어도 비용이 발생하지 않지만 사용하지 않는 리소스는 삭제하는 것이 좋습니다.
+
+> [!WARNING]
+> 가드레일은 `modelRegion`에만 생성됩니다. `guardrailEnabled: true`일 때 `modelIds`에서 `modelRegion` 이외의 리전을 지정한 모델을 사용하면, 해당 리전에 가드레일이 없으므로 `The guardrail identifier or version provided in the request does not exist.` 오류가 발생합니다. 가드레일을 활성화하는 경우 텍스트 생성 모델의 리전을 `modelRegion`으로 맞춰 주세요.
 
 ## 비용 관련 설정
 

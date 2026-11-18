@@ -136,7 +136,7 @@ const baseStackInputSchema = z.object({
   ragKnowledgeBaseAdvancedParsing: z.boolean().default(false),
   ragKnowledgeBaseAdvancedParsingModelId: z
     .string()
-    .default('anthropic.claude-3-sonnet-20240229-v1:0'),
+    .default('global.anthropic.claude-sonnet-4-6'),
   ragKnowledgeBaseBinaryVector: z.boolean().default(false),
   queryDecompositionEnabled: z.boolean().default(false),
   rerankingModelId: z.string().nullish(),
@@ -204,6 +204,19 @@ const baseStackInputSchema = z.object({
       })
     )
     .default([]),
+  // Additional origins allowed to call the API, on top of the deployed web URL.
+  // Intended for local frontend development (`npm run web:devw`), which serves
+  // the SPA from http://localhost:5173 while calling the deployed API.
+  allowedDevOrigins: z
+    .array(
+      z
+        .string()
+        .regex(
+          /^https?:\/\/[^/\s]+$/,
+          'allowedDevOrigins must be an origin such as http://localhost:5173 (scheme + host, no path or trailing slash)'
+        )
+    )
+    .default([]),
   // WAF
   allowedIpV4AddressRanges: z.array(z.string()).nullish(),
   allowedIpV6AddressRanges: z.array(z.string()).nullish(),
@@ -227,6 +240,10 @@ const baseStackInputSchema = z.object({
   closedNetworkCertificateArn: z.string().nullish(),
   closedNetworkDomainName: z.string().nullish(),
   closedNetworkCreateTestEnvironment: z.boolean().default(true),
+  closedNetworkTestEnvironmentInstanceType: z.string().default('t3.large'),
+  // Interface VPC Endpoints to create even when no enabled feature needs them
+  // (names as in closed-vpc.ts, e.g. 'Kendra'), such as ones other workloads in an imported VPC use
+  closedNetworkAdditionalVpcEndpoints: z.array(z.string()).default([]),
   closedNetworkCreateResolverEndpoint: z.boolean().default(true),
 });
 
@@ -261,7 +278,35 @@ export const stackInputSchema = baseStackInputSchema
         'Both VPC ID and Subnet IDs must be provided together for AgentCore network configuration',
       path: ['agentCoreVpcId'],
     }
-  );
+  )
+  .refine(
+    (data) => {
+      // In closed network mode, AgentCore must run in the same region as the closed VPC
+      const agentCoreEnabled =
+        data.agentBuilderEnabled ||
+        data.createGenericAgentCoreRuntime ||
+        data.researchAgentEnabled;
+      if (
+        data.closedNetworkMode &&
+        agentCoreEnabled &&
+        data.agentCoreRegion &&
+        data.agentCoreRegion !== data.region
+      ) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message:
+        'agentCoreRegion must equal region when closedNetworkMode=true (the AgentCore Runtime shares the closed VPC, which exists in a single region)',
+      path: ['agentCoreRegion'],
+    }
+  )
+  .refine((data) => !(data.closedNetworkMode && data.researchAgentEnabled), {
+    message:
+      'researchAgentEnabled cannot be used with closedNetworkMode=true (the research agent runtime needs internet access)',
+    path: ['researchAgentEnabled'],
+  });
 
 // schema after conversion
 export const processedStackInputSchema = baseStackInputSchema.extend({

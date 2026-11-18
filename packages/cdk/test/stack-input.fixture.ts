@@ -14,8 +14,7 @@ export const stackInput: Partial<StackInput> = {
   ragKnowledgeBaseEnabled: true,
   ragKnowledgeBaseStandbyReplicas: false,
   ragKnowledgeBaseAdvancedParsing: false,
-  ragKnowledgeBaseAdvancedParsingModelId:
-    'anthropic.claude-3-sonnet-20240229-v1:0',
+  ragKnowledgeBaseAdvancedParsingModelId: 'global.anthropic.claude-sonnet-4-6',
   embeddingModelId: 'amazon.titan-embed-text-v2:0',
   selfSignUpEnabled: true,
   allowedSignUpEmailDomains: null,

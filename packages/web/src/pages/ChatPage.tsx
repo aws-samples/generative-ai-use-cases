@@ -37,6 +37,7 @@ import { getPrompter } from '../prompts';
 import { withCurrentDate } from '../utils/currentDate';
 import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
+import { effortLabel } from '../utils/reasoningEffort';
 import {
   AdditionalModelRequestFields,
   FileLimit,
@@ -45,6 +46,7 @@ import {
 import ModelParameters from '../components/ModelParameters';
 import { AcceptedDotExtensions } from '../utils/MediaUtils';
 import { useTranslation } from 'react-i18next';
+import useAcceptedExtensions from '../hooks/useAcceptedExtensions';
 
 // File size limits for Chat (Lambda route: API Gateway → Lambda → Bedrock Converse API)
 // - Lambda synchronous payload limit: 6MB
@@ -127,6 +129,7 @@ const ChatPage: React.FC = () => {
     uploadedFiles,
     uploadFiles,
     base64Cache,
+    restore: restoreFiles,
   } = useFiles(pathname);
   const { chatId } = useParams();
 
@@ -212,18 +215,23 @@ const ChatPage: React.FC = () => {
     }
   }, [chatId, getChatTitle, t]);
 
-  const accept = useMemo(() => {
-    if (!modelId) return [];
-    const feature = MODELS.getModelMetadata(modelId);
-    return [
-      ...(feature.flags.doc ? fileLimit.accept.doc : []),
-      ...(feature.flags.image ? fileLimit.accept.image : []),
-      ...(feature.flags.video ? fileLimit.accept.video : []),
-    ];
-  }, [modelId]);
+  const accept = useAcceptedExtensions(fileLimit, modelId);
   const fileUpload = useMemo(() => {
     return accept.length > 0;
   }, [accept]);
+  // Documents attached earlier in this chat are sent again with every
+  // message, and Bedrock rejects a request with more than 5 documents (#1685)
+  const previousFileCount = useMemo(
+    () =>
+      rawMessages
+        .flatMap((m) => m.extraData ?? [])
+        .filter((data) => data.type === 'file').length,
+    [rawMessages]
+  );
+  const chatFileLimit = useMemo(
+    () => ({ ...fileLimit, previousFileCount }),
+    [previousFileCount]
+  );
   const reasoning = useMemo(() => {
     return MODELS.getModelMetadata(modelId).flags.reasoning ?? false;
   }, [modelId]);
@@ -278,8 +286,17 @@ const ChatPage: React.FC = () => {
         newType = adaptiveThinking ? 'adaptive' : 'enabled';
       }
 
+      // A model without xhigh gets high. Back on a model with xhigh, the
+      // user's saved xhigh comes back: the high was only this adjustment.
+      const savedEffort = sanitizeReasoningConfig(
+        useChatPreferences.getState().reasoningConfig
+      ).effort;
       const newEffort =
-        config.effort === 'xhigh' && !xhighEffort ? 'high' : config.effort;
+        config.effort === 'xhigh' && !xhighEffort
+          ? 'high'
+          : config.effort === 'high' && xhighEffort && savedEffort === 'xhigh'
+            ? 'xhigh'
+            : config.effort;
       if (config.type === newType && config.effort === newEffort) {
         return prev;
       }
@@ -345,6 +362,7 @@ const ChatPage: React.FC = () => {
   const onSend = useCallback(async () => {
     setFollowing(true);
     const savedContent = content;
+    const savedFiles = uploadedFiles;
     setContent('');
     clearFiles();
     const success = await postChat(
@@ -361,7 +379,10 @@ const ChatPage: React.FC = () => {
       overrideModelParameters
     );
     if (!success) {
+      // Give back what was cleared, so the user can change the attachments
+      // (e.g. remove one that made the request too large) and send again
       setContent(savedContent);
+      restoreFiles(savedFiles);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -569,8 +590,8 @@ const ChatPage: React.FC = () => {
   ]);
 
   const onDropFiles = useCallback(
-    (files: File[]) => uploadFiles(files, fileLimit, accept),
-    [uploadFiles, accept]
+    (files: File[]) => uploadFiles(files, chatFileLimit, accept),
+    [uploadFiles, chatFileLimit, accept]
   );
   const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
     useDropOverlay(onDropFiles);
@@ -737,7 +758,7 @@ const ChatPage: React.FC = () => {
             }}
             onReset={onReset}
             fileUpload={fileUpload}
-            fileLimit={fileLimit}
+            fileLimit={chatFileLimit}
             accept={accept}
             reasoning={reasoning && !adaptiveThinkingAlwaysOn}
             onReasoningSwitched={onReasoningSwitched}
@@ -746,6 +767,13 @@ const ChatPage: React.FC = () => {
             onModelChange={onChangeModel}
             modelOptions={modelOptions}
             setting={setting}
+            settingLabel={
+              setting &&
+              adaptiveThinking &&
+              overrideModelParameters.reasoningConfig.type !== 'disabled'
+                ? effortLabel(overrideModelParameters.reasoningConfig.effort)
+                : undefined
+            }
             onSetting={() => {
               setShowSetting(true);
             }}

@@ -475,6 +475,19 @@ const mergeConverseInferenceParams = (
 
 // API call, extract string from output, etc.
 
+// Bedrock rejects a text block that is empty or only whitespace, in any turn
+// and in the system prompt (#1685). Such text reaches here from a reply
+// stopped before its first character, a retry, an edited message or an empty
+// system prompt, and once saved it breaks every later request of that chat.
+// Dropping the block is not enough: a turn with a document must also have
+// text. So a blank turn gets a short placeholder, and a blank system prompt
+// is left out.
+const isBlank = (text: string) => text.trim() === '';
+const BLANK_TEXT_PLACEHOLDER = {
+  user: '(no text)',
+  assistant: '(no response)',
+} as const;
+
 const createConverseCommandInput = (
   messages: UnrecordedMessage[],
   id: string,
@@ -484,7 +497,8 @@ const createConverseCommandInput = (
 ) => {
   // Set the string passed in the system role to the system prompt
   const system = messages.find((message) => message.role === 'system');
-  const systemContext = system ? [{ text: system.content }] : [];
+  const systemContext =
+    system && !isBlank(system.content) ? [{ text: system.content }] : [];
 
   // Add the string of user role and assistant role other than the system role to the conversation
   messages = messages.filter((message) => message.role !== 'system');
@@ -548,7 +562,11 @@ const createConverseCommandInput = (
       });
     }
 
-    contentBlocks.push({ text: message.content });
+    contentBlocks.push({
+      text: isBlank(message.content)
+        ? BLANK_TEXT_PLACEHOLDER[message.role === 'user' ? 'user' : 'assistant']
+        : message.content,
+    });
     return {
       role:
         message.role === 'user'

@@ -1,37 +1,22 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
 import { PredictRequest } from 'generative-ai-use-cases';
 import api from './utils/api';
 import { defaultModel } from './utils/models';
+import { getUserSub, sendJson } from './utils/http';
+import { bedrockRequestMetadata } from './utils/requestMetadata';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
-  try {
-    const req: PredictRequest = JSON.parse(event.body!);
-    const model = req.model || defaultModel;
-    const response = await api[model.type].invoke?.(
-      model,
-      req.messages,
-      req.id
-    );
+  request: Request,
+  response: Response
+): Promise<void> => {
+  const req: PredictRequest = request.body ?? {};
+  const model = req.model || defaultModel;
+  const output = await api[model.type].invoke?.(
+    model,
+    req.messages,
+    req.id,
+    bedrockRequestMetadata({ userSub: getUserSub(request), id: req.id })
+  );
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify(response),
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
-  }
+  return sendJson(response, 200, output);
 };

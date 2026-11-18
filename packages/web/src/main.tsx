@@ -12,6 +12,7 @@ import {
 import LandingPage from './pages/LandingPage';
 import Setting from './pages/Setting';
 import StatPage from './pages/StatPage.tsx';
+import AdminPage from './pages/AdminPage.tsx';
 import ChatPage from './pages/ChatPage';
 import SharedChatPage from './pages/SharedChatPage';
 import SummarizePage from './pages/SummarizePage';
@@ -90,6 +91,10 @@ const routes: RouteObject[] = [
     element: <StatPage />,
   },
   {
+    path: '/admin',
+    element: <AdminPage />,
+  },
+  {
     path: '/chat',
     element: <ChatPage />,
   },
@@ -161,10 +166,12 @@ const routes: RouteObject[] = [
         element: <OptimizePromptPage />,
       }
     : null,
-  {
-    path: '/transcribe',
-    element: <TranscribePage />,
-  },
+  enabled('transcribe')
+    ? {
+        path: '/transcribe',
+        element: <TranscribePage />,
+      }
+    : null,
   {
     path: '/flow-chat',
     element: <FlowChatPage />,

@@ -209,20 +209,28 @@ export const listMessages = async (
   _chatId: string
 ): Promise<RecordedMessage[]> => {
   const chatId = `chat#${_chatId}`;
-  const res = await dynamoDbDocument.send(
-    new QueryCommand({
-      TableName: TABLE_NAME,
-      KeyConditionExpression: '#id = :id',
-      ExpressionAttributeNames: {
-        '#id': 'id',
-      },
-      ExpressionAttributeValues: {
-        ':id': chatId,
-      },
-    })
-  );
+  const items: RecordedMessage[] = [];
+  let exclusiveStartKey: Record<string, unknown> | undefined;
+  // A query page stops at 1 MB, so long chats take several pages.
+  do {
+    const res = await dynamoDbDocument.send(
+      new QueryCommand({
+        TableName: TABLE_NAME,
+        KeyConditionExpression: '#id = :id',
+        ExpressionAttributeNames: {
+          '#id': 'id',
+        },
+        ExpressionAttributeValues: {
+          ':id': chatId,
+        },
+        ExclusiveStartKey: exclusiveStartKey,
+      })
+    );
+    items.push(...((res.Items ?? []) as RecordedMessage[]));
+    exclusiveStartKey = res.LastEvaluatedKey;
+  } while (exclusiveStartKey);
 
-  return res.Items as RecordedMessage[];
+  return items;
 };
 
 // Update token usage
@@ -794,4 +802,27 @@ export const aggregateTokenUsage = async (
     console.error('Error aggregating token usage:', error);
     throw error;
   }
+};
+
+/** Every user's token usage record for one day (YYYY-MM-DD). */
+export const listTokenUsageForDate = async (
+  date: string
+): Promise<TokenUsageStats[]> => {
+  const items: TokenUsageStats[] = [];
+  let exclusiveStartKey: QueryCommandInput['ExclusiveStartKey'] = undefined;
+  // A query page stops at 1 MB; a busy day can take several pages.
+  do {
+    const res: QueryCommandOutput = await dynamoDbDocument.send(
+      new QueryCommand({
+        TableName: STATS_TABLE_NAME,
+        KeyConditionExpression: '#id = :id',
+        ExpressionAttributeNames: { '#id': 'id' },
+        ExpressionAttributeValues: { ':id': `stats#${date}` },
+        ExclusiveStartKey: exclusiveStartKey,
+      })
+    );
+    items.push(...((res.Items ?? []) as TokenUsageStats[]));
+    exclusiveStartKey = res.LastEvaluatedKey;
+  } while (exclusiveStartKey);
+  return items;
 };

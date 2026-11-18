@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { handler as getWebTextHandler } from '../../getWebText';
-import { wrapHandler } from './helpers';
+import { route } from '../../utils/http';
 
 export const router = Router();
 
-router.get('/', wrapHandler(getWebTextHandler));
+router.get('/', route(getWebTextHandler));

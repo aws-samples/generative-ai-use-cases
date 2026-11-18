@@ -36,6 +36,7 @@ const useFilesState = create<{
     accept: string[]
   ) => Promise<boolean>;
   clear: (id: string) => void;
+  restore: (id: string, files: UploadedFileType[]) => void;
   base64Cache: Record<string, string>;
   getFileDownloadSignedUrl: (
     s3Url: string,
@@ -51,6 +52,16 @@ const useFilesState = create<{
       }),
       errorMessagesDict: produce(state.errorMessagesDict, (draft) => {
         draft[id] = [];
+      }),
+    }));
+  };
+
+  // Put files back in the input, e.g. after a send that failed. The files
+  // stay in S3 when the input is cleared, so the same entries can be reused.
+  const restore = (id: string, files: UploadedFileType[]) => {
+    set((state) => ({
+      uploadedFilesDict: produce(state.uploadedFilesDict, (draft) => {
+        draft[id] = files;
       }),
     }));
   };
@@ -110,7 +121,11 @@ const useFilesState = create<{
     fileLimit: FileLimit,
     accept: string[]
   ) => {
-    let fileCount = 0;
+    // Bedrock accepts at most 5 documents in a whole request, past turns
+    // included, so documents already in the conversation are counted first.
+    // Images have no such limit across turns, so they are counted per message.
+    const previousFileCount = fileLimit.previousFileCount ?? 0;
+    let fileCount = previousFileCount;
     let imageFileCount = 0;
     let videoFileCount = 0;
 
@@ -215,9 +230,14 @@ const useFilesState = create<{
           isFileNumberAllowed = fileCount <= (fileLimit.maxFileCount || 0);
           if (!isFileNumberAllowed) {
             errorMessages.push(
-              i18next.t('files.error.fileCountExceeded', {
-                maxCount: fileLimit.maxFileCount,
-              })
+              previousFileCount > 0
+                ? i18next.t('files.error.fileCountExceededInChat', {
+                    maxCount: fileLimit.maxFileCount,
+                    previousCount: previousFileCount,
+                  })
+                : i18next.t('files.error.fileCountExceeded', {
+                    maxCount: fileLimit.maxFileCount,
+                  })
             );
           }
         }
@@ -417,6 +437,7 @@ const useFilesState = create<{
 
   return {
     clear,
+    restore,
     uploadedFilesDict: {},
     errorMessagesDict: {},
     uploadFiles,
@@ -432,6 +453,7 @@ const useFiles = (id: string) => {
     uploadFiles,
     checkFiles,
     clear,
+    restore,
     uploadedFilesDict,
     deleteUploadedFile,
     errorMessagesDict,
@@ -449,6 +471,7 @@ const useFiles = (id: string) => {
     ),
     errorMessages: errorMessagesDict[id] ?? [],
     clear: () => clear(id),
+    restore: (files: UploadedFileType[]) => restore(id, files),
     uploadedFiles: uploadedFilesDict[id] ?? [],
     deleteUploadedFile: (
       fileId: string,

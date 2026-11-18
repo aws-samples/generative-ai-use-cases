@@ -1,34 +1,26 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { getUserSub, sendJson, sendText } from './utils/http';
+import { bedrockRequestMetadata } from './utils/requestMetadata';
 import { GenerateImageRequest } from 'generative-ai-use-cases';
 import api from './utils/api';
 import { defaultImageGenerationModel } from './utils/models';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    const req: GenerateImageRequest = JSON.parse(event.body!);
+    const req: GenerateImageRequest = request.body ?? {};
     const model = req.model || defaultImageGenerationModel;
-    const res = await api[model.type].generateImage(model, req.params);
+    const res = await api[model.type].generateImage(
+      model,
+      req.params,
+      bedrockRequestMetadata({ userSub: getUserSub(request), id: '/image' })
+    );
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: res,
-      isBase64Encoded: true,
-    };
+    return sendText(response, 200, res);
   } catch (error) {
     console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: (error as Error).message }),
-    };
+    return sendJson(response, 500, { message: (error as Error).message });
   }
 };

@@ -136,3 +136,74 @@ describe('document names', () => {
     expect(names).toEqual(['report', 'report (2)', 'report (3)']);
   });
 });
+
+describe('blank text', () => {
+  const build = async (conversation: UnrecordedMessage[]) => {
+    const { BEDROCK_TEXT_GEN_MODELS } =
+      await import('../../../lambda/utils/models');
+    const modelId = 'global.anthropic.claude-opus-5-5';
+    const config = BEDROCK_TEXT_GEN_MODELS[modelId];
+    return config.createConverseCommandInput(
+      conversation,
+      '/chat',
+      { type: 'bedrock', modelId },
+      config.defaultParams,
+      config.usecaseParams
+    );
+  };
+  const texts = (input: Awaited<ReturnType<typeof build>>) =>
+    (input.messages ?? []).map((m) =>
+      (m.content ?? []).flatMap((c) => (c.text !== undefined ? [c.text] : []))
+    );
+
+  // Bedrock rejects all of these: "text content blocks must be non-empty",
+  // "... must contain non-whitespace text" (#1685)
+  it('fills a blank reply and a blank message, and keeps the rest', async () => {
+    const input = await build([
+      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'user', content: 'first' },
+      { role: 'assistant', content: '' },
+      { role: 'user', content: ' ' },
+      { role: 'assistant', content: 'ok' },
+      { role: 'user', content: 'last' },
+    ]);
+    expect(texts(input)).toEqual([
+      ['first'],
+      ['(no response)'],
+      ['(no text)'],
+      ['ok'],
+      ['last'],
+    ]);
+  });
+
+  it('keeps a text block next to a document, as Bedrock requires', async () => {
+    const input = await build([
+      {
+        role: 'user',
+        content: '',
+        extraData: [
+          {
+            type: 'file',
+            name: 'a.txt',
+            source: { type: 'base64', mediaType: 'text/plain', data: 'YQ==' },
+          },
+        ],
+      },
+    ]);
+    const content = input.messages?.[0].content ?? [];
+    // A cache point may follow; the document and its text come first
+    expect(content.slice(0, 2).map((c) => Object.keys(c)[0])).toEqual([
+      'document',
+      'text',
+    ]);
+    expect(texts(input)).toEqual([['(no text)']]);
+  });
+
+  it('leaves out a blank system prompt', async () => {
+    const input = await build([
+      { role: 'system', content: '  ' },
+      { role: 'user', content: 'Hello' },
+    ]);
+    expect(input.system).toEqual([]);
+  });
+});
