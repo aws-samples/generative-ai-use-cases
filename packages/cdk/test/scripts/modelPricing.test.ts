@@ -6,7 +6,9 @@ import {
   OfferFile,
   pricePer1k,
 } from '../../scripts/model-pricing/extract';
-import { ALIASES } from '../../scripts/model-pricing/update';
+import { ALIASES, countPriced } from '../../scripts/model-pricing/update';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { MODEL_PRICING } from '../../lambda/utils/modelPricing.generated';
 
 const offer = (
@@ -257,5 +259,20 @@ describe('modelPricing.generated', () => {
       Object.values(modelMetadata).map((meta) => meta.displayName)
     );
     for (const name of Object.keys(ALIASES)) expect(names).toContain(name);
+  });
+});
+
+describe('countPriced', () => {
+  test('counts entries with and without quotes', () => {
+    expect(countPriced('{\n  "regional": {},\n  "global": {}\n}')).toBe(2);
+    expect(countPriced('{\n  regional: {},\n  global: {}\n}')).toBe(2);
+  });
+
+  test('sees the entries in the committed table', () => {
+    const source = readFileSync(
+      join(__dirname, '../../lambda/utils/modelPricing.generated.ts'),
+      'utf8'
+    );
+    expect(countPriced(source)).toBeGreaterThan(500);
   });
 });

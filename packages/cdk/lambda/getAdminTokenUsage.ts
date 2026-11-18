@@ -11,33 +11,16 @@ import {
   withEstimatedCost,
 } from './utils/tokenUsage';
 import { MODEL_PRICING_DATE } from './utils/modelPricing';
-import { getUserEmail } from './agentBuilder/utils/auth-utils';
+import { lookupEmails } from './utils/userEmails';
+
+export { clearEmailCache } from './utils/userEmails';
 
 /** Longest range one request may read (one query per day). */
 export const MAX_DAYS = 93;
 /** Most users one request may narrow the totals to (`userIds`). */
 export const MAX_FILTER_USERS = 50;
-/** Calls in flight to DynamoDB and to Cognito. */
+/** DynamoDB queries in flight. */
 const LOOKUP_CONCURRENCY = 10;
-/** Emails are kept this long, so changing the period does not look them up again. */
-const EMAIL_CACHE_TTL_MS = 10 * 60 * 1000;
-
-const emailCache = new Map<
-  string,
-  { email: string | undefined; expiresAt: number }
->();
-
-const lookupEmail = async (userId: string): Promise<string | undefined> => {
-  const cached = emailCache.get(userId);
-  if (cached && cached.expiresAt > Date.now()) return cached.email;
-  const email = await getUserEmail(userId);
-  emailCache.set(userId, { email, expiresAt: Date.now() + EMAIL_CACHE_TTL_MS });
-  return email;
-};
-
-/** Only for tests. */
-export const clearEmailCache = (): void => emailCache.clear();
-
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 const isValidDate = (value: unknown): value is string =>
@@ -116,12 +99,11 @@ export const handler = async (
     .filter((record) => !only || only.has(record.userId));
 
   const users = totalsByUser(records);
-  const emails = await mapLimit(users, LOOKUP_CONCURRENCY, (user) =>
-    lookupEmail(user.userId)
-  );
-  users.forEach((user, index) => {
-    if (emails[index]) user.email = emails[index];
-  });
+  const emails = await lookupEmails(users.map((user) => user.userId));
+  for (const user of users) {
+    const email = emails.get(user.userId);
+    if (email) user.email = email;
+  }
 
   const models = totalsByModel(records);
   const body: GetAdminTokenUsageResponse = {

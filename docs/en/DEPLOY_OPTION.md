@@ -2309,7 +2309,9 @@ npm -w packages/cdk run pricing:update
 > [!NOTE]
 >
 > - Usage of agents (Bedrock Agents, AgentCore) and image or video generation is not included. To include it, use CloudWatch Logs Insights as described in "Usage by User and Use Case" above.
-> - Cost uses list prices. Discounts, Savings Plans and free tiers are not reflected; see AWS Cost Explorer for actual charges. Models missing from the price table are left out of the cost and shown as "No price".
+> - Cost uses list prices. Cache writes are priced at the 5-minute cache rate and requests over 200K tokens at the standard rate, so cost is lower than actual when these are used. Discounts, Savings Plans and free tiers are not reflected; see AWS Cost Explorer for actual charges. Models missing from the price table are left out of the cost and shown as "No price".
+> - The totals are computed each time the admin page is opened. With a 90-day period and more than 1,000-2,000 active users, the request approaches the 29-second API Gateway limit; use a shorter period or CloudWatch Logs Insights at that scale.
+> - `userId` in the per-user table and the CSV is the Cognito user name. `genu_user` in the model invocation logs is the Cognito `sub`, so the two differ for SAML users, for example.
 > - If the user pool already has a group named `SystemAdminGroup`, the deployment fails. Delete or rename that group first.
 
 ## Using a Custom Domain

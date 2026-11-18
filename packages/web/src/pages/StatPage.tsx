@@ -39,6 +39,8 @@ const StatPage: React.FC = () => {
   const [days, setDays] = useState<string>('7');
 
   useEffect(() => {
+    // Ignore an older response when the period changes before it arrives.
+    let cancelled = false;
     const fetchStats = async () => {
       setLoading(true);
       try {
@@ -55,19 +57,24 @@ const StatPage: React.FC = () => {
         if (!Array.isArray(data)) {
           throw new Error('Invalid response format');
         }
+        if (cancelled) return;
         setStats(data);
       } catch (error) {
+        if (cancelled) return;
         console.error('Failed to fetch stats:', error);
         setError(
           error instanceof Error ? error : new Error('Failed to fetch stats')
         );
         setStats([]); // Reset stats on error
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     };
 
     fetchStats();
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [days]);
 

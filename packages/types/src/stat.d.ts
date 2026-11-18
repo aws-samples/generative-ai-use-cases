@@ -74,7 +74,7 @@ export interface UserTokenUsageTotals {
 export interface GetAdminTokenUsageResponse {
   /** Per day, all users added together (`userId` is `*`). */
   daily: TokenUsageStats[];
-  /** Per user, sorted by input + output tokens, largest first. */
+  /** Per user, sorted by all four token kinds added together, largest first. */
   users: UserTokenUsageTotals[];
   /** Per model, largest estimated cost (then tokens) first. */
   models: ModelTokenUsageTotals[];

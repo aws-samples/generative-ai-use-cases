@@ -76,8 +76,12 @@ const textModelNames = (): string[] => [
   ),
 ];
 
-const countPriced = (source: string): number =>
-  (source.match(/"(regional|global)":/g) ?? []).length;
+/**
+ * Priced (Region, model, scope) entries in a generated file, before or after
+ * prettier (which drops the quotes around `regional` and `global`).
+ */
+export const countPriced = (source: string): number =>
+  (source.match(/^\s*"?(regional|global)"?:/gm) ?? []).length;
 
 const main = async () => {
   const names = textModelNames();

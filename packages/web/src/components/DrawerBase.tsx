@@ -19,7 +19,7 @@ const DrawerBase: React.FC<Props> = (props) => {
   const { getHasUpdate } = useVersion();
   const { settingShowEmail } = useUserSetting();
   const { t } = useTranslation();
-  const isAdmin = useIsAdmin();
+  const isAdmin = useIsAdmin() === true;
 
   // The first argument is not required, but if it is not included, the request will not be made, so 'user' string is entered
   const { data } = useSWR('user', () => {

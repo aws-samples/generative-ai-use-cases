@@ -8,12 +8,29 @@ import {
 } from '../../lambda/getAdminTokenUsage';
 import { listTokenUsageForDate } from '../../lambda/repository';
 import { verifyToken } from '../../lambda/utils/auth';
-import { getUserEmail } from '../../lambda/agentBuilder/utils/auth-utils';
 import { resetConfiguredRegions } from '../../lambda/utils/modelPricing';
 import { MODEL_PRICING } from '../../lambda/utils/modelPricing.generated';
 
 jest.mock('../../lambda/repository');
-jest.mock('../../lambda/agentBuilder/utils/auth-utils');
+
+// Cognito: AdminGetUser answers from `emailFor`; ListUsers pages 60 at a time
+// over `poolUsers`.
+const cognitoSend = jest.fn();
+let poolUsers: string[] = [];
+const emailFor = jest.fn(
+  async (id: string): Promise<string | undefined> => `${id}@example.com`
+);
+jest.mock('@aws-sdk/client-cognito-identity-provider', () => {
+  const actual = jest.requireActual(
+    '@aws-sdk/client-cognito-identity-provider'
+  );
+  return {
+    ...actual,
+    CognitoIdentityProviderClient: jest.fn().mockImplementation(() => ({
+      send: (...args: unknown[]) => cognitoSend(...args),
+    })),
+  };
+});
 jest.mock('../../lambda/utils/auth', () => ({
   ...jest.requireActual('../../lambda/utils/auth'),
   verifyToken: jest.fn(),
@@ -52,7 +69,33 @@ beforeEach(() => {
   jest.spyOn(console, 'log').mockImplementation(() => {});
   mocked(verifyToken).mockResolvedValue(admin as never);
   mocked(listTokenUsageForDate).mockResolvedValue([]);
-  mocked(getUserEmail).mockImplementation(async (id) => `${id}@example.com`);
+  poolUsers = [];
+  emailFor.mockImplementation(async (id: string) => `${id}@example.com`);
+  cognitoSend.mockImplementation(
+    async (command: {
+      constructor: { name: string };
+      input: Record<string, string>;
+    }) => {
+      if (command.constructor.name === 'AdminGetUserCommand') {
+        const email = await emailFor(command.input.Username);
+        return {
+          UserAttributes: email ? [{ Name: 'email', Value: email }] : [],
+        };
+      }
+      const start = Number(command.input.PaginationToken ?? 0);
+      const page = poolUsers.slice(start, start + 60);
+      return {
+        Users: await Promise.all(
+          page.map(async (id) => ({
+            Username: id,
+            Attributes: [{ Name: 'email', Value: await emailFor(id) }],
+          }))
+        ),
+        PaginationToken:
+          start + 60 < poolUsers.length ? String(start + 60) : undefined,
+      };
+    }
+  );
   clearEmailCache();
   process.env.MODEL_REGION = 'us-east-1';
   process.env.MODEL_IDS = '[]';
@@ -214,22 +257,38 @@ describe('GET /admin/token-usage', () => {
     ).toEqual(['cached', 'plain']);
   });
 
-  test.each([100, 500])(
-    'looks up every email for %i users with at most 10 calls in flight',
+  test('looks up few users one by one, at most 10 at a time', async () => {
+    const ids = Array.from({ length: 100 }, (_, i) => `user${i}`);
+    mocked(listTokenUsageForDate).mockImplementation(async (date) =>
+      ids.map((id) => stats(date, id, 10, 1))
+    );
+    let inFlight = 0;
+    let peak = 0;
+    emailFor.mockImplementation(async (id: string) => {
+      inFlight++;
+      peak = Math.max(peak, inFlight);
+      await new Promise((resolve) => setTimeout(resolve, 1));
+      inFlight--;
+      return `${id}@example.com`;
+    });
+
+    const res = await call({ startDate: '2026-10-01', endDate: '2026-10-30' });
+    const body = JSON.parse(res.body);
+
+    expect(body.users).toHaveLength(100);
+    expect(body.users.every((u: { email?: string }) => u.email)).toBe(true);
+    expect(cognitoSend).toHaveBeenCalledTimes(100);
+    expect(peak).toBeLessThanOrEqual(10);
+  });
+
+  test.each([500, 2000])(
+    'reads %i users in bulk with ListUsers',
     async (count) => {
       const ids = Array.from({ length: count }, (_, i) => `user${i}`);
+      poolUsers = [...ids, 'inactive-user'];
       mocked(listTokenUsageForDate).mockImplementation(async (date) =>
         ids.map((id) => stats(date, id, 10, 1))
       );
-      let inFlight = 0;
-      let peak = 0;
-      mocked(getUserEmail).mockImplementation(async (id) => {
-        inFlight++;
-        peak = Math.max(peak, inFlight);
-        await new Promise((resolve) => setTimeout(resolve, 1));
-        inFlight--;
-        return `${id}@example.com`;
-      });
 
       const res = await call({
         startDate: '2026-10-01',
@@ -240,15 +299,34 @@ describe('GET /admin/token-usage', () => {
       expect(res.statusCode).toBe(200);
       expect(body.users).toHaveLength(count);
       expect(body.users.every((u: { email?: string }) => u.email)).toBe(true);
-      expect(getUserEmail).toHaveBeenCalledTimes(count);
-      expect(peak).toBeLessThanOrEqual(10);
+      expect(cognitoSend).toHaveBeenCalledTimes(
+        Math.ceil(poolUsers.length / 60)
+      );
       expect(body.daily).toHaveLength(30);
       expect(body.daily[0].executions.overall).toBe(count);
       // The web client reads this in one response; keep it well under the
       // API Gateway payload limit.
-      expect(res.body.length).toBeLessThan(1_000_000);
+      expect(res.body.length).toBeLessThan(6_000_000);
     }
   );
+
+  test('does not cache a failed lookup', async () => {
+    mocked(listTokenUsageForDate).mockResolvedValue([
+      stats('2026-11-01', 'alice', 1, 1),
+    ]);
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    emailFor.mockRejectedValueOnce(new Error('TooManyRequests'));
+    const first = await call({
+      startDate: '2026-11-01',
+      endDate: '2026-11-01',
+    });
+    expect(JSON.parse(first.body).users[0].email).toBe(undefined);
+    const second = await call({
+      startDate: '2026-11-01',
+      endDate: '2026-11-01',
+    });
+    expect(JSON.parse(second.body).users[0].email).toBe('alice@example.com');
+  });
 
   test('reuses looked-up emails on the next request', async () => {
     mocked(listTokenUsageForDate).mockResolvedValue([
@@ -256,7 +334,7 @@ describe('GET /admin/token-usage', () => {
     ]);
     await call({ startDate: '2026-11-01', endDate: '2026-11-01' });
     await call({ startDate: '2026-11-01', endDate: '2026-11-01' });
-    expect(getUserEmail).toHaveBeenCalledTimes(1);
+    expect(cognitoSend).toHaveBeenCalledTimes(1);
   });
 
   test('accepts the longest allowed range', async () => {
@@ -275,7 +353,7 @@ describe('GET /admin/token-usage', () => {
     mocked(listTokenUsageForDate).mockResolvedValue([
       stats('2026-11-01', 'gone', 1, 1),
     ]);
-    mocked(getUserEmail).mockResolvedValue(undefined);
+    emailFor.mockResolvedValue(undefined);
     const res = await call({ startDate: '2026-11-01', endDate: '2026-11-01' });
     expect(JSON.parse(res.body).users).toEqual([
       expect.not.objectContaining({ email: expect.anything() }),

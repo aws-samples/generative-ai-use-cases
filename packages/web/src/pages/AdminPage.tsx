@@ -25,6 +25,7 @@ import Select from '../components/Select';
 import Button from '../components/Button';
 import useIsAdmin from '../hooks/useIsAdmin';
 import useAdminApi from '../hooks/useAdminApi';
+import { toCsv } from '../utils/adminCsv';
 
 const TokensTimeSeriesChart = lazy(
   () => import('../components/charts/TokensTimeSeriesChart')
@@ -72,29 +73,6 @@ const compactNumber = (value: number) =>
     notation: 'compact',
     maximumFractionDigits: 1,
   });
-
-const CSV_COLUMNS = [
-  'executions',
-  'inputTokens',
-  'outputTokens',
-  'cacheReadInputTokens',
-  'cacheWriteInputTokens',
-  'estimatedCostUsd',
-  'lastActiveDate',
-] as const;
-
-/** CSV of the per-user totals, for joining with user attributes elsewhere. */
-const toCsv = (users: UserTokenUsageTotals[]): string => {
-  const quote = (value: string | number | undefined) =>
-    `"${String(value ?? '').replace(/"/g, '""')}"`;
-  const header = ['userId', 'email', ...CSV_COLUMNS].map(quote).join(',');
-  const rows = users.map((user) =>
-    [user.userId, user.email, ...CSV_COLUMNS.map((column) => user[column])]
-      .map(quote)
-      .join(',')
-  );
-  return [header, ...rows].join('\n');
-};
 
 const Card: React.FC<{ label: string; value: string; note?: string }> = (
   props
@@ -154,7 +132,7 @@ const AdminPage: React.FC = () => {
   }, [days]);
 
   useEffect(() => {
-    if (!isAdmin) return;
+    if (isAdmin !== true) return;
     let cancelled = false;
     const { startDate, endDate } = range();
     setLoading(true);
@@ -267,7 +245,11 @@ const AdminPage: React.FC = () => {
     URL.revokeObjectURL(url);
   }, [usage, range]);
 
-  // The admin group is read from the id token; others are sent home.
+  // The admin group is read from the id token; others are sent home. Wait
+  // for the session first, so reloading /admin does not redirect an admin.
+  if (isAdmin === undefined) {
+    return <div className="py-6 text-center">{t('common.loading')}</div>;
+  }
   if (!isAdmin) {
     return <Navigate to="/" replace />;
   }

@@ -6625,7 +6625,10 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               },
             },
             {
-              "Action": "cognito-idp:AdminGetUser",
+              "Action": [
+                "cognito-idp:AdminGetUser",
+                "cognito-idp:ListUsers",
+              ],
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
@@ -19688,7 +19691,10 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               },
             },
             {
-              "Action": "cognito-idp:AdminGetUser",
+              "Action": [
+                "cognito-idp:AdminGetUser",
+                "cognito-idp:ListUsers",
+              ],
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
