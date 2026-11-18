@@ -26,9 +26,6 @@ except ImportError as e:
 
 logger = logging.getLogger(__name__)
 
-# Pinned for reproducible behavior. Check PyPI regularly for new stable versions.
-MCP_PROXY_FOR_AWS_VERSION = "1.6.4"
-
 # The Web Search connector exposes its tool without a description, so one is
 # supplied to help the model choose between multiple search tools.
 WEB_SEARCH_TOOL_DESCRIPTION = (
@@ -217,9 +214,11 @@ class ToolManager:
             logger.warning("WEB_SEARCH_GATEWAY_URL is not set, skipping web search tools")
             return []
 
+        # mcp-proxy-for-aws is installed in the image (see Dockerfile), so this
+        # works without PyPI access, including in closed network mode.
         server_config = {
-            "command": "uvx",
-            "args": [f"mcp-proxy-for-aws@{MCP_PROXY_FOR_AWS_VERSION}", gateway_url],
+            "command": "mcp-proxy-for-aws",
+            "args": [gateway_url],
         }
 
         _, client = _create_mcp_client("agentcore-web-search", server_config, get_uv_environment())
