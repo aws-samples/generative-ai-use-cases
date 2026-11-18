@@ -6,7 +6,8 @@ import {
 import { setChatTitle } from './repository';
 import api from './utils/api';
 import { defaultModel } from './utils/models';
-import { sendText } from './utils/http';
+import { getUserSub, sendText } from './utils/http';
+import { bedrockRequestMetadata } from './utils/requestMetadata';
 
 export const handler = async (
   request: Request,
@@ -50,7 +51,12 @@ export const handler = async (
   // Some reasoning models (e.g. Opus 4.5) may also output <thinking>...</thinking> before the actual title.
   // Extract specifically from <output> tags if present, otherwise strip all XML tags.
   const rawTitle =
-    (await api['bedrock'].invoke?.(model, messages, req.id)) ?? '';
+    (await api['bedrock'].invoke?.(
+      model,
+      messages,
+      req.id,
+      bedrockRequestMetadata({ userSub: getUserSub(request), id: req.id })
+    )) ?? '';
   const outputMatch = rawTitle.match(/<output>([\s\S]*?)<\/output>/);
   const title = outputMatch
     ? outputMatch[1].trim()

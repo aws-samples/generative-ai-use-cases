@@ -459,7 +459,8 @@ const cases: Case[] = [
     setup: () =>
       mock(repository.aggregateTokenUsage).mockResolvedValue([{ d: 1 }]),
     status: 200,
-    responseBody: JSON.stringify([{ d: 1 }]),
+    // The API adds the estimated cost of each day.
+    responseBody: JSON.stringify([{ d: 1, estimatedCostUsd: { overall: 0 } }]),
     calls: [
       [repository.aggregateTokenUsage, ['2026-01-01', '2026-01-31', ['alice']]],
     ],

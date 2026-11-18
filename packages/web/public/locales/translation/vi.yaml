@@ -1,3 +1,33 @@
+admin:
+  active_users: Người dùng hoạt động
+  clear_filter: Hiện tất cả người dùng
+  cost: Chi phí
+  cost_note: 'Chi phí dùng giá niêm yết của AWS (theo yêu cầu, USD) tại Region gọi từng mô hình. Không tính chiết khấu, Savings Plans và bậc miễn phí; xem chi phí thực tế trong AWS Cost Explorer.'
+  description: 'Lượng token của mọi người dùng theo dữ liệu GenU ghi lại. Để phân tích chi tiết, hãy dùng CloudWatch Logs Insights trên nhật ký gọi mô hình của Bedrock.'
+  download_csv: Tải xuống CSV
+  executions: Số lần thực thi
+  filter_selected: 'Tổng hợp {{users}} người đã chọn'
+  filtered_to_users: 'Đang hiển thị tổng của {{users}} người dùng đã chọn'
+  last_active: Lần dùng gần nhất
+  last_n_days: '{{days}} ngày qua'
+  load_failed: Không tải được dữ liệu sử dụng.
+  model: Mô hình
+  models_heading: Theo mô hình
+  next: Tiếp
+  no_price: Không có giá
+  page_range: '{{from}}–{{to}} trên {{total}}'
+  period: Khoảng thời gian
+  previous: Trước
+  pricing_note: 'Giá niêm yết ngày {{date}}'
+  scope_note: Chỉ tính phần tạo văn bản mà GenU lưu cùng tin nhắn trò chuyện. Không bao gồm tác tử (Bedrock Agents, AgentCore) và tạo ảnh hoặc video.
+  search_users: Tìm người dùng
+  select_page: Chọn tất cả người dùng trên trang này
+  title: Quản trị
+  tokens: 'Token (đầu vào, đầu ra và bộ nhớ đệm)'
+  too_many_selected: 'Chọn tối đa {{max}} người dùng'
+  unpriced_models: 'Mô hình không có giá niêm yết, không tính vào chi phí: {{models}}'
+  user: Người dùng
+  users_heading: Theo người dùng
 agent:
   drop_files: Thả file để tải lên
   title: Chat Agent

@@ -2258,6 +2258,62 @@ After configuration, open the `GenerativeAiUseCasesDashboardStack.DashboardUrl` 
 > [!NOTE]
 > If you want to disable the monitoring dashboard after enabling it, set `dashboard: false` and redeploy. This will disable the monitoring dashboard, but the `GenerativeAiUseCasesDashboardStack` itself will remain. To completely remove it, open the management console and delete the `GenerativeAiUseCasesDashboardStack` stack from CloudFormation in the modelRegion.
 
+### Usage by User and Use Case
+
+GenU tags its Bedrock calls with the following [request metadata](https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-request-metadata.html). The tags are recorded in the model invocation logs.
+
+| Key            | Value                                                                   |
+| -------------- | ----------------------------------------------------------------------- |
+| `genu`         | `genu` (marks calls made by GenU)                                       |
+| `genu_user`    | The Cognito user's `sub`                                                |
+| `genu_usecase` | The use case (`chat`, `rag` and so on, the first part of the page path) |
+
+The dashboard includes usage by user and by use case (Tokens by User / Tokens by Use Case). The same queries are saved in CloudWatch Logs Insights under "Saved queries" as `GenU/<stack name>/TokensByUser` and `GenU/<stack name>/TokensByUseCase`, so you can change the time range or add conditions. `genu_user` is the Cognito `sub`; to group by department or other attributes, join it with the Cognito user attributes.
+
+If you send model invocation logs to an existing log group instead of the dashboard's, you can query the same tags there.
+
+```
+filter requestMetadata.genu = 'genu'
+| fields requestMetadata.genu_user as user, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc
+```
+
+> [!NOTE]
+>
+> - The tags are set on models called through the Converse and InvokeModel APIs (text generation such as chat and writing, and image generation). Video generation (StartAsyncInvoke), voice chat, Bedrock Agents, Knowledge Base chat, Flow chat, prompt optimization and AgentCore calls are not tagged.
+> - Model invocation logs are recorded per Region. If `modelIds` uses models in several Regions, set up logging in each Region and query each Region. To query them in one place, [CloudWatch Logs centralization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html) can copy logs from several Regions into one Region if you use AWS Organizations.
+> - By default, model invocation logs also record the prompt and response text. Check how long they are kept and who can read them.
+
+## Admin Page
+
+The admin page shows every user's token usage in GenU (the shield icon at the bottom left). It shows the usage GenU saves with chat messages (the same data as the stats page) for the last 7, 30 or 90 days, and the per-user totals can be downloaded as CSV. Selecting users in the per-user table (up to 50) narrows the cards, the per-model table and the charts to those users. Token counts add input, output, cache read and cache write tokens.
+
+Only users in the `SystemAdminGroup` group of the Cognito user pool can open the admin page. The group is created on deployment. To add a user, open the user pool in the [Amazon Cognito console](https://console.aws.amazon.com/cognito/home) and add the user under "Groups", or run:
+
+```bash
+aws cognito-idp admin-add-user-to-group \
+  --user-pool-id <user pool ID> \
+  --username <user name> \
+  --group-name SystemAdminGroup
+```
+
+The user can open the admin page after signing in again.
+
+The admin and stats pages compute cost with the AWS list prices (on-demand, USD) included in GenU, for the Region each model is called in; models starting with `global.` use the global price. The price table is updated with each GenU release. To use the latest list prices without waiting for a release, regenerate the table (`packages/cdk/lambda/utils/modelPricing.generated.ts`) and deploy:
+
+```bash
+npm -w packages/cdk run pricing:update
+```
+
+> [!NOTE]
+>
+> - Usage of agents (Bedrock Agents, AgentCore) and image or video generation is not included. To include it, use CloudWatch Logs Insights as described in "Usage by User and Use Case" above.
+> - Cost uses list prices. Cache writes are priced at the 5-minute cache rate and requests over 200K tokens at the standard rate, so cost is lower than actual when these are used. Discounts, Savings Plans and free tiers are not reflected; see AWS Cost Explorer for actual charges. Models missing from the price table are left out of the cost and shown as "No price".
+> - The totals are computed each time the admin page is opened. With a 90-day period and more than 1,000-2,000 active users, the request approaches the 29-second API Gateway limit; use a shorter period or CloudWatch Logs Insights at that scale.
+> - `userId` in the per-user table and the CSV is the Cognito user name. `genu_user` in the model invocation logs is the Cognito `sub`, so the two differ for SAML users, for example.
+> - If the user pool already has a group named `SystemAdminGroup`, the deployment fails. Delete or rename that group first.
+
 ## Using a Custom Domain
 
 You can use a custom domain for your website URL. A public hosted zone must already be created in Route53 in the same AWS account. For public hosted zones, please refer to: [Working with public hosted zones - Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/AboutHZWorkingWith.html)

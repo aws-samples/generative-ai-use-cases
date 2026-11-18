@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { queryParams, requireUserName, sendJson } from './utils/http';
 import { aggregateTokenUsage } from './repository';
+import { withEstimatedCost } from './utils/tokenUsage';
 
 export const handler = async (
   request: Request,
@@ -20,7 +21,7 @@ export const handler = async (
     // Get aggregated data for the specified period
     const stats = await aggregateTokenUsage(startDate, endDate, [userId]);
 
-    return sendJson(response, 200, stats);
+    return sendJson(response, 200, stats.map(withEstimatedCost));
   } catch (error) {
     console.error('Error getting token usage statistics:', error);
     return sendJson(response, 500, {

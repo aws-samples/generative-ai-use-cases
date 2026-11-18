@@ -18,6 +18,7 @@ import {
   findChatById,
   findSystemContextById,
   listMessages,
+  listTokenUsageForDate,
 } from '../../lambda/repository';
 
 beforeEach(() => {
@@ -132,5 +133,33 @@ describe('listMessages', () => {
     expect(mockSend.mock.calls[1][0].input.ExclusiveStartKey).toEqual({
       id: 'page-2',
     });
+  });
+});
+
+describe('listTokenUsageForDate', () => {
+  it('reads every page of the day', async () => {
+    const page = (from: number, count: number) =>
+      Array.from({ length: count }, (_, i) => ({ userId: `u${from + i}` }));
+    mockSend
+      .mockResolvedValueOnce({
+        Items: page(0, 200),
+        LastEvaluatedKey: { k: 1 },
+      })
+      .mockResolvedValueOnce({
+        Items: page(200, 200),
+        LastEvaluatedKey: { k: 2 },
+      })
+      .mockResolvedValueOnce({ Items: page(400, 100) });
+
+    const items = await listTokenUsageForDate('2026-11-01');
+
+    expect(items).toHaveLength(500);
+    expect(mockSend).toHaveBeenCalledTimes(3);
+    expect(mockSend.mock.calls[0][0].input).toMatchObject({
+      TableName: 'test-stats-table',
+      ExpressionAttributeValues: { ':id': 'stats#2026-11-01' },
+    });
+    expect(mockSend.mock.calls[1][0].input.ExclusiveStartKey).toEqual({ k: 1 });
+    expect(mockSend.mock.calls[2][0].input.ExclusiveStartKey).toEqual({ k: 2 });
   });
 });

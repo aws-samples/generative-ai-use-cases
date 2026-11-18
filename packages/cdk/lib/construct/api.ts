@@ -324,12 +324,12 @@ export class Api extends Construct {
       );
     }
 
-    // Grant Cognito permissions for Agent Builder
+    // Grant Cognito permissions for Agent Builder and the admin page (emails)
     apiHandler.role?.addToPrincipalPolicy(
       new PolicyStatement({
         effect: Effect.ALLOW,
         resources: [userPool.userPoolArn],
-        actions: ['cognito-idp:AdminGetUser'],
+        actions: ['cognito-idp:AdminGetUser', 'cognito-idp:ListUsers'],
       })
     );
 
