@@ -2281,7 +2281,7 @@ filter requestMetadata.genu = 'genu'
 
 > [!NOTE]
 >
-> - The tags are set on models called through the Converse and InvokeModel APIs (text generation such as chat and writing, and image generation). Video generation (StartAsyncInvoke), Bedrock Agents, Knowledge Base and AgentCore calls are not tagged.
+> - The tags are set on models called through the Converse and InvokeModel APIs (text generation such as chat and writing, and image generation). Video generation (StartAsyncInvoke), voice chat, Bedrock Agents, Knowledge Base chat, Flow chat, prompt optimization and AgentCore calls are not tagged.
 > - Model invocation logs are recorded per Region. If `modelIds` uses models in several Regions, set up logging in each Region and query each Region. To query them in one place, [CloudWatch Logs centralization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html) can copy logs from several Regions into one Region if you use AWS Organizations.
 > - By default, model invocation logs also record the prompt and response text. Check how long they are kept and who can read them.
 

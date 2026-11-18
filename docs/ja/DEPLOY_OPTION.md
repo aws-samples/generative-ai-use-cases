@@ -2293,7 +2293,7 @@ filter requestMetadata.genu = 'genu'
 
 > [!NOTE]
 >
-> - タグが付くのは、Converse API と InvokeModel API で呼び出すモデル（チャット、文章生成などのテキスト生成と画像生成）です。動画生成（StartAsyncInvoke）、Bedrock Agents、Knowledge Base、AgentCore の呼び出しには付きません。
+> - タグが付くのは、Converse API と InvokeModel API で呼び出すモデル（チャット、文章生成などのテキスト生成と画像生成）です。動画生成（StartAsyncInvoke）、音声チャット、Bedrock Agents、Knowledge Base のチャット、Flow チャット、プロンプト最適化、AgentCore の呼び出しには付きません。
 > - モデル呼び出しログはリージョンごとに記録されます。`modelIds` で複数のリージョンのモデルを使っている場合は、リージョンごとにログの出力を設定し、リージョンごとに集計してください。1 つの場所でまとめて集計したい場合は、AWS Organizations を使っていれば [CloudWatch Logs の集約](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html)で複数のリージョンのログを 1 つのリージョンに集められます。
 > - モデル呼び出しログには、既定でプロンプトと回答の本文も記録されます。保存期間と閲覧できる人を確認してください。
 
