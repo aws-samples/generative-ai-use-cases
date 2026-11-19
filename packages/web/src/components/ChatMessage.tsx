@@ -268,7 +268,12 @@ const ChatMessage: React.FC<Props> = (props) => {
               </>
             )}
             {chatContent?.role === 'assistant' && (
-              <Markdown prefix={`${props.idx}`}>
+              <Markdown
+                prefix={`${props.idx}`}
+                generating={
+                  props.loading ||
+                  typingTextOutput !== (chatContent?.content ?? '')
+                }>
                 {typingTextOutput +
                   `${
                     props.loading && (chatContent?.content ?? '') !== ''

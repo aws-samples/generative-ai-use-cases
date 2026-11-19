@@ -85,6 +85,7 @@ export { MermaidWithToggle };
 type Props = BaseProps & {
   children: string;
   prefix?: string;
+  generating?: boolean;
 };
 
 const LinkRenderer = ({
@@ -359,26 +360,40 @@ const CodeRenderer = memo(
   }
 );
 
-const Markdown = memo(({ className, prefix, children }: Props) => {
-  return (
-    <ReactMarkdown
-      className={`${className ?? ''} prose max-w-full`}
-      children={children}
-      remarkPlugins={[remarkGfm, remarkBreaks, remarkMath, remarkHtmlBreaks]}
-      rehypePlugins={[rehypeKatex]}
-      remarkRehypeOptions={{ clobberPrefix: prefix }}
-      components={{
-        a: LinkRenderer,
-        img: ImageRenderer,
-        sup: ({ children }) => (
-          <sup className="m-0.5 rounded-full bg-gray-200 px-1">{children}</sup>
-        ),
-        pre: PreRenderer,
-        code: CodeRenderer,
-        table: TableRenderer,
-      }}
-    />
-  );
-});
+const Markdown = memo(
+  ({ className, prefix, children, generating = false }: Props) => {
+    return (
+      // Translators can asynchronously overwrite a newer streamed chunk with an
+      // older translation. Translate the completed response in a fresh subtree.
+      <div translate={generating ? 'no' : undefined}>
+        <ReactMarkdown
+          key={generating ? 'streaming' : 'complete'}
+          className={`${className ?? ''} prose max-w-full`}
+          children={children}
+          remarkPlugins={[
+            remarkGfm,
+            remarkBreaks,
+            remarkMath,
+            remarkHtmlBreaks,
+          ]}
+          rehypePlugins={[rehypeKatex]}
+          remarkRehypeOptions={{ clobberPrefix: prefix }}
+          components={{
+            a: LinkRenderer,
+            img: ImageRenderer,
+            sup: ({ children }) => (
+              <sup className="m-0.5 rounded-full bg-gray-200 px-1">
+                {children}
+              </sup>
+            ),
+            pre: PreRenderer,
+            code: CodeRenderer,
+            table: TableRenderer,
+          }}
+        />
+      </div>
+    );
+  }
+);
 
 export default Markdown;
