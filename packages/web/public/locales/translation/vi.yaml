@@ -345,10 +345,17 @@ dialog:
     message: Nếu bạn rời khỏi trang này, nội dung đã nhập sẽ bị mất. Bạn có chắc chắn muốn rời khỏi?
     title: Thay đổi chưa được lưu
 drawer:
+  add_to_sidebar: Thêm vào thanh bên
   ai_services: Dịch vụ AI
   builder_mode: Chế độ builder
+  collapse_sidebar: Thu gọn thanh bên
   done: Hoàn thành
+  edit_favorites: Chọn use case hiển thị ở thanh bên
+  expand_sidebar: Mở rộng thanh bên
   generative_ai: (Generative AI)
+  mode_builder: Trình tạo
+  remove_from_sidebar: Xóa khỏi thanh bên
+  resize_sidebar: Điều chỉnh độ rộng thanh bên
   tools: Công cụ
   use_cases: Use case
 error:
@@ -872,7 +879,6 @@ useCaseBuilder:
       Bằng cách thiết lập ngữ cảnh bổ sung, có thể trích xuất chỉ thông tin mong muốn.
     summarize_article: Tóm tắt
     summarize_article_description: Tóm tắt bài viết cho OGP (bản xem trước bài viết hiển thị khi chia sẻ liên kết bài viết). Bằng cách thiết lập OGP phù hợp, có thể truyền đạt đúng tóm tắt bài viết khi bài viết được chia sẻ.
-  builderMode: Chế độ builder
   cancel: Hủy
   create: Tạo
   createDescription: Tạo trường hợp sử dụng. Vui lòng kiểm tra hoạt động trong preview trước khi tạo. Có thể chỉnh sửa sau khi tạo.

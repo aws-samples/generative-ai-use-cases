@@ -340,10 +340,17 @@ dialog:
     message: 이 페이지를 떠나면 입력한 내용이 손실됩니다. 정말 이동하시겠습니까?
     title: 저장되지 않은 변경사항
 drawer:
+  add_to_sidebar: 사이드바에 추가
   ai_services: AI 서비스
   builder_mode: 빌더 모드
+  collapse_sidebar: 사이드바 접기
   done: 완료
+  edit_favorites: 사이드바에 표시할 사용 사례 선택
+  expand_sidebar: 사이드바 펼치기
   generative_ai: 생성형 AI
+  mode_builder: 빌더
+  remove_from_sidebar: 사이드바에서 제거
+  resize_sidebar: 사이드바 너비 조정
   tools: 도구
   use_cases: 사용 사례
 error:
@@ -754,7 +761,6 @@ useCaseBuilder:
   accessError: 액세스 오류
   addInputExample: 입력 예시 추가
   attach_file: 파일 첨부
-  builderMode: 빌더 모드
   cancel: 취소
   create: 생성
   createDescription: >-

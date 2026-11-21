@@ -327,6 +327,7 @@ const LandingPage: React.FC = () => {
         <CardDemo
           label={t('landing.use_cases.chat.title')}
           onClickDemo={demoChat}
+          sidebarPath="/chat"
           icon={<PiChatsCircle />}
           description={t('landing.use_cases.chat.description')}
         />
@@ -335,6 +336,7 @@ const LandingPage: React.FC = () => {
             label={t('landing.use_cases.rag_chat.title')}
             sub={t('landing.use_cases.rag_chat.sub_kendra')}
             onClickDemo={demoRag}
+            sidebarPath="/rag"
             icon={<PiChatCircleText />}
             description={t('landing.use_cases.rag_chat.description_kendra')}
           />
@@ -344,6 +346,7 @@ const LandingPage: React.FC = () => {
             label={t('landing.use_cases.rag_chat.title')}
             sub={t('landing.use_cases.rag_chat.sub_kb')}
             onClickDemo={demoRagKnowledgeBase}
+            sidebarPath="/rag-knowledge-base"
             icon={<PiChatCircleText />}
             description={t('landing.use_cases.rag_chat.description_kb')}
           />
@@ -352,6 +355,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.agent_chat.title')}
             onClickDemo={demoAgent}
+            sidebarPath="/agent"
             icon={<PiRobot />}
             description={t('landing.use_cases.agent_chat.description')}
           />
@@ -360,6 +364,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.agent_core.title')}
             onClickDemo={demoAgentCore}
+            sidebarPath="/agent-core"
             icon={<PiRobot />}
             description={t('landing.use_cases.agent_core.description')}
           />
@@ -368,6 +373,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('research.title')}
             onClickDemo={demoResearch}
+            sidebarPath="/research"
             icon={<PiMagnifyingGlass />}
             description={t('research.description')}
           />
@@ -376,6 +382,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.mcp_chat.title')}
             onClickDemo={demoMcp}
+            sidebarPath="/mcp"
             icon={<PiGraph />}
             description={t('landing.use_cases.mcp_chat.description')}
           />
@@ -384,6 +391,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.flow_chat.title')}
             onClickDemo={demoFlowChat}
+            sidebarPath="/flow-chat"
             icon={<PiFlowArrow />}
             description={t('landing.use_cases.flow_chat.description')}
           />
@@ -392,6 +400,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.voice_chat.title')}
             onClickDemo={demoVoiceChat}
+            sidebarPath="/voice-chat"
             icon={<PiMicrophoneBold />}
             description={t('landing.use_cases.voice_chat.description')}
           />
@@ -400,6 +409,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.generate_text.title')}
             onClickDemo={demoGenerate}
+            sidebarPath="/generate"
             icon={<PiPencil />}
             description={t('landing.use_cases.generate_text.description')}
           />
@@ -408,6 +418,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.summarize.title')}
             onClickDemo={demoSummarize}
+            sidebarPath="/summarize"
             icon={<PiNote />}
             description={t('landing.use_cases.summarize.description')}
           />
@@ -416,6 +427,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.meeting-minutes.title')}
             onClickDemo={demoMeetingMinutes}
+            sidebarPath="/meeting-minutes"
             icon={<PiNotebook />}
             description={t('landing.use_cases.meeting-minutes.description')}
           />
@@ -424,6 +436,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.writer.title')}
             onClickDemo={demoWriter}
+            sidebarPath="/writer"
             icon={<PiPenNib />}
             description={t('landing.use_cases.writer.description')}
           />
@@ -432,6 +445,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.translate.title')}
             onClickDemo={demoTranslate}
+            sidebarPath="/translate"
             icon={<PiTranslate />}
             description={t('landing.use_cases.translate.description')}
           />
@@ -440,6 +454,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.web_content.title')}
             onClickDemo={demoWebContent}
+            sidebarPath="/web-content"
             icon={<PiGlobe />}
             description={t('landing.use_cases.web_content.description')}
           />
@@ -448,6 +463,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.image.title')}
             onClickDemo={demoGenerateImage}
+            sidebarPath="/image"
             icon={<PiImages />}
             description={t('landing.use_cases.image.description')}
           />
@@ -456,6 +472,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.video-generation.title')}
             onClickDemo={demoGenerateVideo}
+            sidebarPath="/video"
             icon={<PiVideoLight />}
             description={t('landing.use_cases.video-generation.description')}
           />
@@ -464,6 +481,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.video-analysis.title')}
             onClickDemo={demoVideoAnalyzer}
+            sidebarPath="/video-analyzer"
             icon={<PiVideoCamera />}
             description={t('landing.use_cases.video-analysis.description')}
           />
@@ -472,6 +490,7 @@ const LandingPage: React.FC = () => {
           <CardDemo
             label={t('landing.use_cases.diagram.title')}
             onClickDemo={demoGenerateDiagram}
+            sidebarPath="/diagram"
             icon={<PiTreeStructure />}
             description={t('landing.use_cases.diagram.description')}
           />

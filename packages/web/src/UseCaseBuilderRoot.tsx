@@ -11,6 +11,7 @@ import { ItemProps } from './components/Drawer';
 import ButtonIcon from './components/ButtonIcon';
 import '@aws-amplify/ui-react/styles.css';
 import useDrawer from './hooks/useDrawer';
+import useSidebar from './hooks/useSidebar';
 import PopupInterUseCasesDemo from './components/PopupInterUseCasesDemo';
 import useInterUseCases from './hooks/useInterUseCases';
 import UseCaseBuilderDrawer from './components/useCaseBuilder/UseCaseBuilderDrawer';
@@ -20,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 const UseCaseBuilderRoot: React.FC = () => {
   const { t } = useTranslation();
   const { switchOpen: switchDrawer, opened: isOpenDrawer } = useDrawer();
+  const { layoutStyle, resizing } = useSidebar();
   const { isShow } = useInterUseCases();
   const { pathname } = useLocation();
   const { pageTitle } = usePageTitle();
@@ -58,7 +60,9 @@ const UseCaseBuilderRoot: React.FC = () => {
   }, [items, pageTitle, pathname]);
 
   return (
-    <div className="screen:w-screen screen:h-screen overflow-x-hidden overflow-y-scroll">
+    <div
+      className="screen:w-screen screen:h-screen overflow-x-hidden overflow-y-scroll"
+      style={layoutStyle}>
       <main className="flex-1">
         <header className="bg-aws-squid-ink visible flex h-12 w-full items-center justify-between text-lg text-white lg:invisible lg:h-0 print:hidden">
           <div className="flex w-10 items-center justify-start">
@@ -96,7 +100,10 @@ const UseCaseBuilderRoot: React.FC = () => {
             <PiX />
           </ButtonIcon>
         </div>
-        <div className="text-aws-font-color lg:ml-64">
+        <div
+          className={`text-aws-font-color lg:ml-[var(--sidebar-w)] ${
+            resizing ? '' : 'lg:transition-[margin] lg:duration-200'
+          }`}>
           {/* Show when inter-use case connection is enabled */}
           {isShow && <PopupInterUseCasesDemo />}
           <Outlet />
