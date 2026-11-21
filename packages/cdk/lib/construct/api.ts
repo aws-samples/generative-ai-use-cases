@@ -326,6 +326,8 @@ export class Api extends Construct {
           'transcribe:GetTranscriptionJob',
           'transcribe:ListTranscriptionJobs',
           'transcribe:TagResource',
+          // Voice input in the chat
+          'transcribe:TranscribeAudio',
         ],
         resources: ['*'],
       })
@@ -776,6 +778,7 @@ export class Api extends Construct {
     transcribe.addResource('start').addMethod('POST');
     transcribe.addResource('url').addMethod('POST');
     transcribe.addResource('result').addResource('{jobName}').addMethod('GET');
+    transcribe.addResource('audio').addMethod('POST');
 
     // --- Routes from SpeechToSpeech Construct (v5) ---
     api.root.addResource('speech-to-speech').addMethod('POST');

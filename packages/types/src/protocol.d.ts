@@ -205,6 +205,18 @@ export type StartTranscriptionResponse = {
   jobName: string;
 };
 
+// Voice input in the chat: a short recording transcribed in one request
+export type TranscribeAudioRequest = {
+  // The recording, base64 encoded (WebM, Ogg, WAV, MP3, ...)
+  audio: string;
+  // Language of the speech (ja, en, ko, zh-CN, ...). Japanese when not set
+  language?: string;
+};
+
+export type TranscribeAudioResponse = {
+  text: string;
+};
+
 export type Transcript = {
   speakerLabel?: string;
   transcript: string;

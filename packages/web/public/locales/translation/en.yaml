@@ -675,6 +675,11 @@ inputs:
   model: Model
   reasoning: Extended thinking
   setting: Setting
+  voice_error_failed: Could not transcribe the recording. Please try again.
+  voice_error_micDenied: The microphone is not available. Allow microphone access in your browser.
+  voice_error_tooShort: The recording is too short. Please speak a little longer.
+  voice_input: Voice input
+  voice_stop: Stop recording and transcribe
 landing:
   alert:
     description: >-

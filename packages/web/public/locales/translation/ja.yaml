@@ -577,6 +577,11 @@ inputs:
   model: モデル
   reasoning: 深く考える
   setting: 設定
+  voice_error_failed: 音声を文字にできませんでした。もう一度お試しください。
+  voice_error_micDenied: マイクを使えません。ブラウザでマイクの利用を許可してください。
+  voice_error_tooShort: 録音が短すぎます。もう少し長く話してください。
+  voice_input: 音声で入力
+  voice_stop: 録音を止めて文字にする
 landing:
   alert:
     description: >-

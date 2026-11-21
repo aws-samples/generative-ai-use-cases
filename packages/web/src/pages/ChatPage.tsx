@@ -762,6 +762,7 @@ const ChatPage: React.FC = () => {
             content={content}
             disabled={loading && !writing}
             onChangeContent={setContent}
+            voiceInput
             resetDisabled={!!chatId}
             onSend={() => {
               if (!loading) {
