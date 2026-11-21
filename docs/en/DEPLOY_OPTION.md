@@ -1213,6 +1213,8 @@ The solution also supports [cross-region inference](https://docs.aws.amazon.com/
 
 This solution supports the following text generation models. `{global|us|eu}.model-name` stands for `global.model-name`, `us.model-name`, and `eu.model-name`, each of which you specify as a separate model ID (do not include `{}` in the configuration). The list includes models that have reached or are approaching end of life. See [Warnings for Models Reaching End of Life (EOL)](#warnings-for-models-reaching-end-of-life-eol) for details.
 
+<!-- supported-text-models: generated from modelMetadata, checked by packages/cdk/test/docs/supported-models.test.ts -->
+
 ```
 "anthropic.claude-3-5-sonnet-20241022-v2:0",
 "{us|apac}.anthropic.claude-3-5-sonnet-20241022-v2:0",
@@ -1369,10 +1371,11 @@ This solution supports the following video generation models:
 When you run `cdk synth` or `cdk deploy`, a warning is shown for each model in `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, or `speechToSpeechModelIds` that Amazon Bedrock has retired or plans to retire.
 
 ```
-[Warning at /GenerativeAiUseCasesStack/API] Model Claude 3 Sonnet (anthropic.claude-3-sonnet-20240229-v1:0) reached end of life on Amazon Bedrock on 2026-11-13 and requests to it fail. ...
+[Warning at /GenerativeAiUseCasesStack/API] Model Claude 3 Sonnet (anthropic.claude-3-sonnet-20240229-v1:0) reached end of life on Amazon Bedrock on 2026-11-13 in at least one Region, where requests to it fail. ...
 ```
 
-- A model that has reached EOL: requests to it fail. Replace it with an active model.
+- A model Bedrock no longer offers: requests to it fail in every Region. Replace it with an active model.
+- A model past its EOL date: requests to it fail in at least one Region. Replace it with an active model.
 - A model scheduled for EOL: the warning shows the EOL date and the days left. Move to an active model before that date.
 
 The warning is informational and does not stop the deployment.
