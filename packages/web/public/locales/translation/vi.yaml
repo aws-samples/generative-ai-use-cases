@@ -771,12 +771,16 @@ setting:
     version_help: Tham chiếu đến version trong package.json của generative-ai-use-cases
   recent_updates: Cập nhật gần đây
   signout: Đăng xuất
+  tabs:
+    account: Tài khoản
+    general: Chung
+    system: Hệ thống
+    usage: Sử dụng
   title: Thông tin cài đặt
   update:
     message: >-
       Có cập nhật trên GitHub. Nếu muốn sử dụng các tính năng mới nhất, vui lòng pull nhánh main của <0>generative-ai-use-cases</0> 
       và deploy lại.
-  user: Cài đặt người dùng
   view_all_updates: Xem tất cả cập nhật
 shared:
   contact_admin: Vui lòng liên hệ với quản trị viên.

@@ -1093,7 +1093,6 @@ setting:
     show_email: Show Email
     show_tools: Show Tools
     show_use_case_builder: Show Use Case Builder
-    stats: Statistics
     transcribe_languages: Auto-detect languages for speech recognition
     transcribe_languages_help: 'Languages to choose from when the speech recognition language is set to "auto" (meeting minutes, voice input, file transcription). Choose 2 to 5. The more languages you choose, the more often short utterances are misidentified.'
     typing_animation: Typing Animation
@@ -1101,13 +1100,16 @@ setting:
     version_help: Referencing the version in package.json of generative-ai-use-cases
   recent_updates: Recent Updates
   signout: Sign Out
-  system: System settings
+  tabs:
+    account: Account
+    general: General
+    system: System
+    usage: Usage
   update:
     message: >-
       Updates are available on GitHub. If you want to use the latest features,
       please pull the main branch of <0>generative-ai-use-cases</0> and
       redeploy.
-  user: User settings
   view_all_updates: View All Updates
 shared:
   contact_admin: Please contact the administrator.
