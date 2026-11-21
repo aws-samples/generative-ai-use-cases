@@ -155,8 +155,8 @@ const SettingSystemTab: React.FC = () => {
           ) : (
             notes.map((note) => (
               <section key={note.title} className="mb-4">
-                <h3 className="mb-1 font-semibold">{note.title}</h3>
-                <Markdown>{note.highlights}</Markdown>
+                <h3 className="mb-1 text-base font-semibold">{note.title}</h3>
+                <Markdown className="prose-sm">{note.highlights}</Markdown>
               </section>
             ))
           )}
