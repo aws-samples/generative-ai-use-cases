@@ -453,12 +453,12 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     defaultParams: LLAMA_DEFAULT_PARAMS,
   },
   'us.meta.llama3-2-11b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+    flags: { ...MODEL_FEATURE.TEXT_DOC_IMAGE, maxImageCount: 1 },
     displayName: 'Llama 3.2 11B Vision Instruct',
     defaultParams: LLAMA_DEFAULT_PARAMS,
   },
   'us.meta.llama3-2-90b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+    flags: { ...MODEL_FEATURE.TEXT_DOC_IMAGE, maxImageCount: 1 },
     displayName: 'Llama 3.2 90B Vision Instruct',
     defaultParams: LLAMA_DEFAULT_PARAMS,
   },
@@ -474,6 +474,7 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: {
       ...MODEL_FEATURE.TEXT_DOC_IMAGE,
       ...MODEL_FEATURE.LEGACY,
+      maxImageCount: 8,
     },
     displayName: 'Llama 4 Maverick 17B Instruct',
     defaultParams: LLAMA_DEFAULT_PARAMS,
@@ -482,6 +483,7 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: {
       ...MODEL_FEATURE.TEXT_DOC_IMAGE,
       ...MODEL_FEATURE.LEGACY,
+      maxImageCount: 8,
     },
     displayName: 'Llama 4 Scout 17B Instruct',
     defaultParams: LLAMA_DEFAULT_PARAMS,
