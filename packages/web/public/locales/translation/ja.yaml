@@ -439,10 +439,17 @@ dialog:
     message: このページから移動すると、入力内容が失われます。本当に移動しますか？
     title: 入力内容が保存されていません
 drawer:
+  add_to_sidebar: サイドバーに追加
   ai_services: AI サービス
   builder_mode: ビルダーモード
+  collapse_sidebar: サイドバーを折りたたむ
   done: 完了
+  edit_favorites: サイドバーに表示するユースケースを選ぶ
+  expand_sidebar: サイドバーを展開
   generative_ai: (生成 AI)
+  mode_builder: ビルダー
+  remove_from_sidebar: サイドバーから削除
+  resize_sidebar: サイドバーの幅を調整
   tools: ツール
   use_cases: ユースケース
 error:
@@ -1044,7 +1051,6 @@ useCaseBuilder:
     summarize_article_description: >-
       OGP（記事のリンクをシェアする際に表示される記事のプレビュー）用に、記事を要約します。OGP
       を適切に設定することで、記事がシェアされた際に記事の概要を正しく伝えることができます。
-  builderMode: ビルダーモード
   cancel: キャンセル
   create: 作成
   createDescription: ユースケースを作成します。プレビューで動作確認してから作成してください。作成後に編集することも可能です。
