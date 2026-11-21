@@ -1400,6 +1400,24 @@ This solution supports the following video generation models:
 
 **Please verify that the models you specify are enabled in the specified region.**
 
+### Warnings for Models Reaching End of Life (EOL)
+
+When you run `cdk synth` or `cdk deploy`, a warning is shown for each model in `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, or `speechToSpeechModelIds` that Amazon Bedrock has retired or plans to retire.
+
+```
+[Warning at /GenerativeAiUseCasesStack/API] Model Claude 3 Sonnet (anthropic.claude-3-sonnet-20240229-v1:0) reached end of life on Amazon Bedrock on 2026-11-13 and requests to it fail. ...
+```
+
+- A model that has reached EOL: requests to it fail. Replace it with an active model.
+- A model scheduled for EOL: the warning shows the EOL date and the days left. Move to an active model before that date.
+
+The warning is informational and does not stop the deployment.
+
+The EOL date is the earliest one Bedrock announces for any Region. The same model can stay available longer in other Regions, so check the actual status in the Region you use. The dates are part of the GenU release. For the latest status, see [Amazon Bedrock model lifecycle](https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html).
+
+> [!NOTE]
+> The default image generation model `stability.stable-image-core-v1:1` is also Legacy and is scheduled to reach EOL on 2027-05-09. Bedrock currently has no active text-to-image model that GenU's image generation can use, so deploying with the default settings shows a warning.
+
 ### Using Models from Multiple Regions Simultaneously
 
 By default, GenU uses models from the `modelRegion`. If you want to use the latest models that are only available in certain regions, you can specify `{modelId: '<model name>', region: '<region code>'}` in `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, or `speechToSpeechModelIds` to call that specific model from the specified region.

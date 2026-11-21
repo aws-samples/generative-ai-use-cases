@@ -1419,6 +1419,24 @@ amazon.nova-sonic-v1:0
 
 **指定したリージョンで指定したモデルが有効化されているかご確認ください。**
 
+### 提供終了（EOL）のモデルに関する警告
+
+`cdk synth` や `cdk deploy` の実行時に、`modelIds`、`imageGenerationModelIds`、`videoGenerationModelIds`、`speechToSpeechModelIds` に指定したモデルについて、Amazon Bedrock で提供終了済み、または終了予定の場合に警告を表示します。
+
+```
+[Warning at /GenerativeAiUseCasesStack/API] Model Claude 3 Sonnet (anthropic.claude-3-sonnet-20240229-v1:0) reached end of life on Amazon Bedrock on 2026-11-13 and requests to it fail. ...
+```
+
+- 提供終了済みのモデル: 呼び出しが失敗します。有効なモデルに置き換えてください。
+- 提供終了予定のモデル: EOL 日と残り日数を表示します。EOL 日までに有効なモデルへ移行してください。
+
+警告は表示のみで、デプロイは止まりません。
+
+EOL 日は、Bedrock が公表しているリージョンごとの日付のうち最も早いものです。同じモデルが他のリージョンでより長く利用できる場合があるため、実際の提供状況は利用するリージョンで確認してください。日付は GenU のリリースに含まれる情報で、最新の状況は [Bedrock のモデルライフサイクル](https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html) で確認できます。
+
+> [!NOTE]
+> デフォルトの画像生成モデル `stability.stable-image-core-v1:1` も Legacy で、2027-05-09 に EOL となる予定です。現時点で Bedrock には、GenU の画像生成で使える有効なテキストから画像への生成モデルがないため、デフォルトのままデプロイすると警告が表示されます。
+
 ### 複数のリージョンのモデルを同時に利用する
 
 GenU では、特に指定がない限り`modelRegion`のモデルを使用します。一部リージョンのみで利用可能な最新モデル等を使いたい場合、`modelIds`または`imageGenerationModelIds`または`videoGenerationModelIds`または`speechToSpeechModelIds`に`{modelId: '<モデル名>', region: '<リージョンコード>'}`を指定することで、そのモデルのみ指定したリージョンから呼び出すことができます。
