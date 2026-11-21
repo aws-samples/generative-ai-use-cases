@@ -90,21 +90,25 @@ const MODEL_FEATURE: Record<string, FeatureFlags> = {
 };
 
 // Cross-region inference profile prefixes ('' is the plain model ID).
-type ModelIdPrefix = 'global' | 'us' | 'eu' | 'apac' | 'jp' | 'au' | '';
+// Prefixes a model ID can be called with: '' is the plain (in-Region) model
+// ID, the others are cross-region inference profiles. A model offered only
+// through cross-region inference simply leaves '' out.
+export type ModelIdPrefix = 'global' | 'us' | 'eu' | 'apac' | 'jp' | 'au' | '';
 
-// Defines the same model under several inference profile prefixes at once,
-// e.g. withPrefixes('amazon.nova-pro-v1:0', ['us', 'eu'], metadata) defines
-// 'us.amazon.nova-pro-v1:0' and 'eu.amazon.nova-pro-v1:0'.
-// Keep a model under separate entries when its flags differ by prefix.
-const withPrefixes = (
+// Defines the same entry under several model ID prefixes at once, e.g.
+// withPrefixes('amazon.nova-pro-v1:0', ['', 'us', 'eu'], value) defines
+// 'amazon.nova-pro-v1:0', 'us.amazon.nova-pro-v1:0' and
+// 'eu.amazon.nova-pro-v1:0'. Each key gets its own shallow copy. Keep a model
+// under separate entries when its settings differ by prefix.
+export const withPrefixes = <T extends object>(
   baseModelId: string,
   prefixes: ModelIdPrefix[],
-  metadata: ModelMetadata
-): Record<string, ModelMetadata> =>
+  value: T
+): Record<string, T> =>
   Object.fromEntries(
     prefixes.map((prefix) => [
       prefix ? `${prefix}.${baseModelId}` : baseModelId,
-      { ...metadata },
+      { ...value },
     ])
   );
 
