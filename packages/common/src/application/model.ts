@@ -226,6 +226,14 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
     displayName: 'Claude Fable 5',
   },
+  ...withPrefixes('anthropic.claude-fable-5-1', ['global', 'us'], {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Fable 5.1',
+  }),
+  ...withPrefixes('anthropic.claude-fable-5-2', ['global', 'us'], {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+    displayName: 'Claude Fable 5.2',
+  }),
   ...withPrefixes(
     'anthropic.claude-sonnet-4-6',
     ['global', 'us', 'eu', 'au', 'jp'],
@@ -459,6 +467,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'DeepSeek V3.1',
   },
+  'deepseek.v3.2': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'DeepSeek V3.2',
+  },
   'us.deepseek.r1-v1:0': {
     flags: {
       // Reasons natively. Bedrock rejects the reasoning_config the reasoning option sends.
@@ -484,6 +496,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'Qwen3-Coder 30B A3B Instruct',
   },
+  'qwen.qwen3-coder-next': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'Qwen3 Coder Next',
+  },
   'qwen.qwen3-next-80b-a3b': {
     // TODO: Enable Reasoning
     flags: MODEL_FEATURE.TEXT_ONLY,
@@ -508,6 +524,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
       ...MODEL_FEATURE.LEGACY,
     },
     displayName: 'Palmyra X5',
+  },
+  'writer.palmyra-vision-7b': {
+    flags: MODEL_FEATURE.TEXT_IMAGE,
+    displayName: 'Palmyra Vision 7B',
   },
   // OpenAI
   'openai.gpt-oss-120b-1:0': {
@@ -552,6 +572,36 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-5.6 Terra',
   }),
+  ...withPrefixes('openai.gpt-6.2-sol', ['global', 'us'], {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6.2 Sol',
+  }),
+  ...withPrefixes('openai.gpt-6.2-astra', ['global', 'us'], {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-6.2 Astra',
+  }),
+  ...withPrefixes('openai.gpt-5.5', ['global', 'us'], {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-5.5',
+  }),
+  ...withPrefixes('openai.gpt-5.4', ['global', 'us'], {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'GPT-5.4',
+  }),
+  // xAI: Converse rejects temperature.
+  ...withPrefixes('xai.grok-4.7', ['global', 'us'], {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'Grok 4.7',
+  }),
+  ...withPrefixes('xai.grok-4.6', ['global', 'us'], {
+    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
+    displayName: 'Grok 4.6',
+  }),
+  // Z.AI
+  'zai.glm-5': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'GLM 5',
+  },
   // Google
   'google.gemma-3-4b-it': {
     flags: MODEL_FEATURE.TEXT_IMAGE,
@@ -571,11 +621,19 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'Minimax M2',
   },
+  'minimax.minimax-m2.5': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'Minimax M2.5',
+  },
   // Moonshot AI
   'moonshot.kimi-k2-thinking': {
     // Reasoning by default without additional parameter
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'Kimi K2 Thinking',
+  },
+  'moonshotai.kimi-k2.5': {
+    flags: MODEL_FEATURE.TEXT_IMAGE,
+    displayName: 'Kimi K2.5',
   },
   // Kimi K3 supports text and image input (video is not supported on Bedrock).
   // Documents are excluded because the Converse API rejects document inputs for this model.
@@ -600,6 +658,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   'nvidia.nemotron-nano-3-30b': {
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'NVIDIA Nemotron Nano 3 30B',
+  },
+  'nvidia.nemotron-super-3-120b': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'NVIDIA Nemotron 3 Super 120B A12B',
   },
 
   // === Image ===
