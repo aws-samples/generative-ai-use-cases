@@ -33,6 +33,8 @@ import {
 type Outcome = { ok: boolean; detail: string };
 
 const CONCURRENCY = 3;
+// A model that never answers must not stall the whole run.
+const CASE_TIMEOUT_MS = 90_000;
 const USECASE_ID = '/chat';
 
 const arg = (name: string): string | undefined => {
@@ -174,7 +176,10 @@ const main = async () => {
   );
   const { default: bedrockApi } = await import('../../lambda/utils/bedrockApi');
 
-  const runCase = async (model: Model, kind: CaseKind): Promise<Outcome> => {
+  const runCaseOnce = async (
+    model: Model,
+    kind: CaseKind
+  ): Promise<Outcome> => {
     const flags = modelMetadata[model.modelId].flags;
     const target: Model =
       kind === 'reasoning'
@@ -209,6 +214,30 @@ const main = async () => {
     }
   };
 
+  const runCase = (model: Model, kind: CaseKind): Promise<Outcome> =>
+    Promise.race([
+      runCaseOnce(model, kind),
+      new Promise<Outcome>((resolve) =>
+        setTimeout(
+          () =>
+            resolve({
+              ok: false,
+              detail: `no response within ${CASE_TIMEOUT_MS / 1000}s`,
+            }),
+          CASE_TIMEOUT_MS
+        ).unref()
+      ),
+    ]);
+
+  const formatMarks = (results: [PlannedCase, Outcome][]): string =>
+    results
+      .map(([planned, outcome]) => {
+        if (outcome.ok)
+          return `${planned.kind}:ok${planned.expected ? '' : '(flag off)'}`;
+        return `${planned.kind}:${planned.expected ? 'FAIL' : 'ng'}`;
+      })
+      .join('  ');
+
   type Row = { model: Model; results: [PlannedCase, Outcome][] };
   const rows: Row[] = [];
   const queue = [...targets];
@@ -224,7 +253,7 @@ const main = async () => {
         results.push([planned, await runCase(model, planned.kind)]);
       }
       rows.push({ model, results });
-      originalError(`done: ${model.modelId}`);
+      originalError(`${model.modelId}  ${formatMarks(results)}`);
     }
   };
   await Promise.all(Array.from({ length: CONCURRENCY }, worker));
@@ -234,14 +263,7 @@ const main = async () => {
   const failures: string[] = [];
   const enableCandidates: string[] = [];
   for (const { model, results } of rows) {
-    const marks = results
-      .map(([planned, outcome]) => {
-        if (outcome.ok)
-          return `${planned.kind}:ok${planned.expected ? '' : '(flag off)'}`;
-        return `${planned.kind}:${planned.expected ? 'FAIL' : 'ng'}`;
-      })
-      .join('  ');
-    console.log(`${model.modelId} [${model.region}]  ${marks}`);
+    console.log(`${model.modelId} [${model.region}]  ${formatMarks(results)}`);
     for (const [planned, outcome] of results) {
       if (!outcome.ok && planned.expected) {
         failures.push(`${model.modelId} ${planned.kind}: ${outcome.detail}`);
