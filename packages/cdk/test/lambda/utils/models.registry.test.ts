@@ -2,6 +2,7 @@ import {
   BEDROCK_IMAGE_GEN_MODELS as IMAGE_MODEL_IDS,
   BEDROCK_TEXT_MODELS,
   BEDROCK_VIDEO_GEN_MODELS as VIDEO_MODEL_IDS,
+  modelMetadata,
   withPrefixes,
 } from '@generative-ai-use-cases/common';
 import {
@@ -10,13 +11,17 @@ import {
   BEDROCK_VIDEO_GEN_MODELS,
 } from '../../../lambda/utils/models';
 
-// modelMetadata (common) and the request builders here are written separately,
-// both with prefix groups. A model listed in one but not the other is either
-// offered in the UI with no way to call it, or callable but never offered.
+// Text request builders are derived from modelMetadata, so each text model
+// needs its defaultParams there. Image and video builders are written here
+// separately, so their lists must match modelMetadata.
 describe('model registries', () => {
   const sorted = (ids: string[]) => [...ids].sort();
 
-  it('defines a request builder for every text model, and nothing else', () => {
+  it('gives every text model its defaultParams and a request builder', () => {
+    const missing = BEDROCK_TEXT_MODELS.filter(
+      (modelId) => !modelMetadata[modelId].defaultParams
+    );
+    expect(missing).toEqual([]);
     expect(sorted(Object.keys(BEDROCK_TEXT_GEN_MODELS))).toEqual(
       sorted(BEDROCK_TEXT_MODELS)
     );
