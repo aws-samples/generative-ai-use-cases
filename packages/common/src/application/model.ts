@@ -461,7 +461,8 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   },
   'us.deepseek.r1-v1:0': {
     flags: {
-      ...MODEL_FEATURE.TEXT_DOC_REASONING,
+      // Reasons natively. Bedrock rejects the reasoning_config the reasoning option sends.
+      ...MODEL_FEATURE.TEXT_DOC,
       ...MODEL_FEATURE.LEGACY,
     },
     displayName: 'DeepSeek-R1',
@@ -553,15 +554,15 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   }),
   // Google
   'google.gemma-3-4b-it': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+    flags: MODEL_FEATURE.TEXT_IMAGE,
     displayName: 'Gemma 3 4B IT',
   },
   'google.gemma-3-12b-it': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+    flags: MODEL_FEATURE.TEXT_IMAGE,
     displayName: 'Gemma 3 12B IT',
   },
   'google.gemma-3-27b-it': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+    flags: MODEL_FEATURE.TEXT_IMAGE,
     displayName: 'Gemma 3 27B IT',
   },
   // MiniMax AI
