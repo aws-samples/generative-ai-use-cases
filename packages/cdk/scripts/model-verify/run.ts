@@ -159,7 +159,11 @@ const main = async () => {
   // Which regions offer which model IDs, read with the AWS CLI. Only needed for
   // plain model IDs; a region that cannot be read is skipped.
   const offeredIn: Record<string, Set<string>> = {};
+  let offeredInLoaded = false;
   const loadOfferedIn = () => {
+    // Read once, even when every region fails (for example, expired credentials).
+    if (offeredInLoaded) return;
+    offeredInLoaded = true;
     for (const region of new Set([defaultRegion, ...CANDIDATE_REGIONS])) {
       try {
         const output = execFileSync(
@@ -201,9 +205,7 @@ const main = async () => {
         flag('all') || filters.some((filter) => modelId.includes(filter))
     )
     .map((modelId) => {
-      if (!regionOverride && Object.keys(offeredIn).length === 0) {
-        loadOfferedIn();
-      }
+      if (!regionOverride) loadOfferedIn();
       return {
         type: 'bedrock' as const,
         modelId,
