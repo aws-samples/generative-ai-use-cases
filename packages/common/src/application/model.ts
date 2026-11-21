@@ -841,3 +841,99 @@ export const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
 };
 
 export const CRI_PREFIX_PATTERN = /^(global|us|eu|apac|jp|au)\./;
+
+// Amazon Bedrock end-of-life (EOL) by base model ID, without an inference
+// profile prefix. After its EOL date a model is removed and requests to it fail.
+// Dates are the earliest EOL announced for any Region. The same model can stay
+// available longer in other Regions, so check the Region you use.
+// Sources: https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html
+// and the modelLifecycle field of ListFoundationModels.
+// RETIRED marks a model Bedrock already rejects with "reached the end of its
+// life" and for which no date is published (found with npm run models:verify).
+export const RETIRED = 'retired';
+export const MODEL_END_OF_LIFE: Record<string, string> = {
+  // Already retired
+  'amazon.titan-text-express-v1': RETIRED,
+  'amazon.titan-text-premier-v1:0': RETIRED,
+  'amazon.nova-premier-v1:0': RETIRED,
+  'anthropic.claude-3-opus-20240229-v1:0': RETIRED,
+  'anthropic.claude-3-5-haiku-20241022-v1:0': RETIRED,
+  'anthropic.claude-opus-4-20250514-v1:0': RETIRED,
+  'meta.llama3-1-405b-instruct-v1:0': '2026-07-07',
+  'meta.llama3-2-11b-instruct-v1:0': '2026-07-07',
+  'meta.llama3-2-1b-instruct-v1:0': '2026-07-07',
+  'meta.llama3-2-3b-instruct-v1:0': '2026-07-07',
+  'meta.llama3-2-90b-instruct-v1:0': '2026-07-07',
+  'cohere.command-r-v1:0': '2026-08-19',
+  'cohere.command-r-plus-v1:0': '2026-08-19',
+  'anthropic.claude-3-haiku-20240307-v1:0': '2026-09-10',
+  'amazon.nova-sonic-v1:0': '2026-09-14',
+  'amazon.nova-canvas-v1:0': '2026-09-30',
+  'amazon.nova-reel-v1:0': '2026-09-30',
+  'amazon.nova-reel-v1:1': '2026-09-30',
+  'anthropic.claude-sonnet-4-20250514-v1:0': '2026-10-14',
+  'anthropic.claude-3-sonnet-20240229-v1:0': '2026-11-13',
+  'anthropic.claude-3-5-sonnet-20240620-v1:0': '2026-11-13',
+  'anthropic.claude-3-5-sonnet-20241022-v2:0': '2026-11-13',
+  'anthropic.claude-3-7-sonnet-20250219-v1:0': '2026-11-13',
+  // Scheduled
+  'anthropic.claude-opus-4-1-20250805-v1:0': '2027-01-08',
+  'writer.palmyra-x4-v1:0': '2027-03-09',
+  'writer.palmyra-x5-v1:0': '2027-03-21',
+  'deepseek.r1-v1:0': '2027-03-30',
+  'deepseek.v3-v1:0': '2027-03-30',
+  'google.gemma-3-4b-it': '2027-03-30',
+  'google.gemma-3-12b-it': '2027-03-30',
+  'google.gemma-3-27b-it': '2027-03-30',
+  'meta.llama3-8b-instruct-v1:0': '2027-03-30',
+  'meta.llama3-70b-instruct-v1:0': '2027-03-30',
+  'meta.llama3-1-8b-instruct-v1:0': '2027-03-30',
+  'meta.llama3-1-70b-instruct-v1:0': '2027-03-30',
+  'meta.llama3-3-70b-instruct-v1:0': '2027-03-30',
+  'meta.llama4-maverick-17b-instruct-v1:0': '2027-03-30',
+  'meta.llama4-scout-17b-instruct-v1:0': '2027-03-30',
+  'minimax.minimax-m2': '2027-03-30',
+  'mistral.mistral-7b-instruct-v0:2': '2027-03-30',
+  'mistral.mixtral-8x7b-instruct-v0:1': '2027-03-30',
+  'moonshot.kimi-k2-thinking': '2027-03-30',
+  'nvidia.nemotron-nano-12b-v2': '2027-03-30',
+  'nvidia.nemotron-nano-9b-v2': '2027-03-30',
+  'qwen.qwen3-coder-30b-a3b-v1:0': '2027-03-30',
+  'qwen.qwen3-coder-480b-a35b-v1:0': '2027-03-30',
+  'anthropic.claude-sonnet-4-5-20250929-v1:0': '2027-04-08',
+  'stability.stable-image-core-v1:1': '2027-05-09',
+  'stability.sd3-5-large-v1:0': '2027-05-09',
+};
+
+export type EndOfLife =
+  // Bedrock rejects requests now and publishes no date
+  | { state: 'retired' }
+  // The EOL date has passed
+  | { state: 'ended'; date: string }
+  // The EOL date is ahead
+  | { state: 'scheduled'; date: string; daysLeft: number };
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+// Returns undefined for a model with no announced end of life.
+export const getEndOfLife = ({
+  modelId,
+  today = new Date(),
+}: {
+  modelId: string;
+  today?: Date;
+}): EndOfLife | undefined => {
+  const value = MODEL_END_OF_LIFE[modelId.replace(CRI_PREFIX_PATTERN, '')];
+  if (!value) return undefined;
+  if (value === RETIRED) return { state: 'retired' };
+  const msLeft =
+    Date.parse(`${value}T00:00:00Z`) -
+    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate());
+  return msLeft <= 0
+    ? { state: 'ended', date: value }
+    : {
+        state: 'scheduled',
+        date: value,
+        daysLeft: Math.ceil(msLeft / MS_PER_DAY),
+      };
+};
