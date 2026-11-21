@@ -4,12 +4,7 @@ import { Link } from 'react-router-dom';
 import useSWR from 'swr';
 import useVersion from '../hooks/useVersion';
 import IconWithDot from './IconWithDot';
-import {
-  PiChartBar,
-  PiGear,
-  PiShieldCheck,
-  PiSidebarSimple,
-} from 'react-icons/pi';
+import { PiGear, PiShieldCheck, PiSidebarSimple } from 'react-icons/pi';
 import useIsAdmin from '../hooks/useIsAdmin';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import useUserSetting from '../hooks/useUserSetting';
@@ -124,9 +119,6 @@ const DrawerBase: React.FC<Props> = (props) => {
                 <PiShieldCheck className="text-lg" />
               </Link>
             )}
-            <Link to="/stats" title={t('stat.title')}>
-              <PiChartBar className="text-lg" />
-            </Link>
             <Link to={settingUrl} title={t('navigation.settings')}>
               <IconWithDot showDot={hasUpdate}>
                 <PiGear className="text-lg" />
