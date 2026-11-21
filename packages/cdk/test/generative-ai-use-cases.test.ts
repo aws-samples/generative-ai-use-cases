@@ -138,7 +138,9 @@ describe('GenerativeAiUseCases', () => {
       expect(
         annotations.findWarning(
           '*',
-          Match.stringLikeRegexp(`\\(${modelId}\\) reached end of life`)
+          Match.stringLikeRegexp(
+            `\\(${modelId}\\) reached end of life on .* in at least one Region`
+          )
         )
       ).toHaveLength(1);
     }

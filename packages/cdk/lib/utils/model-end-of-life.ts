@@ -23,15 +23,16 @@ export const warnModelEndOfLife = ({
 
     const name = modelMetadata[modelId]?.displayName ?? modelId;
     const subject = `Model ${name} (${modelId})`;
-    const action =
-      'Replace it with an active model in the model parameters. ' +
-      `The date is the earliest announced for any Region: ${LIFECYCLE_DOC}`;
+    // Dates are the earliest announced for any Region, so a dated model may
+    // still answer in a Region whose EOL comes later. Only an undated retired
+    // model is gone everywhere.
+    const check = `Check the status in the Region you use: ${LIFECYCLE_DOC}`;
     const message =
       endOfLife.state === 'retired'
-        ? `${subject} has reached end of life on Amazon Bedrock and requests to it fail. ${action}`
+        ? `${subject} is no longer offered on Amazon Bedrock, so requests to it fail. Replace it with an active model in the model parameters.`
         : endOfLife.state === 'ended'
-          ? `${subject} reached end of life on Amazon Bedrock on ${endOfLife.date} and requests to it fail. ${action}`
-          : `${subject} will reach end of life on Amazon Bedrock on ${endOfLife.date} (in ${endOfLife.daysLeft} days). ${action}`;
+          ? `${subject} reached end of life on Amazon Bedrock on ${endOfLife.date} in at least one Region, where requests to it fail. Replace it with an active model in the model parameters. ${check}`
+          : `${subject} will reach end of life on Amazon Bedrock on ${endOfLife.date} (in ${endOfLife.daysLeft} days) in at least one Region. Move to an active model before then. ${check}`;
     Annotations.of(scope).addWarningV2(
       `@generative-ai-use-cases/model-end-of-life:${modelId}`,
       message

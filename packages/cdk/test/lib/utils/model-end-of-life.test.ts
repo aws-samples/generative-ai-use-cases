@@ -87,7 +87,7 @@ describe('warnModelEndOfLife', () => {
       annotations.findWarning(
         '*',
         Match.stringLikeRegexp(
-          'DeepSeek-R1 .* will reach end of life on Amazon Bedrock on 2027-03-30 \\(in 129 days\\)'
+          'DeepSeek-R1 .* will reach end of life on Amazon Bedrock on 2027-03-30 \\(in 129 days\\) in at least one Region'
         )
       )
     ).toHaveLength(1);
@@ -102,14 +102,16 @@ describe('warnModelEndOfLife', () => {
       annotations.findWarning(
         '*',
         Match.stringLikeRegexp(
-          'reached end of life .* on 2026-10-14 and requests'
+          'reached end of life .* on 2026-10-14 in at least one Region'
         )
       )
     ).toHaveLength(1);
     expect(
       annotations.findWarning(
         '*',
-        Match.stringLikeRegexp('Nova Premier .* has reached end of life')
+        Match.stringLikeRegexp(
+          'Nova Premier .* is no longer offered on Amazon Bedrock'
+        )
       )
     ).toHaveLength(1);
   });

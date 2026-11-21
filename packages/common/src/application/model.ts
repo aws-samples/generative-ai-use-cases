@@ -910,14 +910,19 @@ export const CRI_PREFIX_PATTERN = /^(global|us|eu|apac|jp|au)\./;
 // available longer in other Regions, so check the Region you use.
 // Sources: https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html
 // and the modelLifecycle field of ListFoundationModels.
-// RETIRED marks a model Bedrock already rejects with "reached the end of its
-// life" and for which no date is published (found with npm run models:verify).
+// RETIRED marks a model Bedrock no longer offers and for which no date is
+// published: text models rejected with "reached the end of its life" (found
+// with npm run models:verify), and image models missing from
+// ListFoundationModels in every Region.
 export const RETIRED = 'retired';
 export const MODEL_END_OF_LIFE: Record<string, string> = {
   // Already retired
   'amazon.titan-text-express-v1': RETIRED,
   'amazon.titan-text-premier-v1:0': RETIRED,
   'amazon.nova-premier-v1:0': RETIRED,
+  'amazon.titan-image-generator-v1': RETIRED,
+  'amazon.titan-image-generator-v2:0': RETIRED,
+  'stability.stable-diffusion-xl-v1': RETIRED,
   'anthropic.claude-3-opus-20240229-v1:0': RETIRED,
   'anthropic.claude-3-5-haiku-20241022-v1:0': RETIRED,
   'anthropic.claude-opus-4-20250514-v1:0': RETIRED,
