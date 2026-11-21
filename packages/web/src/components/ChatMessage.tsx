@@ -210,7 +210,9 @@ const ChatMessage: React.FC<Props> = (props) => {
                       )}
                     </div>
                   </summary>
-                  <Markdown prefix={`${props.idx}-trace`}>
+                  <Markdown
+                    prefix={`${props.idx}-trace`}
+                    generating={props.loading}>
                     {chatContent.trace}
                   </Markdown>
                 </details>
@@ -221,7 +223,8 @@ const ChatMessage: React.FC<Props> = (props) => {
                   chatContent?.traceInlineMessage && (
                     <Markdown
                       className="mt-2"
-                      prefix={`${props.idx}-last-trace`}>
+                      prefix={`${props.idx}-last-trace`}
+                      generating>
                       {chatContent.traceInlineMessage}
                     </Markdown>
                   )}

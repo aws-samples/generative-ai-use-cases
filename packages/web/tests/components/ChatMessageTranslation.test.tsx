@@ -98,3 +98,39 @@ describe('ChatMessage translation during typing', () => {
     expect(view.container.querySelector('.prose')?.textContent).toBe(second);
   });
 });
+
+describe('ChatMessage trace translation during generation', () => {
+  const withTrace = (trace: string, loading: boolean) => (
+    <MemoryRouter>
+      <ChatMessage
+        chatContent={{ role: 'assistant', content: '', trace }}
+        loading={loading}
+        hideFeedback
+      />
+    </MemoryRouter>
+  );
+
+  it('keeps a streaming trace untranslated and survives the next chunk', async () => {
+    const view = render(withTrace('First **trace** chunk', true));
+    const details = view.container.querySelector('details')!;
+    expect(details.querySelector('[translate="no"]')).toBeTruthy();
+
+    // Translate the streamed trace the way a browser translator does.
+    const walker = document.createTreeWalker(details, NodeFilter.SHOW_TEXT);
+    const nodes: Text[] = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+    for (const node of nodes) {
+      if (!node.textContent?.trim()) continue;
+      const font = document.createElement('font');
+      font.textContent = 'Translated';
+      node.parentNode!.replaceChild(font, node);
+    }
+
+    expect(() =>
+      view.rerender(withTrace('First **trace** chunk and more', true))
+    ).not.toThrow();
+    view.rerender(withTrace('First **trace** chunk and more', false));
+    expect(details.querySelector('[translate="no"]')).toBeNull();
+    expect(details.textContent).toContain('chunk and more');
+  });
+});
