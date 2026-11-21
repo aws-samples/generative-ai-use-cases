@@ -64,4 +64,38 @@ describe('models that reject a system role', () => {
       text: 'You are a helpful assistant.Hello',
     });
   });
+
+  it('adds nothing and leaves the messages unchanged without a system prompt', async () => {
+    jest.resetModules();
+    const { BEDROCK_TEXT_GEN_MODELS } =
+      await import('../../../lambda/utils/models');
+    const modelId = 'openai.gpt-oss-120b-1:0';
+    const config = BEDROCK_TEXT_GEN_MODELS[modelId];
+    const userOnly: UnrecordedMessage[] = [{ role: 'user', content: 'Hello' }];
+    const input = config.createConverseCommandInput(
+      userOnly,
+      '/chat',
+      { type: 'bedrock', modelId },
+      config.defaultParams,
+      config.usecaseParams
+    );
+    expect(input.messages?.[0].content?.[0]).toEqual({ text: 'Hello' });
+    expect(userOnly[0].content).toBe('Hello');
+  });
+
+  it('does not edit the caller messages when it folds the system prompt', async () => {
+    const { BEDROCK_TEXT_GEN_MODELS } =
+      await import('../../../lambda/utils/models');
+    const modelId = 'writer.palmyra-vision-7b';
+    const config = BEDROCK_TEXT_GEN_MODELS[modelId];
+    const input = messages();
+    config.createConverseCommandInput(
+      input,
+      '/chat',
+      { type: 'bedrock', modelId },
+      config.defaultParams,
+      config.usecaseParams
+    );
+    expect(input[1].content).toBe('Hello');
+  });
 });

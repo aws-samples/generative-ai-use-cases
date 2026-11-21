@@ -664,10 +664,15 @@ const createConverseCommandInputWithoutSystemContext = (
   usecaseConverseInferenceParams: UsecaseConverseInferenceParams
 ) => {
   // Since system is not available, system is also included as user.
+  // Copy the first turn instead of editing it, so the caller's messages stay
+  // unchanged, and add nothing when there is no system prompt.
   const system = messages.find((message) => message.role === 'system');
   messages = messages.filter((message) => message.role !== 'system');
-  if (messages.length > 0 && messages[0].role === 'user') {
-    messages[0].content = system?.content + messages[0].content;
+  if (system && messages.length > 0 && messages[0].role === 'user') {
+    messages = [
+      { ...messages[0], content: system.content + messages[0].content },
+      ...messages.slice(1),
+    ];
   }
 
   return createConverseCommandInput(
