@@ -371,7 +371,12 @@ const TranslatePage: React.FC = () => {
                 />
               </div>
               <div className="rounded border border-black/30 p-1.5">
-                <Markdown>{typingTextOutput}</Markdown>
+                <Markdown
+                  generating={
+                    loading || typingTextOutput !== translatedSentence
+                  }>
+                  {typingTextOutput}
+                </Markdown>
                 {loading && (
                   <div className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></div>
                 )}

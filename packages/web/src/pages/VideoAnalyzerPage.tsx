@@ -309,7 +309,9 @@ const VideoAnalyzerPage: React.FC = () => {
               />
 
               <div className="relative h-48 overflow-y-scroll rounded border border-black/30 p-1.5 xl:h-96">
-                <Markdown>{typingTextOutput}</Markdown>
+                <Markdown generating={loading || typingTextOutput !== analysis}>
+                  {typingTextOutput}
+                </Markdown>
                 {(loading || sending) && (
                   <div className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></div>
                 )}
