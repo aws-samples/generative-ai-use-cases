@@ -90,7 +90,7 @@ const Select: React.FC<Props> = (props) => {
       );
     }
 
-    return <>{label}</>;
+    return <span>{label}</span>;
   };
 
   return (
