@@ -54,7 +54,7 @@
       "global.anthropic.claude-opus-4-6-v1",
       "global.anthropic.claude-haiku-4-5-20251001-v1:0",
       "global.amazon.nova-2-lite-v1:0",
-      "us.deepseek.r1-v1:0"
+      "openai.gpt-oss-120b-1:0"
     ],
     "imageGenerationModelIds": [
       { "modelId": "stability.stable-image-core-v1:1", "region": "us-west-2" }

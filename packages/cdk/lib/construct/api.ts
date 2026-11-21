@@ -32,6 +32,7 @@ import {
 } from '@generative-ai-use-cases/common';
 import { allowS3AccessWithSourceIpCondition } from '../utils/s3-access-policy';
 import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
+import { warnModelEndOfLife } from '../utils/model-end-of-life';
 import {
   InterfaceVpcEndpoint,
   IVpc,
@@ -147,6 +148,18 @@ export class Api extends Construct {
       !BEDROCK_RERANKING_MODELS.includes(rerankingModelId)
     ) {
       throw new Error(`Unsupported Model Name: ${rerankingModelId}`);
+    }
+
+    for (const [parameter, models] of Object.entries({
+      modelIds,
+      imageGenerationModelIds,
+      videoGenerationModelIds,
+    })) {
+      warnModelEndOfLife({
+        scope: this,
+        parameter,
+        modelIds: models.map((m) => m.modelId),
+      });
     }
 
     const duplicateModelIds = new Set(
