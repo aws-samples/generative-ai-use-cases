@@ -23,7 +23,7 @@ GenU はリリースタグからデプロイ・アップデートします ([ア
 
 - **Knowledge Base の Web Crawler データソースの削除**: Bedrock で、カスタマー管理の Knowledge Base に新しく Web Crawler コネクタを作成できなくなりました。アップデートすると、既存の `web-crawler-data-source` と、そこから取り込んだドキュメントが削除されます。S3 データソースのドキュメントには影響しません。(#1747)
 - **画像・動画生成のデフォルトモデル**: Nova Canvas と Nova Reel が提供終了 (EOL) になりました。画像生成のデフォルトは Stable Image Core (`us-west-2`) になり、動画生成はデフォルトで無効になりました。動画生成を続けて使う場合は、`videoGenerationModelIds` に `us-west-2` の `luma.ray-v2:0` を指定し、そのリージョンを bootstrap してください。モデルを自分で指定している環境には影響しません。(#1791)
-- **Knowledge Base の Advanced Parsing のデフォルトモデル**: これまでのデフォルトが提供終了になるため、`global.anthropic.claude-sonnet-4-6` に変わりました。(#1813)
+- **Knowledge Base の Advanced Parsing のデフォルトモデル**: これまでのデフォルト (Claude 3 Sonnet) が 2026-11-13 に提供終了になったため、`global.anthropic.claude-sonnet-4-6` に変わりました。(#1813)
 - **閉域モード**:
   - 有効にしていない機能の VPC エンドポイントは削除されます。インポートした VPC で他のワークロードが使っている場合は、デプロイ前に `closedNetworkAdditionalVpcEndpoints` に指定してください。
   - 検証用インスタンスのタイプが `t3.large` に変わります。以前のタイプを使い続ける場合は `closedNetworkTestEnvironmentInstanceType: 'r6i.large'` を指定してください。
@@ -64,7 +64,7 @@ GenU はリリースタグからデプロイ・アップデートします ([ア
 - チャットでの **Mermaid の図と数式の表示**。
 - **ブランディング**: ロゴとタイトルのカスタマイズ。
 - **会話履歴**: 一括削除。
-- **議事録**: 録音内容を失わないための保護。
+- **議事録**: 録音中にページを離れようとすると警告。
 - **新しいモデル**: Claude Opus 4.5、Nemotron 3 Nano 30B ほか 17 モデル、デフォルトモデルの設定。
 - **AgentCore**: MCP の読み込みの高速化と AgentCore Gateway への対応。
 - リソースを削除する `destroy.sh` と `cdk:diff` のショートカット。
@@ -88,7 +88,7 @@ GenU はリリースタグからデプロイ・アップデートします ([ア
 - Claude Sonnet 4.5 (Extended Thinking とプロンプトキャッシュに対応)。
 - エージェントのループの最大回数を設定。
 - 議事録のリアルタイム翻訳の改善。
-- SageMaker Code Editor を使ったプライベートネットワークでのデプロイ。
+- プライベートネットワークのオプションを使った SageMaker Code Editor からのデプロイ。
 - 提供終了したモデルの削除。
 
 [変更の一覧](https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.2.0)

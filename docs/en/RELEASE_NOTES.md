@@ -23,7 +23,7 @@ These changes are merged into the `main` branch and will be included in the next
 
 - **Knowledge Base Web Crawler data source removed**: Bedrock no longer allows new Web Crawler connectors on customer-managed knowledge bases. Updating deletes the existing `web-crawler-data-source` and the documents it ingested. Documents from the S3 data source are not affected. (#1747)
 - **Default image and video models**: Nova Canvas and Nova Reel reached end of life. The default image model is now Stable Image Core (`us-west-2`), and video generation is off by default. To keep video generation, set `videoGenerationModelIds` to `luma.ray-v2:0` in `us-west-2` and bootstrap that region. Deployments that set their own models are not affected. (#1791)
-- **Default Knowledge Base advanced parsing model**: the default is now `global.anthropic.claude-sonnet-4-6`, because the previous default reaches end of life. (#1813)
+- **Default Knowledge Base advanced parsing model**: the default is now `global.anthropic.claude-sonnet-4-6`, because the previous default (Claude 3 Sonnet) reached end of life on 2026-11-13. (#1813)
 - **Closed network mode**:
   - VPC endpoints of features that are not enabled are deleted. If other workloads in an imported VPC use them, list them in `closedNetworkAdditionalVpcEndpoints` before deploying.
   - The test instance type changes to `t3.large`. Set `closedNetworkTestEnvironmentInstanceType: 'r6i.large'` to keep the previous type.
@@ -64,7 +64,7 @@ These changes are merged into the `main` branch and will be included in the next
 - **Mermaid diagrams and math rendering** in chat.
 - **Branding**: custom logo and title.
 - **Chat history**: bulk delete.
-- **Meeting minutes**: protection against losing a recording.
+- **Meeting minutes**: a warning before leaving the page during a recording.
 - **New models**: Claude Opus 4.5, Nemotron 3 Nano 30B and 17 more models, plus a default model setting.
 - **AgentCore**: faster MCP loading and AgentCore Gateway support.
 - `destroy.sh` for deleting the resources and a `cdk:diff` shortcut.
@@ -88,7 +88,7 @@ These changes are merged into the `main` branch and will be included in the next
 - Claude Sonnet 4.5, with extended thinking and prompt caching.
 - Maximum number of agent loops can be set.
 - Real-time translation improvements for meeting minutes.
-- Deployment in a private network with SageMaker Code Editor.
+- Deploying from SageMaker Code Editor with the private network options.
 - End-of-life models removed.
 
 [Full changelog](https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.2.0)

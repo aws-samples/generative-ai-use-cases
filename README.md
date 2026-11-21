@@ -17,14 +17,7 @@ Well-architected application implementation with business use cases for utilizin
 
 ## What's New
 
-The latest release is [v5.5.0](https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.5.0). The next release, v5.6.0, will include:
-
-- An admin page for every user's token usage and estimated cost
-- AgentCore inside the closed VPC, and only the VPC endpoints in use in closed network mode
-- S3 Vectors and Guardrails for the Knowledge Base
-- Claude 5.5 models, OpenAI GPT-6, and Kimi K3
-
-See the [Release Notes](docs/en/RELEASE_NOTES.md) for every release and what to check before updating.
+See the [Release Notes](docs/en/RELEASE_NOTES.md) for what changed in each release, what is coming in the next one, and what to check before updating.
 
 ## GenU Usage Patterns
 

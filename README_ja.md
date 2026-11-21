@@ -15,14 +15,7 @@
 
 ## 最近のアップデート
 
-最新のリリースは [v5.5.0](https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.5.0) です。次のリリース v5.6.0 には以下が含まれる予定です。
-
-- 全ユーザーのトークン使用量と推定コストを確認できる管理者ページ
-- 閉域モードでの、閉域 VPC 内の AgentCore と、利用する機能の分だけの VPC エンドポイント
-- Knowledge Base での S3 Vectors と Guardrails
-- Claude 5.5 のモデル、OpenAI GPT-6、Kimi K3
-
-各リリースの内容とアップデート前の確認事項は [リリースノート](docs/ja/RELEASE_NOTES.md) をご参照ください。
+各リリースの変更内容、次のリリースの予定、アップデート前の確認事項は [リリースノート](docs/ja/RELEASE_NOTES.md) をご参照ください。
 
 ## GenU 活用パターン集
 

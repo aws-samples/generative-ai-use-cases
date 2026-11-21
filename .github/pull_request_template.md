@@ -10,7 +10,7 @@ How did you confirm the change works (tests, local run, deployed environment)?
 ## Checklist
 
 - [ ] Modified relevant documentation
-- [ ] If users will notice this change, added it to the Upcoming section of `docs/en/RELEASE_NOTES.md` and `docs/ja/RELEASE_NOTES.md` (impact on existing deployments goes under "Before you update")
+- [ ] If users will notice this change, added it to the "Upcoming" (en) / "次のリリース" (ja) section of `docs/en/RELEASE_NOTES.md` and `docs/ja/RELEASE_NOTES.md` (impact on existing deployments goes under "Before you update" / "アップデート前の確認事項")
 - [ ] Executed `npm run cdk:test` and if there are snapshot differences, execute `npm run cdk:test:update-snapshot` to update snapshots
 
 ## Related Issues
