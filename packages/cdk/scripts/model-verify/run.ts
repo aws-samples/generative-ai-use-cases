@@ -15,10 +15,14 @@
 // --all     run every text model
 // --probe   also try image and document input on models whose flags say no,
 //           and report the ones that work (the flag may be enabled)
-// --region  region to call instead of the one chosen from the ID prefix
-// --default-region  region for plain model IDs (default: AWS_REGION or us-east-1)
+// --region  region to call for every model, instead of choosing one per model
+//           (a prefix picks its region; a plain ID uses the first region that
+//           offers it)
+// --default-region  region tried first for plain model IDs (default:
+//           AWS_REGION or us-east-1)
 //
 // Exit code is 1 when a capability promised by the flags failed.
+import { execFileSync } from 'node:child_process';
 import { deflateSync } from 'node:zlib';
 import { modelMetadata } from '@generative-ai-use-cases/common';
 import { Model, UnrecordedMessage } from 'generative-ai-use-cases';
@@ -27,7 +31,8 @@ import {
   planCases,
   PlannedCase,
   reasoningParameters,
-  regionForModelId,
+  CANDIDATE_REGIONS,
+  pickRegion,
 } from './plan';
 
 type Outcome = { ok: boolean; detail: string };
@@ -151,6 +156,43 @@ const main = async () => {
   const regionOverride = arg('region');
   const probe = flag('probe');
 
+  // Which regions offer which model IDs, read with the AWS CLI. Only needed for
+  // plain model IDs; a region that cannot be read is skipped.
+  const offeredIn: Record<string, Set<string>> = {};
+  const loadOfferedIn = () => {
+    for (const region of new Set([defaultRegion, ...CANDIDATE_REGIONS])) {
+      try {
+        const output = execFileSync(
+          'aws',
+          [
+            'bedrock',
+            'list-foundation-models',
+            '--region',
+            region,
+            '--output',
+            'json',
+          ],
+          { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 }
+        );
+        // A plain model ID is only callable where it supports on-demand use.
+        offeredIn[region] = new Set(
+          (
+            JSON.parse(output).modelSummaries as {
+              modelId: string;
+              inferenceTypesSupported: string[];
+            }[]
+          )
+            .filter(({ inferenceTypesSupported }) =>
+              inferenceTypesSupported.includes('ON_DEMAND')
+            )
+            .map(({ modelId }) => modelId)
+        );
+      } catch {
+        // Not enabled or not reachable in this region
+      }
+    }
+  };
+
   const targets: Model[] = Object.entries(modelMetadata)
     .filter(([, metadata]) => metadata.flags.text)
     .map(([modelId]) => modelId)
@@ -158,11 +200,17 @@ const main = async () => {
       (modelId) =>
         flag('all') || filters.some((filter) => modelId.includes(filter))
     )
-    .map((modelId) => ({
-      type: 'bedrock' as const,
-      modelId,
-      region: regionOverride ?? regionForModelId(modelId, defaultRegion),
-    }));
+    .map((modelId) => {
+      if (!regionOverride && Object.keys(offeredIn).length === 0) {
+        loadOfferedIn();
+      }
+      return {
+        type: 'bedrock' as const,
+        modelId,
+        region:
+          regionOverride ?? pickRegion({ modelId, defaultRegion, offeredIn }),
+      };
+    });
   if (targets.length === 0) {
     console.error('No text model matches.');
     process.exitCode = 2;

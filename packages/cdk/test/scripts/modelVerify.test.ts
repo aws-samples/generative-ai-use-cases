@@ -2,10 +2,17 @@ import { modelMetadata } from '@generative-ai-use-cases/common';
 import {
   planCases,
   reasoningParameters,
-  regionForModelId,
+  pickRegion,
 } from '../../scripts/model-verify/plan';
 
-describe('regionForModelId', () => {
+describe('pickRegion', () => {
+  const offeredIn = {
+    'us-east-1': new Set(['amazon.nova-pro-v1:0']),
+    'us-west-2': new Set(['amazon.nova-pro-v1:0', 'deepseek.v3-v1:0']),
+  };
+  const pick = (modelId: string, defaultRegion = 'us-east-1') =>
+    pickRegion({ modelId, defaultRegion, offeredIn });
+
   it.each([
     ['global.anthropic.claude-opus-5-5', 'us-east-1'],
     ['us.amazon.nova-pro-v1:0', 'us-east-1'],
@@ -13,14 +20,20 @@ describe('regionForModelId', () => {
     ['apac.amazon.nova-pro-v1:0', 'ap-northeast-1'],
     ['jp.anthropic.claude-opus-5-5', 'ap-northeast-1'],
     ['au.anthropic.claude-opus-5-5', 'ap-southeast-2'],
-  ])('maps %s to %s', (modelId, region) => {
-    expect(regionForModelId(modelId, 'ap-northeast-1')).toBe(region);
+  ])('maps the prefix of %s to %s', (modelId, region) => {
+    expect(pick(modelId)).toBe(region);
   });
 
-  it('uses the default region for a plain model ID', () => {
-    expect(regionForModelId('amazon.nova-pro-v1:0', 'us-west-2')).toBe(
-      'us-west-2'
-    );
+  it('prefers the default region when it offers a plain model ID', () => {
+    expect(pick('amazon.nova-pro-v1:0', 'us-west-2')).toBe('us-west-2');
+  });
+
+  it('finds a region that offers a model the default region lacks', () => {
+    expect(pick('deepseek.v3-v1:0')).toBe('us-west-2');
+  });
+
+  it('falls back to the default region when no region offers the model', () => {
+    expect(pick('unknown.model-v1:0', 'us-west-2')).toBe('us-west-2');
   });
 });
 
