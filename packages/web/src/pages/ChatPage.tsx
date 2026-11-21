@@ -242,7 +242,7 @@ const ChatPage: React.FC = () => {
   );
   const chatFileLimit = useMemo(
     () => ({ ...fileLimit, previousFileCount }),
-    [previousFileCount]
+    [fileLimit, previousFileCount]
   );
   const reasoning = useMemo(() => {
     return MODELS.getModelMetadata(modelId).flags.reasoning ?? false;

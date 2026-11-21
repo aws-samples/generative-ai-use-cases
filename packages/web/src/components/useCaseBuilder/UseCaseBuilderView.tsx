@@ -436,7 +436,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
 
   useEffect(() => {
     checkFiles(fileLimit, accept);
-  }, [checkFiles, accept]);
+  }, [checkFiles, fileLimit, accept]);
 
   const fileInput = useRef<HTMLInputElement | null>(null);
 
@@ -457,13 +457,13 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
         deleteUploadedFile(fileId, fileLimit, accept);
       }
     },
-    [deleteUploadedFile, accept]
+    [deleteUploadedFile, fileLimit, accept]
   );
 
   // Drop overlay; see useDropOverlay for why it closes on its own.
   const onDropFiles = useCallback(
     (files: File[]) => uploadFiles(files, fileLimit, accept),
-    [uploadFiles, accept]
+    [uploadFiles, fileLimit, accept]
   );
   const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
     useDropOverlay(onDropFiles);
