@@ -89,48 +89,83 @@ const MODEL_FEATURE: Record<string, FeatureFlags> = {
   LEGACY: { legacy: true },
 };
 
+// Cross-region inference profile prefixes ('' is the plain model ID).
+type ModelIdPrefix = 'global' | 'us' | 'eu' | 'apac' | 'jp' | 'au' | '';
+
+// Defines the same model under several inference profile prefixes at once,
+// e.g. withPrefixes('amazon.nova-pro-v1:0', ['us', 'eu'], metadata) defines
+// 'us.amazon.nova-pro-v1:0' and 'eu.amazon.nova-pro-v1:0'.
+// Keep a model under separate entries when its flags differ by prefix.
+const withPrefixes = (
+  baseModelId: string,
+  prefixes: ModelIdPrefix[],
+  metadata: ModelMetadata
+): Record<string, ModelMetadata> =>
+  Object.fromEntries(
+    prefixes.map((prefix) => [
+      prefix ? `${prefix}.${baseModelId}` : baseModelId,
+      { ...metadata },
+    ])
+  );
+
 export const modelMetadata: Record<string, ModelMetadata> = {
   // ==== Text ===
 
   // Anthropic
-  'anthropic.claude-3-5-sonnet-20241022-v2:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Claude 3.5 Sonnet v2',
-  },
-  'anthropic.claude-3-5-haiku-20241022-v1:0': {
+  ...withPrefixes(
+    'anthropic.claude-3-5-sonnet-20241022-v2:0',
+    ['', 'us', 'apac'],
+    {
+      flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+      displayName: 'Claude 3.5 Sonnet v2',
+    }
+  ),
+  ...withPrefixes('anthropic.claude-3-5-haiku-20241022-v1:0', ['', 'us'], {
     flags: {
       ...MODEL_FEATURE.TEXT_DOC_IMAGE,
       ...MODEL_FEATURE.LIGHT,
     },
     displayName: 'Claude 3.5 Haiku',
-  },
-  'anthropic.claude-3-5-sonnet-20240620-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Claude 3.5 Sonnet',
-  },
-  'anthropic.claude-3-opus-20240229-v1:0': {
+  }),
+  ...withPrefixes(
+    'anthropic.claude-3-5-sonnet-20240620-v1:0',
+    ['', 'us', 'eu', 'apac'],
+    {
+      flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+      displayName: 'Claude 3.5 Sonnet',
+    }
+  ),
+  ...withPrefixes('anthropic.claude-3-opus-20240229-v1:0', ['', 'us'], {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
     displayName: 'Claude 3 Opus',
-  },
-  'anthropic.claude-3-sonnet-20240229-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-      ...MODEL_FEATURE.LEGACY,
-    },
-    displayName: 'Claude 3 Sonnet',
-  },
-  'anthropic.claude-3-haiku-20240307-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Claude 3 Haiku',
-  },
-  'us.anthropic.claude-opus-4-5-20251101-v1:0': {
+  }),
+  ...withPrefixes(
+    'anthropic.claude-3-sonnet-20240229-v1:0',
+    ['', 'us', 'eu', 'apac'],
+    {
+      flags: {
+        ...MODEL_FEATURE.TEXT_DOC_IMAGE,
+        ...MODEL_FEATURE.LIGHT,
+        ...MODEL_FEATURE.LEGACY,
+      },
+      displayName: 'Claude 3 Sonnet',
+    }
+  ),
+  ...withPrefixes(
+    'anthropic.claude-3-haiku-20240307-v1:0',
+    ['', 'us', 'eu', 'apac'],
+    {
+      flags: {
+        ...MODEL_FEATURE.TEXT_DOC_IMAGE,
+        ...MODEL_FEATURE.LIGHT,
+      },
+      displayName: 'Claude 3 Haiku',
+    }
+  ),
+  ...withPrefixes('anthropic.claude-opus-4-5-20251101-v1:0', ['us', 'global'], {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
     displayName: 'Claude Opus 4.5',
-  },
+  }),
   'us.anthropic.claude-opus-4-1-20250805-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
     displayName: 'Claude Opus 4.1',
@@ -139,290 +174,95 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
     displayName: 'Claude Opus 4',
   },
-  'global.anthropic.claude-opus-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
-    displayName: 'Claude Opus 5.5',
-  },
-  'us.anthropic.claude-opus-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
-    displayName: 'Claude Opus 5.5',
-  },
-  'eu.anthropic.claude-opus-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
-    displayName: 'Claude Opus 5.5',
-  },
-  'au.anthropic.claude-opus-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
-    displayName: 'Claude Opus 5.5',
-  },
-  'jp.anthropic.claude-opus-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
-    displayName: 'Claude Opus 5.5',
-  },
-  'global.anthropic.claude-opus-5': {
+  ...withPrefixes(
+    'anthropic.claude-opus-5-5',
+    ['global', 'us', 'eu', 'au', 'jp'],
+    {
+      flags:
+        MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
+      displayName: 'Claude Opus 5.5',
+    }
+  ),
+  ...withPrefixes('anthropic.claude-opus-5', ['global', 'us', 'eu', 'au'], {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Opus 5',
-  },
-  'us.anthropic.claude-opus-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Opus 5',
-  },
-  'eu.anthropic.claude-opus-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Opus 5',
-  },
-  'au.anthropic.claude-opus-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Opus 5',
-  },
-  'global.anthropic.claude-haiku-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Haiku 5.5',
-  },
-  'us.anthropic.claude-haiku-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Haiku 5.5',
-  },
-  'eu.anthropic.claude-haiku-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Haiku 5.5',
-  },
-  'au.anthropic.claude-haiku-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Haiku 5.5',
-  },
-  'jp.anthropic.claude-haiku-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Haiku 5.5',
-  },
-  'global.anthropic.claude-opus-4-8': {
+  }),
+  ...withPrefixes(
+    'anthropic.claude-haiku-5-5',
+    ['global', 'us', 'eu', 'au', 'jp'],
+    {
+      flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
+      displayName: 'Claude Haiku 5.5',
+    }
+  ),
+  ...withPrefixes('anthropic.claude-opus-4-8', ['global', 'us', 'eu', 'jp'], {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Opus 4.8',
-  },
-  'us.anthropic.claude-opus-4-8': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Opus 4.8',
-  },
-  'eu.anthropic.claude-opus-4-8': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Opus 4.8',
-  },
-  'jp.anthropic.claude-opus-4-8': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Opus 4.8',
-  },
-  'global.anthropic.claude-opus-4-7': {
+  }),
+  ...withPrefixes('anthropic.claude-opus-4-7', ['global', 'us', 'eu', 'jp'], {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
     displayName: 'Claude Opus 4.7',
-  },
-  'us.anthropic.claude-opus-4-7': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Opus 4.7',
-  },
-  'eu.anthropic.claude-opus-4-7': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Opus 4.7',
-  },
-  'jp.anthropic.claude-opus-4-7': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_NO_SAMPLING,
-    displayName: 'Claude Opus 4.7',
-  },
-  'global.anthropic.claude-opus-4-6-v1': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
-    displayName: 'Claude Opus 4.6',
-  },
-  'us.anthropic.claude-opus-4-6-v1': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
-    displayName: 'Claude Opus 4.6',
-  },
-  'au.anthropic.claude-opus-4-6-v1': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
-    displayName: 'Claude Opus 4.6',
-  },
-  'eu.anthropic.claude-opus-4-6-v1': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
-    displayName: 'Claude Opus 4.6',
-  },
-  'global.anthropic.claude-sonnet-5-5': {
+  }),
+  ...withPrefixes(
+    'anthropic.claude-opus-4-6-v1',
+    ['global', 'us', 'au', 'eu'],
+    {
+      flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
+      displayName: 'Claude Opus 4.6',
+    }
+  ),
+  ...withPrefixes('anthropic.claude-sonnet-5-5', ['global', 'us'], {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
     displayName: 'Claude Sonnet 5.5',
-  },
-  'us.anthropic.claude-sonnet-5-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
-    displayName: 'Claude Sonnet 5.5',
-  },
-  'global.anthropic.claude-sonnet-5': {
+  }),
+  ...withPrefixes('anthropic.claude-sonnet-5', ['global', 'us'], {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
     displayName: 'Claude Sonnet 5',
-  },
-  'us.anthropic.claude-sonnet-5': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
-    displayName: 'Claude Sonnet 5',
-  },
+  }),
   'global.anthropic.claude-fable-5': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING_ALWAYS_ON_NO_SAMPLING,
     displayName: 'Claude Fable 5',
   },
-  'global.anthropic.claude-sonnet-4-6': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
-    displayName: 'Claude Sonnet 4.6',
-  },
-  'us.anthropic.claude-sonnet-4-6': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
-    displayName: 'Claude Sonnet 4.6',
-  },
-  'eu.anthropic.claude-sonnet-4-6': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
-    displayName: 'Claude Sonnet 4.6',
-  },
-  'au.anthropic.claude-sonnet-4-6': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
-    displayName: 'Claude Sonnet 4.6',
-  },
-  'jp.anthropic.claude-sonnet-4-6': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
-    displayName: 'Claude Sonnet 4.6',
-  },
-  'global.anthropic.claude-opus-4-5-20251101-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Opus 4.5',
-  },
-  'global.anthropic.claude-sonnet-4-5-20250929-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Sonnet 4.5',
-  },
-  'us.anthropic.claude-sonnet-4-5-20250929-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Sonnet 4.5',
-  },
-  'eu.anthropic.claude-sonnet-4-5-20250929-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Sonnet 4.5',
-  },
-  'jp.anthropic.claude-sonnet-4-5-20250929-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Sonnet 4.5',
-  },
-  'global.anthropic.claude-haiku-4-5-20251001-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Haiku 4.5',
-  },
-  'us.anthropic.claude-haiku-4-5-20251001-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Haiku 4.5',
-  },
-  'eu.anthropic.claude-haiku-4-5-20251001-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Haiku 4.5',
-  },
-  'jp.anthropic.claude-haiku-4-5-20251001-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Haiku 4.5',
-  },
-  'global.anthropic.claude-sonnet-4-20250514-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Sonnet 4',
-  },
-  'us.anthropic.claude-sonnet-4-20250514-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Sonnet 4',
-  },
-  'us.anthropic.claude-3-7-sonnet-20250219-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude 3.7 Sonnet',
-  },
-  'us.anthropic.claude-3-5-sonnet-20241022-v2:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Claude 3.5 Sonnet v2',
-  },
-  'us.anthropic.claude-3-5-haiku-20241022-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Claude 3.5 Haiku',
-  },
-  'us.anthropic.claude-3-5-sonnet-20240620-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Claude 3.5 Sonnet',
-  },
-  'us.anthropic.claude-3-opus-20240229-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Claude 3 Opus',
-  },
-  'us.anthropic.claude-3-sonnet-20240229-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-      ...MODEL_FEATURE.LEGACY,
-    },
-    displayName: 'Claude 3 Sonnet',
-  },
-  'us.anthropic.claude-3-haiku-20240307-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Claude 3 Haiku',
-  },
-  'eu.anthropic.claude-sonnet-4-20250514-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Sonnet 4',
-  },
-  'eu.anthropic.claude-3-7-sonnet-20250219-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude 3.7 Sonnet',
-  },
-  'eu.anthropic.claude-3-5-sonnet-20240620-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Claude 3.5 Sonnet',
-  },
-  'eu.anthropic.claude-3-sonnet-20240229-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-      ...MODEL_FEATURE.LEGACY,
-    },
-    displayName: 'Claude 3 Sonnet',
-  },
-  'eu.anthropic.claude-3-haiku-20240307-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Claude 3 Haiku',
-  },
-  'apac.anthropic.claude-sonnet-4-20250514-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude Sonnet 4',
-  },
-  'apac.anthropic.claude-3-7-sonnet-20250219-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
-    displayName: 'Claude 3.7 Sonnet',
-  },
-  'apac.anthropic.claude-3-5-sonnet-20241022-v2:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Claude 3.5 Sonnet v2',
-  },
-  'apac.anthropic.claude-3-5-sonnet-20240620-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Claude 3.5 Sonnet',
-  },
-  'apac.anthropic.claude-3-sonnet-20240229-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-      ...MODEL_FEATURE.LEGACY,
-    },
-    displayName: 'Claude 3 Sonnet',
-  },
-  'apac.anthropic.claude-3-haiku-20240307-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Claude 3 Haiku',
-  },
+  ...withPrefixes(
+    'anthropic.claude-sonnet-4-6',
+    ['global', 'us', 'eu', 'au', 'jp'],
+    {
+      flags: MODEL_FEATURE.TEXT_DOC_IMAGE_ADAPTIVE_THINKING,
+      displayName: 'Claude Sonnet 4.6',
+    }
+  ),
+  ...withPrefixes(
+    'anthropic.claude-sonnet-4-5-20250929-v1:0',
+    ['global', 'us', 'eu', 'jp'],
+    {
+      flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+      displayName: 'Claude Sonnet 4.5',
+    }
+  ),
+  ...withPrefixes(
+    'anthropic.claude-haiku-4-5-20251001-v1:0',
+    ['global', 'us', 'eu', 'jp'],
+    {
+      flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+      displayName: 'Claude Haiku 4.5',
+    }
+  ),
+  ...withPrefixes(
+    'anthropic.claude-sonnet-4-20250514-v1:0',
+    ['global', 'us', 'eu', 'apac'],
+    {
+      flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+      displayName: 'Claude Sonnet 4',
+    }
+  ),
+  ...withPrefixes(
+    'anthropic.claude-3-7-sonnet-20250219-v1:0',
+    ['us', 'eu', 'apac'],
+    {
+      flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+      displayName: 'Claude 3.7 Sonnet',
+    }
+  ),
   // Amazon Titan
   'amazon.titan-text-express-v1': {
     flags: MODEL_FEATURE.TEXT_DOC,
@@ -444,99 +284,39 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     },
     displayName: 'Nova Lite',
   },
-  'amazon.nova-micro-v1:0': {
+  ...withPrefixes('amazon.nova-micro-v1:0', ['', 'us', 'eu', 'apac'], {
     flags: {
       ...MODEL_FEATURE.TEXT_ONLY,
       ...MODEL_FEATURE.LIGHT,
     },
     displayName: 'Nova Micro',
-  },
+  }),
 
-  // S3 Video Upload only supports us-east-1.
-  // If you want to use Video, please use amazon.nova-pro-v1:0 in us-east-1.
-  // (Note: If RAG is enabled, it will be deleted when the region is changed)
   'us.amazon.nova-premier-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
     displayName: 'Nova Premier',
   },
-  'us.amazon.nova-pro-v1:0': {
+  // S3 Video Upload only supports us-east-1.
+  // If you want to use Video, please use amazon.nova-pro-v1:0 in us-east-1.
+  // (Note: If RAG is enabled, it will be deleted when the region is changed)
+  ...withPrefixes('amazon.nova-pro-v1:0', ['us', 'eu', 'apac'], {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
     displayName: 'Nova Pro',
-  },
-  'us.amazon.nova-lite-v1:0': {
+  }),
+  ...withPrefixes('amazon.nova-lite-v1:0', ['us', 'eu', 'apac'], {
     flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE, // Same as above
+      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
       ...MODEL_FEATURE.LIGHT,
     },
     displayName: 'Nova Lite',
-  },
-  'us.amazon.nova-micro-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_ONLY,
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Nova Micro',
-  },
-  'us.amazon.nova-2-lite-v1:0': {
-    // TODO: Enable Reasoning
+  }),
+  ...withPrefixes('amazon.nova-2-lite-v1:0', ['us', 'jp', 'global'], {
     flags: {
       ...MODEL_FEATURE.TEXT_DOC_IMAGE,
       ...MODEL_FEATURE.LIGHT,
     },
     displayName: 'Nova Lite 2',
-  },
-  'eu.amazon.nova-pro-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE, // Same as above
-    displayName: 'Nova Pro',
-  },
-  'eu.amazon.nova-lite-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE, // Same as above
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Nova Lite',
-  },
-  'eu.amazon.nova-micro-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_ONLY,
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Nova Micro',
-  },
-  'apac.amazon.nova-pro-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE, // Same as above
-    displayName: 'Nova Pro',
-  },
-  'apac.amazon.nova-lite-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE, // Same as above
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Nova Lite',
-  },
-  'apac.amazon.nova-micro-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_ONLY,
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Nova Micro',
-  },
-  'jp.amazon.nova-2-lite-v1:0': {
-    // TODO: Enable Reasoning
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Nova Lite 2',
-  },
-  'global.amazon.nova-2-lite-v1:0': {
-    // TODO: Enable Reasoning
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-      ...MODEL_FEATURE.LIGHT,
-    },
-    displayName: 'Nova Lite 2',
-  },
+  }),
   // Meta
   'meta.llama3-8b-instruct-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC,
@@ -607,14 +387,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_DOC,
     displayName: 'Mistral Large 2 (24.07)',
   },
-  'us.mistral.pixtral-large-2502-v1:0': {
+  ...withPrefixes('mistral.pixtral-large-2502-v1:0', ['us', 'eu'], {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
     displayName: 'Pixtral Large (25.02)',
-  },
-  'eu.mistral.pixtral-large-2502-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Pixtral Large (25.02)',
-  },
+  }),
   'mistral.mistral-large-3-675b-instruct': {
     flags: MODEL_FEATURE.TEXT_ONLY,
     displayName: 'Mistral Large 3',
@@ -701,70 +477,38 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   },
   // GPT-6.1 / GPT-6 / GPT-5.6: Converse rejects temperature, topP and document blocks.
   // Only global. and us. inference profiles exist.
-  'global.openai.gpt-6.1-sol': {
+  ...withPrefixes('openai.gpt-6.1-sol', ['global', 'us'], {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-6.1 Sol',
-  },
-  'us.openai.gpt-6.1-sol': {
-    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
-    displayName: 'GPT-6.1 Sol',
-  },
-  'global.openai.gpt-6.1-terra': {
+  }),
+  ...withPrefixes('openai.gpt-6.1-terra', ['global', 'us'], {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-6.1 Terra',
-  },
-  'us.openai.gpt-6.1-terra': {
-    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
-    displayName: 'GPT-6.1 Terra',
-  },
-  'global.openai.gpt-6-sol': {
+  }),
+  ...withPrefixes('openai.gpt-6-sol', ['global', 'us'], {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-6 Sol',
-  },
-  'us.openai.gpt-6-sol': {
-    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
-    displayName: 'GPT-6 Sol',
-  },
-  'global.openai.gpt-6-luna': {
+  }),
+  ...withPrefixes('openai.gpt-6-luna', ['global', 'us'], {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-6 Luna',
-  },
-  'us.openai.gpt-6-luna': {
-    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
-    displayName: 'GPT-6 Luna',
-  },
-  'global.openai.gpt-6-astra': {
+  }),
+  ...withPrefixes('openai.gpt-6-astra', ['global', 'us'], {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-6 Astra',
-  },
-  'us.openai.gpt-6-astra': {
-    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
-    displayName: 'GPT-6 Astra',
-  },
-  'global.openai.gpt-5.6-sol': {
+  }),
+  ...withPrefixes('openai.gpt-5.6-sol', ['global', 'us'], {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-5.6 Sol',
-  },
-  'us.openai.gpt-5.6-sol': {
-    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
-    displayName: 'GPT-5.6 Sol',
-  },
-  'global.openai.gpt-5.6-luna': {
+  }),
+  ...withPrefixes('openai.gpt-5.6-luna', ['global', 'us'], {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-5.6 Luna',
-  },
-  'us.openai.gpt-5.6-luna': {
-    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
-    displayName: 'GPT-5.6 Luna',
-  },
-  'global.openai.gpt-5.6-terra': {
+  }),
+  ...withPrefixes('openai.gpt-5.6-terra', ['global', 'us'], {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'GPT-5.6 Terra',
-  },
-  'us.openai.gpt-5.6-terra': {
-    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
-    displayName: 'GPT-5.6 Terra',
-  },
+  }),
   // Google
   'google.gemma-3-4b-it': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
@@ -793,22 +537,14 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   // Kimi K3 supports text and image input (video is not supported on Bedrock).
   // Documents are excluded because the Converse API rejects document inputs for this model.
   // Sampling params (temperature / topP) are rejected by this model, so noSamplingParams is set.
-  'us.moonshotai.kimi-k3': {
+  ...withPrefixes('moonshotai.kimi-k3', ['us', 'global'], {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'Kimi K3',
-  },
-  'global.moonshotai.kimi-k3': {
-    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
-    displayName: 'Kimi K3',
-  },
-  'us.moonshotai.kimi-k3.1': {
+  }),
+  ...withPrefixes('moonshotai.kimi-k3.1', ['us', 'global'], {
     flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
     displayName: 'Kimi K3.1',
-  },
-  'global.moonshotai.kimi-k3.1': {
-    flags: MODEL_FEATURE.TEXT_IMAGE_NO_SAMPLING,
-    displayName: 'Kimi K3.1',
-  },
+  }),
   // NVIDIA
   'nvidia.nemotron-nano-9b-v2': {
     flags: MODEL_FEATURE.TEXT_ONLY,
