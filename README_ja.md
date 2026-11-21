@@ -13,6 +13,17 @@
 > [!IMPORTANT]
 > GenU は v4 より多言語対応しました。
 
+## 最近のアップデート
+
+最新のリリースは [v5.5.0](https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.5.0) です。次のリリース v5.6.0 には以下が含まれる予定です。
+
+- 全ユーザーのトークン使用量と推定コストを確認できる管理者ページ
+- 閉域モードでの、閉域 VPC 内の AgentCore と、利用する機能の分だけの VPC エンドポイント
+- Knowledge Base での S3 Vectors と Guardrails
+- Claude 5.5 のモデル、OpenAI GPT-6、Kimi K3
+
+各リリースの内容とアップデート前の確認事項は [リリースノート](docs/ja/RELEASE_NOTES.md) をご参照ください。
+
 ## GenU 活用パターン集
 
 GenU の機能やオプションを活用パターンごとに紹介いたします。網羅的なデプロイオプションに関しては [こちら](docs/ja/DEPLOY_OPTION.md) をご参照ください。
@@ -201,6 +212,7 @@ npm run cdk:deploy:quick
 
 - [デプロイオプション](docs/ja/DEPLOY_OPTION.md)
 - [アップデート方法](docs/ja/UPDATE.md)
+- [リリースノート](docs/ja/RELEASE_NOTES.md)
 - [ローカル開発環境構築手順](docs/ja/DEVELOPMENT.md)
 - [リソースの削除方法](docs/ja/DESTROY.md)
 - [ネイティブアプリのように利用する方法](docs/ja/PWA.md)

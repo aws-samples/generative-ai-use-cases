@@ -15,6 +15,17 @@ Well-architected application implementation with business use cases for utilizin
 >
 > GenU は v4 から多言語対応しました。日本語ドキュメントは[こちら](./README_ja.md)
 
+## What's New
+
+The latest release is [v5.5.0](https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.5.0). The next release, v5.6.0, will include:
+
+- An admin page for every user's token usage and estimated cost
+- AgentCore inside the closed VPC, and only the VPC endpoints in use in closed network mode
+- S3 Vectors and Guardrails for the Knowledge Base
+- Claude 5.5 models, OpenAI GPT-6, and Kimi K3
+
+See the [Release Notes](docs/en/RELEASE_NOTES.md) for every release and what to check before updating.
+
 ## GenU Usage Patterns
 
 Here we introduce GenU's features and options by usage pattern. For comprehensive deployment options, please refer to [this document](docs/en/DEPLOY_OPTION.md).
@@ -204,6 +215,7 @@ npm run cdk:deploy:quick
 
 - [Deployment Options](docs/en/DEPLOY_OPTION.md)
 - [Update Method](docs/en/UPDATE.md)
+- [Release Notes](docs/en/RELEASE_NOTES.md)
 - [Local Development Environment Setup](docs/en/DEVELOPMENT.md)
 - [Resource Deletion Method](docs/en/DESTROY.md)
 - [How to Use as a Native App](docs/en/PWA.md)
