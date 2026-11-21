@@ -729,7 +729,9 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
       </div>
 
       <div className="mt-5 rounded border border-black/30 p-1.5">
-        <Markdown>{typingTextOutput}</Markdown>
+        <Markdown generating={loading || typingTextOutput !== text}>
+          {typingTextOutput}
+        </Markdown>
         {!loading && text === '' && (
           <div className="text-gray-500">
             {t('useCaseBuilder.resultPlaceholder')}
