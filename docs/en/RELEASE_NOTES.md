@@ -1,5 +1,7 @@
 # Release Notes
 
+<!-- The Highlights section of each release is also shown on the settings page of the app. Write it for the people who use GenU, and put details for administrators under "For administrators" or "Before you update". -->
+
 This page summarizes each GenU release. The full list of changes for each release is on the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases).
 
 GenU is deployed and updated from release tags (see [Update Method](./UPDATE.md)). Before updating, read every release between your current version and the new one, especially the **Before you update** sections.
@@ -10,16 +12,20 @@ These changes are merged into the `main` branch and will be included in the next
 
 ### Highlights
 
-- **Admin page for token usage and cost**: members of the new Cognito group `SystemAdminGroup` can see every user's token usage and estimated cost at `/admin`, filter by user and period, and download a CSV. Each user sees their own usage and cost in the new Usage tab in Settings. Bedrock calls carry usage tags (`genu_user`, `genu_usecase`) that appear in the model invocation logs. (#1827)
-- **Closed network mode improvements**: the AgentCore Runtime runs inside the closed VPC, Interface VPC endpoints are created only for the features in use, and settings that do not work in closed network mode are reported as warnings at synth time. (#1814, #1761, #1723)
-- **Chat experience**: the model selector moved into the input toolbar, chat history is grouped by date, the selected model and reasoning settings are kept across reloads, Markdown tables can be copied for spreadsheets, and the chat model is told today's date. (#1788, #1781, #1787, #1782, #1786)
-- **Sidebar and settings**: the sidebar can be collapsed to icons and resized, and each user picks the use cases it shows (favorites). The settings page is split into General, Usage, Account and System tabs; the usage icon in the sidebar moved to the Usage tab, and `/stats` still works. (#1830, #1831)
-- **Model end-of-life warnings**: `cdk synth` / `cdk deploy` warn about each configured model that Bedrock no longer offers or that has an end-of-life date, and say which parameter to change. The deployment continues. (#1832)
-- **Knowledge Base**: S3 Vectors as an alternative vector store, and Guardrails for the Knowledge Base chat. (#1471, #1649)
-- **Speech**: voice and language selection in Voice Chat, a choice of auto-detect languages for speech recognition in Settings, and Amazon Nova 2.5 Sonic for speech-to-speech. (#1727, #1779, #1726)
-- **Agent Builder**: agent definitions can be shared as JSON. (#1689)
+- **Chat**: the model selector moved into the input toolbar, chat history is grouped by date, the selected model and reasoning settings are kept across reloads, Markdown tables can be copied for pasting into spreadsheets, and the chat model knows today's date. (#1788, #1781, #1787, #1782, #1786)
+- **Sidebar and settings**: the sidebar can be collapsed to icons and resized, and each user chooses the use cases it shows (favorites). The settings page has General, Usage, Account and System tabs; the Usage tab shows each user's own token usage and cost, and the System tab shows these release notes. (#1830, #1831)
+- **Speech**: voice and language selection in Voice Chat, a choice of languages for automatic language detection in speech recognition (Settings), and Amazon Nova 2.5 Sonic for Voice Chat. (#1727, #1779, #1726)
+- **RAG chat (Knowledge Base)**: S3 Vectors can be used as a lower-cost vector store, and guardrails also check RAG chat answers. (#1471, #1649)
+- **Agent Builder**: agent definitions can be shared as JSON files. (#1689)
 - **New models**: Claude Opus 5, Claude Fable 5, Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5, Claude Fable 5.1 / 5.2, OpenAI GPT-6 / GPT-6.1 / GPT-6.2 Sol / GPT-6.2 Astra / GPT-5.4 / GPT-5.5 / GPT-5.6, Moonshot AI Kimi K3 / K3.1 / K2.5, Grok 4.6 / 4.7, GLM 5, DeepSeek V3.2, MiniMax M2.5, NVIDIA Nemotron 3 Super 120B, Qwen3 Coder Next, Palmyra Vision 7B. (#1652, #1646, #1707, #1712, #1724, #1709, #1755, #1704, #1795, #1832)
-- **Update tooling**: the deployment and update guides now use release tags, `deploy.sh` deploys the latest release by default (`--ref` selects another one), and a `genu-update` agent skill helps merge a new release into a customized branch. (#1766, #1777)
+
+### For administrators
+
+- An admin page shows every user's token usage and estimated cost, with filters by user and period and a CSV download. Bedrock calls are tagged with the user and the use case, so usage can also be analyzed in the model invocation logs. (#1827)
+- Administrators are told in the System tab of the settings page when a newer release is available.
+- Closed network mode runs AgentCore inside the closed VPC, creates only the VPC endpoints for the features in use, and warns at deploy time about settings that do not work in a closed network. (#1814, #1761, #1723)
+- Deployments warn about models that Bedrock no longer offers or will retire. (#1832)
+- The deployment and update guides use release tags, and an agent skill helps merge a new release into a customized deployment. (#1766, #1777)
 
 ### Before you update
 
@@ -29,12 +35,12 @@ These changes are merged into the `main` branch and will be included in the next
 - **End-of-life warnings with the default settings**: the default image model `stability.stable-image-core-v1:1` is Legacy (end of life 2027-05-09), so the default settings show one warning at deploy time. Bedrock has no active text-to-image model to switch to yet. (#1832)
 - **Model capabilities corrected**: Mistral Large 3 and Ministral 3 accept image attachments, Gemma 3 no longer accepts document attachments, and DeepSeek-R1 no longer shows the reasoning option, to match what Bedrock accepts. (#1832)
 - **Default Knowledge Base advanced parsing model**: the default is now `global.anthropic.claude-sonnet-4-6`, because the previous default (Claude 3 Sonnet) reached end of life on 2026-11-13. (#1813)
-- **Closed network mode**:
-  - VPC endpoints of features that are not enabled are deleted. If other workloads in an imported VPC use them, list them in `closedNetworkAdditionalVpcEndpoints` before deploying.
-  - The test instance type changes to `t3.large`. Set `closedNetworkTestEnvironmentInstanceType: 'r6i.large'` to keep the previous type.
-  - If AgentCore is enabled, its runtime moves into the closed VPC, and `agentCoreRegion` must equal `region`. `researchAgentEnabled` cannot be combined with closed network mode.
-  - The API Gateway resource policy changes form, and the API deployment is recreated. Requests from endpoints that are not allowed now get 403 instead of 401. (#1814, #1723)
+- **Closed network mode: VPC endpoints**: VPC endpoints of features that are not enabled are deleted. If other workloads in an imported VPC use them, list them in `closedNetworkAdditionalVpcEndpoints` before deploying.
+- **Closed network mode: test instance**: the test instance type changes to `t3.large`. Set `closedNetworkTestEnvironmentInstanceType: 'r6i.large'` to keep the previous type.
+- **Closed network mode: AgentCore**: if AgentCore is enabled, its runtime moves into the closed VPC, and `agentCoreRegion` must equal `region`. `researchAgentEnabled` cannot be combined with closed network mode.
+- **Closed network mode: API Gateway**: the API Gateway resource policy changes form, and the API deployment is recreated. Requests from endpoints that are not allowed now get 403 instead of 401. (#1814, #1723)
 - **New Cognito group**: `SystemAdminGroup` is created. If the user pool already has a group with this name, the update fails. (#1827)
+- **Settings page**: the list of recent pull requests on the System tab is replaced by the release notes of the deployed version, read from `docs/en/RELEASE_NOTES.md` and `docs/ja/RELEASE_NOTES.md` at build time. The notice of a newer release is shown only to members of `SystemAdminGroup` and compares the full version with the latest release on GitHub.
 - **Meeting minutes transcription** starts with automatic language detection (Japanese and English by default) instead of the UI language. The languages can be changed in Settings. (#1779)
 
 ### Fixes
