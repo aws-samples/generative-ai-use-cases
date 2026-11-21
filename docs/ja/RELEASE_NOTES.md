@@ -18,7 +18,7 @@ GenU はリリースタグからデプロイ・アップデートします ([ア
 - **Knowledge Base**: ベクトルストアとして S3 Vectors を選べるようになり、Knowledge Base チャットで Guardrails を使えるようになりました。(#1471, #1649)
 - **音声**: 音声チャットで声と言語を選択、設定画面で音声認識の自動判別の対象言語を選択、speech-to-speech で Amazon Nova 2.5 Sonic を利用できるようになりました。(#1727, #1779, #1726)
 - **Agent Builder**: エージェントの定義を JSON で共有できるようになりました。(#1689)
-- **新しいモデル**: Claude Opus 5、Claude Fable 5、Claude Opus 5.5、Claude Sonnet 5.5、Claude Haiku 5.5、OpenAI GPT-6 / GPT-6.1 / GPT-5.6、Claude Fable 5.1 / 5.2、OpenAI GPT-6 / GPT-6.1 / GPT-6.2 Sol / GPT-6.2 Astra / GPT-5.4 / GPT-5.5 / GPT-5.6、Moonshot AI Kimi K3 / K3.1 / K2.5、Grok 4.6 / 4.7、GLM 5、DeepSeek V3.2、MiniMax M2.5、NVIDIA Nemotron 3 Super 120B、Qwen3 Coder Next、Palmyra Vision 7B。(#1652, #1646, #1707, #1712, #1724, #1709, #1755, #1704, #1795, #1832)
+- **新しいモデル**: Claude Opus 5、Claude Fable 5、Claude Opus 5.5、Claude Sonnet 5.5、Claude Haiku 5.5、Claude Fable 5.1 / 5.2、OpenAI GPT-6 / GPT-6.1 / GPT-6.2 Sol / GPT-6.2 Astra / GPT-5.4 / GPT-5.5 / GPT-5.6、Moonshot AI Kimi K3 / K3.1 / K2.5、Grok 4.6 / 4.7、GLM 5、DeepSeek V3.2、MiniMax M2.5、NVIDIA Nemotron 3 Super 120B、Qwen3 Coder Next、Palmyra Vision 7B。(#1652, #1646, #1707, #1712, #1724, #1709, #1755, #1704, #1795, #1832)
 - **アップデートの支援**: デプロイとアップデートの手順がリリースタグを使う形になり、`deploy.sh` はデフォルトで最新のリリースをデプロイします (`--ref` で別のリリースを指定できます)。カスタマイズしたブランチに新しいリリースをマージするための `genu-update` エージェントスキルを追加しました。(#1766, #1777)
 
 ### アップデート前の確認事項

@@ -18,7 +18,7 @@ These changes are merged into the `main` branch and will be included in the next
 - **Knowledge Base**: S3 Vectors as an alternative vector store, and Guardrails for the Knowledge Base chat. (#1471, #1649)
 - **Speech**: voice and language selection in Voice Chat, a choice of auto-detect languages for speech recognition in Settings, and Amazon Nova 2.5 Sonic for speech-to-speech. (#1727, #1779, #1726)
 - **Agent Builder**: agent definitions can be shared as JSON. (#1689)
-- **New models**: Claude Opus 5, Claude Fable 5, Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5, OpenAI GPT-6 / GPT-6.1 / GPT-5.6, Claude Fable 5.1 / 5.2, OpenAI GPT-6 / GPT-6.1 / GPT-6.2 Sol / GPT-6.2 Astra / GPT-5.4 / GPT-5.5 / GPT-5.6, Moonshot AI Kimi K3 / K3.1 / K2.5, Grok 4.6 / 4.7, GLM 5, DeepSeek V3.2, MiniMax M2.5, NVIDIA Nemotron 3 Super 120B, Qwen3 Coder Next, Palmyra Vision 7B. (#1652, #1646, #1707, #1712, #1724, #1709, #1755, #1704, #1795, #1832)
+- **New models**: Claude Opus 5, Claude Fable 5, Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5, Claude Fable 5.1 / 5.2, OpenAI GPT-6 / GPT-6.1 / GPT-6.2 Sol / GPT-6.2 Astra / GPT-5.4 / GPT-5.5 / GPT-5.6, Moonshot AI Kimi K3 / K3.1 / K2.5, Grok 4.6 / 4.7, GLM 5, DeepSeek V3.2, MiniMax M2.5, NVIDIA Nemotron 3 Super 120B, Qwen3 Coder Next, Palmyra Vision 7B. (#1652, #1646, #1707, #1712, #1724, #1709, #1755, #1704, #1795, #1832)
 - **Update tooling**: the deployment and update guides now use release tags, `deploy.sh` deploys the latest release by default (`--ref` selects another one), and a `genu-update` agent skill helps merge a new release into a customized branch. (#1766, #1777)
 
 ### Before you update
