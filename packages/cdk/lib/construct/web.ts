@@ -169,15 +169,15 @@ export class Web extends Construct {
 
       if (
         props.cert &&
-        props.hostName &&
         props.domainName &&
         props.hostedZoneId
       ) {
+        const fqdn = props.hostName
+          ? `${props.hostName}.${props.domainName}`
+          : props.domainName;
         cloudFrontToS3Props.cloudFrontDistributionProps.certificate =
           props.cert;
-        cloudFrontToS3Props.cloudFrontDistributionProps.domainNames = [
-          `${props.hostName}.${props.domainName}`,
-        ];
+        cloudFrontToS3Props.cloudFrontDistributionProps.domainNames = [fqdn];
       }
 
       const { cloudFrontWebDistribution, s3BucketInterface } =
@@ -185,10 +185,12 @@ export class Web extends Construct {
 
       if (
         props.cert &&
-        props.hostName &&
         props.domainName &&
         props.hostedZoneId
       ) {
+        const fqdn = props.hostName
+          ? `${props.hostName}.${props.domainName}`
+          : props.domainName;
         // DNS record for custom domain
         const hostedZone = HostedZone.fromHostedZoneAttributes(
           this,
@@ -200,12 +202,14 @@ export class Web extends Construct {
         );
         new ARecord(this, 'ARecord', {
           zone: hostedZone,
-          recordName: props.hostName,
+          // For zone apex, recordName is undefined (Route 53 treats it as the
+          // zone root).  For a subdomain, it is the host part.
+          recordName: props.hostName ?? undefined,
           target: RecordTarget.fromAlias(
             new CloudFrontTarget(cloudFrontWebDistribution)
           ),
         });
-        this.webUrl = `https://${props.hostName}.${props.domainName}`;
+        this.webUrl = `https://${fqdn}`;
       } else {
         this.webUrl = `https://${cloudFrontWebDistribution.domainName}`;
       }
