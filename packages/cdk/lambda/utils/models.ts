@@ -1859,8 +1859,10 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  // The 128K context window must also hold the prompt, so maxTokens of 131072
+  // is rejected (verified with npm run models:verify).
   'mistral.ministral-3-3b-instruct': {
-    defaultParams: DEFAULT_128K_DEFAULT_PARAMS,
+    defaultParams: DEFAULT_64K_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
     createConverseStreamCommandInput: createConverseStreamCommandInput,
@@ -1868,7 +1870,7 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
   'mistral.ministral-3-8b-instruct': {
-    defaultParams: DEFAULT_128K_DEFAULT_PARAMS,
+    defaultParams: DEFAULT_64K_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
     createConverseStreamCommandInput: createConverseStreamCommandInput,
@@ -1876,7 +1878,7 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
   'mistral.ministral-3-14b-instruct': {
-    defaultParams: DEFAULT_128K_DEFAULT_PARAMS,
+    defaultParams: DEFAULT_64K_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
     createConverseStreamCommandInput: createConverseStreamCommandInput,

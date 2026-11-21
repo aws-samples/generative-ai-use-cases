@@ -167,7 +167,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Claude Opus 4.5',
   }),
   'us.anthropic.claude-opus-4-1-20250805-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Claude Opus 4.1',
   },
   'us.anthropic.claude-opus-4-20250514-v1:0': {
@@ -235,7 +238,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     'anthropic.claude-sonnet-4-5-20250929-v1:0',
     ['global', 'us', 'eu', 'jp'],
     {
-      flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+      flags: {
+        ...MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+        ...MODEL_FEATURE.LEGACY,
+      },
       displayName: 'Claude Sonnet 4.5',
     }
   ),
@@ -319,19 +325,31 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   }),
   // Meta
   'meta.llama3-8b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Llama 3 8B Instruct',
   },
   'meta.llama3-70b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Llama 3 70B Instruct',
   },
   'meta.llama3-1-8b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Llama 3.1 8B Instruct',
   },
   'meta.llama3-1-70b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Llama 3.1 70B Instruct',
   },
   'meta.llama3-1-405b-instruct-v1:0': {
@@ -355,24 +373,39 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Llama 3.2 90B Vision Instruct',
   },
   'us.meta.llama3-3-70b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Llama 3.3 70B Instruct',
   },
   'us.meta.llama4-maverick-17b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Llama 4 Maverick 17B Instruct',
   },
   'us.meta.llama4-scout-17b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Llama 4 Scout 17B Instruct',
   },
   // Mistral
   'mistral.mistral-7b-instruct-v0:2': {
-    flags: MODEL_FEATURE.TEXT_DOC,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Mistral 7B Instruct',
   },
   'mistral.mixtral-8x7b-instruct-v0:1': {
-    flags: MODEL_FEATURE.TEXT_DOC,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Mixtral 8x7B Instruct',
   },
   'mistral.mistral-small-2402-v1:0': {
@@ -392,19 +425,19 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Pixtral Large (25.02)',
   }),
   'mistral.mistral-large-3-675b-instruct': {
-    flags: MODEL_FEATURE.TEXT_ONLY,
+    flags: MODEL_FEATURE.TEXT_IMAGE,
     displayName: 'Mistral Large 3',
   },
   'mistral.ministral-3-3b-instruct': {
-    flags: MODEL_FEATURE.TEXT_ONLY,
+    flags: MODEL_FEATURE.TEXT_IMAGE,
     displayName: 'Ministral 3 3B',
   },
   'mistral.ministral-3-8b-instruct': {
-    flags: MODEL_FEATURE.TEXT_ONLY,
+    flags: MODEL_FEATURE.TEXT_IMAGE,
     displayName: 'Ministral 3 8B',
   },
   'mistral.ministral-3-14b-instruct': {
-    flags: MODEL_FEATURE.TEXT_ONLY,
+    flags: MODEL_FEATURE.TEXT_IMAGE,
     displayName: 'Ministral 3 14B',
   },
   'mistral.magistral-small-2509': {
@@ -427,7 +460,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'DeepSeek V3.1',
   },
   'us.deepseek.r1-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_REASONING,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC_REASONING,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'DeepSeek-R1',
   },
   // Qwen
@@ -459,11 +495,17 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   },
   // Writer
   'us.writer.palmyra-x4-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Palmyra X4',
   },
   'us.writer.palmyra-x5-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Palmyra X5',
   },
   // OpenAI
@@ -570,7 +612,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Stable Diffusion XL',
   },
   'stability.stable-image-core-v1:1': {
-    flags: MODEL_FEATURE.IMAGE_GEN,
+    flags: {
+      ...MODEL_FEATURE.IMAGE_GEN,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Stable Image Core v1.1',
   },
   'stability.stable-image-ultra-v1:1': {
@@ -581,7 +626,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Stable Image Ultra v1.1',
   },
   'stability.sd3-5-large-v1:0': {
-    flags: MODEL_FEATURE.IMAGE_GEN,
+    flags: {
+      ...MODEL_FEATURE.IMAGE_GEN,
+      ...MODEL_FEATURE.LEGACY,
+    },
     displayName: 'Stable Diffusion 3.5 Large',
   },
   // Amazon Image Gen
