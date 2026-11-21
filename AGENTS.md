@@ -12,8 +12,9 @@ GenU is an AWS sample application with business use cases for generative AI: cha
 packages/
 ├── cdk/                    # AWS CDK app (infrastructure) and Lambda code
 │   ├── bin/, lib/          # Stacks and constructs; lib/stack-input.ts is the parameter schema
-│   ├── lambda/             # TypeScript Lambda: api/ is the Express API, other files are invoked directly
-│   ├── lambda-python/      # AgentCore runtimes (Python, Strands Agents)
+│   ├── lambda/             # TypeScript Lambda: api/ is the Express API behind API Gateway; other files hold
+│   │                       #   its handlers or are invoked directly by the client (predictStream.ts and others)
+│   ├── lambda-python/      # AgentCore runtimes in Python (generic: Strands Agents, research: Claude Agent SDK)
 │   ├── custom-resources/   # Custom resources
 │   ├── cdk.json, parameter.ts  # Deployment parameters
 │   └── test/               # Jest tests and CloudFormation snapshots
@@ -54,11 +55,11 @@ npm run cdk:diff -- -c env=<env>    # Preview changes to a deployed environment
 ## Rules for changes
 
 - **Existing deployments**: a change must not delete or replace a resource that holds data (DynamoDB tables, S3 buckets, Cognito user pools, Knowledge Bases and similar). `packages/cdk/test/stateful-resources.test.ts` and the "Stateful resource check" workflow fail when it does. Do not update that snapshot to make the check pass; describe the impact instead.
-- **Parameters**: a new deployment parameter needs a default in `packages/cdk/lib/stack-input.ts` that keeps the current behavior, the same default in `packages/cdk/cdk.json`, and a section in `docs/{en,ja,ko}/DEPLOY_OPTION.md`.
+- **Parameters**: a new deployment parameter needs a default in `packages/cdk/lib/stack-input.ts` that keeps the current behavior, and a section in `docs/{en,ja,ko}/DEPLOY_OPTION.md`. Existing deployments that do not set it must synthesize the same resources as before.
 - **UI text**: put user-facing strings in `packages/web/public/locales/translation/*.yaml` and use i18n. Do not write Japanese strings or comments in code.
 - **Snapshots**: if `npm run cdk:test` shows snapshot differences, check that they are intended, update them, and explain them in the pull request.
 - **Documentation**: when behavior or a parameter changes, update `docs/en`, `docs/ja` and `docs/ko` (and the READMEs if they mention it) in the same pull request.
-- **Release notes**: if users will notice the change, add it to the "Upcoming" section of [docs/en/RELEASE_NOTES.md](docs/en/RELEASE_NOTES.md) and [docs/ja/RELEASE_NOTES.md](docs/ja/RELEASE_NOTES.md). Impact on existing deployments goes under "Before you update" / "アップデート前の確認事項".
+- **Release notes**: if users will notice the change, add it to the "Upcoming" / "次のリリース" section of [docs/en/RELEASE_NOTES.md](docs/en/RELEASE_NOTES.md) and [docs/ja/RELEASE_NOTES.md](docs/ja/RELEASE_NOTES.md). Impact on existing deployments goes under "Before you update" / "アップデート前の確認事項".
 - **Pull requests**: one topic per pull request, using [.github/pull_request_template.md](.github/pull_request_template.md). State the impact on existing users and how the change was verified.
 
 ## Skills
