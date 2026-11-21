@@ -71,6 +71,7 @@ const {
   imageGenModelIds,
   videoGenModelIds,
   speechToSpeechModelIds,
+  flowChatEnabled,
 } = MODELS;
 const useCaseBuilderEnabled: boolean =
   import.meta.env.VITE_APP_USE_CASE_BUILDER_ENABLED === 'true';
@@ -172,10 +173,12 @@ const routes: RouteObject[] = [
         element: <TranscribePage />,
       }
     : null,
-  {
-    path: '/flow-chat',
-    element: <FlowChatPage />,
-  },
+  flowChatEnabled
+    ? {
+        path: '/flow-chat',
+        element: <FlowChatPage />,
+      }
+    : null,
   visionEnabled && enabled('videoAnalyzer')
     ? {
         path: '/video-analyzer',
