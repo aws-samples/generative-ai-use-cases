@@ -439,10 +439,17 @@ dialog:
     message: このページから移動すると、入力内容が失われます。本当に移動しますか？
     title: 入力内容が保存されていません
 drawer:
+  add_to_sidebar: サイドバーに追加
   ai_services: AI サービス
   builder_mode: ビルダーモード
+  collapse_sidebar: サイドバーを折りたたむ
   done: 完了
+  edit_favorites: サイドバーに表示するユースケースを選ぶ
+  expand_sidebar: サイドバーを展開
   generative_ai: (生成 AI)
+  mode_builder: ビルダー
+  remove_from_sidebar: サイドバーから削除
+  resize_sidebar: サイドバーの幅を調整
   tools: ツール
   use_cases: ユースケース
 error:
@@ -919,7 +926,6 @@ setting:
     show_email: メールアドレスの表示
     show_tools: ツールの表示
     show_use_case_builder: ユースケースビルダーの表示
-    stats: 利用統計
     transcribe_languages: 音声認識の自動判定言語
     transcribe_languages_help: 音声認識の言語を「自動」にしたとき（議事録生成・音声入力・ファイルの文字起こし）に、判定の候補とする言語です。2〜5 個選んでください。多く選ぶほど、短い発話で言語を取り違えやすくなります。
     typing_animation: タイピングアニメーション
@@ -927,12 +933,15 @@ setting:
     version_help: generative-ai-use-cases の package.json の version を参照しています
   recent_updates: 最近のアップデート
   signout: サインアウト
-  system: システム設定
+  tabs:
+    account: アカウント
+    general: 一般
+    system: システム
+    usage: 使用量
   update:
     message: >-
       GitHub にアップデートがあります。最新の機能を利用したい場合は <0>generative-ai-use-cases</0> の main
       ブランチを pull して再度デプロイしてください。
-  user: ユーザー設定
   view_all_updates: 全てのアップデートを見る
 shared:
   contact_admin: 管理者に問い合わせてください。
@@ -1044,7 +1053,6 @@ useCaseBuilder:
     summarize_article_description: >-
       OGP（記事のリンクをシェアする際に表示される記事のプレビュー）用に、記事を要約します。OGP
       を適切に設定することで、記事がシェアされた際に記事の概要を正しく伝えることができます。
-  builderMode: ビルダーモード
   cancel: キャンセル
   create: 作成
   createDescription: ユースケースを作成します。プレビューで動作確認してから作成してください。作成後に編集することも可能です。

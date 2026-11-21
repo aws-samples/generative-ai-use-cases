@@ -1,4 +1,4 @@
-import { Template } from 'aws-cdk-lib/assertions';
+import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
 import * as cdk from 'aws-cdk-lib';
 import {
   processedStackInputSchema,
@@ -117,6 +117,51 @@ describe('GenerativeAiUseCases', () => {
     expect(guardrailTemplate.toJSON()).toMatchSnapshot();
     expect(generativeAiUseCasesTemplate.toJSON()).toMatchSnapshot();
     expect(dashboardTemplate.toJSON()).toMatchSnapshot();
+  });
+
+  test('warns about models that reached end of life without failing the deployment', () => {
+    const app = new cdk.App({ context: appContext });
+    const { generativeAiUseCasesStack } = createStacks(
+      app,
+      processedStackInputSchema.parse(stackInput)
+    );
+    if (!generativeAiUseCasesStack) throw new Error('Stack is not created');
+
+    const annotations = Annotations.fromStack(generativeAiUseCasesStack);
+    // The fixture lists a text, an image, a video and a speech-to-speech model
+    // that Bedrock has retired. Each warning names the parameter to edit.
+    for (const [modelId, parameter, state] of [
+      [
+        'anthropic.claude-3-sonnet-20240229-v1:0',
+        'modelIds',
+        'reached end of life on',
+      ],
+      [
+        'stability.stable-diffusion-xl-v1',
+        'imageGenerationModelIds',
+        'is no longer offered',
+      ],
+      [
+        'amazon.nova-reel-v1:0',
+        'videoGenerationModelIds',
+        'reached end of life on',
+      ],
+      [
+        'amazon.nova-sonic-v1:0',
+        'speechToSpeechModelIds',
+        'reached end of life on',
+      ],
+    ]) {
+      expect(
+        annotations.findWarning(
+          '*',
+          Match.stringLikeRegexp(
+            `\\(${modelId}\\) in ${parameter} ${state} .* remove it from ${parameter}`
+          )
+        )
+      ).toHaveLength(1);
+    }
+    expect(annotations.findError('*', Match.anyValue())).toHaveLength(0);
   });
 
   test('tagKey functionality', () => {
