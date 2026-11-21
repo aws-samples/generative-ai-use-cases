@@ -136,26 +136,44 @@ def set_up_fonts(code_interpreter) -> str | None:
     return families or None
 
 
-class FontSetupHook(HookProvider):
-    """Set up the fonts right before the model first runs the code interpreter.
+_SESSION_ALREADY_OPEN = "Not needed: a sandbox session is already open, with the attachments in it. Run code directly, without session_name."
 
-    Doing it up front would start a billed sandbox session on every request with
-    code execution enabled, even when the model never uses it. The setup runs in
-    a thread so the event loop (and /ping) is not held up meanwhile.
+
+class CodeInterpreterHook(HookProvider):
+    """Keep every code interpreter call in the one sandbox, and set up its fonts.
+
+    The attachments go into the tool's default session and the upload tool reads
+    files back from it, so a call in another session sees neither, and a file
+    made there cannot be uploaded. The tool's own description encourages naming
+    sessions, so drop session_name from each call, and turn away initSession.
+
+    The fonts are set up right before the model first runs code. Doing it up
+    front would start a billed sandbox session on every request with code
+    execution enabled, even when the model never uses it. The setup runs in a
+    thread so the event loop (and /ping) is not held up meanwhile.
     """
 
     def __init__(self, code_interpreter):
         self.code_interpreter = code_interpreter
-        self.done = False
+        self.fonts_done = False
 
     def register_hooks(self, registry: HookRegistry, **kwargs: Any) -> None:
         registry.add_callback(BeforeToolCallEvent, self.before_tool_call)
 
     async def before_tool_call(self, event: BeforeToolCallEvent) -> None:
-        if self.done or event.tool_use.get("name") != "code_interpreter":
+        if event.tool_use.get("name") != "code_interpreter":
             return
-        self.done = True
-        await asyncio.to_thread(set_up_fonts, self.code_interpreter)
+        tool_input = event.tool_use.get("input")
+        action = tool_input.get("code_interpreter_input", {}).get("action") if isinstance(tool_input, dict) else None
+        if isinstance(action, dict):
+            if action.get("type") == "initSession":
+                event.cancel_tool = _SESSION_ALREADY_OPEN
+                return
+            if action.pop("session_name", None) is not None:
+                logger.info("Dropped session_name from a code interpreter call")
+        if not self.fonts_done:
+            self.fonts_done = True
+            await asyncio.to_thread(set_up_fonts, self.code_interpreter)
 
 
 def stop_sessions(code_interpreter) -> None:

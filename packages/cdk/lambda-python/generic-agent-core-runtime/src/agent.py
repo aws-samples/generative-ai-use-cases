@@ -123,7 +123,7 @@ class AgentManager:
                 # Starts a sandbox session only when there is something to put in it
                 paths = sandbox.put_attachments(code_interpreter, files)
                 combined_system_prompt += "\n" + get_code_interpreter_prompt(paths)
-                hooks.append(sandbox.FontSetupHook(code_interpreter))
+                hooks.append(sandbox.CodeInterpreterHook(code_interpreter))
 
             # Create Strands agent and stream response
             agent = StrandsAgent(
