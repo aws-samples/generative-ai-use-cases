@@ -115,6 +115,61 @@ const useFilesState = create<{
     });
   };
 
+  // The Bedrock Converse API rejects images whose longest side exceeds
+  // 8 000 px (single image) or 3 000 px (many-image request).  Claude
+  // models also down-scale anything above 2 576 px internally, so there
+  // is no quality loss in resizing client-side.  Resizing also shrinks
+  // the payload, making the 3.75 MB file-size limit easier to satisfy.
+  const MAX_IMAGE_DIMENSION = 2576;
+
+  /**
+   * Resize an image File so its longest side is at most MAX_IMAGE_DIMENSION.
+   * Returns the original File unchanged when no resize is needed or the
+   * format cannot be safely re-encoded (animated GIF, SVG, etc.).
+   */
+  const resizeImageIfNeeded = async (file: File): Promise<File> => {
+    // Skip non-image and formats that should not be re-encoded
+    if (!file.type.startsWith('image/')) return file;
+    if (file.type === 'image/gif' || file.type === 'image/svg+xml')
+      return file;
+
+    const { width, height } = await getImageDimensions(file);
+    const longestSide = Math.max(width, height);
+    if (longestSide <= MAX_IMAGE_DIMENSION) return file;
+
+    const scale = MAX_IMAGE_DIMENSION / longestSide;
+    const newWidth = Math.round(width * scale);
+    const newHeight = Math.round(height * scale);
+
+    // Use OffscreenCanvas when available, fall back to DOM canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return file; // Cannot resize — let the server reject it
+
+    // Draw the image onto the smaller canvas
+    const img = await createImageBitmap(file);
+    ctx.drawImage(img, 0, 0, newWidth, newHeight);
+    img.close();
+
+    // Preserve PNG transparency; everything else becomes JPEG for size
+    const outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+    const quality = outputType === 'image/jpeg' ? 0.9 : undefined;
+
+    const blob: Blob = await new Promise((resolve) =>
+      canvas.toBlob((b) => resolve(b!), outputType, quality)
+    );
+
+    // Keep the original file name but fix the extension if format changed
+    let name = file.name;
+    if (outputType === 'image/jpeg' && !/\.jpe?g$/i.test(name)) {
+      name = name.replace(/\.[^.]+$/, '.jpg');
+    }
+
+    return new File([blob], name, { type: outputType });
+  };
+
   // Validated given uploadedFiles, return updated uploadedFiles (no side effect) and errorMessages
   const validateUploadedFiles = async (
     uploadedFiles: UploadedFileType[],
@@ -289,8 +344,13 @@ const useFilesState = create<{
   ) => {
     // Get File
     const currentUploadedFiles = get().uploadedFilesDict[id] ?? [];
+    // Resize large images before validation so they fit within the Bedrock
+    // dimension limits and the file-size budget.
+    const resizedFiles = await Promise.all(
+      files.map((f) => resizeImageIfNeeded(f))
+    );
     const uploadedFiles = await Promise.all(
-      files.map((f) => convertFile2UploadedFileType(f))
+      resizedFiles.map((f) => convertFile2UploadedFileType(f))
     );
     const newUploadedFiles: UploadedFileType[] = [
       ...currentUploadedFiles,
