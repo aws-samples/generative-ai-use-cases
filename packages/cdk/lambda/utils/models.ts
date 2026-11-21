@@ -2054,8 +2054,9 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  // Bedrock rejects max_completion_tokens above 65536 for this model.
   'qwen.qwen3-235b-a22b-2507-v1:0': {
-    defaultParams: QWEN_192K_DEFAULT_PARAMS,
+    defaultParams: QWEN_64K_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
     createConverseStreamCommandInput: createConverseStreamCommandInput,
