@@ -124,7 +124,7 @@ const RagPage: React.FC = () => {
           <ScrollTopBottom />
         </div>
 
-        <div className="fixed bottom-0 z-0 flex w-full items-end justify-center lg:pr-64 print:hidden">
+        <div className="fixed bottom-0 z-0 flex w-full items-end justify-center lg:pr-[var(--sidebar-w,16rem)] print:hidden">
           <InputChatContent
             content={content}
             disabled={loading && !writing}

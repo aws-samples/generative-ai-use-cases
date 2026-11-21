@@ -273,7 +273,10 @@ dialog:
 drawer:
   ai_services: AI 服务
   builder_mode: 构建者模式
+  collapse_sidebar: 收起侧边栏
+  expand_sidebar: 展开侧边栏
   generative_ai: (生成式 AI)
+  resize_sidebar: 调整侧边栏宽度
   tools: 工具
   use_cases: 用例
 error:

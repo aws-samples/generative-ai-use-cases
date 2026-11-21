@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { BaseProps } from '../@types/common';
 import useDrawer from '../hooks/useDrawer';
+import useSidebar from '../hooks/useSidebar';
 import { useCallback } from 'react';
 import Switch from '../components/Switch';
 import useLocalStorageBoolean from '../hooks/useLocalStorageBoolean';
@@ -16,6 +17,7 @@ export type DrawerItemProps = BaseProps & {
 const DrawerItem: React.FC<DrawerItemProps> = (props) => {
   const location = useLocation();
   const { switchOpen } = useDrawer();
+  const { collapsed } = useSidebar();
   const [visibility, setVisibility] = useLocalStorageBoolean(
     `visibility_${props.to}`,
     true
@@ -44,19 +46,27 @@ const DrawerItem: React.FC<DrawerItemProps> = (props) => {
           )}
           <Link
             className={`hover:bg-aws-sky flex h-8 w-full items-center rounded p-2 ${
-              location.pathname === props.to && 'bg-aws-sky'
-            } ${props.className} ${props.settingVisibility ? 'pl-2' : ''}`}
+              collapsed ? 'justify-center' : ''
+            } ${location.pathname === props.to && 'bg-aws-sky'} ${
+              props.className
+            } ${props.settingVisibility ? 'pl-2' : ''}`}
             to={props.to}
+            title={collapsed ? props.label : undefined}
+            aria-label={collapsed ? props.label : undefined}
             onClick={onClick}>
             {!props.settingVisibility && (
-              <span className="mr-2">{props.icon}</span>
+              <span className={collapsed ? 'text-lg' : 'mr-2'}>
+                {props.icon}
+              </span>
             )}
-            <div className="flex w-full items-center justify-between">
-              <span>{props.label}</span>
-              {props.sub && (
-                <span className="text-xs text-gray-300">{props.sub}</span>
-              )}
-            </div>
+            {!collapsed && (
+              <div className="flex w-full items-center justify-between">
+                <span>{props.label}</span>
+                {props.sub && (
+                  <span className="text-xs text-gray-300">{props.sub}</span>
+                )}
+              </div>
+            )}
           </Link>
         </div>
       )}

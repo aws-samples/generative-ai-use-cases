@@ -349,7 +349,10 @@ dialog:
 drawer:
   ai_services: บริการ AI
   builder_mode: Builder Mode
+  collapse_sidebar: ย่อแถบด้านข้าง
+  expand_sidebar: ขยายแถบด้านข้าง
   generative_ai: Generative AI
+  resize_sidebar: ปรับความกว้างแถบด้านข้าง
   tools: เครื่องมือ
   use_cases: Use cases
 error:

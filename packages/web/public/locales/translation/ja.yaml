@@ -441,8 +441,11 @@ dialog:
 drawer:
   ai_services: AI サービス
   builder_mode: ビルダーモード
+  collapse_sidebar: サイドバーを折りたたむ
   done: 完了
+  expand_sidebar: サイドバーを展開
   generative_ai: (生成 AI)
+  resize_sidebar: サイドバーの幅を調整
   tools: ツール
   use_cases: ユースケース
 error:

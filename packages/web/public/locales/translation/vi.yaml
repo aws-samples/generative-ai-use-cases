@@ -347,8 +347,11 @@ dialog:
 drawer:
   ai_services: Dịch vụ AI
   builder_mode: Chế độ builder
+  collapse_sidebar: Thu gọn thanh bên
   done: Hoàn thành
+  expand_sidebar: Mở rộng thanh bên
   generative_ai: (Generative AI)
+  resize_sidebar: Điều chỉnh độ rộng thanh bên
   tools: Công cụ
   use_cases: Use case
 error:

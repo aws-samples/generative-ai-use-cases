@@ -342,8 +342,11 @@ dialog:
 drawer:
   ai_services: AI 서비스
   builder_mode: 빌더 모드
+  collapse_sidebar: 사이드바 접기
   done: 완료
+  expand_sidebar: 사이드바 펼치기
   generative_ai: 생성형 AI
+  resize_sidebar: 사이드바 너비 조정
   tools: 도구
   use_cases: 사용 사례
 error:

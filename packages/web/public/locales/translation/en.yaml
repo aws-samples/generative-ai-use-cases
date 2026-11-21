@@ -503,8 +503,11 @@ dialog:
 drawer:
   ai_services: AI Services
   builder_mode: Builder Mode
+  collapse_sidebar: Collapse sidebar
   done: Done
+  expand_sidebar: Expand sidebar
   generative_ai: Generative AI
+  resize_sidebar: Resize sidebar
   tools: Tools
   use_cases: Use Cases
 error:
