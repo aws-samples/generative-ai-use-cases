@@ -2081,7 +2081,7 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ### ガードレール
 
-Converse API を使う(=テキスト出力を行う生成 AI モデル)場合はガードレールを適用させることが可能です。設定するには `guardrailEnabled` を `true` に変更しデプロイしなおします。
+Converse API を使う(=テキスト出力を行う生成 AI モデル)場合はガードレールを適用させることが可能です。RAG チャット (Knowledge Base) の回答にも適用されます。設定するには `guardrailEnabled` を `true` に変更しデプロイしなおします。
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 

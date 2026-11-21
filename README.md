@@ -156,6 +156,28 @@ In that case, please be careful about conflicts with GenU's main branch.
 
 </details>
 
+<details markdown="1">
+  <summary><strong><ins>I want to see how generative AI is used and what it costs</ins></strong></summary>
+
+GenU records the tokens each user consumes.
+Members of the `SystemAdminGroup` Cognito group can open the [admin page](docs/en/DEPLOY_OPTION.md#admin-page) to see every user's token usage and estimated cost, narrow it down by user and period, and download it as CSV.
+Each user can see their own usage and cost on the stats page.
+
+With the [monitoring dashboard](docs/en/DEPLOY_OPTION.md#enabling-monitoring-dashboard), you can also follow usage by user and use case in Amazon CloudWatch, because GenU tags its Bedrock calls with the user and the use case.
+To break down the AWS bill, [add cost allocation tags](docs/en/DEPLOY_OPTION.md#how-to-set-tags) to the resources GenU creates.
+
+</details>
+
+<details markdown="1">
+  <summary><strong><ins>I want to use GenU only from my organization's network</ins></strong></summary>
+
+In [closed network mode](docs/en/CLOSED_NETWORK.md), clients reach GenU through a VPC instead of the internet, and GenU calls AWS services through VPC endpoints.
+GenU creates only the VPC endpoints for the features you enable, and AgentCore runs inside the closed VPC.
+The page lists which features work in closed network mode, the fixed cost of the VPC endpoints, and how to connect from your own network with Site-to-Site VPN, AWS Direct Connect or AWS Client VPN.
+If you only need to restrict who can access GenU, the [security-related settings](docs/en/DEPLOY_OPTION.md#security-related-settings) such as IP address restrictions and SAML authentication may be enough.
+
+</details>
+
 ## Deployment
 
 > [!IMPORTANT]

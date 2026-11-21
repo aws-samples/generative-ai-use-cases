@@ -2070,7 +2070,7 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ### Guardrails
 
-When using the Converse API (i.e., generative AI models that produce text output), guardrails can be applied. To configure this, change `guardrailEnabled` to `true` and redeploy.
+When using the Converse API (i.e., generative AI models that produce text output), guardrails can be applied. They are also applied to the answers of the RAG Chat (Knowledge Base) use case. To configure this, change `guardrailEnabled` to `true` and redeploy.
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 

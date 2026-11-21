@@ -153,6 +153,28 @@ GenU は OSS ですので、カスタマイズして独自のユースケース�
 
 </details>
 
+<details markdown="1">
+  <summary><strong><ins>生成 AI の利用状況とコストを把握したい</ins></strong></summary>
+
+GenU はユーザーごとに消費したトークン数を記録しています。
+Cognito の `SystemAdminGroup` グループのメンバーは [管理者ページ](docs/ja/DEPLOY_OPTION.md#管理者ページ) で、全ユーザーのトークン使用量と推定コストを確認し、ユーザーや期間で絞り込み、CSV でダウンロードできます。
+各ユーザーは統計ページで自分の使用量とコストを確認できます。
+
+GenU は Bedrock の呼び出しにユーザーとユースケースのタグを付けるため、[モニタリング用のダッシュボード](docs/ja/DEPLOY_OPTION.md#モニタリング用のダッシュボードの有効化) を有効にすると、ユーザー別・ユースケース別の利用状況を Amazon CloudWatch でも確認できます。
+AWS の請求を分けて確認したい場合は、GenU が作成するリソースに [コスト配分タグを設定](docs/ja/DEPLOY_OPTION.md#タグを設定する方法) してください。
+
+</details>
+
+<details markdown="1">
+  <summary><strong><ins>社内のネットワークからだけ GenU を使いたい</ins></strong></summary>
+
+[閉域モード](docs/ja/CLOSED_NETWORK.md) では、クライアントはインターネットではなく VPC を経由して GenU にアクセスし、GenU は VPC エンドポイント経由で AWS のサービスを呼び出します。
+VPC エンドポイントは有効にした機能の分だけ作成され、AgentCore も閉域 VPC 内で動作します。
+閉域モードで使える機能、VPC エンドポイントの固定費の目安、Site-to-Site VPN・AWS Direct Connect・AWS Client VPN で社内ネットワークから接続する方法も記載しています。
+アクセスできる人を制限したいだけであれば、IP アドレスの制限や SAML 認証などの [セキュリティ関連の設定](docs/ja/DEPLOY_OPTION.md#セキュリティ関連設定) で足りる場合もあります。
+
+</details>
+
 ## デプロイ
 
 > [!IMPORTANT]
