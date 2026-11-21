@@ -74,7 +74,12 @@ describe('getEndOfLife', () => {
 describe('warnModelEndOfLife', () => {
   const warnings = (modelIds: string[]) => {
     const stack = new Stack(new App(), 'Test');
-    warnModelEndOfLife({ scope: stack, modelIds, today });
+    warnModelEndOfLife({
+      scope: stack,
+      parameter: 'modelIds',
+      modelIds,
+      today,
+    });
     return Annotations.fromStack(stack);
   };
 
@@ -87,7 +92,7 @@ describe('warnModelEndOfLife', () => {
       annotations.findWarning(
         '*',
         Match.stringLikeRegexp(
-          'DeepSeek-R1 .* will reach end of life on Amazon Bedrock on 2027-03-30 \\(in 129 days\\) in at least one Region'
+          'DeepSeek-R1 \\(us.deepseek.r1-v1:0\\) in modelIds will reach end of life on Amazon Bedrock on 2027-03-30 \\(in 129 days\\) in at least one Region. Replace it with an active model or remove it from modelIds'
         )
       )
     ).toHaveLength(1);

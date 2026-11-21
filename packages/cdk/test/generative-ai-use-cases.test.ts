@@ -128,18 +128,35 @@ describe('GenerativeAiUseCases', () => {
     if (!generativeAiUseCasesStack) throw new Error('Stack is not created');
 
     const annotations = Annotations.fromStack(generativeAiUseCasesStack);
-    // The fixture lists a text, a video and a speech-to-speech model that
-    // Bedrock has retired.
-    for (const modelId of [
-      'anthropic.claude-3-sonnet-20240229-v1:0',
-      'amazon.nova-reel-v1:0',
-      'amazon.nova-sonic-v1:0',
+    // The fixture lists a text, an image, a video and a speech-to-speech model
+    // that Bedrock has retired. Each warning names the parameter to edit.
+    for (const [modelId, parameter, state] of [
+      [
+        'anthropic.claude-3-sonnet-20240229-v1:0',
+        'modelIds',
+        'reached end of life on',
+      ],
+      [
+        'stability.stable-diffusion-xl-v1',
+        'imageGenerationModelIds',
+        'is no longer offered',
+      ],
+      [
+        'amazon.nova-reel-v1:0',
+        'videoGenerationModelIds',
+        'reached end of life on',
+      ],
+      [
+        'amazon.nova-sonic-v1:0',
+        'speechToSpeechModelIds',
+        'reached end of life on',
+      ],
     ]) {
       expect(
         annotations.findWarning(
           '*',
           Match.stringLikeRegexp(
-            `\\(${modelId}\\) reached end of life on .* in at least one Region`
+            `\\(${modelId}\\) in ${parameter} ${state} .* remove it from ${parameter}`
           )
         )
       ).toHaveLength(1);

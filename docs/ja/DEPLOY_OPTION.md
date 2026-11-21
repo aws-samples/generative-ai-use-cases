@@ -1230,7 +1230,7 @@ const envs: Record<string, Partial<StackInput>> = {
 
 (例) `modelRegion` が `us-east-1` の場合、`us.anthropic.claude-3-5-sonnet-20240620-v1:0` は OK だが、`eu.anthropic.claude-3-5-sonnet-20240620-v1:0` は NG です。
 
-このソリューションが対応しているテキスト生成モデルは以下です。`{global|us|eu}.モデル名` は、`global.モデル名`、`us.モデル名`、`eu.モデル名` をそれぞれ別のモデル ID として指定できることを表します（設定には `{}` を含めず、1 つずつ指定してください）。提供終了済み、または終了予定のモデルも含まれます。詳細は[提供終了（EOL）のモデルに関する警告](#提供終了eolのモデルに関する警告)を参照してください。
+このソリューションが対応しているテキスト生成モデルは以下です。`{global|us|eu}.モデル名` は、`global.モデル名`、`us.モデル名`、`eu.モデル名` をそれぞれ別のモデル ID として指定できることを表します（設定には `{}` を含めず、1 つずつ指定してください）。提供終了済み、または終了予定のモデルも含まれます（[提供終了（EOL）のモデル](#提供終了eolのモデル)）。
 
 <!-- supported-text-models: generated from modelMetadata, checked by packages/cdk/test/docs/supported-models.test.ts -->
 
@@ -1385,24 +1385,9 @@ amazon.nova-sonic-v1:0
 
 **指定したリージョンで指定したモデルが有効化されているかご確認ください。**
 
-### 提供終了（EOL）のモデルに関する警告
+### 提供終了（EOL）のモデル
 
-`cdk synth` や `cdk deploy` の実行時に、`modelIds`、`imageGenerationModelIds`、`videoGenerationModelIds`、`speechToSpeechModelIds` に指定したモデルについて、Amazon Bedrock で提供終了済み、または終了予定の場合に警告を表示します。
-
-```
-[Warning at /GenerativeAiUseCasesStack/API] Model Claude 3 Sonnet (anthropic.claude-3-sonnet-20240229-v1:0) reached end of life on Amazon Bedrock on 2026-11-13 in at least one Region, where requests to it fail. ...
-```
-
-- Bedrock で提供されなくなったモデル: どのリージョンでも呼び出しが失敗します。有効なモデルに置き換えてください。
-- EOL 日を過ぎたモデル: 少なくとも 1 つのリージョンで呼び出しが失敗します。有効なモデルに置き換えてください。
-- 提供終了予定のモデル: EOL 日と残り日数を表示します。EOL 日までに有効なモデルへ移行してください。
-
-警告は表示のみで、デプロイは止まりません。
-
-EOL 日は、Bedrock が公表しているリージョンごとの日付のうち最も早いものです。同じモデルが他のリージョンでより長く利用できる場合があるため、実際の提供状況は利用するリージョンで確認してください。日付は GenU のリリースに含まれる情報で、最新の状況は [Bedrock のモデルライフサイクル](https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html) で確認できます。
-
-> [!NOTE]
-> デフォルトの画像生成モデル `stability.stable-image-core-v1:1` も Legacy で、2027-05-09 に EOL となる予定です。現時点で Bedrock には、GenU の画像生成で使える有効なテキストから画像への生成モデルがないため、デフォルトのままデプロイすると警告が表示されます。
+Amazon Bedrock で提供終了済み、または終了予定のモデルを指定すると、`cdk deploy` 時に警告が表示されます。デプロイは止まりません。警告に従って、モデルを置き換えるか削除してください。
 
 ### 複数のリージョンのモデルを同時に利用する
 

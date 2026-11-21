@@ -150,14 +150,17 @@ export class Api extends Construct {
       throw new Error(`Unsupported Model Name: ${rerankingModelId}`);
     }
 
-    warnModelEndOfLife({
-      scope: this,
-      modelIds: [
-        ...modelIds,
-        ...imageGenerationModelIds,
-        ...videoGenerationModelIds,
-      ].map((m) => m.modelId),
-    });
+    for (const [parameter, models] of Object.entries({
+      modelIds,
+      imageGenerationModelIds,
+      videoGenerationModelIds,
+    })) {
+      warnModelEndOfLife({
+        scope: this,
+        parameter,
+        modelIds: models.map((m) => m.modelId),
+      });
+    }
 
     const duplicateModelIds = new Set(
       [...modelIds, ...imageGenerationModelIds, ...videoGenerationModelIds]

@@ -37,6 +37,7 @@ export class SpeechToSpeech extends Construct {
 
     warnModelEndOfLife({
       scope: this,
+      parameter: 'speechToSpeechModelIds',
       modelIds: speechToSpeechModelIds.map((m) => m.modelId),
     });
 

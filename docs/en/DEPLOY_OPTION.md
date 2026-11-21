@@ -1211,7 +1211,7 @@ The solution also supports [cross-region inference](https://docs.aws.amazon.com/
 
 (Example) If `modelRegion` is `us-east-1`, `us.anthropic.claude-3-5-sonnet-20240620-v1:0` is OK, but `eu.anthropic.claude-3-5-sonnet-20240620-v1:0` is not.
 
-This solution supports the following text generation models. `{global|us|eu}.model-name` stands for `global.model-name`, `us.model-name`, and `eu.model-name`, each of which you specify as a separate model ID (do not include `{}` in the configuration). The list includes models that have reached or are approaching end of life. See [Warnings for Models Reaching End of Life (EOL)](#warnings-for-models-reaching-end-of-life-eol) for details.
+This solution supports the following text generation models. `{global|us|eu}.model-name` stands for `global.model-name`, `us.model-name`, and `eu.model-name`, each of which you specify as a separate model ID (do not include `{}` in the configuration). The list includes models that have reached or are approaching end of life (see [Models Reaching End of Life (EOL)](#models-reaching-end-of-life-eol)).
 
 <!-- supported-text-models: generated from modelMetadata, checked by packages/cdk/test/docs/supported-models.test.ts -->
 
@@ -1366,24 +1366,9 @@ This solution supports the following video generation models:
 
 **Please verify that the models you specify are enabled in the specified region.**
 
-### Warnings for Models Reaching End of Life (EOL)
+### Models Reaching End of Life (EOL)
 
-When you run `cdk synth` or `cdk deploy`, a warning is shown for each model in `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, or `speechToSpeechModelIds` that Amazon Bedrock has retired or plans to retire.
-
-```
-[Warning at /GenerativeAiUseCasesStack/API] Model Claude 3 Sonnet (anthropic.claude-3-sonnet-20240229-v1:0) reached end of life on Amazon Bedrock on 2026-11-13 in at least one Region, where requests to it fail. ...
-```
-
-- A model Bedrock no longer offers: requests to it fail in every Region. Replace it with an active model.
-- A model past its EOL date: requests to it fail in at least one Region. Replace it with an active model.
-- A model scheduled for EOL: the warning shows the EOL date and the days left. Move to an active model before that date.
-
-The warning is informational and does not stop the deployment.
-
-The EOL date is the earliest one Bedrock announces for any Region. The same model can stay available longer in other Regions, so check the actual status in the Region you use. The dates are part of the GenU release. For the latest status, see [Amazon Bedrock model lifecycle](https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html).
-
-> [!NOTE]
-> The default image generation model `stability.stable-image-core-v1:1` is also Legacy and is scheduled to reach EOL on 2027-05-09. Bedrock currently has no active text-to-image model that GenU's image generation can use, so deploying with the default settings shows a warning.
+If you specify a model that Amazon Bedrock has retired or plans to retire, `cdk deploy` shows a warning. The deployment continues. Follow the warning to replace or remove the model.
 
 ### Using Models from Multiple Regions Simultaneously
 
