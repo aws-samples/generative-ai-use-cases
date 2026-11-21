@@ -3,7 +3,8 @@ import { BaseProps } from '../@types/common';
 import useDrawer from '../hooks/useDrawer';
 import useSidebar from '../hooks/useSidebar';
 import { useCallback } from 'react';
-import Switch from '../components/Switch';
+import { PiStar, PiStarFill } from 'react-icons/pi';
+import { useTranslation } from 'react-i18next';
 import useLocalStorageBoolean from '../hooks/useLocalStorageBoolean';
 
 export type DrawerItemProps = BaseProps & {
@@ -11,13 +12,20 @@ export type DrawerItemProps = BaseProps & {
   to: string;
   icon: JSX.Element;
   sub?: string;
-  settingVisibility?: boolean;
+  /**
+   * True while the user is picking which use cases to keep in the sidebar:
+   * every item is listed with a star that adds or removes it.
+   */
+  editingFavorite?: boolean;
 };
 
 const DrawerItem: React.FC<DrawerItemProps> = (props) => {
   const location = useLocation();
   const { switchOpen } = useDrawer();
   const { collapsed } = useSidebar();
+  const { t } = useTranslation();
+  // A use case is in the sidebar unless the user removed it. The key is the
+  // one the earlier visibility switch wrote, so existing choices carry over.
   const [visibility, setVisibility] = useLocalStorageBoolean(
     `visibility_${props.to}`,
     true
@@ -37,24 +45,44 @@ const DrawerItem: React.FC<DrawerItemProps> = (props) => {
 
   return (
     <>
-      {!visibility && !props.settingVisibility ? (
+      {!visibility && !props.editingFavorite ? (
         <div></div>
       ) : (
         <div className="mt-0.5 flex h-8 items-center">
-          {props.settingVisibility && (
-            <Switch checked={visibility} onSwitch={setVisibility} label="" />
+          {props.editingFavorite && (
+            <button
+              type="button"
+              className="focus:ring-aws-sky mr-1 rounded p-1 text-base hover:opacity-50 focus:outline-none focus:ring-1"
+              title={
+                visibility
+                  ? t('drawer.remove_from_sidebar')
+                  : t('drawer.add_to_sidebar')
+              }
+              aria-label={
+                visibility
+                  ? t('drawer.remove_from_sidebar')
+                  : t('drawer.add_to_sidebar')
+              }
+              aria-pressed={visibility}
+              onClick={() => setVisibility(!visibility)}>
+              {visibility ? (
+                <PiStarFill className="text-aws-smile" />
+              ) : (
+                <PiStar />
+              )}
+            </button>
           )}
           <Link
             className={`hover:bg-aws-sky flex h-8 w-full items-center rounded p-2 ${
               collapsed ? 'justify-center' : ''
             } ${location.pathname === props.to && 'bg-aws-sky'} ${
               props.className
-            } ${props.settingVisibility ? 'pl-2' : ''}`}
+            }`}
             to={props.to}
             title={collapsed ? props.label : undefined}
             aria-label={collapsed ? props.label : undefined}
             onClick={onClick}>
-            {!props.settingVisibility && (
+            {!props.editingFavorite && (
               <span className={collapsed ? 'text-lg' : 'mr-2'}>
                 {props.icon}
               </span>

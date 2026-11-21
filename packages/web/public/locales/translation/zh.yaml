@@ -271,11 +271,15 @@ dialog:
     message: 如果离开此页面，您输入的内容将丢失。确定要离开吗？
     title: 未保存的更改
 drawer:
+  add_to_sidebar: 添加到侧边栏
   ai_services: AI 服务
   builder_mode: 构建者模式
   collapse_sidebar: 收起侧边栏
+  edit_favorites: 选择在侧边栏显示的用例
   expand_sidebar: 展开侧边栏
   generative_ai: (生成式 AI)
+  mode_builder: 构建器
+  remove_from_sidebar: 从侧边栏移除
   resize_sidebar: 调整侧边栏宽度
   tools: 工具
   use_cases: 用例
@@ -748,7 +752,6 @@ useCaseBuilder:
     reference_info_description: 指定URL自动获取作为文章参考的信息。 通过设置额外上下文，可以只提取您需要的信息。
     summarize_article: 摘要
     summarize_article_description: 为OGP（分享文章链接时显示的文章预览）总结文章。适当设置OGP可以在分享文章时正确传达文章概要。
-  builderMode: 构建者模式
   cancel: 取消
   create: 创建
   createDescription: 创建用例。请在预览中确认操作后再创建。创建后也可以编辑。

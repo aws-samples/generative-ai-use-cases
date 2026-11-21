@@ -18,6 +18,7 @@ import useSidebar, {
   SIDEBAR_MAX_WIDTH,
   SIDEBAR_MIN_WIDTH,
 } from '../hooks/useSidebar';
+import DrawerModeTabs from './DrawerModeTabs';
 
 const RESIZE_KEY_STEP = 16;
 
@@ -28,7 +29,7 @@ type Props = BaseProps & {
 
 const DrawerBase: React.FC<Props> = (props) => {
   const { getHasUpdate } = useVersion();
-  const { settingShowEmail } = useUserSetting();
+  const { settingShowEmail, settingShowUseCaseBuilder } = useUserSetting();
   const { t } = useTranslation();
   const isAdmin = useIsAdmin() === true;
 
@@ -54,6 +55,13 @@ const DrawerBase: React.FC<Props> = (props) => {
   } = useSidebar();
   const navRef = useRef<HTMLElement>(null);
 
+  // Builder mode is always switchable back; the way in follows the deployment
+  // and user settings.
+  const showModeTabs =
+    props.builderMode ||
+    (import.meta.env.VITE_APP_USE_CASE_BUILDER_ENABLED === 'true' &&
+      settingShowUseCaseBuilder);
+
   const toggleLabel = collapsed
     ? t('drawer.expand_sidebar')
     : t('drawer.collapse_sidebar');
@@ -78,19 +86,28 @@ const DrawerBase: React.FC<Props> = (props) => {
         }`}>
         <div className="flex h-full min-h-0 flex-col">
           <div
-            className={`hidden flex-none px-2 pt-1 lg:flex ${
-              collapsed ? 'justify-center' : 'justify-end'
-            }`}>
-            <button
-              type="button"
-              className="focus:ring-aws-sky flex size-8 flex-none items-center justify-center rounded text-lg hover:bg-white/10 focus:outline-none focus:ring-1"
-              title={toggleLabel}
-              aria-label={toggleLabel}
-              aria-expanded={!collapsed}
-              onClick={toggleCollapsed}>
-              <PiSidebarSimple />
-            </button>
+            className={`flex-none flex-col gap-1 px-2 pb-2 pt-1 ${
+              collapsed ? 'items-center' : ''
+            } ${showModeTabs ? 'flex' : 'hidden lg:flex'}`}>
+            <div
+              className={`hidden lg:flex ${
+                collapsed ? 'justify-center' : 'justify-end'
+              }`}>
+              <button
+                type="button"
+                className="focus:ring-aws-sky flex size-8 flex-none items-center justify-center rounded text-lg hover:bg-white/10 focus:outline-none focus:ring-1"
+                title={toggleLabel}
+                aria-label={toggleLabel}
+                aria-expanded={!collapsed}
+                onClick={toggleCollapsed}>
+                <PiSidebarSimple />
+              </button>
+            </div>
+            {showModeTabs && (
+              <DrawerModeTabs builderMode={!!props.builderMode} />
+            )}
           </div>
+          {showModeTabs && <div className="border-b border-gray-400" />}
           {props.children}
           <div
             className={`flex flex-none border-t border-gray-400 px-3 py-2 ${

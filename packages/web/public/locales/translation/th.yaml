@@ -347,11 +347,15 @@ dialog:
     message: หากคุณออกจากหน้านี้ ข้อมูลที่ป้อนจะสูญหาย คุณแน่ใจหรือไม่ว่าต้องการออก?
     title: การเปลี่ยนแปลงที่ยังไม่ได้บันทึก
 drawer:
+  add_to_sidebar: เพิ่มในแถบด้านข้าง
   ai_services: บริการ AI
   builder_mode: Builder Mode
   collapse_sidebar: ย่อแถบด้านข้าง
+  edit_favorites: เลือก use case ที่จะแสดงในแถบด้านข้าง
   expand_sidebar: ขยายแถบด้านข้าง
   generative_ai: Generative AI
+  mode_builder: ตัวสร้าง
+  remove_from_sidebar: นำออกจากแถบด้านข้าง
   resize_sidebar: ปรับความกว้างแถบด้านข้าง
   tools: เครื่องมือ
   use_cases: Use cases
@@ -898,7 +902,6 @@ useCaseBuilder:
     summarize_article: สรุปบทความ
     summarize_article_description: >-
       สรุปบทความสำหรับ OGP (ตัวอย่างบทความที่แสดงเมื่อแชร์ลิงก์บทความ) การตั้งค่า OGP อย่างเหมาะสมช่วยให้สามารถสื่อสารภาพรวมของบทความได้อย่างถูกต้องเมื่อมีการแชร์
-  builderMode: Builder Mode
   cancel: ยกเลิก
   create: สร้าง
   createDescription: สร้าง use cases โปรดตรวจสอบฟังก์ชันในตัวอย่างก่อนสร้าง คุณยังสามารถแก้ไขหลังจากสร้างได้

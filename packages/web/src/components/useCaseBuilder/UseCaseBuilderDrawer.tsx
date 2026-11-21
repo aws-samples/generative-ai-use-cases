@@ -1,14 +1,11 @@
 import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BaseProps } from '../../@types/common';
 import DrawerItem, { DrawerItemProps } from '../DrawerItem';
 import DrawerBase from '../DrawerBase';
 import ExpandableMenu from '../ExpandableMenu';
 import useMyUseCases from '../../hooks/useCaseBuilder/useMyUseCases';
 import CustomUseCaseDrawerItems from './CustomUseCaseDrawerItems';
-import Switch from '../Switch';
 import { useTranslation } from 'react-i18next';
-import { PiSquaresFour } from 'react-icons/pi';
 import useSidebar from '../../hooks/useSidebar';
 
 type Props = BaseProps & {
@@ -16,7 +13,6 @@ type Props = BaseProps & {
 };
 
 const UseCaseBuilderDrawer: React.FC<Props> = (props) => {
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const { collapsed } = useSidebar();
 
@@ -38,30 +34,6 @@ const UseCaseBuilderDrawer: React.FC<Props> = (props) => {
   return (
     <DrawerBase builderMode>
       <div className="flex-none">
-        {collapsed ? (
-          <div className="flex justify-center pb-1">
-            <button
-              type="button"
-              className="focus:ring-aws-sky flex size-8 items-center justify-center rounded text-lg hover:bg-white/10 focus:outline-none focus:ring-1"
-              title={t('useCaseBuilder.builderMode')}
-              aria-label={t('useCaseBuilder.builderMode')}
-              onClick={() => {
-                navigate('/');
-              }}>
-              <PiSquaresFour />
-            </button>
-          </div>
-        ) : (
-          <Switch
-            className="mx-3 my-2"
-            label={t('useCaseBuilder.builderMode')}
-            checked
-            onSwitch={() => {
-              navigate('/');
-            }}
-          />
-        )}
-        <div className="border-b" />
         {!collapsed && (
           <div className="text-aws-smile mx-3 my-1 text-xs">
             {t('useCaseBuilder.mainMenu')}

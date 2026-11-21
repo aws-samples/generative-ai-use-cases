@@ -501,12 +501,16 @@ dialog:
     message: If you leave this page, your input will be lost. Are you sure you want to leave?
     title: Unsaved Changes
 drawer:
+  add_to_sidebar: Add to sidebar
   ai_services: AI Services
   builder_mode: Builder Mode
   collapse_sidebar: Collapse sidebar
   done: Done
+  edit_favorites: Choose the use cases shown in the sidebar
   expand_sidebar: Expand sidebar
   generative_ai: Generative AI
+  mode_builder: Builder
+  remove_from_sidebar: Remove from sidebar
   resize_sidebar: Resize sidebar
   tools: Tools
   use_cases: Use Cases
@@ -1250,7 +1254,6 @@ useCaseBuilder:
       Summarize the article for OGP (the article preview displayed when sharing
       the article link). By properly setting the OGP, you can correctly convey
       the overview of the article when it is shared.
-  builderMode: Builder Mode
   cancel: Cancel
   create: Create
   createDescription: >-

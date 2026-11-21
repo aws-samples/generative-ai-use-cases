@@ -1,12 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { BaseProps } from '../@types/common';
-import { useNavigate } from 'react-router-dom';
-import { PiMagnifyingGlass, PiGear, PiHammer } from 'react-icons/pi';
+import { PiMagnifyingGlass, PiStar } from 'react-icons/pi';
 import ExpandableMenu from './ExpandableMenu';
 import ChatList from './ChatList';
 import DrawerItem, { DrawerItemProps } from './DrawerItem';
 import DrawerBase from './DrawerBase';
-import Switch from './Switch';
 import Button from './Button';
 import { useTranslation } from 'react-i18next';
 import useUserSetting from '../hooks/useUserSetting';
@@ -22,8 +20,7 @@ type Props = BaseProps & {
 
 const Drawer: React.FC<Props> = (props) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { settingShowUseCaseBuilder, settingShowTools } = useUserSetting();
+  const { settingShowTools } = useUserSetting();
   const { collapsed } = useSidebar();
 
   const usecases = useMemo(() => {
@@ -42,56 +39,31 @@ const Drawer: React.FC<Props> = (props) => {
       .filter((q) => q !== '');
   }, [searchQuery]);
 
-  const useCaseBuilderEnabled: boolean =
-    import.meta.env.VITE_APP_USE_CASE_BUILDER_ENABLED === 'true';
-
-  const [settingVisibilityState, setSettingVisibility] = useState(false);
-  // The icon-only rail has no room for the visibility switches.
-  const settingVisibility = settingVisibilityState && !collapsed;
+  // While editing, every use case is listed with a star to keep it in the
+  // sidebar or drop it. The icon-only rail has no room for the stars.
+  const [editingFavoritesState, setEditingFavorites] = useState(false);
+  const editingFavorites = editingFavoritesState && !collapsed;
 
   return (
     <>
       <DrawerBase>
-        {useCaseBuilderEnabled &&
-          settingShowUseCaseBuilder &&
-          (collapsed ? (
-            <div className="flex flex-none justify-center pb-1">
-              <button
-                type="button"
-                className="focus:ring-aws-sky flex size-8 items-center justify-center rounded text-lg hover:bg-white/10 focus:outline-none focus:ring-1"
-                title={t('drawer.builder_mode')}
-                aria-label={t('drawer.builder_mode')}
-                onClick={() => {
-                  navigate('/use-case-builder');
-                }}>
-                <PiHammer />
-              </button>
-            </div>
-          ) : (
-            <Switch
-              className="mx-3 my-2"
-              label={t('drawer.builder_mode')}
-              checked={false}
-              onSwitch={() => {
-                navigate('/use-case-builder');
-              }}
-            />
-          ))}
-        {useCaseBuilderEnabled && settingShowUseCaseBuilder && (
-          <div className="border-b" />
-        )}
         {!collapsed && (
           <div className="text-aws-smile mx-3 my-1 flex items-center justify-between text-xs">
             <div>
               {t('drawer.use_cases')}{' '}
               <span className="text-gray-400">{t('drawer.generative_ai')}</span>
             </div>
-            <PiGear
-              className="cursor-pointer text-base text-white"
+            <button
+              type="button"
+              className="focus:ring-aws-sky rounded text-base text-white hover:opacity-50 focus:outline-none focus:ring-1"
+              title={t('drawer.edit_favorites')}
+              aria-label={t('drawer.edit_favorites')}
+              aria-pressed={editingFavorites}
               onClick={() => {
-                setSettingVisibility(!settingVisibility);
-              }}
-            />
+                setEditingFavorites(!editingFavorites);
+              }}>
+              <PiStar />
+            </button>
           </div>
         )}
         <div className="scrollbar-thin scrollbar-thumb-white ml-2 mr-1 h-full overflow-y-auto">
@@ -102,16 +74,16 @@ const Drawer: React.FC<Props> = (props) => {
               icon={item.icon}
               to={item.to}
               sub={item.sub}
-              settingVisibility={settingVisibility}
+              editingFavorite={editingFavorites}
             />
           ))}
 
-          {settingVisibility && (
+          {editingFavorites && (
             <div className="my-2 flex w-full justify-center">
               <Button
                 className="w-full"
                 onClick={() => {
-                  setSettingVisibility(false);
+                  setEditingFavorites(false);
                 }}
                 outlined>
                 {t('drawer.done')}
