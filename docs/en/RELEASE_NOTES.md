@@ -29,11 +29,10 @@ These changes are merged into the `main` branch and will be included in the next
 - **End-of-life warnings with the default settings**: the default image model `stability.stable-image-core-v1:1` is Legacy (end of life 2027-05-09), so the default settings show one warning at deploy time. Bedrock has no active text-to-image model to switch to yet. (#1832)
 - **Model capabilities corrected**: Mistral Large 3 and Ministral 3 accept image attachments, Gemma 3 no longer accepts document attachments, and DeepSeek-R1 no longer shows the reasoning option, to match what Bedrock accepts. (#1832)
 - **Default Knowledge Base advanced parsing model**: the default is now `global.anthropic.claude-sonnet-4-6`, because the previous default (Claude 3 Sonnet) reached end of life on 2026-11-13. (#1813)
-- **Closed network mode**:
-  - VPC endpoints of features that are not enabled are deleted. If other workloads in an imported VPC use them, list them in `closedNetworkAdditionalVpcEndpoints` before deploying.
-  - The test instance type changes to `t3.large`. Set `closedNetworkTestEnvironmentInstanceType: 'r6i.large'` to keep the previous type.
-  - If AgentCore is enabled, its runtime moves into the closed VPC, and `agentCoreRegion` must equal `region`. `researchAgentEnabled` cannot be combined with closed network mode.
-  - The API Gateway resource policy changes form, and the API deployment is recreated. Requests from endpoints that are not allowed now get 403 instead of 401. (#1814, #1723)
+- **Closed network mode: VPC endpoints**: VPC endpoints of features that are not enabled are deleted. If other workloads in an imported VPC use them, list them in `closedNetworkAdditionalVpcEndpoints` before deploying.
+- **Closed network mode: test instance**: the test instance type changes to `t3.large`. Set `closedNetworkTestEnvironmentInstanceType: 'r6i.large'` to keep the previous type.
+- **Closed network mode: AgentCore**: if AgentCore is enabled, its runtime moves into the closed VPC, and `agentCoreRegion` must equal `region`. `researchAgentEnabled` cannot be combined with closed network mode.
+- **Closed network mode: API Gateway**: the API Gateway resource policy changes form, and the API deployment is recreated. Requests from endpoints that are not allowed now get 403 instead of 401. (#1814, #1723)
 - **New Cognito group**: `SystemAdminGroup` is created. If the user pool already has a group with this name, the update fails. (#1827)
 - **Meeting minutes transcription** starts with automatic language detection (Japanese and English by default) instead of the UI language. The languages can be changed in Settings. (#1779)
 

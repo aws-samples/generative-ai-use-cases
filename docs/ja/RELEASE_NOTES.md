@@ -29,11 +29,10 @@ GenU はリリースタグからデプロイ・アップデートします ([ア
 - **デフォルト設定での提供終了の警告**: 画像生成のデフォルトモデル `stability.stable-image-core-v1:1` は Legacy (2027-05-09 に提供終了) のため、デフォルト設定ではデプロイ時に警告が 1 件表示されます。現時点で切り替え先となる Bedrock のテキストから画像を生成するモデルはありません。(#1832)
 - **モデルの機能の修正**: Bedrock が受け付ける内容に合わせて、Mistral Large 3 と Ministral 3 で画像を添付できるようになり、Gemma 3 ではドキュメントを添付できなくなり、DeepSeek-R1 では推論の切り替えが表示されなくなりました。(#1832)
 - **Knowledge Base の Advanced Parsing のデフォルトモデル**: これまでのデフォルト (Claude 3 Sonnet) が 2026-11-13 に提供終了になったため、`global.anthropic.claude-sonnet-4-6` に変わりました。(#1813)
-- **閉域モード**:
-  - 有効にしていない機能の VPC エンドポイントは削除されます。インポートした VPC で他のワークロードが使っている場合は、デプロイ前に `closedNetworkAdditionalVpcEndpoints` に指定してください。
-  - 検証用インスタンスのタイプが `t3.large` に変わります。以前のタイプを使い続ける場合は `closedNetworkTestEnvironmentInstanceType: 'r6i.large'` を指定してください。
-  - AgentCore を有効にしている場合、ランタイムが閉域 VPC 内に移り、`agentCoreRegion` は `region` と同じである必要があります。`researchAgentEnabled` は閉域モードと併用できません。
-  - API Gateway のリソースポリシーの形が変わり、API のデプロイメントが作り直されます。許可していないエンドポイントからのリクエストは 401 ではなく 403 になります。(#1814, #1723)
+- **閉域モード: VPC エンドポイント**: 有効にしていない機能の VPC エンドポイントは削除されます。インポートした VPC で他のワークロードが使っている場合は、デプロイ前に `closedNetworkAdditionalVpcEndpoints` に指定してください。
+- **閉域モード: 検証用インスタンス**: 検証用インスタンスのタイプが `t3.large` に変わります。以前のタイプを使い続ける場合は `closedNetworkTestEnvironmentInstanceType: 'r6i.large'` を指定してください。
+- **閉域モード: AgentCore**: AgentCore を有効にしている場合、ランタイムが閉域 VPC 内に移り、`agentCoreRegion` は `region` と同じである必要があります。`researchAgentEnabled` は閉域モードと併用できません。
+- **閉域モード: API Gateway**: API Gateway のリソースポリシーの形が変わり、API のデプロイメントが作り直されます。許可していないエンドポイントからのリクエストは 401 ではなく 403 になります。(#1814, #1723)
 - **新しい Cognito グループ**: `SystemAdminGroup` が作成されます。ユーザープールに同じ名前のグループがすでにある場合、アップデートが失敗します。(#1827)
 - **議事録の文字起こし** は、UI の言語ではなく自動判別 (デフォルトは日本語と英語) で始まるようになりました。対象言語は設定画面で変更できます。(#1779)
 
