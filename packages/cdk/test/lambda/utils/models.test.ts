@@ -102,6 +102,22 @@ describe('Claude Opus 5.5', () => {
   });
 });
 
+describe('Claude Fable', () => {
+  it.each([
+    'global.anthropic.claude-fable-5',
+    'global.anthropic.claude-fable-5-1',
+    'us.anthropic.claude-fable-5-1',
+    'global.anthropic.claude-fable-5-2',
+    'us.anthropic.claude-fable-5-2',
+  ])('should add a cache point in /chat: %s', async (modelId) => {
+    const input = await createInput({ type: 'bedrock', modelId }, '/chat');
+    expect(input.system?.at(-1)).toEqual({ cachePoint: { type: 'default' } });
+    expect(input.messages?.at(-1)?.content?.at(-1)).toEqual({
+      cachePoint: { type: 'default' },
+    });
+  });
+});
+
 describe('document names', () => {
   it('gives files with the same name distinct names across turns', async () => {
     const { BEDROCK_TEXT_GEN_MODELS } =

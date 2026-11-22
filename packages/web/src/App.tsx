@@ -30,6 +30,7 @@ import Drawer, { ItemProps } from './components/Drawer';
 import ButtonIcon from './components/ButtonIcon';
 import '@aws-amplify/ui-react/styles.css';
 import useDrawer from './hooks/useDrawer';
+import useSidebar from './hooks/useSidebar';
 import useChatList from './hooks/useChatList';
 import PopupInterUseCasesDemo from './components/PopupInterUseCasesDemo';
 import useInterUseCases from './hooks/useInterUseCases';
@@ -73,6 +74,7 @@ const extractChatId = (path: string): string | null => {
 const App: React.FC = () => {
   const { t } = useTranslation();
   const { switchOpen: switchDrawer, opened: isOpenDrawer } = useDrawer();
+  const { layoutStyle, resizing } = useSidebar();
   const { pathname } = useLocation();
   const { getChatTitle } = useChatList();
   const { isShow } = useInterUseCases();
@@ -330,6 +332,7 @@ const App: React.FC = () => {
   return (
     <div
       className="screen:w-screen screen:h-screen overflow-x-hidden overflow-y-scroll"
+      style={layoutStyle}
       ref={screen}>
       <main className="flex-1">
         <div ref={scrollTopAnchorRef}></div>
@@ -369,7 +372,10 @@ const App: React.FC = () => {
             <PiX />
           </ButtonIcon>
         </div>
-        <div className="text-aws-font-color lg:ml-64">
+        <div
+          className={`text-aws-font-color lg:ml-[var(--sidebar-w)] ${
+            resizing ? '' : 'lg:transition-[margin] lg:duration-200'
+          }`}>
           {/* Show when inter-use case connection is enabled */}
           {isShow && <PopupInterUseCasesDemo />}
           <Outlet />

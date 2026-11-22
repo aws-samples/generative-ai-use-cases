@@ -394,7 +394,7 @@ const MeetingMinutesGeneration: React.FC<MeetingMinutesGenerationProps> = ({
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden rounded border border-black/30 p-3">
           {generatedMinutes ? (
-            <Markdown>{generatedMinutes}</Markdown>
+            <Markdown generating={minutesLoading}>{generatedMinutes}</Markdown>
           ) : (
             <div className="flex h-full items-center justify-center text-gray-400">
               {t('meetingMinutes.minutes_placeholder')}

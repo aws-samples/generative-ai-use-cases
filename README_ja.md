@@ -13,6 +13,10 @@
 > [!IMPORTANT]
 > GenU は v4 より多言語対応しました。
 
+## 最近のアップデート
+
+各リリースの変更内容、次のリリースの予定、アップデート前の確認事項は [リリースノート](docs/ja/RELEASE_NOTES.md) をご参照ください。
+
 ## GenU 活用パターン集
 
 GenU の機能やオプションを活用パターンごとに紹介いたします。網羅的なデプロイオプションに関しては [こちら](docs/ja/DEPLOY_OPTION.md) をご参照ください。
@@ -223,6 +227,7 @@ npm run cdk:deploy:quick
 
 - [デプロイオプション](docs/ja/DEPLOY_OPTION.md)
 - [アップデート方法](docs/ja/UPDATE.md)
+- [リリースノート](docs/ja/RELEASE_NOTES.md)
 - [ローカル開発環境構築手順](docs/ja/DEVELOPMENT.md)
 - [リソースの削除方法](docs/ja/DESTROY.md)
 - [ネイティブアプリのように利用する方法](docs/ja/PWA.md)

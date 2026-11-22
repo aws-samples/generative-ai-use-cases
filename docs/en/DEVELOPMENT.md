@@ -105,6 +105,16 @@ npm run web:lint:fix  # For frontend code
 
 This repository uses [Husky](https://typicode.github.io/husky) for git hooks. Linting runs automatically on `git commit` via `lint-staged`.
 
+## Developing with AI Coding Agents
+
+Instructions for AI coding agents are kept in files that are not tied to one tool, so the same rules apply whether you use Kiro, Claude Code or another agent.
+
+- [AGENTS.md](/AGENTS.md) at the repository root describes the repository, the commands and the rules for changes. Kiro and other agents read it automatically. `CLAUDE.md` imports it for Claude Code.
+- Agent skills are in `.kiro/skills/`. `.claude/skills` is a symbolic link to the same directory.
+
+> [!NOTE]
+> On Windows, Git checks out symbolic links as plain text files unless symbolic links are enabled (Developer Mode, and `git config core.symlinks true` before cloning). Without them, Claude Code does not find the skills; Kiro is not affected.
+
 ## When Submitting a Pull Request
 
 We welcome Pull Requests for bug fixes and feature improvements :tada:
