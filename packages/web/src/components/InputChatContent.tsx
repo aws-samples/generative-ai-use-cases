@@ -36,7 +36,8 @@ type Props = {
   loading?: boolean;
   isEmpty?: boolean;
   onChangeContent: (content: string) => void;
-  onSend: () => void;
+  // Without onSend, the send button is hidden (e.g. an input that applies as you type)
+  onSend?: () => void;
   sendIcon?: React.ReactNode;
   // When using it outside the bottom of the page, disable the margin bottom
   disableMarginBottom?: boolean;
@@ -327,14 +328,16 @@ const InputChatContent: React.FC<Props> = (props) => {
                 </ButtonIcon>
               </Tooltip>
             )}
-            <ButtonSend
-              className=""
-              disabled={disabledSend}
-              loading={loading || uploading}
-              onClick={props.onSend}
-              icon={props.sendIcon}
-              canStop={props.canStop}
-            />
+            {props.onSend && (
+              <ButtonSend
+                className=""
+                disabled={disabledSend}
+                loading={loading || uploading}
+                onClick={props.onSend}
+                icon={props.sendIcon}
+                canStop={props.canStop}
+              />
+            )}
           </div>
         </div>
 

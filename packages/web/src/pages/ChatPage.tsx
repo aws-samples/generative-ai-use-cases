@@ -753,8 +753,6 @@ const ChatPage: React.FC = () => {
                   }}
                   fullWidth={true}
                   resetDisabled={true}
-                  disabled={true}
-                  onSend={() => {}}
                   hideReset={true}
                 />
               </>
