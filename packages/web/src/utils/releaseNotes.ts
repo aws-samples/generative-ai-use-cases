@@ -26,8 +26,30 @@ export const compareVersions = (a: string, b: string): number => {
 // Pull request references such as " (#1827)" or " (#1814, #1761)" are for
 // maintainers and are left out of the text shown in the app.
 const PR_REFERENCES = /\s*\((?:#\d+(?:,\s*)?)+\)/g;
-// A line made only of links, such as "[Full changelog](...)".
-const LINK_ONLY_LINE = /^\s*(\[[^\]]+\]\([^)]+\)\s*\/?\s*)+$/;
+const MARKDOWN_LINK = /\[[^\]]*\]\([^)]*\)/g;
+
+/**
+ * Whether a line is made only of links, such as "[Full changelog](...)" or
+ * "[v5.1.0](...) / [v5.1.1](...)".
+ */
+const isLinkOnlyLine = (line: string): boolean => {
+  const rest = line.replace(MARKDOWN_LINK, '');
+  return rest !== line && /^[\s/]*$/.test(rest);
+};
+
+/** Removes HTML comments, which are notes for the people writing the file. */
+const removeComments = (markdown: string): string => {
+  let result = '';
+  let rest = markdown;
+  for (;;) {
+    const start = rest.indexOf('<!--');
+    if (start === -1) return result + rest;
+    result += rest.slice(0, start);
+    const end = rest.indexOf('-->', start + 4);
+    if (end === -1) return result;
+    rest = rest.slice(end + 3);
+  }
+};
 
 /**
  * Splits docs/{lang}/RELEASE_NOTES.md into releases. Each "## " heading that
@@ -38,7 +60,7 @@ const LINK_ONLY_LINE = /^\s*(\[[^\]]+\]\([^)]+\)\s*\/?\s*)+$/;
  */
 export const parseReleaseNotes = (markdown: string): ReleaseNote[] => {
   const notes: ReleaseNote[] = [];
-  const sections = markdown.replace(/<!--[\s\S]*?-->/g, '').split(/^## /m);
+  const sections = removeComments(markdown).split(/^## /m);
 
   for (const section of sections.slice(1)) {
     const [heading, ...body] = section.split('\n');
@@ -50,7 +72,7 @@ export const parseReleaseNotes = (markdown: string): ReleaseNote[] => {
     const highlights = subsections[1]
       .split('\n')
       .slice(1)
-      .filter((line) => !LINK_ONLY_LINE.test(line))
+      .filter((line) => !isLinkOnlyLine(line))
       .join('\n')
       .replace(PR_REFERENCES, '')
       .trim();

@@ -63,6 +63,18 @@ describe('parseReleaseNotes', () => {
     expect(notes[1].highlights).toBe('- Patch releases');
   });
 
+  it('keeps lines that mix links and text, and handles an unclosed comment', () => {
+    const [note] = parseReleaseNotes(
+      '## v1.0.0\n\n### Highlights\n\n- See [docs](https://example.com) for details\n<!-- a\n<!-- b -->\n- Hidden? no\n'
+    );
+    expect(note.highlights).toBe(
+      '- See [docs](https://example.com) for details\n\n- Hidden? no'
+    );
+    expect(
+      parseReleaseNotes('## v1.0.0\n\n### Highlights\n\n- A\n<!-- open')
+    ).toEqual([{ title: 'v1.0.0', versions: ['1.0.0'], highlights: '- A' }]);
+  });
+
   it('reads every version in the heading', () => {
     expect(notes[1].versions).toEqual(['5.1.0', '5.1.2']);
   });
