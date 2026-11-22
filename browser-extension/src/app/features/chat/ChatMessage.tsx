@@ -53,6 +53,16 @@ const ChatMessage: React.FC<Props> = (props) => {
         ) : (
           message.content.split('\n').map((c, idx) => <div key={idx}>{c}</div>)
         )}
+        {message.extraData
+          ?.filter((data) => data.type === 'image')
+          .map((data, idx) => (
+            <img
+              key={idx}
+              src={`data:${data.source.mediaType};base64,${data.source.data}`}
+              alt="スクリーンショット"
+              className="mt-2 max-h-48 rounded border"
+            />
+          ))}
       </div>
       {message.role === 'assistant' && message.content !== '' && (
         <div className="flex justify-end">

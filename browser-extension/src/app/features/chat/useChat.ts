@@ -9,7 +9,7 @@ import {
 } from './chatSlice';
 import usePredict from './usePredict';
 import useSettings from '../settings/useSettings';
-import { Message } from '../../../@types/chat';
+import { ExtraData, Message } from '../../../@types/chat';
 import Browser from 'webextension-polyfill';
 import { PromptSetting } from '../../../@types/settings';
 import { StreamingChunk } from '../../../@types/backend-api';
@@ -26,6 +26,19 @@ const parseFirstModelId = (modelIds: string): string => {
     // not JSON
   }
   return modelIds.split(',')[0]?.trim() ?? '';
+};
+
+// data:image/jpeg;base64,... -> the image format the API expects
+const toImageExtraData = (dataUrl: string): ExtraData => {
+  const [header, data] = dataUrl.split(',');
+  return {
+    type: 'image',
+    source: {
+      type: 'base64',
+      mediaType: header.replace(/^data:/, '').replace(/;base64$/, ''),
+      data: data ?? '',
+    },
+  };
 };
 
 const useChat = () => {
@@ -55,7 +68,13 @@ const useChat = () => {
     isEmptyMessages,
     // The tab and the settings are loaded after the first render
     isReady: tabId !== -1 && !!settings,
-    sendMessage: async (promptSetting: PromptSetting, content: string, isReplace?: boolean) => {
+    sendMessage: async (
+      promptSetting: PromptSetting,
+      content: string,
+      isReplace?: boolean,
+      // Images (data URLs) sent with the message, such as a screenshot
+      images?: string[],
+    ) => {
       if (tabId === -1) {
         throw new Error('Tab IDが取得できませんでした');
       }
@@ -66,6 +85,7 @@ const useChat = () => {
           {
             role: 'user',
             content: content,
+            extraData: images?.map(toImageExtraData),
           },
         ];
         // If ignoreHistory is true, use the one-question-one-answer format

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { PiArrowsCounterClockwise, PiPaperPlaneRightFill, PiSpinner } from 'react-icons/pi';
+import { PiArrowsCounterClockwise, PiPaperPlaneRightFill, PiSpinner, PiX } from 'react-icons/pi';
 import { BaseProps } from '../../../@types/common';
 import { twMerge } from 'tailwind-merge';
 import Button from '../common/components/Button';
@@ -12,6 +12,8 @@ import { IconWrapper } from '../../components/IconWrapper';
 
 type Props = BaseProps & {
   initContent: string;
+  // A screenshot (data URL) to send with the message
+  initImage?: string;
   initPromptSetting?: PromptSetting;
 };
 
@@ -19,6 +21,11 @@ const InputContent: React.FC<Props> = (props) => {
   const { isEmptyMessages, sendMessage, clearMessages, isLoading, isReady } = useChat();
 
   const [content, setContent] = useState('');
+  const [image, setImage] = useState('');
+
+  useEffect(() => {
+    setImage(props.initImage ?? '');
+  }, [props.initImage]);
   const [formValues, setFormValues] = useState<string[]>([]);
 
   const [promptSetting, setPromptSetting] = useState<PromptSetting>({
@@ -33,6 +40,7 @@ const InputContent: React.FC<Props> = (props) => {
   const [pendingSend, setPendingSend] = useState<{
     promptSetting: PromptSetting;
     content: string;
+    images?: string[];
   } | null>(null);
 
   useEffect(() => {
@@ -42,6 +50,7 @@ const InputContent: React.FC<Props> = (props) => {
         pendingSend.promptSetting,
         pendingSend.content,
         pendingSend.promptSetting.initializeMessages,
+        pendingSend.images,
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,7 +61,12 @@ const InputContent: React.FC<Props> = (props) => {
       clearMessages();
     }
     if (props.initPromptSetting?.directSend) {
-      setPendingSend({ promptSetting: props.initPromptSetting, content: props.initContent });
+      setPendingSend({
+        promptSetting: props.initPromptSetting,
+        content: props.initContent,
+        images: props.initImage ? [props.initImage] : undefined,
+      });
+      setImage('');
     } else {
       if (props.initContent) {
         setContent(props.initContent);
@@ -84,14 +98,15 @@ ${formValues[idx]}
 </${def.tag}>
 `;
       });
-      sendMessage(promptSetting, content_);
+      sendMessage(promptSetting, content_, undefined, image ? [image] : undefined);
       setFormValues(new Array(formValues.length).fill(''));
     } else {
-      sendMessage(promptSetting, content);
+      sendMessage(promptSetting, content, undefined, image ? [image] : undefined);
     }
 
     setContent('');
-  }, [content, formValues, isEmptyMessages, promptSetting, sendMessage]);
+    setImage('');
+  }, [content, formValues, image, isEmptyMessages, promptSetting, sendMessage]);
 
   return (
     <div className={twMerge('relative bg-aws-squid-ink px-2 pb-1', props.className)}>
@@ -117,6 +132,20 @@ ${formValues[idx]}
           </Button>
         )}
       </div>
+      {image && (
+        <div className="relative mb-2 w-fit">
+          <img src={image} alt="スクリーンショット" className="max-h-24 rounded border" />
+          <button
+            type="button"
+            className="absolute -top-2 -right-2 rounded-full bg-aws-squid-ink border p-0.5"
+            title="画像を外す"
+            aria-label="画像を外す"
+            onClick={() => setImage('')}
+          >
+            <IconWrapper icon={PiX} />
+          </button>
+        </div>
+      )}
       {isEmptyMessages &&
       promptSetting.useForm &&
       (promptSetting.formDefinitions?.length ?? 0) > 0 ? (
