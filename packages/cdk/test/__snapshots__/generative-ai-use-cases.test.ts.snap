@@ -13537,7 +13537,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             ],
           },
           "VITE_APP_CUSTOM_AGENTS_JSON": "[]",
-          "VITE_APP_DEFAULT_SYSTEM_PROMPT": "",
           "VITE_APP_ENDPOINT_NAMES": "[]",
           "VITE_APP_FLOWS": "[]",
           "VITE_APP_FLOW_STREAM_FUNCTION_ARN": {
@@ -26489,7 +26488,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             ],
           },
           "VITE_APP_CUSTOM_AGENTS_JSON": "[]",
-          "VITE_APP_DEFAULT_SYSTEM_PROMPT": "",
           "VITE_APP_ENDPOINT_NAMES": "[]",
           "VITE_APP_FLOWS": "[]",
           "VITE_APP_FLOW_STREAM_FUNCTION_ARN": {

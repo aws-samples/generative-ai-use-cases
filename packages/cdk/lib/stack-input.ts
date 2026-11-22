@@ -30,8 +30,6 @@ const baseStackInputSchema = z.object({
       transcribe: z.boolean().optional(),
     })
     .default({}),
-  // System prompt that new chats start with. Empty keeps the built-in one.
-  defaultSystemPrompt: z.string().default(''),
   // API
   modelRegion: z.string().default('us-east-1'),
   modelIds: z

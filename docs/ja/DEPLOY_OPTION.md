@@ -1221,27 +1221,6 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
-### チャットのデフォルトのシステムプロンプトを変更する
-
-新しいチャットは組み込みのシステムプロンプトで始まります。組織独自の指示を使う場合は `defaultSystemPrompt` を設定してください。空 (デフォルト) の場合は組み込みのシステムプロンプトが使われます。
-
-**[parameter.ts](/packages/cdk/parameter.ts) を編集**
-
-```typescript
-// parameter.ts
-const envs: Record<string, Partial<StackInput>> = {
-  dev: {
-    defaultSystemPrompt: `あなたは Example 株式会社の社員を支援する AI アシスタントです。
-ユーザーの質問と同じ言語で回答してください。`,
-  },
-};
-```
-
-- チャットユースケースにのみ適用されます。ほかのユースケースはそれぞれのシステムプロンプトを使います。
-- ユーザーはこれまでどおりチャットごとにシステムプロンプトを変更できます。保存したシステムプロンプトの一覧で星のボタンを押すと、そのシステムプロンプトでユーザーの新しいチャットが始まります。これは `defaultSystemPrompt` より優先されます。
-- システムプロンプトが何であっても、GenU はリクエストを送るときに、チャット画面で表示できる書式 (Markdown、数式、Mermaid の図、グラフ、SVG) と今日の日付を付け加えます。
-- 値は Web アプリに組み込まれます。`npm run web:devw` はスタックからこの値を読まないため、ローカルで試す場合は `VITE_APP_DEFAULT_SYSTEM_PROMPT` を設定してください。
-
 ## ユースケースビルダーの設定
 
 ユースケースビルダーはデフォルトで有効化されており、デプロイ後画面上に表示される「ビルダーモード」という項目から利用できます。ユースケースビルダーを無効化する場合は、パラメータの `useCaseBuilderEnabled` に `false` を指定します。(デフォルトは `true`)

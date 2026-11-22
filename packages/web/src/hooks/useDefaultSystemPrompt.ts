@@ -3,7 +3,7 @@ import { Prompter } from '../prompts';
 
 /**
  * The system prompt the user chose for new chats (one of their saved system
- * prompts), or null to use the deployment's. ChatPage keeps it up to date from
+ * prompts), or null to use the built-in one. ChatPage keeps it up to date from
  * the user settings; useChat reads it when it starts a new chat.
  */
 export const useDefaultSystemPrompt = create<{
@@ -16,8 +16,7 @@ export const useDefaultSystemPrompt = create<{
 
 /**
  * The system prompt a chat starts with: the user's default for a new chat,
- * otherwise the page's own prompt (the deployment's defaultSystemPrompt or the
- * built-in one for the chat).
+ * otherwise the page's own prompt.
  */
 export const initialSystemContext = (id: string, prompter: Prompter): string =>
   (id === '/chat' && useDefaultSystemPrompt.getState().userDefault) ||

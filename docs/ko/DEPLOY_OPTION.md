@@ -1064,27 +1064,6 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
-### 채팅의 기본 시스템 프롬프트 변경
-
-새 채팅은 기본 제공 시스템 프롬프트로 시작합니다. 조직 고유의 지침을 사용하려면 `defaultSystemPrompt`를 설정하세요. 비어 있으면(기본값) 기본 제공 시스템 프롬프트가 사용됩니다.
-
-**[parameter.ts](/packages/cdk/parameter.ts) 편집**
-
-```typescript
-// parameter.ts
-const envs: Record<string, Partial<StackInput>> = {
-  dev: {
-    defaultSystemPrompt: `You are an AI assistant for the employees of Example Corp.
-Answer in the same language as the user's question.`,
-  },
-};
-```
-
-- 채팅 사용 사례에만 적용됩니다. 다른 사용 사례는 각자의 시스템 프롬프트를 사용합니다.
-- 사용자는 기존과 같이 채팅마다 시스템 프롬프트를 변경할 수 있습니다. 저장된 시스템 프롬프트 목록에서 별 버튼을 누르면 해당 시스템 프롬프트로 사용자의 새 채팅이 시작됩니다. 이는 `defaultSystemPrompt`보다 우선합니다.
-- 시스템 프롬프트와 관계없이 GenU는 요청을 보낼 때 채팅 화면에서 표시할 수 있는 서식(Markdown, 수식, Mermaid 다이어그램, 차트, SVG)과 오늘 날짜를 추가합니다.
-- 값은 웹 앱에 포함됩니다. `npm run web:devw`는 스택에서 이 값을 읽지 않으므로 로컬에서 시험하려면 `VITE_APP_DEFAULT_SYSTEM_PROMPT`를 설정하세요.
-
 ## Use Case Builder 구성
 
 Use Case Builder는 기본적으로 활성화되어 있으며 배포 후 화면에 표시되는 "Builder Mode" 옵션에서 액세스할 수 있습니다. Use Case Builder를 비활성화하려면 매개변수 `useCaseBuilderEnabled`에 `false`를 지정합니다. (기본값은 `true`)
