@@ -205,6 +205,7 @@ chat:
   save: Save
   saved_system_prompts: Saved System Prompts
   search_by_title: Search by title
+  set_default_system_prompt: Start new chats with this system prompt
   settings: Apply
   share: Share
   share_conversation: Share Conversation History
@@ -212,6 +213,7 @@ chat:
   show_system_prompt: Show system prompt
   system_prompt: System Prompt
   title: Chat
+  unset_default_system_prompt: Stop starting new chats with this system prompt
   view_prompt_examples: View Prompt Examples
 common:
   add: Add

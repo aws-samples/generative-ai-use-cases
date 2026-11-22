@@ -79,10 +79,16 @@ Command[newtask command]
 
 If technical content contains these characters, rephrase or simplify the text.`;
 
+// What the chat can render (Markdown, math, Mermaid, charts) is added when a
+// request is sent (withChatContext), so it is not repeated here.
+const BUILT_IN_CHAT_SYSTEM_PROMPT = `You are an AI assistant helping users in chat.
+Automatically detect the language of the user's request and think and answer in the same language.`;
+
 const systemContexts: { [key: string]: string } = {
-  '/chat': `You are an AI assistant helping users in chat.
-Use a Mermaid diagram in a code block (e.g., \`\`\`mermaid) only when the user asks for a diagram, or when a process, relationship or structure is hard to follow in text alone. Otherwise answer in text.
-Automatically detect the language of the user's request and think and answer in the same language.`,
+  // The deployment can replace the chat's with defaultSystemPrompt
+  '/chat':
+    import.meta.env.VITE_APP_DEFAULT_SYSTEM_PROMPT ||
+    BUILT_IN_CHAT_SYSTEM_PROMPT,
   '/summarize': `You are an AI assistant that summarizes text. 
 I will give you summarization instructions in the first chat, and then you should improve the summary results in subsequent chats.
 Automatically detect the language of the user's request and think and answer in the same language.`,
@@ -170,7 +176,9 @@ export const claudePrompter: Prompter = {
     if (pathname.startsWith('/chat/')) {
       return systemContexts['/chat'];
     }
-    return systemContexts[pathname] || systemContexts['/chat'];
+    // Other pages (RAG chat and others without their own prompt) keep the
+    // built-in prompt; defaultSystemPrompt is for the chat only
+    return systemContexts[pathname] || BUILT_IN_CHAT_SYSTEM_PROMPT;
   },
   chatPrompt(params: ChatParams): string {
     return params.content;

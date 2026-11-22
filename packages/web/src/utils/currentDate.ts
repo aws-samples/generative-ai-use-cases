@@ -1,4 +1,5 @@
 import { ShownMessage } from 'generative-ai-use-cases';
+import { CHAT_FORMATTING_INSTRUCTIONS } from '@generative-ai-use-cases/common';
 
 const WEEKDAYS = [
   'Sunday',
@@ -37,6 +38,31 @@ export const currentDateLine = (
  * the system message stored with the chat stays as the user wrote it, and a
  * chat resumed on a later day gets that day's date.
  */
+/**
+ * Add what the chat screen can render and today's date to the system message of
+ * a chat request. Like `withCurrentDate`, it changes only what is sent: the
+ * system prompt the user sees and saves stays as written, so a user's own or a
+ * saved system prompt still gets them. The fixed formatting text comes first and
+ * the daily date last, so prompt caching keeps working.
+ */
+export const withChatContext = (
+  messages: ShownMessage[],
+  now: Date = new Date()
+): ShownMessage[] =>
+  withCurrentDate(
+    messages.map((message, i) =>
+      i === 0 && message.role === 'system'
+        ? {
+            ...message,
+            content: [message.content.trim(), CHAT_FORMATTING_INSTRUCTIONS]
+              .filter((s) => s !== '')
+              .join('\n\n'),
+          }
+        : message
+    ),
+    now
+  );
+
 export const withCurrentDate = (
   messages: ShownMessage[],
   now: Date = new Date()

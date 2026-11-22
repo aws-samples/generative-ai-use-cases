@@ -57,8 +57,17 @@ const { chatStore, hooks } = vi.hoisted(() => {
       chatList: { getChatTitle: () => '' },
       files: { clear: fn, uploadedFiles: [], uploadFiles: fn, base64Cache: {} },
       follow: { scrollableContainer: { current: null }, setFollowing: fn },
+      userSettingsApi: (() => {
+        const settings = { data: {}, mutate: fn };
+        return {
+          getUserSettings: () => settings,
+          setDefaultSystemContext: fn,
+          clearDefaultChat: fn,
+        };
+      })(),
       prompter: {
         chatPrompt: ({ content }: { content: string }) => content,
+        systemContext: () => '',
       },
     },
   };
@@ -83,6 +92,9 @@ vi.mock('../../../src/hooks/useChatApi', () => ({
 }));
 vi.mock('../../../src/hooks/useSystemContextApi', () => ({
   default: () => hooks.systemContextApi,
+}));
+vi.mock('../../../src/hooks/useUserSettingsApi', () => ({
+  default: () => hooks.userSettingsApi,
 }));
 vi.mock('../../../src/hooks/useChatList', () => ({
   default: () => hooks.chatList,
@@ -339,5 +351,73 @@ describe('ChatPage reasoning settings', () => {
 
     fireEvent.click(screen.getByTestId('reasoning'));
     expect(screen.getByTestId('setting-label').textContent).toBe('');
+  });
+});
+
+describe('ChatPage default system prompt', () => {
+  const saved = {
+    id: 'systemContext#alice',
+    createdDate: '1',
+    systemContextId: 'systemContext#s1',
+    systemContextTitle: 'Mine',
+    systemContext: 'my prompt',
+  };
+  const original = {
+    list: hooks.systemContextApi.listSystemContexts,
+    settings: hooks.userSettingsApi.getUserSettings,
+    update: hooks.chat.updateSystemContext,
+    current: hooks.chat.getCurrentSystemContext,
+  };
+
+  beforeEach(async () => {
+    localStorage.clear();
+    chatStore.modelId = 'opus';
+    const list = { data: [saved], mutate: vi.fn() };
+    hooks.systemContextApi.listSystemContexts = () => list;
+    hooks.chat.updateSystemContext = vi.fn();
+    await reload();
+  });
+
+  afterEach(() => {
+    cleanup();
+    hooks.systemContextApi.listSystemContexts = original.list;
+    hooks.userSettingsApi.getUserSettings = original.settings;
+    hooks.chat.updateSystemContext = original.update;
+    hooks.chat.getCurrentSystemContext = original.current;
+  });
+
+  it("starts a new chat with the user's default system prompt", () => {
+    const settings = {
+      data: { defaultChat: { type: 'systemContext', id: 's1' } },
+      mutate: vi.fn(),
+    };
+    hooks.userSettingsApi.getUserSettings = () => settings;
+    renderAt('/chat');
+    expect(hooks.chat.updateSystemContext).toHaveBeenCalledWith('my prompt');
+  });
+
+  it('keeps a system prompt the user already edited', () => {
+    const settings = {
+      data: { defaultChat: { type: 'systemContext', id: 's1' } },
+      mutate: vi.fn(),
+    };
+    hooks.userSettingsApi.getUserSettings = () => settings;
+    hooks.chat.getCurrentSystemContext = () => 'edited by the user';
+    renderAt('/chat');
+    expect(hooks.chat.updateSystemContext).not.toHaveBeenCalledWith(
+      'my prompt'
+    );
+  });
+
+  it('does not change a saved chat', () => {
+    const settings = {
+      data: { defaultChat: { type: 'systemContext', id: 's1' } },
+      mutate: vi.fn(),
+    };
+    hooks.userSettingsApi.getUserSettings = () => settings;
+    renderAt('/chat/chat-1');
+    expect(hooks.chat.updateSystemContext).not.toHaveBeenCalledWith(
+      'my prompt'
+    );
   });
 });

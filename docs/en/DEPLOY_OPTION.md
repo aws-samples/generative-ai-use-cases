@@ -1202,6 +1202,27 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### Changing the Default System Prompt for Chat
+
+New chats start with a built-in system prompt. To use your organization's own instructions, set `defaultSystemPrompt`. When it is empty (the default), the built-in system prompt is used.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    defaultSystemPrompt: `You are an AI assistant for the employees of Example Corp.
+Answer in the same language as the user's question.`,
+  },
+};
+```
+
+- It applies to the Chat use case only. Other use cases keep their own system prompts.
+- Users can still change the system prompt in each chat. In the list of saved system prompts, the star button makes one of them the starting point of the user's new chats; it takes precedence over `defaultSystemPrompt`.
+- Whatever the system prompt is, GenU adds what the chat screen can render (Markdown, math, Mermaid diagrams, charts and SVG) and today's date when it sends the request.
+- The value is built into the web app. `npm run web:devw` does not read it from the stack; set `VITE_APP_DEFAULT_SYSTEM_PROMPT` to try it locally.
+
 ## Use Case Builder Configuration
 
 The Use Case Builder is enabled by default and can be accessed from the "Builder Mode" option displayed on the screen after deployment. To disable the Use Case Builder, specify `false` for the parameter `useCaseBuilderEnabled`. (Default is `true`)

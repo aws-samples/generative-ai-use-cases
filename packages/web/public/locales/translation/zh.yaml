@@ -56,6 +56,7 @@ chat:
   save: 保存
   saved_system_prompts: 已保存的系统提示
   search_by_title: 按标题搜索
+  set_default_system_prompt: 使用此系统提示开始新对话
   settings: 设置
   share: 分享
   share_conversation: 分享对话历史
@@ -63,6 +64,7 @@ chat:
   show_system_prompt: 显示系统提示
   system_prompt: 系统提示
   title: 聊天
+  unset_default_system_prompt: 不再使用此系统提示开始新对话
 common:
   cancel: 取消
   clear: 清除

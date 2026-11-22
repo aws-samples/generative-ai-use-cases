@@ -8,6 +8,7 @@ export * from './video';
 export * from './text';
 export * from './utils';
 export * from './systemContext';
+export * from './userSetting';
 export * from './meetingMinutesCustomPrompt';
 export * from './useCaseBuilder';
 export * from './protocolUseCaseBuilder';

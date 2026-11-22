@@ -195,6 +195,7 @@ chat:
   save: 保存
   saved_system_prompts: 保存したシステムプロンプト
   search_by_title: 件名で検索
+  set_default_system_prompt: 新しいチャットをこのシステムプロンプトで始める
   settings: 設定
   share: シェアする
   share_conversation: 会話履歴のシェア
@@ -202,6 +203,7 @@ chat:
   show_system_prompt: システムプロンプトの表示
   system_prompt: システムプロンプト
   title: チャット
+  unset_default_system_prompt: 新しいチャットをこのシステムプロンプトで始めるのをやめる
   view_prompt_examples: プロンプト例を見る
 common:
   add: 追加

@@ -69,6 +69,7 @@ chat:
   save: 저장
   saved_system_prompts: 저장된 시스템 프롬프트
   search_by_title: 제목으로 검색
+  set_default_system_prompt: 새 채팅을 이 시스템 프롬프트로 시작
   settings: 설정
   share: 공유
   share_conversation: 대화 기록 공유
@@ -76,6 +77,7 @@ chat:
   show_system_prompt: 시스템 프롬프트 표시
   system_prompt: 시스템 프롬프트
   title: 채팅
+  unset_default_system_prompt: 새 채팅을 이 시스템 프롬프트로 시작하지 않기
   view_prompt_examples: 프롬프트 예시 보기
 common:
   cancel: 취소

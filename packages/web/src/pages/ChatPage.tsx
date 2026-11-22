@@ -10,6 +10,8 @@ import InputChatContent from '../components/InputChatContent';
 import useChat from '../hooks/useChat';
 import useChatApi from '../hooks/useChatApi';
 import useSystemContextApi from '../hooks/useSystemContextApi';
+import useUserSettingsApi from '../hooks/useUserSettingsApi';
+import { useDefaultSystemPrompt } from '../hooks/useDefaultSystemPrompt';
 import useChatList from '../hooks/useChatList';
 import ChatMessage from '../components/ChatMessage';
 import PromptList from '../components/PromptList';
@@ -34,7 +36,7 @@ import BedrockIcon from '../assets/bedrock.svg?react';
 import { ChatPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import { getPrompter } from '../prompts';
-import { withCurrentDate } from '../utils/currentDate';
+import { withChatContext } from '../utils/currentDate';
 import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
 import { effortLabel } from '../utils/reasoningEffort';
@@ -380,7 +382,7 @@ const ChatPage: React.FC = () => {
     const success = await postChat(
       prompter.chatPrompt({ content: savedContent }),
       false,
-      withCurrentDate,
+      withChatContext,
       undefined,
       undefined,
       fileUpload ? uploadedFiles : undefined,
@@ -409,7 +411,7 @@ const ChatPage: React.FC = () => {
   const onRetry = useCallback(() => {
     retryGeneration(
       undefined,
-      withCurrentDate,
+      withChatContext,
       undefined,
       undefined,
       undefined,
@@ -436,7 +438,7 @@ const ChatPage: React.FC = () => {
       editChat(
         modifiedPrompt,
         false,
-        withCurrentDate,
+        withChatContext,
         undefined,
         undefined,
         undefined,
@@ -528,6 +530,68 @@ const ChatPage: React.FC = () => {
     setInputSystemContext(currentSystemContext);
   }, [currentSystemContext, setInputSystemContext]);
 
+  // The saved system prompt the user chose for new chats
+  const { getUserSettings, setDefaultSystemContext, clearDefaultChat } =
+    useUserSettingsApi();
+  const { data: userSettings, mutate: mutateUserSettings } = getUserSettings();
+  const defaultSystemContextId =
+    userSettings?.defaultChat?.type === 'systemContext'
+      ? `systemContext#${userSettings.defaultChat.id}`
+      : null;
+  const userDefaultPrompt = useMemo(
+    () =>
+      systemContextList.find(
+        (item) => item.systemContextId === defaultSystemContextId
+      )?.systemContext ?? null,
+    [systemContextList, defaultSystemContextId]
+  );
+  const setUserDefaultPrompt = useDefaultSystemPrompt(
+    (state) => state.setUserDefault
+  );
+  // The default a new chat on this page last got, to tell it from the user's edits
+  const appliedDefaultPrompt = useRef<string | null>(null);
+  useEffect(() => {
+    setUserDefaultPrompt(userDefaultPrompt);
+    // The settings arrive after a new chat has started. Switch it to the new
+    // default only while its system prompt is still the one it started with.
+    if (pathname === '/chat' && isEmpty) {
+      const started =
+        appliedDefaultPrompt.current ?? prompter.systemContext(pathname);
+      if (getCurrentSystemContext() === started) {
+        updateSystemContext(
+          userDefaultPrompt ?? prompter.systemContext(pathname)
+        );
+      }
+    }
+    appliedDefaultPrompt.current = userDefaultPrompt;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userDefaultPrompt]);
+
+  const onClickDefaultSystemContext = async (systemContextId: string) => {
+    const isDefault = systemContextId === defaultSystemContextId;
+    try {
+      if (isDefault) {
+        await mutateUserSettings({}, { revalidate: false });
+        await clearDefaultChat();
+      } else {
+        await mutateUserSettings(
+          {
+            defaultChat: {
+              type: 'systemContext',
+              id: systemContextId.split('#')[1],
+            },
+          },
+          { revalidate: false }
+        );
+        await setDefaultSystemContext(systemContextId);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      mutateUserSettings();
+    }
+  };
+
   const onClickSamplePrompt = useCallback(
     (params: ChatPageQueryParams) => {
       // Only update chat content when the prompt list provides one.
@@ -550,6 +614,8 @@ const ChatPage: React.FC = () => {
       }
       await deleteSystemContext(systemContextId);
       mutate();
+      // Deleting the default also clears it on the server
+      mutateUserSettings();
     } catch (e) {
       console.error(e);
     }
@@ -802,6 +868,8 @@ const ChatPage: React.FC = () => {
           systemContextList={systemContextList as SystemContext[]}
           onClickDeleteSystemContext={onClickDeleteSystemContext}
           onClickUpdateSystemContext={onClickUpdateSystemContext}
+          defaultSystemContextId={defaultSystemContextId}
+          onClickDefaultSystemContext={onClickDefaultSystemContext}
           forceExpand={forceExpandPromptList}
         />
       )}

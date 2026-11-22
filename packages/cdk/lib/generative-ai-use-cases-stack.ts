@@ -430,6 +430,7 @@ export class GenerativeAiUseCasesStack extends Stack {
         : undefined,
       // Frontend
       hiddenUseCases: webConfig.hiddenUseCases,
+      defaultSystemPrompt: params.defaultSystemPrompt,
       // Custom Domain
       cert: props.cert,
       hostName: params.hostName,

@@ -58,6 +58,7 @@ chat:
   save: บันทึก
   saved_system_prompts: System Prompts ที่บันทึกไว้
   search_by_title: ค้นหาตามชื่อเรื่อง
+  set_default_system_prompt: เริ่มแชทใหม่ด้วย System Prompt นี้
   settings: การตั้งค่า
   share: แชร์
   share_conversation: แชร์ประวัติการสนทนา
@@ -65,6 +66,7 @@ chat:
   show_system_prompt: แสดง system prompt
   system_prompt: System Prompt
   title: Chat
+  unset_default_system_prompt: เลิกเริ่มแชทใหม่ด้วย System Prompt นี้
   view_prompt_examples: ดูตัวอย่าง Prompt
 common:
   cancel: ยกเลิก
