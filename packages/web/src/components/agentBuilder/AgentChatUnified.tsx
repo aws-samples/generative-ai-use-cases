@@ -6,7 +6,8 @@ import InputChatContent from '../InputChatContent';
 import ChatMessage from '../ChatMessage';
 import ScrollTopBottom from '../ScrollTopBottom';
 import useFollow from '../../hooks/useFollow';
-import { useAgentCore } from '../../hooks/useAgentCore';
+import useAgentInvocation from '../../hooks/agentBuilder/useAgentInvocation';
+import { agentModelId, agentSystemPrompt } from '../../utils/agentInvocation';
 import { MODELS } from '../../hooks/useModel';
 import useFiles from '../../hooks/useFiles';
 import { AgentConfiguration } from 'generative-ai-use-cases';
@@ -69,12 +70,11 @@ const AgentChatUnified: React.FC<AgentChatProps> = ({
     isEmpty: chatIsEmpty,
     clear: clearChat,
     loading: chatLoading,
-    invokeAgentRuntime,
-    getAgentBuilderRuntime,
+    invokeAgent,
     updateSystemContext,
     getModelId,
     setModelId,
-  } = useAgentCore(pathname);
+  } = useAgentInvocation(pathname);
 
   const [chatContent, setChatContent] = useState('');
   const [initialized, setInitialized] = useState(false);
@@ -89,8 +89,7 @@ const AgentChatUnified: React.FC<AgentChatProps> = ({
   // Initialize model ID when agent is loaded
   useEffect(() => {
     if (agent && availableModels.length > 0) {
-      const agentModelId = agent.modelId || availableModels[0];
-      setModelId(agentModelId);
+      setModelId(agentModelId(agent, availableModels));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [agent?.modelId, availableModels]);
@@ -100,15 +99,7 @@ const AgentChatUnified: React.FC<AgentChatProps> = ({
     if (!initialized && agent) {
       console.log('Initializing agent chat:', agent.name);
 
-      // Set the system context to the agent's system prompt
-      const systemPrompt = `${agent.systemPrompt || 'You are a helpful assistant.'}
-
-Agent Name: ${agent.name}
-Agent Description: ${agent.description || 'No description provided'}
-
-Please respond as this agent with the specified behavior and personality.`;
-
-      updateSystemContext(systemPrompt);
+      updateSystemContext(agentSystemPrompt(agent));
       setInitialized(true);
       handleResetChat();
     }
@@ -120,14 +111,7 @@ Please respond as this agent with the specified behavior and personality.`;
     if (initialized && agent) {
       console.log('Updating agent context:', agent.name);
 
-      const systemPrompt = `${agent.systemPrompt || 'You are a helpful assistant.'}
-
-Agent Name: ${agent.name}
-Agent Description: ${agent.description || 'No description provided'}
-
-Please respond as this agent with the specified behavior and personality.`;
-
-      updateSystemContext(systemPrompt);
+      updateSystemContext(agentSystemPrompt(agent));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [agent?.name, agent?.description, agent?.systemPrompt, initialized]);
@@ -148,11 +132,6 @@ Please respond as this agent with the specified behavior and personality.`;
     }
 
     try {
-      const agentBuilderRuntime = getAgentBuilderRuntime();
-      if (!agentBuilderRuntime) {
-        throw new Error('No AgentBuilder runtime available');
-      }
-
       console.log('Sending message with agent:', agent.name);
       console.log('Using sessionId:', sessionId);
       console.log('MCP servers count:', agent.mcpServers?.length || 0);
@@ -167,20 +146,13 @@ Please respond as this agent with the specified behavior and personality.`;
           ? uploadedFileObjects.map((uploadedFile) => uploadedFile.file)
           : undefined;
 
-      // Use AgentCore's invokeAgentRuntime with MCP servers
-      invokeAgentRuntime(
-        agentBuilderRuntime.arn,
+      invokeAgent({
+        agent,
         sessionId,
-        chatContent,
-        'DEFAULT',
-        filesToSend,
-        'current-user',
-        agent.mcpServers,
-        agent.agentId,
+        prompt: chatContent,
+        files: filesToSend,
         modelId,
-        agent.codeExecutionEnabled ?? false,
-        agent.webSearchEnabled ?? false
-      );
+      });
 
       setChatContent('');
       clearFiles();
@@ -197,8 +169,7 @@ Please respond as this agent with the specified behavior and personality.`;
     modelId,
     chatLoading,
     setFollowing,
-    invokeAgentRuntime,
-    getAgentBuilderRuntime,
+    invokeAgent,
     sessionId,
     uploadedFiles,
     clearFiles,
