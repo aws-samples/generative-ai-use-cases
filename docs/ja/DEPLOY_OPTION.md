@@ -506,7 +506,7 @@ const envs: Record<string, Partial<StackInput>> = {
 ### MCP チャットユースケースの有効化
 
 > [!WARNING]
-> MCP チャットユースケースは Deprecated ステータスになりました。MCP の活用には AgentCore ユースケースをご利用ください。MCP チャットユースケースは v6 で完全削除予定です。
+> MCP チャットユースケースは Deprecated ステータスになりました。MCP の活用には AgentCore ユースケースをご利用ください。
 
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) とは、LLM モデルと外部データやツールを繋ぐプロトコルです。
 GenU では [Strands Agents](https://strandsagents.com/latest/) を活用して MCP に準拠したツールを実行するチャットユースケースを用意しています。

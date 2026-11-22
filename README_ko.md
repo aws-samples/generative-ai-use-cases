@@ -90,7 +90,7 @@ GenU는 생성형 AI를 활용한 다양한 표준 사용 사례를 제공합니
       </tr>
       <tr>
         <td>Agent Builder (옵션)</td>
-        <td>지침을 작성하고 도구와 MCP 서버를 선택하는 것만으로 코드 없이 에이전트를 만들고 다른 사용자와 공유할 수 있습니다. <a href="https://aws-samples.github.io/generative-ai-use-cases/en/DEPLOY_OPTION.html#enabling-agentbuilder-use-case">Enabling AgentBuilder Use Case</a>를 참조하세요.</td>
+        <td>지침을 작성하고 도구와 MCP 서버를 선택하는 것만으로 코드 없이 에이전트를 만들고 다른 사용자와 공유할 수 있습니다. <a href="docs/ko/DEPLOY_OPTION.md#agentbuilder-사용-사례-활성화">AgentBuilder 사용 사례 활성화</a>를 참조하세요.</td>
       </tr>
       <tr>
         <td>리서치 (옵션)</td>
@@ -117,7 +117,7 @@ Knowledge Base를 사용할 때는 [고급 파싱](docs/ko/DEPLOY_OPTION.md#enab
 Knowledge Base는 또한 [메타데이터 필터 설정](docs/ko/DEPLOY_OPTION.md#metadata-filter-configuration)을 허용합니다.
 예를 들어, "조직별로 접근 가능한 데이터 소스 전환" 또는 "사용자가 UI에서 필터를 설정할 수 있도록 허용"과 같은 요구사항을 충족할 수 있습니다.
 
-AWS 외부의 데이터를 기반으로 답변하게 하려면 [AgentCore 사용 사례](docs/ko/DEPLOY_OPTION.md#agentcore-사용-사례-활성화)나 [Agent Builder](https://aws-samples.github.io/generative-ai-use-cases/en/DEPLOY_OPTION.html#enabling-agentbuilder-use-case)의 에이전트에 외부 서비스의 MCP 서버를 추가하세요.
+AWS 외부의 데이터를 기반으로 답변하게 하려면 [AgentCore 사용 사례](docs/ko/DEPLOY_OPTION.md#agentcore-사용-사례-활성화)나 [Agent Builder](docs/ko/DEPLOY_OPTION.md#agentbuilder-사용-사례-활성화)의 에이전트에 외부 서비스의 MCP 서버를 추가하세요.
 
 > [!NOTE]
 > Amazon Kendra는 2026년 6월 30일에 유지 관리 모드로 전환되었으며, 2026년 7월 30일부터 신규 고객을 받지 않습니다 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). 이미 사용 중인 경우 [Amazon Kendra 옵션](docs/ko/DEPLOY_OPTION.md#rag-chat-amazon-kendra-사용-사례-활성화)을 계속 사용할 수 있으며, [수동으로 생성된 S3 버킷이나 Kendra 인덱스](docs/ko/DEPLOY_OPTION.md#기존-amazon-kendra-인덱스-사용)도 사용할 수 있습니다.
@@ -141,7 +141,7 @@ AgentCore Runtime에 대해서도 마찬가지로 [가져오기 기능](docs/ko/
 
 마찬가지로 Bedrock Flows에 대한 [가져오기 기능](docs/ko/DEPLOY_OPTION.md#enabling-flow-chat-use-case)이 있으므로 활용해 주세요.
 
-에이전트를 직접 만들고 싶다면 [Agent Builder](https://aws-samples.github.io/generative-ai-use-cases/en/DEPLOY_OPTION.html#enabling-agentbuilder-use-case)에서 사용자가 코드 없이 에이전트를 만들 수 있습니다. AgentCore 사용 사례와 Agent Builder의 에이전트는 관리자가 등록한 MCP 서버를 통해 AWS 외부 서비스에서 작업을 수행할 수도 있습니다.
+에이전트를 직접 만들고 싶다면 [Agent Builder](docs/ko/DEPLOY_OPTION.md#agentbuilder-사용-사례-활성화)에서 사용자가 코드 없이 에이전트를 만들 수 있습니다. AgentCore 사용 사례와 Agent Builder의 에이전트는 관리자가 등록한 MCP 서버를 통해 AWS 외부 서비스에서 작업을 수행할 수도 있습니다.
 
 </details>
 
@@ -172,7 +172,7 @@ GenU는 OSS이므로 자체 사용 사례를 추가하도록 사용자 정의할
   <summary><strong><ins>생성형 AI의 사용 현황과 비용을 파악하고 싶습니다</ins></strong></summary>
 
 GenU는 사용자별로 소비한 토큰 수를 기록합니다.
-Cognito의 `SystemAdminGroup` 그룹 구성원은 [관리자 페이지](https://aws-samples.github.io/generative-ai-use-cases/en/DEPLOY_OPTION.html#admin-page)에서 모든 사용자의 토큰 사용량과 예상 비용을 확인하고, 사용자와 기간으로 범위를 좁히고, CSV로 다운로드할 수 있습니다.
+Cognito의 `SystemAdminGroup` 그룹 구성원은 [관리자 페이지](docs/ko/DEPLOY_OPTION.md#관리자-페이지)에서 모든 사용자의 토큰 사용량과 예상 비용을 확인하고, 사용자와 기간으로 범위를 좁히고, CSV로 다운로드할 수 있습니다.
 각 사용자는 설정 화면의 사용량 탭에서 자신의 사용량과 비용을 확인할 수 있습니다.
 
 GenU는 Bedrock 호출에 사용자와 사용 사례 태그를 붙이므로 [모니터링 대시보드](docs/ko/DEPLOY_OPTION.md#모니터링-대시보드-활성화)를 활성화하면 사용자별, 사용 사례별 사용 현황을 Amazon CloudWatch에서도 확인할 수 있습니다.

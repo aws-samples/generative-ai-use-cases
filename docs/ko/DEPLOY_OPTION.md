@@ -489,7 +489,7 @@ const envs: Record<string, Partial<StackInput>> = {
 ### MCP Chat 사용 사례 활성화
 
 > [!WARNING]
-> MCP Chat 사용 사례는 사용 중단되었습니다. MCP 활용을 위해서는 AgentCore 사용 사례를 사용하세요. MCP 채팅 사용 사례는 v6에서 완전히 제거될 예정입니다.
+> MCP Chat 사용 사례는 사용 중단되었습니다. MCP 활용을 위해서는 AgentCore 사용 사례를 사용하세요.
 
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction)는 LLM 모델을 외부 데이터 및 도구와 연결하는 프로토콜입니다.
 GenU에서는 [Strands Agents](https://strandsagents.com/latest/)를 사용하여 MCP 호환 도구를 실행하는 채팅 사용 사례를 제공합니다.
@@ -666,6 +666,35 @@ const envs: Record<string, Partial<StackInput>> = {
 
 > [!WARNING]
 > VPC 모드를 사용할 때, 예를 들어 PRIVATE에서 PUBLIC으로의 변경으로 인해 AgentCore Runtime 삭제 시 보안 그룹이 자동 삭제되지 않습니다. AgentCore Runtime이 생성하는 AWS 관리형 ENI가 보안 그룹을 참조하기 때문에 CloudFormation에서는 삭제할 수 없습니다. AgentCore Runtime 삭제 후 관리형 ENI가 자동 삭제될 때까지 기다린 다음 수동으로 보안 그룹을 삭제하세요. 삭제가 필요한 보안 그룹 ID는 CloudFormation 출력에 표시됩니다.
+
+### AgentBuilder 사용 사례 활성화
+
+시스템 프롬프트와 임의의 MCP를 설정하여 사용자가 사용 사례별로 자유롭게 에이전트를 만들 수 있는 사용 사례입니다. (Experimental: 예고 없이 호환되지 않는 변경이 있을 수 있습니다)
+
+AgentCore 사용 사례와 마찬가지로 관리자가 [agent-builder/mcp.json](packages/cdk/lambda-python/generic-agent-core-runtime/mcp-configs/agent-builder/mcp.json)에 MCP를 미리 등록합니다. 사용자는 관리자가 등록한 MCP 중에서 원하는 것을 선택하여 사용할 수 있습니다.
+
+`agentBuilderEnabled`를 활성화하면 Agent Builder용 AgentCore Runtime이 배포됩니다.
+기본적으로 `modelRegion`에 배포되며, `agentCoreRegion`을 지정하여 변경할 수 있습니다.
+
+AWS 외부의 서비스에 접근할 때는 AgentCore Gateway를 사용합니다.
+`agentCoreGatewayArns`에 Gateway ARN을 지정하면 최소 권한 원칙에 따른 IAM 정책이 설정됩니다.
+설정 후 MCP 설정에서 `mcp-proxy-for-aws`를 사용하여 엔드포인트를 지정합니다.
+자세한 내용은 [mcp-proxy-for-aws 문서](https://github.com/aws/mcp-proxy-for-aws)를 참조하세요.
+
+**[parameter.ts](/packages/cdk/parameter.ts) 편집**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    agentBuilderEnabled: true,
+    agentCoreRegion: 'us-west-2',
+    agentCoreGatewayArns: [
+      'arn:aws:bedrock-agentcore:us-west-2:<account>:gateway/<gateway-id>',
+    ],
+  },
+};
+```
 
 ### Voice Chat 사용 사례 활성화
 
@@ -1439,6 +1468,62 @@ const envs: Record<string, Partial<StackInput>> = {
 
 > [!NOTE]
 > 모니터링 대시보드를 활성화한 후 비활성화하려면 `dashboard: false`로 설정하고 재배포합니다. 이렇게 하면 모니터링 대시보드가 비활성화되지만 `GenerativeAiUseCasesDashboardStack` 자체는 남아있습니다. 완전히 제거하려면 관리 콘솔을 열고 modelRegion의 CloudFormation에서 `GenerativeAiUseCasesDashboardStack` 스택을 삭제하세요.
+
+### 사용자별, 사용 사례별 사용 현황
+
+GenU는 Bedrock 호출에 다음 [요청 메타데이터](https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-request-metadata.html)를 붙입니다. 태그는 모델 호출 로그에 기록됩니다.
+
+| 키             | 값                                                       |
+| -------------- | -------------------------------------------------------- |
+| `genu`         | `genu` (GenU에서 호출했음을 나타냄)                      |
+| `genu_user`    | Cognito 사용자의 `sub`                                   |
+| `genu_usecase` | 사용 사례 (`chat`, `rag` 등, 페이지 경로의 첫 번째 부분) |
+
+대시보드에는 사용자별, 사용 사례별 사용 현황(Tokens by User / Tokens by Use Case)이 포함됩니다. 같은 쿼리가 CloudWatch Logs Insights의 "Saved queries"에 `GenU/<스택 이름>/TokensByUser`와 `GenU/<스택 이름>/TokensByUseCase`로 저장되므로 기간을 바꾸거나 조건을 추가할 수 있습니다. `genu_user`는 Cognito의 `sub`이므로 부서 등의 속성으로 집계하려면 Cognito 사용자 속성과 결합하세요.
+
+대시보드의 로그 그룹이 아닌 기존 로그 그룹에 모델 호출 로그를 보내는 경우에도 같은 태그로 쿼리할 수 있습니다.
+
+```
+filter requestMetadata.genu = 'genu'
+| fields requestMetadata.genu_user as user, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc
+```
+
+> [!NOTE]
+>
+> - 태그는 Converse API와 InvokeModel API로 호출하는 모델(채팅이나 집필 등의 텍스트 생성, 이미지 생성)에 붙습니다. 비디오 생성(StartAsyncInvoke), 음성 채팅, Bedrock Agents, Knowledge Base 채팅, Flow 채팅, 프롬프트 최적화, AgentCore 호출에는 붙지 않습니다.
+> - 모델 호출 로그는 리전별로 기록됩니다. `modelIds`에서 여러 리전의 모델을 사용하는 경우 각 리전에서 로그를 설정하고 리전별로 쿼리하세요. 한곳에서 쿼리하려면 AWS Organizations를 사용하는 경우 [CloudWatch Logs centralization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html)으로 여러 리전의 로그를 하나의 리전에 복사할 수 있습니다.
+> - 기본적으로 모델 호출 로그에는 프롬프트와 응답 텍스트도 기록됩니다. 보존 기간과 열람할 수 있는 사람을 확인하세요.
+
+## 관리자 페이지
+
+관리자 페이지에서는 GenU의 모든 사용자의 토큰 사용량을 확인할 수 있습니다(왼쪽 아래의 방패 아이콘). GenU가 채팅 메시지와 함께 저장하는 사용량(통계 페이지와 같은 데이터)을 최근 7일, 30일, 90일 단위로 표시하며, 사용자별 합계를 CSV로 다운로드할 수 있습니다. 사용자별 표에서 사용자를 선택하면(최대 50명) 카드, 모델별 표, 차트를 해당 사용자로 좁힐 수 있습니다. 토큰 수는 입력, 출력, 캐시 읽기, 캐시 쓰기 토큰의 합계입니다.
+
+관리자 페이지는 Cognito 사용자 풀의 `SystemAdminGroup` 그룹에 속한 사용자만 열 수 있습니다. 그룹은 배포 시 생성됩니다. 사용자를 추가하려면 [Amazon Cognito 콘솔](https://console.aws.amazon.com/cognito/home)에서 사용자 풀을 열고 "그룹"에서 사용자를 추가하거나 다음 명령을 실행합니다.
+
+```bash
+aws cognito-idp admin-add-user-to-group \
+  --user-pool-id <사용자 풀 ID> \
+  --username <사용자 이름> \
+  --group-name SystemAdminGroup
+```
+
+사용자가 다시 로그인하면 관리자 페이지를 열 수 있습니다.
+
+관리자 페이지와 통계 페이지의 비용은 GenU에 포함된 AWS 정가(온디맨드, USD)로 각 모델을 호출하는 리전의 가격을 사용해 계산합니다. `global.`로 시작하는 모델은 글로벌 가격을 사용합니다. 가격표는 GenU 릴리스마다 업데이트됩니다. 릴리스를 기다리지 않고 최신 정가를 사용하려면 가격표(`packages/cdk/lambda/utils/modelPricing.generated.ts`)를 다시 생성하고 배포하세요.
+
+```bash
+npm -w packages/cdk run pricing:update
+```
+
+> [!NOTE]
+>
+> - 에이전트(Bedrock Agents, AgentCore)와 이미지, 비디오 생성의 사용량은 포함되지 않습니다. 포함하려면 위의 "사용자별, 사용 사례별 사용 현황"처럼 CloudWatch Logs Insights를 사용하세요.
+> - 비용은 정가를 사용합니다. 캐시 쓰기는 5분 캐시 요금, 200K 토큰을 넘는 요청은 표준 요금으로 계산하므로 이들을 사용하는 경우 실제보다 낮게 표시됩니다. 할인, Savings Plans, 프리 티어는 반영되지 않으므로 실제 요금은 AWS Cost Explorer에서 확인하세요. 가격표에 없는 모델은 비용에서 제외되고 "No price"로 표시됩니다.
+> - 합계는 관리자 페이지를 열 때마다 계산됩니다. 기간이 90일이고 활성 사용자가 1,000~2,000명을 넘으면 요청이 API Gateway의 29초 제한에 가까워지므로, 그 규모에서는 기간을 짧게 하거나 CloudWatch Logs Insights를 사용하세요.
+> - 사용자별 표와 CSV의 `userId`는 Cognito 사용자 이름입니다. 모델 호출 로그의 `genu_user`는 Cognito의 `sub`이므로 SAML 사용자 등에서는 두 값이 다릅니다.
+> - 사용자 풀에 `SystemAdminGroup`이라는 그룹이 이미 있으면 배포가 실패합니다. 먼저 해당 그룹을 삭제하거나 이름을 바꾸세요.
 
 ## 사용자 정의 도메인 사용
 

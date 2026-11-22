@@ -489,7 +489,7 @@ For detailed instructions, see the [Research Agent Deployment Guide](./DEPLOY_RE
 ### Enabling MCP Chat Use Case
 
 > [!WARNING]
-> The MCP Chat use case has been deprecated. Please use the AgentCore use case for MCP utilization. The MCP chat use case is scheduled for complete removal in v6.
+> The MCP Chat use case has been deprecated. Please use the AgentCore use case for MCP utilization.
 
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) is a protocol that connects LLM models with external data and tools.
 In GenU, we provide chat use cases that execute MCP-compliant tools using [Strands Agents](https://strandsagents.com/latest/).
