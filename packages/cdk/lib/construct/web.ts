@@ -167,11 +167,7 @@ export class Web extends Construct {
         },
       };
 
-      if (
-        props.cert &&
-        props.domainName &&
-        props.hostedZoneId
-      ) {
+      if (props.cert && props.domainName && props.hostedZoneId) {
         const fqdn = props.hostName
           ? `${props.hostName}.${props.domainName}`
           : props.domainName;
@@ -183,11 +179,7 @@ export class Web extends Construct {
       const { cloudFrontWebDistribution, s3BucketInterface } =
         new CloudFrontToS3(this, 'Web', cloudFrontToS3Props);
 
-      if (
-        props.cert &&
-        props.domainName &&
-        props.hostedZoneId
-      ) {
+      if (props.cert && props.domainName && props.hostedZoneId) {
         const fqdn = props.hostName
           ? `${props.hostName}.${props.domainName}`
           : props.domainName;
@@ -245,7 +237,7 @@ export class Web extends Construct {
             '.prettierrc.json',
             '*.md',
             'LICENSE',
-            'docs',
+            'docs/**/*',
             'imgs',
             'setup-env.sh',
             'site',
@@ -256,6 +248,12 @@ export class Web extends Construct {
             'packages/web/dev-dist',
             'packages/web/node_modules',
             'browser-extension',
+            // The settings page shows the release notes (SettingSystemTab.tsx).
+            // The directories are included again so that the files can be.
+            '!docs/en',
+            '!docs/ja',
+            '!docs/en/RELEASE_NOTES.md',
+            '!docs/ja/RELEASE_NOTES.md',
           ],
         },
       ],

@@ -23,7 +23,7 @@ type Props = BaseProps & {
 };
 
 const DrawerBase: React.FC<Props> = (props) => {
-  const { getHasUpdate } = useVersion();
+  const { hasUpdate } = useVersion();
   const { settingShowEmail, settingShowUseCaseBuilder } = useUserSetting();
   const { t } = useTranslation();
   const isAdmin = useIsAdmin() === true;
@@ -36,8 +36,6 @@ const DrawerBase: React.FC<Props> = (props) => {
   const email = useMemo<string>(() => {
     return (data?.tokens?.idToken?.payload.email ?? '') as string;
   }, [data]);
-
-  const hasUpdate = getHasUpdate();
 
   const {
     collapsed,
