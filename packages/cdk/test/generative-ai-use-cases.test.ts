@@ -332,6 +332,44 @@ describe('GenerativeAiUseCases', () => {
     );
   });
 
+  test.each([
+    { hostName: 'genai', fqdn: 'genai.example.com' },
+    { hostName: null, fqdn: 'example.com' },
+    { hostName: '', fqdn: 'example.com' },
+  ])(
+    'custom domain with hostName $hostName is served at $fqdn',
+    ({ hostName, fqdn }) => {
+      const app = new cdk.App({ context: appContext });
+      const params = processedStackInputSchema.parse({
+        ...stackInput,
+        hostName,
+        domainName: 'example.com',
+        hostedZoneId: 'Z0000000000000000000',
+      });
+
+      const { cloudFrontWafStack, generativeAiUseCasesStack } = createStacks(
+        app,
+        params
+      );
+      if (!cloudFrontWafStack || !generativeAiUseCasesStack) {
+        throw new Error('Stack was not created');
+      }
+
+      Template.fromStack(cloudFrontWafStack).hasResourceProperties(
+        'AWS::CertificateManager::Certificate',
+        { DomainName: fqdn }
+      );
+      const template = Template.fromStack(generativeAiUseCasesStack);
+      template.hasResourceProperties('AWS::Route53::RecordSet', {
+        Name: `${fqdn}.`,
+        Type: 'A',
+      });
+      template.hasResourceProperties('AWS::CloudFront::Distribution', {
+        DistributionConfig: Match.objectLike({ Aliases: [fqdn] }),
+      });
+    }
+  );
+
   test('allowedDevOrigins rejects values that are not origins', () => {
     // The API handler compares the Origin header exactly, so a path or a
     // trailing slash would silently never match.
