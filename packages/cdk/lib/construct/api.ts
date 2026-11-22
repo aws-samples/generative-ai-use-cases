@@ -219,7 +219,9 @@ export class Api extends Construct {
       timeout: Duration.minutes(15),
       memorySize: 1024,
       bundling: {
-        ...bedrockSdkBundling,
+        // TranscribeAudio (voice input in the chat) is newer than the Lambda
+        // runtime's built-in SDK, so bundle client-transcribe as well
+        nodeModules: [...bedrockSdkModules, '@aws-sdk/client-transcribe'],
         commandHooks: {
           beforeBundling: () => [],
           beforeInstall: () => [],

@@ -31,8 +31,6 @@ export const joinWords = (transcript: string, language: string): string => {
   return text.replace(/(?<=[^\x00-\x7F]) +| +(?=[^\x00-\x7F])/g, '');
 };
 
-const client = new TranscribeClient({});
-
 /**
  * Transcribe a short recording from the chat input in one request
  * (TranscribeAudio). Nothing is stored: the audio is sent inline and only the
@@ -64,6 +62,7 @@ export const handler = async (
       : SyncLanguage.JA;
 
   try {
+    const client = new TranscribeClient({});
     const res = await client.send(
       new TranscribeAudioCommand({
         Media: { MediaBytes: audio },
