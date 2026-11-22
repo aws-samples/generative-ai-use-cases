@@ -15,6 +15,7 @@ export type PortableAgent = {
   modelId: string;
   mcpServers: string[];
   codeExecutionEnabled: boolean;
+  webSearchEnabled: boolean;
 };
 
 export const toPortableAgent = (
@@ -26,6 +27,7 @@ export const toPortableAgent = (
   modelId: agent.modelId ?? '',
   mcpServers: agent.mcpServers ?? [],
   codeExecutionEnabled: !!agent.codeExecutionEnabled,
+  webSearchEnabled: !!agent.webSearchEnabled,
 });
 
 /**
@@ -57,6 +59,8 @@ export const fromPortableAgent = (parsed: unknown): PortableAgent => {
       ? raw.mcpServers.filter((s): s is string => typeof s === 'string')
       : [],
     codeExecutionEnabled: raw.codeExecutionEnabled === true,
+    // Files written before web search existed have no such field: off.
+    webSearchEnabled: raw.webSearchEnabled === true,
   };
 };
 

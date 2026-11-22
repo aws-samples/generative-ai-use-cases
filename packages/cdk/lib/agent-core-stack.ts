@@ -36,6 +36,10 @@ export class AgentCoreStack extends Stack {
         subnets: props.subnets,
         gatewayArns: params.agentCoreGatewayArns ?? undefined,
         closedNetworkMode: params.closedNetworkMode,
+        webSearchEnabled:
+          params.agentBuilderEnabled && params.agentBuilderWebSearchEnabled,
+        webSearchExcludeDomains:
+          params.agentBuilderWebSearchExcludeDomains ?? undefined,
       });
 
       // Outputs read by GenerativeAiUseCasesStack via StackOutputs, also across Regions (only if values exist)

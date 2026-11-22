@@ -53,6 +53,10 @@ export interface GenericAgentCoreProps {
   closedNetworkMode?: boolean;
   // The text generation models of this deployment, for their output token limits
   modelIds?: string[];
+  // Let the agent builder runtime use AgentCore Web Search (InvokeWebSearch)
+  webSearchEnabled?: boolean;
+  // Domains excluded from every web search, enforced by the runtime's tool
+  webSearchExcludeDomains?: string[];
 }
 
 interface RuntimeResources {
@@ -67,6 +71,7 @@ export class GenericAgentCore extends Construct {
   private readonly agentBuilderRuntimeConfig: AgentCoreRuntimeConfig;
   private readonly resources: RuntimeResources;
   private readonly gatewayArns?: string[];
+  private readonly webSearchEnabled: boolean;
 
   // Security Group ID that requires manual cleanup after AgentCore Runtime deletion
   // Used for CloudFormation Output to remind users of manual cleanup tasks
@@ -86,9 +91,12 @@ export class GenericAgentCore extends Construct {
       subnets: providedSubnets,
       gatewayArns,
       closedNetworkMode = false,
+      webSearchEnabled = false,
+      webSearchExcludeDomains,
     } = props;
 
     this.gatewayArns = gatewayArns;
+    this.webSearchEnabled = webSearchEnabled;
 
     // Create bucket first
     this._fileBucket = this.createFileBucket();
@@ -98,7 +106,9 @@ export class GenericAgentCore extends Construct {
       env,
       this._fileBucket.bucketName,
       props.modelIds ?? [],
-      closedNetworkMode
+      closedNetworkMode,
+      webSearchEnabled,
+      webSearchExcludeDomains
     );
     this.genericRuntimeConfig = configs.generic;
     this.agentBuilderRuntimeConfig = configs.agentBuilder;
@@ -203,7 +213,9 @@ export class GenericAgentCore extends Construct {
     env: string,
     bucketName: string,
     modelIds: string[],
-    closedNetworkMode: boolean
+    closedNetworkMode: boolean,
+    webSearchEnabled: boolean,
+    webSearchExcludeDomains?: string[]
   ) {
     const modelMaxTokens = this.modelMaxTokensEnvironment(modelIds);
     return {
@@ -236,6 +248,15 @@ export class GenericAgentCore extends Construct {
           MCP_CONFIG_PATH: '/var/task/mcp-configs/agent-builder/mcp.json',
           SUPPORTED_CACHE_FIELDS: JSON.stringify(SUPPORTED_CACHE_FIELDS),
           ...modelMaxTokens,
+          ...(webSearchEnabled && {
+            WEB_SEARCH_ENABLED: 'true',
+            ...(webSearchExcludeDomains &&
+              webSearchExcludeDomains.length > 0 && {
+                WEB_SEARCH_EXCLUDE_DOMAINS: JSON.stringify(
+                  webSearchExcludeDomains
+                ),
+              }),
+          }),
         },
       },
     };
@@ -412,6 +433,21 @@ export class GenericAgentCore extends Construct {
         resources: gatewayArns && gatewayArns.length > 0 ? gatewayArns : ['*'],
       })
     );
+
+    // AgentCore Web Search for the agent builder
+    if (this.webSearchEnabled) {
+      const stack = Stack.of(this);
+      role.addToPolicy(
+        new PolicyStatement({
+          sid: 'AllowWebSearch',
+          effect: Effect.ALLOW,
+          actions: ['bedrock-agentcore:InvokeWebSearch'],
+          resources: [
+            `arn:${stack.partition}:bedrock-agentcore:${stack.region}:aws:tool/web-search.v1`,
+          ],
+        })
+      );
+    }
 
     this._fileBucket.grantWrite(role);
   }

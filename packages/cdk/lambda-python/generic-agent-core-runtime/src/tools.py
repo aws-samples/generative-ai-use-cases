@@ -26,6 +26,28 @@ except ImportError as e:
 
 logger = logging.getLogger(__name__)
 
+# AgentCore Web Search (InvokeWebSearch). The API accepts a query of up to
+# 200 characters and 1 to 25 results.
+WEB_SEARCH_ID = "web-search.v1"
+WEB_SEARCH_MAX_QUERY_LENGTH = 200
+WEB_SEARCH_MAX_RESULTS = 25
+
+
+def _web_search_exclude_domains() -> list[str]:
+    """Domains excluded from every web search, from WEB_SEARCH_EXCLUDE_DOMAINS (a JSON array)."""
+    raw = os.environ.get("WEB_SEARCH_EXCLUDE_DOMAINS", "").strip()
+    if not raw:
+        return []
+    try:
+        domains = json.loads(raw)
+    except json.JSONDecodeError:
+        logger.warning("WEB_SEARCH_EXCLUDE_DOMAINS is not a JSON array, ignoring it")
+        return []
+    if not isinstance(domains, list):
+        logger.warning("WEB_SEARCH_EXCLUDE_DOMAINS is not a JSON array, ignoring it")
+        return []
+    return [d for d in domains if isinstance(d, str) and d]
+
 
 def _create_mcp_client(server_name: str, server_config: dict, uv_env: dict) -> tuple[str, MCPClient | None]:
     """Create and start an MCP client (for parallel execution)"""
@@ -192,12 +214,86 @@ class ToolManager:
 
         return code_interpreter_tools
 
-    def get_tools_with_options(self, code_execution_enabled: bool = False, mcp_servers=None) -> list[Any]:
+    def get_web_search_tool(self):
+        """Get the web search tool, which calls AgentCore Web Search (InvokeWebSearch).
+
+        Queries are processed within AWS. The domains in WEB_SEARCH_EXCLUDE_DOMAINS
+        are excluded from every search, whatever the model asks for.
+        """
+        region = get_aws_credentials()["AWS_REGION"]
+        client = boto3.client("bedrock-agentcore", region_name=region)
+        exclude_domains = _web_search_exclude_domains()
+
+        @tool
+        def web_search(
+            query: str,
+            max_results: int = 10,
+            include_domains: list[str] | None = None,
+            published_after: str | None = None,
+            published_before: str | None = None,
+        ) -> str:
+            """Search the web for current information with Amazon Bedrock AgentCore Web Search.
+
+            Queries are processed within AWS and are not sent to third party search engines.
+            Use this when an answer depends on recent or citable information, and cite the
+            returned source URLs in the answer.
+
+            Args:
+                query: What to search for, up to 200 characters
+                max_results: Number of results, from 1 to 25
+                include_domains: Search only these domains, for example ["aws.amazon.com"]
+                published_after: Only pages published on or after this date (YYYY-MM-DD)
+                published_before: Only pages published on or before this date (YYYY-MM-DD)
+
+            Returns:
+                A JSON array of results with title, url, publishedAt and text
+            """
+            request: dict[str, Any] = {
+                "webSearchId": WEB_SEARCH_ID,
+                "searchQuery": query.strip()[:WEB_SEARCH_MAX_QUERY_LENGTH],
+                "maxResults": min(max(int(max_results), 1), WEB_SEARCH_MAX_RESULTS),
+            }
+            filters: dict[str, Any] = {}
+            domain_filter: dict[str, list[str]] = {}
+            if include_domains:
+                domain_filter["include"] = include_domains
+            if exclude_domains:
+                domain_filter["exclude"] = exclude_domains
+            if domain_filter:
+                filters["domainFilter"] = domain_filter
+            date_filter = {key: value for key, value in (("publishedAfter", published_after), ("publishedBefore", published_before)) if value}
+            if date_filter:
+                filters["publishedDateFilter"] = date_filter
+            if filters:
+                request["filters"] = filters
+
+            try:
+                response = client.invoke_web_search(**request)
+            except Exception as e:
+                logger.warning(f"Web search failed: {e}")
+                return f"Web search failed: {e}"
+
+            results = [
+                {
+                    "title": result.get("title", ""),
+                    "url": result.get("url", ""),
+                    "publishedAt": result["publishedAt"].isoformat() if result.get("publishedAt") else None,
+                    "text": result.get("text", ""),
+                }
+                for result in response.get("results", [])
+            ]
+            logger.info(f"Web search returned {len(results)} results")
+            return json.dumps(results, ensure_ascii=False)
+
+        return web_search
+
+    def get_tools_with_options(self, code_execution_enabled: bool = False, web_search_enabled: bool = False, mcp_servers=None) -> list[Any]:
         """
         Get tools with optional code execution and MCP servers.
 
         Args:
             code_execution_enabled: Whether to include code interpreter tools
+            web_search_enabled: Whether to include AgentCore Web Search tools
             mcp_servers: MCP server configurations
                 - None: Load default MCP servers from mcp.json
                 - []: Empty list, no MCP servers (File Upload only)
@@ -206,7 +302,7 @@ class ToolManager:
         Returns:
             List of all available tools
         """
-        logger.info(f"get_tools_with_options called with code_execution_enabled={code_execution_enabled}")
+        logger.info(f"get_tools_with_options called with code_execution_enabled={code_execution_enabled}, web_search_enabled={web_search_enabled}")
         logger.info(f"mcp_servers parameter: {mcp_servers} (type: {type(mcp_servers)})")
 
         all_tools = []
@@ -241,7 +337,16 @@ class ToolManager:
             code_interpreter_tools = self.get_code_interpreter_tool()
             all_tools.extend(code_interpreter_tools)
 
+        # Add web search tools if enabled
+        web_search_tools = []
+        if web_search_enabled:
+            if os.environ.get("WEB_SEARCH_ENABLED") == "true":
+                web_search_tools = [self.get_web_search_tool()]
+                all_tools.extend(web_search_tools)
+            else:
+                logger.warning("Web search is not enabled for this deployment, skipping the web search tool")
+
         # Log final tool count
-        logger.info(f"Total tools loaded: {len(all_tools)} (MCP: {len(mcp_tools)}, Built-in: 1, Code Interpreter: {len(code_interpreter_tools)} - {'enabled' if code_execution_enabled else 'disabled'})")
+        logger.info(f"Total tools loaded: {len(all_tools)} (MCP: {len(mcp_tools)}, Built-in: 1, Code Interpreter: {len(code_interpreter_tools)} - {'enabled' if code_execution_enabled else 'disabled'}, Web Search: {len(web_search_tools)} - {'enabled' if web_search_enabled else 'disabled'})")
 
         return all_tools
