@@ -62,6 +62,7 @@ nav:
           - SAML Authentication: EXTENSION_SAML.md
       - Other:
           - Update: UPDATE.md
+          - Release Notes: RELEASE_NOTES.md
           - Local Development Environment: DEVELOPMENT.md
           - Delete Resources: DESTROY.md
           - (Optional) Delete with AWS CloudShell: DESTROY_ON_CLOUDSHELL.md
@@ -107,6 +108,7 @@ plugins:
             SAML Authentication: SAML 認証
             Other: その他
             Update: アップデート方法
+            Release Notes: リリースノート
             Local Development Environment: ローカル開発環境構築手順
             Delete Resources: リソースの削除方法
             (Optional) Delete with AWS CloudShell: (オプション) AWS CloudShell でリソースを削除する
@@ -128,6 +130,7 @@ plugins:
             SAML Authentication: SAML 인증
             Other: 기타
             Update: 업데이트
+            Release Notes: 릴리스 노트
             Local Development Environment: 로컬 개발 환경
             Delete Resources: 리소스 삭제
             (Optional) Delete with AWS CloudShell: (선택사항) AWS CloudShell로 리소스 삭제하기
