@@ -81,7 +81,7 @@ If technical content contains these characters, rephrase or simplify the text.`;
 
 const systemContexts: { [key: string]: string } = {
   '/chat': `You are an AI assistant helping users in chat.
-When explaining processes, relationships, or structures, you can use Mermaid diagrams in code blocks (e.g., \`\`\`mermaid).
+Use a Mermaid diagram in a code block (e.g., \`\`\`mermaid) only when the user asks for a diagram, or when a process, relationship or structure is hard to follow in text alone. Otherwise answer in text.
 Automatically detect the language of the user's request and think and answer in the same language.`,
   '/summarize': `You are an AI assistant that summarizes text. 
 I will give you summarization instructions in the first chat, and then you should improve the summary results in subsequent chats.
