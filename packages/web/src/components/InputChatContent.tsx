@@ -73,6 +73,11 @@ type Props = {
     onSetting?: () => void;
   };
 
+// Off only in a closed network deployment without the Transcribe endpoint.
+// Unset (local development against an older stack, tests) means on.
+const voiceInputEnabled: boolean =
+  import.meta.env.VITE_APP_VOICE_INPUT_ENABLED !== 'false';
+
 const InputChatContent: React.FC<Props> = (props) => {
   const { t, i18n } = useTranslation();
   const { settingSubmitCmdOrCtrlEnter } = useUserSetting();
@@ -88,7 +93,8 @@ const InputChatContent: React.FC<Props> = (props) => {
     const separator = current === '' || /\s$/.test(current) ? '' : ' ';
     onChangeContentRef.current(current + separator + text);
   });
-  const showVoiceInput = !!props.voiceInput && voice.supported;
+  const showVoiceInput =
+    !!props.voiceInput && voiceInputEnabled && voice.supported;
   const { pathname } = useLocation();
   const { loading: chatLoading, isEmpty: chatIsEmpty } = useChat(pathname);
   const {

@@ -187,6 +187,7 @@ describe('closedNetworkWebConfig', () => {
       { modelId: 'b', region: 'us-west-2' },
     ],
     videoGenerationModelIds: [{ modelId: 'c', region: 'us-east-1' }],
+    vpcEndpointNames: ['ApiGateway', 'Transcribe'],
   };
 
   test('passes the values through outside closed network mode', () => {
@@ -196,6 +197,7 @@ describe('closedNetworkWebConfig', () => {
       hiddenUseCases: base.hiddenUseCases,
       imageGenerationModelIds: base.imageGenerationModelIds,
       videoGenerationModelIds: base.videoGenerationModelIds,
+      voiceInputEnabled: true,
     });
   });
 
@@ -210,6 +212,36 @@ describe('closedNetworkWebConfig', () => {
       },
       imageGenerationModelIds: [{ modelId: 'a', region: 'ap-northeast-1' }],
       videoGenerationModelIds: [],
+      voiceInputEnabled: true,
     });
+  });
+
+  test('turns voice input off without the Transcribe endpoint', () => {
+    const endpoints = requiredClosedNetworkVpcEndpoints(
+      params({ hiddenUseCases: { transcribe: true, meetingMinutes: true } })
+    );
+    expect(
+      closedNetworkWebConfig({
+        ...base,
+        closedNetworkMode: true,
+        vpcEndpointNames: endpoints,
+      }).voiceInputEnabled
+    ).toBe(false);
+  });
+
+  test('keeps voice input on when the Transcribe endpoint is added on request', () => {
+    const endpoints = requiredClosedNetworkVpcEndpoints(
+      params({
+        hiddenUseCases: { transcribe: true, meetingMinutes: true },
+        closedNetworkAdditionalVpcEndpoints: ['Transcribe'],
+      })
+    );
+    expect(
+      closedNetworkWebConfig({
+        ...base,
+        closedNetworkMode: true,
+        vpcEndpointNames: endpoints,
+      }).voiceInputEnabled
+    ).toBe(true);
   });
 });

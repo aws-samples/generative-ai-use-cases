@@ -28,7 +28,10 @@ import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { AgentCoreStack } from './agent-core-stack';
 import { ResearchAgentCoreStack } from './research-agent-core-stack';
 import { ClosedNetworkStack } from './closed-network-stack';
-import { closedNetworkWebConfig } from './utils/closed-network';
+import {
+  closedNetworkWebConfig,
+  requiredClosedNetworkVpcEndpoints,
+} from './utils/closed-network';
 import * as path from 'path';
 import { StackOutputs } from './construct/stack-outputs';
 import { REMOTE_OUTPUT_KEYS } from './remote-output-keys';
@@ -362,6 +365,9 @@ export class GenerativeAiUseCasesStack extends Stack {
       hiddenUseCases: params.hiddenUseCases,
       imageGenerationModelIds: api.imageGenerationModelIds,
       videoGenerationModelIds: api.videoGenerationModelIds,
+      vpcEndpointNames: params.closedNetworkMode
+        ? requiredClosedNetworkVpcEndpoints(params)
+        : [],
     });
     const web = new Web(this, 'Api', {
       // Auth
@@ -430,6 +436,7 @@ export class GenerativeAiUseCasesStack extends Stack {
         : undefined,
       // Frontend
       hiddenUseCases: webConfig.hiddenUseCases,
+      voiceInputEnabled: webConfig.voiceInputEnabled,
       // Custom Domain
       cert: props.cert,
       hostName: params.hostName,
@@ -578,6 +585,10 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     new CfnOutput(this, 'HiddenUseCases', {
       value: JSON.stringify(webConfig.hiddenUseCases),
+    });
+
+    new CfnOutput(this, 'VoiceInputEnabled', {
+      value: webConfig.voiceInputEnabled.toString(),
     });
 
     new CfnOutput(this, 'SpeechToSpeechNamespace', {

@@ -249,15 +249,23 @@ export const closedNetworkWebConfig = ({
   hiddenUseCases,
   imageGenerationModelIds,
   videoGenerationModelIds,
+  vpcEndpointNames,
 }: {
   closedNetworkMode: boolean;
   region: string;
   hiddenUseCases: NonNullable<StackInput['hiddenUseCases']>;
   imageGenerationModelIds: WebModelConfig[];
   videoGenerationModelIds: WebModelConfig[];
+  // Interface VPC Endpoints of the closed VPC
+  vpcEndpointNames: string[];
 }) => {
   if (!closedNetworkMode) {
-    return { hiddenUseCases, imageGenerationModelIds, videoGenerationModelIds };
+    return {
+      hiddenUseCases,
+      imageGenerationModelIds,
+      videoGenerationModelIds,
+      voiceInputEnabled: true,
+    };
   }
   const image = imageGenerationModelIds.filter((m) => m.region === region);
   const video = videoGenerationModelIds.filter((m) => m.region === region);
@@ -270,5 +278,9 @@ export const closedNetworkWebConfig = ({
     },
     imageGenerationModelIds: image,
     videoGenerationModelIds: video,
+    // Voice input in the chat calls Transcribe, whose endpoint is created only
+    // for the Transcribe and Meeting Minutes use cases. Hide the microphone
+    // button instead of adding an endpoint to existing deployments.
+    voiceInputEnabled: vpcEndpointNames.includes('Transcribe'),
   };
 };
