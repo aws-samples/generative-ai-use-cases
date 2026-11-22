@@ -26,6 +26,7 @@ These changes are merged into the `main` branch and will be included in the next
 - Closed network mode runs AgentCore inside the closed VPC, creates only the VPC endpoints for the features in use, and warns at deploy time about settings that do not work in a closed network. (#1814, #1761, #1723)
 - Deployments warn about models that Bedrock no longer offers or will retire. (#1832)
 - The deployment and update guides use release tags, and an agent skill helps merge a new release into a customized deployment. (#1766, #1777)
+- A custom domain can be set at the zone apex, without `hostName`. (#1834)
 
 ### Before you update
 
@@ -50,7 +51,8 @@ These changes are merged into the `main` branch and will be included in the next
 - Attached files with the same name, Shift_JIS / EUC-JP documents, blank text and file name characters that Bedrock rejects are handled. (#1756, #1805, #1679, #1765, #1801, #1677)
 - Ministral 3 and Qwen3 235B work again (their default `maxTokens` was above the model's limit), and models that do not accept a system prompt no longer get an empty one. (#1832)
 - Without a configured flow, `/flow-chat` shows the "not found" page. (#1829)
-- The app keeps working after the browser's page translation is used. (#1828)
+- The app keeps working after the browser's page translation is used. (#1828, #1833)
+- Use cases that call `{{retrieveKnowledgeBase}}` work with an S3 Vectors Knowledge Base. (#1837)
 - Agent gallery sync, S3 permissions when no IP ranges are set, and reading long chats. (#1826)
 
 ## v5.5.0 (2026-07-19)

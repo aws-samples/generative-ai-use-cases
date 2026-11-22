@@ -221,7 +221,9 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
             </p>
           ) : (
             <>
-              {value === null && (placeholder || defaultPlaceholder)}
+              {value === null && (
+                <span>{placeholder || defaultPlaceholder}</span>
+              )}
 
               {Array.isArray(value) &&
                 value.map((item, index) => (
