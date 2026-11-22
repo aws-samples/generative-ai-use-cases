@@ -27,7 +27,7 @@ const FileCard: React.FC<Props> = (props) => {
           {props.url ? (
             <a href={props.url}>{props.filename}</a>
           ) : (
-            props.filename
+            <span>{props.filename}</span>
           )}
         </div>
         {(props.loading || props.deleting) && (

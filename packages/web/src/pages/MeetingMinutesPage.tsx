@@ -313,12 +313,18 @@ const MeetingMinutesPage: React.FC = () => {
               </div>
               {/* Mobile: Show selected tab label below icons */}
               <div className="mt-4 pb-4 text-center text-sm font-medium text-blue-600 sm:hidden">
-                {inputMethod === 'transcription' &&
-                  t('transcribe.voice_transcription')}
-                {inputMethod === 'realtime_translation' &&
-                  t('translate.realtime_translation')}
-                {inputMethod === 'direct' && t('transcribe.direct_input')}
-                {inputMethod === 'file' && t('transcribe.file_upload')}
+                {inputMethod === 'transcription' && (
+                  <span>{t('transcribe.voice_transcription')}</span>
+                )}
+                {inputMethod === 'realtime_translation' && (
+                  <span>{t('translate.realtime_translation')}</span>
+                )}
+                {inputMethod === 'direct' && (
+                  <span>{t('transcribe.direct_input')}</span>
+                )}
+                {inputMethod === 'file' && (
+                  <span>{t('transcribe.file_upload')}</span>
+                )}
               </div>
             </div>
 

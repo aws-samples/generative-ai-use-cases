@@ -6,6 +6,9 @@ import { initBedrockAgentRuntimeClient } from './utils/bedrockClient';
 
 const KNOWLEDGE_BASE_ID = process.env.KNOWLEDGE_BASE_ID;
 const MODEL_REGION = process.env.MODEL_REGION as string;
+// Hybrid search needs an OpenSearch Serverless vector store; other stores
+// (S3 Vectors) accept only semantic search.
+const HYBRID_SEARCH = process.env.KNOWLEDGE_BASE_HYBRID_SEARCH === 'true';
 
 export const handler = async (
   request: Request,
@@ -25,7 +28,7 @@ export const handler = async (
     retrievalConfiguration: {
       vectorSearchConfiguration: {
         numberOfResults: 10,
-        overrideSearchType: 'HYBRID',
+        ...(HYBRID_SEARCH ? { overrideSearchType: 'HYBRID' } : {}),
       },
     },
   });
