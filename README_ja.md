@@ -182,6 +182,8 @@ AWS の請求を分けて確認したい場合は、GenU が作成するリソ�
 [閉域モード](docs/ja/CLOSED_NETWORK.md) では、クライアントはインターネットではなく VPC を経由して GenU にアクセスし、GenU は VPC エンドポイント経由で AWS のサービスを呼び出します。
 VPC エンドポイントは有効にした機能の分だけ作成され、AgentCore も閉域 VPC 内で動作します。
 閉域モードで使える機能、VPC エンドポイントの固定費の目安、Site-to-Site VPN・AWS Direct Connect・AWS Client VPN で社内ネットワークから接続する方法も記載しています。
+![arch-closed-network.drawio.png](./docs/assets/images/arch-closed-network.drawio.png)
+
 アクセスできる人を制限したいだけであれば、IP アドレスの制限や SAML 認証などの [セキュリティ関連の設定](docs/ja/DEPLOY_OPTION.md#セキュリティ関連設定) で足りる場合もあります。
 
 </details>

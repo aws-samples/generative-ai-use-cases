@@ -183,6 +183,8 @@ To break down the AWS bill, [add cost allocation tags](docs/en/DEPLOY_OPTION.md#
 In [closed network mode](docs/en/CLOSED_NETWORK.md), clients reach GenU through a VPC instead of the internet, and GenU calls AWS services through VPC endpoints.
 GenU creates only the VPC endpoints for the features you enable, and AgentCore runs inside the closed VPC.
 The page lists which features work in closed network mode, the fixed cost of the VPC endpoints, and how to connect from your own network with Site-to-Site VPN, AWS Direct Connect or AWS Client VPN.
+![arch-closed-network.drawio.png](./docs/assets/images/arch-closed-network.drawio.png)
+
 If you only need to restrict who can access GenU, the [security-related settings](docs/en/DEPLOY_OPTION.md#security-related-settings) such as IP address restrictions and SAML authentication may be enough.
 
 </details>

@@ -186,6 +186,8 @@ AWS 청구를 나누어 확인하려면 GenU가 생성하는 리소스에 [비�
 [폐쇄 네트워크 모드](docs/ko/CLOSED_NETWORK.md)에서는 클라이언트가 인터넷이 아닌 VPC를 통해 GenU에 접근하고, GenU는 VPC 엔드포인트를 통해 AWS 서비스를 호출합니다.
 VPC 엔드포인트는 활성화한 기능에 필요한 것만 생성되며, AgentCore도 폐쇄 VPC 내에서 실행됩니다.
 폐쇄 네트워크 모드에서 사용할 수 있는 기능, VPC 엔드포인트의 고정 비용, Site-to-Site VPN, AWS Direct Connect, AWS Client VPN으로 조직 네트워크에서 연결하는 방법도 설명합니다.
+![arch-closed-network.drawio.png](./docs/assets/images/arch-closed-network.drawio.png)
+
 GenU에 접근할 수 있는 사람만 제한하려면 IP 주소 제한이나 SAML 인증 등의 [보안 관련 설정](docs/ko/DEPLOY_OPTION.md#security-related-settings)으로 충분할 수 있습니다.
 
 </details>
