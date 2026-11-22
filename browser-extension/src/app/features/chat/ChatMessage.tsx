@@ -5,6 +5,7 @@ import { twMerge } from 'tailwind-merge';
 import { PiCaretUp } from 'react-icons/pi';
 import { IconWrapper } from '../../components/IconWrapper';
 import MarkdownContent from './MarkdownContent';
+import ButtonCopy from './ButtonCopy';
 
 type Props = BaseProps & {
   message: Message;
@@ -53,6 +54,11 @@ const ChatMessage: React.FC<Props> = (props) => {
           message.content.split('\n').map((c, idx) => <div key={idx}>{c}</div>)
         )}
       </div>
+      {message.role === 'assistant' && message.content !== '' && (
+        <div className="flex justify-end">
+          <ButtonCopy text={message.content} />
+        </div>
+      )}
     </div>
   );
 };
