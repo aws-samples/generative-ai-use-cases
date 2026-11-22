@@ -20,6 +20,7 @@ These changes are merged into the `main` branch and will be included in the next
 - **Agent Builder**: agent definitions can be shared as JSON. (#1689)
 - **New models**: Claude Opus 5, Claude Fable 5, Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5, Claude Fable 5.1 / 5.2, OpenAI GPT-6 / GPT-6.1 / GPT-6.2 Sol / GPT-6.2 Astra / GPT-5.4 / GPT-5.5 / GPT-5.6, Moonshot AI Kimi K3 / K3.1 / K2.5, Grok 4.6 / 4.7, GLM 5, DeepSeek V3.2, MiniMax M2.5, NVIDIA Nemotron 3 Super 120B, Qwen3 Coder Next, Palmyra Vision 7B. (#1652, #1646, #1707, #1712, #1724, #1709, #1755, #1704, #1795, #1832)
 - **Update tooling**: the deployment and update guides now use release tags, `deploy.sh` deploys the latest release by default (`--ref` selects another one), and a `genu-update` agent skill helps merge a new release into a customized branch. (#1766, #1777)
+- **Custom domain**: a custom domain can be set at the zone apex, without `hostName`. (#1834)
 
 ### Before you update
 
@@ -43,7 +44,8 @@ These changes are merged into the `main` branch and will be included in the next
 - Attached files with the same name, Shift_JIS / EUC-JP documents, blank text and file name characters that Bedrock rejects are handled. (#1756, #1805, #1679, #1765, #1801, #1677)
 - Ministral 3 and Qwen3 235B work again (their default `maxTokens` was above the model's limit), and models that do not accept a system prompt no longer get an empty one. (#1832)
 - Without a configured flow, `/flow-chat` shows the "not found" page. (#1829)
-- The app keeps working after the browser's page translation is used. (#1828)
+- The app keeps working after the browser's page translation is used. (#1828, #1833)
+- Use cases that call `{{retrieveKnowledgeBase}}` work with an S3 Vectors Knowledge Base. (#1837)
 - Agent gallery sync, S3 permissions when no IP ranges are set, and reading long chats. (#1826)
 
 ## v5.5.0 (2026-07-19)
