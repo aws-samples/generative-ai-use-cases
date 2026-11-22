@@ -347,9 +347,16 @@ dialog:
     message: หากคุณออกจากหน้านี้ ข้อมูลที่ป้อนจะสูญหาย คุณแน่ใจหรือไม่ว่าต้องการออก?
     title: การเปลี่ยนแปลงที่ยังไม่ได้บันทึก
 drawer:
+  add_to_sidebar: เพิ่มในแถบด้านข้าง
   ai_services: บริการ AI
   builder_mode: Builder Mode
+  collapse_sidebar: ย่อแถบด้านข้าง
+  edit_favorites: เลือก use case ที่จะแสดงในแถบด้านข้าง
+  expand_sidebar: ขยายแถบด้านข้าง
   generative_ai: Generative AI
+  mode_builder: ตัวสร้าง
+  remove_from_sidebar: นำออกจากแถบด้านข้าง
+  resize_sidebar: ปรับความกว้างแถบด้านข้าง
   tools: เครื่องมือ
   use_cases: Use cases
 error:
@@ -787,7 +794,6 @@ setting:
     show_email: แสดงอีเมล
     show_tools: แสดงเครื่องมือ
     show_use_case_builder: แสดง Use Case Builder
-    stats: สถิติ
     transcribe_languages: ภาษาที่ตรวจจับอัตโนมัติสำหรับการรู้จำเสียง
     transcribe_languages_help: 'ภาษาที่ใช้เป็นตัวเลือกเมื่อตั้งค่าภาษาการรู้จำเสียงเป็น "อัตโนมัติ" (บันทึกการประชุม การป้อนด้วยเสียง การถอดเสียงจากไฟล์) เลือก 2 ถึง 5 ภาษา ยิ่งเลือกมาก ยิ่งตรวจจับภาษาของคำพูดสั้นๆ ผิดได้ง่าย'
     typing_animation: แอนิเมชันการพิมพ์
@@ -795,6 +801,11 @@ setting:
     version_help: อ้างอิงเวอร์ชันใน package.json ของ generative-ai-use-cases
   recent_updates: การอัปเดตล่าสุด
   signout: ออกจากระบบ
+  tabs:
+    account: บัญชี
+    general: ทั่วไป
+    system: ระบบ
+    usage: การใช้งาน
   update:
     message: >-
       มีการอัปเดตบน GitHub หากคุณต้องการใช้คุณสมบัติล่าสุด โปรดดึงสาขาหลักของ <0>generative-ai-use-cases</0> และปรับใช้ใหม่
@@ -895,7 +906,6 @@ useCaseBuilder:
     summarize_article: สรุปบทความ
     summarize_article_description: >-
       สรุปบทความสำหรับ OGP (ตัวอย่างบทความที่แสดงเมื่อแชร์ลิงก์บทความ) การตั้งค่า OGP อย่างเหมาะสมช่วยให้สามารถสื่อสารภาพรวมของบทความได้อย่างถูกต้องเมื่อมีการแชร์
-  builderMode: Builder Mode
   cancel: ยกเลิก
   create: สร้าง
   createDescription: สร้าง use cases โปรดตรวจสอบฟังก์ชันในตัวอย่างก่อนสร้าง คุณยังสามารถแก้ไขหลังจากสร้างได้

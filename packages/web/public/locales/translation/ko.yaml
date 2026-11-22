@@ -340,10 +340,17 @@ dialog:
     message: 이 페이지를 떠나면 입력한 내용이 손실됩니다. 정말 이동하시겠습니까?
     title: 저장되지 않은 변경사항
 drawer:
+  add_to_sidebar: 사이드바에 추가
   ai_services: AI 서비스
   builder_mode: 빌더 모드
+  collapse_sidebar: 사이드바 접기
   done: 완료
+  edit_favorites: 사이드바에 표시할 사용 사례 선택
+  expand_sidebar: 사이드바 펼치기
   generative_ai: 생성형 AI
+  mode_builder: 빌더
+  remove_from_sidebar: 사이드바에서 제거
+  resize_sidebar: 사이드바 너비 조정
   tools: 도구
   use_cases: 사용 사례
 error:
@@ -648,7 +655,6 @@ setting:
     show_email: 이메일 표시
     show_tools: 도구 표시
     show_use_case_builder: 사용 사례 빌더 표시
-    stats: 통계
     transcribe_languages: 음성 인식 자동 감지 언어
     transcribe_languages_help: '음성 인식 언어를 "자동"으로 설정했을 때(회의록, 음성 입력, 파일 문자 변환) 감지 후보로 사용할 언어입니다. 2~5개를 선택하세요. 많이 선택할수록 짧은 발화의 언어를 잘못 감지하기 쉽습니다.'
     typing_animation: 타이핑 애니메이션
@@ -656,12 +662,15 @@ setting:
     version_help: generative-ai-use-cases의 package.json 버전 참조
   recent_updates: 최근 업데이트
   signout: 로그아웃
-  system: 시스템 설정
+  tabs:
+    account: 계정
+    general: 일반
+    system: 시스템
+    usage: 사용량
   update:
     message: >-
       GitHub에 업데이트가 있습니다. 최신 기능을 사용하려면
       <0>generative-ai-use-cases</0>의 main 브랜치를 pull하고 재배포하세요.
-  user: 사용자 설정
   view_all_updates: 모든 업데이트 보기
 shared:
   contact_admin: 관리자에게 문의하세요.
@@ -752,7 +761,6 @@ useCaseBuilder:
   accessError: 액세스 오류
   addInputExample: 입력 예시 추가
   attach_file: 파일 첨부
-  builderMode: 빌더 모드
   cancel: 취소
   create: 생성
   createDescription: >-

@@ -50,7 +50,7 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
     (params.allowedIpV4AddressRanges ||
       params.allowedIpV6AddressRanges ||
       params.allowedCountryCodes ||
-      params.hostName) &&
+      params.domainName) &&
     !params.closedNetworkMode
       ? new CloudFrontWafStack(app, `CloudFrontWafStack${params.env}`, {
           env: {

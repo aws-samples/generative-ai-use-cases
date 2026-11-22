@@ -29,7 +29,8 @@ const Button = React.forwardRef<HTMLButtonElement, Props>((props, ref) => {
       onClick={props.onClick}
       disabled={props.disabled || props.loading}>
       {props.loading && <PiSpinnerGap className="mr-2 animate-spin" />}
-      {props.children}
+      {/* A span keeps a translated label from breaking the spinner insertion */}
+      <span>{props.children}</span>
     </button>
   );
 });

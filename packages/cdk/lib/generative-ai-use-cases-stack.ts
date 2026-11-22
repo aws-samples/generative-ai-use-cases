@@ -239,6 +239,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       endpointNames: params.endpointNames,
       customAgents: params.agents,
       queryDecompositionEnabled: params.queryDecompositionEnabled,
+      ragKnowledgeBaseStorageType: params.ragKnowledgeBaseStorageType,
       rerankingModelId: params.rerankingModelId,
       crossAccountBedrockRoleArn: params.crossAccountBedrockRoleArn,
       userPool: auth.userPool,

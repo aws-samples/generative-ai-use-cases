@@ -14,7 +14,7 @@ This is the method for users to update themselves.
 
 ### Check the release notes
 
-Before updating, read the release notes of every release between your current version and the new one on the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases).
+Before updating, read the release notes of every release between your current version and the new one. [Release Notes](./RELEASE_NOTES.md) summarizes each release and what to check before updating, and the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases) has the full list of changes.
 If a release contains a breaking change (for example, a resource that is replaced or deleted, or a setting that is removed or renamed), the release notes describe its impact and the migration steps.
 
 You can check your current version with the following command:

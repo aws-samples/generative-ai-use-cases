@@ -52,11 +52,13 @@ import useAcceptedExtensions from '../hooks/useAcceptedExtensions';
 // - Lambda synchronous payload limit: 6MB
 // - File data is base64-encoded in the request, so max original file size ≈ 6MB / 1.33 ≈ 4.5MB
 // - Bedrock Converse API document limit: 4.5MB per document (except Claude 4+ PDF and Nova PDF/DOCX)
-const fileLimit: FileLimit = {
+const DEFAULT_MAX_IMAGE_COUNT = 20;
+
+const baseFileLimit: FileLimit = {
   accept: AcceptedDotExtensions,
   maxFileCount: 5,
   maxFileSizeMB: 4.5,
-  maxImageFileCount: 20,
+  maxImageFileCount: DEFAULT_MAX_IMAGE_COUNT,
   maxImageFileSizeMB: 3.75,
   maxVideoFileCount: 1,
   maxVideoFileSizeMB: 1000, // 1 GB for S3 input
@@ -215,6 +217,16 @@ const ChatPage: React.FC = () => {
     }
   }, [chatId, getChatTitle, t]);
 
+  // Adjust the image count limit based on the selected model's capabilities.
+  // Some models accept fewer images than the Converse API default of 20.
+  const fileLimit = useMemo<FileLimit>(() => {
+    const maxImages =
+      MODELS.getModelMetadata(modelId).flags.maxImageCount ??
+      DEFAULT_MAX_IMAGE_COUNT;
+    if (maxImages === baseFileLimit.maxImageFileCount) return baseFileLimit;
+    return { ...baseFileLimit, maxImageFileCount: maxImages };
+  }, [modelId]);
+
   const accept = useAcceptedExtensions(fileLimit, modelId);
   const fileUpload = useMemo(() => {
     return accept.length > 0;
@@ -230,7 +242,7 @@ const ChatPage: React.FC = () => {
   );
   const chatFileLimit = useMemo(
     () => ({ ...fileLimit, previousFileCount }),
-    [previousFileCount]
+    [fileLimit, previousFileCount]
   );
   const reasoning = useMemo(() => {
     return MODELS.getModelMetadata(modelId).flags.reasoning ?? false;
@@ -701,7 +713,7 @@ const ChatPage: React.FC = () => {
           <ScrollTopBottom />
         </div>
 
-        <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden">
+        <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-[var(--sidebar-w,16rem)] print:hidden">
           {isEmpty && !loadingMessages && !chatId && (
             <ExpandableField
               label={t('chat.system_prompt')}

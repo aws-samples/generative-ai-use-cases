@@ -7,6 +7,7 @@ import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { ModelConfiguration } from 'generative-ai-use-cases';
 import { BEDROCK_SPEECH_TO_SPEECH_MODELS } from '@generative-ai-use-cases/common';
 import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
+import { warnModelEndOfLife } from '../utils/model-end-of-life';
 import { ISecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2';
 
 export interface SpeechToSpeechProps {
@@ -33,6 +34,12 @@ export class SpeechToSpeech extends Construct {
         throw new Error(`Unsupported Model Name: ${model.modelId}`);
       }
     }
+
+    warnModelEndOfLife({
+      scope: this,
+      parameter: 'speechToSpeechModelIds',
+      modelIds: speechToSpeechModelIds.map((m) => m.modelId),
+    });
 
     const channelNamespaceName = 'speech-to-speech';
     const eventApi = new appsync.EventApi(this, 'EventApi', {

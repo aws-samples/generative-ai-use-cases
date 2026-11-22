@@ -137,7 +137,7 @@ const OptimizePromptPage: React.FC = () => {
             </div>
             <div className="w-full lg:ml-2 lg:w-1/2">
               <div className="rounded border border-black/30 p-1.5">
-                <Markdown>{optimizedPrompt}</Markdown>
+                <Markdown generating={loading}>{optimizedPrompt}</Markdown>
                 {loading && (
                   <div className="border-aws-sky size-5 animate-spin rounded-full border-4 border-t-transparent"></div>
                 )}

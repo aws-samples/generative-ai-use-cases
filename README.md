@@ -15,6 +15,10 @@ Well-architected application implementation with business use cases for utilizin
 >
 > GenU は v4 から多言語対応しました。日本語ドキュメントは[こちら](./README_ja.md)
 
+## What's New
+
+See the [Release Notes](docs/en/RELEASE_NOTES.md) for what changed in each release, what is coming in the next one, and what to check before updating.
+
 ## GenU Usage Patterns
 
 Here we introduce GenU's features and options by usage pattern. For comprehensive deployment options, please refer to [this document](docs/en/DEPLOY_OPTION.md).
@@ -204,6 +208,7 @@ npm run cdk:deploy:quick
 
 - [Deployment Options](docs/en/DEPLOY_OPTION.md)
 - [Update Method](docs/en/UPDATE.md)
+- [Release Notes](docs/en/RELEASE_NOTES.md)
 - [Local Development Environment Setup](docs/en/DEVELOPMENT.md)
 - [Resource Deletion Method](docs/en/DESTROY.md)
 - [How to Use as a Native App](docs/en/PWA.md)

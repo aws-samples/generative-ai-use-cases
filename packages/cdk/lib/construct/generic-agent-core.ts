@@ -20,8 +20,10 @@ import {
 } from '@aws-cdk/aws-bedrock-agentcore-alpha';
 import { BucketInfo } from 'generative-ai-use-cases';
 import * as path from 'path';
-import { SUPPORTED_CACHE_FIELDS } from '@generative-ai-use-cases/common';
-import { BEDROCK_TEXT_GEN_MODELS } from '../../lambda/utils/models';
+import {
+  SUPPORTED_CACHE_FIELDS,
+  modelMetadata,
+} from '@generative-ai-use-cases/common';
 
 export interface AgentCoreRuntimeConfig {
   name: string;
@@ -186,8 +188,7 @@ export class GenericAgentCore extends Construct {
     const limits = Object.fromEntries(
       modelIds.flatMap((modelId) => {
         const maxTokens =
-          BEDROCK_TEXT_GEN_MODELS[modelId]?.defaultParams.inferenceConfig
-            ?.maxTokens;
+          modelMetadata[modelId]?.defaultParams?.inferenceConfig?.maxTokens;
         return maxTokens ? [[modelId, maxTokens]] : [];
       })
     );

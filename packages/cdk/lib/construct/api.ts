@@ -32,6 +32,7 @@ import {
 } from '@generative-ai-use-cases/common';
 import { allowS3AccessWithSourceIpCondition } from '../utils/s3-access-policy';
 import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
+import { warnModelEndOfLife } from '../utils/model-end-of-life';
 import {
   InterfaceVpcEndpoint,
   IVpc,
@@ -47,6 +48,8 @@ export interface BackendApiProps {
   readonly videoBucketRegionMap: Record<string, string>;
   readonly endpointNames: ModelConfiguration[];
   readonly queryDecompositionEnabled: boolean;
+  // Vector store of the Knowledge Base; hybrid search needs OpenSearch
+  readonly ragKnowledgeBaseStorageType?: 'opensearch' | 's3vectors';
   readonly rerankingModelId?: string | null;
   readonly customAgents: Agent[];
   readonly crossAccountBedrockRoleArn?: string | null;
@@ -149,6 +152,18 @@ export class Api extends Construct {
       throw new Error(`Unsupported Model Name: ${rerankingModelId}`);
     }
 
+    for (const [parameter, models] of Object.entries({
+      modelIds,
+      imageGenerationModelIds,
+      videoGenerationModelIds,
+    })) {
+      warnModelEndOfLife({
+        scope: this,
+        parameter,
+        modelIds: models.map((m) => m.modelId),
+      });
+    }
+
     const duplicateModelIds = new Set(
       [...modelIds, ...imageGenerationModelIds, ...videoGenerationModelIds]
         .map((m) => m.modelId)
@@ -231,6 +246,9 @@ export class Api extends Construct {
         KNOWLEDGE_BASE_ID: knowledgeBaseId ?? '',
         VIDEO_BUCKET_REGION_MAP: JSON.stringify(props.videoBucketRegionMap),
         QUERY_DECOMPOSITION_ENABLED: JSON.stringify(queryDecompositionEnabled),
+        KNOWLEDGE_BASE_HYBRID_SEARCH: JSON.stringify(
+          props.ragKnowledgeBaseStorageType !== 's3vectors'
+        ),
         RERANKING_MODEL_ID: rerankingModelId ?? '',
         // RAG Kendra
         INDEX_ID: props.kendraIndexId ?? '',

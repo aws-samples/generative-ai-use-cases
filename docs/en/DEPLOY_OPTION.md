@@ -1239,154 +1239,120 @@ The solution also supports [cross-region inference](https://docs.aws.amazon.com/
 
 (Example) If `modelRegion` is `us-east-1`, `us.anthropic.claude-3-5-sonnet-20240620-v1:0` is OK, but `eu.anthropic.claude-3-5-sonnet-20240620-v1:0` is not.
 
-This solution supports the following text generation models:
+This solution supports the following text generation models. `{global|us|eu}.model-name` stands for `global.model-name`, `us.model-name`, and `eu.model-name`, each of which you specify as a separate model ID (do not include `{}` in the configuration). The list includes models that have reached or are approaching end of life (see [Models Reaching End of Life (EOL)](#models-reaching-end-of-life-eol)).
+
+<!-- supported-text-models: generated from modelMetadata, checked by packages/cdk/test/docs/supported-models.test.ts -->
 
 ```
 "anthropic.claude-3-5-sonnet-20241022-v2:0",
+"{us|apac}.anthropic.claude-3-5-sonnet-20241022-v2:0",
 "anthropic.claude-3-5-haiku-20241022-v1:0",
+"us.anthropic.claude-3-5-haiku-20241022-v1:0",
 "anthropic.claude-3-5-sonnet-20240620-v1:0",
+"{us|eu|apac}.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "anthropic.claude-3-opus-20240229-v1:0",
+"us.anthropic.claude-3-opus-20240229-v1:0",
 "anthropic.claude-3-sonnet-20240229-v1:0",
+"{us|eu|apac}.anthropic.claude-3-sonnet-20240229-v1:0",
 "anthropic.claude-3-haiku-20240307-v1:0",
-"global.anthropic.claude-opus-5-5",
-"global.anthropic.claude-opus-5",
-"global.anthropic.claude-haiku-5-5",
-"global.anthropic.claude-opus-4-8",
-"global.anthropic.claude-opus-4-7",
-"global.anthropic.claude-opus-4-6-v1",
-"global.anthropic.claude-sonnet-5-5",
-"global.anthropic.claude-sonnet-5",
-"global.anthropic.claude-fable-5",
-"global.anthropic.claude-sonnet-4-6",
-"global.anthropic.claude-opus-4-5-20251101-v1:0",
-"global.anthropic.claude-sonnet-4-5-20250929-v1:0",
-"global.anthropic.claude-sonnet-4-20250514-v1:0",
-"us.anthropic.claude-opus-5-5",
-"us.anthropic.claude-opus-5",
-"us.anthropic.claude-haiku-5-5",
-"us.anthropic.claude-opus-4-8",
-"us.anthropic.claude-opus-4-7",
-"us.anthropic.claude-opus-4-6-v1",
-"us.anthropic.claude-sonnet-5-5",
-"us.anthropic.claude-sonnet-5",
-"us.anthropic.claude-sonnet-4-6",
+"{us|eu|apac}.anthropic.claude-3-haiku-20240307-v1:0",
+"{us|global}.anthropic.claude-opus-4-5-20251101-v1:0",
 "us.anthropic.claude-opus-4-1-20250805-v1:0",
 "us.anthropic.claude-opus-4-20250514-v1:0",
-"us.anthropic.claude-sonnet-4-20250514-v1:0",
-"us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-"us.anthropic.claude-3-5-sonnet-20241022-v2:0",
-"us.anthropic.claude-3-5-haiku-20241022-v1:0",
-"us.anthropic.claude-3-5-sonnet-20240620-v1:0",
-"us.anthropic.claude-3-opus-20240229-v1:0",
-"us.anthropic.claude-3-sonnet-20240229-v1:0",
-"us.anthropic.claude-3-haiku-20240307-v1:0",
-"au.anthropic.claude-haiku-5-5",
-"au.anthropic.claude-opus-4-6-v1",
-"au.anthropic.claude-sonnet-4-6",
-"eu.anthropic.claude-opus-5-5",
-"eu.anthropic.claude-opus-5",
-"eu.anthropic.claude-haiku-5-5",
-"eu.anthropic.claude-opus-4-8",
-"eu.anthropic.claude-opus-4-7",
-"eu.anthropic.claude-opus-4-6-v1",
-"eu.anthropic.claude-sonnet-4-6",
-"eu.anthropic.claude-sonnet-4-20250514-v1:0",
-"eu.anthropic.claude-3-7-sonnet-20250219-v1:0",
-"eu.anthropic.claude-3-5-sonnet-20240620-v1:0",
-"eu.anthropic.claude-3-sonnet-20240229-v1:0",
-"eu.anthropic.claude-3-haiku-20240307-v1:0",
-"jp.anthropic.claude-opus-5-5",
-"jp.anthropic.claude-haiku-5-5",
-"jp.anthropic.claude-opus-4-8",
-"jp.anthropic.claude-opus-4-7",
-"apac.anthropic.claude-sonnet-4-20250514-v1:0",
-"apac.anthropic.claude-3-7-sonnet-20250219-v1:0",
-"apac.anthropic.claude-3-haiku-20240307-v1:0",
-"apac.anthropic.claude-3-sonnet-20240229-v1:0",
-"apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
-"apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
-"deepseek.v3-v1:0",
-"us.deepseek.r1-v1:0",
-"qwen.qwen3-235b-a22b-2507-v1:0",
-"qwen.qwen3-32b-v1:0",
-"qwen.qwen3-coder-480b-a35b-v1:0",
-"qwen.qwen3-coder-30b-a3b-v1:0",
-"qwen.qwen3-next-80b-a3b",
-"qwen.qwen3-vl-235b-a22b",
-"us.writer.palmyra-x5-v1:0",
-"us.writer.palmyra-x4-v1:0",
+"{global|us|eu|au|jp}.anthropic.claude-opus-5-5",
+"{global|us|eu|au}.anthropic.claude-opus-5",
+"{global|us|eu|au|jp}.anthropic.claude-haiku-5-5",
+"{global|us|eu|jp}.anthropic.claude-opus-4-8",
+"{global|us|eu|jp}.anthropic.claude-opus-4-7",
+"{global|us|au|eu}.anthropic.claude-opus-4-6-v1",
+"{global|us}.anthropic.claude-sonnet-5-5",
+"{global|us}.anthropic.claude-sonnet-5",
+"global.anthropic.claude-fable-5",
+"{global|us}.anthropic.claude-fable-5-1",
+"{global|us}.anthropic.claude-fable-5-2",
+"{global|us|eu|au|jp}.anthropic.claude-sonnet-4-6",
+"{global|us|eu|jp}.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"{global|us|eu|jp}.anthropic.claude-haiku-4-5-20251001-v1:0",
+"{global|us|eu|apac}.anthropic.claude-sonnet-4-20250514-v1:0",
+"{us|eu|apac}.anthropic.claude-3-7-sonnet-20250219-v1:0",
+"amazon.titan-text-express-v1",
 "amazon.titan-text-premier-v1:0",
+"amazon.nova-pro-v1:0",
+"{us|eu|apac}.amazon.nova-pro-v1:0",
+"amazon.nova-lite-v1:0",
+"{us|eu|apac}.amazon.nova-lite-v1:0",
+"amazon.nova-micro-v1:0",
+"{us|eu|apac}.amazon.nova-micro-v1:0",
+"us.amazon.nova-premier-v1:0",
+"{us|jp|global}.amazon.nova-2-lite-v1:0",
+"meta.llama3-8b-instruct-v1:0",
+"meta.llama3-70b-instruct-v1:0",
+"meta.llama3-1-8b-instruct-v1:0",
+"meta.llama3-1-70b-instruct-v1:0",
+"meta.llama3-1-405b-instruct-v1:0",
+"us.meta.llama3-2-1b-instruct-v1:0",
+"us.meta.llama3-2-3b-instruct-v1:0",
+"us.meta.llama3-2-11b-instruct-v1:0",
+"us.meta.llama3-2-90b-instruct-v1:0",
+"us.meta.llama3-3-70b-instruct-v1:0",
 "us.meta.llama4-maverick-17b-instruct-v1:0",
 "us.meta.llama4-scout-17b-instruct-v1:0",
-"us.meta.llama3-3-70b-instruct-v1:0",
-"us.meta.llama3-2-90b-instruct-v1:0",
-"us.meta.llama3-2-11b-instruct-v1:0",
-"us.meta.llama3-2-3b-instruct-v1:0",
-"us.meta.llama3-2-1b-instruct-v1:0",
-"meta.llama3-1-405b-instruct-v1:0",
-"meta.llama3-1-70b-instruct-v1:0",
-"meta.llama3-1-8b-instruct-v1:0",
-"meta.llama3-70b-instruct-v1:0",
-"meta.llama3-8b-instruct-v1:0",
-"cohere.command-r-plus-v1:0",
-"cohere.command-r-v1:0",
-"mistral.mistral-large-2407-v1:0",
-"mistral.mistral-large-2402-v1:0",
-"mistral.mistral-small-2402-v1:0",
-"us.mistral.pixtral-large-2502-v1:0",
-"eu.mistral.pixtral-large-2502-v1:0",
-"mistral.mixtral-8x7b-instruct-v0:1",
 "mistral.mistral-7b-instruct-v0:2",
+"mistral.mixtral-8x7b-instruct-v0:1",
+"mistral.mistral-small-2402-v1:0",
+"mistral.mistral-large-2402-v1:0",
+"mistral.mistral-large-2407-v1:0",
+"{us|eu}.mistral.pixtral-large-2502-v1:0",
 "mistral.mistral-large-3-675b-instruct",
 "mistral.ministral-3-3b-instruct",
 "mistral.ministral-3-8b-instruct",
 "mistral.ministral-3-14b-instruct",
 "mistral.magistral-small-2509",
-"amazon.nova-pro-v1:0",
-"amazon.nova-lite-v1:0",
-"amazon.nova-micro-v1:0",
-"us.amazon.nova-premier-v1:0",
-"us.amazon.nova-pro-v1:0",
-"us.amazon.nova-lite-v1:0",
-"us.amazon.nova-micro-v1:0",
-"us.amazon.nova-2-lite-v1:0",
-"eu.amazon.nova-pro-v1:0",
-"eu.amazon.nova-lite-v1:0",
-"eu.amazon.nova-micro-v1:0",
-"apac.amazon.nova-pro-v1:0",
-"apac.amazon.nova-lite-v1:0",
-"apac.amazon.nova-micro-v1:0",
-"jp.amazon.nova-2-lite-v1:0",
-"global.amazon.nova-2-lite-v1:0",
+"cohere.command-r-v1:0",
+"cohere.command-r-plus-v1:0",
+"deepseek.v3-v1:0",
+"deepseek.v3.2",
+"us.deepseek.r1-v1:0",
+"qwen.qwen3-235b-a22b-2507-v1:0",
+"qwen.qwen3-32b-v1:0",
+"qwen.qwen3-coder-480b-a35b-v1:0",
+"qwen.qwen3-coder-30b-a3b-v1:0",
+"qwen.qwen3-coder-next",
+"qwen.qwen3-next-80b-a3b",
+"qwen.qwen3-vl-235b-a22b",
+"us.writer.palmyra-x4-v1:0",
+"us.writer.palmyra-x5-v1:0",
+"writer.palmyra-vision-7b",
 "openai.gpt-oss-120b-1:0",
 "openai.gpt-oss-20b-1:0",
-"global.openai.gpt-6.1-sol",
-"us.openai.gpt-6.1-sol",
-"global.openai.gpt-6.1-terra",
-"us.openai.gpt-6.1-terra",
-"global.openai.gpt-6-sol",
-"us.openai.gpt-6-sol",
-"global.openai.gpt-6-luna",
-"us.openai.gpt-6-luna",
-"global.openai.gpt-6-astra",
-"us.openai.gpt-6-astra",
-"global.openai.gpt-5.6-sol",
-"us.openai.gpt-5.6-sol",
-"global.openai.gpt-5.6-luna",
-"us.openai.gpt-5.6-luna",
-"global.openai.gpt-5.6-terra",
-"us.openai.gpt-5.6-terra",
+"{global|us}.openai.gpt-6.1-sol",
+"{global|us}.openai.gpt-6.1-terra",
+"{global|us}.openai.gpt-6-sol",
+"{global|us}.openai.gpt-6-luna",
+"{global|us}.openai.gpt-6-astra",
+"{global|us}.openai.gpt-5.6-sol",
+"{global|us}.openai.gpt-5.6-luna",
+"{global|us}.openai.gpt-5.6-terra",
+"{global|us}.openai.gpt-6.2-sol",
+"{global|us}.openai.gpt-6.2-astra",
+"{global|us}.openai.gpt-5.5",
+"{global|us}.openai.gpt-5.4",
+"{global|us}.xai.grok-4.7",
+"{global|us}.xai.grok-4.6",
+"zai.glm-5",
 "google.gemma-3-4b-it",
 "google.gemma-3-12b-it",
 "google.gemma-3-27b-it",
 "minimax.minimax-m2",
+"minimax.minimax-m2.5",
 "moonshot.kimi-k2-thinking",
-"us.moonshotai.kimi-k3",
-"global.moonshotai.kimi-k3",
-"us.moonshotai.kimi-k3.1",
-"global.moonshotai.kimi-k3.1",
+"moonshotai.kimi-k2.5",
+"{us|global}.moonshotai.kimi-k3",
+"{us|global}.moonshotai.kimi-k3.1",
 "nvidia.nemotron-nano-9b-v2",
 "nvidia.nemotron-nano-12b-v2",
+"nvidia.nemotron-nano-3-30b",
+"nvidia.nemotron-super-3-120b",
 ```
 
 This solution supports the following speech-to-speech models:
@@ -1428,6 +1394,10 @@ This solution supports the following video generation models:
 
 **Please verify that the models you specify are enabled in the specified region.**
 
+### Models Reaching End of Life (EOL)
+
+If you specify a model that Amazon Bedrock has retired or plans to retire, `cdk deploy` shows a warning. The deployment continues. Follow the warning to replace or remove the model.
+
 ### Using Models from Multiple Regions Simultaneously
 
 By default, GenU uses models from the `modelRegion`. If you want to use the latest models that are only available in certain regions, you can specify `{modelId: '<model name>', region: '<region code>'}` in `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, or `speechToSpeechModelIds` to call that specific model from the specified region.
@@ -1450,43 +1420,25 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'ap-northeast-1',
     modelIds: [
-      {
-        modelId: 'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
-        region: 'us-east-1',
-      },
-      'apac.anthropic.claude-3-5-sonnet-20241022-v2:0',
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      {
-        modelId: 'us.anthropic.claude-3-5-haiku-20241022-v1:0',
-        region: 'us-east-1',
-      },
+      'jp.anthropic.claude-sonnet-4-6',
+      'jp.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'jp.amazon.nova-2-lite-v1:0',
       'apac.amazon.nova-pro-v1:0',
       'apac.amazon.nova-lite-v1:0',
       'apac.amazon.nova-micro-v1:0',
-      { modelId: 'us.deepseek.r1-v1:0', region: 'us-east-1' },
-      { modelId: 'us.writer.palmyra-x5-v1:0', region: 'us-west-2' },
-      {
-        modelId: 'us.meta.llama4-maverick-17b-instruct-v1:0',
-        region: 'us-east-1',
-      },
-      {
-        modelId: 'us.meta.llama4-scout-17b-instruct-v1:0',
-        region: 'us-east-1',
-      },
-      { modelId: 'us.mistral.pixtral-large-2502-v1:0', region: 'us-east-1' },
+      { modelId: 'global.anthropic.claude-opus-4-8', region: 'us-east-1' },
+      { modelId: 'openai.gpt-oss-120b-1:0', region: 'us-east-1' },
+      { modelId: 'qwen.qwen3-235b-a22b-2507-v1:0', region: 'us-west-2' },
     ],
     imageGenerationModelIds: [
-      'amazon.nova-canvas-v1:0',
-      { modelId: 'stability.sd3-5-large-v1:0', region: 'us-west-2' },
       { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
       { modelId: 'stability.stable-image-ultra-v1:1', region: 'us-west-2' },
     ],
     videoGenerationModelIds: [
-      'amazon.nova-reel-v1:0',
       { modelId: 'luma.ray-v2:0', region: 'us-west-2' },
     ],
     speechToSpeechModelIds: [
-      { modelId: 'amazon.nova-sonic-v1:0', region: 'us-east-1' },
+      { modelId: 'amazon.nova-2-5-sonic', region: 'us-east-1' },
     ],
   },
 };
@@ -1495,50 +1447,31 @@ const envs: Record<string, Partial<StackInput>> = {
 **Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
 
 ```json
+// cdk.json
 {
   "context": {
     "modelRegion": "ap-northeast-1",
     "modelIds": [
-      {
-        "modelId": "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-        "region": "us-east-1"
-      },
-      "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      {
-        "modelId": "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-        "region": "us-east-1"
-      },
+      "jp.anthropic.claude-sonnet-4-6",
+      "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "jp.amazon.nova-2-lite-v1:0",
       "apac.amazon.nova-pro-v1:0",
       "apac.amazon.nova-lite-v1:0",
       "apac.amazon.nova-micro-v1:0",
       {
-        "modelId": "us.deepseek.r1-v1:0",
+        "modelId": "global.anthropic.claude-opus-4-8",
         "region": "us-east-1"
       },
       {
-        "modelId": "us.writer.palmyra-x5-v1:0",
+        "modelId": "openai.gpt-oss-120b-1:0",
+        "region": "us-east-1"
+      },
+      {
+        "modelId": "qwen.qwen3-235b-a22b-2507-v1:0",
         "region": "us-west-2"
-      },
-      {
-        "modelId": "us.meta.llama4-maverick-17b-instruct-v1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "us.meta.llama4-scout-17b-instruct-v1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "us.mistral.pixtral-large-2502-v1:0",
-        "region": "us-east-1"
       }
     ],
     "imageGenerationModelIds": [
-      "amazon.nova-canvas-v1:0",
-      {
-        "modelId": "stability.sd3-5-large-v1:0",
-        "region": "us-west-2"
-      },
       {
         "modelId": "stability.stable-image-core-v1:1",
         "region": "us-west-2"
@@ -1549,15 +1482,14 @@ const envs: Record<string, Partial<StackInput>> = {
       }
     ],
     "videoGenerationModelIds": [
-      "amazon.nova-reel-v1:0",
       {
         "modelId": "luma.ray-v2:0",
         "region": "us-west-2"
       }
-    ]
+    ],
     "speechToSpeechModelIds": [
       {
-        "modelId": "amazon.nova-sonic-v1:0",
+        "modelId": "amazon.nova-2-5-sonic",
         "region": "us-east-1"
       }
     ]
@@ -1575,28 +1507,20 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-east-1',
     modelIds: [
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'anthropic.claude-3-sonnet-20240229-v1:0',
-      'anthropic.claude-3-haiku-20240307-v1:0',
+      'global.anthropic.claude-opus-4-8',
+      'global.anthropic.claude-sonnet-4-6',
+      'global.anthropic.claude-haiku-4-5-20251001-v1:0',
       'amazon.nova-pro-v1:0',
       'amazon.nova-lite-v1:0',
       'amazon.nova-micro-v1:0',
-      'amazon.titan-text-premier-v1:0',
-      'meta.llama3-70b-instruct-v1:0',
-      'meta.llama3-8b-instruct-v1:0',
-      'cohere.command-r-plus-v1:0',
-      'cohere.command-r-v1:0',
-      'us.mistral.pixtral-large-2502-v1:0',
-      'mistral.mistral-large-2402-v1:0',
+      'openai.gpt-oss-120b-1:0',
+      'mistral.mistral-large-3-675b-instruct',
     ],
     imageGenerationModelIds: [
-      'amazon.nova-canvas-v1:0',
-      'amazon.titan-image-generator-v2:0',
-      'amazon.titan-image-generator-v1',
-      'stability.stable-diffusion-xl-v1',
+      // us-east-1 has no image generation model, so this uses a model in us-west-2
+      { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
     ],
-    videoGenerationModelIds: ['amazon.nova-reel-v1:1'],
-    speechToSpeechModelIds: ['amazon.nova-sonic-v1:0'],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1609,27 +1533,22 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "modelRegion": "us-east-1",
     "modelIds": [
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-sonnet-20240229-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0",
+      "global.anthropic.claude-opus-4-8",
+      "global.anthropic.claude-sonnet-4-6",
+      "global.anthropic.claude-haiku-4-5-20251001-v1:0",
       "amazon.nova-pro-v1:0",
       "amazon.nova-lite-v1:0",
       "amazon.nova-micro-v1:0",
-      "amazon.titan-text-premier-v1:0",
-      "meta.llama3-70b-instruct-v1:0",
-      "meta.llama3-8b-instruct-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2402-v1:0"
+      "openai.gpt-oss-120b-1:0",
+      "mistral.mistral-large-3-675b-instruct"
     ],
     "imageGenerationModelIds": [
-      "amazon.nova-canvas-v1:0",
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.stable-diffusion-xl-v1"
+      {
+        "modelId": "stability.stable-image-core-v1:1",
+        "region": "us-west-2"
+      }
     ],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:1"],
-    "speechToSpeechModelIds": ["amazon.nova-sonic-v1:0"]
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -1644,26 +1563,19 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-west-2',
     modelIds: [
-      'anthropic.claude-3-5-sonnet-20241022-v2:0',
-      'anthropic.claude-3-5-haiku-20241022-v1:0',
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'anthropic.claude-3-opus-20240229-v1:0',
-      'anthropic.claude-3-sonnet-20240229-v1:0',
-      'anthropic.claude-3-haiku-20240307-v1:0',
-      'meta.llama3-1-70b-instruct-v1:0',
-      'meta.llama3-1-8b-instruct-v1:0',
-      'cohere.command-r-plus-v1:0',
-      'cohere.command-r-v1:0',
-      'mistral.mistral-large-2407-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
+      'global.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'amazon.nova-lite-v1:0',
+      'openai.gpt-oss-120b-1:0',
+      'mistral.mistral-large-3-675b-instruct',
+      'qwen.qwen3-235b-a22b-2507-v1:0',
     ],
     imageGenerationModelIds: [
-      'amazon.titan-image-generator-v2:0',
-      'amazon.titan-image-generator-v1',
-      'stability.sd3-5-large-v1:0',
       'stability.stable-image-core-v1:1',
       'stability.stable-image-ultra-v1:1',
-      'stability.stable-diffusion-xl-v1',
+      'stability.sd3-5-large-v1:0',
     ],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1676,26 +1588,19 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "modelRegion": "us-west-2",
     "modelIds": [
-      "anthropic.claude-3-5-sonnet-20241022-v2:0",
-      "anthropic.claude-3-5-haiku-20241022-v1:0",
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-opus-20240229-v1:0",
-      "anthropic.claude-3-sonnet-20240229-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0",
-      "meta.llama3-1-70b-instruct-v1:0",
-      "meta.llama3-1-8b-instruct-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0"
+      "global.anthropic.claude-sonnet-4-6",
+      "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "amazon.nova-lite-v1:0",
+      "openai.gpt-oss-120b-1:0",
+      "mistral.mistral-large-3-675b-instruct",
+      "qwen.qwen3-235b-a22b-2507-v1:0"
     ],
     "imageGenerationModelIds": [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-5-large-v1:0"
       "stability.stable-image-core-v1:1",
       "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1",
+      "stability.sd3-5-large-v1:0"
     ],
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -1710,33 +1615,19 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-west-2',
     modelIds: [
-      "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-haiku-20240307-v1:0",
-      "us.deepseek.r1-v1:0",
-      "us.writer.palmyra-x5-v1:0",
-      "us.writer.palmyra-x4-v1:0",
-      "us.meta.llama4-maverick-17b-instruct-v1:0",
-      "us.meta.llama4-scout-17b-instruct-v1:0",
-      "us.meta.llama3-2-11b-instruct-v1:0",
-      "us.meta.llama3-2-3b-instruct-v1:0",
-      "us.meta.llama3-2-1b-instruct-v1:0",
-      "us.amazon.nova-premier-v1:0",
-      "us.amazon.nova-pro-v1:0",
-      "us.amazon.nova-lite-v1:0",
-      "us.amazon.nova-micro-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0",
+      'us.anthropic.claude-opus-4-8',
+      'us.anthropic.claude-sonnet-4-6',
+      'us.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'us.amazon.nova-2-lite-v1:0',
+      'us.amazon.nova-pro-v1:0',
+      'us.amazon.nova-lite-v1:0',
+      'us.amazon.nova-micro-v1:0',
     ],
     imageGenerationModelIds: [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-5-large-v1:0"
-      "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1",
+      'stability.stable-image-core-v1:1',
+      'stability.stable-image-ultra-v1:1',
     ],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1749,33 +1640,19 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "modelRegion": "us-west-2",
     "modelIds": [
-      "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-haiku-20240307-v1:0",
-      "us.deepseek.r1-v1:0",
-      "us.writer.palmyra-x5-v1:0",
-      "us.writer.palmyra-x4-v1:0",
-      "us.meta.llama4-maverick-17b-instruct-v1:0",
-      "us.meta.llama4-scout-17b-instruct-v1:0",
-      "us.meta.llama3-2-11b-instruct-v1:0",
-      "us.meta.llama3-2-3b-instruct-v1:0",
-      "us.meta.llama3-2-1b-instruct-v1:0",
-      "us.amazon.nova-premier-v1:0",
+      "us.anthropic.claude-opus-4-8",
+      "us.anthropic.claude-sonnet-4-6",
+      "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "us.amazon.nova-2-lite-v1:0",
       "us.amazon.nova-pro-v1:0",
       "us.amazon.nova-lite-v1:0",
-      "us.amazon.nova-micro-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0"
+      "us.amazon.nova-micro-v1:0"
     ],
     "imageGenerationModelIds": [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-5-large-v1:0"
       "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1",
+      "stability.stable-image-ultra-v1:1"
     ],
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -1786,15 +1663,23 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ```typescript
 // parameter.ts
-const envs: Record<string, StackInput> = {
+const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'ap-northeast-1',
     modelIds: [
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'anthropic.claude-3-haiku-20240307-v1:0',
+      'jp.anthropic.claude-opus-4-8',
+      'jp.anthropic.claude-sonnet-4-6',
+      'jp.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'jp.amazon.nova-2-lite-v1:0',
+      'apac.amazon.nova-pro-v1:0',
+      'apac.amazon.nova-lite-v1:0',
+      'apac.amazon.nova-micro-v1:0',
     ],
-    imageGenerationModelIds: ['amazon.nova-canvas-v1:0'],
-    videoGenerationModelIds: ['amazon.nova-reel-v1:0'],
+    imageGenerationModelIds: [
+      // ap-northeast-1 has no image generation model, so this uses a model in us-west-2
+      { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
+    ],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1807,11 +1692,21 @@ const envs: Record<string, StackInput> = {
   "context": {
     "modelRegion": "ap-northeast-1",
     "modelIds": [
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0"
+      "jp.anthropic.claude-opus-4-8",
+      "jp.anthropic.claude-sonnet-4-6",
+      "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "jp.amazon.nova-2-lite-v1:0",
+      "apac.amazon.nova-pro-v1:0",
+      "apac.amazon.nova-lite-v1:0",
+      "apac.amazon.nova-micro-v1:0"
     ],
-    "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:0"]
+    "imageGenerationModelIds": [
+      {
+        "modelId": "stability.stable-image-core-v1:1",
+        "region": "us-west-2"
+      }
+    ],
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```

@@ -209,6 +209,7 @@ npm run cdk:deploy:quick
 
 - [배포 옵션](docs/ko/DEPLOY_OPTION.md)
 - [업데이트 방법](docs/ko/UPDATE.md)
+- [Release Notes (English)](docs/en/RELEASE_NOTES.md)
 - [로컬 개발 환경 설정](docs/ko/DEVELOPMENT.md)
 - [리소스 삭제 방법](docs/ko/DESTROY.md)
 - [네이티브 앱으로 사용하는 방법](docs/ko/PWA.md)

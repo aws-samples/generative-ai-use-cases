@@ -317,7 +317,7 @@ const TailwindAdvancedEditor: React.FC<Props> = ({ initialSentence }) => {
             <div className="bg-accent text-muted-foreground rounded-lg px-2 py-1">
               {saveStatus ? t('writer.saved') : t('writer.saving')}
             </div>
-            {charsCount && (
+            {charsCount > 0 && (
               <div className="bg-accent text-muted-foreground rounded-lg px-2 py-1">
                 {charsCount} {t('writer.characters')}
               </div>

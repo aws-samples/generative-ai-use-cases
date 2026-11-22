@@ -42,7 +42,7 @@ export class CloudFrontWafStack extends Stack {
       this.webAcl = webAcl;
     }
 
-    if (params.hostName && params.domainName && params.hostedZoneId) {
+    if (params.domainName && params.hostedZoneId) {
       const hostedZone = HostedZone.fromHostedZoneAttributes(
         this,
         'HostedZone',
@@ -51,8 +51,14 @@ export class CloudFrontWafStack extends Stack {
           zoneName: params.domainName,
         }
       );
+      // When hostName is set, use "hostName.domainName" (e.g. app.example.com).
+      // When hostName is omitted, use domainName itself as a zone apex
+      // (e.g. example.com).
+      const fqdn = params.hostName
+        ? `${params.hostName}.${params.domainName}`
+        : params.domainName;
       const cert = new Certificate(this, 'Cert', {
-        domainName: `${params.hostName}.${params.domainName}`,
+        domainName: fqdn,
         validation: CertificateValidation.fromDns(hostedZone),
       });
       this.cert = cert;
