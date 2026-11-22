@@ -2242,7 +2242,7 @@ If you don't have a public hosted zone in the same AWS account, you can also man
 
 Set the following values:
 
-- `hostName` ... The hostname for your website. An A record will be created by CDK; you don't need to create it in advance
+- `hostName` ... The hostname for your website. An A record will be created by CDK; you don't need to create it in advance. If omitted, the A record is created for `domainName` itself (the zone apex, e.g. `example.com`). The deployment fails if an A record with that name already exists
 - `domainName` ... The domain name of the pre-created public hosted zone
 - `hostedZoneId` ... The ID of the pre-created public hosted zone
 

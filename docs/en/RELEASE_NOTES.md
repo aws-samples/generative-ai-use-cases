@@ -36,6 +36,7 @@ These changes are merged into the `main` branch and will be included in the next
 - **Closed network mode: API Gateway**: the API Gateway resource policy changes form, and the API deployment is recreated. Requests from endpoints that are not allowed now get 403 instead of 401. (#1814, #1723)
 - **New Cognito group**: `SystemAdminGroup` is created. If the user pool already has a group with this name, the update fails. (#1827)
 - **Meeting minutes transcription** starts with automatic language detection (Japanese and English by default) instead of the UI language. The languages can be changed in Settings. (#1779)
+- **Custom domain without `hostName`**: if `domainName` and `hostedZoneId` are set and `hostName` is not, the update now creates a certificate and an A record for the zone apex (`domainName` itself). Before, no custom domain was set up. Remove `domainName` and `hostedZoneId` if you do not want this. The update fails if the zone apex already has an A record. (#1834)
 
 ### Fixes
 
@@ -47,6 +48,7 @@ These changes are merged into the `main` branch and will be included in the next
 - The app keeps working after the browser's page translation is used. (#1828, #1833)
 - Use cases that call `{{retrieveKnowledgeBase}}` work with an S3 Vectors Knowledge Base. (#1837)
 - Agent gallery sync, S3 permissions when no IP ranges are set, and reading long chats. (#1826)
+- Large images are scaled down to 2,576 px on the longest side when attached, so Bedrock no longer rejects them for their dimensions. Models that accept fewer than 20 images limit the attachment count (1 for Llama 3.2 Vision, 8 for Llama 4). (#1835, #1836)
 
 ## v5.5.0 (2026-07-19)
 

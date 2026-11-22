@@ -168,30 +168,26 @@ export class Web extends Construct {
         },
       };
 
-      if (
-        props.cert &&
-        props.domainName &&
-        props.hostedZoneId
-      ) {
-        const fqdn = props.hostName
-          ? `${props.hostName}.${props.domainName}`
-          : props.domainName;
+      // Without hostName (null or ''), the site is served at the zone apex
+      const customDomain =
+        props.cert && props.domainName && props.hostedZoneId
+          ? props.hostName
+            ? `${props.hostName}.${props.domainName}`
+            : props.domainName
+          : undefined;
+
+      if (customDomain) {
         cloudFrontToS3Props.cloudFrontDistributionProps.certificate =
           props.cert;
-        cloudFrontToS3Props.cloudFrontDistributionProps.domainNames = [fqdn];
+        cloudFrontToS3Props.cloudFrontDistributionProps.domainNames = [
+          customDomain,
+        ];
       }
 
       const { cloudFrontWebDistribution, s3BucketInterface } =
         new CloudFrontToS3(this, 'Web', cloudFrontToS3Props);
 
-      if (
-        props.cert &&
-        props.domainName &&
-        props.hostedZoneId
-      ) {
-        const fqdn = props.hostName
-          ? `${props.hostName}.${props.domainName}`
-          : props.domainName;
+      if (customDomain && props.domainName && props.hostedZoneId) {
         // DNS record for custom domain
         const hostedZone = HostedZone.fromHostedZoneAttributes(
           this,
@@ -203,14 +199,13 @@ export class Web extends Construct {
         );
         new ARecord(this, 'ARecord', {
           zone: hostedZone,
-          // For zone apex, recordName is undefined (Route 53 treats it as the
-          // zone root).  For a subdomain, it is the host part.
-          recordName: props.hostName ?? undefined,
+          // An undefined recordName creates the record at the zone apex
+          recordName: props.hostName || undefined,
           target: RecordTarget.fromAlias(
             new CloudFrontTarget(cloudFrontWebDistribution)
           ),
         });
-        this.webUrl = `https://${fqdn}`;
+        this.webUrl = `https://${customDomain}`;
       } else {
         this.webUrl = `https://${cloudFrontWebDistribution.domainName}`;
       }
