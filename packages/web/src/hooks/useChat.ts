@@ -330,10 +330,52 @@ const useChatState = create<{
     extraData?: ExtraData[],
     base64Cache?: Record<string, string>
   ): UnrecordedMessage[] => {
-    return messages.map((m) => {
+    // Bedrock limits documents to 5 per request (counted across all
+    // messages, not per message).  Past turns re-send their documents
+    // every time, so a conversation with 6+ documents would always fail.
+    //
+    // Strategy: keep the 5 most recent documents as document blocks and
+    // replace older ones with a text note so the model still knows they
+    // existed.  Images and videos are unaffected by this limit.
+    const MAX_DOCUMENTS = 5;
+
+    // First pass: collect every (messageIndex, extraDataIndex) for files,
+    // ordered from newest message to oldest.
+    const filePositions: { msgIdx: number; edIdx: number; name: string }[] = [];
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const eds = messages[i].extraData;
+      if (!eds) continue;
+      for (let j = eds.length - 1; j >= 0; j--) {
+        if (eds[j].type === 'file') {
+          filePositions.push({ msgIdx: i, edIdx: j, name: eds[j].name });
+        }
+      }
+    }
+
+    // The first MAX_DOCUMENTS entries (newest) are kept; the rest are
+    // replaced.
+    const replacedSet = new Set<string>();
+    const replacedNames: Map<number, string[]> = new Map();
+    for (let k = MAX_DOCUMENTS; k < filePositions.length; k++) {
+      const pos = filePositions[k];
+      const key = `${pos.msgIdx}:${pos.edIdx}`;
+      replacedSet.add(key);
+      if (!replacedNames.has(pos.msgIdx)) {
+        replacedNames.set(pos.msgIdx, []);
+      }
+      replacedNames.get(pos.msgIdx)!.push(pos.name);
+    }
+
+    return messages.map((m, msgIdx) => {
       // Convert extraData to the format for LLM inference
       const convertedFiles: ExtraData[] | undefined = m.extraData
-        ?.flatMap((data): ExtraData => {
+        ?.flatMap((data, edIdx): ExtraData | ExtraData[] => {
+          // Replace over-limit documents with nothing (a text note is
+          // appended to the message content below).
+          if (data.type === 'file' && replacedSet.has(`${msgIdx}:${edIdx}`)) {
+            return [];
+          }
+
           if (data.type === 'video') {
             // Send S3 location for video
             // Convert https://  format S3 URL to s3:// format S3 URI
@@ -370,15 +412,28 @@ const useChatState = create<{
             };
           }
         })
+        .flat()
         .filter((data) => {
           if (!data.source.data) {
             return false;
           }
           return true;
         });
+
+      // Append a text note for replaced documents so the model knows they
+      // were attached.
+      let content = m.content;
+      const names = replacedNames.get(msgIdx);
+      if (names && names.length > 0) {
+        const note = names.map((n) => `[${n}]`).join(', ');
+        content =
+          content +
+          `\n\n(${note} — previously attached; omitted to stay within the document limit)`;
+      }
+
       return {
         role: m.role,
-        content: m.content,
+        content,
         extraData: [...(convertedFiles ?? []), ...(extraData ?? [])],
       };
     });

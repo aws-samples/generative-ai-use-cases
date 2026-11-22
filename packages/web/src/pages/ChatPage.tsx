@@ -231,19 +231,10 @@ const ChatPage: React.FC = () => {
   const fileUpload = useMemo(() => {
     return accept.length > 0;
   }, [accept]);
-  // Documents attached earlier in this chat are sent again with every
-  // message, and Bedrock rejects a request with more than 5 documents (#1685)
-  const previousFileCount = useMemo(
-    () =>
-      rawMessages
-        .flatMap((m) => m.extraData ?? [])
-        .filter((data) => data.type === 'file').length,
-    [rawMessages]
-  );
-  const chatFileLimit = useMemo(
-    () => ({ ...fileLimit, previousFileCount }),
-    [fileLimit, previousFileCount]
-  );
+  // Documents beyond the 5-document Bedrock limit are automatically
+  // replaced with text notes by formatMessageProperties (#1820), so we
+  // no longer need to block uploads based on past document count.
+  const chatFileLimit = fileLimit;
   const reasoning = useMemo(() => {
     return MODELS.getModelMetadata(modelId).flags.reasoning ?? false;
   }, [modelId]);
