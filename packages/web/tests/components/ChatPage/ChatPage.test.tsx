@@ -57,14 +57,6 @@ const { chatStore, hooks } = vi.hoisted(() => {
       chatList: { getChatTitle: () => '' },
       files: { clear: fn, uploadedFiles: [], uploadFiles: fn, base64Cache: {} },
       follow: { scrollableContainer: { current: null }, setFollowing: fn },
-      userSettingsApi: (() => {
-        const settings = { data: {}, mutate: fn };
-        return {
-          getUserSettings: () => settings,
-          setDefaultSystemContext: fn,
-          clearDefaultChat: fn,
-        };
-      })(),
       prompter: {
         chatPrompt: ({ content }: { content: string }) => content,
         systemContext: () => '',
@@ -92,9 +84,6 @@ vi.mock('../../../src/hooks/useChatApi', () => ({
 }));
 vi.mock('../../../src/hooks/useSystemContextApi', () => ({
   default: () => hooks.systemContextApi,
-}));
-vi.mock('../../../src/hooks/useUserSettingsApi', () => ({
-  default: () => hooks.userSettingsApi,
 }));
 vi.mock('../../../src/hooks/useChatList', () => ({
   default: () => hooks.chatList,
@@ -364,9 +353,20 @@ describe('ChatPage default system prompt', () => {
   };
   const original = {
     list: hooks.systemContextApi.listSystemContexts,
-    settings: hooks.userSettingsApi.getUserSettings,
     update: hooks.chat.updateSystemContext,
     current: hooks.chat.getCurrentSystemContext,
+  };
+
+  // The choice is kept in local storage, like the other chat preferences
+  const chooseDefault = async (systemContextId: string) => {
+    localStorage.setItem(
+      'chatPreferences',
+      JSON.stringify({
+        state: { defaultSystemContextId: systemContextId },
+        version: 1,
+      })
+    );
+    await reload();
   };
 
   beforeEach(async () => {
@@ -381,27 +381,18 @@ describe('ChatPage default system prompt', () => {
   afterEach(() => {
     cleanup();
     hooks.systemContextApi.listSystemContexts = original.list;
-    hooks.userSettingsApi.getUserSettings = original.settings;
     hooks.chat.updateSystemContext = original.update;
     hooks.chat.getCurrentSystemContext = original.current;
   });
 
-  it("starts a new chat with the user's default system prompt", () => {
-    const settings = {
-      data: { defaultChat: { type: 'systemContext', id: 's1' } },
-      mutate: vi.fn(),
-    };
-    hooks.userSettingsApi.getUserSettings = () => settings;
+  it("starts a new chat with the user's default system prompt", async () => {
+    await chooseDefault('systemContext#s1');
     renderAt('/chat');
     expect(hooks.chat.updateSystemContext).toHaveBeenCalledWith('my prompt');
   });
 
-  it('keeps a system prompt the user already edited', () => {
-    const settings = {
-      data: { defaultChat: { type: 'systemContext', id: 's1' } },
-      mutate: vi.fn(),
-    };
-    hooks.userSettingsApi.getUserSettings = () => settings;
+  it('keeps a system prompt the user already edited', async () => {
+    await chooseDefault('systemContext#s1');
     hooks.chat.getCurrentSystemContext = () => 'edited by the user';
     renderAt('/chat');
     expect(hooks.chat.updateSystemContext).not.toHaveBeenCalledWith(
@@ -409,13 +400,17 @@ describe('ChatPage default system prompt', () => {
     );
   });
 
-  it('does not change a saved chat', () => {
-    const settings = {
-      data: { defaultChat: { type: 'systemContext', id: 's1' } },
-      mutate: vi.fn(),
-    };
-    hooks.userSettingsApi.getUserSettings = () => settings;
+  it('does not change a saved chat', async () => {
+    await chooseDefault('systemContext#s1');
     renderAt('/chat/chat-1');
+    expect(hooks.chat.updateSystemContext).not.toHaveBeenCalledWith(
+      'my prompt'
+    );
+  });
+
+  it('ignores a default whose saved system prompt was deleted', async () => {
+    await chooseDefault('systemContext#gone');
+    renderAt('/chat');
     expect(hooks.chat.updateSystemContext).not.toHaveBeenCalledWith(
       'my prompt'
     );

@@ -7,7 +7,6 @@ import { Router } from 'express';
 import { createTestApp, callApi } from './testApp';
 import { router as chatsRouter } from '../../../lambda/api/routes/chats';
 import { router as systemContextsRouter } from '../../../lambda/api/routes/systemContexts';
-import { router as userSettingsRouter } from '../../../lambda/api/routes/userSettings';
 import { router as sharesRouter } from '../../../lambda/api/routes/shares';
 import { router as useCasesRouter } from '../../../lambda/api/routes/useCases';
 import { router as videoRouter } from '../../../lambda/api/routes/video';
@@ -17,7 +16,6 @@ import { router as transcribeRouter } from '../../../lambda/api/routes/transcrib
 import { router as agentBuilderRouter } from '../../../lambda/api/routes/agentBuilder';
 import * as agentHandlers from '../../../lambda/agentBuilder/handlers/agent-handlers';
 import * as repository from '../../../lambda/repository';
-import * as userSettingRepository from '../../../lambda/repositoryUserSetting';
 import * as videoRepository from '../../../lambda/repositoryVideoJob';
 import * as useCaseRepository from '../../../lambda/useCaseBuilder/useCaseBuilderRepository';
 import * as minutesRepository from '../../../lambda/meetingMinutes/repository';
@@ -27,7 +25,6 @@ import * as minutesRepository from '../../../lambda/meetingMinutes/repository';
 // the per-handler suites.
 
 jest.mock('../../../lambda/repository');
-jest.mock('../../../lambda/repositoryUserSetting');
 jest.mock('../../../lambda/repositoryVideoJob');
 jest.mock('../../../lambda/useCaseBuilder/useCaseBuilderRepository');
 jest.mock('../../../lambda/meetingMinutes/repository');
@@ -50,7 +47,6 @@ const mock = (fn: unknown) => fn as jest.Mock<any, any>;
 
 beforeEach(() => {
   jest.clearAllMocks();
-  mock(userSettingRepository.getUserSettings).mockResolvedValue({});
   jest.spyOn(console, 'log').mockImplementation(() => {});
   jest.spyOn(console, 'error').mockImplementation(() => {});
 });
@@ -73,7 +69,6 @@ const systemContexts: [string, Router] = [
   '/systemcontexts',
   systemContextsRouter,
 ];
-const userSettings: [string, Router] = ['/user-settings', userSettingsRouter];
 const shares: [string, Router] = ['/shares', sharesRouter];
 const useCases: [string, Router] = ['/usecases', useCasesRouter];
 const video: [string, Router] = ['/video', videoRouter];
@@ -196,73 +191,6 @@ const cases: Case[] = [
     responseBody: JSON.stringify({ message: 'Internal Server Error' }),
   },
 
-  // user settings
-  {
-    name: 'GET /user-settings',
-    mount: userSettings,
-    method: 'GET',
-    path: '/user-settings',
-    setup: () =>
-      mock(userSettingRepository.getUserSettings).mockResolvedValue({
-        defaultChat: { type: 'systemContext', id: 's1' },
-      }),
-    status: 200,
-    responseBody: JSON.stringify({
-      defaultChat: { type: 'systemContext', id: 's1' },
-    }),
-    calls: [[userSettingRepository.getUserSettings, ['alice']]],
-  },
-  {
-    name: 'PUT /user-settings/default-chat',
-    mount: userSettings,
-    method: 'PUT',
-    path: '/user-settings/default-chat',
-    body: { type: 'systemContext', id: 's1' },
-    setup: () =>
-      mock(repository.findSystemContextById).mockResolvedValue({ id: 'x' }),
-    status: 200,
-    responseBody: JSON.stringify({
-      defaultChat: { type: 'systemContext', id: 's1' },
-    }),
-    calls: [
-      [repository.findSystemContextById, ['alice', 's1']],
-      [
-        userSettingRepository.setDefaultChat,
-        ['alice', { type: 'systemContext', id: 's1' }],
-      ],
-    ],
-  },
-  {
-    name: "PUT /user-settings/default-chat rejects another user's prompt",
-    mount: userSettings,
-    method: 'PUT',
-    path: '/user-settings/default-chat',
-    body: { type: 'systemContext', id: 's2' },
-    setup: () => mock(repository.findSystemContextById).mockResolvedValue(null),
-    status: 404,
-    responseBody: JSON.stringify({ message: 'System prompt not found' }),
-  },
-  {
-    name: 'PUT /user-settings/default-chat rejects an unknown type',
-    mount: userSettings,
-    method: 'PUT',
-    path: '/user-settings/default-chat',
-    body: { type: 'agent', id: 'a1' },
-    status: 400,
-    responseBody: JSON.stringify({
-      message: 'type must be systemContext and id must be set',
-    }),
-  },
-  {
-    name: 'DELETE /user-settings/default-chat',
-    mount: userSettings,
-    method: 'DELETE',
-    path: '/user-settings/default-chat',
-    status: 204,
-    responseBody: '',
-    calls: [[userSettingRepository.deleteDefaultChat, ['alice']]],
-  },
-
   // system contexts
   {
     name: 'POST /systemcontexts',
@@ -295,22 +223,6 @@ const cases: Case[] = [
     status: 204,
     responseBody: '',
     calls: [[repository.deleteSystemContext, ['alice', 's1']]],
-  },
-  {
-    name: 'DELETE /systemcontexts/:systemContextId clears it as the default',
-    mount: systemContexts,
-    method: 'DELETE',
-    path: '/systemcontexts/s1',
-    setup: () =>
-      mock(userSettingRepository.getUserSettings).mockResolvedValue({
-        defaultChat: { type: 'systemContext', id: 's1' },
-      }),
-    status: 204,
-    responseBody: '',
-    calls: [
-      [repository.deleteSystemContext, ['alice', 's1']],
-      [userSettingRepository.deleteDefaultChat, ['alice']],
-    ],
   },
   {
     name: 'PUT /systemcontexts/:systemContextId/title',

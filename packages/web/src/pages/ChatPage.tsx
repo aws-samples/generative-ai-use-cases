@@ -10,7 +10,6 @@ import InputChatContent from '../components/InputChatContent';
 import useChat from '../hooks/useChat';
 import useChatApi from '../hooks/useChatApi';
 import useSystemContextApi from '../hooks/useSystemContextApi';
-import useUserSettingsApi from '../hooks/useUserSettingsApi';
 import { useDefaultSystemPrompt } from '../hooks/useDefaultSystemPrompt';
 import useChatList from '../hooks/useChatList';
 import ChatMessage from '../components/ChatMessage';
@@ -530,14 +529,9 @@ const ChatPage: React.FC = () => {
     setInputSystemContext(currentSystemContext);
   }, [currentSystemContext, setInputSystemContext]);
 
-  // The saved system prompt the user chose for new chats
-  const { getUserSettings, setDefaultSystemContext, clearDefaultChat } =
-    useUserSettingsApi();
-  const { data: userSettings, mutate: mutateUserSettings } = getUserSettings();
-  const defaultSystemContextId =
-    userSettings?.defaultChat?.type === 'systemContext'
-      ? `systemContext#${userSettings.defaultChat.id}`
-      : null;
+  // The saved system prompt the user chose for new chats (kept in this browser)
+  const { defaultSystemContextId, setDefaultSystemContextId } =
+    useChatPreferences();
   const userDefaultPrompt = useMemo(
     () =>
       systemContextList.find(
@@ -552,8 +546,8 @@ const ChatPage: React.FC = () => {
   const appliedDefaultPrompt = useRef<string | null>(null);
   useEffect(() => {
     setUserDefaultPrompt(userDefaultPrompt);
-    // The settings arrive after a new chat has started. Switch it to the new
-    // default only while its system prompt is still the one it started with.
+    // The saved system prompts arrive after a new chat has started. Switch it to
+    // the default only while its system prompt is still the one it started with.
     if (pathname === '/chat' && isEmpty) {
       const started =
         appliedDefaultPrompt.current ?? prompter.systemContext(pathname);
@@ -568,28 +562,9 @@ const ChatPage: React.FC = () => {
   }, [userDefaultPrompt]);
 
   const onClickDefaultSystemContext = async (systemContextId: string) => {
-    const isDefault = systemContextId === defaultSystemContextId;
-    try {
-      if (isDefault) {
-        await mutateUserSettings({}, { revalidate: false });
-        await clearDefaultChat();
-      } else {
-        await mutateUserSettings(
-          {
-            defaultChat: {
-              type: 'systemContext',
-              id: systemContextId.split('#')[1],
-            },
-          },
-          { revalidate: false }
-        );
-        await setDefaultSystemContext(systemContextId);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      mutateUserSettings();
-    }
+    setDefaultSystemContextId(
+      systemContextId === defaultSystemContextId ? undefined : systemContextId
+    );
   };
 
   const onClickSamplePrompt = useCallback(
@@ -614,8 +589,6 @@ const ChatPage: React.FC = () => {
       }
       await deleteSystemContext(systemContextId);
       mutate();
-      // Deleting the default also clears it on the server
-      mutateUserSettings();
     } catch (e) {
       console.error(e);
     }
@@ -868,7 +841,7 @@ const ChatPage: React.FC = () => {
           systemContextList={systemContextList as SystemContext[]}
           onClickDeleteSystemContext={onClickDeleteSystemContext}
           onClickUpdateSystemContext={onClickUpdateSystemContext}
-          defaultSystemContextId={defaultSystemContextId}
+          defaultSystemContextId={defaultSystemContextId ?? null}
           onClickDefaultSystemContext={onClickDefaultSystemContext}
           forceExpand={forceExpandPromptList}
         />

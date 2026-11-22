@@ -4,7 +4,8 @@ import { Prompter } from '../prompts';
 /**
  * The system prompt the user chose for new chats (one of their saved system
  * prompts), or null to use the built-in one. ChatPage keeps it up to date from
- * the user settings; useChat reads it when it starts a new chat.
+ * the chat preferences and the saved system prompts; useChat reads it when it
+ * starts a new chat.
  */
 export const useDefaultSystemPrompt = create<{
   userDefault: string | null;
