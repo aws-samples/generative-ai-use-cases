@@ -40,6 +40,7 @@ export class AgentCoreStack extends Stack {
           params.agentBuilderEnabled && params.agentBuilderWebSearchEnabled,
         webSearchExcludeDomains:
           params.agentBuilderWebSearchExcludeDomains ?? undefined,
+        runtimePlatformVersion: params.agentCoreRuntimePlatformVersion,
       });
 
       // Outputs read by GenerativeAiUseCasesStack via StackOutputs, also across Regions (only if values exist)

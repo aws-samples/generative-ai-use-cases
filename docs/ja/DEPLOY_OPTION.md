@@ -691,6 +691,30 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!WARNING]
 > VPC モードを使用する場合、例えば PRIVATE から PUBLIC への変更により AgentCore Runtime 削除時にセキュリティグループが自動削除されません。AgentCore Runtime が作成する AWS マネージドな ENI がセキュリティグループを参照するため、CloudFormation では削除できません。AgentCore Runtime 削除後、マネージド ENI が自動削除されるまで待ってから、手動でセキュリティグループを削除してください。削除が必要なセキュリティグループ ID は CloudFormation の出力に表示されます。
 
+#### AgentCore Runtime のプラットフォームバージョン
+
+`agentCoreRuntimePlatformVersion` に `V2` を指定すると、GenU が作成する AgentCore Runtime (Generic Runtime、AgentBuilder Runtime、Research Agent Runtime) を [プラットフォームバージョン V2](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html) で作成します。デフォルトは `V1` です。
+
+V2 は、準備済みのエージェントのスナップショットから各セッションを起動するため、新しいセッションの起動が速くなります。
+
+> [!NOTE]
+>
+> - V2 では Runtime の作成・更新のたびにスナップショットを作成するため、デプロイ時の Runtime の作成・更新に数分かかります。
+> - V2 を利用できるリージョンは [AWS 公式ドキュメント](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html) を確認してください。
+> - `V2` から `V1` に戻すこともできます。
+
+**[parameter.ts](/packages/cdk/parameter.ts) を編集**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    agentBuilderEnabled: true,
+    agentCoreRuntimePlatformVersion: 'V2',
+  },
+};
+```
+
 ### AgentBuilder ユースケースの有効化
 
 ユーザーがシステムプロンプトと任意の MCP を設定することでユースケースごとの Agent を自由に作成できるユースケースです。(Experimental: 予告なく破壊的変更を行うことがあります)

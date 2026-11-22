@@ -183,6 +183,9 @@ const baseStackInputSchema = z.object({
   // Agent Core Network Configuration
   agentCoreVpcId: z.string().nullish(),
   agentCoreSubnetIds: z.array(z.string()).nullish(),
+  // Platform version of the AgentCore Runtimes that GenU creates. V2 starts
+  // sessions from a snapshot, so they start in seconds.
+  agentCoreRuntimePlatformVersion: z.enum(['V1', 'V2']).default('V1'),
   // Research Agent Core Runtime
   researchAgentEnabled: z.boolean().default(false),
   createResearchAgentFargate: z.boolean().default(false),

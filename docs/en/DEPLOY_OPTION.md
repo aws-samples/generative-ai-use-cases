@@ -674,6 +674,30 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!WARNING]
 > When using VPC mode, security groups are not automatically deleted when AgentCore Runtime is deleted due to changes such as from PRIVATE to PUBLIC. This is because AWS-managed ENIs created by AgentCore Runtime reference the security groups, making them undeletable by CloudFormation. After deleting AgentCore Runtime, wait for the managed ENIs to be automatically deleted, then manually delete the security groups. The security group IDs that need to be deleted are displayed in the CloudFormation outputs. Note: if the initial deployment fails (e.g., unsupported AZ), the security group may also remain and need to be cleaned up manually.
 
+#### AgentCore Runtime Platform Version
+
+Set `agentCoreRuntimePlatformVersion` to `V2` to create the AgentCore Runtimes that GenU deploys (Generic Runtime, AgentBuilder Runtime and Research Agent Runtime) on [platform version V2](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html). The default is `V1`.
+
+V2 starts each session from a snapshot of the prepared agent, so new sessions start faster.
+
+> [!NOTE]
+>
+> - V2 takes a snapshot each time a runtime is created or updated, so creating or updating a runtime during deployment takes several minutes.
+> - For the Regions where V2 is available, see the [AWS documentation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html).
+> - You can switch back from `V2` to `V1`.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    agentBuilderEnabled: true,
+    agentCoreRuntimePlatformVersion: 'V2',
+  },
+};
+```
+
 ### Enabling AgentBuilder Use Case
 
 This is a use case where users can freely create Agents for each use case by configuring system prompts and arbitrary MCPs. (Experimental: Breaking changes may be made without notice)
