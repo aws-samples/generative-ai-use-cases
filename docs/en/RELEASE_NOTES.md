@@ -1,5 +1,7 @@
 # Release Notes
 
+<!-- The Highlights section of each release is also shown on the settings page of the app. Write it for the people who use GenU, and only include changes they notice when they use the app. Put changes for administrators (deployment settings, infrastructure, operations) under "For administrators" or "Before you update". -->
+
 This page summarizes each GenU release. The full list of changes for each release is on the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases).
 
 GenU is deployed and updated from release tags (see [Update Method](./UPDATE.md)). Before updating, read every release between your current version and the new one, especially the **Before you update** sections.
@@ -10,17 +12,21 @@ These changes are merged into the `main` branch and will be included in the next
 
 ### Highlights
 
-- **Admin page for token usage and cost**: members of the new Cognito group `SystemAdminGroup` can see every user's token usage and estimated cost at `/admin`, filter by user and period, and download a CSV. Each user sees their own usage and cost in the new Usage tab in Settings. Bedrock calls carry usage tags (`genu_user`, `genu_usecase`) that appear in the model invocation logs. (#1827)
-- **Closed network mode improvements**: the AgentCore Runtime runs inside the closed VPC, Interface VPC endpoints are created only for the features in use, and settings that do not work in closed network mode are reported as warnings at synth time. (#1814, #1761, #1723)
-- **Chat experience**: the model selector moved into the input toolbar, chat history is grouped by date, the selected model and reasoning settings are kept across reloads, Markdown tables can be copied for spreadsheets, and the chat model is told today's date. (#1788, #1781, #1787, #1782, #1786)
-- **Sidebar and settings**: the sidebar can be collapsed to icons and resized, and each user picks the use cases it shows (favorites). The settings page is split into General, Usage, Account and System tabs; the usage icon in the sidebar moved to the Usage tab, and `/stats` still works. (#1830, #1831)
-- **Model end-of-life warnings**: `cdk synth` / `cdk deploy` warn about each configured model that Bedrock no longer offers or that has an end-of-life date, and say which parameter to change. The deployment continues. (#1832)
-- **Knowledge Base**: S3 Vectors as an alternative vector store, and Guardrails for the Knowledge Base chat. (#1471, #1649)
-- **Speech**: voice and language selection in Voice Chat, a choice of auto-detect languages for speech recognition in Settings, and Amazon Nova 2.5 Sonic for speech-to-speech. (#1727, #1779, #1726)
-- **Agent Builder**: agent definitions can be shared as JSON. (#1689)
-- **New models**: Claude Opus 5, Claude Fable 5, Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5, Claude Fable 5.1 / 5.2, OpenAI GPT-6 / GPT-6.1 / GPT-6.2 Sol / GPT-6.2 Astra / GPT-5.4 / GPT-5.5 / GPT-5.6, Moonshot AI Kimi K3 / K3.1 / K2.5, Grok 4.6 / 4.7, GLM 5, DeepSeek V3.2, MiniMax M2.5, NVIDIA Nemotron 3 Super 120B, Qwen3 Coder Next, Palmyra Vision 7B. (#1652, #1646, #1707, #1712, #1724, #1709, #1755, #1704, #1795, #1832)
-- **Update tooling**: the deployment and update guides now use release tags, `deploy.sh` deploys the latest release by default (`--ref` selects another one), and a `genu-update` agent skill helps merge a new release into a customized branch. (#1766, #1777)
-- **Custom domain**: a custom domain can be set at the zone apex, without `hostName`. (#1834)
+- **Chat**: the model selector moved into the input toolbar, chat history is grouped by date, the selected model and reasoning settings are kept across reloads, Markdown tables can be copied for pasting into spreadsheets, and the chat model knows today's date. (#1788, #1781, #1787, #1782, #1786)
+- **Sidebar and settings**: the sidebar can be collapsed to icons and resized, and each user chooses the use cases it shows (favorites). The settings page has General, Usage, Account and System tabs; the Usage tab shows each user's own token usage and cost, and the System tab shows these release notes. (#1830, #1831)
+- **Speech**: voice and language selection in Voice Chat, a choice of languages for automatic language detection in speech recognition (Settings), and Amazon Nova 2.5 Sonic for Voice Chat. (#1727, #1779, #1726)
+- **Agent Builder**: agent definitions can be shared as JSON files. (#1689)
+- **New models** (available when the administrator enables them): Claude Opus 5, Claude Fable 5, Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5, Claude Fable 5.1 / 5.2, OpenAI GPT-6 / GPT-6.1 / GPT-6.2 Sol / GPT-6.2 Astra / GPT-5.4 / GPT-5.5 / GPT-5.6, Moonshot AI Kimi K3 / K3.1 / K2.5, Grok 4.6 / 4.7, GLM 5, DeepSeek V3.2, MiniMax M2.5, NVIDIA Nemotron 3 Super 120B, Qwen3 Coder Next, Palmyra Vision 7B. (#1652, #1646, #1707, #1712, #1724, #1709, #1755, #1704, #1795, #1832)
+
+### For administrators
+
+- Knowledge Base: S3 Vectors can be used as a lower-cost vector store, and guardrails also check RAG chat answers. (#1471, #1649)
+- An admin page shows every user's token usage and estimated cost, with filters by user and period and a CSV download. Bedrock calls are tagged with the user and the use case, so usage can also be analyzed in the model invocation logs. (#1827)
+- Administrators are told in the System tab of the settings page when a newer release is available.
+- Closed network mode runs AgentCore inside the closed VPC, creates only the VPC endpoints for the features in use, and warns at deploy time about settings that do not work in a closed network. (#1814, #1761, #1723)
+- Deployments warn about models that Bedrock no longer offers or will retire. (#1832)
+- The deployment and update guides use release tags, and an agent skill helps merge a new release into a customized deployment. (#1766, #1777)
+- A custom domain can be set at the zone apex, without `hostName`. (#1834)
 
 ### Before you update
 
@@ -35,6 +41,7 @@ These changes are merged into the `main` branch and will be included in the next
 - **Closed network mode: AgentCore**: if AgentCore is enabled, its runtime moves into the closed VPC, and `agentCoreRegion` must equal `region`. `researchAgentEnabled` cannot be combined with closed network mode.
 - **Closed network mode: API Gateway**: the API Gateway resource policy changes form, and the API deployment is recreated. Requests from endpoints that are not allowed now get 403 instead of 401. (#1814, #1723)
 - **New Cognito group**: `SystemAdminGroup` is created. If the user pool already has a group with this name, the update fails. (#1827)
+- **Settings page**: the list of recent pull requests on the System tab is replaced by the release notes of the deployed version, read from `docs/en/RELEASE_NOTES.md` and `docs/ja/RELEASE_NOTES.md` at build time. The notice of a newer release is shown only to members of `SystemAdminGroup` and compares the full version with the latest release on GitHub.
 - **Meeting minutes transcription** starts with automatic language detection (Japanese and English by default) instead of the UI language. The languages can be changed in Settings. (#1779)
 - **Custom domain without `hostName`**: if `domainName` and `hostedZoneId` are set and `hostName` is not, the update now creates a certificate and an A record for the zone apex (`domainName` itself). Before, no custom domain was set up. Remove `domainName` and `hostedZoneId` if you do not want this. The update fails if the zone apex already has an A record. (#1834)
 
@@ -54,15 +61,20 @@ These changes are merged into the `main` branch and will be included in the next
 
 ### Highlights
 
-- **New models**: Claude Sonnet 5, Claude Opus 4.8, Claude Opus 4.7, Claude Opus 4.6 / Sonnet 4.6.
-- **AgentCore**: VPC configuration for the AgentCore Runtime and a list screen for AgentCore.
+- **New models** (available when the administrator enables them): Claude Sonnet 5, Claude Opus 4.8, Claude Opus 4.7, Claude Opus 4.6 / Sonnet 4.6.
+- **AgentCore**: a list screen for AgentCore.
 - **Research use case**.
-- **Knowledge Base**: Web Crawler data source, citation improvements and system prompt customization.
+- **RAG chat (Knowledge Base)**: improved citations.
 - **Meeting minutes**: custom prompts, download of generated minutes, screen sleep prevention during recording.
 - **Markdown**: ECharts charts and SVG preview in code blocks.
 - **Browser extension**: model switching.
-- **Security**: script injection mitigation in the auto deploy workflow, `unsafe-eval` removed from the CSP, dependency CVEs resolved.
-- **Internal**: the API Lambda functions were consolidated into one Express application, and Cognito is reached through VPC endpoints in closed network mode.
+
+### For administrators
+
+- VPC configuration for the AgentCore Runtime.
+- Knowledge Base: Web Crawler data source and system prompt customization.
+- Security: script injection mitigation in the auto deploy workflow, `unsafe-eval` removed from the CSP, dependency CVEs resolved.
+- The API Lambda functions were consolidated into one Express application, and Cognito is reached through VPC endpoints in closed network mode.
 
 [Full changelog](https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.5.0)
 
@@ -72,11 +84,15 @@ These changes are merged into the `main` branch and will be included in the next
 
 - **Agent Builder**: create agents without code, with automatic system prompt generation.
 - **Mermaid diagrams and math rendering** in chat.
-- **Branding**: custom logo and title.
 - **Chat history**: bulk delete.
 - **Meeting minutes**: a warning before leaving the page during a recording.
-- **New models**: Claude Opus 4.5, Nemotron 3 Nano 30B and 17 more models, plus a default model setting.
-- **AgentCore**: faster MCP loading and AgentCore Gateway support.
+- **New models** (available when the administrator enables them): Claude Opus 4.5, Nemotron 3 Nano 30B and 17 more models.
+
+### For administrators
+
+- Branding: custom logo and title.
+- A default model setting.
+- AgentCore: faster MCP loading and AgentCore Gateway support.
 - `destroy.sh` for deleting the resources and a `cdk:diff` shortcut.
 
 [Full changelog](https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.4.0)
@@ -85,8 +101,11 @@ These changes are merged into the `main` branch and will be included in the next
 
 ### Highlights
 
+- **New models** (available when the administrator enables them): Claude Haiku 4.5.
+
+### For administrators
+
 - Custom tag keys for cost management.
-- Claude Haiku 4.5.
 - AgentCore use cases in closed network mode.
 
 [Full changelog](https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.3.0)
@@ -95,9 +114,13 @@ These changes are merged into the `main` branch and will be included in the next
 
 ### Highlights
 
-- Claude Sonnet 4.5, with extended thinking and prompt caching.
+- **New models** (available when the administrator enables them): Claude Sonnet 4.5, with extended thinking.
+- **Meeting minutes**: real-time translation improvements.
+
+### For administrators
+
+- Prompt caching for Claude Sonnet 4.5.
 - Maximum number of agent loops can be set.
-- Real-time translation improvements for meeting minutes.
 - Deploying from SageMaker Code Editor with the private network options.
 - End-of-life models removed.
 
@@ -107,9 +130,13 @@ These changes are merged into the `main` branch and will be included in the next
 
 ### Highlights
 
-- Reasoning toggle in chat and AgentCore UI improvements.
+- **Chat**: a reasoning toggle.
+- **AgentCore**: UI improvements, and uploaded files no longer disappear in agent use cases.
+
+### For administrators
+
 - Global cross-Region inference.
-- Fixes for closed network mode and for files uploaded in agent use cases.
+- Fixes for closed network mode.
 
 ### Before you update
 
@@ -121,10 +148,13 @@ These changes are merged into the `main` branch and will be included in the next
 
 ### Highlights
 
-- **AgentCore**: agents on Amazon Bedrock AgentCore.
-- **Closed network mode**: access GenU only from a VPC.
+- **AgentCore**: a use case for agents on Amazon Bedrock AgentCore.
 - **Voice Chat** is generally available.
-- OpenAI GPT OSS 20B / 120B.
+- **New models** (available when the administrator enables them): OpenAI GPT OSS 20B / 120B.
+
+### For administrators
+
+- Closed network mode: access GenU only from a VPC.
 - Tags for cost management.
 
 ### Before you update

@@ -99,6 +99,8 @@ services:
       - ./packages/web:/workspace/packages/web
       - ./packages/common:/workspace/packages/common
       - ./packages/types:/workspace/packages/types
+      # Release notes shown on the settings page
+      - ./docs:/workspace/docs:ro
       # Protect container's node_modules from host
       - /workspace/node_modules
       - /workspace/packages/web/node_modules

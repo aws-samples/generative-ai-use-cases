@@ -931,7 +931,8 @@ setting:
     typing_animation: タイピングアニメーション
     version: バージョン
     version_help: generative-ai-use-cases の package.json の version を参照しています
-  recent_updates: 最近のアップデート
+  release_notes: リリースノート
+  release_notes_unavailable: このバージョンのリリースノートはありません。
   signout: サインアウト
   tabs:
     account: アカウント
@@ -939,10 +940,8 @@ setting:
     system: システム
     usage: 使用量
   update:
-    message: >-
-      GitHub にアップデートがあります。最新の機能を利用したい場合は <0>generative-ai-use-cases</0> の main
-      ブランチを pull して再度デプロイしてください。
-  view_all_updates: 全てのアップデートを見る
+    message: '新しいバージョン {{version}} がリリースされています。<0>リリースノート</0>を確認し、<1>アップデート方法</1>に沿ってアップデートしてください。'
+  view_all_release_notes: すべてのリリースノートを見る
 shared:
   contact_admin: 管理者に問い合わせてください。
   error: エラー
