@@ -6110,6 +6110,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "INDEX_ID": {
               "Ref": "RagKendraIndexFEF3924C",
             },
+            "KNOWLEDGE_BASE_HYBRID_SEARCH": "true",
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
@@ -19206,6 +19207,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "INDEX_ID": {
               "Ref": "RagKendraIndexFEF3924C",
             },
+            "KNOWLEDGE_BASE_HYBRID_SEARCH": "true",
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
