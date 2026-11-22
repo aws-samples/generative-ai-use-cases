@@ -51,11 +51,13 @@ const ragKnowledgeBaseEnabled: boolean =
 // - Lambda synchronous payload limit: 6MB
 // - File data is base64-encoded in the request, so max original file size ≈ 6MB / 1.33 ≈ 4.5MB
 // - Match pages/ChatPage.tsx. If a difference occurs, update it
-const fileLimit: FileLimit = {
+const DEFAULT_MAX_IMAGE_COUNT = 20;
+
+const baseFileLimit: FileLimit = {
   accept: AcceptedDotExtensions,
   maxFileCount: 5,
   maxFileSizeMB: 4.5,
-  maxImageFileCount: 20,
+  maxImageFileCount: DEFAULT_MAX_IMAGE_COUNT,
   maxImageFileSizeMB: 3.75,
   maxVideoFileCount: 1,
   maxVideoFileSizeMB: 25, // 25 MB for base64 input (TODO: up to 1 GB through S3)
@@ -422,11 +424,19 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
     [setValue]
   );
 
+  const fileLimit = useMemo<FileLimit>(() => {
+    const maxImages =
+      MODELS.getModelMetadata(modelId).flags.maxImageCount ??
+      DEFAULT_MAX_IMAGE_COUNT;
+    if (maxImages === baseFileLimit.maxImageFileCount) return baseFileLimit;
+    return { ...baseFileLimit, maxImageFileCount: maxImages };
+  }, [modelId]);
+
   const accept = useAcceptedExtensions(fileLimit, modelId);
 
   useEffect(() => {
     checkFiles(fileLimit, accept);
-  }, [checkFiles, accept]);
+  }, [checkFiles, fileLimit, accept]);
 
   const fileInput = useRef<HTMLInputElement | null>(null);
 
@@ -447,13 +457,13 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
         deleteUploadedFile(fileId, fileLimit, accept);
       }
     },
-    [deleteUploadedFile, accept]
+    [deleteUploadedFile, fileLimit, accept]
   );
 
   // Drop overlay; see useDropOverlay for why it closes on its own.
   const onDropFiles = useCallback(
     (files: File[]) => uploadFiles(files, fileLimit, accept),
-    [uploadFiles, accept]
+    [uploadFiles, fileLimit, accept]
   );
   const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
     useDropOverlay(onDropFiles);

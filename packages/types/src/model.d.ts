@@ -17,6 +17,10 @@ export type FeatureFlags = {
   // Rejects a system role, so the system prompt goes into the first user turn
   noSystemPrompt?: boolean;
 
+  // Maximum number of images the model accepts in a single request.
+  // Defaults to 20 (Converse API default) when not set.
+  maxImageCount?: number;
+
   image_gen?: boolean;
   video_gen?: boolean;
 
