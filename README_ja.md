@@ -24,7 +24,7 @@ GenU の機能やオプションを活用パターンごとに紹介いたしま
 <details markdown="1">
   <summary><strong><ins>生成 AI のユースケースを体験したい</ins></strong></summary>
 
-GenU は生成 AI を活用した多様なユースケースを標準で提供しています。それらのユースケースは、生成 AI を業務活用するためのアイデアの種となったり、そのまま業務で活用できるものなど、さまざまです。今後もさらにブラッシュアップされたユースケースを随時追加予定です。また、不要であれば [特定のユースケースを非表示にする](docs/ja/DEPLOY_OPTION.md#特定のユースケースを非表示にする) オプションで非表示にすることもできます。デフォルトで提供しているユースケース一覧はこちらです。
+GenU は生成 AI を活用した多様なユースケースを標準で提供しています。それらのユースケースは、生成 AI を業務活用するためのアイデアの種となったり、そのまま業務で活用できるものなど、さまざまです。今後もさらにブラッシュアップされたユースケースを随時追加予定です。また、不要であれば [特定のユースケースを非表示にする](docs/ja/DEPLOY_OPTION.md#特定のユースケースを非表示にする) オプションで非表示にすることもできます。ユースケースの一覧はこちらです。(オプション) と付いたものは、デプロイオプションで有効にすると使えます。
 
   <br/>
   <br/>
@@ -65,8 +65,8 @@ GenU は生成 AI を活用した多様なユースケースを標準で提供�
         <td>画像生成 AI は、テキストや画像を元に新しい画像を生成できます。アイデアを即座に可視化することができ、デザイン作業などの効率化を期待できます。こちらの機能では、プロンプトの作成を LLM に支援してもらうことができます。</td>
       </tr>
       <tr>
-        <td>動画生成</td>
-        <td>動画生成 AI はテキストから短い動画を生成します。生成した動画は素材としてさまざまなシーンで活用できます。</td>
+        <td>動画生成 (オプション)</td>
+        <td>動画生成 AI はテキストから短い動画を生成します。利用するには<a href="docs/ja/DEPLOY_OPTION.md#動画生成ユースケースの有効化">動画生成のモデルを指定</a>してください。生成した動画は素材としてさまざまなシーンで活用できます。</td>
       </tr>
       <tr>
         <td>映像分析</td>
@@ -84,8 +84,19 @@ GenU は生成 AI を活用した多様なユースケースを標準で提供�
         <td>音声チャット</td>
         <td>音声チャットでは生成 AI と双方向の音声によるチャットが可能です。自然な会話と同様、AI の発言中に割り込んで話すこともできます。また、システムプロンプトを設定することで、特定の役割を持った AI と音声で会話することもできます。</td>
       </tr>
+      <tr>
+        <td>Agent Builder (オプション)</td>
+        <td>指示を書き、ツールや MCP サーバーを選ぶだけで、コードを書かずにエージェントを作成し、ほかのユーザーに共有できます。<a href="docs/ja/DEPLOY_OPTION.md#agentbuilder-ユースケースの有効化">AgentBuilder ユースケースの有効化</a> をご参照ください。</td>
+      </tr>
+      <tr>
+        <td>リサーチ (オプション)</td>
+        <td>エージェントが Web と AWS のドキュメントを検索し、テーマについてのレポートを作成します。<a href="docs/ja/DEPLOY_OPTION.md#リサーチエージェントユースケースの有効化">リサーチエージェントユースケースの有効化</a> をご参照ください。</td>
+      </tr>
     </tbody>
   </table>
+
+RAG チャット、Agent チャット、AgentCore は、以下の活用パターンで紹介しています。
+
 </details>
 
 <details markdown="1">
@@ -96,17 +107,16 @@ RAG は LLM が苦手な最新の情報やドメイン知識を外部から伝�
 RAG は根拠に基づいた回答のみを許すため、LLM にありがちな「それっぽい間違った情報」を回答させないという効果もあります。
 
 GenU は RAG チャットというユースケースを提供しています。
-また RAG チャットの情報ソースとして [Amazon Kendra](docs/ja/DEPLOY_OPTION.md) と [Knowledge Base](docs/ja/DEPLOY_OPTION.md#rag-チャット-knowledge-base-ユースケースの有効化) の 2 種類が利用可能です。
-Amazon Kendra を利用する場合は、[手動で作成した S3 Bucket や Kendra Index をそのまま利用する](docs/ja/DEPLOY_OPTION.md#既存の-amazon-kendra-index-を利用したい場合)ことが可能です。
-
-> [!IMPORTANT]
-> Amazon Kendra は 2026 年 6 月 30 日にメンテナンスモードへ移行し、2026 年 7 月 30 日以降は新規のお客様の受付を終了しています ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html))。これから RAG チャットを構築する場合は、Knowledge Base 版の利用を推奨します。固定費を抑えたい場合は `ragKnowledgeBaseStorageType` に `s3vectors` を指定してください。
+RAG チャットの情報ソースには [Knowledge Bases for Amazon Bedrock](docs/ja/DEPLOY_OPTION.md#rag-チャット-knowledge-base-ユースケースの有効化) を使います。ベクトルストアの固定費を抑えたい場合は `ragKnowledgeBaseStorageType` に `s3vectors` を指定してください。
 
 Knowledge Base を利用する場合は、[Advanced Parsing](docs/ja/DEPLOY_OPTION.md#advanced-parsing-を有効化)・[チャンク戦略の選択](docs/ja/DEPLOY_OPTION.md#チャンク戦略を変更)・[クエリ分解](docs/ja/DEPLOY_OPTION.md#rag-チャット-knowledge-base-ユースケースの有効化)・[リランキング](docs/ja/DEPLOY_OPTION.md#rag-チャット-knowledge-base-ユースケースの有効化) など高度な RAG が利用可能です。
 また Knowledge Base では、[メタデータフィルターの設定](docs/ja/DEPLOY_OPTION.md#メタデータフィルターの設定) も可能です。
 例えば「組織ごとにアクセス可能なデータソースを切り替えたい」や「UI からユーザーがフィルタを設定したい」といった要件を満たすことが可能です。
 
-また、[MCP チャットを有効化](docs/ja/DEPLOY_OPTION.md#mcp-チャットユースケースの有効化) して外部サービスの MCP サーバーを [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json) に追加することで、AWS 外のデータを参照する RAG を構築することも可能です。
+AWS 外のデータをもとに回答させたい場合は、[AgentCore ユースケース](docs/ja/DEPLOY_OPTION.md#agentcore-ユースケースの有効化) や [Agent Builder](docs/ja/DEPLOY_OPTION.md#agentbuilder-ユースケースの有効化) のエージェントに、外部サービスの MCP サーバーを追加してください。
+
+> [!NOTE]
+> Amazon Kendra は 2026 年 6 月 30 日にメンテナンスモードへ移行し、2026 年 7 月 30 日以降は新規のお客様の受付を終了しています ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html))。すでに利用している場合は、[Amazon Kendra のオプション](docs/ja/DEPLOY_OPTION.md#rag-チャット-amazon-kendra-ユースケースの有効化) を引き続き使えます ([既存の S3 Bucket や Kendra Index の利用](docs/ja/DEPLOY_OPTION.md#既存の-amazon-kendra-index-を利用したい場合) も可能です)。
 
 </details>
 
@@ -127,7 +137,7 @@ AgentCore Runtime に関しても同様に [インポート機能](docs/ja/DEPLO
 
 Bedrock Flows に関しても同様に [インポート機能](docs/ja/DEPLOY_OPTION.md#flow-チャットユースケースの有効化) がございますので、ぜひご活用ください。
 
-また、[MCP チャットを有効化](docs/ja/DEPLOY_OPTION.md#mcp-チャットユースケースの有効化) して外部サービスの MCP サーバーを [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json) に追加することで、AWS 外のサービスにも何らかのアクションを起こすエージェントを作成することも可能です。
+エージェントを自分で作りたい場合は、[Agent Builder](docs/ja/DEPLOY_OPTION.md#agentbuilder-ユースケースの有効化) でユーザーがコードを書かずにエージェントを作成できます。AgentCore ユースケースと Agent Builder のエージェントは、管理者が登録した MCP サーバーを通じて AWS 外のサービスを操作することもできます。
 
 </details>
 
@@ -203,6 +213,8 @@ CDK を利用したことがない場合、初回のみ [Bootstrap](https://docs
 npx -w packages/cdk cdk bootstrap
 ```
 
+デフォルトの設定のままでもデプロイできます。モデルや有効にするユースケースを選ぶ場合は、[packages/cdk/parameter.ts](/packages/cdk/parameter.ts) に環境 (例: `dev`) の設定を書き、デプロイのコマンドに `-c env=dev` を付けてください。パラメータは [デプロイオプション](docs/ja/DEPLOY_OPTION.md) をご参照ください。
+
 続いて、以下のコマンドで AWS リソースをデプロイします。デプロイが完了するまで、お待ちください（20 分程度かかる場合があります）。
 
 ```bash
@@ -232,8 +244,8 @@ npm run cdk:deploy:quick
 GenU をご利用いただく際の、構成と料金試算例を公開しております。(従量課金制となっており、実際の料金はご利用内容により変動いたします。)
 
 - [シンプル版 (RAG なし) 試算](https://aws.amazon.com/jp/cdp/ai-chatbot/)
-- [RAG (Amazon Kendra) あり試算](https://aws.amazon.com/jp/cdp/ai-chatapp/)
 - [RAG (Knowledge Base) あり試算](https://aws.amazon.com/jp/cdp/genai-chat-app/)
+- [RAG (Amazon Kendra) あり試算](https://aws.amazon.com/jp/cdp/ai-chatapp/) (Amazon Kendra をすでに利用している場合)
 
 ## お客様事例
 
