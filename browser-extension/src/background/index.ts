@@ -14,6 +14,8 @@ store.subscribe(() => {
 });
 
 const PROMPT_KEY = 'promptList';
+// Context menu for the whole page; its items are the prompts
+const PAGE_MENU_ID = 'page';
 
 let prompts: SystemContext[] = [];
 
@@ -22,6 +24,11 @@ browser.tabs.onUpdated.addListener(async () => {
     browser.contextMenus.create({
       id: 'default',
       title: 'GenU拡張機能を開く',
+      contexts: ['page'],
+    });
+    browser.contextMenus.create({
+      id: PAGE_MENU_ID,
+      title: 'このページをGenUで',
       contexts: ['page'],
     });
 
@@ -33,13 +40,35 @@ browser.tabs.onUpdated.addListener(async () => {
           title: prompt.systemContextTitle,
           contexts: ['selection'],
         });
+        browser.contextMenus.create({
+          id: `${PAGE_MENU_ID}:${prompt.systemContextId}`,
+          parentId: PAGE_MENU_ID,
+          title: prompt.systemContextTitle,
+          contexts: ['page'],
+        });
       });
     });
   });
 });
 
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (tab?.id !== undefined) {
+  if (tab?.id === undefined) {
+    return;
+  }
+
+  // A prompt for the whole page: the content script reads the page and opens the chat
+  const pagePrompt = prompts.find(
+    (p) => `${PAGE_MENU_ID}:${p.systemContextId}` === info.menuItemId,
+  );
+  if (pagePrompt) {
+    Browser.tabs.sendMessage(tab.id, {
+      type: 'PAGE-CONTENT',
+      systemContext: pagePrompt,
+    } as MessagePayload);
+    return;
+  }
+
+  {
     // Send a message from the background to the TAB
     Browser.tabs.sendMessage(tab.id, { type: 'CHAT-OPEN' } as MessagePayload);
     Browser.tabs.sendMessage(tab.id, {
