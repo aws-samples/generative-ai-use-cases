@@ -161,7 +161,7 @@ In that case, please be careful about conflicts with GenU's main branch.
 
 GenU records the tokens each user consumes.
 Members of the `SystemAdminGroup` Cognito group can open the [admin page](docs/en/DEPLOY_OPTION.md#admin-page) to see every user's token usage and estimated cost, narrow it down by user and period, and download it as CSV.
-Each user can see their own usage and cost on the stats page.
+Each user can see their own usage and cost in the Usage tab of the settings page.
 
 With the [monitoring dashboard](docs/en/DEPLOY_OPTION.md#enabling-monitoring-dashboard), you can also follow usage by user and use case in Amazon CloudWatch, because GenU tags its Bedrock calls with the user and the use case.
 To break down the AWS bill, [add cost allocation tags](docs/en/DEPLOY_OPTION.md#how-to-set-tags) to the resources GenU creates.
