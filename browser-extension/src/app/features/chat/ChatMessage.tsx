@@ -4,6 +4,7 @@ import { Message } from '../../../@types/chat';
 import { twMerge } from 'tailwind-merge';
 import { PiCaretUp } from 'react-icons/pi';
 import { IconWrapper } from '../../components/IconWrapper';
+import MarkdownContent from './MarkdownContent';
 
 type Props = BaseProps & {
   message: Message;
@@ -20,7 +21,7 @@ const ChatMessage: React.FC<Props> = (props) => {
       className={twMerge(
         'border-t last:border-b p-2',
         isUser ? 'bg-aws-squid-ink brightness-150' : '',
-        props.className,
+        props.className
       )}
     >
       {message.title && (
@@ -43,12 +44,14 @@ const ChatMessage: React.FC<Props> = (props) => {
         className={twMerge(
           'transition-all ',
           message.role === 'system' && isOpen && 'max-h-[300px] overflow-y-auto',
-          message.role === 'system' && !isOpen && 'max-h-0 overflow-hidden',
+          message.role === 'system' && !isOpen && 'max-h-0 overflow-hidden'
         )}
       >
-        {message.content.split('\n').map((c, idx) => (
-          <div key={idx}>{c}</div>
-        ))}
+        {message.role === 'assistant' ? (
+          <MarkdownContent>{message.content}</MarkdownContent>
+        ) : (
+          message.content.split('\n').map((c, idx) => <div key={idx}>{c}</div>)
+        )}
       </div>
     </div>
   );
