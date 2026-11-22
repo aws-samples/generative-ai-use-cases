@@ -278,35 +278,43 @@ describe('GenerativeAiUseCases', () => {
     }
     const agentCoreTemplate = Template.fromStack(agentCoreStack);
 
-    // Assert: the gateway and the web search connector target are created
-    agentCoreTemplate.resourceCountIs('AWS::BedrockAgentCore::Gateway', 1);
-    agentCoreTemplate.resourceCountIs(
-      'AWS::BedrockAgentCore::GatewayTarget',
-      1
-    );
+    // Assert: the runtime calls InvokeWebSearch directly, without a gateway
+    agentCoreTemplate.resourceCountIs('AWS::BedrockAgentCore::Gateway', 0);
     agentCoreTemplate.hasResourceProperties(
-      'AWS::BedrockAgentCore::Gateway',
+      'AWS::IAM::Policy',
       Match.objectLike({
-        AuthorizerType: 'AWS_IAM',
-        ProtocolType: 'MCP',
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'AllowWebSearch',
+              Action: 'bedrock-agentcore:InvokeWebSearch',
+              Resource: {
+                'Fn::Join': [
+                  '',
+                  Match.arrayWith([
+                    Match.stringLikeRegexp(':tool/web-search.v1$'),
+                  ]),
+                ],
+              },
+            }),
+          ]),
+        },
       })
     );
     agentCoreTemplate.hasResourceProperties(
-      'AWS::BedrockAgentCore::GatewayTarget',
+      'AWS::BedrockAgentCore::Runtime',
       Match.objectLike({
-        TargetConfiguration: {
-          Mcp: {
-            Connector: {
-              Source: { ConnectorId: 'web-search' },
-            },
-          },
-        },
+        AgentRuntimeName: Match.stringLikeRegexp('^GenUAgentBuilderRuntime'),
+        EnvironmentVariables: Match.objectLike({
+          WEB_SEARCH_ENABLED: 'true',
+          WEB_SEARCH_EXCLUDE_DOMAINS: '["excluded.example.com"]',
+        }),
       })
     );
     expect(agentCoreTemplate.toJSON()).toMatchSnapshot();
   });
 
-  test('no web search gateway is created when disabled', () => {
+  test('web search is not allowed when disabled', () => {
     const app = new cdk.App();
 
     const params = processedStackInputSchema.parse({
@@ -322,11 +330,9 @@ describe('GenerativeAiUseCases', () => {
     }
     const agentCoreTemplate = Template.fromStack(agentCoreStack);
 
-    agentCoreTemplate.resourceCountIs('AWS::BedrockAgentCore::Gateway', 0);
-    agentCoreTemplate.resourceCountIs(
-      'AWS::BedrockAgentCore::GatewayTarget',
-      0
-    );
+    const template = JSON.stringify(agentCoreTemplate.toJSON());
+    expect(template).not.toContain('bedrock-agentcore:InvokeWebSearch');
+    expect(template).not.toContain('WEB_SEARCH_ENABLED');
   });
 
   test('AgentCore VPC config requires both vpcId and subnetIds', () => {

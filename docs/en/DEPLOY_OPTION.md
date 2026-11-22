@@ -930,21 +930,17 @@ For details, refer to the [mcp-proxy-for-aws documentation](https://github.com/a
 Enabling `agentBuilderWebSearchEnabled` adds a web search tool backed by the Web Search Tool of Amazon Bedrock AgentCore, and users can choose whether each Agent uses it.
 No API key is required and search queries are processed within AWS (zero data egress).
 
-When enabled, an AgentCore Gateway with the Web Search connector is created automatically.
-Note that this differs from `agentCoreGatewayArns`, where you specify a Gateway that you prepared yourself; in this case GenU creates the Gateway for you.
+The Agent calls the AgentCore Web Search API (`InvokeWebSearch`) directly, so no Gateway or other additional resources are created. The Agent can narrow each search by domain and publication date.
 
-`agentBuilderWebSearchExcludeDomains` lets you specify domains to exclude from search results. The list is enforced server side and cannot be changed by the Agent.
+`agentBuilderWebSearchExcludeDomains` lets you specify domains to exclude from search results. The list is applied to every search and cannot be changed by the Agent.
 
 When `agentBuilderWebSearchEnabled` is disabled, the web search option is not shown in the agent builder. Leave it disabled if your organization does not allow web search.
 
 > [!NOTE]
-> The Web Search Tool is only available in some Regions. `agentCoreRegion` (or `modelRegion` when it is not specified) must be a supported Region. See the [Web Search Tool documentation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) for the supported Regions.
+> The Web Search Tool is only available in some Regions. `agentCoreRegion` (or `modelRegion` when it is not specified) must be a supported Region. See the [Web Search Tool documentation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) for the supported Regions (as of November 2026: Tokyo, N. Virginia, Ohio, Oregon, Sydney and Ireland).
 
 > [!NOTE]
 > Web Search is charged based on the number of search queries. See the [Amazon Bedrock AgentCore pricing page](https://aws.amazon.com/bedrock/agentcore/pricing/) for details.
-
-> [!NOTE]
-> The connector version cannot be specified through CloudFormation, so the default version is used. As a result, per request domain and published date filters are not available to the Agent.
 
 > [!IMPORTANT]
 > Under the acceptable use terms of Web Search, when you surface output that uses search results to your end users, you **must retain and display the source citations and links** provided with each result. See [Acceptable use](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) for details.

@@ -2,7 +2,6 @@ import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { IVpc, ISubnet } from 'aws-cdk-lib/aws-ec2';
 import { GenericAgentCore } from './construct/generic-agent-core';
-import { WebSearchGateway } from './construct/web-search-gateway';
 import { ProcessedStackInput } from './stack-input';
 import { BucketInfo } from 'generative-ai-use-cases';
 import { REMOTE_OUTPUT_KEYS } from './remote-output-keys';
@@ -23,16 +22,6 @@ export class AgentCoreStack extends Stack {
 
     const params = props.params;
 
-    // Provision the Web Search gateway when enabled for the agent builder
-    let webSearchGatewayUrl: string | undefined;
-    if (params.agentBuilderEnabled && params.agentBuilderWebSearchEnabled) {
-      const webSearchGateway = new WebSearchGateway(this, 'WebSearchGateway', {
-        env: params.env,
-        excludeDomains: params.agentBuilderWebSearchExcludeDomains ?? undefined,
-      });
-      webSearchGatewayUrl = webSearchGateway.gatewayUrl;
-    }
-
     // Deploy Generic AgentCore Runtime if either generic or agentBuilder is enabled
     if (params.createGenericAgentCoreRuntime || params.agentBuilderEnabled) {
       this.genericAgentCore = new GenericAgentCore(this, 'GenericAgentCore', {
@@ -47,7 +36,10 @@ export class AgentCoreStack extends Stack {
         subnets: props.subnets,
         gatewayArns: params.agentCoreGatewayArns ?? undefined,
         closedNetworkMode: params.closedNetworkMode,
-        webSearchGatewayUrl,
+        webSearchEnabled:
+          params.agentBuilderEnabled && params.agentBuilderWebSearchEnabled,
+        webSearchExcludeDomains:
+          params.agentBuilderWebSearchExcludeDomains ?? undefined,
       });
 
       // Outputs read by GenerativeAiUseCasesStack via StackOutputs, also across Regions (only if values exist)

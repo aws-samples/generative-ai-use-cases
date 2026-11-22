@@ -123,13 +123,9 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentBuilder with web search
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
-          "WEB_SEARCH_GATEWAY_URL": {
-            "Fn::GetAtt": [
-              "WebSearchGateway8C3EA7E1",
-              "GatewayUrl",
-            ],
-          },
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
+          "WEB_SEARCH_ENABLED": "true",
+          "WEB_SEARCH_EXCLUDE_DOMAINS": "[\\"excluded.example.com\\"]",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -412,6 +408,23 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentBuilder with web search
               "Sid": "AllowGatewayInvocation",
             },
             {
+              "Action": "bedrock-agentcore:InvokeWebSearch",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":bedrock-agentcore:us-east-1:aws:tool/web-search.v1",
+                  ],
+                ],
+              },
+              "Sid": "AllowWebSearch",
+            },
+            {
               "Action": [
                 "s3:DeleteObject*",
                 "s3:PutObject",
@@ -533,7 +546,7 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentBuilder with web search
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -551,121 +564,6 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentBuilder with web search
         },
       },
       "Type": "AWS::BedrockAgentCore::Runtime",
-    },
-    "WebSearchGateway8C3EA7E1": {
-      "Properties": {
-        "AuthorizerType": "AWS_IAM",
-        "Description": "AgentCore Web Search gateway for GenU agent builder",
-        "Name": "GenUWebSearchGateway",
-        "ProtocolType": "MCP",
-        "RoleArn": {
-          "Fn::GetAtt": [
-            "WebSearchGatewayWebSearchGatewayRoleA661EAA1",
-            "Arn",
-          ],
-        },
-        "Tags": {
-          "app": "genu",
-        },
-      },
-      "Type": "AWS::BedrockAgentCore::Gateway",
-    },
-    "WebSearchGatewayWebSearchGatewayRoleA661EAA1": {
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Condition": {
-                "StringEquals": {
-                  "aws:SourceAccount": "123456890123",
-                },
-              },
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "bedrock-agentcore.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "WebSearchGatewayWebSearchGatewayRoleDefaultPolicy7FDC21C9": {
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "bedrock-agentcore:InvokeGateway",
-              "Effect": "Allow",
-              "Resource": "arn:aws:bedrock-agentcore:us-east-1:123456890123:gateway/*",
-              "Sid": "InvokeGateway",
-            },
-            {
-              "Action": "bedrock-agentcore:InvokeWebSearch",
-              "Effect": "Allow",
-              "Resource": "arn:aws:bedrock-agentcore:us-east-1:aws:tool/web-search.v1",
-              "Sid": "InvokeWebSearch",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "WebSearchGatewayWebSearchGatewayRoleDefaultPolicy7FDC21C9",
-        "Roles": [
-          {
-            "Ref": "WebSearchGatewayWebSearchGatewayRoleA661EAA1",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "WebSearchGatewayWebSearchTargetE6ED2D81": {
-      "DependsOn": [
-        "WebSearchGateway8C3EA7E1",
-      ],
-      "Properties": {
-        "CredentialProviderConfigurations": [
-          {
-            "CredentialProviderType": "GATEWAY_IAM_ROLE",
-          },
-        ],
-        "GatewayIdentifier": {
-          "Fn::GetAtt": [
-            "WebSearchGateway8C3EA7E1",
-            "GatewayIdentifier",
-          ],
-        },
-        "Name": "web-search",
-        "TargetConfiguration": {
-          "Mcp": {
-            "Connector": {
-              "Configurations": [
-                {
-                  "Name": "WebSearch",
-                  "ParameterValues": {
-                    "domainFilter": {
-                      "exclude": [
-                        "excluded.example.com",
-                      ],
-                    },
-                  },
-                },
-              ],
-              "Source": {
-                "ConnectorId": "web-search",
-              },
-            },
-          },
-        },
-      },
-      "Type": "AWS::BedrockAgentCore::GatewayTarget",
     },
   },
   "Rules": {
