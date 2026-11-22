@@ -18,6 +18,7 @@ const complete = {
   modelId: 'global.anthropic.claude-sonnet-4-6',
   mcpServers: ['powerpoint', 'excel'],
   codeExecutionEnabled: true,
+  webSearchEnabled: true,
 };
 
 describe('writing an agent out', () => {
@@ -47,6 +48,7 @@ describe('writing an agent out', () => {
       modelId: '',
       mcpServers: [],
       codeExecutionEnabled: false,
+      webSearchEnabled: false,
     });
   });
 });
@@ -100,6 +102,20 @@ describe('reading an agent in', () => {
     expect(on(true)).toBe(true);
     expect(on('true')).toBe(false);
     expect(on(1)).toBe(false);
+  });
+
+  // Web search sends queries outside the conversation, so it is treated the
+  // same way, and a file written before the option existed reads as off.
+  it('only enables web search on a real true', () => {
+    const on = (value: unknown) =>
+      fromPortableAgent({
+        name: 'x',
+        systemPrompt: 'y',
+        webSearchEnabled: value,
+      }).webSearchEnabled;
+    expect(on(true)).toBe(true);
+    expect(on('true')).toBe(false);
+    expect(on(undefined)).toBe(false);
   });
 });
 

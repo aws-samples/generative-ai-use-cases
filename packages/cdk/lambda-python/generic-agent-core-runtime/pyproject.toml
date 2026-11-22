@@ -5,7 +5,8 @@ requires-python = ">=3.12"
 dependencies = [
   "strands-agents>=1.0",
   "strands-agents-tools[agent_core_code_interpreter,agent_core_browser]",
-  "boto3",
+  # 1.43.127 added InvokeWebSearch (the web search tool)
+  "boto3>=1.43.127",
   "mcp",
   "fastapi",
   "uvicorn",

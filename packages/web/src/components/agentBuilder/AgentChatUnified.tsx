@@ -36,6 +36,13 @@ interface AgentChatProps {
   actions?: React.ReactNode;
 }
 
+// Web search is provisioned at deploy time. An agent saved with it on keeps
+// the setting when the deployment turns it off, but the runtime then has no
+// web search tool, so the badge must not claim it.
+const webSearchEnabledByDeployment =
+  import.meta.env.VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED ===
+  'true';
+
 const AgentChatUnified: React.FC<AgentChatProps> = ({
   agent,
   sessionId: providedSessionId,
@@ -171,7 +178,8 @@ Please respond as this agent with the specified behavior and personality.`;
         agent.mcpServers,
         agent.agentId,
         modelId,
-        agent.codeExecutionEnabled ?? false
+        agent.codeExecutionEnabled ?? false,
+        agent.webSearchEnabled ?? false
       );
 
       setChatContent('');
@@ -269,12 +277,20 @@ Please respond as this agent with the specified behavior and personality.`;
 
           {/* Agent Capabilities */}
           {(agent.codeExecutionEnabled ||
+            (webSearchEnabledByDeployment && agent.webSearchEnabled) ||
             (agent.mcpServers && agent.mcpServers.length > 0)) && (
             <div className="flex flex-wrap justify-center gap-2">
               {/* Code Execution - only show when enabled */}
               {agent.codeExecutionEnabled && (
                 <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
                   {t('agent_builder.code_execution')}
+                </span>
+              )}
+
+              {/* Web Search - only show when enabled for the agent and the deployment */}
+              {webSearchEnabledByDeployment && agent.webSearchEnabled && (
+                <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                  {t('agent_builder.web_search')}
                 </span>
               )}
 

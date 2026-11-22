@@ -261,6 +261,80 @@ describe('GenerativeAiUseCases', () => {
     expect(agentCoreTemplate.toJSON()).toMatchSnapshot();
   });
 
+  test('matches the snapshot (AgentBuilder with web search)', () => {
+    const app = new cdk.App();
+
+    const params = processedStackInputSchema.parse({
+      ...stackInput,
+      agentBuilderEnabled: true,
+      agentBuilderWebSearchEnabled: true,
+      agentBuilderWebSearchExcludeDomains: ['excluded.example.com'],
+    });
+
+    const { agentCoreStack } = createStacks(app, params);
+
+    if (!agentCoreStack) {
+      throw new Error('AgentCore stack is not created');
+    }
+    const agentCoreTemplate = Template.fromStack(agentCoreStack);
+
+    // Assert: the runtime calls InvokeWebSearch directly, without a gateway
+    agentCoreTemplate.resourceCountIs('AWS::BedrockAgentCore::Gateway', 0);
+    agentCoreTemplate.hasResourceProperties(
+      'AWS::IAM::Policy',
+      Match.objectLike({
+        PolicyDocument: {
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'AllowWebSearch',
+              Action: 'bedrock-agentcore:InvokeWebSearch',
+              Resource: {
+                'Fn::Join': [
+                  '',
+                  Match.arrayWith([
+                    Match.stringLikeRegexp(':tool/web-search.v1$'),
+                  ]),
+                ],
+              },
+            }),
+          ]),
+        },
+      })
+    );
+    agentCoreTemplate.hasResourceProperties(
+      'AWS::BedrockAgentCore::Runtime',
+      Match.objectLike({
+        AgentRuntimeName: Match.stringLikeRegexp('^GenUAgentBuilderRuntime'),
+        EnvironmentVariables: Match.objectLike({
+          WEB_SEARCH_ENABLED: 'true',
+          WEB_SEARCH_EXCLUDE_DOMAINS: '["excluded.example.com"]',
+        }),
+      })
+    );
+    expect(agentCoreTemplate.toJSON()).toMatchSnapshot();
+  });
+
+  test('web search is not allowed when disabled', () => {
+    const app = new cdk.App();
+
+    const params = processedStackInputSchema.parse({
+      ...stackInput,
+      agentBuilderEnabled: true,
+      agentBuilderWebSearchEnabled: false,
+    });
+
+    const { agentCoreStack } = createStacks(app, params);
+
+    if (!agentCoreStack) {
+      throw new Error('AgentCore stack is not created');
+    }
+    const agentCoreTemplate = Template.fromStack(agentCoreStack);
+
+    const template = JSON.stringify(agentCoreTemplate.toJSON());
+    expect(template).not.toContain('bedrock-agentcore:InvokeWebSearch');
+    expect(template).not.toContain('WEB_SEARCH_ENABLED');
+  });
+
   test('AgentCore VPC config requires both vpcId and subnetIds', () => {
     // Only vpcId is provided -> must fail
     expect(() =>

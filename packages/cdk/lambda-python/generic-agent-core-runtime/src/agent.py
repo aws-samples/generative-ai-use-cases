@@ -58,6 +58,7 @@ class AgentManager:
         session_id: str | None = None,
         agent_id: str | None = None,
         code_execution_enabled: bool | None = False,
+        web_search_enabled: bool | None = False,
     ) -> AsyncGenerator[str]:
         """Process a request and yield streaming responses as raw events"""
         try:
@@ -69,11 +70,15 @@ class AgentManager:
             model_id, region = extract_model_info(model_info)
 
             # Combine system prompts
-            combined_system_prompt = get_system_prompt(system_prompt)
+            combined_system_prompt = get_system_prompt(system_prompt, web_search_enabled=bool(web_search_enabled))
 
             # Get tools (MCP handling is done in ToolManager)
-            tools = self.tool_manager.get_tools_with_options(code_execution_enabled=code_execution_enabled, mcp_servers=mcp_servers)
-            logger.info(f"Loaded {len(tools)} tools (code execution: {code_execution_enabled})")
+            tools = self.tool_manager.get_tools_with_options(
+                code_execution_enabled=code_execution_enabled,
+                web_search_enabled=web_search_enabled,
+                mcp_servers=mcp_servers,
+            )
+            logger.info(f"Loaded {len(tools)} tools (code execution: {code_execution_enabled}, web search: {web_search_enabled})")
 
             # Log agent info
             if agent_id:
