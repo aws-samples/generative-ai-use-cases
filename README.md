@@ -10,11 +10,6 @@ Well-architected application implementation with business use cases for utilizin
   <img src="./docs/assets/images/sc_lp_en.png" alt="Well-architected application implementation with business use cases for utilizing generative AI in business operations" width="68%">
 </div>
 
-> [!IMPORTANT]
-> GenU has supported multiple languages since v4.
->
-> GenU は v4 から多言語対応しました。日本語ドキュメントは[こちら](./README_ja.md)
-
 ## What's New
 
 See the [Release Notes](docs/en/RELEASE_NOTES.md) for what changed in each release, what is coming in the next one, and what to check before updating.
@@ -183,9 +178,6 @@ If you only need to restrict who can access GenU, the [security-related settings
 </details>
 
 ## Deployment
-
-> [!IMPORTANT]
-> Please enable the `modelIds` (text generation), `imageGenerationModelIds` (image generation), and `videoGenerationModelIds` (video generation) in the `modelRegion` region listed in [`/packages/cdk/cdk.json`](/packages/cdk/cdk.json). ([Amazon Bedrock Model access screen](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess))
 
 GenU deployment uses [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/) (CDK). If you cannot prepare a CDK execution environment, refer to the following deployment methods:
 

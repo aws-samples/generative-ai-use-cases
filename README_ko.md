@@ -14,13 +14,6 @@
   <img src="./docs/assets/images/sc_lp_en.png" alt="비즈니스 운영에서 생성형 AI를 활용하기 위한 비즈니스 사용 사례가 포함된 Well-architected 애플리케이션 구현" width="68%">
 </div>
 
-> [!IMPORTANT]
-> GenU는 v4부터 다국어를 지원합니다.
->
-> GenU has supported multiple languages since v4.
->
-> GenU は v4 から多言語対応しました。일본어 문서는 [여기](./README_ja.md)를 참조하세요.
-
 ## GenU 사용 패턴
 
 여기서는 사용 패턴별로 GenU의 기능과 옵션을 소개합니다. 포괄적인 배포 옵션은 [이 문서](docs/ko/DEPLOY_OPTION.md)를 참조하세요.
@@ -162,9 +155,6 @@ GenU는 OSS이므로 자체 사용 사례를 추가하도록 사용자 정의할
 </details>
 
 ## 배포
-
-> [!IMPORTANT]
-> [`/packages/cdk/cdk.json`](/packages/cdk/cdk.json)에 나열된 `modelRegion` 지역에서 `modelIds`(텍스트 생성), `imageGenerationModelIds`(이미지 생성), `videoGenerationModelIds`(비디오 생성)를 활성화하세요. ([Amazon Bedrock 모델 액세스 화면](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess))
 
 GenU 배포는 [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/) (CDK)를 사용합니다. CDK 실행 환경을 준비할 수 없는 경우 다음 배포 방법을 참조하세요:
 

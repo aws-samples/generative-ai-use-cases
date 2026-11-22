@@ -10,9 +10,6 @@
   <img src="docs/assets/images/sc_lp_ja.png" alt="生成 AI を安全に業務活用するための、ビジネスユースケース集を備えたアプリケーション実装" width="68%">
 </div>
 
-> [!IMPORTANT]
-> GenU は v4 より多言語対応しました。
-
 ## 最近のアップデート
 
 各リリースの変更内容、次のリリースの予定、アップデート前の確認事項は [リリースノート](docs/ja/RELEASE_NOTES.md) をご参照ください。
@@ -180,9 +177,6 @@ VPC エンドポイントは有効にした機能の分だけ作成され、Agen
 </details>
 
 ## デプロイ
-
-> [!IMPORTANT]
-> 設定に記載されている `modelRegion` リージョンの `modelIds` (テキスト生成)、`imageGenerationModelIds` (画像生成) 及び `videoGenerationModelIds` (動画生成) を有効化してください。(デフォルトの設定ファイル [`/packages/cdk/cdk.json`](/packages/cdk/cdk.json)) ([Amazon Bedrock の Model access 画面](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess))
 
 GenU のデプロイには [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/)（以降 CDK）を利用します。CDK の実行環境が用意できない場合は、以下のデプロイ方法を参照してください。
 
