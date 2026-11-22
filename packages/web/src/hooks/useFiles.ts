@@ -124,50 +124,50 @@ const useFilesState = create<{
 
   /**
    * Resize an image File so its longest side is at most MAX_IMAGE_DIMENSION.
-   * Returns the original File unchanged when no resize is needed or the
-   * format cannot be safely re-encoded (animated GIF, SVG, etc.).
+   * Returns the original File unchanged when no resize is needed, when the
+   * format should not be re-encoded (animated GIF, SVG), or when the browser
+   * cannot decode or re-encode it. In that case validation and Bedrock
+   * report the problem as before.
    */
   const resizeImageIfNeeded = async (file: File): Promise<File> => {
-    // Skip non-image and formats that should not be re-encoded
     if (!file.type.startsWith('image/')) return file;
-    if (file.type === 'image/gif' || file.type === 'image/svg+xml')
+    if (file.type === 'image/gif' || file.type === 'image/svg+xml') return file;
+
+    try {
+      const { width, height } = await getImageDimensions(file);
+      const longestSide = Math.max(width, height);
+      if (longestSide <= MAX_IMAGE_DIMENSION) return file;
+
+      const scale = MAX_IMAGE_DIMENSION / longestSide;
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(width * scale);
+      canvas.height = Math.round(height * scale);
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return file;
+
+      const img = await createImageBitmap(file);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      img.close();
+
+      // Keep PNG to preserve transparency; re-encode everything else as JPEG
+      const outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+      const quality = outputType === 'image/jpeg' ? 0.9 : undefined;
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, outputType, quality)
+      );
+      // toBlob passes null when the canvas cannot be encoded (e.g. memory)
+      if (!blob) return file;
+
+      let name = file.name;
+      if (outputType === 'image/jpeg' && !/\.jpe?g$/i.test(name)) {
+        name = name.replace(/\.[^.]+$/, '.jpg');
+      }
+      return new File([blob], name, { type: outputType });
+    } catch (e) {
+      // e.g. HEIC in Chrome, or a corrupt file
+      console.warn('Image resize skipped:', e);
       return file;
-
-    const { width, height } = await getImageDimensions(file);
-    const longestSide = Math.max(width, height);
-    if (longestSide <= MAX_IMAGE_DIMENSION) return file;
-
-    const scale = MAX_IMAGE_DIMENSION / longestSide;
-    const newWidth = Math.round(width * scale);
-    const newHeight = Math.round(height * scale);
-
-    // Use OffscreenCanvas when available, fall back to DOM canvas
-    const canvas = document.createElement('canvas');
-    canvas.width = newWidth;
-    canvas.height = newHeight;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return file; // Cannot resize — let the server reject it
-
-    // Draw the image onto the smaller canvas
-    const img = await createImageBitmap(file);
-    ctx.drawImage(img, 0, 0, newWidth, newHeight);
-    img.close();
-
-    // Preserve PNG transparency; everything else becomes JPEG for size
-    const outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
-    const quality = outputType === 'image/jpeg' ? 0.9 : undefined;
-
-    const blob: Blob = await new Promise((resolve) =>
-      canvas.toBlob((b) => resolve(b!), outputType, quality)
-    );
-
-    // Keep the original file name but fix the extension if format changed
-    let name = file.name;
-    if (outputType === 'image/jpeg' && !/\.jpe?g$/i.test(name)) {
-      name = name.replace(/\.[^.]+$/, '.jpg');
     }
-
-    return new File([blob], name, { type: outputType });
   };
 
   // Validated given uploadedFiles, return updated uploadedFiles (no side effect) and errorMessages

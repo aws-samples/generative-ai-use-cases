@@ -27,7 +27,7 @@ import useChatPreferences, {
 } from '../hooks/useChatPreferences';
 import useDropOverlay from '../hooks/useDropOverlay';
 import usePreventNavigation from '../hooks/usePreventNavigation';
-import { PiArrowClockwiseBold, PiShareFatFill, PiX } from 'react-icons/pi';
+import { PiShareFatFill, PiX } from 'react-icons/pi';
 import ButtonIcon from '../components/ButtonIcon';
 import { create } from 'zustand';
 import BedrockIcon from '../assets/bedrock.svg?react';
@@ -530,7 +530,11 @@ const ChatPage: React.FC = () => {
 
   const onClickSamplePrompt = useCallback(
     (params: ChatPageQueryParams) => {
-      setContent(params.content ?? '');
+      // Only update chat content when the prompt list provides one.
+      // Selecting a saved system-context should NOT clear user input (#1276).
+      if (params.content !== undefined) {
+        setContent(params.content);
+      }
       updateSystemContext(params.systemContext ?? '');
     },
     [setContent, updateSystemContext]
@@ -743,14 +747,12 @@ const ChatPage: React.FC = () => {
                 <InputChatContent
                   disableMarginBottom={true}
                   content={inputSystemContext}
-                  onChangeContent={setInputSystemContext}
+                  onChangeContent={(value) => {
+                    setInputSystemContext(value);
+                    updateSystemContext(value);
+                  }}
                   fullWidth={true}
                   resetDisabled={true}
-                  disabled={inputSystemContext === currentSystemContext}
-                  sendIcon={<PiArrowClockwiseBold />}
-                  onSend={() => {
-                    updateSystemContext(inputSystemContext);
-                  }}
                   hideReset={true}
                 />
               </>
