@@ -389,6 +389,7 @@ files:
     fileCountExceededInChat: Cuộc trò chuyện này đã có {{previousCount}} tài liệu được đính kèm trước đó, và mỗi cuộc trò chuyện chỉ có tối đa {{maxCount}} tài liệu. Vui lòng giảm số tệp đính kèm hoặc bắt đầu cuộc trò chuyện mới.
     fileSizeExceeded: Kích thước file phải không quá {{maxSize}} MB.
     imageCountExceeded: Số lượng ảnh phải không quá {{maxCount}} ảnh.
+    imageCountExceededInChat: Cuộc trò chuyện này đã có {{previousCount}} ảnh được đính kèm trước đó, và mô hình này chỉ nhận tối đa {{maxCount}} ảnh trong một cuộc trò chuyện. Vui lòng giảm số ảnh đính kèm hoặc bắt đầu cuộc trò chuyện mới.
     invalidExtension: '{{fileName}} có đuôi file không được phép. Các đuôi file được phép là {{acceptedExtensions}}.'
     invalidImageDimension: Kích thước file ảnh có thể chỉ định là {{allowedDimensions}} (kích thước ảnh đã tải lên {{uploadedDimension}})
     mimeMismatch: 'Định dạng file của {{fileName}} không đúng.'

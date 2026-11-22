@@ -17,8 +17,9 @@ export type FeatureFlags = {
   // Rejects a system role, so the system prompt goes into the first user turn
   noSystemPrompt?: boolean;
 
-  // Maximum number of images the model accepts in a single request.
-  // Defaults to 20 (Converse API default) when not set.
+  // Maximum number of images in a whole request, images from earlier turns
+  // included (e.g. 3 for Llama 4). When not set, up to 20 images can be
+  // attached per message.
   maxImageCount?: number;
 
   image_gen?: boolean;

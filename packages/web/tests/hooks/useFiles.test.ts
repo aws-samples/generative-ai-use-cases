@@ -112,4 +112,36 @@ describe('useFiles document count across a conversation (#1685)', () => {
   it('does not count earlier documents against images', async () => {
     expect((await check([image('a.png')], 5)).errorMessages).toEqual([]);
   });
+
+  // Llama 4 accepts 3 images in a whole request, earlier turns included
+  const checkImages = async (
+    files: UploadedFileType[],
+    previousImageCount?: number
+  ) => {
+    const { result } = renderHook(() => useFiles('/chat/image-count'));
+    act(() => result.current.restore(files));
+    await act(() =>
+      result.current.checkFiles(
+        { ...fileLimit, maxImageFileCount: 3, previousImageCount },
+        accept
+      )
+    );
+    return result.current;
+  };
+
+  it('counts the images attached earlier when the model limits the chat', async () => {
+    const files = [image('a.png')];
+
+    expect((await checkImages(files, 2)).errorMessages).toEqual([]);
+    expect((await checkImages(files, 3)).errorMessages).toEqual([
+      'files.error.imageCountExceededInChat',
+    ]);
+  });
+
+  it('keeps the usual image message when nothing was attached before', async () => {
+    const files = ['a', 'b', 'c', 'd'].map((n) => image(`${n}.png`));
+    expect((await checkImages(files)).errorMessages).toEqual([
+      'files.error.imageCountExceeded',
+    ]);
+  });
 });

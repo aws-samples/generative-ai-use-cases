@@ -390,6 +390,7 @@ files:
     fileCountExceededInChat: แชทนี้มีเอกสารที่แนบไว้ก่อนหน้าแล้ว {{previousCount}} ไฟล์ และแชทหนึ่งแนบเอกสารได้สูงสุด {{maxCount}} ไฟล์ กรุณาลดจำนวนไฟล์แนบหรือเริ่มแชทใหม่
     fileSizeExceeded: '{{fileName}} เกินขนาดไฟล์สูงสุดที่ {{maxSize}} MB'
     imageCountExceeded: 'โปรดจำกัดไฟล์รูปภาพไม่เกิน {{maxCount}} ไฟล์'
+    imageCountExceededInChat: แชทนี้มีรูปภาพที่แนบไว้ก่อนหน้าแล้ว {{previousCount}} ไฟล์ และโมเดลนี้รับรูปภาพได้สูงสุด {{maxCount}} ไฟล์ต่อแชท กรุณาลดจำนวนรูปภาพหรือเริ่มแชทใหม่
     invalidExtension: >-
       {{fileName}} มีนามสกุลที่ไม่รองรับ นามสกุลที่อนุญาตคือ
       {{acceptedExtensions}}

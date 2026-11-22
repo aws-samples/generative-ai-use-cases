@@ -94,6 +94,9 @@ export type FileLimit = {
   previousFileCount?: number;
   maxFileSizeMB: number;
   maxImageFileCount: number;
+  // Images attached earlier in the same conversation. Set only for models
+  // whose image limit covers the whole request (e.g. Llama 4).
+  previousImageCount?: number;
   maxImageFileSizeMB: number;
   maxVideoFileCount: number;
   maxVideoFileSizeMB: number;

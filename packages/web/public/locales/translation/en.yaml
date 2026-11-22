@@ -545,6 +545,7 @@ files:
     fileCountExceededInChat: This chat already has {{previousCount}} documents attached earlier, and a chat can have up to {{maxCount}} documents. Attach fewer documents, or start a new chat.
     fileSizeExceeded: '{{fileName}} exceeds the maximum file size of {{maxSize}} MB.'
     imageCountExceeded: Please limit image files to {{maxCount}} or fewer
+    imageCountExceededInChat: This chat already has {{previousCount}} images attached earlier, and this model accepts up to {{maxCount}} images in a chat. Attach fewer images, or start a new chat.
     invalidExtension: >-
       {{fileName}} has an unsupported extension. Allowed extensions are
       {{acceptedExtensions}}

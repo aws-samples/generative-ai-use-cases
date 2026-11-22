@@ -178,10 +178,12 @@ const useFilesState = create<{
   ) => {
     // Bedrock accepts at most 5 documents in a whole request, past turns
     // included, so documents already in the conversation are counted first.
-    // Images have no such limit across turns, so they are counted per message.
+    // Images are counted per message, except for models whose image limit
+    // covers the whole request (previousImageCount is set for those).
     const previousFileCount = fileLimit.previousFileCount ?? 0;
     let fileCount = previousFileCount;
-    let imageFileCount = 0;
+    const previousImageCount = fileLimit.previousImageCount ?? 0;
+    let imageFileCount = previousImageCount;
     let videoFileCount = 0;
 
     // Validate uploaded files
@@ -242,9 +244,14 @@ const useFilesState = create<{
             imageFileCount <= (fileLimit.maxImageFileCount || 0);
           if (!isFileNumberAllowed) {
             errorMessages.push(
-              i18next.t('files.error.imageCountExceeded', {
-                maxCount: fileLimit.maxImageFileCount,
-              })
+              previousImageCount > 0
+                ? i18next.t('files.error.imageCountExceededInChat', {
+                    maxCount: fileLimit.maxImageFileCount,
+                    previousCount: previousImageCount,
+                  })
+                : i18next.t('files.error.imageCountExceeded', {
+                    maxCount: fileLimit.maxImageFileCount,
+                  })
             );
           }
           if (fileLimit.strictImageDimensions) {

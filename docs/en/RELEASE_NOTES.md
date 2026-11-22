@@ -48,7 +48,7 @@ These changes are merged into the `main` branch and will be included in the next
 - The app keeps working after the browser's page translation is used. (#1828, #1833)
 - Use cases that call `{{retrieveKnowledgeBase}}` work with an S3 Vectors Knowledge Base. (#1837)
 - Agent gallery sync, S3 permissions when no IP ranges are set, and reading long chats. (#1826)
-- Large images are scaled down to 2,576 px on the longest side when attached, so Bedrock no longer rejects them for their dimensions. Models that accept fewer than 20 images limit the attachment count (1 for Llama 3.2 Vision, 8 for Llama 4). (#1835, #1836)
+- Large images are scaled down to 2,576 px on the longest side when attached, so Bedrock no longer rejects them for their dimensions. With Llama 4, which accepts up to 3 images in a whole chat, images attached in earlier turns count toward that limit. (#1835, #1836)
 
 ## v5.5.0 (2026-07-19)
 

@@ -240,9 +240,22 @@ const ChatPage: React.FC = () => {
         .filter((data) => data.type === 'file').length,
     [rawMessages]
   );
+  // Some models (e.g. Llama 4) count images from earlier turns toward their
+  // limit as well, so those images are counted first for them.
+  const countsPreviousImages =
+    MODELS.getModelMetadata(modelId).flags.maxImageCount !== undefined;
+  const previousImageCount = useMemo(
+    () =>
+      countsPreviousImages
+        ? rawMessages
+            .flatMap((m) => m.extraData ?? [])
+            .filter((data) => data.type === 'image').length
+        : 0,
+    [rawMessages, countsPreviousImages]
+  );
   const chatFileLimit = useMemo(
-    () => ({ ...fileLimit, previousFileCount }),
-    [fileLimit, previousFileCount]
+    () => ({ ...fileLimit, previousFileCount, previousImageCount }),
+    [fileLimit, previousFileCount, previousImageCount]
   );
   const reasoning = useMemo(() => {
     return MODELS.getModelMetadata(modelId).flags.reasoning ?? false;

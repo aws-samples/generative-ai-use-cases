@@ -314,6 +314,7 @@ files:
     fileCountExceededInChat: 本次对话之前已附加 {{previousCount}} 个文档，一次对话最多可附加 {{maxCount}} 个文档。请减少附件或开始新的对话。
     fileSizeExceeded: 文件大小不能超过 {{maxSize}} MB。
     imageCountExceeded: 图片数量不能超过 {{maxCount}} 个。
+    imageCountExceededInChat: 本次对话之前已附加 {{previousCount}} 张图片，此模型在一次对话中最多接受 {{maxCount}} 张图片。请减少附件或开始新的对话。
     invalidExtension: '{{fileName}} 是不允许的扩展名。允许的扩展名为 {{acceptedExtensions}}。'
     invalidImageDimension: 可指定的图像文件尺寸为 {{allowedDimensions}}（上传的图像尺寸为 {{uploadedDimension}}）
     mimeMismatch: '{{fileName}} 的文件格式不正确。'
