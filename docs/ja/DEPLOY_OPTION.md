@@ -952,6 +952,7 @@ API キーの設定は不要で、検索クエリは AWS 内で処理されま�
 Agent は AgentCore Web Search の API (`InvokeWebSearch`) を直接呼び出すため、Gateway などの追加のリソースは作成されません。Agent は検索ごとに、対象のドメインや公開日で結果を絞り込めます。
 
 `agentBuilderWebSearchExcludeDomains` を指定すると、検索結果から除外するドメインを設定できます。この設定はすべての検索に必ず適用され、Agent からは変更できません。
+除外は検索結果のページ単位で行われます。ほかのページの本文に書かれた URL や、モデルがもともと知っている URL が回答に含まれることは防げません。
 
 `agentBuilderWebSearchEnabled` が無効の場合、エージェントビルダーの画面に Web 検索の選択肢は表示されません。組織のポリシーで Web 検索を利用しない場合は、無効のままにしてください。
 

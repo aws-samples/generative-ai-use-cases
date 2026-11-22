@@ -933,6 +933,7 @@ No API key is required and search queries are processed within AWS (zero data eg
 The Agent calls the AgentCore Web Search API (`InvokeWebSearch`) directly, so no Gateway or other additional resources are created. The Agent can narrow each search by domain and publication date.
 
 `agentBuilderWebSearchExcludeDomains` lets you specify domains to exclude from search results. The list is applied to every search and cannot be changed by the Agent.
+The exclusion applies to the pages returned by the search. It does not stop an answer from including a URL that appears in the text of another page, or one that the model already knows.
 
 When `agentBuilderWebSearchEnabled` is disabled, the web search option is not shown in the agent builder. Leave it disabled if your organization does not allow web search.
 
