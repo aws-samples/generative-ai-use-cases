@@ -182,7 +182,8 @@ const PromptList: React.FC<Props> = (props) => {
               onClick={onClickPrompt}>
               {props.systemContextTitle}
             </div>
-            {onClickDefaultSystemContext && (
+            {/* A record without an id cannot be chosen (or found again) */}
+            {onClickDefaultSystemContext && props.systemContextId && (
               <ButtonIcon
                 title={
                   props.systemContextId === defaultSystemContextId
