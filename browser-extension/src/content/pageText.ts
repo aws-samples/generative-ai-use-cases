@@ -4,8 +4,10 @@ export const MAX_PAGE_TEXT_LENGTH = 30000;
 
 const MAIN_SELECTORS = ['article', 'main', '[role="main"]'];
 
-// Menus and side panels that some sites put inside the main content
-const NOISE_SELECTORS = 'nav, aside, footer, [role="navigation"], [role="complementary"]';
+// Menus and side panels that some sites put inside the main content, and
+// elements whose text is not shown
+const NOISE_SELECTORS =
+  'nav, aside, footer, [role="navigation"], [role="complementary"], script, style, noscript, template';
 
 /**
  * The text of the page the user is reading, for "use this page" in the
@@ -20,12 +22,11 @@ export const extractPageText = (
     (el) => el && el.innerText.trim().length > 0,
   );
   const root = main ?? doc.body;
-  // Remove their text from the result; the page itself is not changed
-  let raw = root?.innerText ?? '';
-  root?.querySelectorAll<HTMLElement>(NOISE_SELECTORS).forEach((el) => {
-    const noise = el.innerText.trim();
-    if (noise) raw = raw.replace(noise, '');
-  });
+  // Remove the menus from a copy in a separate, inert document, so the page
+  // is not changed and the copy loads no images or scripts
+  const copy = root && doc.implementation.createHTMLDocument('').importNode(root, true);
+  copy?.querySelectorAll(NOISE_SELECTORS).forEach((el) => el.remove());
+  const raw = copy?.textContent ?? '';
   const text = raw
     .split('\n')
     .map((line) => line.trim())
