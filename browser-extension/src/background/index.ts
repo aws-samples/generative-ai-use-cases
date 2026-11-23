@@ -51,10 +51,18 @@ browser.tabs.onUpdated.addListener(async () => {
   });
 });
 
+// The service worker is stopped while it is idle, which clears the prompts
+// loaded when the menus were made, so read them again on each click
+const loadPrompts = async (): Promise<SystemContext[]> => {
+  const value = await browser.storage.local.get(PROMPT_KEY);
+  return value[PROMPT_KEY] ?? presetPrompts;
+};
+
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
   if (tab?.id === undefined) {
     return;
   }
+  prompts = await loadPrompts();
 
   // A prompt for the whole page: the content script reads the page and opens the chat
   const pagePrompt = prompts.find(
