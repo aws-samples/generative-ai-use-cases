@@ -351,68 +351,49 @@ describe('ChatPage default system prompt', () => {
     systemContextTitle: 'Mine',
     systemContext: 'my prompt',
   };
-  const original = {
-    list: hooks.systemContextApi.listSystemContexts,
-    update: hooks.chat.updateSystemContext,
-    current: hooks.chat.getCurrentSystemContext,
-  };
+  const original = hooks.systemContextApi.listSystemContexts;
 
   // The choice is kept in local storage, like the other chat preferences
   const chooseDefault = async (systemContextId: string) => {
     localStorage.setItem(
       'chatPreferences',
       JSON.stringify({
-        state: { defaultSystemContextId: systemContextId },
+        state: {
+          defaultSystemContext: { systemContextId, systemContext: 'my prompt' },
+        },
         version: 1,
       })
     );
     await reload();
   };
+  const storedDefault = () =>
+    JSON.parse(localStorage.getItem('chatPreferences')!).state
+      .defaultSystemContext;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     localStorage.clear();
     chatStore.modelId = 'opus';
     const list = { data: [saved], mutate: vi.fn() };
     hooks.systemContextApi.listSystemContexts = () => list;
-    hooks.chat.updateSystemContext = vi.fn();
-    await reload();
   });
 
   afterEach(() => {
     cleanup();
-    hooks.systemContextApi.listSystemContexts = original.list;
-    hooks.chat.updateSystemContext = original.update;
-    hooks.chat.getCurrentSystemContext = original.current;
+    hooks.systemContextApi.listSystemContexts = original;
   });
 
-  it("starts a new chat with the user's default system prompt", async () => {
+  it('keeps a default whose saved system prompt exists', async () => {
     await chooseDefault('systemContext#s1');
     renderAt('/chat');
-    expect(hooks.chat.updateSystemContext).toHaveBeenCalledWith('my prompt');
+    expect(storedDefault()).toEqual({
+      systemContextId: 'systemContext#s1',
+      systemContext: 'my prompt',
+    });
   });
 
-  it('keeps a system prompt the user already edited', async () => {
-    await chooseDefault('systemContext#s1');
-    hooks.chat.getCurrentSystemContext = () => 'edited by the user';
-    renderAt('/chat');
-    expect(hooks.chat.updateSystemContext).not.toHaveBeenCalledWith(
-      'my prompt'
-    );
-  });
-
-  it('does not change a saved chat', async () => {
-    await chooseDefault('systemContext#s1');
-    renderAt('/chat/chat-1');
-    expect(hooks.chat.updateSystemContext).not.toHaveBeenCalledWith(
-      'my prompt'
-    );
-  });
-
-  it('ignores a default whose saved system prompt was deleted', async () => {
+  it('forgets a default whose saved system prompt was deleted', async () => {
     await chooseDefault('systemContext#gone');
     renderAt('/chat');
-    expect(hooks.chat.updateSystemContext).not.toHaveBeenCalledWith(
-      'my prompt'
-    );
+    expect(storedDefault()).toBeUndefined();
   });
 });

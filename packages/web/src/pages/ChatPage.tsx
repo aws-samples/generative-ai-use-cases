@@ -10,7 +10,6 @@ import InputChatContent from '../components/InputChatContent';
 import useChat from '../hooks/useChat';
 import useChatApi from '../hooks/useChatApi';
 import useSystemContextApi from '../hooks/useSystemContextApi';
-import { useDefaultSystemPrompt } from '../hooks/useDefaultSystemPrompt';
 import useChatList from '../hooks/useChatList';
 import ChatMessage from '../components/ChatMessage';
 import PromptList from '../components/PromptList';
@@ -529,41 +528,31 @@ const ChatPage: React.FC = () => {
     setInputSystemContext(currentSystemContext);
   }, [currentSystemContext, setInputSystemContext]);
 
-  // The saved system prompt the user chose for new chats (kept in this browser)
-  const { defaultSystemContextId, setDefaultSystemContextId } =
+  // The saved system prompt new chats start with (kept in this browser)
+  const { defaultSystemContext, setDefaultSystemContext } =
     useChatPreferences();
-  const userDefaultPrompt = useMemo(
-    () =>
-      systemContextList.find(
-        (item) => item.systemContextId === defaultSystemContextId
-      )?.systemContext ?? null,
-    [systemContextList, defaultSystemContextId]
-  );
-  const setUserDefaultPrompt = useDefaultSystemPrompt(
-    (state) => state.setUserDefault
-  );
-  // The default a new chat on this page last got, to tell it from the user's edits
-  const appliedDefaultPrompt = useRef<string | null>(null);
+  const defaultSystemContextId = defaultSystemContext?.systemContextId;
+  // Forget the default once its saved prompt is deleted, here or elsewhere
   useEffect(() => {
-    setUserDefaultPrompt(userDefaultPrompt);
-    // The saved system prompts arrive after a new chat has started. Switch it to
-    // the default only while its system prompt is still the one it started with.
-    if (pathname === '/chat' && isEmpty) {
-      const started =
-        appliedDefaultPrompt.current ?? prompter.systemContext(pathname);
-      if (getCurrentSystemContext() === started) {
-        updateSystemContext(
-          userDefaultPrompt ?? prompter.systemContext(pathname)
-        );
-      }
+    if (
+      systemContextResponse &&
+      defaultSystemContextId &&
+      !systemContextResponse.some(
+        (item) => item.systemContextId === defaultSystemContextId
+      )
+    ) {
+      setDefaultSystemContext(undefined);
     }
-    appliedDefaultPrompt.current = userDefaultPrompt;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userDefaultPrompt]);
+  }, [systemContextResponse, defaultSystemContextId, setDefaultSystemContext]);
 
-  const onClickDefaultSystemContext = async (systemContextId: string) => {
-    setDefaultSystemContextId(
-      systemContextId === defaultSystemContextId ? undefined : systemContextId
+  const onClickDefaultSystemContext = (systemContextId: string) => {
+    const item = systemContextList.find(
+      (item) => item.systemContextId === systemContextId
+    );
+    setDefaultSystemContext(
+      item && systemContextId !== defaultSystemContextId
+        ? { systemContextId, systemContext: item.systemContext }
+        : undefined
     );
   };
 
@@ -841,7 +830,7 @@ const ChatPage: React.FC = () => {
           systemContextList={systemContextList as SystemContext[]}
           onClickDeleteSystemContext={onClickDeleteSystemContext}
           onClickUpdateSystemContext={onClickUpdateSystemContext}
-          defaultSystemContextId={defaultSystemContextId ?? null}
+          defaultSystemContextId={defaultSystemContextId}
           onClickDefaultSystemContext={onClickDefaultSystemContext}
           forceExpand={forceExpandPromptList}
         />

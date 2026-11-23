@@ -38,8 +38,8 @@ type Props = BaseProps & {
    * The saved system prompt new chats start with, if the user chose one. The
    * button to choose it is shown only on pages that pass the handler (the chat).
    */
-  defaultSystemContextId?: string | null;
-  onClickDefaultSystemContext?: (systemContextId: string) => Promise<void>;
+  defaultSystemContextId?: string;
+  onClickDefaultSystemContext?: (systemContextId: string) => void;
   forceExpand: number | null;
 };
 

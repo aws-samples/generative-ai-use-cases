@@ -10,29 +10,38 @@ type ReasoningConfig = AdditionalModelRequestFields['reasoningConfig'];
  * Only the user's own choices are kept: the last model picked in the chat use
  * case (#1391), the reasoning settings changed in the UI (#923) and the saved
  * system prompt new chats start with. They are re-checked when read: a
- * redeploy can remove a model that an old entry still names, the stored
- * reasoning values are validated, and a deleted system prompt is ignored.
+ * redeploy can remove a model that an old entry still names, and the stored
+ * reasoning values are validated. ChatPage forgets a default system prompt
+ * whose saved prompt was deleted.
  */
 type ChatPreferencesState = {
   modelId?: string;
   reasoningConfig?: ReasoningConfig;
-  /** `systemContextId` of the saved system prompt new chats start with */
-  defaultSystemContextId?: string;
+  /**
+   * The saved system prompt new chats start with. The text is kept with the id
+   * so a new chat can start with it before the saved prompts are fetched; a
+   * saved prompt's text cannot be edited, only its title.
+   */
+  defaultSystemContext?: DefaultSystemContext;
   setModelId: (modelId: string) => void;
   setReasoningConfig: (reasoningConfig: ReasoningConfig) => void;
-  setDefaultSystemContextId: (systemContextId: string | undefined) => void;
+  setDefaultSystemContext: (
+    defaultSystemContext: DefaultSystemContext | undefined
+  ) => void;
 };
+
+type DefaultSystemContext = { systemContextId: string; systemContext: string };
 
 const useChatPreferences = create<ChatPreferencesState>()(
   persist(
     (set) => ({
       modelId: undefined,
       reasoningConfig: undefined,
-      defaultSystemContextId: undefined,
+      defaultSystemContext: undefined,
       setModelId: (modelId) => set({ modelId }),
       setReasoningConfig: (reasoningConfig) => set({ reasoningConfig }),
-      setDefaultSystemContextId: (defaultSystemContextId) =>
-        set({ defaultSystemContextId }),
+      setDefaultSystemContext: (defaultSystemContext) =>
+        set({ defaultSystemContext }),
     }),
     {
       name: 'chatPreferences',
@@ -40,11 +49,20 @@ const useChatPreferences = create<ChatPreferencesState>()(
       partialize: (state) => ({
         modelId: state.modelId,
         reasoningConfig: state.reasoningConfig,
-        defaultSystemContextId: state.defaultSystemContextId,
+        defaultSystemContext: state.defaultSystemContext,
       }),
     }
   )
 );
+
+/**
+ * The system prompt a chat on page `id` starts with: the user's default for a
+ * new chat, otherwise the page's own prompt.
+ */
+export const initialSystemContext = (id: string, pagePrompt: string): string =>
+  (id === '/chat' &&
+    useChatPreferences.getState().defaultSystemContext?.systemContext) ||
+  pagePrompt;
 
 const REASONING_TYPES = ['enabled', 'disabled', 'adaptive'] as const;
 const EFFORTS = ['max', 'xhigh', 'high', 'medium', 'low'] as const;
