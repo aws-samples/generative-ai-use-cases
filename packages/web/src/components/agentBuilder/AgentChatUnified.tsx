@@ -43,6 +43,10 @@ const webSearchEnabledByDeployment =
   import.meta.env.VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED ===
   'true';
 
+// The browser is also opted in at deploy time, in the same way
+const browserEnabledByDeployment =
+  import.meta.env.VITE_APP_AGENT_CORE_AGENT_BUILDER_BROWSER_ENABLED === 'true';
+
 const AgentChatUnified: React.FC<AgentChatProps> = ({
   agent,
   sessionId: providedSessionId,
@@ -179,7 +183,8 @@ Please respond as this agent with the specified behavior and personality.`;
         agent.agentId,
         modelId,
         agent.codeExecutionEnabled ?? false,
-        agent.webSearchEnabled ?? false
+        agent.webSearchEnabled ?? false,
+        agent.browserEnabled ?? false
       );
 
       setChatContent('');
@@ -278,6 +283,7 @@ Please respond as this agent with the specified behavior and personality.`;
           {/* Agent Capabilities */}
           {(agent.codeExecutionEnabled ||
             (webSearchEnabledByDeployment && agent.webSearchEnabled) ||
+            (browserEnabledByDeployment && agent.browserEnabled) ||
             (agent.mcpServers && agent.mcpServers.length > 0)) && (
             <div className="flex flex-wrap justify-center gap-2">
               {/* Code Execution - only show when enabled */}
@@ -291,6 +297,13 @@ Please respond as this agent with the specified behavior and personality.`;
               {webSearchEnabledByDeployment && agent.webSearchEnabled && (
                 <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
                   {t('agent_builder.web_search')}
+                </span>
+              )}
+
+              {/* Browser - only show when enabled for the agent and the deployment */}
+              {browserEnabledByDeployment && agent.browserEnabled && (
+                <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                  {t('agent_builder.browser')}
                 </span>
               )}
 

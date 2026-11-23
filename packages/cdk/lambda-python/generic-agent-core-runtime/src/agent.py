@@ -61,6 +61,7 @@ class AgentManager:
         agent_id: str | None = None,
         code_execution_enabled: bool | None = False,
         web_search_enabled: bool | None = False,
+        browser_enabled: bool | None = False,
     ) -> AsyncGenerator[str]:
         """Process a request and yield streaming responses as raw events"""
         try:
@@ -78,9 +79,10 @@ class AgentManager:
             tools = self.tool_manager.get_tools_with_options(
                 code_execution_enabled=code_execution_enabled,
                 web_search_enabled=web_search_enabled,
+                browser_enabled=browser_enabled,
                 mcp_servers=mcp_servers,
             )
-            logger.info(f"Loaded {len(tools)} tools (code execution: {code_execution_enabled}, web search: {web_search_enabled})")
+            logger.info(f"Loaded {len(tools)} tools (code execution: {code_execution_enabled}, web search: {web_search_enabled}, browser: {browser_enabled})")
 
             # Log agent info
             if agent_id:

@@ -730,6 +730,37 @@ Agent は AgentCore Web Search の API (`InvokeWebSearch`) を直接呼び出す
 > [!NOTE]
 > `tavily-search` などの検索系 MCP を併用する場合、どちらのツールを使うかは Agent が判断します。用途に応じた使い分けを明示したい場合は、システムプロンプトに記載してください (例: 機密性の高いクエリは Web Search、詳細な調査は Tavily)。
 
+#### ブラウザ操作ツールの有効化
+
+`agentBuilderBrowserEnabled` を有効化すると、Amazon Bedrock AgentCore の Browser ツールが追加され、ユーザーは Agent ごとに利用の有無を選択できます。マネージドなクラウドブラウザが AWS 側で動作するため、利用者の端末に Chrome や Playwright をインストールする必要はありません。
+
+ログインが必要なページや JavaScript で描画されるページなど、Web 検索では取得できない情報に到達できます。Agent が利用できるアクションは以下のとおりです。
+
+| 分類         | アクション                                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------------------------------- |
+| 遷移         | `navigate`, `back`, `forward`, `refresh`                                                                        |
+| 操作         | `click`, `type`, `press_key`                                                                                    |
+| 抽出         | `get_text`, `get_html`, `screenshot`                                                                            |
+| タブ         | `new_tab`, `switch_tab`, `close_tab`, `list_tabs`                                                               |
+| セッション   | `init_session`, `list_local_sessions`, `close`                                                                  |
+| Cookie       | `get_cookies`, `set_cookies`                                                                                    |
+| 低レベル操作 | `evaluate` (任意の JavaScript 実行), `execute_cdp` (Chrome DevTools Protocol), `network_intercept` (通信の傍受) |
+
+> [!WARNING]
+> ブラウザ操作は**任意の URL に到達でき、権限の強いアクションを含みます**。有効化の判断にあたっては以下をご確認ください。
+>
+> - `evaluate` により任意の JavaScript を実行できます
+> - `execute_cdp` により Chrome DevTools Protocol のコマンドを実行できます
+> - `network_intercept` により画面の裏側の通信を傍受・改変できます
+> - `get_cookies` / `set_cookies` により Cookie を読み書きできます
+>
+> これらは、閲覧先のページに悪意のある指示が含まれていた場合 (プロンプトインジェクション)、Agent が意図しない操作を行う経路になり得ます。組織のポリシーで利用しない場合は、`agentBuilderBrowserEnabled` を無効のままにしてください。無効の場合はランタイムの実行ロールにブラウザ関連の権限が付与されず、エージェントビルダーの画面にも選択肢は表示されません。
+>
+> また、到達先を限定したい場合は、ネットワーク設定を指定できる AgentCore のカスタムブラウザを利用する方式が考えられます (本実装では AWS マネージドブラウザを使用しています)。
+
+> [!NOTE]
+> ブラウザセッションは実行時間に応じた課金が発生します。料金は [Amazon Bedrock AgentCore の料金ページ](https://aws.amazon.com/bedrock/agentcore/pricing/)を参照してください。
+
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
 ```typescript

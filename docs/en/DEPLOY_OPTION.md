@@ -713,6 +713,37 @@ When `agentBuilderWebSearchEnabled` is disabled, the web search option is not sh
 > [!NOTE]
 > When you also enable a search MCP such as `tavily-search`, the Agent decides which tool to use. If you want a specific split, state it in the system prompt (for example, Web Search for sensitive queries and Tavily for deeper research).
 
+#### Enabling the Browser Tool
+
+Enabling `agentBuilderBrowserEnabled` adds the Browser tool of Amazon Bedrock AgentCore, and users can choose whether each Agent uses it. The browser runs as a managed cloud browser on the AWS side, so users do not need to install Chrome or Playwright on their machines.
+
+This makes it possible to reach information that web search cannot retrieve, such as pages behind a sign-in or pages rendered by JavaScript. The Agent can use the following actions.
+
+| Category    | Actions                                                                                                                 |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Navigation  | `navigate`, `back`, `forward`, `refresh`                                                                                |
+| Interaction | `click`, `type`, `press_key`                                                                                            |
+| Extraction  | `get_text`, `get_html`, `screenshot`                                                                                    |
+| Tabs        | `new_tab`, `switch_tab`, `close_tab`, `list_tabs`                                                                       |
+| Session     | `init_session`, `list_local_sessions`, `close`                                                                          |
+| Cookies     | `get_cookies`, `set_cookies`                                                                                            |
+| Low level   | `evaluate` (arbitrary JavaScript), `execute_cdp` (Chrome DevTools Protocol), `network_intercept` (traffic interception) |
+
+> [!WARNING]
+> The browser tool **can reach any URL and includes powerful actions**. Review the following before enabling it.
+>
+> - `evaluate` runs arbitrary JavaScript
+> - `execute_cdp` runs Chrome DevTools Protocol commands
+> - `network_intercept` can observe and modify the traffic behind the page
+> - `get_cookies` / `set_cookies` can read and write cookies
+>
+> If a visited page contains malicious instructions (prompt injection), these actions can become a path for the Agent to perform unintended operations. If your organization does not allow the browser tool, leave `agentBuilderBrowserEnabled` disabled. When disabled, the runtime execution role is not granted browser permissions and the option is not shown in the agent builder.
+>
+> To restrict which destinations are reachable, consider using an AgentCore custom browser, which allows network configuration (this implementation uses the AWS managed browser).
+
+> [!NOTE]
+> Browser sessions are charged based on runtime. See the [Amazon Bedrock AgentCore pricing page](https://aws.amazon.com/bedrock/agentcore/pricing/) for details.
+
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
 ```typescript
