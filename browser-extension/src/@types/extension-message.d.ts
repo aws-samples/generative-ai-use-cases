@@ -14,4 +14,9 @@ export type MessagePayload =
   | {
       type: 'SYSTEM-CONTEXT';
       systemContext: SystemContext;
+    }
+  | {
+      // From the context menu: open the chat with the text of the page
+      type: 'PAGE-CONTENT';
+      systemContext: SystemContext;
     };
