@@ -49,7 +49,7 @@ export interface BackendApiProps {
   readonly endpointNames: ModelConfiguration[];
   readonly queryDecompositionEnabled: boolean;
   // Vector store of the Knowledge Base; hybrid search needs OpenSearch
-  readonly ragKnowledgeBaseStorageType?: 'opensearch' | 's3vectors';
+  readonly ragKnowledgeBaseStorageType?: 'opensearch' | 's3vectors' | 'managed';
   readonly rerankingModelId?: string | null;
   readonly customAgents: Agent[];
   readonly crossAccountBedrockRoleArn?: string | null;
@@ -246,8 +246,13 @@ export class Api extends Construct {
         KNOWLEDGE_BASE_ID: knowledgeBaseId ?? '',
         VIDEO_BUCKET_REGION_MAP: JSON.stringify(props.videoBucketRegionMap),
         QUERY_DECOMPOSITION_ENABLED: JSON.stringify(queryDecompositionEnabled),
+        // Hybrid search is an option of OpenSearch Serverless; a managed
+        // knowledge base always searches that way and takes other settings
         KNOWLEDGE_BASE_HYBRID_SEARCH: JSON.stringify(
-          props.ragKnowledgeBaseStorageType !== 's3vectors'
+          (props.ragKnowledgeBaseStorageType ?? 'opensearch') === 'opensearch'
+        ),
+        KNOWLEDGE_BASE_MANAGED: JSON.stringify(
+          props.ragKnowledgeBaseStorageType === 'managed'
         ),
         RERANKING_MODEL_ID: rerankingModelId ?? '',
         // RAG Kendra
@@ -398,6 +403,10 @@ export class Api extends Construct {
           : {}),
         QUERY_DECOMPOSITION_ENABLED: JSON.stringify(queryDecompositionEnabled),
         RERANKING_MODEL_ID: rerankingModelId ?? '',
+        // The RAG chat answers through agentic retrieval on a managed one
+        KNOWLEDGE_BASE_MANAGED: JSON.stringify(
+          props.ragKnowledgeBaseStorageType === 'managed'
+        ),
       },
       vpc,
       securityGroups,

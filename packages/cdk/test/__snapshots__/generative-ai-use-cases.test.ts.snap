@@ -6710,6 +6710,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
+            "KNOWLEDGE_BASE_MANAGED": "false",
             "LANGUAGE": "ja",
             "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
@@ -13171,6 +13172,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
+            "KNOWLEDGE_BASE_MANAGED": "false",
             "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
             "QUERY_DECOMPOSITION_ENABLED": "false",
@@ -19808,6 +19810,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
+            "KNOWLEDGE_BASE_MANAGED": "false",
             "LANGUAGE": "ja",
             "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
@@ -26149,6 +26152,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
+            "KNOWLEDGE_BASE_MANAGED": "false",
             "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
             "QUERY_DECOMPOSITION_ENABLED": "false",

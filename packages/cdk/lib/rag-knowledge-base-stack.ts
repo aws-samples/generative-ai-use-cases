@@ -7,6 +7,8 @@ import * as oss from 'aws-cdk-lib/aws-opensearchserverless';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3Deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as fs from 'fs';
+import * as path from 'path';
 import { ProcessedStackInput } from './stack-input';
 import { LAMBDA_RUNTIME_NODEJS, TAG_KEY } from '../consts';
 import { bedrockModelArn } from './utils/model-id-utils';
@@ -122,6 +124,44 @@ class OpenSearchServerlessIndex extends Construct {
   }
 }
 
+/**
+ * The sample documents for a managed knowledge base. Its metadata takes
+ * strings, numbers and string lists only, and a metadata file with a boolean
+ * fails the whole document, so the boolean attributes of the samples are left
+ * out of what is uploaded. The documents themselves are uploaded as they are.
+ */
+const managedKnowledgeBaseSampleDocs = (dir: string): s3Deploy.ISource[] => {
+  const metadataFiles: string[] = [];
+  const walk = (relative: string) => {
+    for (const entry of fs.readdirSync(path.join(dir, relative), {
+      withFileTypes: true,
+    })) {
+      const child = path.join(relative, entry.name);
+      if (entry.isDirectory()) walk(child);
+      else if (entry.name.endsWith('.metadata.json')) metadataFiles.push(child);
+    }
+  };
+  walk('');
+
+  return [
+    s3Deploy.Source.asset(dir, { exclude: ['**/*.metadata.json'] }),
+    ...metadataFiles.map((file) => {
+      const metadata = JSON.parse(
+        fs.readFileSync(path.join(dir, file), 'utf-8')
+      ) as { metadataAttributes?: Record<string, unknown> };
+      const attributes = Object.fromEntries(
+        Object.entries(metadata.metadataAttributes ?? {}).filter(
+          ([, value]) => typeof value !== 'boolean'
+        )
+      );
+      return s3Deploy.Source.jsonData(file.split(path.sep).join('/'), {
+        ...metadata,
+        metadataAttributes: attributes,
+      });
+    }),
+  ];
+};
+
 export interface RagKnowledgeBaseStackProps extends StackProps {
   params: ProcessedStackInput;
   collectionName?: string;
@@ -142,6 +182,7 @@ export class RagKnowledgeBaseStack extends Stack {
       env,
       embeddingModelId,
       ragKnowledgeBaseStorageType,
+      ragKnowledgeBaseSyncSchedule,
       ragKnowledgeBaseStandbyReplicas,
       ragKnowledgeBaseAdvancedParsing,
       ragKnowledgeBaseAdvancedParsingModelId,
@@ -152,14 +193,18 @@ export class RagKnowledgeBaseStack extends Stack {
     } = props.params;
 
     const useS3Vectors = ragKnowledgeBaseStorageType === 's3vectors';
+    // A managed knowledge base has no vector store of ours: Bedrock keeps the
+    // vectors and runs its own embedding model.
+    const useManaged = ragKnowledgeBaseStorageType === 'managed';
+    const useOpenSearch = !useS3Vectors && !useManaged;
 
-    if (typeof embeddingModelId !== 'string') {
+    if (!useManaged && typeof embeddingModelId !== 'string') {
       throw new Error(
         'Knowledge Base RAG is enabled, but embeddingModelId is not specified'
       );
     }
 
-    if (!EMBEDDING_MODELS.includes(embeddingModelId)) {
+    if (!useManaged && !EMBEDDING_MODELS.includes(embeddingModelId)) {
       throw new Error(
         `embeddingModelId is invalid (valid embeddingModelId: ${EMBEDDING_MODELS})`
       );
@@ -199,11 +244,11 @@ export class RagKnowledgeBaseStack extends Stack {
       );
     }
 
-    // OpenSearch resources (not needed when using S3 Vectors)
+    // OpenSearch resources (not needed when using S3 Vectors or a managed knowledge base)
     let collection: oss.CfnCollection | undefined;
     let ossIndex: OpenSearchServerlessIndex | undefined;
 
-    if (!useS3Vectors) {
+    if (useOpenSearch) {
       collection = new oss.CfnCollection(this, 'Collection', {
         name: collectionName,
         description: 'GenU Collection',
@@ -411,13 +456,16 @@ export class RagKnowledgeBaseStack extends Stack {
       enforceSSL: true,
     });
 
-    knowledgeBaseRole.addToPolicy(
-      new iam.PolicyStatement({
-        effect: iam.Effect.ALLOW,
-        resources: ['*'],
-        actions: ['bedrock:InvokeModel'],
-      })
-    );
+    // A managed knowledge base embeds with a service-managed model
+    if (!useManaged) {
+      knowledgeBaseRole.addToPolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          resources: ['*'],
+          actions: ['bedrock:InvokeModel'],
+        })
+      );
+    }
 
     // Bedrock looks up the inference profile with the Knowledge Base role
     // when Advanced Parsing uses a cross-Region inference profile.
@@ -439,7 +487,7 @@ export class RagKnowledgeBaseStack extends Stack {
       );
     }
 
-    if (!useS3Vectors && collection) {
+    if (useOpenSearch && collection) {
       knowledgeBaseRole.addToPolicy(
         new iam.PolicyStatement({
           effect: iam.Effect.ALLOW,
@@ -485,130 +533,174 @@ export class RagKnowledgeBaseStack extends Stack {
       })
     );
 
-    // When using S3 Vectors, append suffix to KB name to avoid name collision
-    // during CloudFormation Replacement (storageConfiguration is immutable)
+    // Append a suffix to the KB name for each storage type to avoid name
+    // collision during CloudFormation Replacement (the type is immutable)
     const knowledgeBaseName = useS3Vectors
       ? `${collectionName}-s3vectors`
-      : collectionName;
+      : useManaged
+        ? `${collectionName}-managed`
+        : collectionName;
 
-    const knowledgeBase = new bedrock.CfnKnowledgeBase(this, 'KnowledgeBase', {
-      name: knowledgeBaseName,
-      roleArn: knowledgeBaseRole.roleArn,
-      knowledgeBaseConfiguration: {
-        type: 'VECTOR',
-        vectorKnowledgeBaseConfiguration: {
-          embeddingModelArn: `arn:aws:bedrock:${this.region}::foundation-model/${embeddingModelId}`,
-          ...(ragKnowledgeBaseBinaryVector
+    const knowledgeBase = useManaged
+      ? new bedrock.CfnKnowledgeBase(this, 'KnowledgeBase', {
+          name: knowledgeBaseName,
+          roleArn: knowledgeBaseRole.roleArn,
+          knowledgeBaseConfiguration: {
+            type: 'MANAGED',
+            managedKnowledgeBaseConfiguration: {
+              embeddingModelType: 'MANAGED',
+            },
+          },
+        })
+      : new bedrock.CfnKnowledgeBase(this, 'KnowledgeBase', {
+          name: knowledgeBaseName,
+          roleArn: knowledgeBaseRole.roleArn,
+          knowledgeBaseConfiguration: {
+            type: 'VECTOR',
+            vectorKnowledgeBaseConfiguration: {
+              embeddingModelArn: `arn:aws:bedrock:${this.region}::foundation-model/${embeddingModelId}`,
+              ...(ragKnowledgeBaseBinaryVector
+                ? {
+                    embeddingModelConfiguration: {
+                      bedrockEmbeddingModelConfiguration: {
+                        embeddingDataType: 'BINARY',
+                      },
+                    },
+                  }
+                : {}),
+            },
+          },
+          storageConfiguration: useS3Vectors
             ? {
-                embeddingModelConfiguration: {
-                  bedrockEmbeddingModelConfiguration: {
-                    embeddingDataType: 'BINARY',
+                type: 'S3_VECTORS',
+                s3VectorsConfiguration: {
+                  vectorBucketArn: s3VectorBucketArn,
+                  indexArn: s3VectorIndexArn,
+                },
+              }
+            : {
+                type: 'OPENSEARCH_SERVERLESS',
+                opensearchServerlessConfiguration: {
+                  collectionArn: cdk.Token.asString(collection!.getAtt('Arn')),
+                  fieldMapping: {
+                    metadataField,
+                    textField,
+                    vectorField,
+                  },
+                  vectorIndexName,
+                },
+              },
+        });
+
+    if (useManaged) {
+      // A managed knowledge base reads S3 through its own connector, and
+      // parses and chunks the documents itself
+      new bedrock.CfnDataSource(this, 'DataSource', {
+        dataSourceConfiguration: {
+          type: 'MANAGED_KNOWLEDGE_BASE_CONNECTOR',
+          managedKnowledgeBaseConnectorConfiguration: {
+            connectorParameters: {
+              type: 'S3',
+              version: '1',
+              connectionConfiguration: {
+                bucketName: dataSourceBucket.bucketName,
+                // Required even for a bucket in the same account, although
+                // the connector documentation lists it for cross-account use
+                bucketOwnerAccountId: this.account,
+              },
+              filterConfiguration: {
+                inclusionPrefixes: ['docs/'],
+              },
+            },
+            // Picks up documents added to or changed in the bucket without
+            // anyone having to start the sync
+            ...(ragKnowledgeBaseSyncSchedule === 'daily' && {
+              syncSchedule: { daily: {} },
+            }),
+          },
+        },
+        knowledgeBaseId: knowledgeBase.ref,
+        name: 's3-data-source',
+      });
+    } else
+      new bedrock.CfnDataSource(this, 'DataSource', {
+        dataSourceConfiguration: {
+          s3Configuration: {
+            bucketArn: `arn:aws:s3:::${dataSourceBucket.bucketName}`,
+            inclusionPrefixes: ['docs/'],
+          },
+          type: 'S3',
+        },
+        vectorIngestionConfiguration: {
+          ...(ragKnowledgeBaseAdvancedParsing
+            ? {
+                // Enable Advanced Parsing only if it is enabled
+                parsingConfiguration: {
+                  parsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
+                  bedrockFoundationModelConfiguration: {
+                    modelArn: parsingModelArn,
+                    parsingPrompt: {
+                      parsingPromptText: PARSING_PROMPT,
+                    },
                   },
                 },
               }
             : {}),
+          // If you want to change the chunking strategy, uncomment the following and adjust the various parameters to build an environment suitable for your needs.
+          // The following 4 types of chunking strategies are available.
+          // - Default (no specification)
+          // - Semantic Chunk
+          // - Hierarchical Chunk
+          // - Standard Chunk
+          // Please refer to the following Document for details.
+          // https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking-parsing.html
+          // https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_bedrock.CfnDataSource.ChunkingConfigurationProperty.html
+          //
+          // Semantic Chunk
+          // chunkingConfiguration: {
+          //   chunkingStrategy: 'SEMANTIC',
+          //   semanticChunkingConfiguration: {
+          //     maxTokens: 300,
+          //     bufferSize: 0,
+          //     breakpointPercentileThreshold: 95,
+          //   },
+          // },
+          //
+          // Hierarchical Chunk
+          // chunkingConfiguration: {
+          //   chunkingStrategy: 'HIERARCHICAL',
+          //   hierarchicalChunkingConfiguration: {
+          //     levelConfigurations: [
+          //       {
+          //         maxTokens: 1500, // Max Token size of the parent chunk
+          //       },
+          //       {
+          //         maxTokens: 300, // Max Token size of the child chunk
+          //       },
+          //     ],
+          //     overlapTokens: 60,
+          //   },
+          // },
+          //
+          // Standard Chunk
+          // chunkingConfiguration: {
+          //   chunkingStrategy: 'FIXED_SIZE',
+          //   fixedSizeChunkingConfiguration: {
+          //     maxTokens: 300,
+          //     overlapPercentage: 10,
+          //   },
+          // },
         },
-      },
-      storageConfiguration: useS3Vectors
-        ? {
-            type: 'S3_VECTORS',
-            s3VectorsConfiguration: {
-              vectorBucketArn: s3VectorBucketArn,
-              indexArn: s3VectorIndexArn,
-            },
-          }
-        : {
-            type: 'OPENSEARCH_SERVERLESS',
-            opensearchServerlessConfiguration: {
-              collectionArn: cdk.Token.asString(collection!.getAtt('Arn')),
-              fieldMapping: {
-                metadataField,
-                textField,
-                vectorField,
-              },
-              vectorIndexName,
-            },
-          },
-    });
-
-    new bedrock.CfnDataSource(this, 'DataSource', {
-      dataSourceConfiguration: {
-        s3Configuration: {
-          bucketArn: `arn:aws:s3:::${dataSourceBucket.bucketName}`,
-          inclusionPrefixes: ['docs/'],
-        },
-        type: 'S3',
-      },
-      vectorIngestionConfiguration: {
-        ...(ragKnowledgeBaseAdvancedParsing
-          ? {
-              // Enable Advanced Parsing only if it is enabled
-              parsingConfiguration: {
-                parsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
-                bedrockFoundationModelConfiguration: {
-                  modelArn: parsingModelArn,
-                  parsingPrompt: {
-                    parsingPromptText: PARSING_PROMPT,
-                  },
-                },
-              },
-            }
-          : {}),
-        // If you want to change the chunking strategy, uncomment the following and adjust the various parameters to build an environment suitable for your needs.
-        // The following 4 types of chunking strategies are available.
-        // - Default (no specification)
-        // - Semantic Chunk
-        // - Hierarchical Chunk
-        // - Standard Chunk
-        // Please refer to the following Document for details.
-        // https://docs.aws.amazon.com/bedrock/latest/userguide/kb-chunking-parsing.html
-        // https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_bedrock.CfnDataSource.ChunkingConfigurationProperty.html
-        //
-        // Semantic Chunk
-        // chunkingConfiguration: {
-        //   chunkingStrategy: 'SEMANTIC',
-        //   semanticChunkingConfiguration: {
-        //     maxTokens: 300,
-        //     bufferSize: 0,
-        //     breakpointPercentileThreshold: 95,
-        //   },
-        // },
-        //
-        // Hierarchical Chunk
-        // chunkingConfiguration: {
-        //   chunkingStrategy: 'HIERARCHICAL',
-        //   hierarchicalChunkingConfiguration: {
-        //     levelConfigurations: [
-        //       {
-        //         maxTokens: 1500, // Max Token size of the parent chunk
-        //       },
-        //       {
-        //         maxTokens: 300, // Max Token size of the child chunk
-        //       },
-        //     ],
-        //     overlapTokens: 60,
-        //   },
-        // },
-        //
-        // Standard Chunk
-        // chunkingConfiguration: {
-        //   chunkingStrategy: 'FIXED_SIZE',
-        //   fixedSizeChunkingConfiguration: {
-        //     maxTokens: 300,
-        //     overlapPercentage: 10,
-        //   },
-        // },
-      },
-      knowledgeBaseId: knowledgeBase.ref,
-      name: 's3-data-source',
-    });
+        knowledgeBaseId: knowledgeBase.ref,
+        name: 's3-data-source',
+      });
 
     // The Web Crawler sample data source was removed: starting September 30, 2026,
     // new Web Crawler connectors can no longer be created on customer-managed
     // knowledge bases.
     // https://docs.aws.amazon.com/bedrock/latest/userguide/webcrawl-data-source-connector.html
 
-    if (!useS3Vectors && collection && ossIndex) {
+    if (useOpenSearch && collection && ossIndex) {
       knowledgeBase.addDependency(collection);
       knowledgeBase.node.addDependency(ossIndex.customResource);
     }
@@ -622,7 +714,9 @@ export class RagKnowledgeBaseStack extends Stack {
     knowledgeBase.node.addDependency(defaultPolicy);
 
     new s3Deploy.BucketDeployment(this, 'DeployDocs', {
-      sources: [s3Deploy.Source.asset('./rag-docs')],
+      sources: useManaged
+        ? managedKnowledgeBaseSampleDocs('./rag-docs')
+        : [s3Deploy.Source.asset('./rag-docs')],
       destinationBucket: dataSourceBucket,
       // There is a possibility that access logs are still in the same Bucket from the previous configuration, so this setting is left.
       exclude: ['AccessLogs/*', 'logs*'],

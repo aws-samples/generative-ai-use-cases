@@ -142,6 +142,17 @@ Use `ragKnowledgeBaseStorageType` to select the vector store backend. (Default i
 
 - `opensearch`: Use OpenSearch Serverless (existing behavior)
 - `s3vectors`: Use Amazon S3 Vectors (low cost, no fixed fees)
+- `managed`: Use an Amazon Bedrock Managed Knowledge Base (no vector store; Bedrock manages the embedding and reranking models)
+
+With `managed`, no vector store (OpenSearch Serverless / S3 Vectors) is created, and Bedrock stores the vectors, embeds the documents, and runs hybrid search and reranking ([Build a managed knowledge base](https://docs.aws.amazon.com/bedrock/latest/userguide/kb-build-managed.html)). Note the following.
+
+- `embeddingModelId` is not used. Enabling `ragKnowledgeBaseAdvancedParsing`, `ragKnowledgeBaseBinaryVector` or `ragKnowledgeBaseStandbyReplicas` fails the deployment (document parsing is built into the managed knowledge base)
+- The metadata filters `startsWith` and `stringContains` are not supported, and the RAG chat filter does not offer them. Implicit filters (`implicitFilters`) are not used
+- Metadata values can be strings, numbers and string lists only. A document whose metadata file has a boolean (`true` / `false`) fails to ingest. The sample documents are uploaded without their boolean attribute (`is_public`), and the RAG chat does not show boolean filters
+- When `rerankingModelId` is set, that model is used instead of the built-in reranking
+- With `ragKnowledgeBaseSyncSchedule: 'daily'`, the data source syncs automatically once a day (at an off-peak time AWS chooses; the time cannot be set), so documents added to, changed in or removed from S3 are picked up without starting a sync by hand. The default is `'none'` (no automatic sync)
+- It is available in a limited set of Regions. `modelRegion` must be one of the [supported Regions](https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-regions.html). In AWS GovCloud (US-West), the service-managed embedding model is not available, so this setting cannot create one there
+- Changing the type (from `opensearch` / `s3vectors` to `managed`, or back) recreates the knowledge base, so its data is ingested again
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
@@ -150,7 +161,7 @@ Use `ragKnowledgeBaseStorageType` to select the vector store backend. (Default i
 const envs: Record<string, Partial<StackInput>> = {
   dev: {
     ragKnowledgeBaseEnabled: true,
-    ragKnowledgeBaseStorageType: 'opensearch', // 'opensearch' or 's3vectors'
+    ragKnowledgeBaseStorageType: 'opensearch', // 'opensearch', 's3vectors' or 'managed'
     ragKnowledgeBaseId: 'XXXXXXXXXX',
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: false,

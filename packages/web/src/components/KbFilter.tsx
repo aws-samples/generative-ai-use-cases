@@ -39,18 +39,32 @@ const allowedOperators: Record<FilterType, RetrievalFilterOperator[]> = {
   ],
 };
 
+// A managed knowledge base has no prefix or substring filters, and no boolean
+// metadata
+// https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-test-config.html
+const managedKnowledgeBase =
+  import.meta.env.VITE_APP_RAG_KNOWLEDGE_BASE_STORAGE_TYPE === 'managed';
+const unsupportedOnManaged: RetrievalFilterOperator[] = [
+  'startsWith',
+  'stringContains',
+];
+const operatorsFor = (type: FilterType): RetrievalFilterOperator[] =>
+  managedKnowledgeBase
+    ? allowedOperators[type].filter((op) => !unsupportedOnManaged.includes(op))
+    : allowedOperators[type];
+
 const KbFilterFormElement: React.FC<{
   filterConfig: ExplicitFilterConfiguration;
   filter: RetrievalFilterLabel | null;
   setFilter: (f: RetrievalFilterLabel | null) => void;
 }> = ({ filterConfig, filter, setFilter }) => {
   const defaultOperator = useMemo(
-    () => allowedOperators[filterConfig.type][0],
+    () => operatorsFor(filterConfig.type)[0],
     [filterConfig.type]
   );
   const operatorOptions = useMemo(
     () =>
-      allowedOperators[filterConfig.type].map((op) => ({
+      operatorsFor(filterConfig.type).map((op) => ({
         label: op,
         value: op,
       })),
@@ -68,6 +82,12 @@ const KbFilterFormElement: React.FC<{
       )[0] as [RetrievalFilterOperator, FilterAttributeLabel],
     [filter, filterConfig.key, defaultOperator]
   );
+  // A managed knowledge base has no boolean metadata, so it has nothing for a
+  // boolean filter to match
+  if (managedKnowledgeBase && filterConfig.type === 'BOOLEAN') {
+    return null;
+  }
+
   switch (filterConfig.type) {
     case 'STRING_LIST':
       return (

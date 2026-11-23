@@ -33,7 +33,7 @@
     "@aws-cdk/aws-bedrock-agentcore-alpha": "2.257.0-alpha.0",
     "@aws-cdk/aws-lambda-python-alpha": "^2.257.0-alpha.0",
     "@aws-sdk/client-bedrock-agent": "^3.1012.0",
-    "@aws-sdk/client-bedrock-agent-runtime": "^3.1012.0",
+    "@aws-sdk/client-bedrock-agent-runtime": "^3.1175.0",
     "@aws-sdk/client-bedrock-agentcore": "^3.1012.0",
     "@aws-sdk/client-bedrock-runtime": "^3.1012.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.1012.0",

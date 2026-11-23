@@ -112,4 +112,13 @@ describe('stateful resources', () => {
       })
     ).toMatchSnapshot();
   });
+
+  test('managed knowledge base', () => {
+    expect(
+      statefulResources({
+        ...stackInput,
+        ragKnowledgeBaseStorageType: 'managed',
+      })
+    ).toMatchSnapshot();
+  });
 });
