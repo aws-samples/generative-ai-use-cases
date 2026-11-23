@@ -1110,7 +1110,8 @@ setting:
     typing_animation: Typing Animation
     version: Version
     version_help: Referencing the version in package.json of generative-ai-use-cases
-  recent_updates: Recent Updates
+  release_notes: Release Notes
+  release_notes_unavailable: Release notes are not available for this version.
   signout: Sign Out
   tabs:
     account: Account
@@ -1118,11 +1119,8 @@ setting:
     system: System
     usage: Usage
   update:
-    message: >-
-      Updates are available on GitHub. If you want to use the latest features,
-      please pull the main branch of <0>generative-ai-use-cases</0> and
-      redeploy.
-  view_all_updates: View All Updates
+    message: 'Version {{version}} is available. Check the <0>release notes</0> and see <1>how to update</1>.'
+  view_all_release_notes: View All Release Notes
 shared:
   contact_admin: Please contact the administrator.
   error: Error

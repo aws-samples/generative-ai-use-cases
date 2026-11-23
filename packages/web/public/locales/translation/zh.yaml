@@ -669,7 +669,8 @@ setting:
     transcribe_languages_help: '当语音识别语言设置为"自动"时（会议记录、语音输入、文件转录），用于检测的候选语言。请选择 2 到 5 种。选择越多，短句越容易被识别为错误的语言。'
     version: 版本
     version_help: 参考generative-ai-use-cases的package.json中的version
-  recent_updates: 最近更新
+  release_notes: 发行说明
+  release_notes_unavailable: 此版本没有发行说明。
   signout: 退出登录
   tabs:
     account: 账户
@@ -677,8 +678,8 @@ setting:
     system: 系统
     usage: 使用量
   update:
-    message: GitHub上有更新。如果您想使用最新功能，请pull <0>generative-ai-use-cases</0>的main分支 并重新部署。
-  view_all_updates: 查看所有更新
+    message: '已发布新版本 {{version}}。请查看<0>发行说明</0>，并按照<1>更新方法</1>进行更新。'
+  view_all_release_notes: 查看所有发行说明
 shared:
   contact_admin: 请联系管理员。
   error: 错误

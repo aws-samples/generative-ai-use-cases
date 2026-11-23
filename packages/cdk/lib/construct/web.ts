@@ -241,7 +241,7 @@ export class Web extends Construct {
             '.prettierrc.json',
             '*.md',
             'LICENSE',
-            'docs',
+            'docs/**/*',
             'imgs',
             'setup-env.sh',
             'site',
@@ -252,6 +252,12 @@ export class Web extends Construct {
             'packages/web/dev-dist',
             'packages/web/node_modules',
             'browser-extension',
+            // The settings page shows the release notes (SettingSystemTab.tsx).
+            // The directories are included again so that the files can be.
+            '!docs/en',
+            '!docs/ja',
+            '!docs/en/RELEASE_NOTES.md',
+            '!docs/ja/RELEASE_NOTES.md',
           ],
         },
       ],

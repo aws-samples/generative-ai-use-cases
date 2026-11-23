@@ -27,8 +27,7 @@ const TABS: TabDef[] = [
 const Setting: React.FC = () => {
   const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { getHasUpdate } = useVersion();
-  const hasUpdate = getHasUpdate();
+  const { hasUpdate } = useVersion();
 
   const activeTab = useMemo<TabId>(() => {
     const tab = searchParams.get('tab');

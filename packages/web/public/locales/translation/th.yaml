@@ -801,7 +801,8 @@ setting:
     typing_animation: แอนิเมชันการพิมพ์
     version: เวอร์ชัน
     version_help: อ้างอิงเวอร์ชันใน package.json ของ generative-ai-use-cases
-  recent_updates: การอัปเดตล่าสุด
+  release_notes: บันทึกประจำรุ่น
+  release_notes_unavailable: ไม่มีบันทึกประจำรุ่นสำหรับเวอร์ชันนี้
   signout: ออกจากระบบ
   tabs:
     account: บัญชี
@@ -809,9 +810,8 @@ setting:
     system: ระบบ
     usage: การใช้งาน
   update:
-    message: >-
-      มีการอัปเดตบน GitHub หากคุณต้องการใช้คุณสมบัติล่าสุด โปรดดึงสาขาหลักของ <0>generative-ai-use-cases</0> และปรับใช้ใหม่
-  view_all_updates: ดูการอัปเดตทั้งหมด
+    message: 'เวอร์ชัน {{version}} พร้อมใช้งานแล้ว โปรดตรวจสอบ<0>บันทึกประจำรุ่น</0>และดู<1>วิธีอัปเดต</1>'
+  view_all_release_notes: ดูบันทึกประจำรุ่นทั้งหมด
 shared:
   contact_admin: โปรดติดต่อผู้ดูแลระบบ
   error: ข้อผิดพลาด

@@ -1,40 +1,45 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import useSWR from 'swr';
+import useIsAdmin from './useIsAdmin';
+import { compareVersions } from '../utils/releaseNotes';
 
-const version = import.meta.env.VITE_APP_VERSION;
-const PACKAGE_JSON_URL =
-  'https://raw.githubusercontent.com/aws-samples/generative-ai-use-cases/main/package.json';
+const version: string | undefined = import.meta.env.VITE_APP_VERSION;
+const LATEST_RELEASE_URL =
+  'https://api.github.com/repos/aws-samples/generative-ai-use-cases/releases/latest';
 
-interface PackageJson {
-  version: string;
-}
+const fetchLatestRelease = (url: string): Promise<string> =>
+  axios
+    .get<{ tag_name: string }>(url, {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    })
+    .then((res) => res.data.tag_name.replace(/^v/, ''));
 
-const versionFetcher = axios.create();
+/**
+ * The deployed version and, for members of the admin group, the latest
+ * release on GitHub. Only admins can update the deployment, so only they are
+ * told about a newer release, and the release is not fetched for other users.
+ * When GitHub cannot be reached (for example in closed network mode), there
+ * is no latest release and no update is shown.
+ */
+const useVersion = () => {
+  const isAdmin = useIsAdmin() === true;
+  const { data: latestVersion } = useSWR(
+    isAdmin && version ? LATEST_RELEASE_URL : null,
+    fetchLatestRelease,
+    { revalidateOnFocus: false, shouldRetryOnError: false }
+  );
 
-const useRemoteVersion = () => {
+  const hasUpdate =
+    !!version && !!latestVersion && compareVersions(latestVersion, version) > 0;
+
   return {
-    getLocalVersion: () => {
-      return version;
-    },
-    getHasUpdate: () => {
-      // If the local version is not available, do not display the update
-      // (Treat it as no update)
-      if (!version) {
-        return false;
-      }
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const { data: packageJson } = useSWR<AxiosResponse<PackageJson>>(
-        PACKAGE_JSON_URL,
-        versionFetcher
-      );
-      if (!packageJson) {
-        return false;
-      } else {
-        // Compare only major versions
-        return version.split('.')[0] !== packageJson.data.version.split('.')[0];
-      }
-    },
+    localVersion: version,
+    latestVersion: hasUpdate ? latestVersion : undefined,
+    hasUpdate,
   };
 };
 
-export default useRemoteVersion;
+export default useVersion;
