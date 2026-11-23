@@ -13,6 +13,7 @@ export const stackInput: Partial<StackInput> = {
   kendraIndexScheduleDeleteCron: null,
   ragKnowledgeBaseEnabled: true,
   ragKnowledgeBaseStandbyReplicas: false,
+  ragKnowledgeBaseOpenSearchNextGen: false,
   ragKnowledgeBaseAdvancedParsing: false,
   ragKnowledgeBaseAdvancedParsingModelId: 'global.anthropic.claude-sonnet-4-6',
   embeddingModelId: 'amazon.titan-embed-text-v2:0',

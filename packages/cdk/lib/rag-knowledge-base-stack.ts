@@ -85,6 +85,7 @@ interface OpenSearchServerlessIndexProps {
   readonly textField: string;
   readonly vectorDimension: string;
   readonly ragKnowledgeBaseBinaryVector: boolean;
+  readonly nextGen: boolean;
 }
 
 class OpenSearchServerlessIndex extends Construct {
@@ -114,7 +115,8 @@ class OpenSearchServerlessIndex extends Construct {
     const customResource = new cdk.CustomResource(this, 'CustomResource', {
       serviceToken: customResourceHandler.functionArn,
       resourceType: 'Custom::OssIndex',
-      properties: props,
+      // nextGen only when set, so that Classic templates stay unchanged
+      properties: { ...props, nextGen: props.nextGen || undefined },
     });
 
     this.customResourceHandler = customResourceHandler;
@@ -143,6 +145,7 @@ export class RagKnowledgeBaseStack extends Stack {
       embeddingModelId,
       ragKnowledgeBaseStorageType,
       ragKnowledgeBaseStandbyReplicas,
+      ragKnowledgeBaseOpenSearchNextGen,
       ragKnowledgeBaseAdvancedParsing,
       ragKnowledgeBaseAdvancedParsingModelId,
       ragKnowledgeBaseBinaryVector,
@@ -177,6 +180,16 @@ export class RagKnowledgeBaseStack extends Stack {
       );
     }
 
+    if (
+      ragKnowledgeBaseOpenSearchNextGen &&
+      ragKnowledgeBaseStorageType !== 'opensearch'
+    ) {
+      throw new Error(
+        'ragKnowledgeBaseOpenSearchNextGen is only for the opensearch storage type. Set ragKnowledgeBaseStorageType to opensearch or ragKnowledgeBaseOpenSearchNextGen to false.'
+      );
+    }
+    const nextGen = ragKnowledgeBaseOpenSearchNextGen;
+
     const collectionName =
       props.collectionName ?? `generative-ai-use-cases-jp${env.toLowerCase()}`;
     const vectorIndexName =
@@ -204,15 +217,40 @@ export class RagKnowledgeBaseStack extends Stack {
     let ossIndex: OpenSearchServerlessIndex | undefined;
 
     if (!useS3Vectors) {
+      // NextGen: the collection belongs to a collection group that scales to
+      // zero OCU when idle. Standby replicas are set on the group, where
+      // NextGen requires them, not on the collection
+      const collectionGroup = nextGen
+        ? new oss.CfnCollectionGroup(this, 'CollectionGroup', {
+            name: collectionName,
+            description: 'GenU Collection Group (NextGen)',
+            generation: 'NEXTGEN',
+            standbyReplicas: 'ENABLED',
+            capacityLimits: {
+              minIndexingCapacityInOcu: 0,
+              minSearchCapacityInOcu: 0,
+              maxIndexingCapacityInOcu: 2,
+              maxSearchCapacityInOcu: 2,
+            },
+          })
+        : undefined;
+
       collection = new oss.CfnCollection(this, 'Collection', {
         name: collectionName,
         description: 'GenU Collection',
         type: 'VECTORSEARCH',
-        standbyReplicas: ragKnowledgeBaseStandbyReplicas
-          ? 'ENABLED'
-          : 'DISABLED',
+        ...(collectionGroup
+          ? { collectionGroupName: collectionGroup.name }
+          : {
+              standbyReplicas: ragKnowledgeBaseStandbyReplicas
+                ? 'ENABLED'
+                : 'DISABLED',
+            }),
         // Do not specify tags here to avoid CloudFormation replacement errors
       });
+      if (collectionGroup) {
+        collection.node.addDependency(collectionGroup);
+      }
 
       ossIndex = new OpenSearchServerlessIndex(this, 'OssIndex', {
         collectionId: collection.ref,
@@ -222,6 +260,7 @@ export class RagKnowledgeBaseStack extends Stack {
         metadataField,
         vectorDimension: MODEL_VECTOR_MAPPING[embeddingModelId],
         ragKnowledgeBaseBinaryVector,
+        nextGen,
       });
 
       ossIndex.customResourceHandler.addToRolePolicy(

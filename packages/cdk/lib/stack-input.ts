@@ -133,6 +133,9 @@ const baseStackInputSchema = z.object({
     .default('opensearch'),
   embeddingModelId: z.string().default('amazon.titan-embed-text-v2:0'),
   ragKnowledgeBaseStandbyReplicas: z.boolean().default(false),
+  // Put the collection in an OpenSearch Serverless NextGen collection group,
+  // which scales to zero when idle. Only for the opensearch storage type
+  ragKnowledgeBaseOpenSearchNextGen: z.boolean().default(false),
   ragKnowledgeBaseAdvancedParsing: z.boolean().default(false),
   ragKnowledgeBaseAdvancedParsingModelId: z
     .string()

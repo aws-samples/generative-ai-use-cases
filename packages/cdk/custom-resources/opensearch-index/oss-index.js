@@ -56,6 +56,8 @@ exports.handler = async (event, context) => {
         const vectorDimension = Number(props.vectorDimension);
         const ragKnowledgeBaseBinaryVector =
           props.ragKnowledgeBaseBinaryVector.toLowerCase() === 'true';
+        // NextGen collections choose the engine themselves and reject an explicit one
+        const nextGen = String(props.nextGen).toLowerCase() === 'true';
         await client.indices.create({
           index: props.vectorIndexName,
           body: {
@@ -76,10 +78,9 @@ exports.handler = async (event, context) => {
                     ? { data_type: 'binary' }
                     : {}),
                   method: {
-                    engine: 'faiss',
+                    ...(nextGen ? {} : { engine: 'faiss', parameters: {} }),
                     space_type: ragKnowledgeBaseBinaryVector ? 'hamming' : 'l2',
                     name: 'hnsw',
-                    parameters: {},
                   },
                 },
               },
@@ -111,7 +112,11 @@ exports.handler = async (event, context) => {
             },
           },
         });
-        await sleep(60 * 1000); // sleep 60s to confirm the creation
+        // sleep 60s to confirm the creation. Bedrock rejects a knowledge base
+        // on a NextGen collection created only minutes before ("The knowledge
+        // base storage configuration provided is invalid"), so wait 5 minutes
+        // there before the knowledge base is created
+        await sleep((nextGen ? 5 * 60 : 60) * 1000);
         await updateStatus(
           event,
           'SUCCESS',

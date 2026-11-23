@@ -153,6 +153,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStorageType: 'opensearch', // 'opensearch' or 's3vectors'
     ragKnowledgeBaseId: 'XXXXXXXXXX',
     ragKnowledgeBaseStandbyReplicas: false,
+    ragKnowledgeBaseOpenSearchNextGen: false,
     ragKnowledgeBaseAdvancedParsing: false,
     ragKnowledgeBaseAdvancedParsingModelId:
       'global.anthropic.claude-sonnet-4-6',
@@ -165,6 +166,14 @@ const envs: Record<string, Partial<StackInput>> = {
 
 - `false`: 개발 및 테스트 목적에 적합합니다. 단일 AZ에서 실행되어 OCU 비용이 절반으로 줄어듭니다.
 - `true`: 프로덕션 환경에 적합합니다. 여러 AZ에서 실행되어 고가용성을 제공합니다.
+
+`ragKnowledgeBaseOpenSearchNextGen`을 `true`로 지정하면 OpenSearch Serverless의 [차세대 버전(NextGen)](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-scale-to-zero.html)으로 컬렉션을 생성합니다. (기본값은 `false`. `ragKnowledgeBaseStorageType`이 `opensearch`일 때만 지정할 수 있습니다)
+
+- NextGen 컬렉션 그룹(최소 OCU 0, 최대 OCU 2)을 생성하고 컬렉션을 그 안에 둡니다. 10분 동안 요청이 없으면 OCU가 0까지 줄어들기 때문에, 사용하지 않는 시간에는 OCU 비용이 발생하지 않습니다
+- OCU가 0까지 줄어든 후의 첫 요청은 OCU가 다시 올라올 때까지 10~30초 정도 걸립니다
+- NextGen에서는 스탠바이 레플리카가 필수이므로 `ragKnowledgeBaseStandbyReplicas`는 사용되지 않습니다(항상 활성화)
+- NextGen에서는 생성 직후의 컬렉션에 지식 베이스를 만들 수 없기 때문에, 인덱스를 만든 후 5분 기다린 다음 지식 베이스를 생성합니다. 그래서 첫 배포가 몇 분 더 걸립니다
+- 기존 환경에서 값을 변경하는 경우 [변경사항 적용을 위한 Knowledge Base 또는 OpenSearch Service 재생성](./DEPLOY_OPTION.md#변경사항-적용을-위한-knowledge-base-또는-opensearch-service-재생성) 절차에 따라 다시 생성하세요
 
 `embeddingModelId`는 임베딩에 사용되는 모델입니다. 현재 다음 모델이 지원됩니다:
 
@@ -269,6 +278,7 @@ chunkingConfiguration: {
 
 - `embeddingModelId`
 - `ragKnowledgeBaseStandbyReplicas`
+- `ragKnowledgeBaseOpenSearchNextGen`
 - `ragKnowledgeBaseAdvancedParsing`
 - `ragKnowledgeBaseAdvancedParsingModelId`
 

@@ -468,4 +468,74 @@ describe('GenerativeAiUseCases', () => {
       })
     ).not.toThrow();
   });
+  test('the opensearch collection can be put in a NextGen collection group', () => {
+    const app = new cdk.App();
+    const params = processedStackInputSchema.parse({
+      ...stackInput,
+      ragKnowledgeBaseEnabled: true,
+      ragKnowledgeBaseOpenSearchNextGen: true,
+    });
+    const { ragKnowledgeBaseStack } = createStacks(app, params);
+    if (!ragKnowledgeBaseStack) {
+      throw new Error('Stack was not created');
+    }
+    const template = Template.fromStack(ragKnowledgeBaseStack);
+
+    // Scales to zero when idle; NextGen requires standby replicas on the group
+    template.hasResourceProperties(
+      'AWS::OpenSearchServerless::CollectionGroup',
+      {
+        Name: 'generative-ai-use-cases-jp',
+        Generation: 'NEXTGEN',
+        StandbyReplicas: 'ENABLED',
+        CapacityLimits: Match.objectLike({
+          MinIndexingCapacityInOcu: 0,
+          MinSearchCapacityInOcu: 0,
+        }),
+      }
+    );
+    template.hasResourceProperties('AWS::OpenSearchServerless::Collection', {
+      Name: 'generative-ai-use-cases-jp',
+      Type: 'VECTORSEARCH',
+      CollectionGroupName: 'generative-ai-use-cases-jp',
+      StandbyReplicas: Match.absent(),
+    });
+    // The index is created without an engine, which NextGen rejects
+    template.hasResourceProperties('Custom::OssIndex', { nextGen: true });
+  });
+
+  test('the Classic collection stays as it was', () => {
+    const app = new cdk.App();
+    const params = processedStackInputSchema.parse({
+      ...stackInput,
+      ragKnowledgeBaseEnabled: true,
+    });
+    const { ragKnowledgeBaseStack } = createStacks(app, params);
+    if (!ragKnowledgeBaseStack) {
+      throw new Error('Stack was not created');
+    }
+    const template = Template.fromStack(ragKnowledgeBaseStack);
+    template.resourceCountIs('AWS::OpenSearchServerless::CollectionGroup', 0);
+    template.hasResourceProperties('AWS::OpenSearchServerless::Collection', {
+      Name: 'generative-ai-use-cases-jp',
+      CollectionGroupName: Match.absent(),
+      StandbyReplicas: 'DISABLED',
+    });
+    template.hasResourceProperties('Custom::OssIndex', {
+      nextGen: Match.absent(),
+    });
+  });
+
+  test('NextGen is only for the opensearch storage type', () => {
+    const app = new cdk.App();
+    const params = processedStackInputSchema.parse({
+      ...stackInput,
+      ragKnowledgeBaseEnabled: true,
+      ragKnowledgeBaseStorageType: 's3vectors',
+      ragKnowledgeBaseOpenSearchNextGen: true,
+    });
+    expect(() => createStacks(app, params)).toThrow(
+      /ragKnowledgeBaseOpenSearchNextGen is only for the opensearch storage type/
+    );
+  });
 });

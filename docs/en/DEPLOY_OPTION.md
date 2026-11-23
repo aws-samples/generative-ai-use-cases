@@ -153,6 +153,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStorageType: 'opensearch', // 'opensearch' or 's3vectors'
     ragKnowledgeBaseId: 'XXXXXXXXXX',
     ragKnowledgeBaseStandbyReplicas: false,
+    ragKnowledgeBaseOpenSearchNextGen: false,
     ragKnowledgeBaseAdvancedParsing: false,
     ragKnowledgeBaseAdvancedParsingModelId:
       'global.anthropic.claude-sonnet-4-6',
@@ -165,6 +166,14 @@ const envs: Record<string, Partial<StackInput>> = {
 
 - `false`: Suitable for development and testing purposes. Runs in a single AZ, reducing OCU costs by half.
 - `true`: Suitable for production environments. Runs across multiple AZs, enabling high availability.
+
+Setting `ragKnowledgeBaseOpenSearchNextGen` to `true` creates the collection on the [next generation (NextGen) of OpenSearch Serverless](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless-scale-to-zero.html). (Default is `false`. Available only when `ragKnowledgeBaseStorageType` is `opensearch`)
+
+- A NextGen collection group (minimum 0 OCU, maximum 2 OCU) is created and the collection is placed in it. The OCUs scale down to 0 after 10 minutes without requests, so no OCU cost is incurred while it is not used
+- The first request after the OCUs have scaled down to 0 takes about 10 to 30 seconds while they scale back up
+- NextGen requires standby replicas, so `ragKnowledgeBaseStandbyReplicas` is not used (always enabled)
+- A knowledge base cannot be created on a NextGen collection right after the collection is created, so with NextGen the knowledge base is created 5 minutes after the index. The first deployment takes a few minutes longer
+- To change this value on an existing deployment, recreate the resources as described in [Recreating Knowledge Base or OpenSearch Service to apply changes](./DEPLOY_OPTION.md#recreating-knowledge-base-or-opensearch-service-to-apply-changes)
 
 `embeddingModelId` is the model used for embedding. Currently, the following models are supported:
 
@@ -269,6 +278,7 @@ For [Knowledge Base chunking strategy](./DEPLOY_OPTION.md#changing-chunking-stra
 
 - `embeddingModelId`
 - `ragKnowledgeBaseStandbyReplicas`
+- `ragKnowledgeBaseOpenSearchNextGen`
 - `ragKnowledgeBaseAdvancedParsing`
 - `ragKnowledgeBaseAdvancedParsingModelId`
 
