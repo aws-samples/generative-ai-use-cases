@@ -58,6 +58,7 @@ chat:
   save: Lưu
   saved_system_prompts: System prompt đã lưu
   search_by_title: Tìm kiếm theo tiêu đề
+  set_default_system_prompt: Bắt đầu cuộc trò chuyện mới với system prompt này
   settings: Cài đặt
   share: Chia sẻ
   share_conversation: Chia sẻ lịch sử cuộc trò chuyện
@@ -65,6 +66,7 @@ chat:
   show_system_prompt: Hiển thị system prompt
   system_prompt: System prompt
   title: Chat
+  unset_default_system_prompt: Ngừng bắt đầu cuộc trò chuyện mới với system prompt này
   view_prompt_examples: Xem ví dụ prompt
 common:
   cancel: Hủy

@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import useChatPreferences, {
+  initialSystemContext,
   pickInitialModelId,
   sanitizeReasoningConfig,
 } from '../../src/hooks/useChatPreferences';
@@ -73,5 +74,34 @@ describe('useChatPreferences', () => {
       modelId: 'model-b',
       reasoningConfig: { type: 'enabled', budgetTokens: 8192 },
     });
+  });
+});
+
+describe('initialSystemContext', () => {
+  beforeEach(() => {
+    useChatPreferences.setState({ defaultSystemContext: undefined });
+  });
+
+  it("uses the page's prompt without a user default", () => {
+    expect(initialSystemContext('/chat', 'page prompt')).toBe('page prompt');
+  });
+
+  it("starts a new chat with the user's default", () => {
+    useChatPreferences.getState().setDefaultSystemContext({
+      systemContextId: 'systemContext#s1',
+      systemContext: 'my prompt',
+    });
+    expect(initialSystemContext('/chat', 'page prompt')).toBe('my prompt');
+  });
+
+  it('leaves saved chats and other pages alone', () => {
+    useChatPreferences.getState().setDefaultSystemContext({
+      systemContextId: 'systemContext#s1',
+      systemContext: 'my prompt',
+    });
+    expect(initialSystemContext('/chat/abc', 'page prompt')).toBe(
+      'page prompt'
+    );
+    expect(initialSystemContext('/rag', 'page prompt')).toBe('page prompt');
   });
 });

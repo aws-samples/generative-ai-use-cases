@@ -59,6 +59,7 @@ const { chatStore, hooks } = vi.hoisted(() => {
       follow: { scrollableContainer: { current: null }, setFollowing: fn },
       prompter: {
         chatPrompt: ({ content }: { content: string }) => content,
+        systemContext: () => '',
       },
     },
   };
@@ -339,5 +340,60 @@ describe('ChatPage reasoning settings', () => {
 
     fireEvent.click(screen.getByTestId('reasoning'));
     expect(screen.getByTestId('setting-label').textContent).toBe('');
+  });
+});
+
+describe('ChatPage default system prompt', () => {
+  const saved = {
+    id: 'systemContext#alice',
+    createdDate: '1',
+    systemContextId: 'systemContext#s1',
+    systemContextTitle: 'Mine',
+    systemContext: 'my prompt',
+  };
+  const original = hooks.systemContextApi.listSystemContexts;
+
+  // The choice is kept in local storage, like the other chat preferences
+  const chooseDefault = async (systemContextId: string) => {
+    localStorage.setItem(
+      'chatPreferences',
+      JSON.stringify({
+        state: {
+          defaultSystemContext: { systemContextId, systemContext: 'my prompt' },
+        },
+        version: 1,
+      })
+    );
+    await reload();
+  };
+  const storedDefault = () =>
+    JSON.parse(localStorage.getItem('chatPreferences')!).state
+      .defaultSystemContext;
+
+  beforeEach(() => {
+    localStorage.clear();
+    chatStore.modelId = 'opus';
+    const list = { data: [saved], mutate: vi.fn() };
+    hooks.systemContextApi.listSystemContexts = () => list;
+  });
+
+  afterEach(() => {
+    cleanup();
+    hooks.systemContextApi.listSystemContexts = original;
+  });
+
+  it('keeps a default whose saved system prompt exists', async () => {
+    await chooseDefault('systemContext#s1');
+    renderAt('/chat');
+    expect(storedDefault()).toEqual({
+      systemContextId: 'systemContext#s1',
+      systemContext: 'my prompt',
+    });
+  });
+
+  it('forgets a default whose saved system prompt was deleted', async () => {
+    await chooseDefault('systemContext#gone');
+    renderAt('/chat');
+    expect(storedDefault()).toBeUndefined();
   });
 });

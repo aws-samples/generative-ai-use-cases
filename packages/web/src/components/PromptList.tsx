@@ -15,6 +15,8 @@ import {
   PiPencilLine,
   PiCheck,
   PiX,
+  PiStar,
+  PiStarFill,
 } from 'react-icons/pi';
 import { ChatPageQueryParams } from '../@types/navigate';
 import useChat from '../hooks/useChat';
@@ -32,13 +34,24 @@ type Props = BaseProps & {
     systemContextId: string,
     title: string
   ) => Promise<void>;
+  /**
+   * The saved system prompt new chats start with, if the user chose one. The
+   * button to choose it is shown only on pages that pass the handler (the chat).
+   */
+  defaultSystemContextId?: string;
+  onClickDefaultSystemContext?: (systemContextId: string) => void;
   forceExpand: number | null;
 };
 
 const PromptList: React.FC<Props> = (props) => {
   const { t } = useTranslation();
-  const { onClick, onClickDeleteSystemContext, onClickUpdateSystemContext } =
-    props;
+  const {
+    onClick,
+    onClickDeleteSystemContext,
+    onClickUpdateSystemContext,
+    onClickDefaultSystemContext,
+    defaultSystemContextId,
+  } = props;
   const [expanded, setExpanded] = useState(false);
   // PromptList is fixed for use on the chat page
   const { getModelId } = useChat('/chat');
@@ -169,6 +182,24 @@ const PromptList: React.FC<Props> = (props) => {
               onClick={onClickPrompt}>
               {props.systemContextTitle}
             </div>
+            {/* A record without an id cannot be chosen (or found again) */}
+            {onClickDefaultSystemContext && props.systemContextId && (
+              <ButtonIcon
+                title={
+                  props.systemContextId === defaultSystemContextId
+                    ? t('chat.unset_default_system_prompt')
+                    : t('chat.set_default_system_prompt')
+                }
+                onClick={() => {
+                  onClickDefaultSystemContext(props.systemContextId);
+                }}>
+                {props.systemContextId === defaultSystemContextId ? (
+                  <PiStarFill className="text-aws-smile" />
+                ) : (
+                  <PiStar />
+                )}
+              </ButtonIcon>
+            )}
             <ButtonIcon
               onClick={() => {
                 setEditing(true);

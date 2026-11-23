@@ -27,6 +27,7 @@ import { SWRInfiniteKeyedMutator } from 'swr/infinite';
 import { getPrompter } from '../prompts';
 import { findModelByModelId } from './useModel';
 import useFileApi from './useFileApi';
+import { initialSystemContext } from './useChatPreferences';
 
 type GenerationMode = 'normal' | 'continue' | 'retry' | 'edit';
 
@@ -202,7 +203,7 @@ const useChatState = create<{
 
   const initChatWithSystemContext = (id: string) => {
     const prompter = getPrompter(getModelId(id));
-    const systemContext = prompter.systemContext(id);
+    const systemContext = initialSystemContext(id, prompter.systemContext(id));
 
     initChat(id, [{ role: 'system', content: systemContext }], undefined);
   };
@@ -1182,7 +1183,10 @@ const useChat = (id: string, chatId?: string) => {
     updateSystemContextByModel: () => {
       const modelId = getModelId(id);
       const prompter = getPrompter(modelId);
-      updateSystemContext(id, prompter.systemContext(id));
+      updateSystemContext(
+        id,
+        initialSystemContext(id, prompter.systemContext(id))
+      );
     },
     getCurrentSystemContext: () => {
       return getCurrentSystemContext(id);

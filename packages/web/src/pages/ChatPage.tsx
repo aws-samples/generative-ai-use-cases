@@ -528,6 +528,34 @@ const ChatPage: React.FC = () => {
     setInputSystemContext(currentSystemContext);
   }, [currentSystemContext, setInputSystemContext]);
 
+  // The saved system prompt new chats start with (kept in this browser)
+  const { defaultSystemContext, setDefaultSystemContext } =
+    useChatPreferences();
+  const defaultSystemContextId = defaultSystemContext?.systemContextId;
+  // Forget the default once its saved prompt is deleted, here or elsewhere
+  useEffect(() => {
+    if (
+      systemContextResponse &&
+      defaultSystemContextId &&
+      !systemContextResponse.some(
+        (item) => item.systemContextId === defaultSystemContextId
+      )
+    ) {
+      setDefaultSystemContext(undefined);
+    }
+  }, [systemContextResponse, defaultSystemContextId, setDefaultSystemContext]);
+
+  const onClickDefaultSystemContext = (systemContextId: string) => {
+    const item = systemContextList.find(
+      (item) => item.systemContextId === systemContextId
+    );
+    setDefaultSystemContext(
+      item && systemContextId !== defaultSystemContextId
+        ? { systemContextId, systemContext: item.systemContext }
+        : undefined
+    );
+  };
+
   const onClickSamplePrompt = useCallback(
     (params: ChatPageQueryParams) => {
       // Only update chat content when the prompt list provides one.
@@ -802,6 +830,8 @@ const ChatPage: React.FC = () => {
           systemContextList={systemContextList as SystemContext[]}
           onClickDeleteSystemContext={onClickDeleteSystemContext}
           onClickUpdateSystemContext={onClickUpdateSystemContext}
+          defaultSystemContextId={defaultSystemContextId}
+          onClickDefaultSystemContext={onClickDefaultSystemContext}
           forceExpand={forceExpandPromptList}
         />
       )}
