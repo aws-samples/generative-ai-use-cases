@@ -402,6 +402,13 @@ export class GenerativeAiUseCasesStack extends Stack {
       agentCoreEnabled:
         params.createGenericAgentCoreRuntime ||
         params.agentCoreExternalRuntimes.length > 0,
+      // The runtimes were built with a JWT authorizer exactly when both were
+      // given, so the web app has to call them with a token rather than a
+      // signature. Reading the same two values keeps the two halves from
+      // disagreeing about which it is.
+      agentCoreJwtAuth: Boolean(
+        params.agentCoreUserPoolId && params.agentCoreUserPoolClientId
+      ),
       agentCoreGenericRuntime: genericRuntimeArn
         ? {
             name: genericRuntimeName || 'GenericAgentCoreRuntime',
@@ -618,6 +625,12 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     new CfnOutput(this, 'AgentCoreAgentBuilderEnabled', {
       value: params.agentBuilderEnabled.toString(),
+    });
+
+    new CfnOutput(this, 'AgentCoreJwtAuth', {
+      value: Boolean(
+        params.agentCoreUserPoolId && params.agentCoreUserPoolClientId
+      ).toString(),
     });
 
     new CfnOutput(this, 'AgentCoreAgentBuilderRuntime', {

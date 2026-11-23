@@ -163,6 +163,12 @@ const baseStackInputSchema = z.object({
   agentBuilderEnabled: z.boolean().default(false),
   createGenericAgentCoreRuntime: z.boolean().default(false),
   agentCoreRegion: z.string().nullish(),
+  // The user pool a runtime accepts tokens from, when it is to authenticate
+  // its callers rather than trust what they say about themselves. The pool
+  // itself lives in the stack that depends on this one, so it is named here
+  // rather than passed as a construct.
+  agentCoreUserPoolId: z.string().nullish(),
+  agentCoreUserPoolClientId: z.string().nullish(),
   agentCoreGatewayArns: z.array(z.string()).nullish(),
   // Allow agents created in the agent builder to use AgentCore Web Search.
   // Available in the Regions listed in the AgentCore Web Search documentation.

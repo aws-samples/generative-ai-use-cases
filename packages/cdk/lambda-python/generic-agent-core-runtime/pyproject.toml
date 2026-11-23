@@ -30,6 +30,9 @@ constraint-dependencies = [
   "pillow>=13.0.0",
   "python-multipart>=0.0.26",
   "urllib3>=2.8.0",
+  # Reading the claims of a token AgentCore has already validated. No
+  # signature check here, so no crypto extra.
+  "pyjwt>=2.8",
 ]
 
 [dependency-groups]

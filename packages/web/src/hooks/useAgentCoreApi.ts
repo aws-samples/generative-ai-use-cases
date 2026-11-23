@@ -22,12 +22,58 @@ import {
   makeDocumentNamesUnique,
 } from '../utils/strandsUtils';
 import { getRegionFromArn } from '../utils/arnUtils';
+import { invokesWithToken } from '../utils/agentCoreAuth';
 
 // Get environment variables
 const region = import.meta.env.VITE_APP_REGION as string;
 const modelRegion = import.meta.env.VITE_APP_MODEL_REGION as string;
 const identityPoolId = import.meta.env.VITE_APP_IDENTITY_POOL_ID as string;
 const userPoolId = import.meta.env.VITE_APP_USER_POOL_ID as string;
+/**
+ * Invoke a runtime with a bearer token rather than a signature.
+ *
+ * The SDK signs with SigV4 and offers no bearer scheme, so a runtime guarded
+ * by a JWT authorizer has to be called over plain HTTP. The shape of what
+ * comes back is kept the same as the SDK's, so the caller reads one stream
+ * either way.
+ */
+const invokeWithToken = async (
+  input: InvokeAgentRuntimeCommandInput,
+  clientRegion: string,
+  token: string
+): Promise<{ response?: ReadableStream<Uint8Array> }> => {
+  // The ARN sits in the path, so its colons and slashes have to survive
+  // encoding rather than be read as separators.
+  const arn = encodeURIComponent(input.agentRuntimeArn as string);
+  const qualifier = encodeURIComponent(input.qualifier as string);
+  const url = `https://bedrock-agentcore.${clientRegion}.amazonaws.com/runtimes/${arn}/invocations?qualifier=${qualifier}`;
+
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      ...(input.runtimeSessionId
+        ? {
+            'X-Amzn-Bedrock-AgentCore-Runtime-Session-Id':
+              input.runtimeSessionId,
+          }
+        : {}),
+    },
+    body: input.payload as string,
+  });
+
+  if (!res.ok) {
+    // Without the body an authorizer rejection is an opaque 403: the reason
+    // it gives is the only thing that separates a bad token from a runtime
+    // that was never given an authorizer at all.
+    throw new Error(
+      `InvokeAgentRuntime failed: ${res.status} ${await res.text()}`
+    );
+  }
+
+  return { response: res.body ?? undefined };
+};
 
 const useAgentCoreApi = (id: string) => {
   const {
@@ -102,8 +148,13 @@ const useAgentCoreApi = (id: string) => {
         pushMessage('user', req.prompt);
         pushMessage('assistant', 'Thinking...');
 
-        // Get the ID token from the authenticated user
-        const token = (await fetchAuthSession()).tokens?.idToken?.toString();
+        // The Identity Pool exchanges the ID token for credentials; the JWT
+        // authorizer is configured with allowedClients, which is a claim of the
+        // access token. Which one is needed depends on how the runtime was
+        // built, so take both from the one session.
+        const session = await fetchAuthSession();
+        const token = session.tokens?.idToken?.toString();
+        const accessToken = session.tokens?.accessToken?.toString();
         if (!token) {
           throw new Error('User is not authenticated');
         }
@@ -188,8 +239,21 @@ const useAgentCoreApi = (id: string) => {
           payload: JSON.stringify(agentCoreRequest),
         };
 
-        const command = new InvokeAgentRuntimeCommand(commandInput);
-        const response = await client.send(command);
+        let response;
+        if (invokesWithToken(req.agentRuntimeArn)) {
+          if (!accessToken) {
+            throw new Error('User is not authenticated');
+          }
+          response = await invokeWithToken(
+            commandInput,
+            clientRegion,
+            accessToken
+          );
+        } else {
+          response = await client.send(
+            new InvokeAgentRuntimeCommand(commandInput)
+          );
+        }
 
         // Handle streaming response
         const responseWithStream = response as unknown as {

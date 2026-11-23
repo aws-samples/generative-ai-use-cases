@@ -930,6 +930,29 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!WARNING]
 > VPC モードを使用する場合、例えば PRIVATE から PUBLIC への変更により AgentCore Runtime 削除時にセキュリティグループが自動削除されません。AgentCore Runtime が作成する AWS マネージドな ENI がセキュリティグループを参照するため、CloudFormation では削除できません。AgentCore Runtime 削除後、マネージド ENI が自動削除されるまで待ってから、手動でセキュリティグループを削除してください。削除が必要なセキュリティグループ ID は CloudFormation の出力に表示されます。
 
+#### AgentCore Runtime の呼び出し元の確認 (JWT 認可)
+
+既定では、AgentCore Runtime は Cognito の ID プールの認証情報 (IAM) で呼び出されます。この場合、Runtime に渡される利用者の ID はブラウザが送った値のままで、Runtime はそれが本人かどうかを確かめられません。
+
+`agentCoreUserPoolId` と `agentCoreUserPoolClientId` を両方指定すると、Generic Runtime と AgentBuilder Runtime に JWT の認可が設定されます。
+
+- Web アプリは、ログインしている利用者のアクセストークンで Runtime を呼び出します
+- AgentCore がトークンを検証してからリクエストを Runtime に渡すので、Runtime はトークンの `sub` で呼び出し元を確かめられます (利用者ごとにデータを分ける機能の前提になります)
+- リサーチエージェントの Runtime と、`agentCoreExternalRuntimes` で指定した Runtime は、これまでどおり IAM で呼び出されます
+
+指定する値は、GenU の Cognito User Pool の ID とアプリクライアントの ID です。`GenerativeAiUseCasesStack` の出力の `UserPoolId` と `UserPoolClientId` で確認できます。`AgentCoreStack` は `GenerativeAiUseCasesStack` より先にデプロイされるため、新しく構築する環境では、一度デプロイしてから 2 つの値を設定し、もう一度デプロイしてください。両方とも未設定 (`null`) の場合は、これまでどおり IAM で呼び出されます。
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    createGenericAgentCoreRuntime: true,
+    agentCoreUserPoolId: 'ap-northeast-1_xxxxxxxxx',
+    agentCoreUserPoolClientId: 'xxxxxxxxxxxxxxxxxxxxxxxxxx',
+  },
+};
+```
+
 ### AgentBuilder ユースケースの有効化
 
 ユーザーがシステムプロンプトと任意の MCP を設定することでユースケースごとの Agent を自由に作成できるユースケースです。(Experimental: 予告なく破壊的変更を行うことがあります)

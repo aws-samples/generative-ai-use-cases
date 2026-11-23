@@ -911,6 +911,29 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!WARNING]
 > When using VPC mode, security groups are not automatically deleted when AgentCore Runtime is deleted due to changes such as from PRIVATE to PUBLIC. This is because AWS-managed ENIs created by AgentCore Runtime reference the security groups, making them undeletable by CloudFormation. After deleting AgentCore Runtime, wait for the managed ENIs to be automatically deleted, then manually delete the security groups. The security group IDs that need to be deleted are displayed in the CloudFormation outputs. Note: if the initial deployment fails (e.g., unsupported AZ), the security group may also remain and need to be cleaned up manually.
 
+#### Verifying the caller of the AgentCore Runtimes (JWT authorization)
+
+By default, the AgentCore Runtimes are invoked with Cognito Identity Pool credentials (IAM). The user ID the runtime receives is then whatever the browser sent, and the runtime cannot tell whether it is the caller's own.
+
+Setting both `agentCoreUserPoolId` and `agentCoreUserPoolClientId` configures a JWT authorizer on the Generic Runtime and the AgentBuilder Runtime.
+
+- The web app invokes these runtimes with the signed-in user's access token
+- AgentCore validates the token before passing the request on, so the runtime can identify the caller from the token's `sub` (a prerequisite for features that keep data per user)
+- The research agent runtime and the runtimes in `agentCoreExternalRuntimes` are still invoked with IAM
+
+Specify the ID of GenU's Cognito User Pool and of its app client, shown as the `UserPoolId` and `UserPoolClientId` outputs of `GenerativeAiUseCasesStack`. Because `AgentCoreStack` is deployed before `GenerativeAiUseCasesStack`, deploy a new environment once, then set the two values and deploy again. When neither is set (`null`), the runtimes are invoked with IAM as before.
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    createGenericAgentCoreRuntime: true,
+    agentCoreUserPoolId: 'ap-northeast-1_xxxxxxxxx',
+    agentCoreUserPoolClientId: 'xxxxxxxxxxxxxxxxxxxxxxxxxx',
+  },
+};
+```
+
 ### Enabling AgentBuilder Use Case
 
 This is a use case where users can freely create Agents for each use case by configuring system prompts and arbitrary MCPs. (Experimental: Breaking changes may be made without notice)

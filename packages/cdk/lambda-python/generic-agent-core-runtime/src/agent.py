@@ -54,6 +54,7 @@ class AgentManager:
         prompt: str | list[dict[str, Any]],
         model_info: ModelInfo,
         user_id: str | None = None,
+        verified_user_id: str | None = None,
         mcp_servers: list[str] | None = None,
         session_id: str | None = None,
         agent_id: str | None = None,
@@ -83,6 +84,14 @@ class AgentManager:
             # Log agent info
             if agent_id:
                 logger.debug(f"Processing agent: {agent_id}")
+
+            # Says which of the two identities the runtime is working from. A
+            # per-user store can only be built on the verified one, so this is
+            # what tells you whether it is there before anything depends on it.
+            if verified_user_id:
+                logger.info(f"Caller verified from their own token: {verified_user_id}")
+            else:
+                logger.info("No verified token on this request; caller is unverified")
 
             # Create boto3 session and Bedrock model
             session = boto3.Session(region_name=region)

@@ -8,6 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 
 from src.agent import AgentManager
+from src.identity import verified_subject
 from src.utils import clean_ws_directory, create_error_response, create_ws_directory
 
 # Configure root logger
@@ -65,7 +66,11 @@ async def invocations(request: Request):
         system_prompt = request_data.get("system_prompt")
         prompt = request_data.get("prompt", [])
         model_info = request_data.get("model", {})
+        # The browser writes user_id, so it says who the caller claims to be.
+        # The Authorization header got past the authorizer, so it says who the
+        # caller is — provided the runtime's allowlist forwards it.
         user_id = request_data.get("user_id")
+        verified_user_id = verified_subject(headers.get("authorization"))
         mcp_servers = request_data.get("mcp_servers")
         agent_session_id = request_data.get("session_id")
         agent_id = request_data.get("agent_id")
@@ -87,6 +92,7 @@ async def invocations(request: Request):
                     prompt=prompt,
                     model_info=model_info,
                     user_id=user_id,
+                    verified_user_id=verified_user_id,
                     mcp_servers=mcp_servers,
                     session_id=agent_session_id or session_id,
                     agent_id=agent_id,

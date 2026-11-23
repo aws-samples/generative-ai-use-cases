@@ -70,6 +70,7 @@ export interface WebProps {
   readonly agentCoreAgentBuilderRuntime?: AgentCoreConfiguration;
   readonly agentCoreExternalRuntimes: AgentCoreConfiguration[];
   readonly agentCoreRegion?: string;
+  readonly agentCoreJwtAuth?: boolean;
   readonly researchAgentEnabled: boolean;
   readonly researchAgentRuntime?: AgentCoreConfiguration;
   readonly brandingConfig?: {
@@ -302,6 +303,9 @@ export class Web extends Construct {
         VITE_APP_MCP_ENDPOINT: props.mcpEndpoint ?? '',
         VITE_APP_MCP_SERVERS_CONFIG: props.mcpServersConfig ?? '',
         VITE_APP_AGENT_CORE_ENABLED: props.agentCoreEnabled.toString(),
+        VITE_APP_AGENT_CORE_JWT_AUTH: (
+          props.agentCoreJwtAuth ?? false
+        ).toString(),
         VITE_APP_AGENT_CORE_GENERIC_RUNTIME: JSON.stringify(
           props.agentCoreGenericRuntime
         ),

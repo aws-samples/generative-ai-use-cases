@@ -12,9 +12,11 @@ import {
   BucketEncryption,
 } from 'aws-cdk-lib/aws-s3';
 import { Subnet, Vpc, SecurityGroup, IVpc, ISubnet } from 'aws-cdk-lib/aws-ec2';
+import { CfnRuntime } from 'aws-cdk-lib/aws-bedrockagentcore';
 import {
   Runtime,
   RuntimeNetworkConfiguration,
+  RuntimeAuthorizerConfiguration,
   ProtocolType,
   AgentRuntimeArtifact,
 } from '@aws-cdk/aws-bedrock-agentcore-alpha';
@@ -57,6 +59,12 @@ export interface GenericAgentCoreProps {
   webSearchEnabled?: boolean;
   // Domains excluded from every web search, enforced by the runtime's tool
   webSearchExcludeDomains?: string[];
+  // Given both, a runtime authenticates its callers against this pool rather
+  // than trusting the identity they claim in the payload. Named rather than
+  // passed as a construct: the pool lives in the stack that depends on this
+  // one, so there is no object to hand over.
+  userPoolId?: string;
+  userPoolClientId?: string;
 }
 
 interface RuntimeResources {
@@ -66,6 +74,7 @@ interface RuntimeResources {
 }
 
 export class GenericAgentCore extends Construct {
+  private readonly props: GenericAgentCoreProps;
   private readonly _fileBucket: Bucket;
   private readonly genericRuntimeConfig: AgentCoreRuntimeConfig;
   private readonly agentBuilderRuntimeConfig: AgentCoreRuntimeConfig;
@@ -79,6 +88,7 @@ export class GenericAgentCore extends Construct {
 
   constructor(scope: Construct, id: string, props: GenericAgentCoreProps) {
     super(scope, id);
+    this.props = props;
 
     const {
       env,
@@ -321,7 +331,7 @@ export class GenericAgentCore extends Construct {
       securityGroup
     );
 
-    return new Runtime(this, `${type}AgentCoreRuntime`, {
+    const runtime = new Runtime(this, `${type}AgentCoreRuntime`, {
       runtimeName: config.name,
       agentRuntimeArtifact: AgentRuntimeArtifact.fromAsset(
         path.join(__dirname, `../../${config.dockerPath}`)
@@ -330,7 +340,36 @@ export class GenericAgentCore extends Construct {
       networkConfiguration: networkConfig,
       protocolConfiguration: ProtocolType.HTTP,
       environmentVariables: config.environmentVariables,
+      authorizerConfiguration: this.authorizer(),
     });
+    this.forwardTheCallersToken(runtime);
+    return runtime;
+  }
+
+  /**
+   * Ask AgentCore to pass the caller's token through to the agent.
+   *
+   * A runtime is given only what its allowlist names: by default the
+   * Authorization header is consumed by the authorizer and never reaches the
+   * agent, which is left unable to tell one caller from another. Naming it
+   * here is what lets the agent read the subject of a token the service has
+   * already validated.
+   *
+   * Only with a JWT authorizer — AgentCore refuses the header otherwise, and
+   * under IAM it would hold a SigV4 signature rather than a token.
+   *
+   * Written through the L1: the alpha L2 has no property for this yet.
+   */
+  private forwardTheCallersToken(runtime: Runtime): void {
+    const { userPoolId, userPoolClientId } = this.props;
+    if (!userPoolId || !userPoolClientId) {
+      return;
+    }
+    const cfnRuntime = runtime.node.defaultChild as CfnRuntime;
+    cfnRuntime.addPropertyOverride(
+      'RequestHeaderConfiguration.RequestHeaderAllowlist',
+      ['Authorization']
+    );
   }
 
   private createNetworkConfiguration(
@@ -354,6 +393,32 @@ export class GenericAgentCore extends Construct {
     } else {
       return RuntimeNetworkConfiguration.usingPublicNetwork();
     }
+  }
+
+  /**
+   * How a runtime decides who is calling it.
+   *
+   * Without a pool it is SigV4, and the caller's identity is whatever the
+   * payload claims — fine for a log line, not for deciding whose data a
+   * request may reach. With one, AgentCore validates the token and the
+   * runtime is handed a subject it did not have to take on trust.
+   *
+   * The pool is named rather than passed: it belongs to the stack that
+   * depends on this one, so there is no construct here to point at.
+   */
+  private authorizer(): RuntimeAuthorizerConfiguration {
+    const { userPoolId, userPoolClientId } = this.props;
+    if (!userPoolId || !userPoolClientId) {
+      return RuntimeAuthorizerConfiguration.usingIAM();
+    }
+    // The pool's own region, which its id begins with, not this stack's: the
+    // runtimes may live in another region than the pool (the model region),
+    // and a token is only valid against the issuer that signed it.
+    const region = userPoolId.split('_')[0];
+    return RuntimeAuthorizerConfiguration.usingJWT(
+      `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/openid-configuration`,
+      [userPoolClientId]
+    );
   }
 
   private createExecutionRole(): Role {

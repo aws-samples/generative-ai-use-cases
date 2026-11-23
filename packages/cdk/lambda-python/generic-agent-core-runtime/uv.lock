@@ -17,6 +17,7 @@ constraints = [
     { name = "opentelemetry-api", specifier = ">=1.45.1" },
     { name = "opentelemetry-propagator-jaeger", specifier = ">=1.45.0" },
     { name = "pillow", specifier = ">=13.0.0" },
+    { name = "pyjwt", specifier = ">=2.8" },
     { name = "python-multipart", specifier = ">=0.0.26" },
     { name = "strands-agents-tools", specifier = "<0.9" },
     { name = "urllib3", specifier = ">=2.8.0" },
