@@ -28,6 +28,7 @@ import { getPrompter } from '../prompts';
 import { findModelByModelId } from './useModel';
 import useFileApi from './useFileApi';
 import { initialSystemContext } from './useChatPreferences';
+import { withContinueRequest } from '../utils/continueOutput';
 
 type GenerationMode = 'normal' | 'continue' | 'retry' | 'edit';
 
@@ -566,20 +567,11 @@ const useChatState = create<{
         ? [chatMessages[0], ...chatMessages.slice(-2, sliceEndIndex)]
         : chatMessages.slice(0, sliceEndIndex);
 
-      // If the assistant's message ends with trailing whitespace in the case of continuing to output, the following error occurs
-      // final assistant content cannot end with trailing whitespace
-      // Assistant's message is trimmed of trailing whitespace
+      // In the case of continuing to output, ask for the rest in a user
+      // message instead of prefilling the assistant's message, which newer
+      // models reject. The output is still appended to the cut-off message.
       if (generationMode === 'continue') {
-        inputMessages = inputMessages.map((m: UnrecordedMessage, i: number) => {
-          if (i === inputMessages.length - 1) {
-            return {
-              ...m,
-              content: m.content.trimEnd(),
-            };
-          } else {
-            return m;
-          }
-        });
+        inputMessages = withContinueRequest(inputMessages);
       }
 
       // In the case of retrying, set the last assistant's message to blank
