@@ -194,6 +194,7 @@ const useAgentCoreApi = (id: string) => {
           ...(req.webSearchEnabled !== undefined && {
             web_search_enabled: req.webSearchEnabled,
           }),
+          ...(req.memoryEnabled && { memory_enabled: true }),
         };
 
         console.log(

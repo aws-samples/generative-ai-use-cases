@@ -163,6 +163,13 @@ const baseStackInputSchema = z.object({
   agentBuilderEnabled: z.boolean().default(false),
   createGenericAgentCoreRuntime: z.boolean().default(false),
   agentCoreRegion: z.string().nullish(),
+  // Memory for Agent Builder agents: what a user told an agent is kept past
+  // the conversation (facts, preferences, summaries), per user and per agent.
+  // Each agent still opts in from its own settings.
+  agentCoreMemoryEnabled: z.boolean().default(false),
+  // Days the raw conversation events are kept. The facts, preferences and
+  // summaries drawn from them stay until a user deletes them.
+  agentCoreMemoryExpirationDays: z.number().int().min(7).max(365).default(90),
   agentCoreGatewayArns: z.array(z.string()).nullish(),
   // Allow agents created in the agent builder to use AgentCore Web Search.
   // Available in the Regions listed in the AgentCore Web Search documentation.
@@ -301,6 +308,17 @@ export const stackInputSchema = baseStackInputSchema
       message:
         'agentCoreRegion must equal region when closedNetworkMode=true (the AgentCore Runtime shares the closed VPC, which exists in a single region)',
       path: ['agentCoreRegion'],
+    }
+  )
+  .refine(
+    (data) => {
+      // Memory is kept for the Agent Builder runtime's agents
+      if (!data.agentCoreMemoryEnabled) return true;
+      return data.agentBuilderEnabled;
+    },
+    {
+      message: 'agentCoreMemoryEnabled requires agentBuilderEnabled',
+      path: ['agentCoreMemoryEnabled'],
     }
   )
   .refine((data) => !(data.closedNetworkMode && data.researchAgentEnabled), {

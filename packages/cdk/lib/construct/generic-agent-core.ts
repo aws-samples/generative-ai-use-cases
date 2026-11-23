@@ -5,13 +5,14 @@ import {
   Role,
   ServicePrincipal,
 } from 'aws-cdk-lib/aws-iam';
-import { Stack, RemovalPolicy, Tags } from 'aws-cdk-lib';
+import { Duration, Stack, RemovalPolicy, Tags } from 'aws-cdk-lib';
 import {
   Bucket,
   BlockPublicAccess,
   BucketEncryption,
 } from 'aws-cdk-lib/aws-s3';
 import { Subnet, Vpc, SecurityGroup, IVpc, ISubnet } from 'aws-cdk-lib/aws-ec2';
+import { Memory, MemoryStrategy } from 'aws-cdk-lib/aws-bedrockagentcore';
 import {
   Runtime,
   RuntimeNetworkConfiguration,
@@ -60,6 +61,9 @@ export interface GenericAgentCoreProps {
   webSearchEnabled?: boolean;
   // Domains excluded from every web search, enforced by the runtime's tool
   webSearchExcludeDomains?: string[];
+  // Memory for the Agent Builder runtime. Created only with that runtime.
+  agentMemoryEnabled?: boolean;
+  agentMemoryExpirationDays?: number;
 }
 
 interface RuntimeResources {
@@ -67,6 +71,18 @@ interface RuntimeResources {
   agentBuilderRuntime?: Runtime;
   role: Role;
 }
+
+/**
+ * Where each kind of memory is filed. The runtime builds the same paths to
+ * read and delete them, so they are fixed here rather than left to the
+ * strategy ids AgentCore would otherwise put in them. {actorId} is one user
+ * of one agent (see the runtime's memory.py).
+ */
+export const AGENT_MEMORY_NAMESPACES = {
+  facts: '/genu/facts/{actorId}',
+  preferences: '/genu/preferences/{actorId}',
+  summaries: '/genu/summaries/{actorId}/{sessionId}',
+} as const;
 
 export class GenericAgentCore extends Construct {
   private readonly _fileBucket: Bucket;
@@ -77,6 +93,7 @@ export class GenericAgentCore extends Construct {
   private readonly envName: string;
   private readonly mainRegion: string;
   private readonly webSearchEnabled: boolean;
+  private readonly agentMemory?: Memory;
 
   // Security Group ID that requires manual cleanup after AgentCore Runtime deletion
   // Used for CloudFormation Output to remind users of manual cleanup tasks
@@ -104,6 +121,13 @@ export class GenericAgentCore extends Construct {
     this.envName = env;
     this.mainRegion = props.mainRegion;
     this.webSearchEnabled = webSearchEnabled;
+
+    if (createAgentBuilderRuntime && props.agentMemoryEnabled) {
+      this.agentMemory = this.createAgentMemory(
+        env,
+        props.agentMemoryExpirationDays ?? 90
+      );
+    }
 
     // Create bucket first
     this._fileBucket = this.createFileBucket();
@@ -176,6 +200,51 @@ export class GenericAgentCore extends Construct {
       subnets,
       securityGroup
     );
+
+    // Record conversations, read memories back, and delete them when a user
+    // asks. The runtime acts only on the caller's own actor (memory.py).
+    if (this.agentMemory) {
+      this.agentMemory.grantWrite(this.resources.role);
+      this.agentMemory.grantRead(this.resources.role);
+      this.agentMemory.grantDelete(this.resources.role);
+      // "Delete all" removes records in batches, which grantDelete leaves out
+      this.agentMemory.grant(
+        this.resources.role,
+        'bedrock-agentcore:BatchDeleteMemoryRecords'
+      );
+    }
+  }
+
+  /**
+   * Memory for Agent Builder agents. Three long-term strategies, each filed
+   * under a namespace of its own (AGENT_MEMORY_NAMESPACES): facts the user
+   * stated, the user's preferences, and a summary of each conversation.
+   */
+  private createAgentMemory(env: string, expirationDays: number): Memory {
+    // Letters, digits and underscores only, up to 48 characters
+    const suffix = env.replace(/[^a-zA-Z0-9]/g, '');
+    return new Memory(this, 'AgentBuilderMemory', {
+      memoryName: `GenUAgentBuilderMemory${suffix}`.slice(0, 48),
+      description: 'Memory of Agent Builder agents, per user and per agent',
+      expirationDuration: Duration.days(expirationDays),
+      memoryStrategies: [
+        MemoryStrategy.usingSemantic({
+          strategyName: 'genu_facts',
+          description: 'Facts the user stated to the agent',
+          namespaces: [AGENT_MEMORY_NAMESPACES.facts],
+        }),
+        MemoryStrategy.usingUserPreference({
+          strategyName: 'genu_preferences',
+          description: 'How the user likes to work with the agent',
+          namespaces: [AGENT_MEMORY_NAMESPACES.preferences],
+        }),
+        MemoryStrategy.usingSummarization({
+          strategyName: 'genu_summaries',
+          description: 'A summary of each conversation',
+          namespaces: [AGENT_MEMORY_NAMESPACES.summaries],
+        }),
+      ],
+    });
   }
 
   private createFileBucket(): Bucket {
@@ -269,6 +338,9 @@ export class GenericAgentCore extends Construct {
                   webSearchExcludeDomains
                 ),
               }),
+          }),
+          ...(this.agentMemory && {
+            AGENT_MEMORY_ID: this.agentMemory.memoryId,
           }),
         },
       },

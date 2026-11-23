@@ -6,8 +6,9 @@ import logging
 import traceback
 
 from fastapi import FastAPI, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
+from src import memory
 from src.agent import AgentManager
 from src.user_files import RuntimeConfigUnavailable, runtime_config, verified_user_sub
 from src.utils import clean_ws_directory, create_error_response, create_ws_directory
@@ -73,12 +74,7 @@ async def invocations(request: Request):
         agent_id = request_data.get("agent_id")
         code_execution_enabled = request_data.get("code_execution_enabled", False)
         web_search_enabled = request_data.get("web_search_enabled", False)
-
-        # Validate required fields
-        if not model_info:
-            return create_error_response("Model information is required")
-        if not prompt and not messages:
-            return create_error_response("Either prompt or messages is required")
+        memory_enabled = request_data.get("memory_enabled", False)
 
         # The caller, from their id token. Output files are stored under it.
         # Without a runtime config (local testing) uploads are skipped instead.
@@ -96,6 +92,20 @@ async def invocations(request: Request):
             if user_sub is None:
                 return create_error_response("Unauthorized")
 
+        # The memory screen's requests: list or delete what the caller's agent
+        # remembers. Answered here, without a model, and only for the caller's
+        # own memory (memory.py builds the actor from the verified user).
+        memory_action = request_data.get("memory_action")
+        if memory_action:
+            result = await asyncio.to_thread(memory.handle_action, memory_action, user_sub, agent_id, request_data.get("memory_record_id"))
+            return JSONResponse(result)
+
+        # Validate required fields
+        if not model_info:
+            return create_error_response("Model information is required")
+        if not prompt and not messages:
+            return create_error_response("Either prompt or messages is required")
+
         # Stream response
         async def generate():
             try:
@@ -112,6 +122,7 @@ async def invocations(request: Request):
                     web_search_enabled=web_search_enabled,
                     user_sub=user_sub,
                     file_config=config,
+                    memory_enabled=memory_enabled,
                 ):
                     yield chunk
             finally:

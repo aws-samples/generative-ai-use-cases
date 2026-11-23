@@ -12,6 +12,7 @@ import { AgentConfiguration } from 'generative-ai-use-cases';
 import usePromptGeneration from '../../hooks/usePromptGeneration';
 import useMCPServers from '../../hooks/useMCPServers';
 import { PiSparkle, PiStop } from 'react-icons/pi';
+import { agentMemoryAvailable } from '../../hooks/agentBuilder/useAgentMemory';
 
 export interface AgentFormData {
   name: string;
@@ -21,6 +22,7 @@ export interface AgentFormData {
   mcpServers: string[];
   codeExecutionEnabled: boolean;
   webSearchEnabled: boolean;
+  memoryEnabled: boolean;
   isPublic: boolean;
   tags: string[];
 }
@@ -84,6 +86,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
     mcpServers: [],
     codeExecutionEnabled: false,
     webSearchEnabled: false,
+    memoryEnabled: false,
     isPublic: false,
     tags: [],
   });
@@ -158,6 +161,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
         mcpServers: initialData.mcpServers || [],
         codeExecutionEnabled: initialData.codeExecutionEnabled || false,
         webSearchEnabled: initialData.webSearchEnabled || false,
+        memoryEnabled: initialData.memoryEnabled || false,
         isPublic: initialData.isPublic || false,
         tags: initialData.tags || [],
       });
@@ -433,6 +437,33 @@ const AgentForm: React.FC<AgentFormProps> = ({
                 </label>
                 <p className="mt-1 text-xs text-gray-500">
                   {t('agent_builder.web_search_description')}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {agentMemoryAvailable && (
+            <div className="flex items-start space-x-3">
+              <input
+                type="checkbox"
+                id="memoryEnabled"
+                checked={formData.memoryEnabled}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    memoryEnabled: e.target.checked,
+                  })
+                }
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <div className="flex-1">
+                <label
+                  htmlFor="memoryEnabled"
+                  className="block cursor-pointer text-sm font-medium text-gray-700">
+                  {t('agent_builder.enable_memory')}
+                </label>
+                <p className="mt-1 text-xs text-gray-500">
+                  {t('agent_builder.memory_description')}
                 </p>
               </div>
             </div>

@@ -67,6 +67,7 @@ export interface WebProps {
   readonly agentCoreGenericRuntime?: AgentCoreConfiguration;
   readonly agentBuilderEnabled: boolean;
   readonly agentBuilderWebSearchEnabled: boolean;
+  readonly agentCoreMemoryEnabled?: boolean;
   readonly agentCoreAgentBuilderRuntime?: AgentCoreConfiguration;
   readonly agentCoreExternalRuntimes: AgentCoreConfiguration[];
   readonly agentCoreRegion?: string;
@@ -315,6 +316,10 @@ export class Web extends Construct {
           props.agentBuilderEnabled.toString(),
         VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED:
           props.agentBuilderWebSearchEnabled.toString(),
+        VITE_APP_AGENT_CORE_MEMORY_ENABLED: (
+          props.agentBuilderEnabled &&
+          (props.agentCoreMemoryEnabled ?? false)
+        ).toString(),
         VITE_APP_AGENT_CORE_AGENT_BUILDER_RUNTIME: JSON.stringify(
           props.agentCoreAgentBuilderRuntime
         ),

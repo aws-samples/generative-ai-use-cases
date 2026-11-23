@@ -435,6 +435,7 @@ export class GenerativeAiUseCasesStack extends Stack {
         : undefined,
       agentBuilderEnabled: params.agentBuilderEnabled,
       agentBuilderWebSearchEnabled: params.agentBuilderWebSearchEnabled,
+      agentCoreMemoryEnabled: params.agentCoreMemoryEnabled,
       agentCoreAgentBuilderRuntime: agentBuilderRuntimeArn
         ? {
             name: agentBuilderRuntimeName || 'AgentBuilderAgentCoreRuntime',
@@ -642,6 +643,12 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     new CfnOutput(this, 'AgentCoreAgentBuilderEnabled', {
       value: params.agentBuilderEnabled.toString(),
+    });
+
+    new CfnOutput(this, 'AgentCoreMemoryEnabled', {
+      value: (
+        params.agentBuilderEnabled && params.agentCoreMemoryEnabled
+      ).toString(),
     });
 
     new CfnOutput(this, 'AgentCoreAgentBuilderRuntime', {

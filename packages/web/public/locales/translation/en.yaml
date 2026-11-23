@@ -72,6 +72,7 @@ agent_builder:
   edit_agent: Edit Agent
   editor: Editor
   enable_code_execution: Enabling code execution
+  enable_memory: Remember each user
   enable_web_search: Enabling web search
   enter_agent_name: Enter the agent name
   enter_system_prompt: Enter a system prompt that defines the agent behavior
@@ -105,6 +106,19 @@ agent_builder:
     servers are pre-configured by administrators for security.
   mcp_servers: MCP Servers
   mcp_servers_description: Add MCP servers to provide tools and capabilities to your agent
+  memory_badge: Memory
+  memory_button: View memory
+  memory_delete: Delete this memory
+  memory_delete_all: Delete all
+  memory_delete_all_confirm: 'This deletes everything this agent remembers about you, and the recorded conversations. It cannot be undone.'
+  memory_description: 'Remembers facts and preferences users state, and a summary of each conversation, for use in later conversations. Memory is kept per user and per agent, and users can view and delete their own.'
+  memory_empty: Nothing remembered yet.
+  memory_explanation: What this agent remembers about you. Other people and other agents cannot see it.
+  memory_kind_facts: Facts
+  memory_kind_heading: '{{kind}} ({{count}})'
+  memory_kind_preferences: Preferences
+  memory_kind_summaries: Earlier conversations
+  memory_title: 'What {{name}} remembers'
   model: Model
   my_agents: My Agents
   name: Name
