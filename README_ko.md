@@ -14,12 +14,9 @@
   <img src="./docs/assets/images/sc_lp_en.png" alt="비즈니스 운영에서 생성형 AI를 활용하기 위한 비즈니스 사용 사례가 포함된 Well-architected 애플리케이션 구현" width="68%">
 </div>
 
-> [!IMPORTANT]
-> GenU는 v4부터 다국어를 지원합니다.
->
-> GenU has supported multiple languages since v4.
->
-> GenU は v4 から多言語対応しました。일본어 문서는 [여기](./README_ja.md)를 참조하세요.
+## 새로운 기능
+
+각 릴리스의 변경 내용, 다음 릴리스의 예정 사항, 업데이트 전 확인 사항은 [Release Notes (English)](docs/en/RELEASE_NOTES.md)를 참조하세요.
 
 ## GenU 사용 패턴
 
@@ -31,7 +28,7 @@
 <details markdown="1">
   <summary><strong><ins>생성형 AI 사용 사례를 경험하고 싶습니다</ins></strong></summary>
 
-GenU는 생성형 AI를 활용한 다양한 표준 사용 사례를 제공합니다. 이러한 사용 사례는 비즈니스 운영에서 생성형 AI를 활용하는 방법에 대한 아이디어의 씨앗 역할을 하거나, 그대로 비즈니스에 직접 적용할 수 있습니다. 앞으로도 더욱 정교한 사용 사례를 지속적으로 추가할 예정입니다. 불필요한 경우 옵션으로 [특정 사용 사례를 숨길](docs/ko/DEPLOY_OPTION.md#hiding-specific-use-cases) 수도 있습니다. 다음은 기본적으로 제공되는 사용 사례입니다.
+GenU는 생성형 AI를 활용한 다양한 표준 사용 사례를 제공합니다. 이러한 사용 사례는 비즈니스 운영에서 생성형 AI를 활용하는 방법에 대한 아이디어의 씨앗 역할을 하거나, 그대로 비즈니스에 직접 적용할 수 있습니다. 앞으로도 더욱 정교한 사용 사례를 지속적으로 추가할 예정입니다. 불필요한 경우 옵션으로 [특정 사용 사례를 숨길](docs/ko/DEPLOY_OPTION.md#hiding-specific-use-cases) 수도 있습니다. 다음은 사용 사례 목록입니다. (옵션)이 붙은 사용 사례는 배포 옵션으로 활성화하면 사용할 수 있습니다.
 
   <br/>
   <br/>
@@ -76,7 +73,7 @@ GenU는 생성형 AI를 활용한 다양한 표준 사용 사례를 제공합니
         <td>이미지 생성 AI는 텍스트나 기존 이미지를 기반으로 새로운 이미지를 생성할 수 있습니다. 아이디어의 즉각적인 시각화를 가능하게 하여 디자인 작업의 효율성을 향상시킬 수 있습니다. 이 기능에서 LLM은 프롬프트 생성을 도울 수 있습니다.</td>
       </tr>
       <tr>
-        <td>비디오 생성</td>
+        <td>비디오 생성 (옵션)</td>
         <td>비디오 생성 AI는 텍스트에서 짧은 비디오를 생성합니다. 생성된 비디오는 다양한 시나리오에서 자료로 사용할 수 있습니다.</td>
       </tr>
       <tr>
@@ -91,8 +88,19 @@ GenU는 생성형 AI를 활용한 다양한 표준 사용 사례를 제공합니
         <td>음성 채팅</td>
         <td>음성 채팅에서는 생성형 AI와 양방향 음성 채팅을 할 수 있습니다. 자연스러운 대화와 유사하게, AI가 말하는 동안 중단하고 말할 수도 있습니다. 또한 시스템 프롬프트를 설정하여 특정 역할을 가진 AI와 음성 대화를 할 수 있습니다.</td>
       </tr>
+      <tr>
+        <td>Agent Builder (옵션)</td>
+        <td>지침을 작성하고 도구와 MCP 서버를 선택하는 것만으로 코드 없이 에이전트를 만들고 다른 사용자와 공유할 수 있습니다. <a href="docs/ko/DEPLOY_OPTION.md#agentbuilder-사용-사례-활성화">AgentBuilder 사용 사례 활성화</a>를 참조하세요.</td>
+      </tr>
+      <tr>
+        <td>리서치 (옵션)</td>
+        <td>에이전트가 웹과 AWS 문서를 검색하여 주제에 대한 보고서를 작성합니다. <a href="docs/ko/DEPLOY_OPTION.md#리서치-에이전트-유스케이스-활성화">리서치 에이전트 유스케이스 활성화</a>를 참조하세요.</td>
+      </tr>
     </tbody>
   </table>
+
+RAG Chat, Agent Chat, AgentCore는 아래 사용 패턴에서 소개합니다.
+
 </details>
 
 <details markdown="1">
@@ -103,17 +111,16 @@ RAG는 LLM이 일반적으로 어려워하는 외부의 최신 정보나 도메�
 RAG는 또한 증거에 기반한 답변만을 허용함으로써 LLM이 "그럴듯하지만 잘못된 정보"를 제공하는 것을 방지하는 효과가 있습니다.
 
 GenU는 RAG Chat 사용 사례를 제공합니다.
-RAG Chat에는 두 가지 유형의 정보 소스를 사용할 수 있습니다: [Amazon Kendra](docs/ko/DEPLOY_OPTION.md)와 [Knowledge Base](docs/ko/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case).
-Amazon Kendra를 사용할 때는 [수동으로 생성된 S3 버킷이나 Kendra 인덱스를 그대로 사용](docs/ko/DEPLOY_OPTION.md#using-an-existing-amazon-kendra-index)할 수 있습니다.
-
-> [!IMPORTANT]
-> Amazon Kendra는 2026년 6월 30일에 유지 관리 모드로 전환되었으며, 2026년 7월 30일부터 신규 고객을 받지 않습니다 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). 새로 RAG 채팅을 구축하는 경우 Knowledge Base 옵션 사용을 권장합니다. 벡터 스토어의 고정 비용을 피하려면 `ragKnowledgeBaseStorageType`을 `s3vectors`로 설정하십시오.
+RAG Chat의 정보 소스로는 [Knowledge Bases for Amazon Bedrock](docs/ko/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case)을 사용합니다. 벡터 스토어의 고정 비용을 피하려면 `ragKnowledgeBaseStorageType`을 `s3vectors`로 설정하십시오.
 
 Knowledge Base를 사용할 때는 [고급 파싱](docs/ko/DEPLOY_OPTION.md#enabling-advanced-parsing), [청크 전략 선택](docs/ko/DEPLOY_OPTION.md#changing-chunking-strategy), [쿼리 분해](docs/ko/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case), [재순위](docs/ko/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case)와 같은 고급 RAG 기능을 사용할 수 있습니다.
 Knowledge Base는 또한 [메타데이터 필터 설정](docs/ko/DEPLOY_OPTION.md#metadata-filter-configuration)을 허용합니다.
 예를 들어, "조직별로 접근 가능한 데이터 소스 전환" 또는 "사용자가 UI에서 필터를 설정할 수 있도록 허용"과 같은 요구사항을 충족할 수 있습니다.
 
-또한 [MCP 채팅을 활성화](docs/ko/DEPLOY_OPTION.md#enabling-mcp-chat-use-case)하고 외부 서비스의 MCP 서버를 [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json)에 추가하여 AWS 외부의 데이터를 참조하는 RAG를 구축할 수 있습니다.
+AWS 외부의 데이터를 기반으로 답변하게 하려면 [AgentCore 사용 사례](docs/ko/DEPLOY_OPTION.md#agentcore-사용-사례-활성화)나 [Agent Builder](docs/ko/DEPLOY_OPTION.md#agentbuilder-사용-사례-활성화)의 에이전트에 외부 서비스의 MCP 서버를 추가하세요.
+
+> [!NOTE]
+> Amazon Kendra는 2026년 6월 30일에 유지 관리 모드로 전환되었으며, 2026년 7월 30일부터 신규 고객을 받지 않습니다 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). 이미 사용 중인 경우 [Amazon Kendra 옵션](docs/ko/DEPLOY_OPTION.md#rag-chat-amazon-kendra-사용-사례-활성화)을 계속 사용할 수 있으며, [수동으로 생성된 S3 버킷이나 Kendra 인덱스](docs/ko/DEPLOY_OPTION.md#기존-amazon-kendra-인덱스-사용)도 사용할 수 있습니다.
 
 </details>
 
@@ -130,11 +137,11 @@ GenU는 수동으로 생성했거나 다른 자산으로 생성한 [에이전트
 GenU를 에이전트 활용 플랫폼으로 사용하면 GenU의 [풍부한 보안 옵션](docs/ko/DEPLOY_OPTION.md#security-related-settings)과 [SAML 인증](docs/ko/DEPLOY_OPTION.md#saml-authentication)을 활용하여 조직 내에 실용적인 에이전트를 확산시킬 수 있습니다.
 또한 [불필요한 표준 사용 사례를 숨기거나](docs/ko/DEPLOY_OPTION.md#hiding-specific-use-cases) [에이전트를 인라인으로 표시](docs/ko/DEPLOY_OPTION.md#displaying-agents-inline)하여 GenU를 더 에이전트 중심의 플랫폼으로 사용할 수 있습니다.
 
-AgentCore Runtime에 대해서도 마찬가지로 [가져오기 기능](docs/ko/DEPLOY_OPTION.md#enabling-agentcore-use-cases)이 있으므로 활용해 주세요.
+AgentCore Runtime에 대해서도 마찬가지로 [가져오기 기능](docs/ko/DEPLOY_OPTION.md#agentcore-사용-사례-활성화)이 있으므로 활용해 주세요.
 
 마찬가지로 Bedrock Flows에 대한 [가져오기 기능](docs/ko/DEPLOY_OPTION.md#enabling-flow-chat-use-case)이 있으므로 활용해 주세요.
 
-또한 [MCP 채팅을 활성화](docs/ko/DEPLOY_OPTION.md#enabling-mcp-chat-use-case)하고 외부 MCP 서버를 [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json)에 추가하여 AWS 외부 서비스에서 작업을 수행하는 에이전트를 생성할 수 있습니다.
+에이전트를 직접 만들고 싶다면 [Agent Builder](docs/ko/DEPLOY_OPTION.md#agentbuilder-사용-사례-활성화)에서 사용자가 코드 없이 에이전트를 만들 수 있습니다. AgentCore 사용 사례와 Agent Builder의 에이전트는 관리자가 등록한 MCP 서버를 통해 AWS 외부 서비스에서 작업을 수행할 수도 있습니다.
 
 </details>
 
@@ -161,12 +168,33 @@ GenU는 OSS이므로 자체 사용 사례를 추가하도록 사용자 정의할
 
 </details>
 
+<details markdown="1">
+  <summary><strong><ins>생성형 AI의 사용 현황과 비용을 파악하고 싶습니다</ins></strong></summary>
+
+GenU는 사용자별로 소비한 토큰 수를 기록합니다.
+Cognito의 `SystemAdminGroup` 그룹 구성원은 [관리자 페이지](docs/ko/DEPLOY_OPTION.md#관리자-페이지)에서 모든 사용자의 토큰 사용량과 예상 비용을 확인하고, 사용자와 기간으로 범위를 좁히고, CSV로 다운로드할 수 있습니다.
+각 사용자는 설정 화면의 사용량 탭에서 자신의 사용량과 비용을 확인할 수 있습니다.
+
+GenU는 Bedrock 호출에 사용자와 사용 사례 태그를 붙이므로 [모니터링 대시보드](docs/ko/DEPLOY_OPTION.md#모니터링-대시보드-활성화)를 활성화하면 사용자별, 사용 사례별 사용 현황을 Amazon CloudWatch에서도 확인할 수 있습니다.
+AWS 청구를 나누어 확인하려면 GenU가 생성하는 리소스에 [비용 할당 태그를 설정](docs/ko/DEPLOY_OPTION.md#태그-설정-방법)하세요.
+
+</details>
+
+<details markdown="1">
+  <summary><strong><ins>조직 내부 네트워크에서만 GenU를 사용하고 싶습니다</ins></strong></summary>
+
+[폐쇄 네트워크 모드](docs/ko/CLOSED_NETWORK.md)에서는 클라이언트가 인터넷이 아닌 VPC를 통해 GenU에 접근하고, GenU는 VPC 엔드포인트를 통해 AWS 서비스를 호출합니다.
+VPC 엔드포인트는 활성화한 기능에 필요한 것만 생성되며, AgentCore도 폐쇄 VPC 내에서 실행됩니다.
+폐쇄 네트워크 모드에서 사용할 수 있는 기능, VPC 엔드포인트의 고정 비용, Site-to-Site VPN, AWS Direct Connect, AWS Client VPN으로 조직 네트워크에서 연결하는 방법도 설명합니다.
+![arch-closed-network.drawio.png](./docs/assets/images/arch-closed-network.drawio.png)
+
+GenU에 접근할 수 있는 사람만 제한하려면 IP 주소 제한이나 SAML 인증 등의 [보안 관련 설정](docs/ko/DEPLOY_OPTION.md#security-related-settings)으로 충분할 수 있습니다.
+
+</details>
+
 ## 배포
 
-> [!IMPORTANT]
-> [`/packages/cdk/cdk.json`](/packages/cdk/cdk.json)에 나열된 `modelRegion` 지역에서 `modelIds`(텍스트 생성), `imageGenerationModelIds`(이미지 생성), `videoGenerationModelIds`(비디오 생성)를 활성화하세요. ([Amazon Bedrock 모델 액세스 화면](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess))
-
-GenU 배포는 [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/) (CDK)를 사용합니다. CDK 실행 환경을 준비할 수 없는 경우 다음 배포 방법을 참조하세요:
+GenU 배포는 [AWS Cloud Development Kit](https://aws.amazon.com/cdk/) (CDK)를 사용합니다. CDK 실행 환경을 준비할 수 없는 경우 다음 배포 방법을 참조하세요:
 
 - [AWS CloudShell을 사용한 배포 방법 (자체 환경 준비가 어려운 경우)](docs/ko/DEPLOY_ON_CLOUDSHELL.md)
 - 워크샵 ([영어](https://catalog.workshops.aws/generative-ai-use-cases) / [일본어](https://catalog.workshops.aws/generative-ai-use-cases-jp))
@@ -185,11 +213,13 @@ git switch -c genu $(git describe --tags --abbrev=0)
 npm ci
 ```
 
-CDK를 처음 사용하는 경우 처음에만 [Bootstrap](https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/bootstrapping.html)이 필요합니다. 환경이 이미 부트스트랩된 경우 다음 명령은 불필요합니다.
+CDK를 처음 사용하는 경우 처음에만 [Bootstrap](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html)이 필요합니다. 환경이 이미 부트스트랩된 경우 다음 명령은 불필요합니다.
 
 ```bash
 npx -w packages/cdk cdk bootstrap
 ```
+
+기본 설정 그대로도 배포할 수 있습니다. 모델이나 활성화할 사용 사례를 선택하려면 [packages/cdk/parameter.ts](/packages/cdk/parameter.ts)에 환경(예: `dev`)의 설정을 작성하고 배포 명령에 `-c env=dev`를 추가하세요. 매개변수는 [배포 옵션](docs/ko/DEPLOY_OPTION.md)을 참조하세요.
 
 다음으로, 다음 명령으로 AWS 리소스를 배포하세요. 배포가 완료될 때까지 기다리세요(약 20분 소요될 수 있습니다).
 
@@ -220,8 +250,8 @@ npm run cdk:deploy:quick
 GenU 사용을 위한 구성 및 비용 추정 예제를 게시했습니다. (서비스는 사용한 만큼 지불하는 방식이며, 실제 비용은 사용량에 따라 달라집니다.)
 
 - [간단한 버전 (RAG 없음) 추정](https://aws.amazon.com/jp/cdp/ai-chatbot/)
-- [RAG 포함 (Amazon Kendra) 추정](https://aws.amazon.com/jp/cdp/ai-chatapp/)
 - [RAG 포함 (Knowledge Base) 추정](https://aws.amazon.com/jp/cdp/genai-chat-app/)
+- [RAG 포함 (Amazon Kendra) 추정](https://aws.amazon.com/jp/cdp/ai-chatapp/) (Amazon Kendra를 이미 사용 중인 경우)
 
 ## 고객 사례 연구
 
