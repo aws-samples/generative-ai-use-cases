@@ -265,6 +265,7 @@ const GenerateImageAssistant: React.FC<Props> = (props) => {
         </div>
         <div className="absolute bottom-0 z-0 -ml-2 flex w-full items-end justify-center pr-6">
           <InputChatContent
+            voiceInput
             placeholder={t('generateImage.assistant.input_placeholder')}
             fullWidth
             hideReset

@@ -327,6 +327,7 @@ const VideoAnalyzerPage: React.FC = () => {
               </div>
               <div className="mt-3">
                 <InputChatContent
+                  voiceInput
                   onSend={sendFrame}
                   disabled={
                     !recording || loading || sending || content.length === 0
