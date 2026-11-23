@@ -31,14 +31,14 @@ const Content = () => {
               type: 'CONTENT',
               content,
             } as MessagePayload,
-            '*'
+            '*',
           );
           iframe.current?.contentWindow?.postMessage(
             {
               type: 'SYSTEM-CONTEXT',
               systemContext,
             } as MessagePayload,
-            '*'
+            '*',
           );
         }}
       />
@@ -46,7 +46,7 @@ const Content = () => {
         ref={iframe}
         className={twMerge(
           'fixed z-[9999999999999] right-0 top-0 h-dvh shadow-xl border-1 bg-aws-squid-ink transition-all',
-          isOpenChat ? 'xl:w-1/3 lg:2/5 md:w-2/5 sm:w-2/3' : 'w-0'
+          isOpenChat ? 'xl:w-1/3 lg:2/5 md:w-2/5 sm:w-2/3' : 'w-0',
         )}
         src={Browser.runtime.getURL('pages/chat/index.html')}
         // Let the chat copy a response to the clipboard

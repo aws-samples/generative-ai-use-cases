@@ -8,7 +8,7 @@ import remarkBreaks from 'remark-breaks';
 const styled = <T extends keyof JSX.IntrinsicElements>(
   tag: T,
   className: string,
-  extra: Partial<ComponentProps<T>> = {}
+  extra: Partial<ComponentProps<T>> = {},
 ) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const Styled = ({ node, ...props }: ComponentProps<T> & ExtraProps) =>
@@ -37,7 +37,7 @@ const components: Components = {
   code: styled('code', 'bg-white/10 rounded px-1 font-mono text-sm'),
   pre: styled(
     'pre',
-    'bg-black/30 rounded p-2 my-2 overflow-x-auto text-sm [&>code]:bg-transparent [&>code]:p-0'
+    'bg-black/30 rounded p-2 my-2 overflow-x-auto text-sm [&>code]:bg-transparent [&>code]:p-0',
   ),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   table: ({ node, ...props }) => (
