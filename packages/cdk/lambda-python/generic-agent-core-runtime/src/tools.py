@@ -187,20 +187,20 @@ class ToolManager:
                 raise ValueError(f"{filepath} does not appear to be a file under the {WORKSPACE_DIR} directory. Files to be uploaded must exist under {WORKSPACE_DIR}.")
 
             # A file made by the code interpreter is in its sandbox, not here.
-            # Bring it over so it can be uploaded like any other.
+            # Its bytes are uploaded as they are, without a copy on this disk.
+            data = None
             if not os.path.exists(filepath) and self.code_interpreter is not None:
                 data = sandbox.read_file(self.code_interpreter, filepath)
-                if data is not None:
-                    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-                    with open(filepath, "wb") as f:
-                        f.write(data)
 
             try:
                 filename = os.path.basename(filepath)
                 key = f"agentcore/{trace_id}/{filename}"
 
                 s3 = boto3.client("s3", region_name=region)
-                s3.upload_file(filepath, bucket, key)
+                if data is not None:
+                    s3.put_object(Bucket=bucket, Key=key, Body=data)
+                else:
+                    s3.upload_file(filepath, bucket, key)
 
                 return f"https://{bucket}.s3.{region}.amazonaws.com/{key}"
             except Exception as e:

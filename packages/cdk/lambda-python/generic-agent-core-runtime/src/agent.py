@@ -1,5 +1,6 @@
 """Agent management for the agent core runtime."""
 
+import asyncio
 import json
 import logging
 from collections.abc import AsyncGenerator
@@ -116,11 +117,13 @@ class AgentManager:
             # The code interpreter has a sandbox of its own: put the attachments
             # there, and tell the model where they are and how to hand files back.
             code_interpreter = self.tool_manager.code_interpreter
+            hooks = []
             if code_interpreter is not None:
                 files = sandbox.attachments(processed_messages, processed_prompt)
+                # Starts a sandbox session only when there is something to put in it
                 paths = sandbox.put_attachments(code_interpreter, files)
-                fonts = sandbox.set_up_fonts(code_interpreter)
-                combined_system_prompt += "\n" + get_code_interpreter_prompt(paths, fonts)
+                combined_system_prompt += "\n" + get_code_interpreter_prompt(paths)
+                hooks.append(sandbox.FontSetupHook(code_interpreter))
 
             # Create Strands agent and stream response
             agent = StrandsAgent(
@@ -129,6 +132,7 @@ class AgentManager:
                 model=bedrock_model,
                 tools=tools,
                 callback_handler=self.iteration_limit_handler,
+                hooks=hooks,
             )
 
             async for event in agent.stream_async(processed_prompt):
@@ -146,6 +150,8 @@ class AgentManager:
             }
             yield json.dumps(error_event, ensure_ascii=False) + "\n"
         finally:
+            if self.tool_manager.code_interpreter is not None:
+                await asyncio.to_thread(sandbox.stop_sessions, self.tool_manager.code_interpreter)
             # Cleanup is handled automatically by the dynamic MCP client
             if user_id:
                 logger.debug(f"Session cleanup for user {user_id} handled automatically")

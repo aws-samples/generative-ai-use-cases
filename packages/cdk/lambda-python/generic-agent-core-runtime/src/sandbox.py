@@ -13,10 +13,13 @@ one path means the same file on both sides.
 """
 
 import ast
+import asyncio
 import logging
 import os
 import re
 from typing import Any
+
+from strands.hooks import BeforeToolCallEvent, HookProvider, HookRegistry
 
 from .config import WORKSPACE_DIR
 
@@ -31,9 +34,9 @@ def _safe_name(name: str) -> str:
 def attachments(messages: list[Any], prompt: Any) -> dict[str, bytes]:
     """The attached documents and images, by file name.
 
-    Earlier messages are sent again with every request, and the sandbox is new
-    each time, so their attachments are included too. A later one with the same
-    name replaces an earlier one.
+    The sandbox is new for every request, so attachments in earlier messages
+    are included too, when the client sent them again. A later one with the
+    same name replaces an earlier one.
     """
     blocks: list[Any] = []
     for message in messages or []:
@@ -58,7 +61,7 @@ def attachments(messages: list[Any], prompt: Any) -> dict[str, bytes]:
             data = image.get("source", {}).get("bytes")
             if isinstance(data, bytes):
                 images += 1
-                files[f"image-{images}.{image.get('format') or 'png'}"] = data
+                files[_safe_name(f"image-{images}.{image.get('format') or 'png'}")] = data
     return files
 
 
@@ -133,6 +136,49 @@ def set_up_fonts(code_interpreter) -> str | None:
     return families or None
 
 
+class FontSetupHook(HookProvider):
+    """Set up the fonts right before the model first runs the code interpreter.
+
+    Doing it up front would start a billed sandbox session on every request with
+    code execution enabled, even when the model never uses it. The setup runs in
+    a thread so the event loop (and /ping) is not held up meanwhile.
+    """
+
+    def __init__(self, code_interpreter):
+        self.code_interpreter = code_interpreter
+        self.done = False
+
+    def register_hooks(self, registry: HookRegistry, **kwargs: Any) -> None:
+        registry.add_callback(BeforeToolCallEvent, self.before_tool_call)
+
+    async def before_tool_call(self, event: BeforeToolCallEvent) -> None:
+        if self.done or event.tool_use.get("name") != "code_interpreter":
+            return
+        self.done = True
+        await asyncio.to_thread(set_up_fonts, self.code_interpreter)
+
+
+def stop_sessions(code_interpreter) -> None:
+    """Stop the sandbox sessions this request started.
+
+    The tool keeps its sessions alive after the request (persist_sessions) until
+    they time out, which keeps them billed. Its own cleanup only runs when the
+    sessions were started through the tool entry point, and the attachments and
+    font setup start them directly, so stop them here.
+    """
+    from strands_tools.code_interpreter.agent_core_code_interpreter import _session_mapping
+
+    sessions = getattr(code_interpreter, "_sessions", {})
+    for name, session in list(sessions.items()):
+        try:
+            session.client.stop()
+        except Exception as e:
+            logger.warning(f"Could not stop the code interpreter session {name}: {e}")
+        # Forget the name too, or a later instance would try to reconnect to it
+        _session_mapping.pop(name, None)
+    sessions.clear()
+
+
 def read_file(code_interpreter, path: str) -> bytes | None:
     """The bytes of a file the model wrote in the sandbox, or None if it is not there."""
     from strands_tools.code_interpreter.models import ExecuteCommandAction, ReadFilesAction
@@ -146,15 +192,18 @@ def read_file(code_interpreter, path: str) -> bytes | None:
     except Exception as e:
         logger.warning(f"Could not read {path} from the code interpreter sandbox: {e}")
         return None
-    # The tool returns its MCP-style result as the repr of a list, with the
-    # file's bytes as a bytes literal.
+    # The tool returns its MCP-style result as the repr of a list. A file that
+    # decodes as UTF-8 comes back as `text` (CSV, Markdown, code...), any other
+    # as `blob`, a bytes literal.
     for part in result.get("content", []):
         try:
             items = ast.literal_eval(part.get("text", ""))
         except (ValueError, SyntaxError):
             continue
         for item in items if isinstance(items, list) else []:
-            blob = item.get("resource", {}).get("blob") if isinstance(item, dict) else None
-            if isinstance(blob, bytes):
-                return blob
+            resource = item.get("resource", {}) if isinstance(item, dict) else {}
+            if isinstance(resource.get("blob"), bytes):
+                return resource["blob"]
+            if isinstance(resource.get("text"), str):
+                return resource["text"].encode("utf-8")
     return None
