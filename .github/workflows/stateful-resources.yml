@@ -1,0 +1,50 @@
+name: Stateful resource check
+
+# Fails a pull request that would delete or replace a DynamoDB table, S3
+# bucket, Cognito pool or other data-holding resource when an existing
+# deployment is updated.
+#
+# packages/cdk/test/stateful-resources.test.ts snapshots those resources, and
+# the main CI (`npm run cdk:test`) keeps the snapshot in sync with the code.
+# Here, any removed or changed line in that snapshot fails the check; added
+# resources pass. It needs no install or synth and runs in seconds.
+#
+# If the change is intended (for example, a documented migration), a
+# maintainer adds the `allow-stateful-change` label. Label events re-run this
+# workflow only.
+
+on:
+  pull_request:
+    branches: ['main']
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: 'Check stateful resources'
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'allow-stateful-change') }}
+    env:
+      SNAPSHOT: packages/cdk/test/__snapshots__/stateful-resources.test.ts.snap
+    steps:
+      # The pull_request checkout is a merge commit whose first parent is the
+      # current base branch, so HEAD^1..HEAD is exactly this PR's change.
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+      - name: Fail on removed or changed stateful resources
+        run: |
+          if ! git cat-file -e "HEAD^1:$SNAPSHOT" 2>/dev/null; then
+            echo "No baseline snapshot on the base branch; nothing to compare."
+            exit 0
+          fi
+          git diff --unified=6 HEAD^1 HEAD -- "$SNAPSHOT" > "$RUNNER_TEMP/stateful.diff"
+          if ! grep -qE '^-[^-]' "$RUNNER_TEMP/stateful.diff"; then
+            echo "No stateful resource is removed, replaced or unprotected."
+            exit 0
+          fi
+          echo "::error::This change removes or changes data-holding resources. Updating an existing deployment would delete or replace them, and their data."
+          cat "$RUNNER_TEMP/stateful.diff"
+          exit 1

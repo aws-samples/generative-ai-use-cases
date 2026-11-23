@@ -3,7 +3,7 @@ import InputChatContent from '../components/InputChatContent';
 import { create } from 'zustand';
 import useChat from '../hooks/useChat';
 import useRag from '../hooks/useRag';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ChatMessage from '../components/ChatMessage';
 import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
@@ -36,6 +36,7 @@ const RagPage: React.FC = () => {
   const { t } = useTranslation();
   const { content, setContent } = useRagPageState();
   const { pathname, search } = useLocation();
+  const navigate = useNavigate();
   const { getModelId, setModelId, forceToStop } = useChat(pathname);
   const { postMessage, clear, loading, writing, messages, isEmpty } =
     useRag(pathname);
@@ -53,11 +54,16 @@ const RagPage: React.FC = () => {
           ? params.modelId!
           : _modelId
       );
+      // Clear query params after consuming to prevent re-application
+      navigate(pathname, { replace: true });
     } else {
       setModelId(_modelId);
     }
+    // Apply the query string once, as AgentChatPage does, not each time the
+    // model changes: a page opened from a link would otherwise put the text
+    // and the model in the URL back whenever the user picks another model.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [availableModels, modelId, search, setContent]);
+  }, [availableModels, search, setContent]);
 
   const onSend = useCallback(() => {
     setFollowing(true);
@@ -118,7 +124,7 @@ const RagPage: React.FC = () => {
           <ScrollTopBottom />
         </div>
 
-        <div className="fixed bottom-0 z-0 flex w-full items-end justify-center lg:pr-64 print:hidden">
+        <div className="fixed bottom-0 z-0 flex w-full items-end justify-center lg:pr-[var(--sidebar-w,16rem)] print:hidden">
           <InputChatContent
             content={content}
             disabled={loading && !writing}

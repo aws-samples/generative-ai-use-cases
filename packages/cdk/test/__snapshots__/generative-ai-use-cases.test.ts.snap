@@ -1,5 +1,601 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`GenerativeAiUseCases matches the snapshot (AgentBuilder with web search) 1`] = `
+{
+  "Outputs": {
+    "AgentBuilderAgentCoreRuntimeArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "GenericAgentCoreAgentBuilderAgentCoreRuntimeFEFD60E0",
+          "AgentRuntimeArn",
+        ],
+      },
+    },
+    "AgentBuilderAgentCoreRuntimeName": {
+      "Value": "GenUAgentBuilderRuntime",
+    },
+    "ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F": {
+      "Export": {
+        "Name": "AgentCoreStack:ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F",
+      },
+      "Value": {
+        "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
+      },
+    },
+    "FileBucketName": {
+      "Value": {
+        "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
+      },
+    },
+    "GenericAgentCoreRuntimeArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "GenericAgentCoreGenericAgentCoreRuntime041F933D",
+          "AgentRuntimeArn",
+        ],
+      },
+    },
+    "GenericAgentCoreRuntimeName": {
+      "Value": "GenUGenericRuntime",
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+      "DependsOn": [
+        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Lambda function for auto-deleting objects in ",
+              {
+                "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
+              },
+              " S3 bucket.",
+            ],
+          ],
+        },
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs24.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "GenericAgentCoreAgentBuilderAgentCoreRuntimeFEFD60E0": {
+      "DependsOn": [
+        "GenericAgentCoreAgentCoreRuntimeRoleDefaultPolicy4E847841",
+        "GenericAgentCoreAgentCoreRuntimeRoleF34B80EA",
+      ],
+      "Properties": {
+        "AgentRuntimeArtifact": {
+          "ContainerConfiguration": {
+            "ContainerUri": {
+              "Fn::Sub": "123456890123.dkr.ecr.us-east-1.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-123456890123-us-east-1:HASH-REPLACED",
+            },
+          },
+        },
+        "AgentRuntimeName": "GenUAgentBuilderRuntime",
+        "EnvironmentVariables": {
+          "FILE_BUCKET": {
+            "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
+          },
+          "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
+          "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
+          "WEB_SEARCH_ENABLED": "true",
+          "WEB_SEARCH_EXCLUDE_DOMAINS": "[\\"excluded.example.com\\"]",
+        },
+        "LifecycleConfiguration": {},
+        "NetworkConfiguration": {
+          "NetworkMode": "PUBLIC",
+        },
+        "ProtocolConfiguration": "HTTP",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "GenericAgentCoreAgentCoreRuntimeRoleF34B80EA",
+            "Arn",
+          ],
+        },
+        "Tags": {
+          "app": "genu",
+        },
+      },
+      "Type": "AWS::BedrockAgentCore::Runtime",
+    },
+    "GenericAgentCoreAgentCoreFileBucket0430DA42": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": [
+          {
+            "Key": "app",
+            "Value": "genu",
+          },
+          {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "GenericAgentCoreAgentCoreFileBucketAutoDeleteObjectsCustomResourceC1B4B54D": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "GenericAgentCoreAgentCoreFileBucketPolicyB659200A",
+      ],
+      "Properties": {
+        "BucketName": {
+          "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
+        },
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::S3AutoDeleteObjects",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "GenericAgentCoreAgentCoreFileBucketPolicyB659200A": {
+      "Properties": {
+        "Bucket": {
+          "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:PutBucketPolicy",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn",
+                  ],
+                },
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "GenericAgentCoreAgentCoreFileBucket0430DA42",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "GenericAgentCoreAgentCoreFileBucket0430DA42",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "GenericAgentCoreAgentCoreRuntimeRoleDefaultPolicy4E847841": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "logs:DescribeLogStreams",
+                "logs:CreateLogGroup",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:us-east-1:123456890123:log-group:/aws/bedrock-agentcore/runtimes/*",
+                  ],
+                ],
+              },
+              "Sid": "LogGroupAccess",
+            },
+            {
+              "Action": "logs:DescribeLogGroups",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:us-east-1:123456890123:log-group:*",
+                  ],
+                ],
+              },
+              "Sid": "DescribeLogGroups",
+            },
+            {
+              "Action": [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":logs:us-east-1:123456890123:log-group:/aws/bedrock-agentcore/runtimes/*:log-stream:*",
+                  ],
+                ],
+              },
+              "Sid": "LogStreamAccess",
+            },
+            {
+              "Action": [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "XRayAccess",
+            },
+            {
+              "Action": "cloudwatch:PutMetricData",
+              "Condition": {
+                "StringEquals": {
+                  "cloudwatch:namespace": "bedrock-agentcore",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "CloudWatchMetrics",
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:GetWorkloadAccessToken",
+                "bedrock-agentcore:GetWorkloadAccessTokenForJWT",
+                "bedrock-agentcore:GetWorkloadAccessTokenForUserId",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":bedrock-agentcore:us-east-1:123456890123:workload-identity-directory/default",
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":bedrock-agentcore:us-east-1:123456890123:workload-identity-directory/default/workload-identity/*",
+                    ],
+                  ],
+                },
+              ],
+              "Sid": "GetAgentAccessToken",
+            },
+            {
+              "Action": [
+                "bedrock:InvokeModel",
+                "bedrock:InvokeModelWithResponseStream",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "BedrockModelInvocation",
+            },
+            {
+              "Action": "iam:CreateServiceLinkedRole",
+              "Condition": {
+                "StringEquals": {
+                  "iam:AWSServiceName": "runtime-identity.bedrock-agentcore.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "arn:aws:iam::*:role/aws-service-role/runtime-identity.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreRuntimeIdentity",
+              "Sid": "CreateServiceLinkedRole",
+            },
+            {
+              "Action": [
+                "bedrock-agentcore:CreateCodeInterpreter",
+                "bedrock-agentcore:StartCodeInterpreterSession",
+                "bedrock-agentcore:InvokeCodeInterpreter",
+                "bedrock-agentcore:StopCodeInterpreterSession",
+                "bedrock-agentcore:DeleteCodeInterpreter",
+                "bedrock-agentcore:ListCodeInterpreters",
+                "bedrock-agentcore:GetCodeInterpreter",
+                "bedrock-agentcore:GetCodeInterpreterSession",
+                "bedrock-agentcore:ListCodeInterpreterSessions",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "Tools",
+            },
+            {
+              "Action": "bedrock-agentcore:InvokeGateway",
+              "Effect": "Allow",
+              "Resource": "*",
+              "Sid": "AllowGatewayInvocation",
+            },
+            {
+              "Action": "bedrock-agentcore:InvokeWebSearch",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":bedrock-agentcore:us-east-1:aws:tool/web-search.v1",
+                  ],
+                ],
+              },
+              "Sid": "AllowWebSearch",
+            },
+            {
+              "Action": [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "GenericAgentCoreAgentCoreFileBucket0430DA42",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "GenericAgentCoreAgentCoreFileBucket0430DA42",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
+              "Action": [
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ecr:us-east-1:123456890123:repository/cdk-hnb659fds-container-assets-123456890123-us-east-1",
+                  ],
+                ],
+              },
+            },
+            {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "GenericAgentCoreAgentCoreRuntimeRoleDefaultPolicy4E847841",
+        "Roles": [
+          {
+            "Ref": "GenericAgentCoreAgentCoreRuntimeRoleF34B80EA",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "GenericAgentCoreAgentCoreRuntimeRoleF34B80EA": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "ArnLike": {
+                  "aws:SourceArn": "arn:aws:bedrock-agentcore:us-east-1:123456890123:*",
+                },
+                "StringEquals": {
+                  "aws:SourceAccount": "123456890123",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "bedrock-agentcore.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Tags": [
+          {
+            "Key": "app",
+            "Value": "genu",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "GenericAgentCoreGenericAgentCoreRuntime041F933D": {
+      "DependsOn": [
+        "GenericAgentCoreAgentCoreRuntimeRoleDefaultPolicy4E847841",
+        "GenericAgentCoreAgentCoreRuntimeRoleF34B80EA",
+      ],
+      "Properties": {
+        "AgentRuntimeArtifact": {
+          "ContainerConfiguration": {
+            "ContainerUri": {
+              "Fn::Sub": "123456890123.dkr.ecr.us-east-1.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-123456890123-us-east-1:HASH-REPLACED",
+            },
+          },
+        },
+        "AgentRuntimeName": "GenUGenericRuntime",
+        "EnvironmentVariables": {
+          "FILE_BUCKET": {
+            "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
+          },
+          "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
+          "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
+        },
+        "LifecycleConfiguration": {},
+        "NetworkConfiguration": {
+          "NetworkMode": "PUBLIC",
+        },
+        "ProtocolConfiguration": "HTTP",
+        "RoleArn": {
+          "Fn::GetAtt": [
+            "GenericAgentCoreAgentCoreRuntimeRoleF34B80EA",
+            "Arn",
+          ],
+        },
+        "Tags": {
+          "app": "genu",
+        },
+      },
+      "Type": "AWS::BedrockAgentCore::Runtime",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
+
 exports[`GenerativeAiUseCases matches the snapshot (AgentCore with VPC) 1`] = `
 {
   "Outputs": {
@@ -132,7 +728,7 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentCore with VPC) 1`] = `
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -584,7 +1180,7 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentCore with VPC) 1`] = `
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -1004,6 +1600,33 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 1`] = `
           },
         ],
         "ServiceName": "com.amazonaws.us-east-1.bedrock-agentcore",
+        "SubnetIds": [
+          {
+            "Ref": "ClosedVpcisolatedSubnet1Subnet2EF6D3F3",
+          },
+          {
+            "Ref": "ClosedVpcisolatedSubnet2SubnetB169C8D3",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "ClosedVpcC15583C9",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "ClosedVpcVpcEndpointAgentCoreGateway2554684E": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "ClosedVpcSecurityGroup985DC3EC",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.us-east-1.bedrock-agentcore.gateway",
         "SubnetIds": [
           {
             "Ref": "ClosedVpcisolatedSubnet1Subnet2EF6D3F3",
@@ -2533,7 +3156,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 1`] = `
         "ImageId": {
           "Ref": "SsmParameterValueawsserviceamiwindowslatestWindowsServer2025EnglishFullBaseC96584B6F00A464EAD1953AFF4B05118Parameter",
         },
-        "InstanceType": "r6i.large",
+        "InstanceType": "t3.large",
         "KeyName": {
           "Ref": "WindowsRdpWindowsKeyPair02415E47",
         },
@@ -3580,36 +4203,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 2`] = `
       "Type": "Custom::OssIndex",
       "UpdateReplacePolicy": "Delete",
     },
-    "WebCrawlerDataSource": {
-      "Properties": {
-        "DataSourceConfiguration": {
-          "Type": "WEB",
-          "WebConfiguration": {
-            "CrawlerConfiguration": {
-              "CrawlerLimits": {
-                "MaxPages": 100,
-                "RateLimit": 300,
-              },
-              "Scope": "HOST_ONLY",
-            },
-            "SourceConfiguration": {
-              "UrlConfiguration": {
-                "SeedUrls": [
-                  {
-                    "Url": "https://aws-samples.github.io/generative-ai-use-cases/en/",
-                  },
-                ],
-              },
-            },
-          },
-        },
-        "KnowledgeBaseId": {
-          "Ref": "KnowledgeBase",
-        },
-        "Name": "web-crawler-data-source",
-      },
-      "Type": "AWS::Bedrock::DataSource",
-    },
   },
   "Rules": {
     "CheckBootstrapVersion": {
@@ -4629,7 +5222,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 4`] = `
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -5031,9 +5624,9 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 4`] = `
           "FILE_BUCKET": {
             "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
           },
-          "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
+          "MCP_CONFIG_PATH": "/var/task/mcp-configs/closed-network/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -5254,14 +5847,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "AgentBuilderAgentCoreRuntimeName",
               ],
             },
             "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "AgentBuilderAgentCoreRuntimeArn",
               ],
             },
@@ -5284,14 +5877,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "GenericAgentCoreRuntimeName",
               ],
             },
             "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "GenericAgentCoreRuntimeArn",
               ],
             },
@@ -5361,7 +5954,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Value": "W10=",
     },
     "HiddenUseCases": {
-      "Value": "{}",
+      "Value": "{\\"voiceChat\\":true}",
     },
     "IdPoolId": {
       "Value": {
@@ -5513,7 +6106,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
     "WebUrl": {
       "Value": {
         "Fn::GetAtt": [
-          "ClosedNetworkRemoteOutputs3C6891AF",
+          "ClosedNetworkStackOutputs5CB81F6F",
           "ClosedNetworkWebUrl",
         ],
       },
@@ -6070,14 +6663,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 [
                   {
                     "Fn::GetAtt": [
-                      "ClosedNetworkRemoteOutputs3C6891AF",
+                      "ClosedNetworkStackOutputs5CB81F6F",
                       "ClosedNetworkAlbOrigin",
                     ],
                   },
                   ",",
                   {
                     "Fn::GetAtt": [
-                      "ClosedNetworkRemoteOutputs3C6891AF",
+                      "ClosedNetworkStackOutputs5CB81F6F",
                       "ClosedNetworkWebUrl",
                     ],
                   },
@@ -6093,8 +6686,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             },
             "BUILTIN_AGENTS_JSON": {
               "Fn::GetAtt": [
-                "AgentRemoteOutputs90CFA880",
+                "AgentStackOutputs62D8A811",
                 "Agents",
+              ],
+            },
+            "COPY_VIDEO_JOB_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "APICopyVideoJobB772026B",
+                "Arn",
               ],
             },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
@@ -6107,6 +6706,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "INDEX_ID": {
               "Ref": "RagKendraIndexFEF3924C",
             },
+            "KNOWLEDGE_BASE_HYBRID_SEARCH": "true",
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
@@ -6504,11 +7104,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6579,11 +7174,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6632,7 +7222,10 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               },
             },
             {
-              "Action": "cognito-idp:AdminGetUser",
+              "Action": [
+                "cognito-idp:AdminGetUser",
+                "cognito-idp:ListUsers",
+              ],
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
@@ -6676,16 +7269,37 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               ],
             },
             {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "APICopyVideoJobB772026B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "APICopyVideoJobB772026B",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
               "Action": [
                 "s3:Abort*",
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6719,11 +7333,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6757,11 +7366,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6813,11 +7417,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -6851,11 +7450,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -12563,7 +13157,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             },
             "BUILTIN_AGENTS_JSON": {
               "Fn::GetAtt": [
-                "AgentRemoteOutputs90CFA880",
+                "AgentStackOutputs62D8A811",
                 "Agents",
               ],
             },
@@ -12760,7 +13354,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsDE8C59C9",
+                          "AgentCoreStackOutputs657336C2",
                           "GenericAgentCoreRuntimeArn",
                         ],
                       },
@@ -12774,7 +13368,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsDE8C59C9",
+                          "AgentCoreStackOutputs657336C2",
                           "AgentBuilderAgentCoreRuntimeArn",
                         ],
                       },
@@ -12797,546 +13391,45 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
-    "AgentCoreRemoteOutputsDE8C59C9": {
+    "AgentCoreStackOutputs657336C2": {
       "DeletionPolicy": "Delete",
       "Properties": {
+        "OutputKeys": [
+          "GenericAgentCoreRuntimeArn",
+          "GenericAgentCoreRuntimeName",
+          "AgentBuilderAgentCoreRuntimeArn",
+          "AgentBuilderAgentCoreRuntimeName",
+        ],
+        "Region": "us-east-1",
         "ServiceToken": {
           "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244",
+            "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888",
             "Arn",
           ],
         },
+        "StackName": "AgentCoreStack",
         "randomString": "RANDOM-STRING-REPLACED",
-        "regionName": "us-east-1",
-        "stackName": "AgentCoreStack",
       },
-      "Type": "AWS::CloudFormation::CustomResource",
+      "Type": "Custom::GenUStackOutputs",
       "UpdateReplacePolicy": "Delete",
     },
-    "AgentCoreRemoteOutputsMyHandler51F86461": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B",
-        "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "remote-outputs.on_event",
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.9",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 600,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285": {
+    "AgentStackOutputs62D8A811": {
       "DeletionPolicy": "Delete",
       "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
+        "OutputKeys": [
+          "Agents",
         ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "cloudformation:DescribeStacks",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B",
-        "Roles": [
-          {
-            "Ref": "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE",
-        "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (GenerativeAiUseCasesStack/AgentCoreRemoteOutputs/MyProvider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsMyHandler51F86461",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "Handler": "framework.onEvent",
-        "LoggingConfig": {
-          "ApplicationLogLevel": "FATAL",
-          "LogFormat": "JSON",
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventLogRetention1B283935": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 1,
+        "Region": "us-east-1",
         "ServiceToken": {
           "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888",
             "Arn",
           ],
         },
-      },
-      "Type": "Custom::LogRetention",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsMyHandler51F86461",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsMyHandler51F86461",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "AgentCoreRemoteOutputsMyHandler51F86461",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE",
-        "Roles": [
-          {
-            "Ref": "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputs90CFA880": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyProviderframeworkonEventF9C28988",
-            "Arn",
-          ],
-        },
+        "StackName": "WebSearchAgentStack",
         "randomString": "RANDOM-STRING-REPLACED",
-        "regionName": "us-east-1",
-        "stackName": "WebSearchAgentStack",
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandler04E7AFB1": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9",
-        "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "remote-outputs.on_event",
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.9",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 600,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandlerServiceRole44123FB4": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "cloudformation:DescribeStacks",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9",
-        "Roles": [
-          {
-            "Ref": "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventF9C28988": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A",
-        "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (GenerativeAiUseCasesStack/AgentRemoteOutputs/MyProvider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "AgentRemoteOutputsMyHandler04E7AFB1",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "Handler": "framework.onEvent",
-        "LoggingConfig": {
-          "ApplicationLogLevel": "FATAL",
-          "LogFormat": "JSON",
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventLogRetention05F81B10": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "AgentRemoteOutputsMyProviderframeworkonEventF9C28988",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 1,
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "AgentRemoteOutputsMyHandler04E7AFB1",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "AgentRemoteOutputsMyHandler04E7AFB1",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "AgentRemoteOutputsMyHandler04E7AFB1",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A",
-        "Roles": [
-          {
-            "Ref": "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
+      "Type": "Custom::GenUStackOutputs",
       "UpdateReplacePolicy": "Delete",
     },
     "ApiBuildWeb746ABF13": {
@@ -13374,14 +13467,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "AgentBuilderAgentCoreRuntimeName",
                   ],
                 },
                 "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "AgentBuilderAgentCoreRuntimeArn",
                   ],
                 },
@@ -13389,6 +13482,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               ],
             ],
           },
+          "VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED": "false",
           "VITE_APP_AGENT_CORE_ENABLED": "true",
           "VITE_APP_AGENT_CORE_EXTERNAL_RUNTIMES": "[]",
           "VITE_APP_AGENT_CORE_GENERIC_RUNTIME": {
@@ -13398,14 +13492,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "GenericAgentCoreRuntimeName",
                   ],
                 },
                 "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "GenericAgentCoreRuntimeArn",
                   ],
                 },
@@ -13438,7 +13532,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
           "VITE_APP_BRANDING_TITLE": "",
           "VITE_APP_BUILTIN_AGENTS_JSON": {
             "Fn::GetAtt": [
-              "AgentRemoteOutputs90CFA880",
+              "AgentStackOutputs62D8A811",
               "Agents",
             ],
           },
@@ -13451,7 +13545,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               "Arn",
             ],
           },
-          "VITE_APP_HIDDEN_USE_CASES": "{}",
+          "VITE_APP_HIDDEN_USE_CASES": "{\\"voiceChat\\":true}",
           "VITE_APP_IDENTITY_POOL_ID": {
             "Ref": "AuthIdentityPool659E7F64",
           },
@@ -13799,6 +13893,18 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         },
       },
       "Type": "AWS::WAFv2::WebACLAssociation",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "AuthAdminGroup9B286F1A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "GenU administrators with access to the admin page",
+        "GroupName": "SystemAdminGroup",
+        "UserPoolId": {
+          "Ref": "AuthUserPool8115E87F",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolGroup",
       "UpdateReplacePolicy": "Delete",
     },
     "AuthIdentityPool659E7F64": {
@@ -14179,275 +14285,24 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::Cognito::UserPoolClient",
       "UpdateReplacePolicy": "Delete",
     },
-    "ClosedNetworkRemoteOutputs3C6891AF": {
+    "ClosedNetworkStackOutputs5CB81F6F": {
       "DeletionPolicy": "Delete",
       "Properties": {
+        "OutputKeys": [
+          "ClosedNetworkAlbOrigin",
+          "ClosedNetworkWebUrl",
+        ],
+        "Region": "us-east-1",
         "ServiceToken": {
           "Fn::GetAtt": [
-            "ClosedNetworkRemoteOutputsMyProviderframeworkonEvent16B46A52",
+            "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888",
             "Arn",
           ],
         },
+        "StackName": "ClosedNetworkStack",
         "randomString": "RANDOM-STRING-REPLACED",
-        "regionName": "us-east-1",
-        "stackName": "ClosedNetworkStack",
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyHandlerD0F91374": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "ClosedNetworkRemoteOutputsMyHandlerServiceRoleDefaultPolicy10D776F6",
-        "ClosedNetworkRemoteOutputsMyHandlerServiceRole9D1B9391",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "remote-outputs.on_event",
-        "Role": {
-          "Fn::GetAtt": [
-            "ClosedNetworkRemoteOutputsMyHandlerServiceRole9D1B9391",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.9",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 600,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyHandlerServiceRole9D1B9391": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyHandlerServiceRoleDefaultPolicy10D776F6": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "cloudformation:DescribeStacks",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ClosedNetworkRemoteOutputsMyHandlerServiceRoleDefaultPolicy10D776F6",
-        "Roles": [
-          {
-            "Ref": "ClosedNetworkRemoteOutputsMyHandlerServiceRole9D1B9391",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyProviderframeworkonEvent16B46A52": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicyEE9B2FBC",
-        "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRole75061C4F",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (GenerativeAiUseCasesStack/ClosedNetworkRemoteOutputs/MyProvider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "ClosedNetworkRemoteOutputsMyHandlerD0F91374",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "Handler": "framework.onEvent",
-        "LoggingConfig": {
-          "ApplicationLogLevel": "FATAL",
-          "LogFormat": "JSON",
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRole75061C4F",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyProviderframeworkonEventLogRetentionD0B10EBE": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "ClosedNetworkRemoteOutputsMyProviderframeworkonEvent16B46A52",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 1,
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRole75061C4F": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicyEE9B2FBC": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "ClosedNetworkRemoteOutputsMyHandlerD0F91374",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "ClosedNetworkRemoteOutputsMyHandlerD0F91374",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "ClosedNetworkRemoteOutputsMyHandlerD0F91374",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicyEE9B2FBC",
-        "Roles": [
-          {
-            "Ref": "ClosedNetworkRemoteOutputsMyProviderframeworkonEventServiceRole75061C4F",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
+      "Type": "Custom::GenUStackOutputs",
       "UpdateReplacePolicy": "Delete",
     },
     "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C1024MiBB049752D": {
@@ -14622,6 +14477,69 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
+    "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Handler": "__entrypoint__.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "cloudformation:DescribeStacks",
+                  "Effect": "Allow",
+                  "Resource": "*",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "Inline",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Delete",
+    },
     "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
@@ -14790,101 +14708,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "index.handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "logs:PutRetentionPolicy",
-                "logs:DeleteRetentionPolicy",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "Roles": [
-          {
-            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
     "NodejsBuildCustomResourceHandler25648b212c404f09aa65b6bbb0c446591C4101F8": {
@@ -16390,7 +16213,23 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 7`] = `
               {
                 "Ref": "LogGroupF5B46931",
               },
-              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}}]}",
+              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":0,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by User\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId\\\\n| sort inputTokens desc\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":12,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by Use Case\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId\\\\n| sort inputTokens desc\\"}}]}",
             ],
           ],
         },
@@ -16404,6 +16243,36 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 7`] = `
       },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
+    },
+    "TokensByUseCaseQuery8D6E560E": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUseCase",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
+    },
+    "TokensByUserQuery424E1E77": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUser",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
     },
   },
   "Rules": {
@@ -17523,36 +17392,6 @@ exports[`GenerativeAiUseCases matches the snapshot 2`] = `
       "Type": "Custom::OssIndex",
       "UpdateReplacePolicy": "Delete",
     },
-    "WebCrawlerDataSource": {
-      "Properties": {
-        "DataSourceConfiguration": {
-          "Type": "WEB",
-          "WebConfiguration": {
-            "CrawlerConfiguration": {
-              "CrawlerLimits": {
-                "MaxPages": 100,
-                "RateLimit": 300,
-              },
-              "Scope": "HOST_ONLY",
-            },
-            "SourceConfiguration": {
-              "UrlConfiguration": {
-                "SeedUrls": [
-                  {
-                    "Url": "https://aws-samples.github.io/generative-ai-use-cases/en/",
-                  },
-                ],
-              },
-            },
-          },
-        },
-        "KnowledgeBaseId": {
-          "Ref": "KnowledgeBase",
-        },
-        "Name": "web-crawler-data-source",
-      },
-      "Type": "AWS::Bedrock::DataSource",
-    },
   },
   "Rules": {
     "CheckBootstrapVersion": {
@@ -18520,7 +18359,7 @@ exports[`GenerativeAiUseCases matches the snapshot 4`] = `
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -18924,7 +18763,7 @@ exports[`GenerativeAiUseCases matches the snapshot 4`] = `
           },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
-          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
+          "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
         "NetworkConfiguration": {
@@ -19145,14 +18984,14 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "AgentBuilderAgentCoreRuntimeName",
               ],
             },
             "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "AgentBuilderAgentCoreRuntimeArn",
               ],
             },
@@ -19175,14 +19014,14 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "{\\"name\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "GenericAgentCoreRuntimeName",
               ],
             },
             "\\",\\"arn\\":\\"",
             {
               "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsDE8C59C9",
+                "AgentCoreStackOutputs657336C2",
                 "GenericAgentCoreRuntimeArn",
               ],
             },
@@ -19945,8 +19784,14 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             },
             "BUILTIN_AGENTS_JSON": {
               "Fn::GetAtt": [
-                "AgentRemoteOutputs90CFA880",
+                "AgentStackOutputs62D8A811",
                 "Agents",
+              ],
+            },
+            "COPY_VIDEO_JOB_FUNCTION_ARN": {
+              "Fn::GetAtt": [
+                "APICopyVideoJobB772026B",
+                "Arn",
               ],
             },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
@@ -19959,6 +19804,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "INDEX_ID": {
               "Ref": "RagKendraIndexFEF3924C",
             },
+            "KNOWLEDGE_BASE_HYBRID_SEARCH": "true",
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
@@ -20326,11 +20172,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20401,11 +20242,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20454,7 +20290,10 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               },
             },
             {
-              "Action": "cognito-idp:AdminGetUser",
+              "Action": [
+                "cognito-idp:AdminGetUser",
+                "cognito-idp:ListUsers",
+              ],
               "Effect": "Allow",
               "Resource": {
                 "Fn::GetAtt": [
@@ -20498,16 +20337,37 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               ],
             },
             {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "APICopyVideoJobB772026B",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "APICopyVideoJobB772026B",
+                          "Arn",
+                        ],
+                      },
+                      ":*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            {
               "Action": [
                 "s3:Abort*",
                 "s3:DeleteObject*",
                 "s3:PutObject*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20541,11 +20401,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20579,11 +20434,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20635,11 +20485,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -20673,11 +20518,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "s3:GetObject*",
                 "s3:List*",
               ],
-              "Condition": {
-                "IpAddress": {
-                  "aws:SourceIp": [],
-                },
-              },
               "Effect": "Allow",
               "Resource": [
                 {
@@ -26295,7 +26135,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             },
             "BUILTIN_AGENTS_JSON": {
               "Fn::GetAtt": [
-                "AgentRemoteOutputs90CFA880",
+                "AgentStackOutputs62D8A811",
                 "Agents",
               ],
             },
@@ -26462,7 +26302,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsDE8C59C9",
+                          "AgentCoreStackOutputs657336C2",
                           "GenericAgentCoreRuntimeArn",
                         ],
                       },
@@ -26476,7 +26316,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                     [
                       {
                         "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsDE8C59C9",
+                          "AgentCoreStackOutputs657336C2",
                           "AgentBuilderAgentCoreRuntimeArn",
                         ],
                       },
@@ -26499,546 +26339,45 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
-    "AgentCoreRemoteOutputsDE8C59C9": {
+    "AgentCoreStackOutputs657336C2": {
       "DeletionPolicy": "Delete",
       "Properties": {
+        "OutputKeys": [
+          "GenericAgentCoreRuntimeArn",
+          "GenericAgentCoreRuntimeName",
+          "AgentBuilderAgentCoreRuntimeArn",
+          "AgentBuilderAgentCoreRuntimeName",
+        ],
+        "Region": "us-east-1",
         "ServiceToken": {
           "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244",
+            "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888",
             "Arn",
           ],
         },
+        "StackName": "AgentCoreStack",
         "randomString": "RANDOM-STRING-REPLACED",
-        "regionName": "us-east-1",
-        "stackName": "AgentCoreStack",
       },
-      "Type": "AWS::CloudFormation::CustomResource",
+      "Type": "Custom::GenUStackOutputs",
       "UpdateReplacePolicy": "Delete",
     },
-    "AgentCoreRemoteOutputsMyHandler51F86461": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B",
-        "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "remote-outputs.on_event",
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.9",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 600,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285": {
+    "AgentStackOutputs62D8A811": {
       "DeletionPolicy": "Delete",
       "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
+        "OutputKeys": [
+          "Agents",
         ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "cloudformation:DescribeStacks",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentCoreRemoteOutputsMyHandlerServiceRoleDefaultPolicy95FB1E7B",
-        "Roles": [
-          {
-            "Ref": "AgentCoreRemoteOutputsMyHandlerServiceRole515D2285",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE",
-        "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (GenerativeAiUseCasesStack/AgentCoreRemoteOutputs/MyProvider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "AgentCoreRemoteOutputsMyHandler51F86461",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "Handler": "framework.onEvent",
-        "LoggingConfig": {
-          "ApplicationLogLevel": "FATAL",
-          "LogFormat": "JSON",
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventLogRetention1B283935": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "AgentCoreRemoteOutputsMyProviderframeworkonEvent918C4244",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 1,
+        "Region": "us-east-1",
         "ServiceToken": {
           "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888",
             "Arn",
           ],
         },
-      },
-      "Type": "Custom::LogRetention",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsMyHandler51F86461",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "AgentCoreRemoteOutputsMyHandler51F86461",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "AgentCoreRemoteOutputsMyHandler51F86461",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy59F6CBAE",
-        "Roles": [
-          {
-            "Ref": "AgentCoreRemoteOutputsMyProviderframeworkonEventServiceRole230DBF5F",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputs90CFA880": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyProviderframeworkonEventF9C28988",
-            "Arn",
-          ],
-        },
+        "StackName": "WebSearchAgentStack",
         "randomString": "RANDOM-STRING-REPLACED",
-        "regionName": "us-east-1",
-        "stackName": "WebSearchAgentStack",
       },
-      "Type": "AWS::CloudFormation::CustomResource",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandler04E7AFB1": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9",
-        "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "remote-outputs.on_event",
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.9",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 600,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandlerServiceRole44123FB4": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "cloudformation:DescribeStacks",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentRemoteOutputsMyHandlerServiceRoleDefaultPolicy9D946EF9",
-        "Roles": [
-          {
-            "Ref": "AgentRemoteOutputsMyHandlerServiceRole44123FB4",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventF9C28988": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A",
-        "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Description": "AWS CDK resource provider framework - onEvent (GenerativeAiUseCasesStack/AgentRemoteOutputs/MyProvider)",
-        "Environment": {
-          "Variables": {
-            "USER_ON_EVENT_FUNCTION_ARN": {
-              "Fn::GetAtt": [
-                "AgentRemoteOutputsMyHandler04E7AFB1",
-                "Arn",
-              ],
-            },
-          },
-        },
-        "Handler": "framework.onEvent",
-        "LoggingConfig": {
-          "ApplicationLogLevel": "FATAL",
-          "LogFormat": "JSON",
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventLogRetention05F81B10": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "LogGroupName": {
-          "Fn::Join": [
-            "",
-            [
-              "/aws/lambda/",
-              {
-                "Ref": "AgentRemoteOutputsMyProviderframeworkonEventF9C28988",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 1,
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "AgentRemoteOutputsMyHandler04E7AFB1",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "AgentRemoteOutputsMyHandler04E7AFB1",
-                          "Arn",
-                        ],
-                      },
-                      ":*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": "lambda:GetFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "AgentRemoteOutputsMyHandler04E7AFB1",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleDefaultPolicy5E7D4C8A",
-        "Roles": [
-          {
-            "Ref": "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "AgentRemoteOutputsMyProviderframeworkonEventServiceRoleFE28477D": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
+      "Type": "Custom::GenUStackOutputs",
       "UpdateReplacePolicy": "Delete",
     },
     "ApiBuildWeb746ABF13": {
@@ -27079,14 +26418,14 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "AgentBuilderAgentCoreRuntimeName",
                   ],
                 },
                 "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "AgentBuilderAgentCoreRuntimeArn",
                   ],
                 },
@@ -27094,6 +26433,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               ],
             ],
           },
+          "VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED": "false",
           "VITE_APP_AGENT_CORE_ENABLED": "true",
           "VITE_APP_AGENT_CORE_EXTERNAL_RUNTIMES": "[]",
           "VITE_APP_AGENT_CORE_GENERIC_RUNTIME": {
@@ -27103,14 +26443,14 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "{\\"name\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "GenericAgentCoreRuntimeName",
                   ],
                 },
                 "\\",\\"arn\\":\\"",
                 {
                   "Fn::GetAtt": [
-                    "AgentCoreRemoteOutputsDE8C59C9",
+                    "AgentCoreStackOutputs657336C2",
                     "GenericAgentCoreRuntimeArn",
                   ],
                 },
@@ -27143,7 +26483,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
           "VITE_APP_BRANDING_TITLE": "",
           "VITE_APP_BUILTIN_AGENTS_JSON": {
             "Fn::GetAtt": [
-              "AgentRemoteOutputs90CFA880",
+              "AgentStackOutputs62D8A811",
               "Agents",
             ],
           },
@@ -28485,6 +27825,18 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::S3::BucketPolicy",
       "UpdateReplacePolicy": "Delete",
     },
+    "AuthAdminGroup9B286F1A": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Description": "GenU administrators with access to the admin page",
+        "GroupName": "SystemAdminGroup",
+        "UserPoolId": {
+          "Ref": "AuthUserPool8115E87F",
+        },
+      },
+      "Type": "AWS::Cognito::UserPoolGroup",
+      "UpdateReplacePolicy": "Delete",
+    },
     "AuthIdentityPool659E7F64": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
@@ -29035,6 +28387,69 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
+    "CustomGenUStackOutputsCustomResourceProviderHandlerB42DD888": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Handler": "__entrypoint__.handler",
+        "MemorySize": 128,
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "CustomGenUStackOutputsCustomResourceProviderRoleEE70B146": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          },
+        ],
+        "Policies": [
+          {
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": "cloudformation:DescribeStacks",
+                  "Effect": "Allow",
+                  "Resource": "*",
+                },
+              ],
+              "Version": "2012-10-17",
+            },
+            "PolicyName": "Inline",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Delete",
+    },
     "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
@@ -29179,101 +28594,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         ],
       },
       "Type": "AWS::DynamoDB::Table",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
-      "DeletionPolicy": "Delete",
-      "DependsOn": [
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-      ],
-      "Properties": {
-        "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
-          "S3Key": "HASH-REPLACED.zip",
-        },
-        "Handler": "index.handler",
-        "Role": {
-          "Fn::GetAtt": [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs24.x",
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-        "Tags": [
-          {
-            "Key": "app",
-            "Value": "genu",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
-      "DeletionPolicy": "Delete",
-      "Properties": {
-        "PolicyDocument": {
-          "Statement": [
-            {
-              "Action": [
-                "logs:PutRetentionPolicy",
-                "logs:DeleteRetentionPolicy",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "Roles": [
-          {
-            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
       "UpdateReplacePolicy": "Delete",
     },
     "NodejsBuildCustomResourceHandler25648b212c404f09aa65b6bbb0c446591C4101F8": {
@@ -30749,7 +30069,23 @@ exports[`GenerativeAiUseCases matches the snapshot 7`] = `
               {
                 "Ref": "LogGroupF5B46931",
               },
-              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}}]}",
+              "' | filter @logStream = 'aws/bedrock/modelinvocations'\\\\n| filter schemaType like 'ModelInvocationLog'\\\\n| filter concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) not like /.*<conversation>.*/\\\\n| sort @timestamp desc\\\\n| fields @timestamp, concat(input.inputBodyJson.prompt, input.inputBodyJson.messages.0.content.0.text) as input, modelId\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":0,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by User\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId\\\\n| sort inputTokens desc\\"}},{\\"type\\":\\"log\\",\\"width\\":12,\\"height\\":8,\\"x\\":12,\\"y\\":14,\\"properties\\":{\\"view\\":\\"table\\",\\"title\\":\\"Tokens by Use Case\\",\\"region\\":\\"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"query\\":\\"SOURCE '",
+              {
+                "Ref": "LogGroupF5B46931",
+              },
+              "' | filter requestMetadata.genu = 'genu'\\\\n| fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens\\\\n| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId\\\\n| sort inputTokens desc\\"}}]}",
             ],
           ],
         },
@@ -30763,6 +30099,36 @@ exports[`GenerativeAiUseCases matches the snapshot 7`] = `
       },
       "Type": "AWS::Logs::LogGroup",
       "UpdateReplacePolicy": "Retain",
+    },
+    "TokensByUseCaseQuery8D6E560E": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUseCase",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by usecase, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
+    },
+    "TokensByUserQuery424E1E77": {
+      "Properties": {
+        "LogGroupNames": [
+          {
+            "Ref": "LogGroupF5B46931",
+          },
+        ],
+        "Name": "GenU/GenerativeAiUseCasesDashboardStack/TokensByUser",
+        "QueryString": "fields requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| filter requestMetadata.genu = 'genu'
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc",
+      },
+      "Type": "AWS::Logs::QueryDefinition",
     },
   },
   "Rules": {

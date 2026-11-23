@@ -66,6 +66,7 @@ export interface WebProps {
   readonly agentCoreEnabled: boolean;
   readonly agentCoreGenericRuntime?: AgentCoreConfiguration;
   readonly agentBuilderEnabled: boolean;
+  readonly agentBuilderWebSearchEnabled: boolean;
   readonly agentCoreAgentBuilderRuntime?: AgentCoreConfiguration;
   readonly agentCoreExternalRuntimes: AgentCoreConfiguration[];
   readonly agentCoreRegion?: string;
@@ -167,28 +168,26 @@ export class Web extends Construct {
         },
       };
 
-      if (
-        props.cert &&
-        props.hostName &&
-        props.domainName &&
-        props.hostedZoneId
-      ) {
+      // Without hostName (null or ''), the site is served at the zone apex
+      const customDomain =
+        props.cert && props.domainName && props.hostedZoneId
+          ? props.hostName
+            ? `${props.hostName}.${props.domainName}`
+            : props.domainName
+          : undefined;
+
+      if (customDomain) {
         cloudFrontToS3Props.cloudFrontDistributionProps.certificate =
           props.cert;
         cloudFrontToS3Props.cloudFrontDistributionProps.domainNames = [
-          `${props.hostName}.${props.domainName}`,
+          customDomain,
         ];
       }
 
       const { cloudFrontWebDistribution, s3BucketInterface } =
         new CloudFrontToS3(this, 'Web', cloudFrontToS3Props);
 
-      if (
-        props.cert &&
-        props.hostName &&
-        props.domainName &&
-        props.hostedZoneId
-      ) {
+      if (customDomain && props.domainName && props.hostedZoneId) {
         // DNS record for custom domain
         const hostedZone = HostedZone.fromHostedZoneAttributes(
           this,
@@ -200,12 +199,13 @@ export class Web extends Construct {
         );
         new ARecord(this, 'ARecord', {
           zone: hostedZone,
-          recordName: props.hostName,
+          // An undefined recordName creates the record at the zone apex
+          recordName: props.hostName || undefined,
           target: RecordTarget.fromAlias(
             new CloudFrontTarget(cloudFrontWebDistribution)
           ),
         });
-        this.webUrl = `https://${props.hostName}.${props.domainName}`;
+        this.webUrl = `https://${customDomain}`;
       } else {
         this.webUrl = `https://${cloudFrontWebDistribution.domainName}`;
       }
@@ -307,6 +307,8 @@ export class Web extends Construct {
         ),
         VITE_APP_AGENT_CORE_AGENT_BUILDER_ENABLED:
           props.agentBuilderEnabled.toString(),
+        VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED:
+          props.agentBuilderWebSearchEnabled.toString(),
         VITE_APP_AGENT_CORE_AGENT_BUILDER_RUNTIME: JSON.stringify(
           props.agentCoreAgentBuilderRuntime
         ),

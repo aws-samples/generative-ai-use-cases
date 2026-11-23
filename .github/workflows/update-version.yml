@@ -73,6 +73,8 @@ jobs:
           body: |
             New release: ${{ fromJSON(steps.get-version.outputs.result).html_url }}
             Merge this PR to publish the release. (Do NOT manually publish the release.)
+
+            CI does not run on pull requests created by GitHub Actions. Close and reopen this PR once to run the required checks before merging.
           branch: 'new-release'
           base: 'main'
           delete-branch: true

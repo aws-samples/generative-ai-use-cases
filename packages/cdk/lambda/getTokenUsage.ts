@@ -1,50 +1,32 @@
+import { Request, Response } from 'express';
+import { queryParams, requireUserName, sendJson } from './utils/http';
 import { aggregateTokenUsage } from './repository';
-import { GetTokenUsageEvent } from 'generative-ai-use-cases';
+import { withEstimatedCost } from './utils/tokenUsage';
 
-export const handler = async (event: GetTokenUsageEvent) => {
+export const handler = async (
+  request: Request,
+  response: Response
+): Promise<void> => {
   try {
-    console.log('Getting token usage statistics', { event });
-
     // Get user ID from Cognito
-    const userId = event.requestContext.authorizer!.claims['cognito:username'];
-    const { startDate, endDate } = event.queryStringParameters || {};
+    const userId = requireUserName(request);
+    const { startDate, endDate } = queryParams(request) || {};
 
     if (!startDate || !endDate) {
-      return {
-        statusCode: 400,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({
-          message: 'startDate and endDate parameters are required',
-        }),
-      };
+      return sendJson(response, 400, {
+        message: 'startDate and endDate parameters are required',
+      });
     }
 
     // Get aggregated data for the specified period
     const stats = await aggregateTokenUsage(startDate, endDate, [userId]);
 
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify(stats),
-    };
+    return sendJson(response, 200, stats.map(withEstimatedCost));
   } catch (error) {
     console.error('Error getting token usage statistics:', error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({
-        message: 'Internal server error',
-        error: error instanceof Error ? error.message : 'Unknown error',
-      }),
-    };
+    return sendJson(response, 500, {
+      message: 'Internal server error',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
   }
 };

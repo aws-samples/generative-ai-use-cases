@@ -10,6 +10,7 @@ import {
   TokenUsageStats,
 } from 'generative-ai-use-cases';
 import * as crypto from 'crypto';
+import { capMessageToItemLimit } from './utils/messageSize';
 
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import {
@@ -208,20 +209,28 @@ export const listMessages = async (
   _chatId: string
 ): Promise<RecordedMessage[]> => {
   const chatId = `chat#${_chatId}`;
-  const res = await dynamoDbDocument.send(
-    new QueryCommand({
-      TableName: TABLE_NAME,
-      KeyConditionExpression: '#id = :id',
-      ExpressionAttributeNames: {
-        '#id': 'id',
-      },
-      ExpressionAttributeValues: {
-        ':id': chatId,
-      },
-    })
-  );
+  const items: RecordedMessage[] = [];
+  let exclusiveStartKey: Record<string, unknown> | undefined;
+  // A query page stops at 1 MB, so long chats take several pages.
+  do {
+    const res = await dynamoDbDocument.send(
+      new QueryCommand({
+        TableName: TABLE_NAME,
+        KeyConditionExpression: '#id = :id',
+        ExpressionAttributeNames: {
+          '#id': 'id',
+        },
+        ExpressionAttributeValues: {
+          ':id': chatId,
+        },
+        ExclusiveStartKey: exclusiveStartKey,
+      })
+    );
+    items.push(...((res.Items ?? []) as RecordedMessage[]));
+    exclusiveStartKey = res.LastEvaluatedKey;
+  } while (exclusiveStartKey);
 
-  return res.Items as RecordedMessage[];
+  return items;
 };
 
 // Update token usage
@@ -360,9 +369,11 @@ export const batchCreateMessages = async (
   const createdDate = Date.now();
   const feedback = 'none';
 
+  // Oversized messages are shrunk to fit DynamoDB's item limit. The shrunken
+  // copy is also what is returned, so the client shows what was stored.
   const items: RecordedMessage[] = messages.map(
     (m: ToBeRecordedMessage, i: number) => {
-      return {
+      return capMessageToItemLimit({
         id: chatId,
         createdDate: m.createdDate ?? `${createdDate + i}#0`,
         messageId: m.messageId,
@@ -375,7 +386,7 @@ export const batchCreateMessages = async (
         usecase: m.usecase,
         llmType: m.llmType ?? '',
         metadata: m.metadata,
-      };
+      });
     }
   );
 
@@ -427,6 +438,29 @@ export const setChatTitle = async (
     })
   );
   return res.Attributes as Chat;
+};
+
+/**
+ * Record when a chat last received messages, so the history can be ordered by
+ * last activity. Stored as epoch milliseconds, like `createdDate`.
+ */
+export const setChatUpdatedDate = async (
+  id: string,
+  createdDate: string
+): Promise<void> => {
+  await dynamoDbDocument.send(
+    new UpdateCommand({
+      TableName: TABLE_NAME,
+      Key: {
+        id: id,
+        createdDate: createdDate,
+      },
+      UpdateExpression: 'set updatedDate = :updatedDate',
+      // Never create a stray item if the chat was deleted in the meantime.
+      ConditionExpression: 'attribute_exists(id)',
+      ExpressionAttributeValues: { ':updatedDate': `${Date.now()}` },
+    })
+  );
 };
 
 export const updateFeedback = async (
@@ -768,4 +802,27 @@ export const aggregateTokenUsage = async (
     console.error('Error aggregating token usage:', error);
     throw error;
   }
+};
+
+/** Every user's token usage record for one day (YYYY-MM-DD). */
+export const listTokenUsageForDate = async (
+  date: string
+): Promise<TokenUsageStats[]> => {
+  const items: TokenUsageStats[] = [];
+  let exclusiveStartKey: QueryCommandInput['ExclusiveStartKey'] = undefined;
+  // A query page stops at 1 MB; a busy day can take several pages.
+  do {
+    const res: QueryCommandOutput = await dynamoDbDocument.send(
+      new QueryCommand({
+        TableName: STATS_TABLE_NAME,
+        KeyConditionExpression: '#id = :id',
+        ExpressionAttributeNames: { '#id': 'id' },
+        ExpressionAttributeValues: { ':id': `stats#${date}` },
+        ExclusiveStartKey: exclusiveStartKey,
+      })
+    );
+    items.push(...((res.Items ?? []) as TokenUsageStats[]));
+    exclusiveStartKey = res.LastEvaluatedKey;
+  } while (exclusiveStartKey);
+  return items;
 };

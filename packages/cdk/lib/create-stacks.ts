@@ -50,7 +50,7 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
     (params.allowedIpV4AddressRanges ||
       params.allowedIpV6AddressRanges ||
       params.allowedCountryCodes ||
-      params.hostName) &&
+      params.domainName) &&
     !params.closedNetworkMode
       ? new CloudFrontWafStack(app, `CloudFrontWafStack${params.env}`, {
           env: {
@@ -114,6 +114,8 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
             region: params.agentCoreRegion,
           },
           params: params,
+          vpc: closedNetworkStack?.closedVpc.vpc,
+          subnets: closedNetworkStack?.closedVpc.subnets,
         })
       : null;
 
@@ -196,7 +198,8 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
     }
   );
 
-  // Add explicit dependencies for RemoteOutputs
+  // Stacks whose outputs are read via StackOutputs must deploy first
+  // (StackOutputs also adds the dependency itself)
   if (agentStack) {
     generativeAiUseCasesStack.addDependency(agentStack);
   }

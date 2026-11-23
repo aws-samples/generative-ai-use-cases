@@ -4,7 +4,7 @@
 
 GenU allows you to change settings in parameter.ts or through AWS CDK context.
 
-**Since you can define settings for multiple environments, it is recommended to use parameter.ts when building a new environment. For backward compatibility, parameters are retrieved in the order of context > parameter.ts.**
+**We recommend parameter.ts when building a new environment. You can define settings for multiple environments, and TypeScript type checking catches wrong parameter names and values (in cdk.json, a misspelled key is silently ignored). Updates also cause fewer conflicts in cdk.json. If the environment specified by `env` is defined in parameter.ts, only the values in parameter.ts are used and the parameters in cdk.json are ignored. To move existing settings from cdk.json, see [Update](./UPDATE.md#moving-settings-from-cdkjson-to-parameterts).**
 
 **When using Context: While CDK context can be specified with '-c', this won't trigger frontend builds since no code changes are made. For this asset, it's recommended to change all settings in cdk.json.**
 
@@ -185,7 +185,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: false,
     ragKnowledgeBaseAdvancedParsingModelId:
-      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
@@ -202,7 +202,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseId": "XXXXXXXXXX",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": false,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "embeddingModelId": "amazon.titan-embed-text-v2:0",
     "rerankingModelId": "amazon.rerank-v1:0",
     "queryDecompositionEnabled": true
@@ -255,9 +255,11 @@ After deployment is complete, follow these steps to sync the Knowledge Base Data
 1. Open the [Knowledge Base console](https://console.aws.amazon.com/bedrock/home#/knowledge-bases)
 2. Click on generative-ai-use-cases-jp
 3. Select s3-data-source and click Sync
-4. Select web-crawler-data-source and click Sync
 
-When the Status of each data source becomes Available, the process is complete. Files stored in S3 and web pages fetched by the Web Crawler have been ingested and can be searched through the Knowledge Base.
+When the Status becomes Available, the process is complete. Files stored in S3 have been ingested and can be searched through the Knowledge Base.
+
+> [!NOTE]
+> Starting September 30, 2026, connectors such as Web Crawler can no longer be newly created on customer-managed knowledge bases, so the sample web-crawler-data-source is no longer created. See the [Web Crawler data source documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/webcrawl-data-source-connector.html) for details.
 
 > [!NOTE]
 > After enabling RAG Chat (Knowledge Base), if you want to disable it again, set `ragKnowledgeBaseEnabled: false` and redeploy. This will disable RAG Chat (Knowledge Base), but the `RagKnowledgeBaseStack` itself will remain. To completely remove it, open the management console and delete the `RagKnowledgeBaseStack` stack from CloudFormation in the modelRegion.
@@ -268,9 +270,8 @@ You can enable the [Advanced Parsing feature](https://docs.aws.amazon.com/bedroc
 
 - `ragKnowledgeBaseAdvancedParsing`: Set to `true` to enable Advanced Parsing
 - `ragKnowledgeBaseAdvancedParsingModelId`: Specify the model ID used for extracting information
-  - Supported models (as of 2024/08)
-    - `anthropic.claude-3-sonnet-20240229-v1:0`
-    - `anthropic.claude-3-haiku-20240307-v1:0`
+  - Claude, Amazon Nova and Llama 4 vision models can be used ([Supported models and Regions for parsing](https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-supported.html))
+  - Specify either a model ID available in `modelRegion` or a cross-Region inference profile ID such as `global.anthropic.claude-sonnet-4-6` (default) or `jp.anthropic.claude-sonnet-4-6`. Choose a Region-scoped profile (`us.` / `eu.` / `jp.` ...) if documents must not leave a geography.
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
@@ -283,7 +284,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: true,
     ragKnowledgeBaseAdvancedParsingModelId:
-      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
@@ -299,7 +300,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseId": "XXXXXXXXXX",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": true,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "embeddingModelId": "amazon.titan-embed-text-v2:0"
   }
 }
@@ -347,7 +348,7 @@ To apply changes, follow these steps to delete and recreate the existing Knowled
 
 With the deletion of RagKnowledgeBaseStack, **the S3 bucket for RAG chat and the RAG files stored in it will be deleted**.
 If you have uploaded RAG files to the S3 bucket, back them up and upload them again after redeployment.
-Also, follow the previously mentioned steps to sync the Data sources (s3-data-source, web-crawler-data-source) again.
+Also, follow the previously mentioned steps to sync the Data source (s3-data-source) again.
 
 #### How to check OpenSearch Service Index in the management console
 
@@ -924,6 +925,31 @@ By specifying the Gateway ARN in `agentCoreGatewayArns`, an IAM policy following
 After configuration, use `mcp-proxy-for-aws` in the MCP settings to specify the endpoint.
 For details, refer to the [mcp-proxy-for-aws documentation](https://github.com/aws/mcp-proxy-for-aws).
 
+#### Enabling the Web Search Tool
+
+Enabling `agentBuilderWebSearchEnabled` adds a web search tool backed by the Web Search Tool of Amazon Bedrock AgentCore, and users can choose whether each Agent uses it.
+No API key is required and search queries are processed within AWS (zero data egress).
+
+The Agent calls the AgentCore Web Search API (`InvokeWebSearch`) directly, so no Gateway or other additional resources are created. The Agent can narrow each search by domain and publication date.
+
+`agentBuilderWebSearchExcludeDomains` lets you specify domains to exclude from search results. The list is applied to every search and cannot be changed by the Agent.
+The exclusion applies to the pages returned by the search. It does not stop an answer from including a URL that appears in the text of another page, or one that the model already knows.
+
+When `agentBuilderWebSearchEnabled` is disabled, the web search option is not shown in the agent builder. Leave it disabled if your organization does not allow web search.
+
+> [!NOTE]
+> The Web Search Tool is only available in some Regions. `agentCoreRegion` (or `modelRegion` when it is not specified) must be a supported Region. See the [Web Search Tool documentation](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) for the supported Regions (as of November 2026: Tokyo, N. Virginia, Ohio, Oregon, Sydney and Ireland).
+
+> [!NOTE]
+> Web Search is charged based on the number of search queries. See the [Amazon Bedrock AgentCore pricing page](https://aws.amazon.com/bedrock/agentcore/pricing/) for details.
+
+> [!IMPORTANT]
+> Under the acceptable use terms of Web Search, when you surface output that uses search results to your end users, you **must retain and display the source citations and links** provided with each result. See [Acceptable use](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) for details.
+> To meet this requirement, an Agent with web search enabled automatically receives a system prompt that instructs it to cite sources as Markdown links. The system prompt entered by the user is preserved as is.
+
+> [!NOTE]
+> When you also enable a search MCP such as `tavily-search`, the Agent decides which tool to use. If you want a specific split, state it in the system prompt (for example, Web Search for sensitive queries and Tavily for deeper research).
+
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
 ```typescript
@@ -1210,152 +1236,120 @@ The solution also supports [cross-region inference](https://docs.aws.amazon.com/
 
 (Example) If `modelRegion` is `us-east-1`, `us.anthropic.claude-3-5-sonnet-20240620-v1:0` is OK, but `eu.anthropic.claude-3-5-sonnet-20240620-v1:0` is not.
 
-This solution supports the following text generation models:
+This solution supports the following text generation models. `{global|us|eu}.model-name` stands for `global.model-name`, `us.model-name`, and `eu.model-name`, each of which you specify as a separate model ID (do not include `{}` in the configuration). The list includes models that have reached or are approaching end of life (see [Models Reaching End of Life (EOL)](#models-reaching-end-of-life-eol)).
+
+<!-- supported-text-models: generated from modelMetadata, checked by packages/cdk/test/docs/supported-models.test.ts -->
 
 ```
 "anthropic.claude-3-5-sonnet-20241022-v2:0",
+"{us|apac}.anthropic.claude-3-5-sonnet-20241022-v2:0",
 "anthropic.claude-3-5-haiku-20241022-v1:0",
+"us.anthropic.claude-3-5-haiku-20241022-v1:0",
 "anthropic.claude-3-5-sonnet-20240620-v1:0",
+"{us|eu|apac}.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "anthropic.claude-3-opus-20240229-v1:0",
+"us.anthropic.claude-3-opus-20240229-v1:0",
 "anthropic.claude-3-sonnet-20240229-v1:0",
+"{us|eu|apac}.anthropic.claude-3-sonnet-20240229-v1:0",
 "anthropic.claude-3-haiku-20240307-v1:0",
-"global.anthropic.claude-opus-5-5",
-"global.anthropic.claude-opus-5",
-"global.anthropic.claude-haiku-5-5",
-"global.anthropic.claude-opus-4-8",
-"global.anthropic.claude-opus-4-7",
-"global.anthropic.claude-opus-4-6-v1",
-"global.anthropic.claude-sonnet-5-5",
-"global.anthropic.claude-sonnet-5",
-"global.anthropic.claude-fable-5",
-"global.anthropic.claude-sonnet-4-6",
-"global.anthropic.claude-opus-4-5-20251101-v1:0",
-"global.anthropic.claude-sonnet-4-5-20250929-v1:0",
-"global.anthropic.claude-sonnet-4-20250514-v1:0",
-"us.anthropic.claude-opus-5-5",
-"us.anthropic.claude-opus-5",
-"us.anthropic.claude-haiku-5-5",
-"us.anthropic.claude-opus-4-8",
-"us.anthropic.claude-opus-4-7",
-"us.anthropic.claude-opus-4-6-v1",
-"us.anthropic.claude-sonnet-5-5",
-"us.anthropic.claude-sonnet-5",
-"us.anthropic.claude-sonnet-4-6",
+"{us|eu|apac}.anthropic.claude-3-haiku-20240307-v1:0",
+"{us|global}.anthropic.claude-opus-4-5-20251101-v1:0",
 "us.anthropic.claude-opus-4-1-20250805-v1:0",
 "us.anthropic.claude-opus-4-20250514-v1:0",
-"us.anthropic.claude-sonnet-4-20250514-v1:0",
-"us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-"us.anthropic.claude-3-5-sonnet-20241022-v2:0",
-"us.anthropic.claude-3-5-haiku-20241022-v1:0",
-"us.anthropic.claude-3-5-sonnet-20240620-v1:0",
-"us.anthropic.claude-3-opus-20240229-v1:0",
-"us.anthropic.claude-3-sonnet-20240229-v1:0",
-"us.anthropic.claude-3-haiku-20240307-v1:0",
-"au.anthropic.claude-haiku-5-5",
-"au.anthropic.claude-opus-4-6-v1",
-"au.anthropic.claude-sonnet-4-6",
-"eu.anthropic.claude-opus-5-5",
-"eu.anthropic.claude-opus-5",
-"eu.anthropic.claude-haiku-5-5",
-"eu.anthropic.claude-opus-4-8",
-"eu.anthropic.claude-opus-4-7",
-"eu.anthropic.claude-opus-4-6-v1",
-"eu.anthropic.claude-sonnet-4-6",
-"eu.anthropic.claude-sonnet-4-20250514-v1:0",
-"eu.anthropic.claude-3-7-sonnet-20250219-v1:0",
-"eu.anthropic.claude-3-5-sonnet-20240620-v1:0",
-"eu.anthropic.claude-3-sonnet-20240229-v1:0",
-"eu.anthropic.claude-3-haiku-20240307-v1:0",
-"jp.anthropic.claude-opus-5-5",
-"jp.anthropic.claude-haiku-5-5",
-"jp.anthropic.claude-opus-4-8",
-"jp.anthropic.claude-opus-4-7",
-"apac.anthropic.claude-sonnet-4-20250514-v1:0",
-"apac.anthropic.claude-3-7-sonnet-20250219-v1:0",
-"apac.anthropic.claude-3-haiku-20240307-v1:0",
-"apac.anthropic.claude-3-sonnet-20240229-v1:0",
-"apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
-"apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
-"deepseek.v3-v1:0",
-"us.deepseek.r1-v1:0",
-"qwen.qwen3-235b-a22b-2507-v1:0",
-"qwen.qwen3-32b-v1:0",
-"qwen.qwen3-coder-480b-a35b-v1:0",
-"qwen.qwen3-coder-30b-a3b-v1:0",
-"qwen.qwen3-next-80b-a3b",
-"qwen.qwen3-vl-235b-a22b",
-"us.writer.palmyra-x5-v1:0",
-"us.writer.palmyra-x4-v1:0",
+"{global|us|eu|au|jp}.anthropic.claude-opus-5-5",
+"{global|us|eu|au}.anthropic.claude-opus-5",
+"{global|us|eu|au|jp}.anthropic.claude-haiku-5-5",
+"{global|us|eu|jp}.anthropic.claude-opus-4-8",
+"{global|us|eu|jp}.anthropic.claude-opus-4-7",
+"{global|us|au|eu}.anthropic.claude-opus-4-6-v1",
+"{global|us}.anthropic.claude-sonnet-5-5",
+"{global|us}.anthropic.claude-sonnet-5",
+"global.anthropic.claude-fable-5",
+"{global|us}.anthropic.claude-fable-5-1",
+"{global|us}.anthropic.claude-fable-5-2",
+"{global|us|eu|au|jp}.anthropic.claude-sonnet-4-6",
+"{global|us|eu|jp}.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"{global|us|eu|jp}.anthropic.claude-haiku-4-5-20251001-v1:0",
+"{global|us|eu|apac}.anthropic.claude-sonnet-4-20250514-v1:0",
+"{us|eu|apac}.anthropic.claude-3-7-sonnet-20250219-v1:0",
+"amazon.titan-text-express-v1",
 "amazon.titan-text-premier-v1:0",
+"amazon.nova-pro-v1:0",
+"{us|eu|apac}.amazon.nova-pro-v1:0",
+"amazon.nova-lite-v1:0",
+"{us|eu|apac}.amazon.nova-lite-v1:0",
+"amazon.nova-micro-v1:0",
+"{us|eu|apac}.amazon.nova-micro-v1:0",
+"us.amazon.nova-premier-v1:0",
+"{us|jp|global}.amazon.nova-2-lite-v1:0",
+"meta.llama3-8b-instruct-v1:0",
+"meta.llama3-70b-instruct-v1:0",
+"meta.llama3-1-8b-instruct-v1:0",
+"meta.llama3-1-70b-instruct-v1:0",
+"meta.llama3-1-405b-instruct-v1:0",
+"us.meta.llama3-2-1b-instruct-v1:0",
+"us.meta.llama3-2-3b-instruct-v1:0",
+"us.meta.llama3-2-11b-instruct-v1:0",
+"us.meta.llama3-2-90b-instruct-v1:0",
+"us.meta.llama3-3-70b-instruct-v1:0",
 "us.meta.llama4-maverick-17b-instruct-v1:0",
 "us.meta.llama4-scout-17b-instruct-v1:0",
-"us.meta.llama3-3-70b-instruct-v1:0",
-"us.meta.llama3-2-90b-instruct-v1:0",
-"us.meta.llama3-2-11b-instruct-v1:0",
-"us.meta.llama3-2-3b-instruct-v1:0",
-"us.meta.llama3-2-1b-instruct-v1:0",
-"meta.llama3-1-405b-instruct-v1:0",
-"meta.llama3-1-70b-instruct-v1:0",
-"meta.llama3-1-8b-instruct-v1:0",
-"meta.llama3-70b-instruct-v1:0",
-"meta.llama3-8b-instruct-v1:0",
-"cohere.command-r-plus-v1:0",
-"cohere.command-r-v1:0",
-"mistral.mistral-large-2407-v1:0",
-"mistral.mistral-large-2402-v1:0",
-"mistral.mistral-small-2402-v1:0",
-"us.mistral.pixtral-large-2502-v1:0",
-"eu.mistral.pixtral-large-2502-v1:0",
-"mistral.mixtral-8x7b-instruct-v0:1",
 "mistral.mistral-7b-instruct-v0:2",
+"mistral.mixtral-8x7b-instruct-v0:1",
+"mistral.mistral-small-2402-v1:0",
+"mistral.mistral-large-2402-v1:0",
+"mistral.mistral-large-2407-v1:0",
+"{us|eu}.mistral.pixtral-large-2502-v1:0",
 "mistral.mistral-large-3-675b-instruct",
 "mistral.ministral-3-3b-instruct",
 "mistral.ministral-3-8b-instruct",
 "mistral.ministral-3-14b-instruct",
 "mistral.magistral-small-2509",
-"amazon.nova-pro-v1:0",
-"amazon.nova-lite-v1:0",
-"amazon.nova-micro-v1:0",
-"us.amazon.nova-premier-v1:0",
-"us.amazon.nova-pro-v1:0",
-"us.amazon.nova-lite-v1:0",
-"us.amazon.nova-micro-v1:0",
-"us.amazon.nova-2-lite-v1:0",
-"eu.amazon.nova-pro-v1:0",
-"eu.amazon.nova-lite-v1:0",
-"eu.amazon.nova-micro-v1:0",
-"apac.amazon.nova-pro-v1:0",
-"apac.amazon.nova-lite-v1:0",
-"apac.amazon.nova-micro-v1:0",
-"jp.amazon.nova-2-lite-v1:0",
-"global.amazon.nova-2-lite-v1:0",
+"cohere.command-r-v1:0",
+"cohere.command-r-plus-v1:0",
+"deepseek.v3-v1:0",
+"deepseek.v3.2",
+"us.deepseek.r1-v1:0",
+"qwen.qwen3-235b-a22b-2507-v1:0",
+"qwen.qwen3-32b-v1:0",
+"qwen.qwen3-coder-480b-a35b-v1:0",
+"qwen.qwen3-coder-30b-a3b-v1:0",
+"qwen.qwen3-coder-next",
+"qwen.qwen3-next-80b-a3b",
+"qwen.qwen3-vl-235b-a22b",
+"us.writer.palmyra-x4-v1:0",
+"us.writer.palmyra-x5-v1:0",
+"writer.palmyra-vision-7b",
 "openai.gpt-oss-120b-1:0",
 "openai.gpt-oss-20b-1:0",
-"global.openai.gpt-6.1-sol",
-"us.openai.gpt-6.1-sol",
-"global.openai.gpt-6.1-terra",
-"us.openai.gpt-6.1-terra",
-"global.openai.gpt-6-sol",
-"us.openai.gpt-6-sol",
-"global.openai.gpt-6-luna",
-"us.openai.gpt-6-luna",
-"global.openai.gpt-6-astra",
-"us.openai.gpt-6-astra",
-"global.openai.gpt-5.6-sol",
-"us.openai.gpt-5.6-sol",
-"global.openai.gpt-5.6-luna",
-"us.openai.gpt-5.6-luna",
-"global.openai.gpt-5.6-terra",
-"us.openai.gpt-5.6-terra",
+"{global|us}.openai.gpt-6.1-sol",
+"{global|us}.openai.gpt-6.1-terra",
+"{global|us}.openai.gpt-6-sol",
+"{global|us}.openai.gpt-6-luna",
+"{global|us}.openai.gpt-6-astra",
+"{global|us}.openai.gpt-5.6-sol",
+"{global|us}.openai.gpt-5.6-luna",
+"{global|us}.openai.gpt-5.6-terra",
+"{global|us}.openai.gpt-6.2-sol",
+"{global|us}.openai.gpt-6.2-astra",
+"{global|us}.openai.gpt-5.5",
+"{global|us}.openai.gpt-5.4",
+"{global|us}.xai.grok-4.7",
+"{global|us}.xai.grok-4.6",
+"zai.glm-5",
 "google.gemma-3-4b-it",
 "google.gemma-3-12b-it",
 "google.gemma-3-27b-it",
 "minimax.minimax-m2",
+"minimax.minimax-m2.5",
 "moonshot.kimi-k2-thinking",
-"us.moonshotai.kimi-k3",
-"global.moonshotai.kimi-k3",
+"moonshotai.kimi-k2.5",
+"{us|global}.moonshotai.kimi-k3",
+"{us|global}.moonshotai.kimi-k3.1",
 "nvidia.nemotron-nano-9b-v2",
 "nvidia.nemotron-nano-12b-v2",
+"nvidia.nemotron-nano-3-30b",
+"nvidia.nemotron-super-3-120b",
 ```
 
 This solution supports the following speech-to-speech models:
@@ -1386,7 +1380,20 @@ This solution supports the following video generation models:
 "luma.ray-v2:0"
 ```
 
+> [!WARNING]
+> `amazon.nova-canvas-v1:0`, `amazon.nova-reel-v1:0` and `amazon.nova-reel-v1:1` reached end of life on 2026-09-30 and can no longer be invoked in any region. Titan Image Generator is no longer offered either. Check [Bedrock model lifecycle](https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html) for the current status.
+>
+> Because of this, the default image generation model is `stability.stable-image-core-v1:1` in us-west-2, and video generation is disabled by default (`videoGenerationModelIds: []`). To use video generation, bootstrap CDK in us-west-2 (`npx -w packages/cdk cdk bootstrap --region us-west-2`) and specify:
+>
+> ```json
+> "videoGenerationModelIds": [{ "modelId": "luma.ray-v2:0", "region": "us-west-2" }]
+> ```
+
 **Please verify that the models you specify are enabled in the specified region.**
+
+### Models Reaching End of Life (EOL)
+
+If you specify a model that Amazon Bedrock has retired or plans to retire, `cdk deploy` shows a warning. The deployment continues. Follow the warning to replace or remove the model.
 
 ### Using Models from Multiple Regions Simultaneously
 
@@ -1410,43 +1417,25 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'ap-northeast-1',
     modelIds: [
-      {
-        modelId: 'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
-        region: 'us-east-1',
-      },
-      'apac.anthropic.claude-3-5-sonnet-20241022-v2:0',
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      {
-        modelId: 'us.anthropic.claude-3-5-haiku-20241022-v1:0',
-        region: 'us-east-1',
-      },
+      'jp.anthropic.claude-sonnet-4-6',
+      'jp.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'jp.amazon.nova-2-lite-v1:0',
       'apac.amazon.nova-pro-v1:0',
       'apac.amazon.nova-lite-v1:0',
       'apac.amazon.nova-micro-v1:0',
-      { modelId: 'us.deepseek.r1-v1:0', region: 'us-east-1' },
-      { modelId: 'us.writer.palmyra-x5-v1:0', region: 'us-west-2' },
-      {
-        modelId: 'us.meta.llama4-maverick-17b-instruct-v1:0',
-        region: 'us-east-1',
-      },
-      {
-        modelId: 'us.meta.llama4-scout-17b-instruct-v1:0',
-        region: 'us-east-1',
-      },
-      { modelId: 'us.mistral.pixtral-large-2502-v1:0', region: 'us-east-1' },
+      { modelId: 'global.anthropic.claude-opus-4-8', region: 'us-east-1' },
+      { modelId: 'openai.gpt-oss-120b-1:0', region: 'us-east-1' },
+      { modelId: 'qwen.qwen3-235b-a22b-2507-v1:0', region: 'us-west-2' },
     ],
     imageGenerationModelIds: [
-      'amazon.nova-canvas-v1:0',
-      { modelId: 'stability.sd3-5-large-v1:0', region: 'us-west-2' },
       { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
       { modelId: 'stability.stable-image-ultra-v1:1', region: 'us-west-2' },
     ],
     videoGenerationModelIds: [
-      'amazon.nova-reel-v1:0',
       { modelId: 'luma.ray-v2:0', region: 'us-west-2' },
     ],
     speechToSpeechModelIds: [
-      { modelId: 'amazon.nova-sonic-v1:0', region: 'us-east-1' },
+      { modelId: 'amazon.nova-2-5-sonic', region: 'us-east-1' },
     ],
   },
 };
@@ -1455,50 +1444,31 @@ const envs: Record<string, Partial<StackInput>> = {
 **Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
 
 ```json
+// cdk.json
 {
   "context": {
     "modelRegion": "ap-northeast-1",
     "modelIds": [
-      {
-        "modelId": "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-        "region": "us-east-1"
-      },
-      "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      {
-        "modelId": "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-        "region": "us-east-1"
-      },
+      "jp.anthropic.claude-sonnet-4-6",
+      "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "jp.amazon.nova-2-lite-v1:0",
       "apac.amazon.nova-pro-v1:0",
       "apac.amazon.nova-lite-v1:0",
       "apac.amazon.nova-micro-v1:0",
       {
-        "modelId": "us.deepseek.r1-v1:0",
+        "modelId": "global.anthropic.claude-opus-4-8",
         "region": "us-east-1"
       },
       {
-        "modelId": "us.writer.palmyra-x5-v1:0",
+        "modelId": "openai.gpt-oss-120b-1:0",
+        "region": "us-east-1"
+      },
+      {
+        "modelId": "qwen.qwen3-235b-a22b-2507-v1:0",
         "region": "us-west-2"
-      },
-      {
-        "modelId": "us.meta.llama4-maverick-17b-instruct-v1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "us.meta.llama4-scout-17b-instruct-v1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "us.mistral.pixtral-large-2502-v1:0",
-        "region": "us-east-1"
       }
     ],
     "imageGenerationModelIds": [
-      "amazon.nova-canvas-v1:0",
-      {
-        "modelId": "stability.sd3-5-large-v1:0",
-        "region": "us-west-2"
-      },
       {
         "modelId": "stability.stable-image-core-v1:1",
         "region": "us-west-2"
@@ -1509,15 +1479,14 @@ const envs: Record<string, Partial<StackInput>> = {
       }
     ],
     "videoGenerationModelIds": [
-      "amazon.nova-reel-v1:0",
       {
         "modelId": "luma.ray-v2:0",
         "region": "us-west-2"
       }
-    ]
+    ],
     "speechToSpeechModelIds": [
       {
-        "modelId": "amazon.nova-sonic-v1:0",
+        "modelId": "amazon.nova-2-5-sonic",
         "region": "us-east-1"
       }
     ]
@@ -1535,28 +1504,20 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-east-1',
     modelIds: [
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'anthropic.claude-3-sonnet-20240229-v1:0',
-      'anthropic.claude-3-haiku-20240307-v1:0',
+      'global.anthropic.claude-opus-4-8',
+      'global.anthropic.claude-sonnet-4-6',
+      'global.anthropic.claude-haiku-4-5-20251001-v1:0',
       'amazon.nova-pro-v1:0',
       'amazon.nova-lite-v1:0',
       'amazon.nova-micro-v1:0',
-      'amazon.titan-text-premier-v1:0',
-      'meta.llama3-70b-instruct-v1:0',
-      'meta.llama3-8b-instruct-v1:0',
-      'cohere.command-r-plus-v1:0',
-      'cohere.command-r-v1:0',
-      'us.mistral.pixtral-large-2502-v1:0',
-      'mistral.mistral-large-2402-v1:0',
+      'openai.gpt-oss-120b-1:0',
+      'mistral.mistral-large-3-675b-instruct',
     ],
     imageGenerationModelIds: [
-      'amazon.nova-canvas-v1:0',
-      'amazon.titan-image-generator-v2:0',
-      'amazon.titan-image-generator-v1',
-      'stability.stable-diffusion-xl-v1',
+      // us-east-1 has no image generation model, so this uses a model in us-west-2
+      { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
     ],
-    videoGenerationModelIds: ['amazon.nova-reel-v1:1'],
-    speechToSpeechModelIds: ['amazon.nova-sonic-v1:0'],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1569,27 +1530,22 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "modelRegion": "us-east-1",
     "modelIds": [
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-sonnet-20240229-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0",
+      "global.anthropic.claude-opus-4-8",
+      "global.anthropic.claude-sonnet-4-6",
+      "global.anthropic.claude-haiku-4-5-20251001-v1:0",
       "amazon.nova-pro-v1:0",
       "amazon.nova-lite-v1:0",
       "amazon.nova-micro-v1:0",
-      "amazon.titan-text-premier-v1:0",
-      "meta.llama3-70b-instruct-v1:0",
-      "meta.llama3-8b-instruct-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2402-v1:0"
+      "openai.gpt-oss-120b-1:0",
+      "mistral.mistral-large-3-675b-instruct"
     ],
     "imageGenerationModelIds": [
-      "amazon.nova-canvas-v1:0",
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.stable-diffusion-xl-v1"
+      {
+        "modelId": "stability.stable-image-core-v1:1",
+        "region": "us-west-2"
+      }
     ],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:1"],
-    "speechToSpeechModelIds": ["amazon.nova-sonic-v1:0"]
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -1604,26 +1560,19 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-west-2',
     modelIds: [
-      'anthropic.claude-3-5-sonnet-20241022-v2:0',
-      'anthropic.claude-3-5-haiku-20241022-v1:0',
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'anthropic.claude-3-opus-20240229-v1:0',
-      'anthropic.claude-3-sonnet-20240229-v1:0',
-      'anthropic.claude-3-haiku-20240307-v1:0',
-      'meta.llama3-1-70b-instruct-v1:0',
-      'meta.llama3-1-8b-instruct-v1:0',
-      'cohere.command-r-plus-v1:0',
-      'cohere.command-r-v1:0',
-      'mistral.mistral-large-2407-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
+      'global.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'amazon.nova-lite-v1:0',
+      'openai.gpt-oss-120b-1:0',
+      'mistral.mistral-large-3-675b-instruct',
+      'qwen.qwen3-235b-a22b-2507-v1:0',
     ],
     imageGenerationModelIds: [
-      'amazon.titan-image-generator-v2:0',
-      'amazon.titan-image-generator-v1',
-      'stability.sd3-5-large-v1:0',
       'stability.stable-image-core-v1:1',
       'stability.stable-image-ultra-v1:1',
-      'stability.stable-diffusion-xl-v1',
+      'stability.sd3-5-large-v1:0',
     ],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1636,26 +1585,19 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "modelRegion": "us-west-2",
     "modelIds": [
-      "anthropic.claude-3-5-sonnet-20241022-v2:0",
-      "anthropic.claude-3-5-haiku-20241022-v1:0",
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-opus-20240229-v1:0",
-      "anthropic.claude-3-sonnet-20240229-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0",
-      "meta.llama3-1-70b-instruct-v1:0",
-      "meta.llama3-1-8b-instruct-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0"
+      "global.anthropic.claude-sonnet-4-6",
+      "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "amazon.nova-lite-v1:0",
+      "openai.gpt-oss-120b-1:0",
+      "mistral.mistral-large-3-675b-instruct",
+      "qwen.qwen3-235b-a22b-2507-v1:0"
     ],
     "imageGenerationModelIds": [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-5-large-v1:0"
       "stability.stable-image-core-v1:1",
       "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1",
+      "stability.sd3-5-large-v1:0"
     ],
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -1670,33 +1612,19 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-west-2',
     modelIds: [
-      "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-haiku-20240307-v1:0",
-      "us.deepseek.r1-v1:0",
-      "us.writer.palmyra-x5-v1:0",
-      "us.writer.palmyra-x4-v1:0",
-      "us.meta.llama4-maverick-17b-instruct-v1:0",
-      "us.meta.llama4-scout-17b-instruct-v1:0",
-      "us.meta.llama3-2-11b-instruct-v1:0",
-      "us.meta.llama3-2-3b-instruct-v1:0",
-      "us.meta.llama3-2-1b-instruct-v1:0",
-      "us.amazon.nova-premier-v1:0",
-      "us.amazon.nova-pro-v1:0",
-      "us.amazon.nova-lite-v1:0",
-      "us.amazon.nova-micro-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0",
+      'us.anthropic.claude-opus-4-8',
+      'us.anthropic.claude-sonnet-4-6',
+      'us.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'us.amazon.nova-2-lite-v1:0',
+      'us.amazon.nova-pro-v1:0',
+      'us.amazon.nova-lite-v1:0',
+      'us.amazon.nova-micro-v1:0',
     ],
     imageGenerationModelIds: [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-5-large-v1:0"
-      "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1",
+      'stability.stable-image-core-v1:1',
+      'stability.stable-image-ultra-v1:1',
     ],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1709,33 +1637,19 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "modelRegion": "us-west-2",
     "modelIds": [
-      "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-haiku-20240307-v1:0",
-      "us.deepseek.r1-v1:0",
-      "us.writer.palmyra-x5-v1:0",
-      "us.writer.palmyra-x4-v1:0",
-      "us.meta.llama4-maverick-17b-instruct-v1:0",
-      "us.meta.llama4-scout-17b-instruct-v1:0",
-      "us.meta.llama3-2-11b-instruct-v1:0",
-      "us.meta.llama3-2-3b-instruct-v1:0",
-      "us.meta.llama3-2-1b-instruct-v1:0",
-      "us.amazon.nova-premier-v1:0",
+      "us.anthropic.claude-opus-4-8",
+      "us.anthropic.claude-sonnet-4-6",
+      "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "us.amazon.nova-2-lite-v1:0",
       "us.amazon.nova-pro-v1:0",
       "us.amazon.nova-lite-v1:0",
-      "us.amazon.nova-micro-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0"
+      "us.amazon.nova-micro-v1:0"
     ],
     "imageGenerationModelIds": [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-5-large-v1:0"
       "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1",
+      "stability.stable-image-ultra-v1:1"
     ],
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -1746,15 +1660,23 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ```typescript
 // parameter.ts
-const envs: Record<string, StackInput> = {
+const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'ap-northeast-1',
     modelIds: [
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'anthropic.claude-3-haiku-20240307-v1:0',
+      'jp.anthropic.claude-opus-4-8',
+      'jp.anthropic.claude-sonnet-4-6',
+      'jp.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'jp.amazon.nova-2-lite-v1:0',
+      'apac.amazon.nova-pro-v1:0',
+      'apac.amazon.nova-lite-v1:0',
+      'apac.amazon.nova-micro-v1:0',
     ],
-    imageGenerationModelIds: ['amazon.nova-canvas-v1:0'],
-    videoGenerationModelIds: ['amazon.nova-reel-v1:0'],
+    imageGenerationModelIds: [
+      // ap-northeast-1 has no image generation model, so this uses a model in us-west-2
+      { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
+    ],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1767,11 +1689,21 @@ const envs: Record<string, StackInput> = {
   "context": {
     "modelRegion": "ap-northeast-1",
     "modelIds": [
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0"
+      "jp.anthropic.claude-opus-4-8",
+      "jp.anthropic.claude-sonnet-4-6",
+      "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "jp.amazon.nova-2-lite-v1:0",
+      "apac.amazon.nova-pro-v1:0",
+      "apac.amazon.nova-lite-v1:0",
+      "apac.amazon.nova-micro-v1:0"
     ],
-    "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:0"]
+    "imageGenerationModelIds": [
+      {
+        "modelId": "stability.stable-image-core-v1:1",
+        "region": "us-west-2"
+      }
+    ],
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -2087,6 +2019,9 @@ The default guardrail applies sensitive information filters that have proven eff
 > [!NOTE]
 > If you want to disable guardrails after enabling them, set `guardrailEnabled: false` and redeploy. This will disable guardrails when calling generative AI, but the guardrail itself will remain. You can completely remove it by opening the management console and deleting the `GuardrailStack` stack from CloudFormation in the modelRegion. Having the guardrail remain doesn't incur costs, but it's best to delete unused resources.
 
+> [!WARNING]
+> The guardrail is created in `modelRegion` only. With `guardrailEnabled: true`, a model in `modelIds` whose region is not `modelRegion` fails with `The guardrail identifier or version provided in the request does not exist.`, because that region has no guardrail. When you enable guardrails, use `modelRegion` as the region of your text generation models.
+
 ## Cost-Related Settings
 
 ### Set Schedule for Automatic Creation and Deletion of Kendra Index
@@ -2243,6 +2178,62 @@ After configuration, open the `GenerativeAiUseCasesDashboardStack.DashboardUrl` 
 > [!NOTE]
 > If you want to disable the monitoring dashboard after enabling it, set `dashboard: false` and redeploy. This will disable the monitoring dashboard, but the `GenerativeAiUseCasesDashboardStack` itself will remain. To completely remove it, open the management console and delete the `GenerativeAiUseCasesDashboardStack` stack from CloudFormation in the modelRegion.
 
+### Usage by User and Use Case
+
+GenU tags its Bedrock calls with the following [request metadata](https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-request-metadata.html). The tags are recorded in the model invocation logs.
+
+| Key            | Value                                                                   |
+| -------------- | ----------------------------------------------------------------------- |
+| `genu`         | `genu` (marks calls made by GenU)                                       |
+| `genu_user`    | The Cognito user's `sub`                                                |
+| `genu_usecase` | The use case (`chat`, `rag` and so on, the first part of the page path) |
+
+The dashboard includes usage by user and by use case (Tokens by User / Tokens by Use Case). The same queries are saved in CloudWatch Logs Insights under "Saved queries" as `GenU/<stack name>/TokensByUser` and `GenU/<stack name>/TokensByUseCase`, so you can change the time range or add conditions. `genu_user` is the Cognito `sub`; to group by department or other attributes, join it with the Cognito user attributes.
+
+If you send model invocation logs to an existing log group instead of the dashboard's, you can query the same tags there.
+
+```
+filter requestMetadata.genu = 'genu'
+| fields requestMetadata.genu_user as user, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc
+```
+
+> [!NOTE]
+>
+> - The tags are set on models called through the Converse and InvokeModel APIs (text generation such as chat and writing, and image generation). Video generation (StartAsyncInvoke), voice chat, Bedrock Agents, Knowledge Base chat, Flow chat, prompt optimization and AgentCore calls are not tagged.
+> - Model invocation logs are recorded per Region. If `modelIds` uses models in several Regions, set up logging in each Region and query each Region. To query them in one place, [CloudWatch Logs centralization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html) can copy logs from several Regions into one Region if you use AWS Organizations.
+> - By default, model invocation logs also record the prompt and response text. Check how long they are kept and who can read them.
+
+## Admin Page
+
+The admin page shows every user's token usage in GenU (the shield icon at the bottom left). It shows the usage GenU saves with chat messages (the same data as the stats page) for the last 7, 30 or 90 days, and the per-user totals can be downloaded as CSV. Selecting users in the per-user table (up to 50) narrows the cards, the per-model table and the charts to those users. Token counts add input, output, cache read and cache write tokens.
+
+Only users in the `SystemAdminGroup` group of the Cognito user pool can open the admin page. The group is created on deployment. To add a user, open the user pool in the [Amazon Cognito console](https://console.aws.amazon.com/cognito/home) and add the user under "Groups", or run:
+
+```bash
+aws cognito-idp admin-add-user-to-group \
+  --user-pool-id <user pool ID> \
+  --username <user name> \
+  --group-name SystemAdminGroup
+```
+
+The user can open the admin page after signing in again.
+
+The admin and stats pages compute cost with the AWS list prices (on-demand, USD) included in GenU, for the Region each model is called in; models starting with `global.` use the global price. The price table is updated with each GenU release. To use the latest list prices without waiting for a release, regenerate the table (`packages/cdk/lambda/utils/modelPricing.generated.ts`) and deploy:
+
+```bash
+npm -w packages/cdk run pricing:update
+```
+
+> [!NOTE]
+>
+> - Usage of agents (Bedrock Agents, AgentCore) and image or video generation is not included. To include it, use CloudWatch Logs Insights as described in "Usage by User and Use Case" above.
+> - Cost uses list prices. Cache writes are priced at the 5-minute cache rate and requests over 200K tokens at the standard rate, so cost is lower than actual when these are used. Discounts, Savings Plans and free tiers are not reflected; see AWS Cost Explorer for actual charges. Models missing from the price table are left out of the cost and shown as "No price".
+> - The totals are computed each time the admin page is opened. With a 90-day period and more than 1,000-2,000 active users, the request approaches the 29-second API Gateway limit; use a shorter period or CloudWatch Logs Insights at that scale.
+> - `userId` in the per-user table and the CSV is the Cognito user name. `genu_user` in the model invocation logs is the Cognito `sub`, so the two differ for SAML users, for example.
+> - If the user pool already has a group named `SystemAdminGroup`, the deployment fails. Delete or rename that group first.
+
 ## Using a Custom Domain
 
 You can use a custom domain for your website URL. A public hosted zone must already be created in Route53 in the same AWS account. For public hosted zones, please refer to: [Working with public hosted zones - Amazon Route 53](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/AboutHZWorkingWith.html)
@@ -2251,7 +2242,7 @@ If you don't have a public hosted zone in the same AWS account, you can also man
 
 Set the following values:
 
-- `hostName` ... The hostname for your website. An A record will be created by CDK; you don't need to create it in advance
+- `hostName` ... The hostname for your website. An A record will be created by CDK; you don't need to create it in advance. If omitted, the A record is created for `domainName` itself (the zone apex, e.g. `example.com`). The deployment fails if an A record with that name already exists
 - `domainName` ... The domain name of the pre-created public hosted zone
 - `hostedZoneId` ... The ID of the pre-created public hosted zone
 

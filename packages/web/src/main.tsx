@@ -12,6 +12,7 @@ import {
 import LandingPage from './pages/LandingPage';
 import Setting from './pages/Setting';
 import StatPage from './pages/StatPage.tsx';
+import AdminPage from './pages/AdminPage.tsx';
 import ChatPage from './pages/ChatPage';
 import SharedChatPage from './pages/SharedChatPage';
 import SummarizePage from './pages/SummarizePage';
@@ -70,6 +71,7 @@ const {
   imageGenModelIds,
   videoGenModelIds,
   speechToSpeechModelIds,
+  flowChatEnabled,
 } = MODELS;
 const useCaseBuilderEnabled: boolean =
   import.meta.env.VITE_APP_USE_CASE_BUILDER_ENABLED === 'true';
@@ -88,6 +90,10 @@ const routes: RouteObject[] = [
   {
     path: '/stats',
     element: <StatPage />,
+  },
+  {
+    path: '/admin',
+    element: <AdminPage />,
   },
   {
     path: '/chat',
@@ -161,14 +167,18 @@ const routes: RouteObject[] = [
         element: <OptimizePromptPage />,
       }
     : null,
-  {
-    path: '/transcribe',
-    element: <TranscribePage />,
-  },
-  {
-    path: '/flow-chat',
-    element: <FlowChatPage />,
-  },
+  enabled('transcribe')
+    ? {
+        path: '/transcribe',
+        element: <TranscribePage />,
+      }
+    : null,
+  flowChatEnabled
+    ? {
+        path: '/flow-chat',
+        element: <FlowChatPage />,
+      }
+    : null,
   visionEnabled && enabled('videoAnalyzer')
     ? {
         path: '/video-analyzer',

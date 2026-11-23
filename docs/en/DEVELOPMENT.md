@@ -22,6 +22,20 @@ npm run web:devw
 > [!TIP]
 > If you want to switch and use a different backend environment, change the context.env in cdk.json or specify it as a command line argument like `npm run web:devw --env=dev2`.
 
+> [!IMPORTANT]
+> The deployed API only accepts requests from the deployed frontend's origin, so add your local origin to `allowedDevOrigins` and deploy. Without it the browser console shows a CORS error (`No 'Access-Control-Allow-Origin' header is present on the requested resource`) and API calls such as saving the conversation history fail.
+>
+> ```typescript
+> // packages/cdk/parameter.ts
+> const envs: Record<string, Partial<StackInput>> = {
+>   dev: {
+>     allowedDevOrigins: ['http://localhost:5173'],
+>   },
+> };
+> ```
+>
+> Use the scheme + host (+ port) form; a trailing slash or a path will never match. Leaving this unset is recommended for production environments.
+
 ### Windows Users
 
 For Windows users, we have prepared a PowerShell script `web_devw_win.ps1` to set up the development environment, which can be launched with `web:devww` (with one extra `w`). This script is similar to `setup-env.sh` but adapted for PowerShell, requiring the `aws` command but not `jq`.
@@ -90,6 +104,16 @@ npm run web:lint:fix  # For frontend code
 ### Pre-commit Hook
 
 This repository uses [Husky](https://typicode.github.io/husky) for git hooks. Linting runs automatically on `git commit` via `lint-staged`.
+
+## Developing with AI Coding Agents
+
+Instructions for AI coding agents are kept in files that are not tied to one tool, so the same rules apply whether you use Kiro, Claude Code or another agent.
+
+- [AGENTS.md](/AGENTS.md) at the repository root describes the repository, the commands and the rules for changes. Kiro and other agents read it automatically. `CLAUDE.md` imports it for Claude Code.
+- Agent skills are in `.kiro/skills/`. `.claude/skills` is a symbolic link to the same directory.
+
+> [!NOTE]
+> On Windows, Git checks out symbolic links as plain text files unless symbolic links are enabled (Developer Mode, and `git config core.symlinks true` before cloning). Without them, Claude Code does not find the skills; Kiro is not affected.
 
 ## When Submitting a Pull Request
 

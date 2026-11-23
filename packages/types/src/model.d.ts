@@ -1,3 +1,5 @@
+import { ConverseInferenceParams } from './text';
+
 // Define the type of Feature Flag
 export type FeatureFlags = {
   // Model Feature Flags
@@ -12,6 +14,12 @@ export type FeatureFlags = {
   // Supports the 'xhigh' effort level (e.g. Claude Opus 4.7+, Claude Sonnet 5)
   xhighEffort?: boolean;
   noSamplingParams?: boolean;
+  // Rejects a system role, so the system prompt goes into the first user turn
+  noSystemPrompt?: boolean;
+
+  // Maximum number of images the model accepts in a single request.
+  // Defaults to 20 (Converse API default) when not set.
+  maxImageCount?: number;
 
   image_gen?: boolean;
   video_gen?: boolean;
@@ -34,4 +42,6 @@ export type ModelConfiguration = {
 export type ModelMetadata = {
   flags: FeatureFlags;
   displayName: string;
+  // Default Converse inference parameters (text models)
+  defaultParams?: ConverseInferenceParams;
 };

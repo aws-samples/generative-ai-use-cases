@@ -1,3 +1,33 @@
+admin:
+  active_users: 活跃用户
+  clear_filter: 显示全部用户
+  cost: 费用
+  cost_note: 费用按调用各模型的区域的 AWS 标价（按需，USD）计算，不包括折扣、Savings Plans 和免费套餐。实际费用请在 AWS Cost Explorer 中查看。
+  description: GenU 记录的所有用户的令牌用量。如需详细分析，请使用 CloudWatch Logs Insights 查询 Bedrock 模型调用日志。
+  download_csv: 下载 CSV
+  executions: 执行次数
+  filter_selected: '按所选 {{users}} 位用户汇总'
+  filtered_to_users: '正在显示所选 {{users}} 位用户的汇总'
+  last_active: 最后使用
+  last_n_days: '最近 {{days}} 天'
+  load_failed: 无法加载用量。
+  model: 模型
+  models_heading: 按模型
+  next: 下一页
+  no_price: 无价格
+  page_range: '第 {{from}}–{{to}} 位，共 {{total}} 位'
+  period: 期间
+  previous: 上一页
+  pricing_note: '{{date}} 的标价'
+  scope_note: 仅统计 GenU 随聊天消息保存的文本生成用量。不包括代理（Bedrock Agents、AgentCore）以及图像或视频生成。
+  search_users: 搜索用户
+  select_page: 选择本页的所有用户
+  title: 管理
+  tokens: 令牌（输入、输出和缓存）
+  too_many_selected: '最多可选择 {{max}} 位用户'
+  unpriced_models: '没有标价、未计入费用的模型：{{models}}'
+  user: 用户
+  users_heading: 按用户
 agent:
   drop_files: 拖放文件上传
   title: Agent 聊天
@@ -16,6 +46,10 @@ chat:
   delete_link_message: 通过删除链接，您可以停止公开对话历史。
   drop_files: 请拖放文件
   history: 对话历史
+  history_last_30_days: 过去 30 天
+  history_last_7_days: 过去 7 天
+  history_today: 今天
+  history_yesterday: 昨天
   initialize: 初始化
   open_link: 打开链接
   prompt_examples: 提示示例
@@ -36,6 +70,7 @@ common:
   collapse: 折叠
   colon: ':'
   complete: 完成
+  copy_table: 复制表格
   create: 创建
   delete: 删除
   enter_text: 请输入
@@ -236,17 +271,34 @@ dialog:
     message: 如果离开此页面，您输入的内容将丢失。确定要离开吗？
     title: 未保存的更改
 drawer:
+  add_to_sidebar: 添加到侧边栏
   ai_services: AI 服务
   builder_mode: 构建者模式
+  collapse_sidebar: 收起侧边栏
+  edit_favorites: 选择在侧边栏显示的用例
+  expand_sidebar: 展开侧边栏
   generative_ai: (生成式 AI)
+  mode_builder: 构建器
+  remove_from_sidebar: 从侧边栏移除
+  resize_sidebar: 调整侧边栏宽度
   tools: 工具
   use_cases: 用例
 error:
   streamingError:
     ACCESS_DENIED: 所选模型尚未启用。请在 Amazon Bedrock 控制台中启用该模型。
-    PAYLOAD_TOO_LARGE: 附件文件过大。请减小文件大小或附件数量后重试。
+    CONTEXT_TOO_LONG: 对话或附件过长，模型无法读取。请减少附件内容（页数、行数或工作表数）或开始新的对话。
+    DEPENDENCY_FAILED: 代理或知识库调用的资源（例如操作组的 Lambda 函数）发生错误。请检查其配置和日志，然后重试。
+    DOCUMENT_TOO_LARGE: 文档过大，无法发送。请拆分文档或减少内容后重试。
+    DUPLICATE_FILE_NAME: 本次对话中有多个同名文件（包括之前附加的文件）。请重命名文件后重新附加，或开始新的对话。
+    EMPTY_MESSAGE: 对话中包含空消息，无法继续。请开始新的对话。
+    IMAGE_DIMENSIONS_TOO_LARGE: 图片的宽度或高度过大。图片每边不能超过 8,000 像素（本次对话中的图片较多时，包括之前附加的图片在内，每边不能超过 3,000 像素）。请缩小图片后重新附加，或开始新的对话。
+    IMAGE_TOO_LARGE: 图片过大。每张图片不能超过 3.75 MB。
+    INVALID_FILE_NAME: 无法使用该文件名。请改为仅包含英文字母和数字的简短名称后重新附加。
+    PAYLOAD_TOO_LARGE: 附件总大小过大，无法发送。本次对话中之前附加的文件每次也会一起发送，并计入总大小。请移除或缩小新的附件，或开始新的对话。
     THROTTLING: 服务器当前流量较高。请稍后重试。
+    TOO_MANY_DOCUMENTS: 附加的文档过多。本次对话中之前附加的文档也会计入。请减少附件或开始新的对话。
     UNKNOWN_ERROR: 发生错误。请重试或联系管理员。
+    UNSUPPORTED_FILE_TYPE: 不支持此文件类型。
 feedback:
   additional_feedback: 如果您有其他反馈，请输入。(可选)
   reason_error: 请选择原因。
@@ -259,6 +311,7 @@ feedback:
 files:
   error:
     fileCountExceeded: 文件数量不能超过 {{maxCount}} 个。
+    fileCountExceededInChat: 本次对话之前已附加 {{previousCount}} 个文档，一次对话最多可附加 {{maxCount}} 个文档。请减少附件或开始新的对话。
     fileSizeExceeded: 文件大小不能超过 {{maxSize}} MB。
     imageCountExceeded: 图片数量不能超过 {{maxCount}} 个。
     invalidExtension: '{{fileName}} 是不允许的扩展名。允许的扩展名为 {{acceptedExtensions}}。'
@@ -458,6 +511,8 @@ language:
   ko: 韩语
   zh: 中文
 meetingMinutes:
+  auto_detect_candidates: '自动检测候选: {{languages}}'
+  auto_detect_change: 在设置中更改
   auto_generate: 自动生成
   clear_minutes: 清除会议纪要
   custom_prompt: 自定义提示
@@ -608,10 +663,17 @@ setting:
     language_help: 可以更改显示语言
     rag_enabled: RAG (Amazon Kendra)已启用
     rag_kb_enabled: RAG (Knowledge Base)已启用
+    transcribe_languages: 语音识别自动检测语言
+    transcribe_languages_help: '当语音识别语言设置为"自动"时（会议记录、语音输入、文件转录），用于检测的候选语言。请选择 2 到 5 种。选择越多，短句越容易被识别为错误的语言。'
     version: 版本
     version_help: 参考generative-ai-use-cases的package.json中的version
   recent_updates: 最近更新
   signout: 退出登录
+  tabs:
+    account: 账户
+    general: 通用
+    system: 系统
+    usage: 使用量
   update:
     message: GitHub上有更新。如果您想使用最新功能，请pull <0>generative-ai-use-cases</0>的main分支 并重新部署。
   view_all_updates: 查看所有更新
@@ -695,7 +757,6 @@ useCaseBuilder:
     reference_info_description: 指定URL自动获取作为文章参考的信息。 通过设置额外上下文，可以只提取您需要的信息。
     summarize_article: 摘要
     summarize_article_description: 为OGP（分享文章链接时显示的文章预览）总结文章。适当设置OGP可以在分享文章时正确传达文章概要。
-  builderMode: 构建者模式
   cancel: 取消
   create: 创建
   createDescription: 创建用例。请在预览中确认操作后再创建。创建后也可以编辑。

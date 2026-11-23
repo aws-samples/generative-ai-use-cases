@@ -1,3 +1,33 @@
+admin:
+  active_users: 이용 사용자 수
+  clear_filter: 전체 사용자로 돌아가기
+  cost: 비용
+  cost_note: '비용은 각 모델을 호출하는 리전의 AWS 정가(온디맨드, USD)로 계산합니다. 할인, Savings Plans, 프리 티어는 반영되지 않습니다. 실제 청구 금액은 AWS Cost Explorer에서 확인하세요.'
+  description: GenU가 기록한 모든 사용자의 토큰 사용량입니다. 자세한 분석은 Bedrock 모델 호출 로그를 CloudWatch Logs Insights로 집계하세요.
+  download_csv: CSV 다운로드
+  executions: 실행 횟수
+  filter_selected: '선택한 {{users}}명으로 집계'
+  filtered_to_users: '선택한 {{users}}명의 집계를 표시하고 있습니다'
+  last_active: 마지막 이용일
+  last_n_days: '최근 {{days}}일'
+  load_failed: 사용량을 불러오지 못했습니다.
+  model: 모델
+  models_heading: 모델별
+  next: 다음
+  no_price: 가격 없음
+  page_range: '{{total}}명 중 {{from}}~{{to}}번째'
+  period: 기간
+  previous: 이전
+  pricing_note: '{{date}} 기준 정가'
+  scope_note: GenU가 채팅 메시지와 함께 저장한 텍스트 생성분만 집계합니다. 에이전트(Bedrock Agents, AgentCore)와 이미지·동영상 생성은 포함되지 않습니다.
+  search_users: 사용자 검색
+  select_page: 이 페이지의 사용자 모두 선택
+  title: 관리
+  tokens: 토큰(입력·출력·캐시)
+  too_many_selected: '최대 {{max}}명까지 선택할 수 있습니다'
+  unpriced_models: '정가가 없어 비용에 포함하지 않은 모델: {{models}}'
+  user: 사용자
+  users_heading: 사용자별
 agent:
   drop_files: 파일을 드롭하여 업로드
   title: 에이전트 채팅
@@ -28,6 +58,10 @@ chat:
   hint_cmd_enter: ⌘ + Enter로 전송
   hint_ctrl_enter: Ctrl + Enter로 전송
   history: 기록
+  history_last_30_days: 지난 30일
+  history_last_7_days: 지난 7일
+  history_today: 오늘
+  history_yesterday: 어제
   initialize: 초기화
   model_parameters: 모델 매개변수
   open_link: 링크 열기
@@ -50,6 +84,7 @@ common:
   collapse: 접기
   colon: ':'
   complete: 완료
+  copy_table: 표 복사
   create: 생성
   delete: 삭제
   enter_text: 텍스트 입력
@@ -305,18 +340,35 @@ dialog:
     message: 이 페이지를 떠나면 입력한 내용이 손실됩니다. 정말 이동하시겠습니까?
     title: 저장되지 않은 변경사항
 drawer:
+  add_to_sidebar: 사이드바에 추가
   ai_services: AI 서비스
   builder_mode: 빌더 모드
+  collapse_sidebar: 사이드바 접기
   done: 완료
+  edit_favorites: 사이드바에 표시할 사용 사례 선택
+  expand_sidebar: 사이드바 펼치기
   generative_ai: 생성형 AI
+  mode_builder: 빌더
+  remove_from_sidebar: 사이드바에서 제거
+  resize_sidebar: 사이드바 너비 조정
   tools: 도구
   use_cases: 사용 사례
 error:
   streamingError:
     ACCESS_DENIED: 선택한 모델이 활성화되어 있지 않습니다. Amazon Bedrock 콘솔에서 모델을 활성화해 주세요.
-    PAYLOAD_TOO_LARGE: 첨부 파일의 크기가 너무 큽니다. 파일 크기 또는 첨부 파일 수를 줄이고 다시 시도해 주세요.
+    CONTEXT_TOO_LONG: 대화 또는 첨부 파일이 너무 길어 모델이 읽을 수 없습니다. 첨부 내용(페이지, 행, 시트 수)을 줄이거나 새 채팅을 시작해 주세요.
+    DEPENDENCY_FAILED: 에이전트 또는 지식 베이스가 호출한 리소스(작업 그룹의 Lambda 함수 등)에서 오류가 발생했습니다. 설정과 로그를 확인한 후 다시 시도해 주세요.
+    DOCUMENT_TOO_LARGE: 문서가 너무 커서 보낼 수 없습니다. 문서를 나누거나 내용을 줄인 후 다시 시도해 주세요.
+    DUPLICATE_FILE_NAME: 이 대화에 같은 이름의 파일이 여러 개 있습니다(이전에 첨부한 파일 포함). 파일 이름을 바꿔 다시 첨부하거나 새 채팅을 시작해 주세요.
+    EMPTY_MESSAGE: 대화에 빈 메시지가 포함되어 있어 계속할 수 없습니다. 새 채팅을 시작해 주세요.
+    IMAGE_DIMENSIONS_TOO_LARGE: 이미지의 가로 또는 세로가 너무 큽니다. 가로와 세로는 각각 8,000픽셀 이하여야 합니다(이 대화에 이미지가 많으면 이전에 첨부한 이미지도 포함해 3,000픽셀 이하). 이미지 크기를 줄여 다시 첨부하거나 새 채팅을 시작해 주세요.
+    IMAGE_TOO_LARGE: 이미지가 너무 큽니다. 이미지는 파일당 3.75 MB 이하여야 합니다.
+    INVALID_FILE_NAME: 파일 이름을 사용할 수 없습니다. 영문자와 숫자만으로 된 짧은 이름으로 바꾼 후 다시 첨부해 주세요.
+    PAYLOAD_TOO_LARGE: 첨부 파일의 합계가 너무 커서 보낼 수 없습니다. 이 대화에서 이전에 첨부한 파일도 매번 함께 전송되어 합계에 포함됩니다. 새 첨부를 제거하거나 줄이거나, 새 채팅을 시작해 주세요.
     THROTTLING: 서버에 트래픽이 집중되고 있습니다. 잠시 후 다시 시도해 주세요.
+    TOO_MANY_DOCUMENTS: 첨부된 문서가 너무 많습니다. 이 대화에서 이전에 첨부한 문서도 포함됩니다. 첨부를 줄이거나 새 채팅을 시작해 주세요.
     UNKNOWN_ERROR: 오류가 발생했습니다. 다시 시도하거나 관리자에게 문의해 주세요.
+    UNSUPPORTED_FILE_TYPE: 지원하지 않는 파일 형식입니다.
 feedback:
   additional_feedback: 추가 피드백이 있으시면 여기에 입력해주세요. (선택사항)
   reason_error: 이유를 선택해주세요.
@@ -329,6 +381,7 @@ feedback:
 files:
   error:
     fileCountExceeded: 파일 수를 {{maxCount}}개 이하로 제한해주세요
+    fileCountExceededInChat: 이 대화에는 이전에 첨부한 문서가 이미 {{previousCount}}개 있습니다. 하나의 대화에 첨부할 수 있는 문서는 {{maxCount}}개까지입니다. 첨부를 줄이거나 새 채팅을 시작해 주세요.
     fileSizeExceeded: '{{fileName}}이(가) 최대 파일 크기 {{maxSize}} MB를 초과합니다.'
     imageCountExceeded: 이미지 파일 수를 {{maxCount}}개 이하로 제한해주세요
     invalidExtension: >-
@@ -426,6 +479,8 @@ mcp_chat:
   loading_message: MCP 서버에 연결 중입니다. 시간이 걸릴 수 있습니다. 기다려주세요...
   title: MCP 채팅
 meetingMinutes:
+  auto_detect_candidates: '자동 감지 후보: {{languages}}'
+  auto_detect_change: 설정에서 변경
   auto_generate: 자동 생성
   clear_minutes: 회의록 지우기
   custom_prompt: 사용자 정의 프롬프트
@@ -600,18 +655,22 @@ setting:
     show_email: 이메일 표시
     show_tools: 도구 표시
     show_use_case_builder: 사용 사례 빌더 표시
-    stats: 통계
+    transcribe_languages: 음성 인식 자동 감지 언어
+    transcribe_languages_help: '음성 인식 언어를 "자동"으로 설정했을 때(회의록, 음성 입력, 파일 문자 변환) 감지 후보로 사용할 언어입니다. 2~5개를 선택하세요. 많이 선택할수록 짧은 발화의 언어를 잘못 감지하기 쉽습니다.'
     typing_animation: 타이핑 애니메이션
     version: 버전
     version_help: generative-ai-use-cases의 package.json 버전 참조
   recent_updates: 최근 업데이트
   signout: 로그아웃
-  system: 시스템 설정
+  tabs:
+    account: 계정
+    general: 일반
+    system: 시스템
+    usage: 사용량
   update:
     message: >-
       GitHub에 업데이트가 있습니다. 최신 기능을 사용하려면
       <0>generative-ai-use-cases</0>의 main 브랜치를 pull하고 재배포하세요.
-  user: 사용자 설정
   view_all_updates: 모든 업데이트 보기
 shared:
   contact_admin: 관리자에게 문의하세요.
@@ -625,11 +684,14 @@ sketch:
 stat:
   cache_read_tokens: 캐시 읽기 토큰
   cache_write_tokens: 캐시 쓰기 토큰
+  daily_cost: 일별 비용
   daily_token_usage: 일일 토큰 사용량
+  estimated_cost_note: AWS 정가 기준 추정치이며 실제 청구 금액과 다를 수 있습니다
   input_tokens: 입력 토큰
   last_7_days: 지난 7일
   model_executions: 모델 실행
   no_data_available: 사용 가능한 데이터 없음
+  other_models: 기타 모델
   output_tokens: 출력 토큰
   title: 통계
   usecase_distribution: 사용 사례 분포
@@ -699,7 +761,6 @@ useCaseBuilder:
   accessError: 액세스 오류
   addInputExample: 입력 예시 추가
   attach_file: 파일 첨부
-  builderMode: 빌더 모드
   cancel: 취소
   create: 생성
   createDescription: >-

@@ -26,6 +26,7 @@ import {
   BEDROCK_VIDEO_GEN_MODELS,
 } from './models';
 import { streamingChunk } from './streamingChunk';
+import { classifyStreamingError } from './streamingError';
 import { initBedrockRuntimeClient } from './bedrockClient';
 
 const MODEL_REGION = process.env.MODEL_REGION as string;
@@ -95,7 +96,7 @@ const createBodyVideo = (model: Model, params: GenerateVideoParams) => {
 };
 
 const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
-  invoke: async (model, messages, id) => {
+  invoke: async (model, messages, id, requestMetadata) => {
     const region = model.region || MODEL_REGION;
     const client = await initBedrockRuntimeClient({ region });
 
@@ -104,12 +105,19 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
       messages,
       id
     );
+    if (requestMetadata) converseCommandInput.requestMetadata = requestMetadata;
     const command = new ConverseCommand(converseCommandInput);
     const output = await client.send(command);
 
     return extractConverseOutput(model, output).text;
   },
-  invokeStream: async function* (model, messages, id) {
+  invokeStream: async function* (
+    model,
+    messages,
+    id,
+    _idToken,
+    requestMetadata
+  ) {
     const region = model.region || MODEL_REGION;
     const client = await initBedrockRuntimeClient({ region });
     try {
@@ -118,6 +126,9 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
         messages,
         id
       );
+      if (requestMetadata) {
+        converseStreamCommandInput.requestMetadata = requestMetadata;
+      }
 
       const command = new ConverseStreamCommand(converseStreamCommandInput);
 
@@ -171,12 +182,12 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
         yield streamingChunk({
           text: '',
           stopReason: 'error',
-          errorCode: 'UNKNOWN_ERROR',
+          errorCode: classifyStreamingError(e),
         });
       }
     }
   },
-  generateImage: async (model, params) => {
+  generateImage: async (model, params, requestMetadata) => {
     const region = model.region || MODEL_REGION;
     const client = await initBedrockRuntimeClient({ region });
 
@@ -185,6 +196,9 @@ const bedrockApi: Omit<ApiInterface, 'invokeFlow'> = {
       modelId: model.modelId,
       body: createBodyImage(model, params),
       contentType: 'application/json',
+      ...(requestMetadata
+        ? { requestMetadata: JSON.stringify(requestMetadata) }
+        : {}),
     });
     const res = await client.send(command);
     const body = JSON.parse(Buffer.from(res.body).toString('utf-8'));

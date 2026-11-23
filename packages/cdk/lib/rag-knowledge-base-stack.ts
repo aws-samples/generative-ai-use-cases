@@ -9,6 +9,7 @@ import * as s3Deploy from 'aws-cdk-lib/aws-s3-deployment';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { ProcessedStackInput } from './stack-input';
 import { LAMBDA_RUNTIME_NODEJS, TAG_KEY } from '../consts';
+import { bedrockModelArn } from './utils/model-id-utils';
 
 const UUID = '339C5FED-A1B5-43B6-B40A-5E8E59E5734D';
 
@@ -418,6 +419,26 @@ export class RagKnowledgeBaseStack extends Stack {
       })
     );
 
+    // Bedrock looks up the inference profile with the Knowledge Base role
+    // when Advanced Parsing uses a cross-Region inference profile.
+    const parsingModelArn = bedrockModelArn({
+      modelId: ragKnowledgeBaseAdvancedParsingModelId as string,
+      region: this.region,
+      account: this.account,
+    });
+    if (
+      ragKnowledgeBaseAdvancedParsing &&
+      parsingModelArn.includes(':inference-profile/')
+    ) {
+      knowledgeBaseRole.addToPolicy(
+        new iam.PolicyStatement({
+          effect: iam.Effect.ALLOW,
+          resources: [parsingModelArn],
+          actions: ['bedrock:GetInferenceProfile'],
+        })
+      );
+    }
+
     if (!useS3Vectors && collection) {
       knowledgeBaseRole.addToPolicy(
         new iam.PolicyStatement({
@@ -525,7 +546,7 @@ export class RagKnowledgeBaseStack extends Stack {
               parsingConfiguration: {
                 parsingStrategy: 'BEDROCK_FOUNDATION_MODEL',
                 bedrockFoundationModelConfiguration: {
-                  modelArn: `arn:aws:bedrock:${this.region}::foundation-model/${ragKnowledgeBaseAdvancedParsingModelId}`,
+                  modelArn: parsingModelArn,
                   parsingPrompt: {
                     parsingPromptText: PARSING_PROMPT,
                   },
@@ -582,42 +603,10 @@ export class RagKnowledgeBaseStack extends Stack {
       name: 's3-data-source',
     });
 
-    // Web Crawler Data Source (GenU documentation site as sample)
-    // S3 Vectors backend does not support WEB data sources
-    if (useS3Vectors) {
-      cdk.Annotations.of(this).addWarningV2(
-        '@genu/s3vectors-web-datasource',
-        'S3 Vectors backend does not support WEB data sources. Only S3 data sources are available.'
-      );
-    }
-
-    if (!useS3Vectors) {
-      new bedrock.CfnDataSource(this, 'WebCrawlerDataSource', {
-        dataSourceConfiguration: {
-          type: 'WEB',
-          webConfiguration: {
-            sourceConfiguration: {
-              urlConfiguration: {
-                seedUrls: [
-                  {
-                    url: 'https://aws-samples.github.io/generative-ai-use-cases/en/',
-                  },
-                ],
-              },
-            },
-            crawlerConfiguration: {
-              crawlerLimits: {
-                rateLimit: 300,
-                maxPages: 100,
-              },
-              scope: 'HOST_ONLY',
-            },
-          },
-        },
-        knowledgeBaseId: knowledgeBase.ref,
-        name: 'web-crawler-data-source',
-      });
-    }
+    // The Web Crawler sample data source was removed: starting September 30, 2026,
+    // new Web Crawler connectors can no longer be created on customer-managed
+    // knowledge bases.
+    // https://docs.aws.amazon.com/bedrock/latest/userguide/webcrawl-data-source-connector.html
 
     if (!useS3Vectors && collection && ossIndex) {
       knowledgeBase.addDependency(collection);

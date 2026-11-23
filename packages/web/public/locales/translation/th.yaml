@@ -1,3 +1,33 @@
+admin:
+  active_users: ผู้ใช้ที่ใช้งาน
+  clear_filter: แสดงผู้ใช้ทั้งหมด
+  cost: ค่าใช้จ่าย
+  cost_note: 'ค่าใช้จ่ายคำนวณจากราคาปกติของ AWS (ออนดีมานด์, USD) ของรีเจียนที่เรียกใช้แต่ละโมเดล ไม่รวมส่วนลด Savings Plans และ Free Tier ดูค่าใช้จ่ายจริงได้ใน AWS Cost Explorer'
+  description: ปริมาณการใช้โทเค็นของผู้ใช้ทุกคนจากบันทึกที่ GenU เก็บไว้ สำหรับการวิเคราะห์โดยละเอียด ให้ใช้ CloudWatch Logs Insights กับบันทึกการเรียกใช้โมเดลของ Bedrock
+  download_csv: ดาวน์โหลด CSV
+  executions: จำนวนครั้งที่เรียกใช้
+  filter_selected: 'สรุปเฉพาะ {{users}} คนที่เลือก'
+  filtered_to_users: 'กำลังแสดงยอดรวมของผู้ใช้ {{users}} คนที่เลือก'
+  last_active: ใช้งานล่าสุด
+  last_n_days: '{{days}} วันที่ผ่านมา'
+  load_failed: โหลดข้อมูลการใช้งานไม่สำเร็จ
+  model: โมเดล
+  models_heading: ตามโมเดล
+  next: ถัดไป
+  no_price: ไม่มีราคา
+  page_range: '{{from}}–{{to}} จาก {{total}}'
+  period: ช่วงเวลา
+  previous: ก่อนหน้า
+  pricing_note: 'ราคาปกติ ณ วันที่ {{date}}'
+  scope_note: นับเฉพาะการสร้างข้อความที่ GenU บันทึกพร้อมข้อความแชท ไม่รวมเอเจนต์ (Bedrock Agents, AgentCore) และการสร้างรูปภาพหรือวิดีโอ
+  search_users: ค้นหาผู้ใช้
+  select_page: เลือกผู้ใช้ทั้งหมดในหน้านี้
+  title: ผู้ดูแลระบบ
+  tokens: โทเค็น (อินพุต เอาต์พุต และแคช)
+  too_many_selected: 'เลือกได้สูงสุด {{max}} คน'
+  unpriced_models: 'โมเดลที่ไม่มีราคาปกติและไม่ได้รวมในค่าใช้จ่าย: {{models}}'
+  user: ผู้ใช้
+  users_heading: ตามผู้ใช้
 agent:
   drop_files: วางไฟล์เพื่ออัปโหลด
   title: Agent Chat
@@ -18,6 +48,10 @@ chat:
   hint_cmd_enter: ⌘ + Enter เพื่อส่ง
   hint_ctrl_enter: Ctrl + Enter เพื่อส่ง
   history: ประวัติ
+  history_last_30_days: 30 วันที่ผ่านมา
+  history_last_7_days: 7 วันที่ผ่านมา
+  history_today: วันนี้
+  history_yesterday: เมื่อวาน
   initialize: เริ่มต้นใหม่
   open_link: เปิดลิงก์
   prompt_examples: ตัวอย่าง prompt
@@ -39,6 +73,7 @@ common:
   collapse: ย่อ
   colon: ':'
   complete: เสร็จสิ้น
+  copy_table: คัดลอกตาราง
   create: สร้าง
   delete: ลบ
   enter_text: ป้อนข้อความ
@@ -312,17 +347,34 @@ dialog:
     message: หากคุณออกจากหน้านี้ ข้อมูลที่ป้อนจะสูญหาย คุณแน่ใจหรือไม่ว่าต้องการออก?
     title: การเปลี่ยนแปลงที่ยังไม่ได้บันทึก
 drawer:
+  add_to_sidebar: เพิ่มในแถบด้านข้าง
   ai_services: บริการ AI
   builder_mode: Builder Mode
+  collapse_sidebar: ย่อแถบด้านข้าง
+  edit_favorites: เลือก use case ที่จะแสดงในแถบด้านข้าง
+  expand_sidebar: ขยายแถบด้านข้าง
   generative_ai: Generative AI
+  mode_builder: ตัวสร้าง
+  remove_from_sidebar: นำออกจากแถบด้านข้าง
+  resize_sidebar: ปรับความกว้างแถบด้านข้าง
   tools: เครื่องมือ
   use_cases: Use cases
 error:
   streamingError:
     ACCESS_DENIED: โมเดลที่เลือกยังไม่ได้เปิดใช้งาน กรุณาเปิดใช้งานโมเดลในคอนโซล Amazon Bedrock
-    PAYLOAD_TOO_LARGE: ไฟล์แนบมีขนาดใหญ่เกินไป กรุณาลดขนาดไฟล์หรือจำนวนไฟล์แนบแล้วลองใหม่อีกครั้ง
+    CONTEXT_TOO_LONG: บทสนทนาหรือไฟล์แนบยาวเกินกว่าที่โมเดลจะอ่านได้ กรุณาลดเนื้อหาไฟล์แนบ (จำนวนหน้า แถว หรือชีต) หรือเริ่มแชทใหม่
+    DEPENDENCY_FAILED: เกิดข้อผิดพลาดในทรัพยากรที่เอเจนต์หรือฐานความรู้เรียกใช้ (เช่น ฟังก์ชัน Lambda ของกลุ่มการดำเนินการ) กรุณาตรวจสอบการตั้งค่าและบันทึก แล้วลองอีกครั้ง
+    DOCUMENT_TOO_LARGE: เอกสารมีขนาดใหญ่เกินกว่าจะส่งได้ กรุณาแบ่งเอกสารหรือลดเนื้อหาแล้วลองใหม่อีกครั้ง
+    DUPLICATE_FILE_NAME: มีไฟล์ชื่อซ้ำกันในบทสนทนานี้ (รวมไฟล์ที่แนบไว้ก่อนหน้า) กรุณาเปลี่ยนชื่อไฟล์แล้วแนบใหม่ หรือเริ่มแชทใหม่
+    EMPTY_MESSAGE: บทสนทนามีข้อความว่างจึงไม่สามารถดำเนินการต่อได้ กรุณาเริ่มแชทใหม่
+    IMAGE_DIMENSIONS_TOO_LARGE: ความกว้างหรือความสูงของรูปภาพมากเกินไป แต่ละด้านต้องไม่เกิน 8,000 พิกเซล (หากบทสนทนานี้มีรูปภาพจำนวนมาก รวมถึงรูปภาพที่แนบไว้ก่อนหน้า ต้องไม่เกิน 3,000 พิกเซล) กรุณาย่อขนาดรูปภาพแล้วแนบใหม่ หรือเริ่มแชทใหม่
+    IMAGE_TOO_LARGE: รูปภาพมีขนาดใหญ่เกินไป รูปภาพแต่ละไฟล์ต้องมีขนาดไม่เกิน 3.75 MB
+    INVALID_FILE_NAME: ไม่สามารถใช้ชื่อไฟล์นี้ได้ กรุณาเปลี่ยนเป็นชื่อสั้นๆ ที่มีเฉพาะตัวอักษรภาษาอังกฤษและตัวเลข แล้วแนบใหม่อีกครั้ง
+    PAYLOAD_TOO_LARGE: ไฟล์แนบรวมกันมีขนาดใหญ่เกินกว่าจะส่งได้ ไฟล์ที่แนบไว้ก่อนหน้าในบทสนทนานี้จะถูกส่งไปพร้อมกันทุกครั้งและนับรวมด้วย กรุณานำไฟล์แนบใหม่ออกหรือลดขนาด หรือเริ่มแชทใหม่
     THROTTLING: เซิร์ฟเวอร์มีการใช้งานหนาแน่นในขณะนี้ กรุณาลองใหม่อีกครั้งในภายหลัง
+    TOO_MANY_DOCUMENTS: แนบเอกสารมากเกินไป เอกสารที่แนบไว้ก่อนหน้าในบทสนทนานี้ก็นับรวมด้วย กรุณาลดจำนวนไฟล์แนบหรือเริ่มแชทใหม่
     UNKNOWN_ERROR: เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้งหรือติดต่อผู้ดูแลระบบ
+    UNSUPPORTED_FILE_TYPE: ไม่รองรับไฟล์ประเภทนี้
 feedback:
   additional_feedback: หากคุณมีข้อเสนอแนะเพิ่มเติม โปรดป้อนที่นี่ (ไม่บังคับ)
   reason_error: โปรดเลือกเหตุผล
@@ -335,6 +387,7 @@ feedback:
 files:
   error:
     fileCountExceeded: 'โปรดจำกัดไฟล์ไม่เกิน {{maxCount}} ไฟล์'
+    fileCountExceededInChat: แชทนี้มีเอกสารที่แนบไว้ก่อนหน้าแล้ว {{previousCount}} ไฟล์ และแชทหนึ่งแนบเอกสารได้สูงสุด {{maxCount}} ไฟล์ กรุณาลดจำนวนไฟล์แนบหรือเริ่มแชทใหม่
     fileSizeExceeded: '{{fileName}} เกินขนาดไฟล์สูงสุดที่ {{maxSize}} MB'
     imageCountExceeded: 'โปรดจำกัดไฟล์รูปภาพไม่เกิน {{maxCount}} ไฟล์'
     invalidExtension: >-
@@ -570,6 +623,8 @@ language:
   th: ภาษาไทย
   zh: ภาษาจีน
 meetingMinutes:
+  auto_detect_candidates: 'ตรวจจับอัตโนมัติจาก: {{languages}}'
+  auto_detect_change: เปลี่ยนในการตั้งค่า
   auto_generate: สร้างอัตโนมัติ
   clear_minutes: ล้างรายงานการประชุม
   custom_prompt: พรอมต์แบบกำหนดเอง
@@ -739,12 +794,18 @@ setting:
     show_email: แสดงอีเมล
     show_tools: แสดงเครื่องมือ
     show_use_case_builder: แสดง Use Case Builder
-    stats: สถิติ
+    transcribe_languages: ภาษาที่ตรวจจับอัตโนมัติสำหรับการรู้จำเสียง
+    transcribe_languages_help: 'ภาษาที่ใช้เป็นตัวเลือกเมื่อตั้งค่าภาษาการรู้จำเสียงเป็น "อัตโนมัติ" (บันทึกการประชุม การป้อนด้วยเสียง การถอดเสียงจากไฟล์) เลือก 2 ถึง 5 ภาษา ยิ่งเลือกมาก ยิ่งตรวจจับภาษาของคำพูดสั้นๆ ผิดได้ง่าย'
     typing_animation: แอนิเมชันการพิมพ์
     version: เวอร์ชัน
     version_help: อ้างอิงเวอร์ชันใน package.json ของ generative-ai-use-cases
   recent_updates: การอัปเดตล่าสุด
   signout: ออกจากระบบ
+  tabs:
+    account: บัญชี
+    general: ทั่วไป
+    system: ระบบ
+    usage: การใช้งาน
   update:
     message: >-
       มีการอัปเดตบน GitHub หากคุณต้องการใช้คุณสมบัติล่าสุด โปรดดึงสาขาหลักของ <0>generative-ai-use-cases</0> และปรับใช้ใหม่
@@ -845,7 +906,6 @@ useCaseBuilder:
     summarize_article: สรุปบทความ
     summarize_article_description: >-
       สรุปบทความสำหรับ OGP (ตัวอย่างบทความที่แสดงเมื่อแชร์ลิงก์บทความ) การตั้งค่า OGP อย่างเหมาะสมช่วยให้สามารถสื่อสารภาพรวมของบทความได้อย่างถูกต้องเมื่อมีการแชร์
-  builderMode: Builder Mode
   cancel: ยกเลิก
   create: สร้าง
   createDescription: สร้าง use cases โปรดตรวจสอบฟังก์ชันในตัวอย่างก่อนสร้าง คุณยังสามารถแก้ไขหลังจากสร้างได้

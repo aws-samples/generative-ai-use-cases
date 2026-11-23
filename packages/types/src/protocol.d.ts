@@ -24,6 +24,19 @@ import { MeetingMinutesCustomPrompt } from './meetingMinutesCustomPrompt';
 export type StreamingErrorCode =
   | 'THROTTLING'
   | 'ACCESS_DENIED'
+  // A resource the agent or knowledge base calls failed (DependencyFailedException),
+  // e.g. an action group's Lambda function
+  | 'DEPENDENCY_FAILED'
+  // Request rejected by Bedrock as invalid (ValidationException), by cause
+  | 'INVALID_FILE_NAME'
+  | 'DUPLICATE_FILE_NAME'
+  | 'TOO_MANY_DOCUMENTS'
+  | 'DOCUMENT_TOO_LARGE'
+  | 'IMAGE_TOO_LARGE'
+  | 'IMAGE_DIMENSIONS_TOO_LARGE'
+  | 'UNSUPPORTED_FILE_TYPE'
+  | 'CONTEXT_TOO_LONG'
+  | 'EMPTY_MESSAGE'
   | 'UNKNOWN_ERROR';
 
 export type StreamingChunk = {
@@ -183,6 +196,9 @@ export type StartTranscriptionRequest = {
   speakerLabel: boolean;
   maxSpeakers: number;
   languageCode?: string;
+  // Candidates for automatic language identification (used when languageCode
+  // is not set); the user's setting
+  languageOptions?: string[];
 };
 
 export type StartTranscriptionResponse = {

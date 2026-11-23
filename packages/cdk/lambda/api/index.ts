@@ -1,91 +1,15 @@
 import express from 'express';
-import cors from 'cors';
+import {
+  corsMiddleware,
+  errorHandler,
+  requestContextMiddleware,
+} from './middleware';
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-// CORS middleware
-// Browsers lowercase the host portion of the Origin header per RFC, so we
-// compare case-insensitively — otherwise an ALB DNS name like
-// `internal-Closed-Close-...elb.amazonaws.com` (preserved from CDK construct
-// IDs) won't match the browser-sent `internal-closed-close-...` origin.
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(',')
-      .map((o) => o.trim().toLowerCase())
-      .filter((o) => o.length > 0)
-  : [];
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Reject if no allowed origins configured (misconfiguration guard)
-      if (allowedOrigins.length === 0) {
-        callback(new Error('No CORS origins configured'));
-        return;
-      }
-      if (
-        !origin ||
-        allowedOrigins.includes('*') ||
-        allowedOrigins.includes(origin.toLowerCase())
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'x-amzn-request-context'],
-  })
-);
-
-// Extract API Gateway event from Lambda Web Adapter
-app.use(
-  (
-    req: express.Request & {
-      apiGateway?: { event?: { requestContext?: unknown } };
-    },
-    res,
-    next
-  ) => {
-    // Lambda Web Adapter passes the API Gateway request context in x-amzn-request-context header
-    const requestContextHeader = req.headers['x-amzn-request-context'];
-
-    if (requestContextHeader) {
-      try {
-        const requestContext = JSON.parse(requestContextHeader as string);
-        req.apiGateway = {
-          event: {
-            requestContext: requestContext,
-          },
-        };
-      } catch (e) {
-        console.error('Failed to parse request context:', e);
-      }
-    } else {
-      // Local development only: Mock API Gateway event
-      if (process.env.NODE_ENV !== 'development') {
-        res
-          .status(401)
-          .json({ error: 'Unauthorized: missing request context' });
-        return;
-      }
-      req.apiGateway = {
-        event: {
-          requestContext: {
-            authorizer: {
-              claims: {
-                sub: 'local-user-id',
-                'cognito:username': 'local-user',
-                email: 'local@example.com',
-              },
-            },
-          },
-        },
-      };
-    }
-    next();
-  }
-);
+app.use(corsMiddleware);
+app.use(requestContextMiddleware);
 
 app.use(express.json({ limit: '10mb' }));
 
@@ -106,6 +30,7 @@ import { router as agentBuilderRouter } from './routes/agentBuilder';
 import { router as transcribeRouter } from './routes/transcribe';
 import { router as meetingMinutesRouter } from './routes/meetingMinutes';
 import { router as speechToSpeechRouter } from './routes/speechToSpeech';
+import { router as adminRouter } from './routes/admin';
 
 // Mount routes
 app.use('/predict', predictRouter);
@@ -124,22 +49,9 @@ app.use('/agents', agentBuilderRouter);
 app.use('/transcribe', transcribeRouter);
 app.use('/meeting-minutes', meetingMinutesRouter);
 app.use('/speech-to-speech', speechToSpeechRouter);
+app.use('/admin', adminRouter);
 
-// Error handler
-app.use(
-  (
-    err: Error,
-    _req: express.Request,
-    res: express.Response,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _next: express.NextFunction
-  ) => {
-    console.error('Express error:', err);
-    res
-      .status(500)
-      .json({ error: 'Internal server error', message: err.message });
-  }
-);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

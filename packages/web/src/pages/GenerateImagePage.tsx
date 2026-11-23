@@ -15,7 +15,7 @@ import SketchPad, { Canvas } from '../components/SketchPad';
 import ModalDialog from '../components/ModalDialog';
 import { produce } from 'immer';
 import Help from '../components/Help';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useChat from '../hooks/useChat';
 import Base64Image from '../components/Base64Image';
 import { AxiosError } from 'axios';
@@ -530,6 +530,8 @@ const GenerateImagePage: React.FC = () => {
   } = useGenerateImagePageState();
 
   const { pathname, search } = useLocation();
+
+  const navigate = useNavigate();
   const { generate } = useImage();
   const {
     getModelId,
@@ -625,20 +627,25 @@ const GenerateImagePage: React.FC = () => {
           ? params.imageModelId!
           : _imageGenModelId
       );
+      // Clear query params after consuming to prevent re-application
+      navigate(pathname, { replace: true });
     } else {
       setModelId(_modelId);
       setImageGenModelId(_imageGenModelId);
     }
+    // Apply the query string once, as AgentChatPage does, not each time the
+    // model changes: a page opened from a link would otherwise put the text
+    // and the model in the URL back whenever the user picks another model.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    imageGenModelId,
-    imageGenModelIds,
-    modelId,
-    modelIds,
-    search,
-    setChatContent,
-    setImageGenModelId,
-  ]);
+  }, [imageGenModelIds, modelIds, search, setChatContent, setImageGenModelId]);
+
+  // clear() resets the image model to '', so pick the default again, as
+  // GenerateVideoPage does
+  useEffect(() => {
+    if (imageGenModelId === '') {
+      setImageGenModelId(imageGenModelIds[0]);
+    }
+  }, [imageGenModelId, imageGenModelIds, setImageGenModelId]);
 
   const generateRandomSeed = useCallback(() => {
     return Math.floor(Math.random() * 4294967295);

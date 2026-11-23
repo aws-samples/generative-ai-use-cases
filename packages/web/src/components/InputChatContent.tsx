@@ -21,6 +21,10 @@ import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
 import useUserSetting from '../hooks/useUserSetting';
 import Tooltip from './Tooltip';
+import {
+  createPastedTextFile,
+  shouldAttachPastedText,
+} from '../utils/pastedText';
 
 type Props = {
   content: string;
@@ -32,7 +36,8 @@ type Props = {
   loading?: boolean;
   isEmpty?: boolean;
   onChangeContent: (content: string) => void;
-  onSend: () => void;
+  // Without onSend, the send button is hidden (e.g. an input that applies as you type)
+  onSend?: () => void;
   sendIcon?: React.ReactNode;
   // When using it outside the bottom of the page, disable the margin bottom
   disableMarginBottom?: boolean;
@@ -43,6 +48,10 @@ type Props = {
   reasoning?: boolean;
   onReasoningSwitched?: () => void;
   reasoningEnabled?: boolean;
+  /** Model selector in the input toolbar, reachable without scrolling up. */
+  modelId?: string;
+  onModelChange?: (modelId: string) => void;
+  modelOptions?: { value: string; label: string }[];
 } & (
   | {
       hideReset?: false;
@@ -53,6 +62,9 @@ type Props = {
     }
 ) & {
     setting?: boolean;
+    // Shown beside the settings button, so the current setting (e.g. the
+    // reasoning effort) can be seen without opening it.
+    settingLabel?: string;
     onSetting?: () => void;
   };
 
@@ -103,8 +115,21 @@ const InputChatContent: React.FC<Props> = (props) => {
       uploadFiles(Array.from(files), props.fileLimit, props.accept);
       // Since the file name is also pasted when the file is pasted, stop the default behavior
       pasteEvent.preventDefault();
+      return;
     }
-    // If there is no file, stop the default behavior (paste text)
+
+    // Long text is attached as a text file so that the message stays small
+    // enough to be saved in full
+    const text = pasteEvent.clipboardData.getData('text/plain');
+    if (props.fileLimit && shouldAttachPastedText(text, props.accept)) {
+      uploadFiles(
+        [createPastedTextFile(text)],
+        props.fileLimit,
+        props.accept ?? []
+      );
+      pasteEvent.preventDefault();
+    }
+    // Otherwise, keep the default behavior (paste text)
   };
 
   const loading = useMemo(() => {
@@ -209,7 +234,9 @@ const InputChatContent: React.FC<Props> = (props) => {
           />
         </div>
         <div className="m-2 flex justify-between gap-1">
-          <div className="flex gap-x-1">
+          {/* min-w-0 lets the model selector shrink on narrow screens instead
+              of pushing the send button out of the row. */}
+          <div className="flex min-w-0 items-center gap-x-1">
             {props.fileUpload && (
               <Tooltip
                 message={t('inputs.attachment')}
@@ -251,6 +278,38 @@ const InputChatContent: React.FC<Props> = (props) => {
                 />
               </Tooltip>
             )}
+            {props.modelId && props.onModelChange && props.modelOptions && (
+              // A native select is as wide as its longest option. The hidden
+              // span holds only the selected label, with the same padding,
+              // border and font, so the box fits the current model; the
+              // select is laid over it.
+              <div className="relative min-w-0 max-w-[160px] sm:max-w-[240px]">
+                <span
+                  aria-hidden="true"
+                  className="invisible block h-[38px] truncate whitespace-nowrap border pl-3 pr-8 text-xs leading-[36px]">
+                  {props.modelOptions.find((o) => o.value === props.modelId)
+                    ?.label ?? props.modelId}
+                </span>
+                <select
+                  aria-label={t('inputs.model')}
+                  title={t('inputs.model')}
+                  // h-[38px] matches the attachment button (20px icon + p-2 +
+                  // border). pr-8 leaves room for the caret that
+                  // @tailwindcss/forms draws as a background image on the right.
+                  className="absolute inset-0 h-[38px] w-full truncate rounded-xl border border-gray-400 bg-white py-0 pl-3 pr-8 text-xs text-gray-700 disabled:opacity-50"
+                  // Switching models mid-response would change the model used
+                  // for the rest of the turn and for the title.
+                  disabled={loading}
+                  value={props.modelId}
+                  onChange={(e) => props.onModelChange!(e.target.value)}>
+                  {props.modelOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-x-2">
             {props.setting && (
@@ -263,17 +322,22 @@ const InputChatContent: React.FC<Props> = (props) => {
                   onClick={props.onSetting ?? (() => {})}
                   className="text-gray-500">
                   <PiSlidersHorizontal />
+                  {props.settingLabel && (
+                    <span className="ml-1 text-xs">{props.settingLabel}</span>
+                  )}
                 </ButtonIcon>
               </Tooltip>
             )}
-            <ButtonSend
-              className=""
-              disabled={disabledSend}
-              loading={loading || uploading}
-              onClick={props.onSend}
-              icon={props.sendIcon}
-              canStop={props.canStop}
-            />
+            {props.onSend && (
+              <ButtonSend
+                className=""
+                disabled={disabledSend}
+                loading={loading || uploading}
+                onClick={props.onSend}
+                icon={props.sendIcon}
+                canStop={props.canStop}
+              />
+            )}
           </div>
         </div>
 

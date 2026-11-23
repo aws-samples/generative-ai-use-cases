@@ -162,6 +162,52 @@ export class DashboardStack extends Stack {
       })
     );
 
+    // Usage by the tags GenU sets on each Bedrock call (requestMetadata).
+    // genu_user is the Cognito sub; join it with Cognito to get the user.
+    const usageFilter = "requestMetadata.genu = 'genu'";
+    const usageFields =
+      'requestMetadata.genu_user as user, requestMetadata.genu_usecase as usecase, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens';
+    const usageStats = (by: string) =>
+      `sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by ${by}, modelId`;
+    const usageSort = 'inputTokens desc';
+    const usageQueries = [
+      { id: 'TokensByUser', title: 'Tokens by User', by: 'user' },
+      { id: 'TokensByUseCase', title: 'Tokens by Use Case', by: 'usecase' },
+    ];
+
+    dashboard.addWidgets(
+      ...usageQueries.map(
+        (query) =>
+          new cw.LogQueryWidget({
+            title: query.title,
+            width: 12,
+            height: 8,
+            logGroupNames: [logGroup.logGroupName],
+            view: cw.LogQueryVisualizationType.TABLE,
+            queryLines: [
+              `filter ${usageFilter}`,
+              `fields ${usageFields}`,
+              `stats ${usageStats(query.by)}`,
+              `sort ${usageSort}`,
+            ],
+          })
+      )
+    );
+
+    // The same queries under "Saved queries" in CloudWatch Logs Insights.
+    for (const query of usageQueries) {
+      new logs.QueryDefinition(this, `${query.id}Query`, {
+        queryDefinitionName: `GenU/${this.stackName}/${query.id}`,
+        queryString: new logs.QueryString({
+          filterStatements: [usageFilter],
+          fields: [usageFields],
+          statsStatements: [usageStats(query.by)],
+          sort: usageSort,
+        }),
+        logGroups: [logGroup],
+      });
+    }
+
     this.logGroup = logGroup;
     this.dashboard = dashboard;
 

@@ -1,3 +1,33 @@
+admin:
+  active_users: 利用ユーザー数
+  clear_filter: 全ユーザーに戻す
+  cost: コスト
+  cost_note: コストは、各モデルを呼び出しているリージョンの AWS の定価（オンデマンド、USD）で計算しています。割引、Savings Plans、無料枠は反映されません。実際の請求額は AWS Cost Explorer で確認してください。
+  description: GenU が記録している全ユーザーのトークン利用量です。詳しい分析は、Bedrock のモデル呼び出しログを CloudWatch Logs Insights で集計してください。
+  download_csv: CSV をダウンロード
+  executions: 実行回数
+  filter_selected: '選択した {{users}} 人で集計'
+  filtered_to_users: '選択した {{users}} 人の集計を表示しています'
+  last_active: 最終利用日
+  last_n_days: '過去 {{days}} 日'
+  load_failed: 利用量を読み込めませんでした。
+  model: モデル
+  models_heading: モデル別
+  next: 次へ
+  no_price: 価格不明
+  page_range: '{{total}} 人中 {{from}}〜{{to}} 人目'
+  period: 期間
+  previous: 前へ
+  pricing_note: '{{date}} 時点の定価'
+  scope_note: GenU がチャットのメッセージと一緒に保存したテキスト生成の分だけを数えています。エージェント（Bedrock Agents、AgentCore）や画像・動画の生成は含みません。
+  search_users: ユーザーを検索
+  select_page: このページのユーザーをすべて選択
+  title: 管理
+  tokens: トークン（入力・出力・キャッシュ）
+  too_many_selected: '選択できるのは {{max}} 人までです'
+  unpriced_models: '定価がないためコストに含めていないモデル: {{models}}'
+  user: ユーザー
+  users_heading: ユーザー別
 agent:
   drop_files: ファイルをドロップしてアップロード
   title: Agent チャット
@@ -43,6 +73,7 @@ agent_builder:
   edit_agent: エージェントを編集
   editor: エディター
   enable_code_execution: コード実行を有効にする
+  enable_web_search: Web検索を有効にする
   enter_agent_name: エージェント名を入力
   enter_system_prompt: エージェントの動作を定義するシステムプロンプトを入力
   enter_tags_comma_separated: タグをカンマ区切りで入力
@@ -113,6 +144,9 @@ agent_builder:
   title: エージェントビルダー
   tool_settings: ツール設定
   updated: 更新日
+  web_search: Web検索
+  web_search_description: >-
+    このエージェントが最新情報を Web 検索できるようにします。検索クエリは AWS 内で処理され、第三者の検索エンジンには送信されません。
 agent_core:
   agent_list: エージェント一覧
   description_label: 説明
@@ -151,6 +185,10 @@ chat:
   hint_cmd_enter: ⌘ + Enter で送信
   hint_ctrl_enter: Ctrl + Enter で送信
   history: 履歴
+  history_last_30_days: 過去 30 日間
+  history_last_7_days: 過去 7 日間
+  history_today: 今日
+  history_yesterday: 昨日
   initialize: 初期化
   open_link: リンクを開く
   prompt_examples: プロンプト例
@@ -175,6 +213,7 @@ common:
   collapse: 折りたたみ
   colon: ':'
   complete: 完了
+  copy_table: 表をコピー
   create: 作成
   default: デフォルト
   delete: 削除
@@ -404,18 +443,35 @@ dialog:
     message: このページから移動すると、入力内容が失われます。本当に移動しますか？
     title: 入力内容が保存されていません
 drawer:
+  add_to_sidebar: サイドバーに追加
   ai_services: AI サービス
   builder_mode: ビルダーモード
+  collapse_sidebar: サイドバーを折りたたむ
   done: 完了
+  edit_favorites: サイドバーに表示するユースケースを選ぶ
+  expand_sidebar: サイドバーを展開
   generative_ai: (生成 AI)
+  mode_builder: ビルダー
+  remove_from_sidebar: サイドバーから削除
+  resize_sidebar: サイドバーの幅を調整
   tools: ツール
   use_cases: ユースケース
 error:
   streamingError:
     ACCESS_DENIED: 選択されたモデルが有効化されていません。Amazon Bedrock コンソールでモデルを有効化してください。
-    PAYLOAD_TOO_LARGE: 添付ファイルのサイズが大きすぎます。ファイルサイズまたは添付数を減らして再度お試しください。
+    CONTEXT_TOO_LONG: 会話または添付ファイルが長すぎてモデルが読み込めません。添付の内容（ページ数・行数・シート数）を減らすか、新しいチャットを開始してください。
+    DEPENDENCY_FAILED: エージェントまたはナレッジベースが呼び出したリソース（アクショングループの Lambda 関数など）でエラーが発生しました。設定とログを確認して、再度お試しください。
+    DOCUMENT_TOO_LARGE: 書類のサイズが大きすぎて送信できません。書類を分割するか内容を減らしてから、再度お試しください。
+    DUPLICATE_FILE_NAME: この会話の中に同じ名前のファイルが複数あります（以前に添付したファイルも含みます）。ファイル名を変更して添付し直すか、新しいチャットを開始してください。
+    EMPTY_MESSAGE: 会話に空のメッセージが含まれているため、続けられません。新しいチャットを開始してください。
+    IMAGE_DIMENSIONS_TOO_LARGE: 画像の縦横が大きすぎます。各辺を 8,000 ピクセル以下にしてください（この会話の画像が多いときは、これまでに添付した画像も含めて 3,000 ピクセル以下）。画像を縮小して添付し直すか、新しいチャットを開始してください。
+    IMAGE_TOO_LARGE: 画像のサイズが大きすぎます。画像は 1 ファイルあたり 3.75 MB までです。
+    INVALID_FILE_NAME: ファイル名を利用できません。英数字だけの短い名前に変更してから添付し直してください。
+    PAYLOAD_TOO_LARGE: 添付ファイルの合計が大きすぎて送信できません。この会話でこれまでに添付したファイルも毎回一緒に送られ、合計に含まれます。新しい添付を外すか小さくするか、新しいチャットを開始してください。
     THROTTLING: サーバーが混み合っています。しばらく待ってから再度お試しください。
+    TOO_MANY_DOCUMENTS: 添付されている書類が多すぎます。この会話でこれまでに添付した書類も数に含まれます。添付を減らすか、新しいチャットを開始してください。
     UNKNOWN_ERROR: エラーが発生しました。再度お試しいただくか、管理者にお問い合わせください。
+    UNSUPPORTED_FILE_TYPE: この形式のファイルには対応していません。
 feedback:
   additional_feedback: 他にフィードバックがありましたら、入力してください。(任意)
   reason_error: 理由を選択してください。
@@ -428,6 +484,7 @@ feedback:
 files:
   error:
     fileCountExceeded: ファイル数は {{maxCount}} 個以下にしてください。
+    fileCountExceededInChat: この会話では、これまでに書類を {{previousCount}} 個添付しています。1つの会話で添付できる書類は {{maxCount}} 個までです。添付を減らすか、新しいチャットを開始してください。
     fileSizeExceeded: ファイルサイズは {{maxSize}} MB 以下にしてください。
     imageCountExceeded: 画像数は {{maxCount}} 個以下にしてください。
     invalidExtension: '{{fileName}} は許可されていない拡張子です。許可されている拡張子は {{acceptedExtensions}} です。'
@@ -517,6 +574,7 @@ image:
   load_error: '[画像エラー: {{error}}]'
 inputs:
   attachment: 添付ファイル
+  model: モデル
   reasoning: 深く考える
   setting: 設定
 landing:
@@ -691,6 +749,8 @@ mcp_chat:
   loading_message: MCP サーバーと接続しています。時間がかかる場合があります。そのまま待機してください...
   title: MCP チャット
 meetingMinutes:
+  auto_detect_candidates: '自動判定の候補: {{languages}}'
+  auto_detect_change: 設定で変更
   auto_generate: 自動生成
   bidirectional: 双方向翻訳
   both_panel: 両方表示
@@ -870,18 +930,22 @@ setting:
     show_email: メールアドレスの表示
     show_tools: ツールの表示
     show_use_case_builder: ユースケースビルダーの表示
-    stats: 利用統計
+    transcribe_languages: 音声認識の自動判定言語
+    transcribe_languages_help: 音声認識の言語を「自動」にしたとき（議事録生成・音声入力・ファイルの文字起こし）に、判定の候補とする言語です。2〜5 個選んでください。多く選ぶほど、短い発話で言語を取り違えやすくなります。
     typing_animation: タイピングアニメーション
     version: バージョン
     version_help: generative-ai-use-cases の package.json の version を参照しています
   recent_updates: 最近のアップデート
   signout: サインアウト
-  system: システム設定
+  tabs:
+    account: アカウント
+    general: 一般
+    system: システム
+    usage: 使用量
   update:
     message: >-
       GitHub にアップデートがあります。最新の機能を利用したい場合は <0>generative-ai-use-cases</0> の main
       ブランチを pull して再度デプロイしてください。
-  user: ユーザー設定
   view_all_updates: 全てのアップデートを見る
 shared:
   contact_admin: 管理者に問い合わせてください。
@@ -894,11 +958,14 @@ sketch:
 stat:
   cache_read_tokens: キャッシュ読込
   cache_write_tokens: キャッシュ書込
+  daily_cost: 日別のコスト
   daily_token_usage: 利用トークン
+  estimated_cost_note: AWS の定価での目安です。実際の請求額とは異なります
   input_tokens: 入力
   last_7_days: 過去7日
   model_executions: モデル実行回数
   no_data_available: データがありません
+  other_models: その他のモデル
   output_tokens: 出力
   title: 統計
   usecase_distribution: ユースケース実行回数
@@ -990,7 +1057,6 @@ useCaseBuilder:
     summarize_article_description: >-
       OGP（記事のリンクをシェアする際に表示される記事のプレビュー）用に、記事を要約します。OGP
       を適切に設定することで、記事がシェアされた際に記事の概要を正しく伝えることができます。
-  builderMode: ビルダーモード
   cancel: キャンセル
   create: 作成
   createDescription: ユースケースを作成します。プレビューで動作確認してから作成してください。作成後に編集することも可能です。

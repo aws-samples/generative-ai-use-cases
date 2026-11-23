@@ -19,6 +19,7 @@ import {
   StrandsStreamProcessor,
   convertToStrandsFormat,
   convertFilesToStrandsContentBlocks,
+  makeDocumentNamesUnique,
 } from '../utils/strandsUtils';
 import { getRegionFromArn } from '../utils/arnUtils';
 
@@ -145,11 +146,17 @@ const useAgentCoreApi = (id: string) => {
           }
         }
 
+        // Bedrock rejects a request with two documents of the same name
+        const uniquelyNamed = makeDocumentNamesUnique(
+          strandsMessages,
+          promptBlocks
+        );
+
         // Create the request with the exact schema: messages, systemPrompt, prompt, model, and optional fields
         const agentCoreRequest: AgentCoreRequest = {
-          messages: strandsMessages,
+          messages: uniquelyNamed.messages,
           system_prompt: req.system_prompt || '',
-          prompt: promptBlocks,
+          prompt: uniquelyNamed.prompt,
           model: {
             type: 'bedrock',
             modelId:
@@ -163,6 +170,9 @@ const useAgentCoreApi = (id: string) => {
           ...(req.sessionId && { session_id: req.sessionId }),
           ...(req.codeExecutionEnabled !== undefined && {
             code_execution_enabled: req.codeExecutionEnabled,
+          }),
+          ...(req.webSearchEnabled !== undefined && {
+            web_search_enabled: req.webSearchEnabled,
           }),
         };
 

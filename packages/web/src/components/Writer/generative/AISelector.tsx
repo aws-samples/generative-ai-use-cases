@@ -89,11 +89,19 @@ export function AISelector({ onOpenChange }: AISelectorProps) {
                     )}
                   </div>
                 </summary>
-                <Markdown>{trace}</Markdown>
+                <div translate={isLoading ? 'no' : undefined}>
+                  <Markdown key={isLoading ? 'streaming' : 'complete'}>
+                    {trace}
+                  </Markdown>
+                </div>
               </details>
             )}
-            <div className="prose prose-sm p-2 px-4">
-              <Markdown>{completion}</Markdown>
+            <div
+              className="prose prose-sm p-2 px-4"
+              translate={isLoading ? 'no' : undefined}>
+              <Markdown key={isLoading ? 'streaming' : 'complete'}>
+                {completion}
+              </Markdown>
             </div>
           </ScrollArea>
         </div>

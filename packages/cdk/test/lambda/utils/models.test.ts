@@ -1,4 +1,4 @@
-import { Model, UnrecordedMessage } from 'generative-ai-use-cases';
+import { ExtraData, Model, UnrecordedMessage } from 'generative-ai-use-cases';
 
 const OPUS_5_5_IDS = [
   'global.anthropic.claude-opus-5-5',
@@ -99,5 +99,127 @@ describe('Claude Opus 5.5', () => {
     expect(input.messages?.at(-1)?.content?.at(-1)).toEqual({
       cachePoint: { type: 'default' },
     });
+  });
+});
+
+describe('Claude Fable', () => {
+  it.each([
+    'global.anthropic.claude-fable-5',
+    'global.anthropic.claude-fable-5-1',
+    'us.anthropic.claude-fable-5-1',
+    'global.anthropic.claude-fable-5-2',
+    'us.anthropic.claude-fable-5-2',
+  ])('should add a cache point in /chat: %s', async (modelId) => {
+    const input = await createInput({ type: 'bedrock', modelId }, '/chat');
+    expect(input.system?.at(-1)).toEqual({ cachePoint: { type: 'default' } });
+    expect(input.messages?.at(-1)?.content?.at(-1)).toEqual({
+      cachePoint: { type: 'default' },
+    });
+  });
+});
+
+describe('document names', () => {
+  it('gives files with the same name distinct names across turns', async () => {
+    const { BEDROCK_TEXT_GEN_MODELS } =
+      await import('../../../lambda/utils/models');
+    const modelId = 'global.anthropic.claude-opus-5-5';
+    const config = BEDROCK_TEXT_GEN_MODELS[modelId];
+    const file = (data: string): ExtraData => ({
+      type: 'file',
+      name: 'report.txt',
+      source: { type: 'base64', mediaType: 'text/plain', data },
+    });
+    const conversation: UnrecordedMessage[] = [
+      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'user', content: 'first', extraData: [file('YQ==')] },
+      { role: 'assistant', content: 'ok' },
+      {
+        role: 'user',
+        content: 'updated',
+        extraData: [file('Yg=='), file('Yw==')],
+      },
+    ];
+    const input = config.createConverseCommandInput(
+      conversation,
+      '/chat',
+      { type: 'bedrock', modelId },
+      config.defaultParams,
+      config.usecaseParams
+    );
+    const names = (input.messages ?? []).flatMap((m) =>
+      (m.content ?? []).flatMap((c) => (c.document ? [c.document.name] : []))
+    );
+    expect(names).toEqual(['report', 'report (2)', 'report (3)']);
+  });
+});
+
+describe('blank text', () => {
+  const build = async (conversation: UnrecordedMessage[]) => {
+    const { BEDROCK_TEXT_GEN_MODELS } =
+      await import('../../../lambda/utils/models');
+    const modelId = 'global.anthropic.claude-opus-5-5';
+    const config = BEDROCK_TEXT_GEN_MODELS[modelId];
+    return config.createConverseCommandInput(
+      conversation,
+      '/chat',
+      { type: 'bedrock', modelId },
+      config.defaultParams,
+      config.usecaseParams
+    );
+  };
+  const texts = (input: Awaited<ReturnType<typeof build>>) =>
+    (input.messages ?? []).map((m) =>
+      (m.content ?? []).flatMap((c) => (c.text !== undefined ? [c.text] : []))
+    );
+
+  // Bedrock rejects all of these: "text content blocks must be non-empty",
+  // "... must contain non-whitespace text" (#1685)
+  it('fills a blank reply and a blank message, and keeps the rest', async () => {
+    const input = await build([
+      { role: 'system', content: 'You are a helpful assistant.' },
+      { role: 'user', content: 'first' },
+      { role: 'assistant', content: '' },
+      { role: 'user', content: ' ' },
+      { role: 'assistant', content: 'ok' },
+      { role: 'user', content: 'last' },
+    ]);
+    expect(texts(input)).toEqual([
+      ['first'],
+      ['(no response)'],
+      ['(no text)'],
+      ['ok'],
+      ['last'],
+    ]);
+  });
+
+  it('keeps a text block next to a document, as Bedrock requires', async () => {
+    const input = await build([
+      {
+        role: 'user',
+        content: '',
+        extraData: [
+          {
+            type: 'file',
+            name: 'a.txt',
+            source: { type: 'base64', mediaType: 'text/plain', data: 'YQ==' },
+          },
+        ],
+      },
+    ]);
+    const content = input.messages?.[0].content ?? [];
+    // A cache point may follow; the document and its text come first
+    expect(content.slice(0, 2).map((c) => Object.keys(c)[0])).toEqual([
+      'document',
+      'text',
+    ]);
+    expect(texts(input)).toEqual([['(no text)']]);
+  });
+
+  it('leaves out a blank system prompt', async () => {
+    const input = await build([
+      { role: 'system', content: '  ' },
+      { role: 'user', content: 'Hello' },
+    ]);
+    expect(input.system).toEqual([]);
   });
 });

@@ -36,6 +36,7 @@ const useFilesState = create<{
     accept: string[]
   ) => Promise<boolean>;
   clear: (id: string) => void;
+  restore: (id: string, files: UploadedFileType[]) => void;
   base64Cache: Record<string, string>;
   getFileDownloadSignedUrl: (
     s3Url: string,
@@ -51,6 +52,16 @@ const useFilesState = create<{
       }),
       errorMessagesDict: produce(state.errorMessagesDict, (draft) => {
         draft[id] = [];
+      }),
+    }));
+  };
+
+  // Put files back in the input, e.g. after a send that failed. The files
+  // stay in S3 when the input is cleared, so the same entries can be reused.
+  const restore = (id: string, files: UploadedFileType[]) => {
+    set((state) => ({
+      uploadedFilesDict: produce(state.uploadedFilesDict, (draft) => {
+        draft[id] = files;
       }),
     }));
   };
@@ -104,13 +115,72 @@ const useFilesState = create<{
     });
   };
 
+  // The Bedrock Converse API rejects images whose longest side exceeds
+  // 8 000 px (single image) or 3 000 px (many-image request).  Claude
+  // models also down-scale anything above 2 576 px internally, so there
+  // is no quality loss in resizing client-side.  Resizing also shrinks
+  // the payload, making the 3.75 MB file-size limit easier to satisfy.
+  const MAX_IMAGE_DIMENSION = 2576;
+
+  /**
+   * Resize an image File so its longest side is at most MAX_IMAGE_DIMENSION.
+   * Returns the original File unchanged when no resize is needed, when the
+   * format should not be re-encoded (animated GIF, SVG), or when the browser
+   * cannot decode or re-encode it. In that case validation and Bedrock
+   * report the problem as before.
+   */
+  const resizeImageIfNeeded = async (file: File): Promise<File> => {
+    if (!file.type.startsWith('image/')) return file;
+    if (file.type === 'image/gif' || file.type === 'image/svg+xml') return file;
+
+    try {
+      const { width, height } = await getImageDimensions(file);
+      const longestSide = Math.max(width, height);
+      if (longestSide <= MAX_IMAGE_DIMENSION) return file;
+
+      const scale = MAX_IMAGE_DIMENSION / longestSide;
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(width * scale);
+      canvas.height = Math.round(height * scale);
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return file;
+
+      const img = await createImageBitmap(file);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      img.close();
+
+      // Keep PNG to preserve transparency; re-encode everything else as JPEG
+      const outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+      const quality = outputType === 'image/jpeg' ? 0.9 : undefined;
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, outputType, quality)
+      );
+      // toBlob passes null when the canvas cannot be encoded (e.g. memory)
+      if (!blob) return file;
+
+      let name = file.name;
+      if (outputType === 'image/jpeg' && !/\.jpe?g$/i.test(name)) {
+        name = name.replace(/\.[^.]+$/, '.jpg');
+      }
+      return new File([blob], name, { type: outputType });
+    } catch (e) {
+      // e.g. HEIC in Chrome, or a corrupt file
+      console.warn('Image resize skipped:', e);
+      return file;
+    }
+  };
+
   // Validated given uploadedFiles, return updated uploadedFiles (no side effect) and errorMessages
   const validateUploadedFiles = async (
     uploadedFiles: UploadedFileType[],
     fileLimit: FileLimit,
     accept: string[]
   ) => {
-    let fileCount = 0;
+    // Bedrock accepts at most 5 documents in a whole request, past turns
+    // included, so documents already in the conversation are counted first.
+    // Images have no such limit across turns, so they are counted per message.
+    const previousFileCount = fileLimit.previousFileCount ?? 0;
+    let fileCount = previousFileCount;
     let imageFileCount = 0;
     let videoFileCount = 0;
 
@@ -215,9 +285,14 @@ const useFilesState = create<{
           isFileNumberAllowed = fileCount <= (fileLimit.maxFileCount || 0);
           if (!isFileNumberAllowed) {
             errorMessages.push(
-              i18next.t('files.error.fileCountExceeded', {
-                maxCount: fileLimit.maxFileCount,
-              })
+              previousFileCount > 0
+                ? i18next.t('files.error.fileCountExceededInChat', {
+                    maxCount: fileLimit.maxFileCount,
+                    previousCount: previousFileCount,
+                  })
+                : i18next.t('files.error.fileCountExceeded', {
+                    maxCount: fileLimit.maxFileCount,
+                  })
             );
           }
         }
@@ -269,8 +344,13 @@ const useFilesState = create<{
   ) => {
     // Get File
     const currentUploadedFiles = get().uploadedFilesDict[id] ?? [];
+    // Resize large images before validation so they fit within the Bedrock
+    // dimension limits and the file-size budget.
+    const resizedFiles = await Promise.all(
+      files.map((f) => resizeImageIfNeeded(f))
+    );
     const uploadedFiles = await Promise.all(
-      files.map((f) => convertFile2UploadedFileType(f))
+      resizedFiles.map((f) => convertFile2UploadedFileType(f))
     );
     const newUploadedFiles: UploadedFileType[] = [
       ...currentUploadedFiles,
@@ -417,6 +497,7 @@ const useFilesState = create<{
 
   return {
     clear,
+    restore,
     uploadedFilesDict: {},
     errorMessagesDict: {},
     uploadFiles,
@@ -432,6 +513,7 @@ const useFiles = (id: string) => {
     uploadFiles,
     checkFiles,
     clear,
+    restore,
     uploadedFilesDict,
     deleteUploadedFile,
     errorMessagesDict,
@@ -449,6 +531,7 @@ const useFiles = (id: string) => {
     ),
     errorMessages: errorMessagesDict[id] ?? [],
     clear: () => clear(id),
+    restore: (files: UploadedFileType[]) => restore(id, files),
     uploadedFiles: uploadedFilesDict[id] ?? [],
     deleteUploadedFile: (
       fileId: string,

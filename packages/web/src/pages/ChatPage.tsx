@@ -19,17 +19,25 @@ import ModalDialog from '../components/ModalDialog';
 import ModalSystemContext from '../components/ModalSystemContext';
 import ExpandableField from '../components/ExpandableField';
 import Switch from '../components/Switch';
-import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import useFollow from '../hooks/useFollow';
-import { PiArrowClockwiseBold, PiShareFatFill } from 'react-icons/pi';
+import useChatPreferences, {
+  pickInitialModelId,
+  sanitizeReasoningConfig,
+} from '../hooks/useChatPreferences';
+import useDropOverlay from '../hooks/useDropOverlay';
+import usePreventNavigation from '../hooks/usePreventNavigation';
+import { PiShareFatFill, PiX } from 'react-icons/pi';
+import ButtonIcon from '../components/ButtonIcon';
 import { create } from 'zustand';
 import BedrockIcon from '../assets/bedrock.svg?react';
 import { ChatPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import { getPrompter } from '../prompts';
+import { withCurrentDate } from '../utils/currentDate';
 import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
+import { effortLabel } from '../utils/reasoningEffort';
 import {
   AdditionalModelRequestFields,
   FileLimit,
@@ -38,16 +46,19 @@ import {
 import ModelParameters from '../components/ModelParameters';
 import { AcceptedDotExtensions } from '../utils/MediaUtils';
 import { useTranslation } from 'react-i18next';
+import useAcceptedExtensions from '../hooks/useAcceptedExtensions';
 
 // File size limits for Chat (Lambda route: API Gateway → Lambda → Bedrock Converse API)
 // - Lambda synchronous payload limit: 6MB
 // - File data is base64-encoded in the request, so max original file size ≈ 6MB / 1.33 ≈ 4.5MB
 // - Bedrock Converse API document limit: 4.5MB per document (except Claude 4+ PDF and Nova PDF/DOCX)
-const fileLimit: FileLimit = {
+const DEFAULT_MAX_IMAGE_COUNT = 20;
+
+const baseFileLimit: FileLimit = {
   accept: AcceptedDotExtensions,
   maxFileCount: 5,
   maxFileSizeMB: 4.5,
-  maxImageFileCount: 20,
+  maxImageFileCount: DEFAULT_MAX_IMAGE_COUNT,
   maxImageFileSizeMB: 3.75,
   maxVideoFileCount: 1,
   maxVideoFileSizeMB: 1000, // 1 GB for S3 input
@@ -107,11 +118,20 @@ const ChatPage: React.FC = () => {
     setSaveSystemContextTitle,
   } = useChatPageState();
   const { pathname, search } = useLocation();
+
+  // Ask before a reload, closing the tab or leaving for another site while
+  // there is an unsent message (#1321). In-app navigation is not blocked: the
+  // draft lives in the useChatPageState store and survives it.
+  usePreventNavigation(content.trim() !== '', {
+    blockInternalNavigation: false,
+  });
+
   const {
     clear: clearFiles,
     uploadedFiles,
     uploadFiles,
     base64Cache,
+    restore: restoreFiles,
   } = useFiles(pathname);
   const { chatId } = useParams();
 
@@ -148,18 +168,33 @@ const ChatPage: React.FC = () => {
   const { scrollableContainer, setFollowing } = useFollow();
   const { getChatTitle } = useChatList();
   const { allModelIds: availableModels, modelDisplayName } = MODELS;
+  const modelOptions = useMemo(
+    () =>
+      availableModels.map((m) => ({ value: m, label: modelDisplayName(m) })),
+    [availableModels, modelDisplayName]
+  );
   const { data: share, mutate: reloadShare } = findShareId(chatId);
   const modelId = getModelId();
   const prompter = useMemo(() => {
     return getPrompter(modelId);
   }, [modelId]);
+  const {
+    modelId: savedModelId,
+    setModelId: saveModelId,
+    setReasoningConfig: saveReasoningConfig,
+  } = useChatPreferences();
+  // Start from the reasoning settings the user last chose (#923). The effect
+  // below still adapts the type to the selected model's capabilities.
   const [overrideModelParameters, setOverrideModelParameters] =
-    useState<AdditionalModelRequestFields>({
+    useState<AdditionalModelRequestFields>(() => ({
       reasoningConfig: {
         type: 'disabled',
         budgetTokens: DEFAULT_REASONING_BUDGET,
+        ...sanitizeReasoningConfig(
+          useChatPreferences.getState().reasoningConfig
+        ),
       },
-    });
+    }));
   const [showSetting, setShowSetting] = useState(false);
   const { t } = useTranslation();
   const [forceExpandPromptList, setForceExpandPromptList] = useState<
@@ -182,18 +217,33 @@ const ChatPage: React.FC = () => {
     }
   }, [chatId, getChatTitle, t]);
 
-  const accept = useMemo(() => {
-    if (!modelId) return [];
-    const feature = MODELS.getModelMetadata(modelId);
-    return [
-      ...(feature.flags.doc ? fileLimit.accept.doc : []),
-      ...(feature.flags.image ? fileLimit.accept.image : []),
-      ...(feature.flags.video ? fileLimit.accept.video : []),
-    ];
+  // Adjust the image count limit based on the selected model's capabilities.
+  // Some models accept fewer images than the Converse API default of 20.
+  const fileLimit = useMemo<FileLimit>(() => {
+    const maxImages =
+      MODELS.getModelMetadata(modelId).flags.maxImageCount ??
+      DEFAULT_MAX_IMAGE_COUNT;
+    if (maxImages === baseFileLimit.maxImageFileCount) return baseFileLimit;
+    return { ...baseFileLimit, maxImageFileCount: maxImages };
   }, [modelId]);
+
+  const accept = useAcceptedExtensions(fileLimit, modelId);
   const fileUpload = useMemo(() => {
     return accept.length > 0;
   }, [accept]);
+  // Documents attached earlier in this chat are sent again with every
+  // message, and Bedrock rejects a request with more than 5 documents (#1685)
+  const previousFileCount = useMemo(
+    () =>
+      rawMessages
+        .flatMap((m) => m.extraData ?? [])
+        .filter((data) => data.type === 'file').length,
+    [rawMessages]
+  );
+  const chatFileLimit = useMemo(
+    () => ({ ...fileLimit, previousFileCount }),
+    [fileLimit, previousFileCount]
+  );
   const reasoning = useMemo(() => {
     return MODELS.getModelMetadata(modelId).flags.reasoning ?? false;
   }, [modelId]);
@@ -228,6 +278,9 @@ const ChatPage: React.FC = () => {
   // reasoning is force-enabled while the model is selected, and the user's
   // original disabled state is restored when switching away.
   useEffect(() => {
+    // Wait for the model. Before it is set the flags are all false, and
+    // normalizing against them would turn a restored 'xhigh' into 'high'.
+    if (!modelId) return;
     setOverrideModelParameters((prev) => {
       const config = prev.reasoningConfig;
       const enabled = config.type === 'enabled' || config.type === 'adaptive';
@@ -245,8 +298,17 @@ const ChatPage: React.FC = () => {
         newType = adaptiveThinking ? 'adaptive' : 'enabled';
       }
 
+      // A model without xhigh gets high. Back on a model with xhigh, the
+      // user's saved xhigh comes back: the high was only this adjustment.
+      const savedEffort = sanitizeReasoningConfig(
+        useChatPreferences.getState().reasoningConfig
+      ).effort;
       const newEffort =
-        config.effort === 'xhigh' && !xhighEffort ? 'high' : config.effort;
+        config.effort === 'xhigh' && !xhighEffort
+          ? 'high'
+          : config.effort === 'high' && xhighEffort && savedEffort === 'xhigh'
+            ? 'xhigh'
+            : config.effort;
       if (config.type === newType && config.effort === newEffort) {
         return prev;
       }
@@ -255,10 +317,39 @@ const ChatPage: React.FC = () => {
         reasoningConfig: { ...config, type: newType, effort: newEffort },
       };
     });
-  }, [adaptiveThinking, adaptiveThinkingAlwaysOn, xhighEffort]);
+  }, [modelId, adaptiveThinking, adaptiveThinkingAlwaysOn, xhighEffort]);
+
+  // Apply a reasoning change the user made and remember it (#923). Only
+  // explicit changes are saved; the per-model adjustments above are not, so
+  // a value the user chose (e.g. 'xhigh') is not overwritten by a model that
+  // cannot use it. When an always-on model forced reasoning on, the user's
+  // own "disabled" is stored instead.
+  const setAndRememberModelParameters = useCallback(
+    (params: AdditionalModelRequestFields) => {
+      setOverrideModelParameters(params);
+      saveReasoningConfig(
+        reasoningForcedByAlwaysOn.current
+          ? { ...params.reasoningConfig, type: 'disabled' }
+          : params.reasoningConfig
+      );
+    },
+    [saveReasoningConfig]
+  );
+
+  // Only an explicit pick is remembered (#1391); a model chosen by default or
+  // by a URL parameter does not replace the user's choice.
+  const onChangeModel = useCallback(
+    (newModelId: string) => {
+      setModelId(newModelId);
+      saveModelId(newModelId);
+    },
+    [setModelId, saveModelId]
+  );
 
   useEffect(() => {
-    const _modelId = !modelId ? availableModels[0] : modelId;
+    const _modelId = !modelId
+      ? pickInitialModelId(savedModelId, availableModels)!
+      : modelId;
 
     if (search !== '') {
       const params = queryString.parse(search) as ChatPageQueryParams;
@@ -283,12 +374,13 @@ const ChatPage: React.FC = () => {
   const onSend = useCallback(async () => {
     setFollowing(true);
     const savedContent = content;
+    const savedFiles = uploadedFiles;
     setContent('');
     clearFiles();
     const success = await postChat(
       prompter.chatPrompt({ content: savedContent }),
       false,
-      undefined,
+      withCurrentDate,
       undefined,
       undefined,
       fileUpload ? uploadedFiles : undefined,
@@ -299,7 +391,10 @@ const ChatPage: React.FC = () => {
       overrideModelParameters
     );
     if (!success) {
+      // Give back what was cleared, so the user can change the attachments
+      // (e.g. remove one that made the request too large) and send again
       setContent(savedContent);
+      restoreFiles(savedFiles);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -314,7 +409,7 @@ const ChatPage: React.FC = () => {
   const onRetry = useCallback(() => {
     retryGeneration(
       undefined,
-      undefined,
+      withCurrentDate,
       undefined,
       undefined,
       undefined,
@@ -341,7 +436,7 @@ const ChatPage: React.FC = () => {
       editChat(
         modifiedPrompt,
         false,
-        undefined,
+        withCurrentDate,
         undefined,
         undefined,
         undefined,
@@ -359,7 +454,6 @@ const ChatPage: React.FC = () => {
   const [deletingShareId, setDeletingShareId] = useState(false);
   const [showShareIdModal, setShowShareIdModal] = useState(false);
   const [showSystemContextModal, setShowSystemContextModal] = useState(false);
-  const [isOver, setIsOver] = useState(false);
 
   const onCreateShareId = useCallback(async () => {
     try {
@@ -436,7 +530,11 @@ const ChatPage: React.FC = () => {
 
   const onClickSamplePrompt = useCallback(
     (params: ChatPageQueryParams) => {
-      setContent(params.content ?? '');
+      // Only update chat content when the prompt list provides one.
+      // Selecting a saved system-context should NOT clear user input (#1276).
+      if (params.content !== undefined) {
+        setContent(params.content);
+      }
       updateSystemContext(params.systemContext ?? '');
     },
     [setContent, updateSystemContext]
@@ -484,7 +582,7 @@ const ChatPage: React.FC = () => {
 
   const onReasoningSwitched = useCallback(() => {
     if (reasoningEnabled) {
-      setOverrideModelParameters({
+      setAndRememberModelParameters({
         ...overrideModelParameters,
         reasoningConfig: {
           ...overrideModelParameters.reasoningConfig,
@@ -492,7 +590,7 @@ const ChatPage: React.FC = () => {
         },
       });
     } else {
-      setOverrideModelParameters({
+      setAndRememberModelParameters({
         ...overrideModelParameters,
         reasoningConfig: {
           ...overrideModelParameters.reasoningConfig,
@@ -504,30 +602,15 @@ const ChatPage: React.FC = () => {
     reasoningEnabled,
     adaptiveThinking,
     overrideModelParameters,
-    setOverrideModelParameters,
+    setAndRememberModelParameters,
   ]);
 
-  const handleDragOver = (event: React.DragEvent) => {
-    // When a file is dragged, display the overlay
-    event.preventDefault();
-    setIsOver(true);
-  };
-
-  const handleDragLeave = (event: React.DragEvent) => {
-    // When a file is dragged, hide the overlay
-    event.preventDefault();
-    setIsOver(false);
-  };
-
-  const handleDrop = (event: React.DragEvent) => {
-    // When a file is dropped, add the file
-    event.preventDefault();
-    setIsOver(false);
-    if (event.dataTransfer.files) {
-      // Reflect the file and upload it
-      uploadFiles(Array.from(event.dataTransfer.files), fileLimit, accept);
-    }
-  };
+  const onDropFiles = useCallback(
+    (files: File[]) => uploadFiles(files, chatFileLimit, accept),
+    [uploadFiles, chatFileLimit, accept]
+  );
+  const { isOver, hideOverlay, handleDragOver, handleDragLeave, handleDrop } =
+    useDropOverlay(onDropFiles);
 
   // Initialize forceExpandPromptList to null when the path changes
   useEffect(() => {
@@ -547,22 +630,19 @@ const ChatPage: React.FC = () => {
           <div
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            onClick={hideOverlay}
             className="fixed bottom-0 left-0 right-0 top-0 z-[999] bg-slate-300 p-10 text-center">
+            <ButtonIcon
+              className="absolute right-3 top-3"
+              title={t('common.close')}
+              onClick={hideOverlay}>
+              <PiX />
+            </ButtonIcon>
             <div className="flex h-full w-full items-center justify-center outline-dashed">
               <div className="font-bold">{t('chat.drop_files')}</div>
             </div>
           </div>
         )}
-
-        <div className="mt-2 flex w-full items-end justify-center lg:mt-0 print:hidden">
-          <Select
-            value={modelId}
-            onChange={setModelId}
-            options={availableModels.map((m) => {
-              return { value: m, label: modelDisplayName(m) };
-            })}
-          />
-        </div>
 
         {((isEmpty && !loadingMessages) || loadingMessages) && (
           <div className="relative flex h-[calc(100vh-13rem)] flex-col items-center justify-center gap-y-4">
@@ -637,7 +717,7 @@ const ChatPage: React.FC = () => {
           <ScrollTopBottom />
         </div>
 
-        <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden">
+        <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-[var(--sidebar-w,16rem)] print:hidden">
           {isEmpty && !loadingMessages && !chatId && (
             <ExpandableField
               label={t('chat.system_prompt')}
@@ -667,14 +747,12 @@ const ChatPage: React.FC = () => {
                 <InputChatContent
                   disableMarginBottom={true}
                   content={inputSystemContext}
-                  onChangeContent={setInputSystemContext}
+                  onChangeContent={(value) => {
+                    setInputSystemContext(value);
+                    updateSystemContext(value);
+                  }}
                   fullWidth={true}
                   resetDisabled={true}
-                  disabled={inputSystemContext === currentSystemContext}
-                  sendIcon={<PiArrowClockwiseBold />}
-                  onSend={() => {
-                    updateSystemContext(inputSystemContext);
-                  }}
                   hideReset={true}
                 />
               </>
@@ -694,12 +772,22 @@ const ChatPage: React.FC = () => {
             }}
             onReset={onReset}
             fileUpload={fileUpload}
-            fileLimit={fileLimit}
+            fileLimit={chatFileLimit}
             accept={accept}
             reasoning={reasoning && !adaptiveThinkingAlwaysOn}
             onReasoningSwitched={onReasoningSwitched}
             reasoningEnabled={reasoningEnabled}
+            modelId={modelId}
+            onModelChange={onChangeModel}
+            modelOptions={modelOptions}
             setting={setting}
+            settingLabel={
+              setting &&
+              adaptiveThinking &&
+              overrideModelParameters.reasoningConfig.type !== 'disabled'
+                ? effortLabel(overrideModelParameters.reasoningConfig.effort)
+                : undefined
+            }
             onSetting={() => {
               setShowSetting(true);
             }}
@@ -784,7 +872,7 @@ const ChatPage: React.FC = () => {
             <ModelParameters
               modelFeatureFlags={MODELS.getModelMetadata(modelId).flags}
               overrideModelParameters={overrideModelParameters}
-              setOverrideModelParameters={setOverrideModelParameters}
+              setOverrideModelParameters={setAndRememberModelParameters}
             />
           </div>
         )}

@@ -1,5 +1,8 @@
 /* eslint-disable i18nhelper/no-jp-string */
-import { convertToSafeFilename } from '../../../lambda/utils/fileNameUtils';
+import {
+  convertToSafeFilename,
+  createUniqueDocumentNamer,
+} from '../../../lambda/utils/fileNameUtils';
 
 describe('convertToSafeFilename', () => {
   it('should return filename without hash when only ASCII characters', () => {
@@ -141,5 +144,43 @@ describe('convertToSafeFilename', () => {
 
   it('never returns an empty name', () => {
     expect(convertToSafeFilename('   .pdf')).toMatch(/^file_[0-9a-f]{8}$/);
+  });
+});
+
+describe('createUniqueDocumentNamer', () => {
+  it('keeps the first name and numbers the later duplicates', () => {
+    const toName = createUniqueDocumentNamer();
+    expect(toName('report.xlsx')).toBe('report');
+    expect(toName('report.pdf')).toBe('report (2)');
+    expect(toName('report.xlsx')).toBe('report (3)');
+    expect(toName('other.txt')).toBe('other');
+  });
+
+  it('skips a numbered name that is already taken', () => {
+    const toName = createUniqueDocumentNamer();
+    expect(toName('report (2).txt')).toBe('report (2)');
+    expect(toName('report.txt')).toBe('report');
+    expect(toName('report.txt')).toBe('report (3)');
+  });
+
+  it('gives the same names when called again in the same order', () => {
+    const files = ['a.txt', 'a.txt', 'テスト.pdf', 'テスト.pdf'];
+    const first = files.map(createUniqueDocumentNamer());
+    const second = files.map(createUniqueDocumentNamer());
+    expect(second).toEqual(first);
+    expect(new Set(first).size).toBe(files.length);
+  });
+
+  it('stays within 200 characters with the suffix', () => {
+    const toName = createUniqueDocumentNamer();
+    const longName = 'a'.repeat(300) + '.txt';
+    const first = toName(longName);
+    const second = toName(longName);
+    expect(first).toHaveLength(200);
+    expect(second).toHaveLength(200);
+    expect(second.endsWith(' (2)')).toBe(true);
+    expect(second).not.toBe(first);
+    // Same characters as convertToSafeFilename output, no double spaces
+    expect(second).toMatch(/^[\w\-()[\]]+( [\w\-()[\]]+)*$/);
   });
 });

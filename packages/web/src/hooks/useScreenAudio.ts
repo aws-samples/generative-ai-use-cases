@@ -11,7 +11,11 @@ import { Buffer } from 'buffer';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { Transcript } from 'generative-ai-use-cases';
-import { getTranscribeSampleRate } from '../utils/AudioUtils';
+import {
+  getTranscribeSampleRate,
+  getTranscribeLanguageOptions,
+  isLanguageWithoutWordSpaces,
+} from '../utils/AudioUtils';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
@@ -106,8 +110,8 @@ const useScreenAudio = () => {
       }
       return prev;
     }, [] as Transcript[]);
-    // If Japanese, remove spaces
-    if (language === 'ja-JP') {
+    // Japanese and Chinese are written without spaces between words
+    if (isLanguageWithoutWordSpaces(language)) {
       return mergedTranscripts.map((item) => ({
         ...item,
         transcript: item.transcript.replace(/ /g, ''),
@@ -180,7 +184,7 @@ const useScreenAudio = () => {
         IdentifyMultipleLanguages: true,
         LanguageOptions: languageOptions
           ? languageOptions.join(',')
-          : 'en-US,ja-JP',
+          : getTranscribeLanguageOptions().join(','),
       };
     } else if (languageCode) {
       // Specific language mode
@@ -198,7 +202,7 @@ const useScreenAudio = () => {
         IdentifyMultipleLanguages: false,
         LanguageOptions: languageOptions
           ? languageOptions.join(',')
-          : 'en-US,ja-JP',
+          : getTranscribeLanguageOptions().join(','),
       };
     }
 

@@ -1,27 +1,31 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
 import { handler } from '../../lambda/getWebText';
+import { InvokeParams, invokeHandler } from './api/testApp';
 
 // Mock the DNS lookup function
-jest.mock('util', () => ({
-  promisify: jest.fn().mockImplementation(() => {
-    return (hostname: string) => {
-      if (hostname.includes('example-internal.com')) {
-        return Promise.resolve({ address: '192.168.1.1', family: 4 });
-      }
-      if (hostname.includes('non-existent-domain.com')) {
-        return Promise.reject(new Error('DNS resolution failed'));
-      }
-      return Promise.resolve({ address: '8.8.8.8', family: 4 });
-    };
-  }),
+jest.mock('dns', () => ({
+  ...jest.requireActual('dns'),
+  lookup: (
+    hostname: string,
+    callback: (error: Error | null, address?: unknown) => void
+  ) => {
+    if (hostname === 'example-internal.com') {
+      callback(null, { address: '192.168.1.1', family: 4 });
+      return;
+    }
+    if (hostname === 'non-existent-domain.com') {
+      callback(new Error('DNS resolution failed'));
+      return;
+    }
+    callback(null, { address: '8.8.8.8', family: 4 });
+  },
 }));
 
-// Helper function to create APIGatewayProxyEvent
-function createAPIGatewayProxyEvent(url?: string): APIGatewayProxyEvent {
-  return {
-    queryStringParameters: url ? { url } : undefined,
-  } as unknown as APIGatewayProxyEvent;
-}
+// The request the web client sends: GET /web-text?url=...
+const event = (url?: string): InvokeParams => ({
+  method: 'GET',
+  user: 'alice',
+  query: url ? { url } : {},
+});
 
 // Mock global fetch
 global.fetch = jest.fn().mockImplementation(() =>
@@ -51,9 +55,7 @@ describe('getWebText Lambda handler', () => {
     );
 
     // Execute test
-    const result = await handler(
-      createAPIGatewayProxyEvent('https://example.com')
-    );
+    const result = await invokeHandler(handler, event('https://example.com'));
 
     // Verify results
     expect(result.statusCode).toBe(200);
@@ -66,7 +68,7 @@ describe('getWebText Lambda handler', () => {
   // Test for missing URL parameter
   test('returns 400 error when URL parameter is missing', async () => {
     // Execute test
-    const result = await handler(createAPIGatewayProxyEvent());
+    const result = await invokeHandler(handler, event());
 
     // Verify results
     expect(result.statusCode).toBe(400);
@@ -79,9 +81,7 @@ describe('getWebText Lambda handler', () => {
   // Test for invalid URL scheme
   test('returns 403 error when URL scheme is not http or https', async () => {
     // Execute test
-    const result = await handler(
-      createAPIGatewayProxyEvent('ftp://example.com')
-    );
+    const result = await invokeHandler(handler, event('ftp://example.com'));
 
     // Verify results
     expect(result.statusCode).toBe(403);
@@ -94,9 +94,7 @@ describe('getWebText Lambda handler', () => {
   // Test for private IP address access
   test('returns 403 error when trying to access private IP address', async () => {
     // Execute test
-    const result = await handler(
-      createAPIGatewayProxyEvent('http://192.168.1.1')
-    );
+    const result = await invokeHandler(handler, event('http://192.168.1.1'));
 
     // Verify results
     expect(result.statusCode).toBe(403);
@@ -109,9 +107,7 @@ describe('getWebText Lambda handler', () => {
   // Test for localhost access
   test('returns 403 error when trying to access localhost', async () => {
     // Execute test
-    const result = await handler(
-      createAPIGatewayProxyEvent('http://localhost')
-    );
+    const result = await invokeHandler(handler, event('http://localhost'));
 
     // Verify results
     expect(result.statusCode).toBe(403);
@@ -124,8 +120,9 @@ describe('getWebText Lambda handler', () => {
   // Test for domain resolving to private IP
   test('returns 403 error when domain resolves to private IP', async () => {
     // Execute test - the util.promisify mock handles giving us a private IP
-    const result = await handler(
-      createAPIGatewayProxyEvent('http://example-internal.com')
+    const result = await invokeHandler(
+      handler,
+      event('http://example-internal.com')
     );
 
     // Verify results
@@ -144,8 +141,9 @@ describe('getWebText Lambda handler', () => {
     console.error = jest.fn();
 
     // Execute test - the util.promisify mock will throw an error
-    const result = await handler(
-      createAPIGatewayProxyEvent('http://non-existent-domain.com')
+    const result = await invokeHandler(
+      handler,
+      event('http://non-existent-domain.com')
     );
 
     // Restore console.error
@@ -171,9 +169,7 @@ describe('getWebText Lambda handler', () => {
     console.log = jest.fn();
 
     // Execute test
-    const result = await handler(
-      createAPIGatewayProxyEvent('https://example.com')
-    );
+    const result = await invokeHandler(handler, event('https://example.com'));
 
     // Restore console.log
     console.log = originalConsoleLog;
@@ -192,7 +188,7 @@ describe('getWebText Lambda handler', () => {
     console.error = jest.fn();
 
     // Execute test
-    const result = await handler(createAPIGatewayProxyEvent('not-a-valid-url'));
+    const result = await invokeHandler(handler, event('not-a-valid-url'));
 
     // Restore console.error
     console.error = originalConsoleError;

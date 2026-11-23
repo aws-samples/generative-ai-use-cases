@@ -23,6 +23,20 @@ npm run web:devw
 > [!TIP]
 > バックエンドの環境を切り替えて利用したい際は、cdk.json の context.env を変更するか、`npm run web:devw --env=dev2` のようにコマンドライン引数で指定してください。
 
+> [!IMPORTANT]
+> デプロイされた API はデプロイされたフロントエンドのオリジンからのリクエストのみを受け付けるため、`allowedDevOrigins` にローカルのオリジンを追加してデプロイしてください。設定しない場合、ブラウザのコンソールに `No 'Access-Control-Allow-Origin' header is present on the requested resource` という CORS エラーが表示され、会話履歴の保存などの API 呼び出しが失敗します。
+>
+> ```typescript
+> // packages/cdk/parameter.ts
+> const envs: Record<string, Partial<StackInput>> = {
+>   dev: {
+>     allowedDevOrigins: ['http://localhost:5173'],
+>   },
+> };
+> ```
+>
+> スキーム + ホスト（+ ポート）の形式で指定してください（末尾のスラッシュやパスを含めると一致しません）。本番環境では設定しないことを推奨します。
+
 ### Windows ユーザー
 
 Windows ユーザー用に開発環境を立ち上げる PowerShell スクリプト `web_devw_win.ps1` を用意しており、`web:devww` から起動できます (`w` が一つ多い)。`setup-env.sh` を PowerShell に置き換えたのに近いスクリプトで、`aws` コマンドは必要ですが `jq` は必要ありません。
@@ -91,6 +105,16 @@ npm run web:lint:fix  # フロントエンドコード用
 ### Pre-commit フック
 
 このリポジトリでは [Husky](https://typicode.github.io/husky) を使用して Git フックを管理しています。`git commit` 時に `lint-staged` 経由で自動的に lint が実行されます。
+
+## AI コーディングエージェントで開発する場合
+
+AI コーディングエージェント向けの指示は特定のツールに依存しないファイルで管理しているため、Kiro でも Claude Code でも、その他のエージェントでも同じルールが適用されます。
+
+- リポジトリ直下の [AGENTS.md](/AGENTS.md) に、リポジトリの構成、コマンド、変更時のルールを記載しています。Kiro などのエージェントは自動で読み込みます。Claude Code 向けには `CLAUDE.md` から読み込んでいます。
+- エージェントスキルは `.kiro/skills/` にあります。`.claude/skills` は同じディレクトリへのシンボリックリンクです。
+
+> [!NOTE]
+> Windows では、シンボリックリンクを有効にしていない場合 (開発者モードと、clone 前の `git config core.symlinks true`)、Git はシンボリックリンクをテキストファイルとしてチェックアウトします。その場合 Claude Code からはスキルが見えません。Kiro には影響しません。
 
 ## Pull Request を出す場合
 

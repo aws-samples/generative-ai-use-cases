@@ -14,7 +14,7 @@ This is the method for users to update themselves.
 
 ### Check the release notes
 
-Before updating, read the release notes of every release between your current version and the new one on the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases).
+Before updating, read the release notes of every release between your current version and the new one. [Release Notes](./RELEASE_NOTES.md) summarizes each release and what to check before updating, and the [Releases page](https://github.com/aws-samples/generative-ai-use-cases/releases) has the full list of changes.
 If a release contains a breaking change (for example, a resource that is replaced or deleted, or a setting that is removed or renamed), the release notes describe its impact and the migration steps.
 
 You can check your current version with the following command:
@@ -108,6 +108,15 @@ git checkout --theirs package-lock.json
 npm install
 git add package-lock.json
 ```
+
+### Moving settings from cdk.json to parameter.ts
+
+When an environment is defined in `envs` in [parameter.ts](/packages/cdk/parameter.ts), the parameters in [cdk.json](/packages/cdk/cdk.json) are not used for that environment, and every parameter that parameter.ts leaves out takes its default value. When you move your settings:
+
+- Move every parameter you changed from its default in cdk.json. A parameter you leave out goes back to its default. For example, leaving out `ragKnowledgeBaseEnabled: true` deletes the Knowledge Base stack.
+- Keep the environment name (`env`). It is part of the stack names, so a different name creates new stacks. If you deploy without `-c env=`, define the environment as `''`.
+- parameter.ts already defines `dev`, `staging` and `prod`, empty. If you deploy with one of these names, the parameters in cdk.json are already not used.
+- After moving, run `npm run cdk:diff` and check that it shows the same changes as before the move. Then redeploy.
 
 ### Troubleshooting
 

@@ -1,53 +1,28 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { Request, Response } from 'express';
+import { requireUserName, sendJson, sendText } from './utils/http';
 import { UpdateTitleRequest } from 'generative-ai-use-cases';
 import { findChatById, setChatTitle } from './repository';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
-): Promise<APIGatewayProxyResult> => {
-  try {
-    const userId: string =
-      event.requestContext.authorizer!.claims['cognito:username'];
-    const chatId = event.pathParameters!.chatId!;
-    const req: UpdateTitleRequest = JSON.parse(event.body!);
+  request: Request,
+  response: Response
+): Promise<void> => {
+  const userId: string = requireUserName(request);
+  const chatId = request.params.chatId;
+  const req: UpdateTitleRequest = request.body ?? {};
 
-    const chatItem = await findChatById(userId, chatId);
+  const chatItem = await findChatById(userId, chatId);
 
-    if (!chatItem) {
-      return {
-        statusCode: 404,
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: '',
-      };
-    }
-
-    const updatedChat = await setChatTitle(
-      chatItem?.id,
-      chatItem?.createdDate,
-      req.title,
-      req.usecase
-    );
-
-    return {
-      statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ chat: updatedChat }),
-    };
-  } catch (error) {
-    console.log(error);
-    return {
-      statusCode: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-      body: JSON.stringify({ message: 'Internal Server Error' }),
-    };
+  if (!chatItem) {
+    return sendText(response, 404);
   }
+
+  const updatedChat = await setChatTitle(
+    chatItem?.id,
+    chatItem?.createdDate,
+    req.title,
+    req.usecase
+  );
+
+  return sendJson(response, 200, { chat: updatedChat });
 };

@@ -1,3 +1,33 @@
+admin:
+  active_users: Người dùng hoạt động
+  clear_filter: Hiện tất cả người dùng
+  cost: Chi phí
+  cost_note: 'Chi phí dùng giá niêm yết của AWS (theo yêu cầu, USD) tại Region gọi từng mô hình. Không tính chiết khấu, Savings Plans và bậc miễn phí; xem chi phí thực tế trong AWS Cost Explorer.'
+  description: 'Lượng token của mọi người dùng theo dữ liệu GenU ghi lại. Để phân tích chi tiết, hãy dùng CloudWatch Logs Insights trên nhật ký gọi mô hình của Bedrock.'
+  download_csv: Tải xuống CSV
+  executions: Số lần thực thi
+  filter_selected: 'Tổng hợp {{users}} người đã chọn'
+  filtered_to_users: 'Đang hiển thị tổng của {{users}} người dùng đã chọn'
+  last_active: Lần dùng gần nhất
+  last_n_days: '{{days}} ngày qua'
+  load_failed: Không tải được dữ liệu sử dụng.
+  model: Mô hình
+  models_heading: Theo mô hình
+  next: Tiếp
+  no_price: Không có giá
+  page_range: '{{from}}–{{to}} trên {{total}}'
+  period: Khoảng thời gian
+  previous: Trước
+  pricing_note: 'Giá niêm yết ngày {{date}}'
+  scope_note: Chỉ tính phần tạo văn bản mà GenU lưu cùng tin nhắn trò chuyện. Không bao gồm tác tử (Bedrock Agents, AgentCore) và tạo ảnh hoặc video.
+  search_users: Tìm người dùng
+  select_page: Chọn tất cả người dùng trên trang này
+  title: Quản trị
+  tokens: 'Token (đầu vào, đầu ra và bộ nhớ đệm)'
+  too_many_selected: 'Chọn tối đa {{max}} người dùng'
+  unpriced_models: 'Mô hình không có giá niêm yết, không tính vào chi phí: {{models}}'
+  user: Người dùng
+  users_heading: Theo người dùng
 agent:
   drop_files: Thả file để tải lên
   title: Chat Agent
@@ -18,6 +48,10 @@ chat:
   hint_cmd_enter: ⌘ + Enter để gửi
   hint_ctrl_enter: Ctrl + Enter để gửi
   history: Lịch sử
+  history_last_30_days: 30 ngày trước
+  history_last_7_days: 7 ngày trước
+  history_today: Hôm nay
+  history_yesterday: Hôm qua
   initialize: Khởi tạo
   open_link: Mở liên kết
   prompt_examples: Ví dụ prompt
@@ -39,6 +73,7 @@ common:
   collapse: Thu gọn
   colon: ':'
   complete: Hoàn thành
+  copy_table: Sao chép bảng
   create: Tạo
   delete: Xóa
   enter_text: Vui lòng nhập
@@ -310,18 +345,35 @@ dialog:
     message: Nếu bạn rời khỏi trang này, nội dung đã nhập sẽ bị mất. Bạn có chắc chắn muốn rời khỏi?
     title: Thay đổi chưa được lưu
 drawer:
+  add_to_sidebar: Thêm vào thanh bên
   ai_services: Dịch vụ AI
   builder_mode: Chế độ builder
+  collapse_sidebar: Thu gọn thanh bên
   done: Hoàn thành
+  edit_favorites: Chọn use case hiển thị ở thanh bên
+  expand_sidebar: Mở rộng thanh bên
   generative_ai: (Generative AI)
+  mode_builder: Trình tạo
+  remove_from_sidebar: Xóa khỏi thanh bên
+  resize_sidebar: Điều chỉnh độ rộng thanh bên
   tools: Công cụ
   use_cases: Use case
 error:
   streamingError:
     ACCESS_DENIED: Mô hình được chọn chưa được kích hoạt. Vui lòng kích hoạt mô hình trong bảng điều khiển Amazon Bedrock.
-    PAYLOAD_TOO_LARGE: Tệp đính kèm quá lớn. Vui lòng giảm kích thước tệp hoặc số lượng tệp đính kèm và thử lại.
+    CONTEXT_TOO_LONG: Cuộc trò chuyện hoặc tệp đính kèm quá dài để mô hình đọc. Vui lòng giảm nội dung đính kèm (số trang, dòng hoặc trang tính) hoặc bắt đầu cuộc trò chuyện mới.
+    DEPENDENCY_FAILED: Tài nguyên mà tác tử hoặc cơ sở tri thức gọi đến (chẳng hạn như hàm Lambda của nhóm hành động) đã gặp lỗi. Vui lòng kiểm tra cấu hình và nhật ký, sau đó thử lại.
+    DOCUMENT_TOO_LARGE: Tài liệu quá lớn để gửi. Vui lòng chia nhỏ hoặc giảm nội dung tài liệu rồi thử lại.
+    DUPLICATE_FILE_NAME: Cuộc trò chuyện này có nhiều tệp trùng tên (bao gồm cả tệp đã đính kèm trước đó). Vui lòng đổi tên tệp rồi đính kèm lại, hoặc bắt đầu cuộc trò chuyện mới.
+    EMPTY_MESSAGE: Cuộc trò chuyện chứa một tin nhắn trống nên không thể tiếp tục. Vui lòng bắt đầu cuộc trò chuyện mới.
+    IMAGE_DIMENSIONS_TOO_LARGE: Chiều rộng hoặc chiều cao của hình ảnh quá lớn. Mỗi cạnh phải nhỏ hơn hoặc bằng 8000 pixel (3000 pixel khi cuộc trò chuyện có nhiều hình ảnh, kể cả các hình ảnh đã đính kèm trước đó). Vui lòng thu nhỏ hình ảnh rồi đính kèm lại, hoặc bắt đầu cuộc trò chuyện mới.
+    IMAGE_TOO_LARGE: Hình ảnh quá lớn. Mỗi hình ảnh phải nhỏ hơn hoặc bằng 3.75 MB.
+    INVALID_FILE_NAME: Không thể sử dụng tên tệp này. Vui lòng đổi sang tên ngắn chỉ gồm chữ cái và số rồi đính kèm lại.
+    PAYLOAD_TOO_LARGE: Tổng dung lượng tệp đính kèm quá lớn để gửi. Các tệp đã đính kèm trước đó trong cuộc trò chuyện này cũng được gửi lại mỗi lần và được tính vào tổng. Vui lòng bỏ hoặc thu nhỏ tệp đính kèm mới, hoặc bắt đầu cuộc trò chuyện mới.
     THROTTLING: Máy chủ hiện đang có lưu lượng truy cập cao. Vui lòng thử lại sau.
+    TOO_MANY_DOCUMENTS: Có quá nhiều tài liệu được đính kèm. Các tài liệu đã đính kèm trước đó trong cuộc trò chuyện này cũng được tính. Vui lòng giảm số tệp đính kèm hoặc bắt đầu cuộc trò chuyện mới.
     UNKNOWN_ERROR: Đã xảy ra lỗi. Vui lòng thử lại hoặc liên hệ quản trị viên.
+    UNSUPPORTED_FILE_TYPE: Loại tệp này không được hỗ trợ.
 feedback:
   additional_feedback: Nếu bạn có phản hồi khác, vui lòng nhập. (tùy chọn)
   reason_error: Vui lòng chọn lý do.
@@ -334,6 +386,7 @@ feedback:
 files:
   error:
     fileCountExceeded: Số lượng file phải không quá {{maxCount}} file.
+    fileCountExceededInChat: Cuộc trò chuyện này đã có {{previousCount}} tài liệu được đính kèm trước đó, và mỗi cuộc trò chuyện chỉ có tối đa {{maxCount}} tài liệu. Vui lòng giảm số tệp đính kèm hoặc bắt đầu cuộc trò chuyện mới.
     fileSizeExceeded: Kích thước file phải không quá {{maxSize}} MB.
     imageCountExceeded: Số lượng ảnh phải không quá {{maxCount}} ảnh.
     invalidExtension: '{{fileName}} có đuôi file không được phép. Các đuôi file được phép là {{acceptedExtensions}}.'
@@ -554,6 +607,8 @@ language:
   th: tiếng Thái
   zh: Tiếng Trung
 meetingMinutes:
+  auto_detect_candidates: 'Tự động nhận diện từ: {{languages}}'
+  auto_detect_change: Thay đổi trong Cài đặt
   auto_generate: Tự động tạo
   clear_minutes: Xóa biên bản
   custom_prompt: Lời nhắc tùy chỉnh
@@ -716,17 +771,23 @@ setting:
     rag_kb_enabled: RAG (Knowledge Base) được bật
     show_tools: Hiển thị công cụ
     show_use_case_builder: Hiển thị Use Case Builder
+    transcribe_languages: Ngôn ngữ tự động nhận diện cho nhận dạng giọng nói
+    transcribe_languages_help: 'Các ngôn ngữ dùng làm lựa chọn khi ngôn ngữ nhận dạng giọng nói được đặt là "tự động" (biên bản cuộc họp, nhập bằng giọng nói, chép lời từ tệp). Chọn từ 2 đến 5 ngôn ngữ. Chọn càng nhiều thì câu nói ngắn càng dễ bị nhận nhầm ngôn ngữ.'
     typing_animation: Hiệu ứng đánh máy
     version: Phiên bản
     version_help: Tham chiếu đến version trong package.json của generative-ai-use-cases
   recent_updates: Cập nhật gần đây
   signout: Đăng xuất
+  tabs:
+    account: Tài khoản
+    general: Chung
+    system: Hệ thống
+    usage: Sử dụng
   title: Thông tin cài đặt
   update:
     message: >-
       Có cập nhật trên GitHub. Nếu muốn sử dụng các tính năng mới nhất, vui lòng pull nhánh main của <0>generative-ai-use-cases</0> 
       và deploy lại.
-  user: Cài đặt người dùng
   view_all_updates: Xem tất cả cập nhật
 shared:
   contact_admin: Vui lòng liên hệ với quản trị viên.
@@ -818,7 +879,6 @@ useCaseBuilder:
       Bằng cách thiết lập ngữ cảnh bổ sung, có thể trích xuất chỉ thông tin mong muốn.
     summarize_article: Tóm tắt
     summarize_article_description: Tóm tắt bài viết cho OGP (bản xem trước bài viết hiển thị khi chia sẻ liên kết bài viết). Bằng cách thiết lập OGP phù hợp, có thể truyền đạt đúng tóm tắt bài viết khi bài viết được chia sẻ.
-  builderMode: Chế độ builder
   cancel: Hủy
   create: Tạo
   createDescription: Tạo trường hợp sử dụng. Vui lòng kiểm tra hoạt động trong preview trước khi tạo. Có thể chỉnh sửa sau khi tạo.

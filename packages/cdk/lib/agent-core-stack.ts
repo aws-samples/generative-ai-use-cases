@@ -1,5 +1,6 @@
 import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import { IVpc, ISubnet } from 'aws-cdk-lib/aws-ec2';
 import { GenericAgentCore } from './construct/generic-agent-core';
 import { ProcessedStackInput } from './stack-input';
 import { BucketInfo } from 'generative-ai-use-cases';
@@ -7,6 +8,10 @@ import { REMOTE_OUTPUT_KEYS } from './remote-output-keys';
 
 export interface AgentCoreStackProps extends StackProps {
   readonly params: ProcessedStackInput;
+  // Pre-resolved VPC + subnets from ClosedNetworkStack (closed network mode).
+  // When provided, AgentCore Runtime is deployed inside this VPC and reuses its endpoints.
+  readonly vpc?: IVpc;
+  readonly subnets?: ISubnet[];
 }
 
 export class AgentCoreStack extends Stack {
@@ -27,10 +32,17 @@ export class AgentCoreStack extends Stack {
         isAgentCoreNetworkPrivate: params.isAgentCoreNetworkPrivate,
         agentCoreVpcId: params.agentCoreVpcId,
         agentCoreSubnetIds: params.agentCoreSubnetIds,
+        vpc: props.vpc,
+        subnets: props.subnets,
         gatewayArns: params.agentCoreGatewayArns ?? undefined,
+        closedNetworkMode: params.closedNetworkMode,
+        webSearchEnabled:
+          params.agentBuilderEnabled && params.agentBuilderWebSearchEnabled,
+        webSearchExcludeDomains:
+          params.agentBuilderWebSearchExcludeDomains ?? undefined,
       });
 
-      // Export runtime info for cross-region access via cdk-remote-stack (only if values exist)
+      // Outputs read by GenerativeAiUseCasesStack via StackOutputs, also across Regions (only if values exist)
       if (
         params.createGenericAgentCoreRuntime &&
         this.genericAgentCore.deployedGenericRuntimeArn

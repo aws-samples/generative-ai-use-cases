@@ -1,6 +1,10 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { invokeHandler, InvokeParams } from './api/testApp';
 import { handler } from '../../lambda/createMessages';
-import { batchCreateMessages, findChatById } from '../../lambda/repository';
+import {
+  batchCreateMessages,
+  findChatById,
+  setChatUpdatedDate,
+} from '../../lambda/repository';
 import { RecordedMessage, ToBeRecordedMessage } from 'generative-ai-use-cases';
 
 // Mock the repository
@@ -10,6 +14,9 @@ const mockedBatchCreateMessages = batchCreateMessages as jest.MockedFunction<
 >;
 const mockedFindChatById = findChatById as jest.MockedFunction<
   typeof findChatById
+>;
+const mockedSetChatUpdatedDate = setChatUpdatedDate as jest.MockedFunction<
+  typeof setChatUpdatedDate
 >;
 
 // Mock the environment variable
@@ -24,25 +31,18 @@ afterAll(() => {
   process.env = originalEnv;
 });
 
-// Helper function to create APIGatewayProxyEvent
+// Request for the handler under test
 function createAPIGatewayProxyEvent(
   body: unknown | null,
   chatId?: string,
   userId?: string
-): APIGatewayProxyEvent {
+): InvokeParams {
   return {
-    body: body ? JSON.stringify(body) : null,
-    pathParameters: chatId ? { chatId } : {},
-    requestContext: {
-      authorizer: userId
-        ? {
-            claims: {
-              'cognito:username': userId,
-            },
-          }
-        : undefined,
-    },
-  } as APIGatewayProxyEvent;
+    method: 'POST',
+    body: body ?? undefined,
+    path: chatId ? { chatId } : {},
+    user: userId,
+  };
 }
 
 describe('createMessages Lambda handler', () => {
@@ -90,7 +90,8 @@ describe('createMessages Lambda handler', () => {
     mockedBatchCreateMessages.mockResolvedValue(expectedRecordedMessages);
 
     // Execute test
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent({ messages }, chatId, userId)
     );
 
@@ -105,6 +106,47 @@ describe('createMessages Lambda handler', () => {
     expect(JSON.parse(result.body)).toEqual({
       messages: expectedRecordedMessages,
     });
+    // The chat record found above is stamped with the time of last activity.
+    expect(mockedSetChatUpdatedDate).toHaveBeenCalledWith(
+      `user#${userId}`,
+      '1234567890'
+    );
+  });
+
+  test('still returns the saved messages when updatedDate fails', async () => {
+    const userId = 'testUser';
+    const chatId = 'chat123';
+    mockedFindChatById.mockResolvedValue({
+      id: `user#${userId}`,
+      createdDate: '1234567890',
+      chatId: `chat#${chatId}`,
+      usecase: '',
+      title: '',
+      updatedDate: '',
+    });
+    mockedBatchCreateMessages.mockResolvedValue([]);
+    mockedSetChatUpdatedDate.mockRejectedValue(new Error('throttled'));
+
+    const result = await invokeHandler(
+      handler,
+      createAPIGatewayProxyEvent(
+        {
+          messages: [
+            {
+              messageId: 'msg123',
+              role: 'user',
+              content: 'Hello',
+              usecase: 'test',
+            },
+          ],
+        },
+        chatId,
+        userId
+      )
+    );
+
+    expect(result.statusCode).toBe(200);
+    expect(JSON.parse(result.body)).toEqual({ messages: [] });
   });
 
   test('allows JSON extraData for RAG Knowledge Base filters', async () => {
@@ -155,7 +197,8 @@ describe('createMessages Lambda handler', () => {
     });
     mockedBatchCreateMessages.mockResolvedValue(expectedRecordedMessages);
 
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent({ messages }, chatId, userId)
     );
 
@@ -200,7 +243,8 @@ describe('createMessages Lambda handler', () => {
       updatedDate: '',
     });
 
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent({ messages }, chatId, userId)
     );
 
@@ -244,7 +288,8 @@ describe('createMessages Lambda handler', () => {
       updatedDate: '',
     });
 
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent({ messages }, chatId, userId)
     );
 
@@ -291,7 +336,8 @@ describe('createMessages Lambda handler', () => {
         },
       ];
 
-      const result = await handler(
+      const result = await invokeHandler(
+        handler,
         createAPIGatewayProxyEvent({ messages }, chatId, userId)
       );
 
@@ -321,7 +367,8 @@ describe('createMessages Lambda handler', () => {
     mockedFindChatById.mockResolvedValue(null);
 
     // Execute test
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent({ messages }, chatId, userId)
     );
 
@@ -346,8 +393,8 @@ describe('createMessages Lambda handler', () => {
     const userId = 'testUser';
     const chatId = 'chat123';
 
-    // Spy on console.log to avoid cluttering test output
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    // route() logs the error with console.error
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
     // Set up mock to throw an error
     mockedFindChatById.mockImplementation(() => {
@@ -355,7 +402,8 @@ describe('createMessages Lambda handler', () => {
     });
 
     // Execute test
-    const result = await handler(
+    const result = await invokeHandler(
+      handler,
       createAPIGatewayProxyEvent({ messages }, chatId, userId)
     );
 
@@ -364,9 +412,9 @@ describe('createMessages Lambda handler', () => {
     expect(JSON.parse(result.body)).toEqual({
       message: 'Internal Server Error',
     });
-    expect(consoleLogSpy).toHaveBeenCalled();
+    expect(consoleErrorSpy).toHaveBeenCalled();
 
     // Restore the spy
-    consoleLogSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
   });
 });

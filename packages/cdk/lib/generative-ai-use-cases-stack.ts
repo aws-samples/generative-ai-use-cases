@@ -1,4 +1,4 @@
-import { Stack, StackProps, CfnOutput, Duration } from 'aws-cdk-lib';
+import { Stack, StackProps, CfnOutput } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import {
   Auth,
@@ -28,8 +28,9 @@ import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { AgentCoreStack } from './agent-core-stack';
 import { ResearchAgentCoreStack } from './research-agent-core-stack';
 import { ClosedNetworkStack } from './closed-network-stack';
+import { closedNetworkWebConfig } from './utils/closed-network';
 import * as path from 'path';
-import { RemoteOutputs } from 'cdk-remote-stack';
+import { StackOutputs } from './construct/stack-outputs';
 import { REMOTE_OUTPUT_KEYS } from './remote-output-keys';
 
 export interface GenerativeAiUseCasesStackProps extends StackProps {
@@ -61,8 +62,8 @@ export interface GenerativeAiUseCasesStackProps extends StackProps {
   readonly vpc?: IVpc;
   readonly apiGatewayVpcEndpoint?: InterfaceVpcEndpoint;
   readonly webBucket?: Bucket;
-  // ALB origin / web URL are read from this stack via cdk-remote-stack
-  // RemoteOutputs (no Fn::ImportValue, so no export-in-use deadlock when the
+  // ALB origin / web URL are read from this stack via StackOutputs
+  // (no Fn::ImportValue, so no export-in-use deadlock when the
   // custom domain is toggled).
   readonly closedNetworkStack?: ClosedNetworkStack;
 }
@@ -81,17 +82,16 @@ export class GenerativeAiUseCasesStack extends Stack {
 
     const params = props.params;
 
-    // Get values from other stacks using RemoteOutputs
+    // Values from other stacks are read with StackOutputs (no exports, read
+    // again on every deploy)
     let agentsJson: string | undefined;
 
-    // Agent RemoteOutputs
     if (params.agentEnabled && props.agentStack) {
-      const agentRemoteOutputs = new RemoteOutputs(this, 'AgentRemoteOutputs', {
+      const agentOutputs = new StackOutputs(this, 'AgentStackOutputs', {
         stack: props.agentStack,
-        alwaysUpdate: true,
-        timeout: Duration.seconds(600),
+        outputKeys: [REMOTE_OUTPUT_KEYS.AGENTS],
       });
-      agentsJson = agentRemoteOutputs.get(REMOTE_OUTPUT_KEYS.AGENTS);
+      agentsJson = agentOutputs.get(REMOTE_OUTPUT_KEYS.AGENTS);
     }
 
     let genericRuntimeArn: string | undefined;
@@ -101,43 +101,64 @@ export class GenerativeAiUseCasesStack extends Stack {
     let researchRuntimeArn: string | undefined;
     let researchRuntimeName: string | undefined;
 
-    // Get runtime info from remote AgentCore stack using cdk-remote-stack
+    // Runtime info from the AgentCore stack (may be in another Region)
     if (params.createGenericAgentCoreRuntime || params.agentBuilderEnabled) {
-      const remoteOutputs = new RemoteOutputs(this, 'AgentCoreRemoteOutputs', {
+      const outputKeys: string[] = [
+        ...(params.createGenericAgentCoreRuntime
+          ? [
+              REMOTE_OUTPUT_KEYS.GENERIC_AGENT_CORE_RUNTIME_ARN,
+              REMOTE_OUTPUT_KEYS.GENERIC_AGENT_CORE_RUNTIME_NAME,
+            ]
+          : []),
+        ...(params.agentBuilderEnabled
+          ? [
+              REMOTE_OUTPUT_KEYS.AGENT_BUILDER_AGENT_CORE_RUNTIME_ARN,
+              REMOTE_OUTPUT_KEYS.AGENT_BUILDER_AGENT_CORE_RUNTIME_NAME,
+            ]
+          : []),
+      ];
+      const agentCoreOutputs = new StackOutputs(this, 'AgentCoreStackOutputs', {
         stack: props.agentCoreStack!,
-        timeout: Duration.seconds(600),
+        outputKeys,
       });
 
       if (params.createGenericAgentCoreRuntime) {
-        genericRuntimeArn = remoteOutputs.get('GenericAgentCoreRuntimeArn');
-        genericRuntimeName = remoteOutputs.get('GenericAgentCoreRuntimeName');
+        genericRuntimeArn = agentCoreOutputs.get(
+          REMOTE_OUTPUT_KEYS.GENERIC_AGENT_CORE_RUNTIME_ARN
+        );
+        genericRuntimeName = agentCoreOutputs.get(
+          REMOTE_OUTPUT_KEYS.GENERIC_AGENT_CORE_RUNTIME_NAME
+        );
       }
 
       if (params.agentBuilderEnabled) {
-        agentBuilderRuntimeArn = remoteOutputs.get(
-          'AgentBuilderAgentCoreRuntimeArn'
+        agentBuilderRuntimeArn = agentCoreOutputs.get(
+          REMOTE_OUTPUT_KEYS.AGENT_BUILDER_AGENT_CORE_RUNTIME_ARN
         );
-        agentBuilderRuntimeName = remoteOutputs.get(
-          'AgentBuilderAgentCoreRuntimeName'
+        agentBuilderRuntimeName = agentCoreOutputs.get(
+          REMOTE_OUTPUT_KEYS.AGENT_BUILDER_AGENT_CORE_RUNTIME_NAME
         );
       }
     }
 
-    // Get runtime info from remote Research AgentCore stack
+    // Runtime info from the Research AgentCore stack
     if (params.researchAgentEnabled) {
-      const researchRemoteOutputs = new RemoteOutputs(
+      const researchOutputs = new StackOutputs(
         this,
-        'ResearchAgentCoreRemoteOutputs',
+        'ResearchAgentCoreStackOutputs',
         {
           stack: props.researchAgentCoreStack!,
-          timeout: Duration.seconds(600),
+          outputKeys: [
+            REMOTE_OUTPUT_KEYS.RESEARCH_AGENT_CORE_RUNTIME_ARN,
+            REMOTE_OUTPUT_KEYS.RESEARCH_AGENT_CORE_RUNTIME_NAME,
+          ],
         }
       );
 
-      researchRuntimeArn = researchRemoteOutputs.get(
+      researchRuntimeArn = researchOutputs.get(
         REMOTE_OUTPUT_KEYS.RESEARCH_AGENT_CORE_RUNTIME_ARN
       );
-      researchRuntimeName = researchRemoteOutputs.get(
+      researchRuntimeName = researchOutputs.get(
         REMOTE_OUTPUT_KEYS.RESEARCH_AGENT_CORE_RUNTIME_NAME
       );
     }
@@ -218,6 +239,7 @@ export class GenerativeAiUseCasesStack extends Stack {
       endpointNames: params.endpointNames,
       customAgents: params.agents,
       queryDecompositionEnabled: params.queryDecompositionEnabled,
+      ragKnowledgeBaseStorageType: params.ragKnowledgeBaseStorageType,
       rerankingModelId: params.rerankingModelId,
       crossAccountBedrockRoleArn: params.crossAccountBedrockRoleArn,
       userPool: auth.userPool,
@@ -333,6 +355,14 @@ export class GenerativeAiUseCasesStack extends Stack {
     }
 
     // Web Frontend
+    // In closed network mode, hide what cannot work there and drop unreachable models
+    const webConfig = closedNetworkWebConfig({
+      closedNetworkMode: params.closedNetworkMode,
+      region: this.region,
+      hiddenUseCases: params.hiddenUseCases,
+      imageGenerationModelIds: api.imageGenerationModelIds,
+      videoGenerationModelIds: api.videoGenerationModelIds,
+    });
     const web = new Web(this, 'Api', {
       // Auth
       userPoolId: auth.userPool.userPoolId,
@@ -356,8 +386,8 @@ export class GenerativeAiUseCasesStack extends Stack {
       webAclId: props.webAclId,
       modelRegion: api.modelRegion,
       modelIds: api.modelIds,
-      imageGenerationModelIds: api.imageGenerationModelIds,
-      videoGenerationModelIds: api.videoGenerationModelIds,
+      imageGenerationModelIds: webConfig.imageGenerationModelIds,
+      videoGenerationModelIds: webConfig.videoGenerationModelIds,
       endpointNames: api.endpointNames,
       builtinAgentsJson: agentsJson || '[]',
       customAgentsJson: JSON.stringify(params.agents),
@@ -380,6 +410,7 @@ export class GenerativeAiUseCasesStack extends Stack {
           }
         : undefined,
       agentBuilderEnabled: params.agentBuilderEnabled,
+      agentBuilderWebSearchEnabled: params.agentBuilderWebSearchEnabled,
       agentCoreAgentBuilderRuntime: agentBuilderRuntimeArn
         ? {
             name: agentBuilderRuntimeName || 'AgentBuilderAgentCoreRuntime',
@@ -398,7 +429,7 @@ export class GenerativeAiUseCasesStack extends Stack {
           }
         : undefined,
       // Frontend
-      hiddenUseCases: params.hiddenUseCases,
+      hiddenUseCases: webConfig.hiddenUseCases,
       // Custom Domain
       cert: props.cert,
       hostName: params.hostName,
@@ -413,19 +444,21 @@ export class GenerativeAiUseCasesStack extends Stack {
     // Update API handler with web URL for CORS.
     // In closed network mode, web.webUrl is a placeholder ('CLOSED_NETWORK_MODE')
     // because the real URL is owned by ClosedNetworkStack. Read it via
-    // RemoteOutputs (soft cross-stack ref, no Fn::ImportValue) and allow both
+    // StackOutputs (no Fn::ImportValue, read on every deploy) and allow both
     // the ALB DNS origin and the custom domain so an ALB-DNS test env can move
     // to a domain with a single deploy and no CORS gap during the transition.
     let allowedOrigins: string[] = [web.webUrl];
     let displayWebUrl = web.webUrl;
     if (props.closedNetworkStack) {
-      const closedNetworkOutputs = new RemoteOutputs(
+      const closedNetworkOutputs = new StackOutputs(
         this,
-        'ClosedNetworkRemoteOutputs',
+        'ClosedNetworkStackOutputs',
         {
           stack: props.closedNetworkStack,
-          alwaysUpdate: true,
-          timeout: Duration.seconds(600),
+          outputKeys: [
+            REMOTE_OUTPUT_KEYS.CLOSED_NETWORK_ALB_ORIGIN,
+            REMOTE_OUTPUT_KEYS.CLOSED_NETWORK_WEB_URL,
+          ],
         }
       );
       const albOrigin = closedNetworkOutputs.get(
@@ -437,6 +470,9 @@ export class GenerativeAiUseCasesStack extends Stack {
       allowedOrigins = [albOrigin, closedWebUrl];
       displayWebUrl = closedWebUrl;
     }
+    // Opt-in extra origins (local development). Empty by default, so the API
+    // only answers the deployed frontend unless a developer asks otherwise.
+    allowedOrigins = [...allowedOrigins, ...params.allowedDevOrigins];
     api.apiHandler.addEnvironment('ALLOWED_ORIGINS', allowedOrigins.join(','));
 
     // Cfn Outputs
@@ -505,11 +541,11 @@ export class GenerativeAiUseCasesStack extends Stack {
     });
 
     new CfnOutput(this, 'ImageGenerateModelIds', {
-      value: JSON.stringify(api.imageGenerationModelIds),
+      value: JSON.stringify(webConfig.imageGenerationModelIds),
     });
 
     new CfnOutput(this, 'VideoGenerateModelIds', {
-      value: JSON.stringify(api.videoGenerationModelIds),
+      value: JSON.stringify(webConfig.videoGenerationModelIds),
     });
 
     new CfnOutput(this, 'EndpointNames', {
@@ -541,7 +577,7 @@ export class GenerativeAiUseCasesStack extends Stack {
     });
 
     new CfnOutput(this, 'HiddenUseCases', {
-      value: JSON.stringify(params.hiddenUseCases),
+      value: JSON.stringify(webConfig.hiddenUseCases),
     });
 
     new CfnOutput(this, 'SpeechToSpeechNamespace', {

@@ -1,4 +1,11 @@
-import React, { useEffect, useMemo, useState, memo } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  memo,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { BaseProps } from '../@types/common';
 import { default as ReactMarkdown } from 'react-markdown';
@@ -8,9 +15,13 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import remarkBreaks from 'remark-breaks';
+import remarkHtmlBreaks from '../utils/remarkHtmlBreaks';
 import ButtonCopy from './ButtonCopy';
+import ButtonIcon from './ButtonIcon';
 import useRagFile from '../hooks/useRagFile';
-import { PiSpinnerGap } from 'react-icons/pi';
+import { PiCheck, PiClipboard, PiSpinnerGap } from 'react-icons/pi';
+import copy from 'copy-to-clipboard';
+import { tableToClipboardHtml, tableToTsv } from '../utils/tableClipboard';
 import useFileApi from '../hooks/useFileApi';
 import 'katex/dist/katex.min.css';
 
@@ -74,6 +85,7 @@ export { MermaidWithToggle };
 type Props = BaseProps & {
   children: string;
   prefix?: string;
+  generating?: boolean;
 };
 
 const LinkRenderer = ({
@@ -136,13 +148,34 @@ const ImageRenderer = ({
   const [src, setSrc] = useState(srcProp);
   const [error, setError] = useState<string | null>(null);
 
+  // These hooks return new functions on every render. Keep the latest ones in
+  // refs so that the signed URL is fetched only when the image source changes,
+  // not on every render (e.g. each streamed chunk, or the setSrc below).
+  const isS3UrlRef = useRef(isS3Url);
+  isS3UrlRef.current = isS3Url;
+  const getSignedUrlRef = useRef(getFileDownloadSignedUrl);
+  getSignedUrlRef.current = getFileDownloadSignedUrl;
+
   useEffect(() => {
-    if (isS3Url(srcProp ?? '')) {
-      getFileDownloadSignedUrl(srcProp ?? '')
-        .then((url) => setSrc(url))
-        .catch((e: Error) => setError(e.message));
+    // A new source starts without the previous source's error
+    setError(null);
+    if (!isS3UrlRef.current(srcProp ?? '')) {
+      setSrc(srcProp);
+      return;
     }
-  }, [getFileDownloadSignedUrl, isS3Url, srcProp]);
+    let cancelled = false;
+    getSignedUrlRef
+      .current(srcProp ?? '')
+      .then((url) => {
+        if (!cancelled) setSrc(url);
+      })
+      .catch((e: Error) => {
+        if (!cancelled) setError(e.message);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [srcProp]);
 
   if (error) {
     return (
@@ -190,6 +223,62 @@ const PreRenderer = ({
 
   // For other code blocks, render normal <pre> tag
   return <pre {...rest}>{children}</pre>;
+};
+
+// Tables get a copy button that puts both HTML and tab-separated text on the
+// clipboard, so a paste into Excel or Google Sheets keeps the cells.
+const TableRenderer = ({
+  children,
+  className,
+  style,
+}: ComponentProps<'table'> & ExtraProps) => {
+  const { t } = useTranslation();
+  const tableRef = useRef<HTMLTableElement>(null);
+  const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  const onCopy = useCallback(() => {
+    const table = tableRef.current;
+    if (!table) return;
+    const ok = copy(tableToTsv(table), {
+      format: 'text/plain',
+      onCopy: (clipboardData) => {
+        (clipboardData as DataTransfer).setData(
+          'text/html',
+          tableToClipboardHtml(table)
+        );
+      },
+    });
+    if (!ok) return;
+    setCopied(true);
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setCopied(false), 3000);
+  }, []);
+
+  // The button sits in its own row above the table, in normal flow, so it
+  // never overlaps the content before the table. The row (24px) plus mt-1
+  // takes the place of the table's own top margin (2em of its 14px font), so
+  // spacing around tables stays as before; first:/last: keep the prose rule
+  // that removes the margin at the start and end of a message. On devices
+  // that can hover the button appears on hover or focus; on touch screens it
+  // is always visible.
+  return (
+    <div className="group mb-7 mt-1 first:mt-0 last:mb-0">
+      <div className="flex justify-end print:hidden">
+        <ButtonIcon
+          className="not-prose text-base text-gray-500 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:focus-visible:opacity-100 [@media(hover:hover)]:group-hover:opacity-100"
+          title={t('common.copy_table')}
+          onClick={onCopy}>
+          {copied ? <PiCheck /> : <PiClipboard />}
+        </ButtonIcon>
+      </div>
+      <table ref={tableRef} className={`${className ?? ''} my-0`} style={style}>
+        {children}
+      </table>
+    </div>
+  );
 };
 
 // Helper function to check if code is SVG
@@ -271,25 +360,40 @@ const CodeRenderer = memo(
   }
 );
 
-const Markdown = memo(({ className, prefix, children }: Props) => {
-  return (
-    <ReactMarkdown
-      className={`${className ?? ''} prose max-w-full`}
-      children={children}
-      remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
-      rehypePlugins={[rehypeKatex]}
-      remarkRehypeOptions={{ clobberPrefix: prefix }}
-      components={{
-        a: LinkRenderer,
-        img: ImageRenderer,
-        sup: ({ children }) => (
-          <sup className="m-0.5 rounded-full bg-gray-200 px-1">{children}</sup>
-        ),
-        pre: PreRenderer,
-        code: CodeRenderer,
-      }}
-    />
-  );
-});
+const Markdown = memo(
+  ({ className, prefix, children, generating = false }: Props) => {
+    return (
+      // Translators can asynchronously overwrite a newer streamed chunk with an
+      // older translation. Translate the completed response in a fresh subtree.
+      <div translate={generating ? 'no' : undefined}>
+        <ReactMarkdown
+          key={generating ? 'streaming' : 'complete'}
+          className={`${className ?? ''} prose max-w-full`}
+          children={children}
+          remarkPlugins={[
+            remarkGfm,
+            remarkBreaks,
+            remarkMath,
+            remarkHtmlBreaks,
+          ]}
+          rehypePlugins={[rehypeKatex]}
+          remarkRehypeOptions={{ clobberPrefix: prefix }}
+          components={{
+            a: LinkRenderer,
+            img: ImageRenderer,
+            sup: ({ children }) => (
+              <sup className="m-0.5 rounded-full bg-gray-200 px-1">
+                {children}
+              </sup>
+            ),
+            pre: PreRenderer,
+            code: CodeRenderer,
+            table: TableRenderer,
+          }}
+        />
+      </div>
+    );
+  }
+);
 
 export default Markdown;

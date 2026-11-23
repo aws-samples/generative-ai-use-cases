@@ -11,6 +11,9 @@ on:
     branches: ['main']
     paths: ['browser-extension/**']
 
+permissions:
+  contents: read
+
 jobs:
   check-lint-build:
     name: 'Check lint and build'

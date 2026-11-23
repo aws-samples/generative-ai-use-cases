@@ -9,7 +9,9 @@
     "cdk": "cdk",
     "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
     "lambda-build-dryrun": "tsc --noEmit --skipLibCheck",
-    "postinstall": "npm ci --prefix custom-resources/opensearch-index && npm ci --prefix custom-resources/apply-tags && npm ci --prefix fargate-s3-server"
+    "postinstall": "npm ci --prefix custom-resources/opensearch-index && npm ci --prefix custom-resources/apply-tags && npm ci --prefix fargate-s3-server",
+    "models:verify": "ts-node scripts/model-verify/run.ts",
+    "pricing:update": "ts-node scripts/model-pricing/update.ts && prettier --write lambda/utils/modelPricing.generated.ts"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.137",
@@ -53,7 +55,6 @@
     "aws-amplify": "^6.14.2",
     "aws-cdk-lib": "^2.275.0",
     "aws-jwt-verify": "^4.0.0",
-    "cdk-remote-stack": "^2.1.0",
     "constructs": "^10.3.0",
     "cors": "^2.8.5",
     "express": "^4.22.3",

@@ -21,7 +21,8 @@ import {
   BraveSearchResult,
 } from 'generative-ai-use-cases';
 import { streamingChunk } from './streamingChunk';
-import { convertToSafeFilename } from './fileNameUtils';
+import { classifyStreamingError } from './streamingError';
+import { createUniqueDocumentNamer } from './fileNameUtils';
 import {
   initBedrockAgentClient,
   initBedrockAgentRuntimeClient,
@@ -133,6 +134,8 @@ const bedrockAgentApi: ApiInterface = {
       const agentId = agentMap[model.modelId].agentId;
       const agentAliasId = agentMap[model.modelId].aliasId;
       const agentConfig = await getagentConfig(agentId, agentAliasId);
+      // Give files with the same name distinct names, as for Converse documents
+      const toFileName = createUniqueDocumentNamer();
 
       // Invoke Agent
       const command = new InvokeAgentCommand({
@@ -155,7 +158,7 @@ const bedrockAgentApi: ApiInterface = {
           files: messages
             .flatMap((m: UnrecordedMessage) => {
               return m.extraData?.map((file) => ({
-                name: convertToSafeFilename(file.name),
+                name: toFileName(file.name),
                 source: {
                   sourceType: 'BYTE_CONTENT',
                   byteContent: {
@@ -399,16 +402,18 @@ const bedrockAgentApi: ApiInterface = {
           errorCode: 'THROTTLING',
         });
       } else if (e instanceof DependencyFailedException) {
+        // Not an access problem: a resource it calls (e.g. an action group's
+        // Lambda function) failed (#912)
         yield streamingChunk({
           text: '',
           stopReason: 'error',
-          errorCode: 'ACCESS_DENIED',
+          errorCode: 'DEPENDENCY_FAILED',
         });
       } else {
         yield streamingChunk({
           text: '',
           stopReason: 'error',
-          errorCode: 'UNKNOWN_ERROR',
+          errorCode: classifyStreamingError(e),
         });
       }
     }

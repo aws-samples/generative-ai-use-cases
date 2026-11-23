@@ -4,7 +4,7 @@
 
 GenU は、parameter.ts もしくは AWS CDK の context で設定を変更します。
 
-**複数環境の設定を定義できるため、新規に構築する場合は parameter.ts での指定を推奨します。後方互換性のために context > parameter.ts の順でパラメータを取得するようになっています。**
+**新規に構築する場合は parameter.ts での指定を推奨します。複数環境の設定を定義でき、TypeScript の型チェックでパラメータ名や値の誤りに気づけます (cdk.json では、名前を間違えた項目は何もエラーにならず無視されます)。また、アップデート時に cdk.json がコンフリクトしにくくなります。`env` で指定した環境が parameter.ts に定義されている場合は parameter.ts の値だけが使われ、cdk.json のパラメータは使われません。すでに cdk.json で設定している場合の移行方法は [アップデート方法](./UPDATE.md#設定を-cdkjson-から-parameterts-に移す場合) を参照してください。**
 
 **Context を使う場合: CDK の context は '-c' でも指定できますが、その場合コードベースに変更が入らずフロントエンドのビルドが実施されないため、このアセットに関しては全ての設定は cdk.json の設定を変更することを推奨します。**
 
@@ -185,7 +185,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: false,
     ragKnowledgeBaseAdvancedParsingModelId:
-      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
     ragKnowledgeBaseBinaryVector: false,
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
@@ -203,7 +203,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseId": "XXXXXXXXXX",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": false,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "ragKnowledgeBaseBinaryVector": false,
     "embeddingModelId": "amazon.titan-embed-text-v2:0",
     "rerankingModelId": "amazon.rerank-v1:0",
@@ -257,9 +257,11 @@ npx -w packages/cdk cdk bootstrap --region us-east-1
 1. [Knowledge Base のコンソール画面](https://console.aws.amazon.com/bedrock/home#/knowledge-bases) を開く
 1. generative-ai-use-cases-jp をクリック
 1. s3-data-source を選択し、Sync をクリック
-1. web-crawler-data-source を選択し、Sync をクリック
 
-それぞれの Status が Available になれば完了です。S3 に保存されているファイルおよび Web Crawler で取得したウェブページが取り込まれ、Knowledge Base から検索できます。
+Status が Available になれば完了です。S3 に保存されているファイルが取り込まれ、Knowledge Base から検索できます。
+
+> [!NOTE]
+> 2026 年 9 月 30 日以降、customer-managed Knowledge Base では Web Crawler などのコネクタを新規作成できなくなったため、以前サンプルとして作成していた web-crawler-data-source は作成しません。詳細は [Web Crawler データソースのドキュメント](https://docs.aws.amazon.com/bedrock/latest/userguide/webcrawl-data-source-connector.html) を参照してください。
 
 > [!NOTE]
 > RAG チャット (Knowledge Base) の設定を有効後に、再度無効化する場合は、`ragKnowledgeBaseEnabled: false` にして再デプロイすれば RAG チャット (Knowledge Base) は無効化されますが、`RagKnowledgeBaseStack` 自体は残ります。マネージメントコンソールを開き、modelRegion の CloudFormation から `RagKnowledgeBaseStack` というスタックを削除することで完全に消去ができます。
@@ -270,9 +272,8 @@ npx -w packages/cdk cdk bootstrap --region us-east-1
 
 - `ragKnowledgeBaseAdvancedParsing` : `true` で Advanced Parsing を有効化
 - `ragKnowledgeBaseAdvancedParsingModelId` : 情報を抽出するときに利用するモデル ID を指定
-  - サポートしているモデル (2024/08 現在)
-    - `anthropic.claude-3-sonnet-20240229-v1:0`
-    - `anthropic.claude-3-haiku-20240307-v1:0`
+  - Claude・Amazon Nova・Llama 4 のビジョン対応モデルが利用できます（[Supported models and Regions for parsing](https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-supported.html)）
+  - `modelRegion` で利用できるモデル ID か、`global.anthropic.claude-sonnet-4-6`（デフォルト）や `jp.anthropic.claude-sonnet-4-6` のようなクロスリージョン推論プロファイル ID を指定します。ドキュメントを特定の地域の外に出したくない場合は、地域を限定したプロファイル（`us.` / `eu.` / `jp.` など）を選んでください。
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
@@ -285,7 +286,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: true,
     ragKnowledgeBaseAdvancedParsingModelId:
-      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
     ragKnowledgeBaseBinaryVector: false,
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
@@ -302,7 +303,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseId": "XXXXXXXXXX",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": true,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "ragKnowledgeBaseBinaryVector": false,
     "embeddingModelId": "amazon.titan-embed-text-v2:0"
   }
@@ -362,7 +363,7 @@ chunkingConfiguration: {
 
 RagKnowledgeBaseStack の削除に伴い、**RAG チャット用の S3 バケットや格納されている RAG 用のファイルが削除**されます。
 S3 バケット内にアップロードした RAG 用のファイルが存在する場合は、退避したあとに再度アップロードしてください。
-また、前述した手順に従い Data source (s3-data-source, web-crawler-data-source) を再度 Sync してください。
+また、前述した手順に従い Data source (s3-data-source) を再度 Sync してください。
 
 #### OpenSearch Service の Index をマネージメントコンソールで確認する方法
 
@@ -943,6 +944,31 @@ AWS 外部のサービスにアクセスする場合、AgentCore Gateway を使�
 設定後、MCP 設定で `mcp-proxy-for-aws` を使用してエンドポイントを指定します。
 詳細は [mcp-proxy-for-aws のドキュメント](https://github.com/aws/mcp-proxy-for-aws)を参照してください。
 
+#### Web 検索ツールの有効化
+
+`agentBuilderWebSearchEnabled` を有効化すると、Amazon Bedrock AgentCore の Web Search Tool を利用した Web 検索ツールが追加され、ユーザーは Agent ごとに利用の有無を選択できます。
+API キーの設定は不要で、検索クエリは AWS 内で処理されます (ゼロデータエグレス)。
+
+Agent は AgentCore Web Search の API (`InvokeWebSearch`) を直接呼び出すため、Gateway などの追加のリソースは作成されません。Agent は検索ごとに、対象のドメインや公開日で結果を絞り込めます。
+
+`agentBuilderWebSearchExcludeDomains` を指定すると、検索結果から除外するドメインを設定できます。この設定はすべての検索に必ず適用され、Agent からは変更できません。
+除外は検索結果のページ単位で行われます。ほかのページの本文に書かれた URL や、モデルがもともと知っている URL が回答に含まれることは防げません。
+
+`agentBuilderWebSearchEnabled` が無効の場合、エージェントビルダーの画面に Web 検索の選択肢は表示されません。組織のポリシーで Web 検索を利用しない場合は、無効のままにしてください。
+
+> [!NOTE]
+> Web Search Tool は一部のリージョンでのみ利用可能です。`agentCoreRegion` (未指定の場合は `modelRegion`) が対応リージョンである必要があります。対応リージョンは [Web Search Tool のドキュメント](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html)を参照してください (2026年11月時点: 東京、バージニア北部、オハイオ、オレゴン、シドニー、アイルランド)。
+
+> [!NOTE]
+> Web Search は検索クエリ数に応じた課金が発生します。料金は [Amazon Bedrock AgentCore の料金ページ](https://aws.amazon.com/bedrock/agentcore/pricing/)を参照してください。
+
+> [!IMPORTANT]
+> Web Search の利用規約により、検索結果を利用した出力をエンドユーザーに表示する場合は、各結果に付随する**出典とリンクを保持して表示する必要があります**。詳細は [Acceptable use](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-target-connector-web-search-tool.html) を参照してください。
+> この要件を満たすため、Web 検索を有効にした Agent には出典を Markdown リンク形式で明記するよう指示するシステムプロンプトが自動的に付与されます。ユーザーが入力したシステムプロンプトはそのまま保持されます。
+
+> [!NOTE]
+> `tavily-search` などの検索系 MCP を併用する場合、どちらのツールを使うかは Agent が判断します。用途に応じた使い分けを明示したい場合は、システムプロンプトに記載してください (例: 機密性の高いクエリは Web Search、詳細な調査は Tavily)。
+
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
 ```typescript
@@ -1229,152 +1255,120 @@ const envs: Record<string, Partial<StackInput>> = {
 
 (例) `modelRegion` が `us-east-1` の場合、`us.anthropic.claude-3-5-sonnet-20240620-v1:0` は OK だが、`eu.anthropic.claude-3-5-sonnet-20240620-v1:0` は NG です。
 
-このソリューションが対応しているテキスト生成モデルは以下です。
+このソリューションが対応しているテキスト生成モデルは以下です。`{global|us|eu}.モデル名` は、`global.モデル名`、`us.モデル名`、`eu.モデル名` をそれぞれ別のモデル ID として指定できることを表します（設定には `{}` を含めず、1 つずつ指定してください）。提供終了済み、または終了予定のモデルも含まれます（[提供終了（EOL）のモデル](#提供終了eolのモデル)）。
+
+<!-- supported-text-models: generated from modelMetadata, checked by packages/cdk/test/docs/supported-models.test.ts -->
 
 ```
 "anthropic.claude-3-5-sonnet-20241022-v2:0",
+"{us|apac}.anthropic.claude-3-5-sonnet-20241022-v2:0",
 "anthropic.claude-3-5-haiku-20241022-v1:0",
+"us.anthropic.claude-3-5-haiku-20241022-v1:0",
 "anthropic.claude-3-5-sonnet-20240620-v1:0",
+"{us|eu|apac}.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "anthropic.claude-3-opus-20240229-v1:0",
+"us.anthropic.claude-3-opus-20240229-v1:0",
 "anthropic.claude-3-sonnet-20240229-v1:0",
+"{us|eu|apac}.anthropic.claude-3-sonnet-20240229-v1:0",
 "anthropic.claude-3-haiku-20240307-v1:0",
-"global.anthropic.claude-opus-5-5",
-"global.anthropic.claude-opus-5",
-"global.anthropic.claude-haiku-5-5",
-"global.anthropic.claude-opus-4-8",
-"global.anthropic.claude-opus-4-7",
-"global.anthropic.claude-opus-4-6-v1",
-"global.anthropic.claude-sonnet-5-5",
-"global.anthropic.claude-sonnet-5",
-"global.anthropic.claude-fable-5",
-"global.anthropic.claude-sonnet-4-6",
-"global.anthropic.claude-opus-4-5-20251101-v1:0",
-"global.anthropic.claude-sonnet-4-5-20250929-v1:0",
-"global.anthropic.claude-sonnet-4-20250514-v1:0",
-"us.anthropic.claude-opus-5-5",
-"us.anthropic.claude-opus-5",
-"us.anthropic.claude-haiku-5-5",
-"us.anthropic.claude-opus-4-8",
-"us.anthropic.claude-opus-4-7",
-"us.anthropic.claude-opus-4-6-v1",
-"us.anthropic.claude-sonnet-5-5",
-"us.anthropic.claude-sonnet-5",
-"us.anthropic.claude-sonnet-4-6",
+"{us|eu|apac}.anthropic.claude-3-haiku-20240307-v1:0",
+"{us|global}.anthropic.claude-opus-4-5-20251101-v1:0",
 "us.anthropic.claude-opus-4-1-20250805-v1:0",
 "us.anthropic.claude-opus-4-20250514-v1:0",
-"us.anthropic.claude-sonnet-4-20250514-v1:0",
-"us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-"us.anthropic.claude-3-5-sonnet-20241022-v2:0",
-"us.anthropic.claude-3-5-haiku-20241022-v1:0",
-"us.anthropic.claude-3-5-sonnet-20240620-v1:0",
-"us.anthropic.claude-3-opus-20240229-v1:0",
-"us.anthropic.claude-3-sonnet-20240229-v1:0",
-"us.anthropic.claude-3-haiku-20240307-v1:0",
-"au.anthropic.claude-haiku-5-5",
-"au.anthropic.claude-opus-4-6-v1",
-"au.anthropic.claude-sonnet-4-6",
-"eu.anthropic.claude-opus-5-5",
-"eu.anthropic.claude-opus-5",
-"eu.anthropic.claude-haiku-5-5",
-"eu.anthropic.claude-opus-4-8",
-"eu.anthropic.claude-opus-4-7",
-"eu.anthropic.claude-opus-4-6-v1",
-"eu.anthropic.claude-sonnet-4-6",
-"eu.anthropic.claude-sonnet-4-20250514-v1:0",
-"eu.anthropic.claude-3-7-sonnet-20250219-v1:0",
-"eu.anthropic.claude-3-5-sonnet-20240620-v1:0",
-"eu.anthropic.claude-3-sonnet-20240229-v1:0",
-"eu.anthropic.claude-3-haiku-20240307-v1:0",
-"jp.anthropic.claude-opus-5-5",
-"jp.anthropic.claude-haiku-5-5",
-"jp.anthropic.claude-opus-4-8",
-"jp.anthropic.claude-opus-4-7",
-"apac.anthropic.claude-sonnet-4-20250514-v1:0",
-"apac.anthropic.claude-3-7-sonnet-20250219-v1:0",
-"apac.anthropic.claude-3-haiku-20240307-v1:0",
-"apac.anthropic.claude-3-sonnet-20240229-v1:0",
-"apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
-"apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
-"deepseek.v3-v1:0",
-"us.deepseek.r1-v1:0",
-"qwen.qwen3-235b-a22b-2507-v1:0",
-"qwen.qwen3-32b-v1:0",
-"qwen.qwen3-coder-480b-a35b-v1:0",
-"qwen.qwen3-coder-30b-a3b-v1:0",
-"qwen.qwen3-next-80b-a3b",
-"qwen.qwen3-vl-235b-a22b",
-"us.writer.palmyra-x5-v1:0",
-"us.writer.palmyra-x4-v1:0",
+"{global|us|eu|au|jp}.anthropic.claude-opus-5-5",
+"{global|us|eu|au}.anthropic.claude-opus-5",
+"{global|us|eu|au|jp}.anthropic.claude-haiku-5-5",
+"{global|us|eu|jp}.anthropic.claude-opus-4-8",
+"{global|us|eu|jp}.anthropic.claude-opus-4-7",
+"{global|us|au|eu}.anthropic.claude-opus-4-6-v1",
+"{global|us}.anthropic.claude-sonnet-5-5",
+"{global|us}.anthropic.claude-sonnet-5",
+"global.anthropic.claude-fable-5",
+"{global|us}.anthropic.claude-fable-5-1",
+"{global|us}.anthropic.claude-fable-5-2",
+"{global|us|eu|au|jp}.anthropic.claude-sonnet-4-6",
+"{global|us|eu|jp}.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"{global|us|eu|jp}.anthropic.claude-haiku-4-5-20251001-v1:0",
+"{global|us|eu|apac}.anthropic.claude-sonnet-4-20250514-v1:0",
+"{us|eu|apac}.anthropic.claude-3-7-sonnet-20250219-v1:0",
+"amazon.titan-text-express-v1",
 "amazon.titan-text-premier-v1:0",
+"amazon.nova-pro-v1:0",
+"{us|eu|apac}.amazon.nova-pro-v1:0",
+"amazon.nova-lite-v1:0",
+"{us|eu|apac}.amazon.nova-lite-v1:0",
+"amazon.nova-micro-v1:0",
+"{us|eu|apac}.amazon.nova-micro-v1:0",
+"us.amazon.nova-premier-v1:0",
+"{us|jp|global}.amazon.nova-2-lite-v1:0",
+"meta.llama3-8b-instruct-v1:0",
+"meta.llama3-70b-instruct-v1:0",
+"meta.llama3-1-8b-instruct-v1:0",
+"meta.llama3-1-70b-instruct-v1:0",
+"meta.llama3-1-405b-instruct-v1:0",
+"us.meta.llama3-2-1b-instruct-v1:0",
+"us.meta.llama3-2-3b-instruct-v1:0",
+"us.meta.llama3-2-11b-instruct-v1:0",
+"us.meta.llama3-2-90b-instruct-v1:0",
+"us.meta.llama3-3-70b-instruct-v1:0",
 "us.meta.llama4-maverick-17b-instruct-v1:0",
 "us.meta.llama4-scout-17b-instruct-v1:0",
-"us.meta.llama3-3-70b-instruct-v1:0",
-"us.meta.llama3-2-90b-instruct-v1:0",
-"us.meta.llama3-2-11b-instruct-v1:0",
-"us.meta.llama3-2-3b-instruct-v1:0",
-"us.meta.llama3-2-1b-instruct-v1:0",
-"meta.llama3-1-405b-instruct-v1:0",
-"meta.llama3-1-70b-instruct-v1:0",
-"meta.llama3-1-8b-instruct-v1:0",
-"meta.llama3-70b-instruct-v1:0",
-"meta.llama3-8b-instruct-v1:0",
-"cohere.command-r-plus-v1:0",
-"cohere.command-r-v1:0",
-"mistral.mistral-large-2407-v1:0",
-"mistral.mistral-large-2402-v1:0",
-"mistral.mistral-small-2402-v1:0",
-"us.mistral.pixtral-large-2502-v1:0",
-"eu.mistral.pixtral-large-2502-v1:0",
-"mistral.mixtral-8x7b-instruct-v0:1",
 "mistral.mistral-7b-instruct-v0:2",
+"mistral.mixtral-8x7b-instruct-v0:1",
+"mistral.mistral-small-2402-v1:0",
+"mistral.mistral-large-2402-v1:0",
+"mistral.mistral-large-2407-v1:0",
+"{us|eu}.mistral.pixtral-large-2502-v1:0",
 "mistral.mistral-large-3-675b-instruct",
 "mistral.ministral-3-3b-instruct",
 "mistral.ministral-3-8b-instruct",
 "mistral.ministral-3-14b-instruct",
 "mistral.magistral-small-2509",
-"amazon.nova-pro-v1:0",
-"amazon.nova-lite-v1:0",
-"amazon.nova-micro-v1:0",
-"us.amazon.nova-premier-v1:0",
-"us.amazon.nova-pro-v1:0",
-"us.amazon.nova-lite-v1:0",
-"us.amazon.nova-micro-v1:0",
-"us.amazon.nova-2-lite-v1:0",
-"eu.amazon.nova-pro-v1:0",
-"eu.amazon.nova-lite-v1:0",
-"eu.amazon.nova-micro-v1:0",
-"apac.amazon.nova-pro-v1:0",
-"apac.amazon.nova-lite-v1:0",
-"apac.amazon.nova-micro-v1:0",
-"jp.amazon.nova-2-lite-v1:0",
-"global.amazon.nova-2-lite-v1:0",
+"cohere.command-r-v1:0",
+"cohere.command-r-plus-v1:0",
+"deepseek.v3-v1:0",
+"deepseek.v3.2",
+"us.deepseek.r1-v1:0",
+"qwen.qwen3-235b-a22b-2507-v1:0",
+"qwen.qwen3-32b-v1:0",
+"qwen.qwen3-coder-480b-a35b-v1:0",
+"qwen.qwen3-coder-30b-a3b-v1:0",
+"qwen.qwen3-coder-next",
+"qwen.qwen3-next-80b-a3b",
+"qwen.qwen3-vl-235b-a22b",
+"us.writer.palmyra-x4-v1:0",
+"us.writer.palmyra-x5-v1:0",
+"writer.palmyra-vision-7b",
 "openai.gpt-oss-120b-1:0",
 "openai.gpt-oss-20b-1:0",
-"global.openai.gpt-6.1-sol",
-"us.openai.gpt-6.1-sol",
-"global.openai.gpt-6.1-terra",
-"us.openai.gpt-6.1-terra",
-"global.openai.gpt-6-sol",
-"us.openai.gpt-6-sol",
-"global.openai.gpt-6-luna",
-"us.openai.gpt-6-luna",
-"global.openai.gpt-6-astra",
-"us.openai.gpt-6-astra",
-"global.openai.gpt-5.6-sol",
-"us.openai.gpt-5.6-sol",
-"global.openai.gpt-5.6-luna",
-"us.openai.gpt-5.6-luna",
-"global.openai.gpt-5.6-terra",
-"us.openai.gpt-5.6-terra",
+"{global|us}.openai.gpt-6.1-sol",
+"{global|us}.openai.gpt-6.1-terra",
+"{global|us}.openai.gpt-6-sol",
+"{global|us}.openai.gpt-6-luna",
+"{global|us}.openai.gpt-6-astra",
+"{global|us}.openai.gpt-5.6-sol",
+"{global|us}.openai.gpt-5.6-luna",
+"{global|us}.openai.gpt-5.6-terra",
+"{global|us}.openai.gpt-6.2-sol",
+"{global|us}.openai.gpt-6.2-astra",
+"{global|us}.openai.gpt-5.5",
+"{global|us}.openai.gpt-5.4",
+"{global|us}.xai.grok-4.7",
+"{global|us}.xai.grok-4.6",
+"zai.glm-5",
 "google.gemma-3-4b-it",
 "google.gemma-3-12b-it",
 "google.gemma-3-27b-it",
 "minimax.minimax-m2",
+"minimax.minimax-m2.5",
 "moonshot.kimi-k2-thinking",
-"us.moonshotai.kimi-k3",
-"global.moonshotai.kimi-k3",
+"moonshotai.kimi-k2.5",
+"{us|global}.moonshotai.kimi-k3",
+"{us|global}.moonshotai.kimi-k3.1",
 "nvidia.nemotron-nano-9b-v2",
 "nvidia.nemotron-nano-12b-v2",
+"nvidia.nemotron-nano-3-30b",
+"nvidia.nemotron-super-3-120b",
 ```
 
 このソリューションが対応している speech-to-speech モデルは以下です。
@@ -1405,7 +1399,20 @@ amazon.nova-sonic-v1:0
 "luma.ray-v2:0"
 ```
 
+> [!WARNING]
+> `amazon.nova-canvas-v1:0`、`amazon.nova-reel-v1:0`、`amazon.nova-reel-v1:1` は 2026-09-30 に EOL となり、全リージョンで呼び出せなくなりました。Titan Image Generator も現在は提供されていません。最新の状況は [Bedrock のモデルライフサイクル](https://docs.aws.amazon.com/bedrock/latest/userguide/model-lifecycle-legacy.html)を確認してください。
+>
+> そのため、デフォルトの画像生成モデルは us-west-2 の `stability.stable-image-core-v1:1` です。動画生成はデフォルトで無効です（`videoGenerationModelIds: []`）。動画生成を使う場合は、us-west-2 を CDK Bootstrap したうえで（`npx -w packages/cdk cdk bootstrap --region us-west-2`）、以下のように指定してください。
+>
+> ```json
+> "videoGenerationModelIds": [{ "modelId": "luma.ray-v2:0", "region": "us-west-2" }]
+> ```
+
 **指定したリージョンで指定したモデルが有効化されているかご確認ください。**
+
+### 提供終了（EOL）のモデル
+
+Amazon Bedrock で提供終了済み、または終了予定のモデルを指定すると、`cdk deploy` 時に警告が表示されます。デプロイは止まりません。警告に従って、モデルを置き換えるか削除してください。
 
 ### 複数のリージョンのモデルを同時に利用する
 
@@ -1428,37 +1435,25 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'ap-northeast-1',
     modelIds: [
-      {
-        modelId: 'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
-        region: 'us-east-1',
-      },
-      'apac.anthropic.claude-3-5-sonnet-20241022-v2:0',
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      {
-        modelId: 'us.anthropic.claude-3-5-haiku-20241022-v1:0',
-        region: 'us-east-1',
-      },
+      'jp.anthropic.claude-sonnet-4-6',
+      'jp.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'jp.amazon.nova-2-lite-v1:0',
       'apac.amazon.nova-pro-v1:0',
       'apac.amazon.nova-lite-v1:0',
       'apac.amazon.nova-micro-v1:0',
-      { modelId: 'us.deepseek.r1-v1:0', region: 'us-east-1' },
-      { modelId: 'us.writer.palmyra-x5-v1:0', region: 'us-west-2' }
-      { modelId: 'us.meta.llama4-maverick-17b-instruct-v1:0', region: 'us-east-1' },
-      { modelId: 'us.meta.llama4-scout-17b-instruct-v1:0', region: 'us-east-1' },
-      { modelId: 'us.mistral.pixtral-large-2502-v1:0', region: 'us-east-1' },
+      { modelId: 'global.anthropic.claude-opus-4-8', region: 'us-east-1' },
+      { modelId: 'openai.gpt-oss-120b-1:0', region: 'us-east-1' },
+      { modelId: 'qwen.qwen3-235b-a22b-2507-v1:0', region: 'us-west-2' },
     ],
     imageGenerationModelIds: [
-      'amazon.nova-canvas-v1:0',
-      { modelId: 'stability.sd3-5-large-v1:0', region: 'us-west-2' },
       { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
       { modelId: 'stability.stable-image-ultra-v1:1', region: 'us-west-2' },
     ],
     videoGenerationModelIds: [
-      'amazon.nova-reel-v1:0',
       { modelId: 'luma.ray-v2:0', region: 'us-west-2' },
     ],
     speechToSpeechModelIds: [
-      { modelId: 'amazon.nova-sonic-v1:0', region: 'us-east-1' },
+      { modelId: 'amazon.nova-2-5-sonic', region: 'us-east-1' },
     ],
   },
 };
@@ -1467,50 +1462,31 @@ const envs: Record<string, Partial<StackInput>> = {
 **[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
 
 ```json
+// cdk.json
 {
   "context": {
     "modelRegion": "ap-northeast-1",
     "modelIds": [
-      {
-        "modelId": "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-        "region": "us-east-1"
-      },
-      "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      {
-        "modelId": "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-        "region": "us-east-1"
-      },
+      "jp.anthropic.claude-sonnet-4-6",
+      "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "jp.amazon.nova-2-lite-v1:0",
       "apac.amazon.nova-pro-v1:0",
       "apac.amazon.nova-lite-v1:0",
       "apac.amazon.nova-micro-v1:0",
       {
-        "modelId": "us.deepseek.r1-v1:0",
+        "modelId": "global.anthropic.claude-opus-4-8",
         "region": "us-east-1"
       },
       {
-        "modelId": "us.writer.palmyra-x5-v1:0",
+        "modelId": "openai.gpt-oss-120b-1:0",
+        "region": "us-east-1"
+      },
+      {
+        "modelId": "qwen.qwen3-235b-a22b-2507-v1:0",
         "region": "us-west-2"
-      },
-      {
-        "modelId": "us.meta.llama4-maverick-17b-instruct-v1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "us.meta.llama4-scout-17b-instruct-v1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "us.mistral.pixtral-large-2502-v1:0",
-        "region": "us-east-1"
       }
     ],
     "imageGenerationModelIds": [
-      "amazon.nova-canvas-v1:0",
-      {
-        "modelId": "stability.sd3-5-large-v1:0",
-        "region": "us-west-2"
-      },
       {
         "modelId": "stability.stable-image-core-v1:1",
         "region": "us-west-2"
@@ -1521,7 +1497,6 @@ const envs: Record<string, Partial<StackInput>> = {
       }
     ],
     "videoGenerationModelIds": [
-      "amazon.nova-reel-v1:0",
       {
         "modelId": "luma.ray-v2:0",
         "region": "us-west-2"
@@ -1529,7 +1504,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
     "speechToSpeechModelIds": [
       {
-        "modelId": "amazon.nova-sonic-v1:0",
+        "modelId": "amazon.nova-2-5-sonic",
         "region": "us-east-1"
       }
     ]
@@ -1547,27 +1522,20 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-east-1',
     modelIds: [
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'anthropic.claude-3-sonnet-20240229-v1:0',
-      'anthropic.claude-3-haiku-20240307-v1:0',
+      'global.anthropic.claude-opus-4-8',
+      'global.anthropic.claude-sonnet-4-6',
+      'global.anthropic.claude-haiku-4-5-20251001-v1:0',
       'amazon.nova-pro-v1:0',
       'amazon.nova-lite-v1:0',
       'amazon.nova-micro-v1:0',
-      'amazon.titan-text-premier-v1:0',
-      'meta.llama3-70b-instruct-v1:0',
-      'meta.llama3-8b-instruct-v1:0',
-      'cohere.command-r-plus-v1:0',
-      'cohere.command-r-v1:0',
-      'mistral.mistral-large-2402-v1:0',
+      'openai.gpt-oss-120b-1:0',
+      'mistral.mistral-large-3-675b-instruct',
     ],
     imageGenerationModelIds: [
-      'amazon.nova-canvas-v1:0',
-      'amazon.titan-image-generator-v2:0',
-      'amazon.titan-image-generator-v1',
-      'stability.stable-diffusion-xl-v1',
+      // us-east-1 には画像生成モデルがないため、us-west-2 のモデルを指定します
+      { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
     ],
-    videoGenerationModelIds: ['amazon.nova-reel-v1:1'],
-    speechToSpeechModelIds: ['amazon.nova-sonic-v1:0'],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1580,27 +1548,22 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "modelRegion": "us-east-1",
     "modelIds": [
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-sonnet-20240229-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0",
+      "global.anthropic.claude-opus-4-8",
+      "global.anthropic.claude-sonnet-4-6",
+      "global.anthropic.claude-haiku-4-5-20251001-v1:0",
       "amazon.nova-pro-v1:0",
       "amazon.nova-lite-v1:0",
       "amazon.nova-micro-v1:0",
-      "amazon.titan-text-premier-v1:0",
-      "meta.llama3-70b-instruct-v1:0",
-      "meta.llama3-8b-instruct-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2402-v1:0"
+      "openai.gpt-oss-120b-1:0",
+      "mistral.mistral-large-3-675b-instruct"
     ],
     "imageGenerationModelIds": [
-      "amazon.nova-canvas-v1:0",
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.stable-diffusion-xl-v1"
+      {
+        "modelId": "stability.stable-image-core-v1:1",
+        "region": "us-west-2"
+      }
     ],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:1"],
-    "speechToSpeechModelIds": ["amazon.nova-sonic-v1:0"]
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -1615,26 +1578,19 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-west-2',
     modelIds: [
-      'anthropic.claude-3-5-sonnet-20241022-v2:0',
-      'anthropic.claude-3-5-haiku-20241022-v1:0',
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'anthropic.claude-3-opus-20240229-v1:0',
-      'anthropic.claude-3-sonnet-20240229-v1:0',
-      'anthropic.claude-3-haiku-20240307-v1:0',
-      'meta.llama3-1-70b-instruct-v1:0',
-      'meta.llama3-1-8b-instruct-v1:0',
-      'cohere.command-r-plus-v1:0',
-      'cohere.command-r-v1:0',
-      'mistral.mistral-large-2407-v1:0',
+      'global.anthropic.claude-sonnet-4-6',
+      'global.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'amazon.nova-lite-v1:0',
+      'openai.gpt-oss-120b-1:0',
+      'mistral.mistral-large-3-675b-instruct',
+      'qwen.qwen3-235b-a22b-2507-v1:0',
     ],
     imageGenerationModelIds: [
-      'amazon.titan-image-generator-v2:0',
-      'amazon.titan-image-generator-v1',
-      'stability.sd3-5-large-v1:0',
       'stability.stable-image-core-v1:1',
       'stability.stable-image-ultra-v1:1',
-      'stability.stable-diffusion-xl-v1',
+      'stability.sd3-5-large-v1:0',
     ],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1647,26 +1603,19 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "modelRegion": "us-west-2",
     "modelIds": [
-      "anthropic.claude-3-5-sonnet-20241022-v2:0",
-      "anthropic.claude-3-5-haiku-20241022-v1:0",
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-opus-20240229-v1:0",
-      "anthropic.claude-3-sonnet-20240229-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0",
-      "meta.llama3-1-70b-instruct-v1:0",
-      "meta.llama3-1-8b-instruct-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0"
+      "global.anthropic.claude-sonnet-4-6",
+      "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "amazon.nova-lite-v1:0",
+      "openai.gpt-oss-120b-1:0",
+      "mistral.mistral-large-3-675b-instruct",
+      "qwen.qwen3-235b-a22b-2507-v1:0"
     ],
     "imageGenerationModelIds": [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-5-large-v1:0"
       "stability.stable-image-core-v1:1",
       "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1",
+      "stability.sd3-5-large-v1:0"
     ],
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -1681,33 +1630,19 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-west-2',
     modelIds: [
-      "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-haiku-20240307-v1:0",
-      "us.deepseek.r1-v1:0",
-      "us.writer.palmyra-x5-v1:0",
-      "us.writer.palmyra-x4-v1:0",
-      "us.meta.llama4-maverick-17b-instruct-v1:0",
-      "us.meta.llama4-scout-17b-instruct-v1:0",
-      "us.meta.llama3-2-11b-instruct-v1:0",
-      "us.meta.llama3-2-3b-instruct-v1:0",
-      "us.meta.llama3-2-1b-instruct-v1:0",
-      "us.amazon.nova-premier-v1:0",
-      "us.amazon.nova-pro-v1:0",
-      "us.amazon.nova-lite-v1:0",
-      "us.amazon.nova-micro-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0",
+      'us.anthropic.claude-opus-4-8',
+      'us.anthropic.claude-sonnet-4-6',
+      'us.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'us.amazon.nova-2-lite-v1:0',
+      'us.amazon.nova-pro-v1:0',
+      'us.amazon.nova-lite-v1:0',
+      'us.amazon.nova-micro-v1:0',
     ],
     imageGenerationModelIds: [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-5-large-v1:0"
-      "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1",
+      'stability.stable-image-core-v1:1',
+      'stability.stable-image-ultra-v1:1',
     ],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1720,33 +1655,19 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "modelRegion": "us-west-2",
     "modelIds": [
-      "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-haiku-20240307-v1:0",
-      "us.deepseek.r1-v1:0",
-      "us.writer.palmyra-x5-v1:0",
-      "us.writer.palmyra-x4-v1:0",
-      "us.meta.llama4-maverick-17b-instruct-v1:0",
-      "us.meta.llama4-scout-17b-instruct-v1:0",
-      "us.meta.llama3-2-11b-instruct-v1:0",
-      "us.meta.llama3-2-3b-instruct-v1:0",
-      "us.meta.llama3-2-1b-instruct-v1:0",
-      "us.amazon.nova-premier-v1:0",
+      "us.anthropic.claude-opus-4-8",
+      "us.anthropic.claude-sonnet-4-6",
+      "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "us.amazon.nova-2-lite-v1:0",
       "us.amazon.nova-pro-v1:0",
       "us.amazon.nova-lite-v1:0",
-      "us.amazon.nova-micro-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0"
+      "us.amazon.nova-micro-v1:0"
     ],
     "imageGenerationModelIds": [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-5-large-v1:0"
       "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1",
+      "stability.stable-image-ultra-v1:1"
     ],
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -1757,15 +1678,23 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ```typescript
 // parameter.ts
-const envs: Record<string, StackInput> = {
+const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'ap-northeast-1',
     modelIds: [
-      'anthropic.claude-3-5-sonnet-20240620-v1:0',
-      'anthropic.claude-3-haiku-20240307-v1:0',
+      'jp.anthropic.claude-opus-4-8',
+      'jp.anthropic.claude-sonnet-4-6',
+      'jp.anthropic.claude-haiku-4-5-20251001-v1:0',
+      'jp.amazon.nova-2-lite-v1:0',
+      'apac.amazon.nova-pro-v1:0',
+      'apac.amazon.nova-lite-v1:0',
+      'apac.amazon.nova-micro-v1:0',
     ],
-    imageGenerationModelIds: ['amazon.nova-canvas-v1:0'],
-    videoGenerationModelIds: ['amazon.nova-reel-v1:0'],
+    imageGenerationModelIds: [
+      // ap-northeast-1 には画像生成モデルがないため、us-west-2 のモデルを指定します
+      { modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2' },
+    ],
+    speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
 ```
@@ -1778,11 +1707,21 @@ const envs: Record<string, StackInput> = {
   "context": {
     "modelRegion": "ap-northeast-1",
     "modelIds": [
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0"
+      "jp.anthropic.claude-opus-4-8",
+      "jp.anthropic.claude-sonnet-4-6",
+      "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
+      "jp.amazon.nova-2-lite-v1:0",
+      "apac.amazon.nova-pro-v1:0",
+      "apac.amazon.nova-lite-v1:0",
+      "apac.amazon.nova-micro-v1:0"
     ],
-    "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:0"]
+    "imageGenerationModelIds": [
+      {
+        "modelId": "stability.stable-image-core-v1:1",
+        "region": "us-west-2"
+      }
+    ],
+    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
   }
 }
 ```
@@ -2098,6 +2037,9 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!NOTE]
 > ガードレールの設定を有効後に、再度無効化する場合は、`guardrailEnabled: false` にして再デプロイすれば生成 AI を呼び出す際にガードレールは無効化されますが、ガードレール自体は残ります。マネージメントコンソールを開き、modelRegion の CloudFormation から `GuardrailStack` というスタックを削除することで完全に消去ができます。ガードレールが残ること自体にコストは発生しませんが、使用しないリソースは削除するのが望ましいです。
 
+> [!WARNING]
+> ガードレールは `modelRegion` にだけ作成されます。`guardrailEnabled: true` のときに `modelIds` で `modelRegion` 以外のリージョンを指定したモデルを使うと、そのリージョンにガードレールが無いため `The guardrail identifier or version provided in the request does not exist.` というエラーになります。ガードレールを有効にする場合は、テキスト生成モデルのリージョンを `modelRegion` に揃えてください。
+
 ## コスト関連設定
 
 ### Kendraのインデックスを自動で作成・削除するスケジュールを設定する
@@ -2255,6 +2197,62 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!NOTE]
 > モニタリング用のダッシュボードを有効後に、再度無効化する場合は、`dashboard: false` にして再デプロイすればモニタリング用ダッシュボードは無効化されますが、`GenerativeAiUseCasesDashboardStack` 自体は残ります。マネージメントコンソールを開き、modelRegion の CloudFormation から `GenerativeAiUseCasesDashboardStack` というスタックを削除することで完全に消去ができます。
 
+### ユーザー別・ユースケース別に集計する
+
+GenU は Bedrock の呼び出しに次のタグ（[requestMetadata](https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-request-metadata.html)）を付けています。タグはモデル呼び出しログに記録されます。
+
+| キー           | 値                                                   |
+| -------------- | ---------------------------------------------------- |
+| `genu`         | `genu`（GenU からの呼び出しの目印）                  |
+| `genu_user`    | Cognito ユーザーの `sub`                             |
+| `genu_usecase` | ユースケース（`chat`、`rag` など、画面のパスの先頭） |
+
+ダッシュボードには、ユーザー別とユースケース別の集計（Tokens by User / Tokens by Use Case）が入っています。同じクエリが CloudWatch Logs Insights の「保存されたクエリ」に `GenU/<スタック名>/TokensByUser` と `GenU/<スタック名>/TokensByUseCase` として登録されるので、期間を変えたり条件を足したりして使えます。`genu_user` は Cognito の `sub` なので、部署などで集計する場合は Cognito のユーザー属性と結合してください。
+
+ダッシュボードを使わず、既存のロググループにモデル呼び出しログを出している場合も、同じタグで集計できます。
+
+```
+filter requestMetadata.genu = 'genu'
+| fields requestMetadata.genu_user as user, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc
+```
+
+> [!NOTE]
+>
+> - タグが付くのは、Converse API と InvokeModel API で呼び出すモデル（チャット、文章生成などのテキスト生成と画像生成）です。動画生成（StartAsyncInvoke）、音声チャット、Bedrock Agents、Knowledge Base のチャット、Flow チャット、プロンプト最適化、AgentCore の呼び出しには付きません。
+> - モデル呼び出しログはリージョンごとに記録されます。`modelIds` で複数のリージョンのモデルを使っている場合は、リージョンごとにログの出力を設定し、リージョンごとに集計してください。1 つの場所でまとめて集計したい場合は、AWS Organizations を使っていれば [CloudWatch Logs の集約](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html)で複数のリージョンのログを 1 つのリージョンに集められます。
+> - モデル呼び出しログには、既定でプロンプトと回答の本文も記録されます。保存期間と閲覧できる人を確認してください。
+
+## 管理者ページ
+
+全ユーザーのトークン利用量を、GenU の画面で確認できます（画面の左下の盾のアイコン）。表示されるのは、GenU がチャットのメッセージと一緒に保存した利用量（統計ページと同じデータ）で、過去 7 日・30 日・90 日を選べます。ユーザー別の集計は CSV でダウンロードできます。ユーザー別の表でユーザーを選ぶと（最大 50 人）、カード、モデル別の表、グラフもそのユーザーだけの集計になります。トークン数は入力・出力・キャッシュ読み込み・キャッシュ書き込みの合計です。
+
+管理者ページを開けるのは、Cognito のユーザープールの `SystemAdminGroup` グループに入っているユーザーだけです。グループはデプロイ時に作られます。ユーザーをグループに追加するには、[Amazon Cognito のコンソール](https://console.aws.amazon.com/cognito/home)でユーザープールを開いて「グループ」から追加するか、次のコマンドを実行します。
+
+```bash
+aws cognito-idp admin-add-user-to-group \
+  --user-pool-id <ユーザープール ID> \
+  --username <ユーザー名> \
+  --group-name SystemAdminGroup
+```
+
+グループに追加したあと、そのユーザーはサインインし直すと管理者ページを開けるようになります。
+
+管理者ページと統計ページのコストは、GenU に含まれている AWS の定価表（オンデマンド、USD）で計算します。各モデルを呼び出しているリージョンの価格を使い、`global.` で始まるモデルは global の価格を使います。定価表は GenU のリリースごとに更新されます。リリースを待たずに最新の定価にしたい場合は、次のコマンドで定価表（`packages/cdk/lambda/utils/modelPricing.generated.ts`）を作り直してからデプロイしてください。
+
+```bash
+npm -w packages/cdk run pricing:update
+```
+
+> [!NOTE]
+>
+> - エージェント（Bedrock Agents、AgentCore）や画像・動画の生成の利用量は含みません。これらも含めて集計する場合は、上の「ユーザー別・ユースケース別に集計する」のとおり CloudWatch Logs Insights を使ってください。
+> - コストは定価での目安です。割引、Savings Plans、無料枠は反映されません。キャッシュ書き込みは 5 分のキャッシュの価格で、20 万トークンを超える長いリクエストも通常の価格で計算するため、これらを使う場合は実際より低めになります。実際の請求額は AWS Cost Explorer で確認してください。定価表にないモデルはコストに含まれず、画面に「価格不明」と表示されます。
+> - 集計は管理者ページを開くたびに行います。90 日の表示で利用ユーザーが 1,000〜2,000 人を超えると、API Gateway の 29 秒の制限に近づきます。その規模では期間を短くするか、CloudWatch Logs Insights で集計してください。
+> - ユーザー別の表と CSV の `userId` は Cognito のユーザー名です。モデル呼び出しログの `genu_user` は Cognito の `sub` なので、SAML のユーザーなどでは値が異なります。
+> - ユーザープールにすでに `SystemAdminGroup` という名前のグループがある場合は、デプロイが失敗します。先にそのグループを削除するか、名前を変えてください。
+
 ## カスタムドメインの使用
 
 Web サイトの URL としてカスタムドメインを使用することができます。同一 AWS アカウントの Route53 にパブリックホストゾーンが作成済みであることが必要です。パブリックホストゾーンについてはこちらをご参照ください: [パブリックホストゾーンの使用 - Amazon Route 53](https://docs.aws.amazon.com/ja_jp/Route53/latest/DeveloperGuide/AboutHZWorkingWith.html)
@@ -2263,7 +2261,7 @@ Web サイトの URL としてカスタムドメインを使用することが�
 
 以下の値を設定します。
 
-- `hostName` ... Web サイトのホスト名です。A レコードは CDK によって作成されます。事前に作成する必要はありません
+- `hostName` ... Web サイトのホスト名です。A レコードは CDK によって作成されます。事前に作成する必要はありません。省略すると、`domainName` そのもの (ゾーンの頂点、例: `example.com`) に A レコードを作成します。その名前に既存の A レコードがある場合、デプロイは失敗します
 - `domainName` ... 事前に作成したパブリックホストゾーンのドメイン名です
 - `hostedZoneId` ... 事前に作成したパブリックホストゾーンのIDです
 

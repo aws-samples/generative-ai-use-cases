@@ -23,6 +23,20 @@ npm run web:devw
 > [!TIP]
 > 다른 백엔드 환경으로 전환하여 사용하려면 cdk.json의 context.env를 변경하거나 `npm run web:devw --env=dev2`와 같이 명령줄 인수로 지정하세요.
 
+> [!IMPORTANT]
+> 배포된 API는 배포된 프런트엔드의 오리진에서 오는 요청만 받으므로, `allowedDevOrigins`에 로컬 오리진을 추가하고 배포하세요. 설정하지 않으면 브라우저 콘솔에 `No 'Access-Control-Allow-Origin' header is present on the requested resource`라는 CORS 오류가 표시되고, 대화 기록 저장 등의 API 호출이 실패합니다.
+>
+> ```typescript
+> // packages/cdk/parameter.ts
+> const envs: Record<string, Partial<StackInput>> = {
+>   dev: {
+>     allowedDevOrigins: ['http://localhost:5173'],
+>   },
+> };
+> ```
+>
+> 스킴 + 호스트(+ 포트) 형식으로 지정하세요(끝의 슬래시나 경로를 포함하면 일치하지 않습니다). 프로덕션 환경에서는 설정하지 않는 것을 권장합니다.
+
 ### Windows 사용자
 
 Windows 사용자를 위해 개발 환경을 설정하는 PowerShell 스크립트 `web_devw_win.ps1`을 준비했으며, `web:devww`(w가 하나 더 있음)로 실행할 수 있습니다. 이 스크립트는 `setup-env.sh`와 유사하지만 PowerShell에 맞게 조정되었으며, `aws` 명령은 필요하지만 `jq`는 필요하지 않습니다.
@@ -52,6 +66,16 @@ npm run web:dev
 ```
 
 성공적으로 실행되면 http://localhost:5173에서 시작되므로 브라우저에서 액세스해 보세요.
+
+## AI 코딩 에이전트로 개발하기
+
+AI 코딩 에이전트용 지침은 특정 도구에 종속되지 않는 파일로 관리하므로, Kiro, Claude Code 또는 다른 에이전트를 사용해도 같은 규칙이 적용됩니다.
+
+- 저장소 루트의 [AGENTS.md](/AGENTS.md)에 저장소 구성, 명령어, 변경 시 규칙이 있습니다. Kiro 등의 에이전트는 자동으로 읽어 들입니다. Claude Code용으로는 `CLAUDE.md`에서 가져옵니다.
+- 에이전트 스킬은 `.kiro/skills/`에 있습니다. `.claude/skills`는 같은 디렉터리를 가리키는 심볼릭 링크입니다.
+
+> [!NOTE]
+> Windows에서는 심볼릭 링크를 활성화하지 않으면(개발자 모드와 clone 전 `git config core.symlinks true`) Git이 심볼릭 링크를 텍스트 파일로 체크아웃합니다. 이 경우 Claude Code에서 스킬을 찾을 수 없습니다. Kiro에는 영향이 없습니다.
 
 ## Pull Request 제출 시
 

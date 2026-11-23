@@ -44,6 +44,7 @@ import {
   GetCommand,
   PutCommand,
   QueryCommand,
+  TransactWriteCommand,
   UpdateCommand,
 } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
@@ -237,40 +238,11 @@ const findAgentsByFavorites = async (
   return agents;
 };
 
-// Manage public agent record
-const managePublicAgentRecord = async (
-  agentId: string,
-  isPublic: boolean,
-  agentData?: AgentInTable
-): Promise<void> => {
-  const key = { id: 'public-agents', dataType: `public#${agentId}` };
-
-  console.log(
-    `managePublicAgentRecord: agentId=${agentId}, isPublic=${isPublic}, hasAgentData=${!!agentData}`
-  );
-
-  if (isPublic && agentData) {
-    // Add/update public record with full data, but preserve the public record keys
-    console.log(`Creating/updating public record for agent ${agentId}`);
-    await dynamoDbDocument.send(
-      new PutCommand({
-        TableName: TABLE_NAME,
-        Item: {
-          ...agentData,
-          ...key,
-        },
-      })
-    );
-    console.log(`Public record created/updated for agent ${agentId}`);
-  } else {
-    // Remove public record
-    console.log(`Removing public record for agent ${agentId}`);
-    await dynamoDbDocument.send(
-      new DeleteCommand({ TableName: TABLE_NAME, Key: key })
-    );
-    console.log(`Public record removed for agent ${agentId}`);
-  }
-};
+// Key of an agent's copy in the public gallery
+const publicAgentKey = (agentId: string) => ({
+  id: 'public-agents',
+  dataType: `public#${agentId}`,
+});
 
 // Get all public agents
 export const listPublicAgents = async (): Promise<AgentInTable[]> => {
@@ -317,6 +289,7 @@ export const createAgent = async (
     modelId: content.modelId,
     mcpServers: content.mcpServers,
     codeExecutionEnabled: content.codeExecutionEnabled ?? false,
+    webSearchEnabled: content.webSearchEnabled ?? false,
     tags: content.tags || [],
     isPublic: content.isPublic ?? false,
     starCount: 0,
@@ -326,13 +299,24 @@ export const createAgent = async (
     createdBy: userId,
   };
 
+  // A public agent and its gallery copy are written together
   await dynamoDbDocument.send(
-    new PutCommand({ TableName: TABLE_NAME, Item: item })
+    new TransactWriteCommand({
+      TransactItems: [
+        { Put: { TableName: TABLE_NAME, Item: item } },
+        ...(item.isPublic
+          ? [
+              {
+                Put: {
+                  TableName: TABLE_NAME,
+                  Item: { ...item, ...publicAgentKey(agentId) },
+                },
+              },
+            ]
+          : []),
+      ],
+    })
   );
-
-  if (item.isPublic) {
-    await managePublicAgentRecord(agentId, true, item);
-  }
 
   return { ...item, isMyAgent: true };
 };
@@ -382,46 +366,60 @@ export const updateAgent = async (
   }
 
   const now = new Date().toISOString();
-  const wasPublic = agent.isPublic;
   const isNowPublic = content.isPublic ?? false;
 
-  // Update main agent record
-  await dynamoDbDocument.send(
-    new UpdateCommand({
-      TableName: TABLE_NAME,
-      Key: { id: agent.id, dataType: agent.dataType },
-      UpdateExpression:
-        'set #name = :name, description = :description, systemPrompt = :systemPrompt, modelId = :modelId, mcpServers = :mcpServers, codeExecutionEnabled = :codeExecutionEnabled, tags = :tags, isPublic = :isPublic, updatedAt = :updatedAt, createdByEmail = :createdByEmail',
-      ExpressionAttributeNames: { '#name': 'name' },
-      ExpressionAttributeValues: {
-        ':name': content.name,
-        ':description': content.description || '',
-        ':systemPrompt': content.systemPrompt,
-        ':modelId': content.modelId,
-        ':mcpServers': content.mcpServers,
-        ':codeExecutionEnabled': content.codeExecutionEnabled ?? false,
-        ':tags': content.tags || [],
-        ':isPublic': isNowPublic,
-        ':updatedAt': now,
-        ':createdByEmail': content.createdByEmail,
-      },
-    })
-  );
-
-  // Update public record if needed
   const updatedAgent: AgentInTable = {
     ...agent,
     ...content,
     description: content.description || '',
     codeExecutionEnabled: content.codeExecutionEnabled ?? false,
+    webSearchEnabled: content.webSearchEnabled ?? false,
     tags: content.tags || [],
     isPublic: isNowPublic,
     updatedAt: now,
   };
+  const publicKey = publicAgentKey(agentId);
 
-  if (wasPublic !== isNowPublic || isNowPublic) {
-    await managePublicAgentRecord(agentId, isNowPublic, updatedAgent);
-  }
+  // The owner's record and the gallery copy are written together, so they
+  // always agree on whether the agent is public. A private agent's gallery
+  // copy is deleted on every save, even when the owner's record already says
+  // private, so a copy left over from an earlier save is removed too.
+  await dynamoDbDocument.send(
+    new TransactWriteCommand({
+      TransactItems: [
+        {
+          Update: {
+            TableName: TABLE_NAME,
+            Key: { id: agent.id, dataType: agent.dataType },
+            UpdateExpression:
+              'set #name = :name, description = :description, systemPrompt = :systemPrompt, modelId = :modelId, mcpServers = :mcpServers, codeExecutionEnabled = :codeExecutionEnabled, webSearchEnabled = :webSearchEnabled, tags = :tags, isPublic = :isPublic, updatedAt = :updatedAt, createdByEmail = :createdByEmail',
+            ExpressionAttributeNames: { '#name': 'name' },
+            ExpressionAttributeValues: {
+              ':name': content.name,
+              ':description': content.description || '',
+              ':systemPrompt': content.systemPrompt,
+              ':modelId': content.modelId,
+              ':mcpServers': content.mcpServers,
+              ':codeExecutionEnabled': content.codeExecutionEnabled ?? false,
+              ':webSearchEnabled': content.webSearchEnabled ?? false,
+              ':tags': content.tags || [],
+              ':isPublic': isNowPublic,
+              ':updatedAt': now,
+              ':createdByEmail': content.createdByEmail,
+            },
+          },
+        },
+        isNowPublic
+          ? {
+              Put: {
+                TableName: TABLE_NAME,
+                Item: { ...updatedAgent, ...publicKey },
+              },
+            }
+          : { Delete: { TableName: TABLE_NAME, Key: publicKey } },
+      ],
+    })
+  );
 };
 
 export const deleteAgent = async (
@@ -433,16 +431,25 @@ export const deleteAgent = async (
     throw new Error(`Agent not found or access denied: ${agentId}`);
   }
 
+  // The gallery copy goes with the agent, whatever the owner's record says
   await dynamoDbDocument.send(
-    new DeleteCommand({
-      TableName: TABLE_NAME,
-      Key: { id: agent.id, dataType: agent.dataType },
+    new TransactWriteCommand({
+      TransactItems: [
+        {
+          Delete: {
+            TableName: TABLE_NAME,
+            Key: { id: agent.id, dataType: agent.dataType },
+          },
+        },
+        {
+          Delete: {
+            TableName: TABLE_NAME,
+            Key: publicAgentKey(agentId),
+          },
+        },
+      ],
     })
   );
-
-  if (agent.isPublic) {
-    await managePublicAgentRecord(agentId, false);
-  }
 };
 
 export const listAgentsWithFavorites = async (
@@ -636,6 +643,7 @@ export const listFavoriteAgents = async (
         modelId: '',
         mcpServers: [],
         codeExecutionEnabled: false,
+        webSearchEnabled: false,
         tags: [],
         isPublic: false,
         starCount: 0,

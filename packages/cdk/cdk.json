@@ -30,7 +30,7 @@
     "ragKnowledgeBaseStorageType": "opensearch",
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": false,
-    "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "ragKnowledgeBaseBinaryVector": false,
     "embeddingModelId": "amazon.titan-embed-text-v2:0",
     "rerankingModelId": null,
@@ -54,10 +54,12 @@
       "global.anthropic.claude-opus-4-6-v1",
       "global.anthropic.claude-haiku-4-5-20251001-v1:0",
       "global.amazon.nova-2-lite-v1:0",
-      "us.deepseek.r1-v1:0"
+      "openai.gpt-oss-120b-1:0"
     ],
-    "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:0"],
+    "imageGenerationModelIds": [
+      { "modelId": "stability.stable-image-core-v1:1", "region": "us-west-2" }
+    ],
+    "videoGenerationModelIds": [],
     "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"],
     "endpointNames": [],
     "agentEnabled": false,

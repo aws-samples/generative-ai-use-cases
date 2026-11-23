@@ -14,6 +14,7 @@ import MeetingMinutesTranscriptSegment from './MeetingMinutesTranscriptSegment';
 import MeetingMinutesSettingsPanel from './MeetingMinutesSettingsPanel';
 import MeetingMinutesControlButtons from './MeetingMinutesControlButtons';
 import useMicrophone from '../../hooks/useMicrophone';
+import { getTranscribeLanguageOptions } from '../../utils/AudioUtils';
 import useScreenAudio from '../../hooks/useScreenAudio';
 import useRealtimeTranslation from '../../hooks/useRealtimeTranslation';
 import useChatApi from '../../hooks/useChatApi';
@@ -723,7 +724,7 @@ const MeetingMinutesRealtimeTranslation: React.FC<
           ? undefined
           : (primaryLanguage as LanguageCode);
       languageOptions =
-        primaryLanguage === 'auto' ? ['en-US', 'ja-JP'] : undefined;
+        primaryLanguage === 'auto' ? getTranscribeLanguageOptions() : undefined;
       enableMultiLanguage = false;
     }
 
