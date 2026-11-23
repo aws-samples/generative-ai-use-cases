@@ -1,10 +1,7 @@
 /**
- * What the chat screen can render, appended to the system prompt of every chat
- * request. It is added when the request is sent, after the system prompt the
- * user or the deployment chose, so replacing the system prompt keeps it.
- *
- * It is fixed text, so prompt caching keeps working. Keep it short: it is sent
- * with every request.
+ * What the chat screen can render. It is part of the built-in chat system
+ * prompt, which the user can edit, so a user can drop what they do not want or
+ * save a system prompt without it. Keep it short: it is sent with every request.
  */
 export const CHAT_FORMATTING_INSTRUCTIONS = `## Formatting
 Your reply is rendered as GitHub-flavored Markdown. Use the following only when the user asks for it or when it makes the answer clearer than text alone:

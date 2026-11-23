@@ -1,3 +1,4 @@
+import { CHAT_FORMATTING_INSTRUCTIONS } from '@generative-ai-use-cases/common';
 import {
   ChatParams,
   WriterParams,
@@ -80,10 +81,12 @@ Command[newtask command]
 If technical content contains these characters, rephrase or simplify the text.`;
 
 const systemContexts: { [key: string]: string } = {
-  // What the chat can render (Markdown, math, Mermaid, charts) is added when a
-  // request is sent (withChatContext), so it is not repeated here.
+  // The formatting section is part of the editable prompt, so a user can drop
+  // what they do not want (Mermaid, for example) or save a prompt without it.
   '/chat': `You are an AI assistant helping users in chat.
-Automatically detect the language of the user's request and think and answer in the same language.`,
+Automatically detect the language of the user's request and think and answer in the same language.
+
+${CHAT_FORMATTING_INSTRUCTIONS}`,
   '/summarize': `You are an AI assistant that summarizes text. 
 I will give you summarization instructions in the first chat, and then you should improve the summary results in subsequent chats.
 Automatically detect the language of the user's request and think and answer in the same language.`,

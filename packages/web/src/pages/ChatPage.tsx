@@ -35,7 +35,7 @@ import BedrockIcon from '../assets/bedrock.svg?react';
 import { ChatPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import { getPrompter } from '../prompts';
-import { withChatContext } from '../utils/currentDate';
+import { withCurrentDate } from '../utils/currentDate';
 import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
 import { effortLabel } from '../utils/reasoningEffort';
@@ -381,7 +381,7 @@ const ChatPage: React.FC = () => {
     const success = await postChat(
       prompter.chatPrompt({ content: savedContent }),
       false,
-      withChatContext,
+      withCurrentDate,
       undefined,
       undefined,
       fileUpload ? uploadedFiles : undefined,
@@ -410,7 +410,7 @@ const ChatPage: React.FC = () => {
   const onRetry = useCallback(() => {
     retryGeneration(
       undefined,
-      withChatContext,
+      withCurrentDate,
       undefined,
       undefined,
       undefined,
@@ -437,7 +437,7 @@ const ChatPage: React.FC = () => {
       editChat(
         modifiedPrompt,
         false,
-        withChatContext,
+        withCurrentDate,
         undefined,
         undefined,
         undefined,
