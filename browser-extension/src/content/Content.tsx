@@ -49,6 +49,8 @@ const Content = () => {
           isOpenChat ? 'xl:w-1/3 lg:2/5 md:w-2/5 sm:w-2/3' : 'w-0',
         )}
         src={Browser.runtime.getURL('pages/chat/index.html')}
+        // Let the chat copy a response to the clipboard
+        allow="clipboard-write"
       />
     </div>
   );

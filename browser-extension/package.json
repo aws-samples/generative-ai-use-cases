@@ -40,9 +40,12 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "18.2.0",
     "react-icons": "^5.5.0",
+    "react-markdown": "^9.1.0",
     "react-redux": "^8.1.3",
     "redux-persist-webextension-storage": "^1.0.2",
     "reduxjs-toolkit-persist": "^7.2.1",
+    "remark-breaks": "^4.0.0",
+    "remark-gfm": "^4.0.1",
     "swr": "^2.2.5",
     "tailwind-merge": "^2.2.2",
     "webextension-polyfill": "^0.10.0"
