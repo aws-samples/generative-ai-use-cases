@@ -1,5 +1,6 @@
 """Agent management for the agent core runtime."""
 
+import asyncio
 import json
 import logging
 from collections.abc import AsyncGenerator
@@ -9,7 +10,8 @@ import boto3
 from strands import Agent as StrandsAgent
 from strands.models import BedrockModel
 
-from .config import extract_model_info, get_max_iterations, get_max_tokens, get_system_prompt, supports_prompt_cache, supports_tools_cache
+from . import sandbox
+from .config import extract_model_info, get_code_interpreter_prompt, get_max_iterations, get_max_tokens, get_system_prompt, supports_prompt_cache, supports_tools_cache
 from .tools import ToolManager
 from .types import Message, ModelInfo
 from .utils import (
@@ -112,6 +114,17 @@ class AgentManager:
             processed_messages = process_messages(messages)
             processed_prompt = process_prompt(prompt)
 
+            # The code interpreter has a sandbox of its own: put the attachments
+            # there, and tell the model where they are and how to hand files back.
+            code_interpreter = self.tool_manager.code_interpreter
+            hooks = []
+            if code_interpreter is not None:
+                files = sandbox.attachments(processed_messages, processed_prompt)
+                # Starts a sandbox session only when there is something to put in it
+                paths = sandbox.put_attachments(code_interpreter, files)
+                combined_system_prompt += "\n" + get_code_interpreter_prompt(paths)
+                hooks.append(sandbox.CodeInterpreterHook(code_interpreter))
+
             # Create Strands agent and stream response
             agent = StrandsAgent(
                 system_prompt=combined_system_prompt,
@@ -119,6 +132,7 @@ class AgentManager:
                 model=bedrock_model,
                 tools=tools,
                 callback_handler=self.iteration_limit_handler,
+                hooks=hooks,
             )
 
             async for event in agent.stream_async(processed_prompt):
@@ -136,6 +150,8 @@ class AgentManager:
             }
             yield json.dumps(error_event, ensure_ascii=False) + "\n"
         finally:
+            if self.tool_manager.code_interpreter is not None:
+                await asyncio.to_thread(sandbox.stop_sessions, self.tool_manager.code_interpreter)
             # Cleanup is handled automatically by the dynamic MCP client
             if user_id:
                 logger.debug(f"Session cleanup for user {user_id} handled automatically")
