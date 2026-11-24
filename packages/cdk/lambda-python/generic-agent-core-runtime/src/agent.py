@@ -64,6 +64,7 @@ class AgentManager:
         browser_enabled: bool | None = False,
     ) -> AsyncGenerator[str]:
         """Process a request and yield streaming responses as raw events"""
+        browser_session = None
         try:
             # Set session info if provided
             if session_id:
@@ -83,6 +84,9 @@ class AgentManager:
                 mcp_servers=mcp_servers,
             )
             logger.info(f"Loaded {len(tools)} tools (code execution: {code_execution_enabled}, web search: {web_search_enabled}, browser: {browser_enabled})")
+            # This request's browser session, kept here so that the finally block
+            # stops this one even if another request has replaced the tool manager's
+            browser_session = self.tool_manager.browser
 
             # Log agent info
             if agent_id:
@@ -154,6 +158,8 @@ class AgentManager:
         finally:
             if self.tool_manager.code_interpreter is not None:
                 await asyncio.to_thread(sandbox.stop_sessions, self.tool_manager.code_interpreter)
+            if browser_session is not None:
+                await browser_session.close()
             # Cleanup is handled automatically by the dynamic MCP client
             if user_id:
                 logger.debug(f"Session cleanup for user {user_id} handled automatically")

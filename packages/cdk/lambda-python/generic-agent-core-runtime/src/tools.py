@@ -11,7 +11,7 @@ from mcp import StdioServerParameters, stdio_client
 from strands import tool
 from strands.tools.mcp import MCPClient
 
-from . import sandbox
+from . import browser, sandbox
 from .config import WORKSPACE_DIR, get_aws_credentials, get_uv_environment
 
 # Import strands-agents code interpreter tool
@@ -24,16 +24,6 @@ except ImportError as e:
     logger = logging.getLogger(__name__)
     logger.warning(f"Strands code interpreter tool not available: {e}")
     AgentCoreCodeInterpreter = None
-
-# Import strands-agents browser tool
-try:
-    from strands_tools.browser import AgentCoreBrowser
-
-    BROWSER_AVAILABLE = True
-except ImportError as e:
-    BROWSER_AVAILABLE = False
-    logging.getLogger(__name__).warning(f"Strands browser tool not available: {e}")
-    AgentCoreBrowser = None
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +78,8 @@ class ToolManager:
         self.trace_id = None
         # The code interpreter of the current request, if code execution is on
         self.code_interpreter = None
+        # The browser session of the current request, if the browser is on
+        self.browser = None
 
     def set_session_info(self, session_id: str, trace_id: str):
         """Set session and trace IDs for tool operations"""
@@ -310,21 +302,12 @@ class ToolManager:
 
         return web_search
 
-    def get_browser_tool(self) -> list[Any]:
-        """Get the AgentCore Browser tool if available"""
-        browser_tools = []
-
-        if BROWSER_AVAILABLE and AgentCoreBrowser:
-            try:
-                aws_creds = get_aws_credentials()
-                region = aws_creds.get("AWS_REGION", "us-east-1")
-                browser = AgentCoreBrowser(region=region)
-                browser_tools.append(browser.browser)
-                logger.info("Added browser tool (AgentCoreBrowser)")
-            except Exception as e:
-                logger.warning(f"Failed to initialize AgentCoreBrowser: {e}")
-
-        return browser_tools
+    def get_browser_tool(self) -> Any:
+        """Get the browser tool. Its AgentCore Browser session starts on first use."""
+        region = get_aws_credentials().get("AWS_REGION", "us-east-1")
+        self.browser = browser.BrowserSession(region)
+        logger.info("Added browser tool (AgentCore Browser)")
+        return browser.make_browser_tool(self.browser)
 
     def get_tools_with_options(
         self,
@@ -353,6 +336,7 @@ class ToolManager:
 
         all_tools = []
         self.code_interpreter = None
+        self.browser = None
 
         # Handle MCP servers based on parameter
         if mcp_servers is None:
@@ -397,7 +381,7 @@ class ToolManager:
         browser_tools = []
         if browser_enabled:
             if os.environ.get("BROWSER_ENABLED") == "true":
-                browser_tools = self.get_browser_tool()
+                browser_tools = [self.get_browser_tool()]
                 all_tools.extend(browser_tools)
             else:
                 logger.warning("The browser is not enabled for this deployment, skipping the browser tool")

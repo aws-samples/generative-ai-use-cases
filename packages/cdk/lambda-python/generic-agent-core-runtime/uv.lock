@@ -758,12 +758,14 @@ version = "0.0.1"
 source = { virtual = "." }
 dependencies = [
     { name = "aws-opentelemetry-distro" },
+    { name = "bedrock-agentcore" },
     { name = "boto3" },
     { name = "fastapi" },
     { name = "mcp" },
+    { name = "playwright" },
     { name = "pydantic" },
     { name = "strands-agents" },
-    { name = "strands-agents-tools", extra = ["agent-core-browser", "agent-core-code-interpreter"] },
+    { name = "strands-agents-tools", extra = ["agent-core-code-interpreter"] },
     { name = "uvicorn" },
 ]
 
@@ -775,12 +777,14 @@ lint = [
 [package.metadata]
 requires-dist = [
     { name = "aws-opentelemetry-distro", specifier = ">=0.10.1" },
+    { name = "bedrock-agentcore" },
     { name = "boto3", specifier = ">=1.43.127" },
     { name = "fastapi" },
     { name = "mcp" },
+    { name = "playwright" },
     { name = "pydantic" },
     { name = "strands-agents", specifier = ">=1.0" },
-    { name = "strands-agents-tools", extras = ["agent-core-code-interpreter", "agent-core-browser"] },
+    { name = "strands-agents-tools", extras = ["agent-core-code-interpreter"] },
     { name = "uvicorn" },
 ]
 
@@ -1202,15 +1206,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/00/2f/45eb8700ee15716cc22f5b42592b4d5bc1ca65c880179c2c10e42fd6f0b4/multidict-7.2.1-cp315-cp315t-win_amd64.whl", hash = "sha256:25ebc4208d9098f77caeb16df895a0e56eb6c3b22870ac4e3ec43e0a9d6a33b6", size = 101193, upload-time = "2026-10-24T20:41:34.124Z" },
     { url = "https://files.pythonhosted.org/packages/7b/80/37d26f26d20b937344cfd68d9a1f57d8bc4f64adae416fc6828a7f8c8a10/multidict-7.2.1-cp315-cp315t-win_arm64.whl", hash = "sha256:4d61be3725016ef5db3543c95f1f062d7d150ba776582d959a982af88e75fa55", size = 98863, upload-time = "2026-10-24T20:40:59.146Z" },
     { url = "https://files.pythonhosted.org/packages/9d/96/1aaad0e5df33f1f5af21775c411349c0234a6edd581ea403bc81919a6eab/multidict-7.2.1-py3-none-any.whl", hash = "sha256:08ea94663d9e7c25d14d78222f7aee906c472d4837766bec62477c38f6e419dc", size = 28145, upload-time = "2026-10-24T20:40:59.159Z" },
-]
-
-[[package]]
-name = "nest-asyncio"
-version = "1.6.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/83/f8/51569ac65d696c8ecbee95938f89d4abf00f47d58d48f6fbabfe8f0baefe/nest_asyncio-1.6.0.tar.gz", hash = "sha256:6f172d5449aca15afd6c646851f4e31e02c598d553a667e38cafa997cfec55fe", size = 7418, upload-time = "2024-01-21T14:25:19.227Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl", hash = "sha256:87af6efd6b5e897c81050477ef65c62e2b2f35d51703cae01aff2905b1852e1c", size = 5195, upload-time = "2024-01-21T14:25:17.223Z" },
 ]
 
 [[package]]
@@ -2892,11 +2887,6 @@ wheels = [
 ]
 
 [package.optional-dependencies]
-agent-core-browser = [
-    { name = "bedrock-agentcore" },
-    { name = "nest-asyncio" },
-    { name = "playwright" },
-]
 agent-core-code-interpreter = [
     { name = "bedrock-agentcore" },
 ]

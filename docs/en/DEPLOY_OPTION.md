@@ -717,27 +717,23 @@ When `agentBuilderWebSearchEnabled` is disabled, the web search option is not sh
 
 Enabling `agentBuilderBrowserEnabled` adds the Browser tool of Amazon Bedrock AgentCore, and users can choose whether each Agent uses it. The browser runs as a managed cloud browser on the AWS side, so users do not need to install Chrome or Playwright on their machines.
 
-This makes it possible to reach information that web search cannot retrieve, such as pages behind a sign-in or pages rendered by JavaScript. The Agent can use the following actions.
+This makes it possible to reach information that web search cannot retrieve, such as pages behind a sign-in or pages rendered by JavaScript. The Agent works in one tab and can use the following actions. After each action, the tool returns the URL, title and text of the page.
 
-| Category    | Actions                                                                                                                 |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------- |
-| Navigation  | `navigate`, `back`, `forward`, `refresh`                                                                                |
-| Interaction | `click`, `type`, `press_key`                                                                                            |
-| Extraction  | `get_text`, `get_html`, `screenshot`                                                                                    |
-| Tabs        | `new_tab`, `switch_tab`, `close_tab`, `list_tabs`                                                                       |
-| Session     | `init_session`, `list_local_sessions`, `close`                                                                          |
-| Cookies     | `get_cookies`, `set_cookies`                                                                                            |
-| Low level   | `evaluate` (arbitrary JavaScript), `execute_cdp` (Chrome DevTools Protocol), `network_intercept` (traffic interception) |
+| Action     | What it does                           |
+| ---------- | -------------------------------------- |
+| `navigate` | Open an `http` or `https` URL          |
+| `click`    | Click an element (Playwright selector) |
+| `type`     | Type text into an input field          |
+| `press`    | Press a key, such as `Enter`           |
+| `read`     | Return the current page again          |
+| `back`     | Go back to the previous page           |
+
+Running JavaScript, Chrome DevTools Protocol commands, intercepting traffic and reading or writing cookies are not available. URLs other than `http` and `https` (such as `file:` and `javascript:`) are refused.
+
+A browser session starts the first time the Agent uses the browser in a request, and it is stopped when the request ends, including when it ends with an error. If the stop fails, the session ends by itself after 15 minutes.
 
 > [!WARNING]
-> The browser tool **can reach any URL and includes powerful actions**. Review the following before enabling it.
->
-> - `evaluate` runs arbitrary JavaScript
-> - `execute_cdp` runs Chrome DevTools Protocol commands
-> - `network_intercept` can observe and modify the traffic behind the page
-> - `get_cookies` / `set_cookies` can read and write cookies
->
-> If a visited page contains malicious instructions (prompt injection), these actions can become a path for the Agent to perform unintended operations. If your organization does not allow the browser tool, leave `agentBuilderBrowserEnabled` disabled. When disabled, the runtime execution role is not granted browser permissions and the option is not shown in the agent builder.
+> The browser tool **can reach any URL**. If a visited page contains malicious instructions (prompt injection), the Agent may follow them, for example by entering what is in the conversation into a form on that page. If your organization does not allow the browser tool, leave `agentBuilderBrowserEnabled` disabled. When disabled, the runtime execution role is not granted browser permissions and the option is not shown in the agent builder.
 >
 > To restrict which destinations are reachable, consider using an AgentCore custom browser, which allows network configuration (this implementation uses the AWS managed browser).
 

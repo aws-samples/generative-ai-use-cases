@@ -734,27 +734,23 @@ Agent は AgentCore Web Search の API (`InvokeWebSearch`) を直接呼び出す
 
 `agentBuilderBrowserEnabled` を有効化すると、Amazon Bedrock AgentCore の Browser ツールが追加され、ユーザーは Agent ごとに利用の有無を選択できます。マネージドなクラウドブラウザが AWS 側で動作するため、利用者の端末に Chrome や Playwright をインストールする必要はありません。
 
-ログインが必要なページや JavaScript で描画されるページなど、Web 検索では取得できない情報に到達できます。Agent が利用できるアクションは以下のとおりです。
+ログインが必要なページや JavaScript で描画されるページなど、Web 検索では取得できない情報に到達できます。Agent は 1 つのタブで、以下のアクションを利用できます。アクションのたびに、ページの URL・タイトル・本文を受け取ります。
 
-| 分類         | アクション                                                                                                      |
-| ------------ | --------------------------------------------------------------------------------------------------------------- |
-| 遷移         | `navigate`, `back`, `forward`, `refresh`                                                                        |
-| 操作         | `click`, `type`, `press_key`                                                                                    |
-| 抽出         | `get_text`, `get_html`, `screenshot`                                                                            |
-| タブ         | `new_tab`, `switch_tab`, `close_tab`, `list_tabs`                                                               |
-| セッション   | `init_session`, `list_local_sessions`, `close`                                                                  |
-| Cookie       | `get_cookies`, `set_cookies`                                                                                    |
-| 低レベル操作 | `evaluate` (任意の JavaScript 実行), `execute_cdp` (Chrome DevTools Protocol), `network_intercept` (通信の傍受) |
+| アクション | 内容                                         |
+| ---------- | -------------------------------------------- |
+| `navigate` | `http` または `https` の URL を開く          |
+| `click`    | 要素をクリックする (Playwright のセレクター) |
+| `type`     | 入力欄に文字を入力する                       |
+| `press`    | `Enter` などのキーを押す                     |
+| `read`     | 今のページをもう一度受け取る                 |
+| `back`     | 前のページに戻る                             |
+
+JavaScript の実行、Chrome DevTools Protocol のコマンド、通信の傍受、Cookie の読み書きはできません。`http` と `https` 以外の URL (`file:` や `javascript:` など) は開きません。
+
+ブラウザのセッションは、リクエストの中で Agent が初めてブラウザを使ったときに開始し、リクエストの終わりに (エラーで終わった場合も) 停止します。停止に失敗した場合も、15 分でセッションは自動的に終了します。
 
 > [!WARNING]
-> ブラウザ操作は**任意の URL に到達でき、権限の強いアクションを含みます**。有効化の判断にあたっては以下をご確認ください。
->
-> - `evaluate` により任意の JavaScript を実行できます
-> - `execute_cdp` により Chrome DevTools Protocol のコマンドを実行できます
-> - `network_intercept` により画面の裏側の通信を傍受・改変できます
-> - `get_cookies` / `set_cookies` により Cookie を読み書きできます
->
-> これらは、閲覧先のページに悪意のある指示が含まれていた場合 (プロンプトインジェクション)、Agent が意図しない操作を行う経路になり得ます。組織のポリシーで利用しない場合は、`agentBuilderBrowserEnabled` を無効のままにしてください。無効の場合はランタイムの実行ロールにブラウザ関連の権限が付与されず、エージェントビルダーの画面にも選択肢は表示されません。
+> ブラウザ操作は**任意の URL に到達できます**。閲覧先のページに悪意のある指示が含まれていた場合 (プロンプトインジェクション)、Agent がそれに従い、たとえば会話の内容をそのページのフォームに入力するおそれがあります。組織のポリシーで利用しない場合は、`agentBuilderBrowserEnabled` を無効のままにしてください。無効の場合はランタイムの実行ロールにブラウザ関連の権限が付与されず、エージェントビルダーの画面にも選択肢は表示されません。
 >
 > また、到達先を限定したい場合は、ネットワーク設定を指定できる AgentCore のカスタムブラウザを利用する方式が考えられます (本実装では AWS マネージドブラウザを使用しています)。
 
