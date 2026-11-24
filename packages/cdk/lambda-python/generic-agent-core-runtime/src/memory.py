@@ -107,8 +107,12 @@ def _readable(kind: str, text: str) -> str:
 
 
 def _owns(record: dict, actor: str) -> bool:
-    """Whether a record is filed under this actor (checked before deleting it)."""
-    return any(f"/{actor}" in ns for ns in record.get("namespaces", []))
+    """Whether a record is filed under this actor (checked before deleting it).
+
+    The actor has to be a whole part of the namespace: as a substring,
+    u-x_a-agent-1 would also own the records of u-x_a-agent-10.
+    """
+    return any(actor in ns.split("/") for ns in record.get("namespaces", []))
 
 
 # ---------- during a conversation ----------

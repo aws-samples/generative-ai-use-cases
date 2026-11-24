@@ -257,6 +257,14 @@ def test_a_user_cannot_delete_their_memory_of_another_agent_through_this_one(age
     assert memory.handle_action("delete", ME, AGENT, "other-agent") == {"deleted": False}
 
 
+def test_an_agent_whose_id_starts_like_another_does_not_reach_its_memory(agentcore):
+    agentcore.add("agent-10", facts_of(ME, "agent-10"), "Told to agent-10")
+    agentcore.add("agent-10-summary", memory.namespace("summaries", memory.actor_id(ME, "agent-10"), "s1"), "A summary for agent-10")
+    assert memory.handle_action("delete", ME, "agent-1", "agent-10") == {"deleted": False}
+    assert memory.handle_action("delete", ME, "agent-1", "agent-10-summary") == {"deleted": False}
+    assert "agent-10" in agentcore.records
+
+
 def test_a_user_can_delete_their_own_memory(agentcore):
     agentcore.add("mine", facts_of(ME, AGENT), "Mine")
     assert memory.handle_action("delete", ME, AGENT, "mine") == {"deleted": True}
