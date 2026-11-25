@@ -913,6 +913,7 @@ useCaseBuilder:
   modelNotFixedDescription: 显示模型选择UI，用户可以自由选择模型。
   myUseCases: 我的用例
   noMyUseCases: 没有我的用例。
+  noPublicUseCases: 还没有公开的用例。
   noUpdateContent: 没有更新内容
   noUserInput: 用例不接受用户输入。请在提示模板中添加占位符或打开文件附件。
   notExistOrNotShared: 此用例不存在或未共享。
@@ -923,6 +924,8 @@ useCaseBuilder:
   promptTemplate: 提示模板
   promptTemplateHint: 不能创建不接受用户输入的用例。请在提示模板中定义占位符或打开文件附件。
   promptTemplatePlaceholder: 关于如何编写提示模板，请参阅"帮助"或"示例集"。
+  publicUseCases: 公开的用例
+  publicUseCasesDescription: 用户共享的用例。所有可以登录此应用的用户都可以使用。
   recentlyUsed: 使用历史
   resultPlaceholder: 结果将显示在这里
   returnToTop: 返回首页

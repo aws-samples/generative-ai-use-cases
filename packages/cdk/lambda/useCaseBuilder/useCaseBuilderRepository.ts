@@ -8,6 +8,7 @@ import {
   ListUseCasesResponse,
   ListFavoriteUseCasesResponse,
   ListRecentlyUsedUseCasesResponse,
+  ListPublicUseCasesResponse,
 } from 'generative-ai-use-cases';
 import {
   DeleteCommand,
@@ -31,6 +32,17 @@ const dynamoDbDocument = DynamoDBDocumentClient.from(dynamoDb);
 // Actually, it becomes RECENTLY_USED_SAVE_LIMIT + 1 in some cases
 // See the updateRecentlyUsedUseCase function for details
 const RECENTLY_USED_SAVE_LIMIT = 100;
+
+// A shared use case (isShared) can be used by everyone who can sign in, so it
+// is listed as public, named like the public agents of the Agent Builder
+// (public-agents / public#{agentId}). The list is one small record per
+// shared use case: id=PUBLIC_LIST_ID,
+// dataType=`public#{sharedAt}#{useCaseId}`, useCaseId. It holds no content, so updating a use case needs no change here; the
+// content is read by useCaseId, as for favorites. The record carries
+// useCaseId, so it is also in the useCaseId index, where deleteUseCase finds
+// it and deletes it with the use case.
+const PUBLIC_LIST_ID = 'public-use-cases';
+const PUBLIC_DATA_TYPE_PREFIX = 'public#';
 
 const getUserIdFromKey = (key: string): string => {
   return key.split('#').slice(1).join('#');
@@ -197,6 +209,36 @@ const innerFindCommonsByUseCaseId = async (
   return (commons.Items || []) as UseCaseCommon[];
 };
 
+// The records that list a use case as public (normally zero or one)
+const innerFindPublicRecordsByUseCaseId = async (
+  useCaseId: string
+): Promise<UseCaseCommon[]> => {
+  const records = await dynamoDbDocument.send(
+    new QueryCommand({
+      TableName: USECASE_TABLE_NAME,
+      IndexName: USECASE_ID_INDEX_NAME,
+      KeyConditionExpression:
+        '#useCaseId = :useCaseId and begins_with(#dataType, :dataTypePrefix)',
+      ExpressionAttributeNames: {
+        '#useCaseId': 'useCaseId',
+        '#dataType': 'dataType',
+      },
+      ExpressionAttributeValues: {
+        ':useCaseId': useCaseId,
+        ':dataTypePrefix': PUBLIC_DATA_TYPE_PREFIX,
+      },
+    })
+  );
+
+  return (records.Items || []) as UseCaseCommon[];
+};
+
+const publicRecord = (useCaseId: string): UseCaseCommon => ({
+  id: PUBLIC_LIST_ID,
+  dataType: `${PUBLIC_DATA_TYPE_PREFIX}${Date.now()}#${useCaseId}`,
+  useCaseId,
+});
+
 export const createUseCase = async (
   userId: string,
   content: UseCaseContent
@@ -332,6 +374,20 @@ export const updateUseCase = async (
       },
     })
   );
+
+  // Use cases shared before the public list existed have no record yet.
+  // Saving one adds it, so it appears in the list from then on.
+  if (useCaseInTable.isShared) {
+    const records = await innerFindPublicRecordsByUseCaseId(useCaseId);
+    if (records.length === 0) {
+      await dynamoDbDocument.send(
+        new PutCommand({
+          TableName: USECASE_TABLE_NAME,
+          Item: publicRecord(useCaseId),
+        })
+      );
+    }
+  }
 };
 
 export const deleteUseCase = async (
@@ -469,21 +525,101 @@ export const toggleShared = async (
     return { isShared: false };
   }
 
+  const isShared = !useCaseInTable.isShared;
+  const records = await innerFindPublicRecordsByUseCaseId(useCaseId);
+
+  // Change the flag and the public list together
   await dynamoDbDocument.send(
-    new UpdateCommand({
-      TableName: USECASE_TABLE_NAME,
-      Key: {
-        id: useCaseInTable.id,
-        dataType: useCaseInTable.dataType,
-      },
-      UpdateExpression: 'set isShared = :isShared',
-      ExpressionAttributeValues: {
-        ':isShared': !useCaseInTable.isShared,
-      },
+    new TransactWriteCommand({
+      TransactItems: [
+        {
+          Update: {
+            TableName: USECASE_TABLE_NAME,
+            Key: {
+              id: useCaseInTable.id,
+              dataType: useCaseInTable.dataType,
+            },
+            UpdateExpression: 'set isShared = :isShared',
+            ExpressionAttributeValues: {
+              ':isShared': isShared,
+            },
+          },
+        },
+        ...(isShared
+          ? records.length === 0
+            ? [
+                {
+                  Put: {
+                    TableName: USECASE_TABLE_NAME,
+                    Item: publicRecord(useCaseId),
+                  },
+                },
+              ]
+            : []
+          : records.map((record) => ({
+              Delete: {
+                TableName: USECASE_TABLE_NAME,
+                Key: { id: record.id, dataType: record.dataType },
+              },
+            }))),
+      ],
     })
   );
 
-  return { isShared: !useCaseInTable.isShared };
+  return { isShared };
+};
+
+// Use cases shared by anyone (the public list), the most recently shared first
+export const listPublicUseCases = async (
+  userId: string,
+  _exclusiveStartKey?: string
+): Promise<ListPublicUseCasesResponse> => {
+  const exclusiveStartKey = _exclusiveStartKey
+    ? JSON.parse(Buffer.from(_exclusiveStartKey, 'base64').toString())
+    : undefined;
+  const records = await dynamoDbDocument.send(
+    new QueryCommand({
+      TableName: USECASE_TABLE_NAME,
+      KeyConditionExpression:
+        '#id = :id and begins_with(#dataType, :dataTypePrefix)',
+      ExpressionAttributeNames: {
+        '#id': 'id',
+        '#dataType': 'dataType',
+      },
+      ExpressionAttributeValues: {
+        ':id': PUBLIC_LIST_ID,
+        ':dataTypePrefix': PUBLIC_DATA_TYPE_PREFIX,
+      },
+      ScanIndexForward: false,
+      Limit: 30, // Number of public use cases per page
+      ExclusiveStartKey: exclusiveStartKey,
+    })
+  );
+  const useCaseIds = ((records.Items || []) as UseCaseCommon[]).map(
+    (r) => r.useCaseId
+  );
+
+  const [useCasesInTable, favorites] = await Promise.all([
+    innerFindUseCasesByUseCaseIds(useCaseIds),
+    innerFindCommonsByUserIdAndDataType(userId, 'favorite'),
+  ]);
+  const favoritesUseCaseIds = new Set(favorites.map((f) => f.useCaseId));
+
+  const useCasesAsOutput: UseCaseAsOutput[] = useCasesInTable
+    // The flag is the source of truth if a record is left behind
+    .filter((u) => u.isShared)
+    .map((u) => ({
+      ...u,
+      isFavorite: favoritesUseCaseIds.has(u.useCaseId),
+      isMyUseCase: getUserIdFromKey(u.id) === userId,
+    }));
+
+  return {
+    data: useCasesAsOutput,
+    lastEvaluatedKey: records.LastEvaluatedKey
+      ? Buffer.from(JSON.stringify(records.LastEvaluatedKey)).toString('base64')
+      : undefined,
+  };
 };
 
 export const listRecentlyUsedUseCases = async (

@@ -8,6 +8,7 @@ import { handler as deleteUseCaseHandler } from '../../useCaseBuilder/deleteUseC
 import { handler as toggleFavoriteHandler } from '../../useCaseBuilder/toggleFavorite';
 import { handler as toggleSharedHandler } from '../../useCaseBuilder/toggleShared';
 import { handler as listRecentlyUsedUseCasesHandler } from '../../useCaseBuilder/listRecentlyUsedUseCases';
+import { handler as listPublicUseCasesHandler } from '../../useCaseBuilder/listPublicUseCases';
 import { handler as updateRecentlyUsedUseCaseHandler } from '../../useCaseBuilder/updateRecentlyUsedUseCase';
 import { route } from '../../utils/http';
 
@@ -16,6 +17,7 @@ export const router = Router();
 router.get('/', route(listUseCasesHandler));
 router.get('/favorite', route(listFavoriteUseCasesHandler));
 router.get('/recent', route(listRecentlyUsedUseCasesHandler));
+router.get('/public', route(listPublicUseCasesHandler));
 router.put('/recent/:useCaseId', route(updateRecentlyUsedUseCaseHandler));
 router.get('/:useCaseId', route(getUseCaseHandler));
 router.post('/', route(createUseCaseHandler));

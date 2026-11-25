@@ -1232,6 +1232,7 @@ useCaseBuilder:
   modelNotFixedDescription: モデル選択の UI が表示され、ユーザーは自由にモデルを選択できます。
   myUseCases: マイユースケース
   noMyUseCases: マイユースケースがありません。
+  noPublicUseCases: 公開ユースケースはまだありません。
   noUpdateContent: 更新内容がありません
   noUserInput: ユースケースがユーザーの入力を受け付けていません。プロンプトテンプレートに placeholder を追加するか、ファイル添付を ON にしてください。
   notExistOrNotShared: このユースケースは存在しないか、共有されていないユースケースです。
@@ -1244,6 +1245,8 @@ useCaseBuilder:
     ユーザーの入力を受け付けないユースケースは作成できません。プロンプトテンプレートに Placeholder を定義するか、ファイル添付を ON
     にしてください。
   promptTemplatePlaceholder: プロントテンプレートの書き方については、「ヘルプ」か「サンプル集」をご覧ください。
+  publicUseCases: 公開ユースケース
+  publicUseCasesDescription: ユーザーが共有したユースケースです。このアプリケーションにログインできる全ユーザーが利用できます。
   recentlyUsed: 利用履歴
   resultPlaceholder: ここに結果が表示されます
   returnToTop: TOP画面に戻る

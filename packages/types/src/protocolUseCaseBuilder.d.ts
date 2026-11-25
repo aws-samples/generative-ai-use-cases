@@ -9,6 +9,7 @@ import { Pagination } from './protocol';
 export type ListUseCasesResponse = Pagination<UseCaseAsOutput>;
 export type ListFavoriteUseCasesResponse = Pagination<UseCaseAsOutput>;
 export type ListRecentlyUsedUseCasesResponse = Pagination<UseCaseAsOutput>;
+export type ListPublicUseCasesResponse = Pagination<UseCaseAsOutput>;
 
 export type GetUseCaseResponse = UseCaseAsOutput;
 

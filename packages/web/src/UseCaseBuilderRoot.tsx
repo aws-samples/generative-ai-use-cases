@@ -5,6 +5,7 @@ import {
   PiSwatches,
   PiListDashes,
   PiNotePencil,
+  PiUsers,
 } from 'react-icons/pi';
 import { Outlet, useLocation } from 'react-router-dom';
 import { ItemProps } from './components/Drawer';
@@ -39,6 +40,12 @@ const UseCaseBuilderRoot: React.FC = () => {
           label: t('useCaseBuilder.myUseCases'),
           to: `/use-case-builder/my-use-case`,
           icon: <PiListDashes />,
+          display: 'usecase' as const,
+        },
+        {
+          label: t('useCaseBuilder.publicUseCases'),
+          to: `/use-case-builder/public`,
+          icon: <PiUsers />,
           display: 'usecase' as const,
         },
         {

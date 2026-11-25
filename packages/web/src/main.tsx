@@ -46,6 +46,7 @@ import UseCaseBuilderRoot from './UseCaseBuilderRoot.tsx';
 import UseCaseBuilderExecutePage from './pages/useCaseBuilder/UseCaseBuilderExecutePage.tsx';
 import UseCaseBuilderSamplesPage from './pages/useCaseBuilder/UseCaseBuilderSamplesPage.tsx';
 import UseCaseBuilderMyUseCasePage from './pages/useCaseBuilder/UseCaseBuilderMyUseCasePage.tsx';
+import UseCaseBuilderPublicUseCasePage from './pages/useCaseBuilder/UseCaseBuilderPublicUseCasePage.tsx';
 import { optimizePromptEnabled } from './hooks/useOptimizePrompt';
 import GenerateDiagramPage from './pages/GenerateDiagramPage.tsx';
 import WriterPage from './pages/WriterPage.tsx';
@@ -277,6 +278,10 @@ const useCaseBuilderRoutes: RouteObject[] = [
   {
     path: `/use-case-builder/my-use-case`,
     element: <UseCaseBuilderMyUseCasePage />,
+  },
+  {
+    path: `/use-case-builder/public`,
+    element: <UseCaseBuilderPublicUseCasePage />,
   },
   {
     path: `/use-case-builder/new`,
