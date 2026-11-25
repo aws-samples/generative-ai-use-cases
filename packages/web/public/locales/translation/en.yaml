@@ -37,12 +37,15 @@ agent_builder:
   add_mcp_server_button: Add MCP Server
   add_mcp_servers_help: Click "Add MCP Server" to add tools and capabilities to your agent
   add_new_mcp_server: Add New MCP Server
+  add_skill: Add skill
   agent_chat: Agent Chat
   agent_cloned_successfully: Agent "{{name}}" cloned successfully!
   agent_created_successfully: Agent created successfully
   agent_deleted_successfully: Agent deleted successfully
   agent_not_found: Agent Not Found
   agent_updated_successfully: Agent updated successfully
+  agents: Agents
+  agents_using_skill: Agents using this skill
   all_categories: All
   arguments: Arguments
   arguments_help: Package name or command arguments (space-separated)
@@ -62,14 +65,19 @@ agent_builder:
   confirm_delete: Are you sure you want to delete this agent?
   create_agent: Create Agent
   create_first_agent_description: Create your first agent to get started
+  create_skill: Create skill
   create_your_first_agent: Create Your First Agent
   created_by: Created by
+  delete_skill: Delete skill
+  delete_skill_agents_affected: 'These agents will no longer use it:'
+  delete_skill_confirm: 'Delete the skill "{{name}}"?'
   describe_agent: Please explain the functions of the agent
   description: Description
   description_label: Description
   description_placeholder: Describe what your agent does...
   description_too_long: Description must be 500 characters or less
   edit_agent: Edit Agent
+  edit_skill: Edit skill
   editor: Editor
   enable_code_execution: Enabling code execution
   enable_web_search: Enabling web search
@@ -81,6 +89,7 @@ agent_builder:
   environment_variables_label: Environment Variables
   example_github: GitHub
   export: Export
+  export_failed: Could not read the skills of this agent, so the file was not written. Try again.
   external: External
   external_agent_description: Pre-configured external agents with specialized capabilities
   external_agents: External Agents
@@ -98,6 +107,8 @@ agent_builder:
   import: Import
   import_failed: Could not read that file as an agent definition
   import_model_unavailable: 'The model in the file ({{modelId}}) is not available here, so the first available model was selected instead'
+  import_skills_added: 'Added {{count}} skills from the file to your skills: {{names}}. They stay in your skills even if you leave without saving.'
+  import_skills_failed: Some skills in the file could not be added to your skills. Check the Skills section before saving.
   loading_agent: Loading agent...
   mcp_server_configuration: MCP Server Configuration
   mcp_server_description: >-
@@ -109,14 +120,17 @@ agent_builder:
   my_agents: My Agents
   name: Name
   name_too_long: Agent name must be 100 characters or less
+  no_agents_using_skill: No agents use this skill yet.
   no_agents_yet: No agents yet
   no_external_agents_available: No external agents available
   no_favorite_agents_yet: No favorite agents yet
+  no_matching_skills: No skills match your search.
   no_mcp_servers: No MCP servers configured
   no_mcp_servers_available: No MCP servers are currently available.
   no_mcp_servers_match_filter: No MCP servers match your current filter.
   no_mcp_servers_selected: No MCP servers selected. Your agent will have basic functionality only.
   no_public_agents_available: No public agents available
+  no_skills_yet: No skills yet. Create one to give your agents instructions they can reuse.
   overwrite_confirm: Overwrite
   overwrite_prompt_message: A system prompt already exists. Do you want to overwrite it with AI-generated prompt?
   overwrite_prompt_title: Overwrite System Prompt Confirmation
@@ -129,8 +143,11 @@ agent_builder:
     The agent is visible to all users, but you cannot modify the original.
   quick_examples: Quick Examples
   quick_examples_title: Quick Examples
+  remove_deleted_skills: Remove the deleted skills to save the agent.
+  remove_skill: Remove skill
   search_agents: Search agents...
   search_mcp_servers: Search MCP servers...
+  search_skills: Search skills
   security_notice: Security Notice
   security_notice_description: >-
     Only uvx command is allowed. External network access is restricted for
@@ -146,6 +163,26 @@ agent_builder:
   server_name_placeholder: e.g., github-mcp-server
   share_publicly: Share publicly
   showing_results: Showing {{start}}-{{end}} of {{total}} results
+  skill_character_count: '{{length}} / {{max}}'
+  skill_delete_failed: Failed to delete the skill
+  skill_deleted: This skill was deleted
+  skill_description: Description
+  skill_description_hint: When the agent should use this skill. The agent always sees it and decides from it.
+  skill_description_placeholder: Use when writing the weekly report
+  skill_descriptions_over_limit: Remove skills or shorten their descriptions to save the agent.
+  skill_descriptions_total: 'Descriptions: {{total}} / {{max}} characters'
+  skill_instructions: Instructions
+  skill_instructions_hint: Markdown. The agent reads it only when it uses the skill.
+  skill_instructions_placeholder: Steps, rules and examples for the task
+  skill_name: Name
+  skill_name_hint: Lowercase letters, digits and hyphens, such as weekly-report. The agent calls the skill by this name.
+  skill_not_found: Skill not found
+  skill_preview: Preview
+  skill_preview_empty: The instructions will be shown here.
+  skill_save_failed: Failed to save the skill
+  skills: Skills
+  skills_description: The agent sees the name and description of each skill, and reads its instructions when a task needs them.
+  skills_page_description: Skills are instructions that agents read only when a task needs them. Write a procedure once and give it to several agents.
   start_chatting_with: Start chatting with {{name}}
   system_prompt: System Prompt
   tags: Tags

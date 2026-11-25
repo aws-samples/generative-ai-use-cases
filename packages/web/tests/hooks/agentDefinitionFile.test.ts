@@ -7,6 +7,8 @@ import { describe, it, expect } from 'vitest';
 import {
   toPortableAgent,
   fromPortableAgent,
+  planSkillImport,
+  isImportCandidate,
   agentFileName,
   applyImportedAgent,
 } from '../../src/utils/agentDefinitionFile';
@@ -187,5 +189,116 @@ describe('filling the form from an import', () => {
     });
     expect(result.form.modelId).toBe(available[0]);
     expect(result.unavailableModelId).toBeNull();
+  });
+});
+
+describe('skills in the file', () => {
+  const skill = (name: string, instructions = 'Do it this way.') => ({
+    name,
+    description: `Use for ${name}`,
+    instructions,
+  });
+
+  it('writes the skills with their content, and nothing else about them', () => {
+    const written = toPortableAgent(complete, [
+      { ...skill('weekly-report'), skillId: 's1' } as never,
+    ]);
+    expect(written.skills).toEqual([skill('weekly-report')]);
+  });
+
+  it('leaves the field out for an agent without skills', () => {
+    expect(toPortableAgent(complete)).not.toHaveProperty('skills');
+    expect(toPortableAgent(complete, [])).not.toHaveProperty('skills');
+  });
+
+  it('reads back the skills it wrote', () => {
+    const file = JSON.parse(
+      JSON.stringify(toPortableAgent(complete, [skill('weekly-report')]))
+    );
+    expect(fromPortableAgent(file).skills).toEqual([skill('weekly-report')]);
+  });
+
+  it('tells a file without skills apart from one with none', () => {
+    expect(fromPortableAgent({ name: 'A' })).not.toHaveProperty('skills');
+    expect(fromPortableAgent({ name: 'A', skills: [] }).skills).toEqual([]);
+  });
+
+  it('drops skills this deployment would refuse, and repeated names', () => {
+    const read = fromPortableAgent({
+      name: 'A',
+      skills: [
+        skill('ok'),
+        skill('Not-Valid'),
+        { name: 'no-text', description: 'x' },
+        { ...skill('blank'), instructions: '   ' },
+        { ...skill('too-long'), description: 'x'.repeat(1025) },
+        'not a skill',
+        skill('ok', 'A second one with the same name'),
+      ],
+    });
+    expect(read.skills).toEqual([skill('ok')]);
+  });
+
+  describe('planSkillImport', () => {
+    const mine = [
+      { skillId: 's1', name: 'same' },
+      { skillId: 's2', name: 'changed' },
+      { skillId: 's3', name: 'changed-2' },
+    ];
+    const contents = [skill('same'), skill('changed', 'Old way.')];
+
+    it('reuses a skill with the same name and content, and creates new ones', () => {
+      expect(
+        planSkillImport([skill('same'), skill('fresh')], mine, contents)
+      ).toEqual([
+        { kind: 'reuse', skillId: 's1', name: 'same' },
+        { kind: 'create', skill: skill('fresh') },
+      ]);
+    });
+
+    it('never overwrites a skill whose content differs: it takes a free name', () => {
+      expect(
+        planSkillImport([skill('changed', 'New way.')], mine, contents)
+      ).toEqual([
+        {
+          kind: 'create',
+          skill: { ...skill('changed', 'New way.'), name: 'changed-3' },
+        },
+      ]);
+    });
+
+    it('reuses a copy made by an earlier import, so importing again adds nothing', () => {
+      expect(
+        planSkillImport(
+          [skill('changed', 'New way.')],
+          [...mine, { skillId: 's4', name: 'changed-3' }],
+          [...contents, { ...skill('changed', 'New way.'), name: 'changed-3' }]
+        )
+      ).toEqual([{ kind: 'reuse', skillId: 's4', name: 'changed-3' }]);
+    });
+
+    it('does not take a skill of another name for a copy', () => {
+      expect(isImportCandidate('changed-2', 'changed')).toBe(true);
+      expect(isImportCandidate('changed', 'changed')).toBe(true);
+      expect(isImportCandidate('other-2', 'changed')).toBe(false);
+      expect(isImportCandidate('changed-two', 'changed')).toBe(false);
+      expect(isImportCandidate('c-2', 'changed')).toBe(false);
+      // A long name cut short for the number still counts
+      const long = 'a'.repeat(63) + 'b';
+      expect(isImportCandidate('a'.repeat(62) + '-2', long)).toBe(true);
+    });
+
+    it('keeps a new name within 64 characters and valid', () => {
+      const long = 'a'.repeat(63) + 'b';
+      const [step] = planSkillImport(
+        [skill(long, 'Different.')],
+        [{ skillId: 's9', name: long }],
+        [skill(long)]
+      );
+      expect(step).toEqual({
+        kind: 'create',
+        skill: { ...skill(long, 'Different.'), name: 'a'.repeat(62) + '-2' },
+      });
+    });
   });
 });

@@ -6,9 +6,14 @@ import InputText from '../InputText';
 import Textarea from '../Textarea';
 import Select from '../Select';
 import MCPServerManager from './MCPServerManager';
+import SkillSelector from './SkillSelector';
+import { skillsOfAgent } from '../../utils/agentSkills';
+import { useSkillList } from '../../hooks/agentBuilder/useAgentSkills';
+import { AGENT_SKILL_DESCRIPTIONS_TOTAL_MAX_LENGTH } from '@generative-ai-use-cases/common';
 import ModalDialog from '../ModalDialog';
 import { MODELS } from '../../hooks/useModel';
 import { AgentConfiguration } from 'generative-ai-use-cases';
+import { toAgentFormData } from '../../utils/agentDraft';
 import usePromptGeneration from '../../hooks/usePromptGeneration';
 import useMCPServers from '../../hooks/useMCPServers';
 import { PiSparkle, PiStop } from 'react-icons/pi';
@@ -21,6 +26,7 @@ export interface AgentFormData {
   mcpServers: string[];
   codeExecutionEnabled: boolean;
   webSearchEnabled: boolean;
+  skillIds: string[];
   isPublic: boolean;
   tags: string[];
 }
@@ -33,6 +39,9 @@ interface AgentFormProps {
   loading?: boolean;
   error?: string;
   isEditMode?: boolean;
+  // Passed to the skills section (see SkillSelector)
+  skillReturnTo?: string;
+  onOpenSkill?: () => void;
 }
 
 const AgentForm: React.FC<AgentFormProps> = ({
@@ -43,6 +52,8 @@ const AgentForm: React.FC<AgentFormProps> = ({
   loading = false,
   error,
   isEditMode = false,
+  skillReturnTo,
+  onOpenSkill,
 }) => {
   const { t } = useTranslation();
   const { modelIds: availableModels, modelDisplayName } = MODELS;
@@ -75,21 +86,17 @@ const AgentForm: React.FC<AgentFormProps> = ({
   );
 
   // Form state
-  const [formData, setFormData] = useState<AgentFormData>({
-    name: '',
-    description: '',
-    systemPrompt: '',
-    modelId:
-      availableModels[0] || 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
-    mcpServers: [],
-    codeExecutionEnabled: false,
-    webSearchEnabled: false,
-    isPublic: false,
-    tags: [],
-  });
+  const [formData, setFormData] = useState<AgentFormData>(() =>
+    toAgentFormData(
+      {},
+      availableModels[0] || 'us.anthropic.claude-3-5-sonnet-20241022-v2:0'
+    )
+  );
 
   const [tagsInput, setTagsInput] = useState('');
   const [showOverwriteDialog, setShowOverwriteDialog] = useState(false);
+
+  const { skills, isLoading: isLoadingSkills } = useSkillList();
 
   // Load available MCP servers using the shared hook
   const availableMCPServers = useMCPServers();
@@ -150,17 +157,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
   // Load initial data when provided
   useEffect(() => {
     if (initialData) {
-      setFormData({
-        name: initialData.name || '',
-        description: initialData.description || '',
-        systemPrompt: initialData.systemPrompt || '',
-        modelId: initialData.modelId || availableModels[0] || '',
-        mcpServers: initialData.mcpServers || [],
-        codeExecutionEnabled: initialData.codeExecutionEnabled || false,
-        webSearchEnabled: initialData.webSearchEnabled || false,
-        isPublic: initialData.isPublic || false,
-        tags: initialData.tags || [],
-      });
+      setFormData(toAgentFormData(initialData, availableModels[0] || ''));
       setTagsInput((initialData.tags || []).join(', '));
     }
   }, [initialData, availableModels]);
@@ -223,8 +220,22 @@ const AgentForm: React.FC<AgentFormProps> = ({
   const isGenerateDisabled =
     !formData.name.trim() || !formData.description.trim() || loading;
 
+  // The API refuses skills that were deleted or that go over the limit
+  const skillsAreValid = useMemo(() => {
+    if (formData.skillIds.length === 0) return true;
+    if (isLoadingSkills) return false;
+    const { missingIds, total } = skillsOfAgent(skills, formData.skillIds);
+    return (
+      missingIds.length === 0 &&
+      total <= AGENT_SKILL_DESCRIPTIONS_TOTAL_MAX_LENGTH
+    );
+  }, [formData.skillIds, skills, isLoadingSkills]);
+
   const isFormValid =
-    formData.name && formData.systemPrompt && formData.modelId;
+    formData.name &&
+    formData.systemPrompt &&
+    formData.modelId &&
+    skillsAreValid;
 
   return (
     <div className="space-y-6">
@@ -368,6 +379,19 @@ const AgentForm: React.FC<AgentFormProps> = ({
           </div>
         </div>
       </ModalDialog>
+
+      {/* Skills */}
+      <div className="rounded-lg border bg-white p-6">
+        <SkillSelector
+          skills={skills}
+          isLoading={isLoadingSkills}
+          skillIds={formData.skillIds}
+          onChange={(skillIds) => setFormData({ ...formData, skillIds })}
+          disabled={loading}
+          returnTo={skillReturnTo}
+          onOpenSkill={onOpenSkill}
+        />
+      </div>
 
       {/* MCP Server Configuration */}
       <div className="rounded-lg border bg-white p-6">

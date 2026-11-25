@@ -1,6 +1,9 @@
 import useChat from './useChat';
 import useAgentCoreApi from './useAgentCoreApi';
-import { AgentCoreRuntimeRequest } from 'generative-ai-use-cases';
+import {
+  AgentCoreRuntimeRequest,
+  AgentSkillContent,
+} from 'generative-ai-use-cases';
 import {
   AgentCoreConfiguration,
   UnrecordedMessage,
@@ -57,7 +60,8 @@ const useAgentCore = (id: string) => {
     agentId?: string,
     modelId?: string, // Add modelId parameter
     codeExecutionEnabled?: boolean, // Add codeExecutionEnabled parameter
-    webSearchEnabled?: boolean // Add webSearchEnabled parameter
+    webSearchEnabled?: boolean, // Add webSearchEnabled parameter
+    skills?: AgentSkillContent[]
   ) => {
     // Use provided modelId or fall back to current model ID
     const targetModelId = modelId || getModelId();
@@ -113,6 +117,7 @@ const useAgentCore = (id: string) => {
       agentId,
       codeExecutionEnabled,
       webSearchEnabled,
+      skills,
     };
 
     await postMessage(request);

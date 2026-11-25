@@ -8,6 +8,7 @@ import {
   ClonedAgentResponse,
 } from 'generative-ai-use-cases';
 import * as agentRepository from '../repositories/agent-repository';
+import { checkSkillsOfAgent } from './skill-service';
 import { getUserEmail } from '../utils/auth-utils';
 import {
   NotFoundError,
@@ -30,6 +31,7 @@ function convertToAgentConfiguration(
     modelId: agent.modelId,
     codeExecutionEnabled: agent.codeExecutionEnabled || false,
     webSearchEnabled: agent.webSearchEnabled || false,
+    skillIds: agent.skillIds || [],
     isPublic: agent.isPublic || false,
     shareId: undefined, // Not available in AgentAsOutput
     createdAt: agent.createdAt,
@@ -53,6 +55,8 @@ export async function createAgent(
   // MCP server names (no sanitization needed for string array)
   const mcpServerNames = request.mcpServers || [];
 
+  const skillIds = await checkSkillsOfAgent(userId, request.skillIds || []);
+
   // Get user email from Cognito
   const userEmail = await getUserEmail(userId);
 
@@ -64,6 +68,7 @@ export async function createAgent(
     modelId: request.modelId,
     codeExecutionEnabled: request.codeExecutionEnabled ?? false,
     webSearchEnabled: request.webSearchEnabled ?? false,
+    skillIds,
     isPublic: request.isPublic ?? false,
     tags: (request.tags || [])
       .map((tag) => tag.trim())
@@ -110,6 +115,12 @@ export async function updateAgent(
   // MCP server names
   const mcpServerNames = request.mcpServers || existingAgent.mcpServers;
 
+  // Only the creator can update an agent, so the skills must be theirs
+  const skillIds = await checkSkillsOfAgent(
+    userId,
+    request.skillIds ?? existingAgent.skillIds ?? []
+  );
+
   // Get user email from Cognito if not provided in request
   const userEmail = request.createdByEmail || (await getUserEmail(userId));
 
@@ -126,6 +137,7 @@ export async function updateAgent(
         false,
       webSearchEnabled:
         request.webSearchEnabled ?? existingAgent.webSearchEnabled ?? false,
+      skillIds,
       tags:
         request.tags
           ?.map((tag) => tag.trim())
@@ -304,6 +316,9 @@ export async function cloneAgent(
     mcpServers: sourceAgent.mcpServers || [],
     codeExecutionEnabled: sourceAgent.codeExecutionEnabled || false,
     webSearchEnabled: sourceAgent.webSearchEnabled || false,
+    // Skills belong to the agent's creator, so only a copy of one's own agent
+    // keeps them
+    skillIds: sourceAgent.isMyAgent ? sourceAgent.skillIds || [] : [],
     tags: sourceAgent.tags || [],
     isPublic: false, // Cloned agents are private by default
   });
@@ -321,6 +336,7 @@ export async function cloneAgent(
     mcpServers: newAgent.mcpServers,
     codeExecutionEnabled: newAgent.codeExecutionEnabled,
     webSearchEnabled: newAgent.webSearchEnabled,
+    skillIds: newAgent.skillIds || [],
     tags: newAgent.tags,
     isPublic: newAgent.isPublic,
     createdAt: newAgent.createdAt,

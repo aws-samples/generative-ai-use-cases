@@ -15,6 +15,7 @@ import { router as meetingMinutesRouter } from '../../../lambda/api/routes/meeti
 import { router as transcribeRouter } from '../../../lambda/api/routes/transcribe';
 import { router as agentBuilderRouter } from '../../../lambda/api/routes/agentBuilder';
 import * as agentHandlers from '../../../lambda/agentBuilder/handlers/agent-handlers';
+import * as skillHandlers from '../../../lambda/agentBuilder/handlers/skill-handlers';
 import * as repository from '../../../lambda/repository';
 import * as videoRepository from '../../../lambda/repositoryVideoJob';
 import * as useCaseRepository from '../../../lambda/useCaseBuilder/useCaseBuilderRepository';
@@ -30,6 +31,7 @@ jest.mock('../../../lambda/useCaseBuilder/useCaseBuilderRepository');
 jest.mock('../../../lambda/meetingMinutes/repository');
 jest.mock('uuid', () => ({ v4: () => 'test-uuid' }));
 jest.mock('../../../lambda/agentBuilder/handlers/agent-handlers');
+jest.mock('../../../lambda/agentBuilder/handlers/skill-handlers');
 
 const mockTranscribeSend = jest.fn();
 jest.mock('@aws-sdk/client-transcribe', () => {
@@ -599,6 +601,112 @@ const cases: Case[] = [
     status: 200,
     responseBody: JSON.stringify({ agentId: 'a1' }),
     calls: [[agentHandlers.handleGetAgent, ['alice', 'a1']]],
+  },
+  {
+    // Not read as GET /agents/:agentId with the agent ID "skills"
+    name: 'GET /agents/skills',
+    mount: agents,
+    method: 'GET',
+    path: '/agents/skills',
+    setup: () =>
+      mock(skillHandlers.handleListSkills).mockResolvedValue({
+        statusCode: 200,
+        body: JSON.stringify({ skills: [] }),
+      }),
+    status: 200,
+    responseBody: JSON.stringify({ skills: [] }),
+    calls: [[skillHandlers.handleListSkills, ['alice']]],
+  },
+  {
+    name: 'POST /agents/skills',
+    mount: agents,
+    method: 'POST',
+    path: '/agents/skills',
+    body: { name: 'report' },
+    setup: () =>
+      mock(skillHandlers.handleCreateSkill).mockResolvedValue({
+        statusCode: 201,
+        body: JSON.stringify({ skillId: 's1' }),
+      }),
+    status: 201,
+    responseBody: JSON.stringify({ skillId: 's1' }),
+    calls: [[skillHandlers.handleCreateSkill, ['alice', { name: 'report' }]]],
+  },
+  {
+    // Not read as GET /agents/skills/:skillId with the skill ID "contents"
+    name: 'GET /agents/skills/contents',
+    mount: agents,
+    method: 'GET',
+    path: '/agents/skills/contents',
+    query: { skillIds: 's1,s2' },
+    setup: () =>
+      mock(skillHandlers.handleListSkillContents).mockResolvedValue({
+        statusCode: 200,
+        body: JSON.stringify({ skills: [] }),
+      }),
+    status: 200,
+    responseBody: JSON.stringify({ skills: [] }),
+    calls: [[skillHandlers.handleListSkillContents, ['alice', ['s1', 's2']]]],
+  },
+  {
+    name: 'GET /agents/skills/:skillId',
+    mount: agents,
+    method: 'GET',
+    path: '/agents/skills/s1',
+    setup: () =>
+      mock(skillHandlers.handleGetSkill).mockResolvedValue({
+        statusCode: 200,
+        body: JSON.stringify({ skillId: 's1' }),
+      }),
+    status: 200,
+    responseBody: JSON.stringify({ skillId: 's1' }),
+    calls: [[skillHandlers.handleGetSkill, ['alice', 's1']]],
+  },
+  {
+    name: 'PUT /agents/skills/:skillId',
+    mount: agents,
+    method: 'PUT',
+    path: '/agents/skills/s1',
+    body: { name: 'report' },
+    setup: () =>
+      mock(skillHandlers.handleUpdateSkill).mockResolvedValue({
+        statusCode: 200,
+        body: JSON.stringify({ skillId: 's1' }),
+      }),
+    status: 200,
+    responseBody: JSON.stringify({ skillId: 's1' }),
+    calls: [
+      [skillHandlers.handleUpdateSkill, ['alice', 's1', { name: 'report' }]],
+    ],
+  },
+  {
+    // Not read as DELETE /agents/:agentId
+    name: 'DELETE /agents/skills/:skillId',
+    mount: agents,
+    method: 'DELETE',
+    path: '/agents/skills/s1',
+    setup: () =>
+      mock(skillHandlers.handleDeleteSkill).mockResolvedValue({
+        statusCode: 200,
+        body: JSON.stringify({ success: true }),
+      }),
+    status: 200,
+    responseBody: JSON.stringify({ success: true }),
+    calls: [[skillHandlers.handleDeleteSkill, ['alice', 's1']]],
+  },
+  {
+    name: 'GET /agents/:agentId/skills',
+    mount: agents,
+    method: 'GET',
+    path: '/agents/a1/skills',
+    setup: () =>
+      mock(skillHandlers.handleListSkillsOfAgent).mockResolvedValue({
+        statusCode: 200,
+        body: JSON.stringify({ skills: [] }),
+      }),
+    status: 200,
+    responseBody: JSON.stringify({ skills: [] }),
+    calls: [[skillHandlers.handleListSkillsOfAgent, ['alice', 'a1']]],
   },
 ];
 

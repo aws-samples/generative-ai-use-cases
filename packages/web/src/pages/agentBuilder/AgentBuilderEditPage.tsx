@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Button from '../../components/Button';
 import AgentForm, {
   AgentFormData,
 } from '../../components/agentBuilder/AgentForm';
+import useLeaveGuard from '../../hooks/useLeaveGuard';
 import AgentTester from '../../components/agentBuilder/AgentTester';
 import { useAgentBuilder } from '../../hooks/agentBuilder/useAgentBuilder';
 import useAgentBuilderList from '../../hooks/agentBuilder/useAgentBuilderList';
@@ -21,17 +22,30 @@ import {
   ImportedAgentForm,
 } from '../../utils/agentDefinitionFile';
 import { MODELS } from '../../hooks/useModel';
+import {
+  agentDraftKey,
+  saveAgentDraft,
+  takeAgentDraft,
+  toAgentFormData,
+} from '../../utils/agentDraft';
+import {
+  useSkillApi,
+  useSkillList,
+} from '../../hooks/agentBuilder/useAgentSkills';
 
 const AgentBuilderEditPage: React.FC = () => {
   const { t } = useTranslation();
   const { agentId } = useParams<{ agentId?: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Single agent state management (for loading existing agent)
   const { agent, loading, error } = useAgentBuilder(agentId);
 
   // List operations (for create/update with optimistic updates)
   const { createAgent, updateAgent } = useAgentBuilderList();
+  const { mutate: mutateSkills } = useSkillList();
+  const { importSkills } = useSkillApi();
 
   const isEditMode = Boolean(agentId);
   const [currentFormData, setCurrentFormData] = useState<AgentFormData | null>(
@@ -44,7 +58,18 @@ const AgentBuilderEditPage: React.FC = () => {
   // An imported definition stands in for the loaded one, so the form fills
   // itself from the file rather than the user retyping it. Kept in state so
   // it survives until they save or leave.
-  const [imported, setImported] = useState<ImportedAgentForm | null>(null);
+  //
+  // Coming back from a skill page, the form starts from the draft kept when
+  // the user left (with a skill they just created added), not the saved agent.
+  const [imported, setImported] = useState<ImportedAgentForm | null>(() => {
+    const draft = takeAgentDraft<ImportedAgentForm>(agentDraftKey(agentId));
+    if (!draft) return null;
+    const added = (location.state as { addedSkillId?: string } | null)
+      ?.addedSkillId;
+    return added && !draft.skillIds.includes(added)
+      ? { ...draft, skillIds: [...draft.skillIds, added] }
+      : draft;
+  });
   const [importError, setImportError] = useState<string | null>(null);
   const [importNotice, setImportNotice] = useState<string | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -56,28 +81,62 @@ const AgentBuilderEditPage: React.FC = () => {
       // a change and the second import would go unnoticed.
       event.target.value = '';
       if (!file) return;
+      let portable;
       try {
-        const { form, unavailableModelId } = applyImportedAgent({
-          portable: fromPortableAgent(JSON.parse(await file.text())),
-          // Sharing settings stay with the agent being edited, not the file.
-          current: currentFormData ?? agent,
-          availableModels: MODELS.modelIds,
-        });
-        setImported(form);
-        setImportError(null);
-        setImportNotice(
-          unavailableModelId
-            ? t('agent_builder.import_model_unavailable', {
-                modelId: unavailableModelId,
-              })
-            : null
-        );
+        portable = fromPortableAgent(JSON.parse(await file.text()));
       } catch {
         setImportError(t('agent_builder.import_failed'));
         setImportNotice(null);
+        return;
       }
+      const { form, unavailableModelId } = applyImportedAgent({
+        portable,
+        // Sharing settings stay with the agent being edited, not the file.
+        current: currentFormData ?? agent,
+        availableModels: MODELS.modelIds,
+      });
+      const notices = unavailableModelId
+        ? [
+            t('agent_builder.import_model_unavailable', {
+              modelId: unavailableModelId,
+            }),
+          ]
+        : [];
+      setImportError(null);
+
+      // The skills in the file become the user's own skills, then the agent's
+      if (portable.skills) {
+        const { skillIds, created, failed } = await importSkills(
+          portable.skills
+        );
+        form.skillIds = skillIds;
+        if (failed) setImportError(t('agent_builder.import_skills_failed'));
+        if (created.length > 0) {
+          notices.push(
+            t('agent_builder.import_skills_added', {
+              count: created.length,
+              names: created.join(', '),
+            })
+          );
+          await mutateSkills();
+        }
+      }
+
+      setImported(form);
+      setImportNotice(notices.length > 0 ? notices.join(' ') : null);
     },
-    [t, currentFormData, agent]
+    [t, currentFormData, agent, importSkills, mutateSkills]
+  );
+
+  // Unsaved: the form differs from the saved agent (an import or a draft
+  // brought back from a skill page counts). Opening a skill keeps the draft,
+  // so skill pages are let through.
+  const unsaved =
+    !!currentFormData &&
+    JSON.stringify(currentFormData) !==
+      JSON.stringify(toAgentFormData(agent ?? {}, MODELS.modelIds[0] || ''));
+  const guard = useLeaveGuard(unsaved, (path) =>
+    path.startsWith('/agent-builder/skills')
   );
 
   const handleSave = useCallback(
@@ -91,11 +150,13 @@ const AgentBuilderEditPage: React.FC = () => {
           mcpServers: formData.mcpServers as string[], // Explicit type assertion
           codeExecutionEnabled: formData.codeExecutionEnabled,
           webSearchEnabled: formData.webSearchEnabled,
+          skillIds: formData.skillIds,
           isPublic: formData.isPublic,
           tags: formData.tags,
           agentId,
         });
         // Navigate back to agent chat page after editing
+        guard.leave();
         navigate(`/agent-builder/${agentId}`);
       } else {
         console.log(
@@ -110,17 +171,19 @@ const AgentBuilderEditPage: React.FC = () => {
           mcpServers: formData.mcpServers as string[], // Explicit type assertion
           codeExecutionEnabled: formData.codeExecutionEnabled,
           webSearchEnabled: formData.webSearchEnabled,
+          skillIds: formData.skillIds,
           isPublic: formData.isPublic,
           tags: formData.tags,
         });
         if (newAgent) {
           console.log('Created agent:', JSON.stringify(newAgent, null, 2));
           // Navigate to agent list after creating new agent
+          guard.leave();
           navigate(`/agent-builder/${newAgent.agentId}`);
         }
       }
     },
-    [agentId, isEditMode, updateAgent, navigate, createAgent]
+    [agentId, isEditMode, updateAgent, navigate, createAgent, guard]
   ); // Remove function dependencies
 
   const handleCancel = useCallback(() => {
@@ -136,6 +199,13 @@ const AgentBuilderEditPage: React.FC = () => {
   const handleFormDataChange = useCallback((formData: AgentFormData) => {
     setCurrentFormData(formData);
   }, []);
+
+  // Keep what the user typed before a skill page replaces this one
+  const handleOpenSkill = useCallback(() => {
+    if (currentFormData) {
+      saveAgentDraft(agentDraftKey(agentId), currentFormData);
+    }
+  }, [currentFormData, agentId]);
 
   const title = isEditMode
     ? t('agent_builder.edit_agent')
@@ -175,6 +245,7 @@ const AgentBuilderEditPage: React.FC = () => {
 
   return (
     <div className="w-full px-8 py-8">
+      {guard.dialog}
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -255,6 +326,8 @@ const AgentBuilderEditPage: React.FC = () => {
             loading={loading}
             error={error || undefined}
             isEditMode={isEditMode}
+            skillReturnTo={location.pathname}
+            onOpenSkill={handleOpenSkill}
           />
         </div>
 
@@ -276,6 +349,7 @@ const AgentBuilderEditPage: React.FC = () => {
                       codeExecutionEnabled:
                         currentFormData.codeExecutionEnabled,
                       webSearchEnabled: currentFormData.webSearchEnabled,
+                      skillIds: currentFormData.skillIds,
                       isPublic: currentFormData.isPublic,
                       tags: currentFormData.tags,
                       isMyAgent: true,

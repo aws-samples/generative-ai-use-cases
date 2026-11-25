@@ -21,6 +21,7 @@ import Select from '../Select';
 import useDropOverlay from '../../hooks/useDropOverlay';
 import useAcceptedExtensions from '../../hooks/useAcceptedExtensions';
 import { agentCoreFileLimit } from '../../utils/fileLimit';
+import { useSkillsForChat } from '../../hooks/agentBuilder/useAgentSkills';
 
 interface AgentChatProps {
   agent: AgentConfiguration;
@@ -78,6 +79,9 @@ const AgentChatUnified: React.FC<AgentChatProps> = ({
 
   const [chatContent, setChatContent] = useState('');
   const [initialized, setInitialized] = useState(false);
+
+  // Sent with every message, so wait for them before the first one
+  const { skills, isLoading: skillsLoading } = useSkillsForChat(agent);
 
   // Get models from MODELS
   const { modelIds: availableModels, modelDisplayName } = MODELS;
@@ -141,7 +145,7 @@ Please respond as this agent with the specified behavior and personality.`;
   }, [accept]);
 
   const handleSendMessage = useCallback(async () => {
-    if (!chatContent.trim() || chatLoading) return;
+    if (!chatContent.trim() || chatLoading || skillsLoading) return;
 
     if (layout === 'fullscreen') {
       setFollowing(true);
@@ -179,7 +183,8 @@ Please respond as this agent with the specified behavior and personality.`;
         agent.agentId,
         modelId,
         agent.codeExecutionEnabled ?? false,
-        agent.webSearchEnabled ?? false
+        agent.webSearchEnabled ?? false,
+        skills
       );
 
       setChatContent('');
@@ -196,6 +201,8 @@ Please respond as this agent with the specified behavior and personality.`;
     agent,
     modelId,
     chatLoading,
+    skillsLoading,
+    skills,
     setFollowing,
     invokeAgentRuntime,
     getAgentBuilderRuntime,
@@ -278,7 +285,8 @@ Please respond as this agent with the specified behavior and personality.`;
           {/* Agent Capabilities */}
           {(agent.codeExecutionEnabled ||
             (webSearchEnabledByDeployment && agent.webSearchEnabled) ||
-            (agent.mcpServers && agent.mcpServers.length > 0)) && (
+            (agent.mcpServers && agent.mcpServers.length > 0) ||
+            skills.length > 0) && (
             <div className="flex flex-wrap justify-center gap-2">
               {/* Code Execution - only show when enabled */}
               {agent.codeExecutionEnabled && (
@@ -303,6 +311,16 @@ Please respond as this agent with the specified behavior and personality.`;
                     {serverName}
                   </span>
                 ))}
+
+              {/* Skills */}
+              {skills.map((skill) => (
+                <span
+                  key={skill.name}
+                  title={skill.description}
+                  className="inline-block rounded bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800">
+                  {skill.name}
+                </span>
+              ))}
             </div>
           )}
         </div>
@@ -408,7 +426,7 @@ Please respond as this agent with the specified behavior and personality.`;
           <div className="border-t border-gray-200 p-4">
             <InputChatContent
               content={chatContent}
-              disabled={chatLoading}
+              disabled={chatLoading || skillsLoading}
               onChangeContent={setChatContent}
               resetDisabled={chatIsEmpty}
               isEmpty={chatIsEmpty}
@@ -451,7 +469,7 @@ Please respond as this agent with the specified behavior and personality.`;
       <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-[var(--sidebar-w,16rem)] print:hidden">
         <InputChatContent
           content={chatContent}
-          disabled={chatLoading}
+          disabled={chatLoading || skillsLoading}
           onChangeContent={setChatContent}
           resetDisabled={chatIsEmpty}
           isEmpty={chatIsEmpty}

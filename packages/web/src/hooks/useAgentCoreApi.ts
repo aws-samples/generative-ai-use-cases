@@ -174,6 +174,7 @@ const useAgentCoreApi = (id: string) => {
           ...(req.webSearchEnabled !== undefined && {
             web_search_enabled: req.webSearchEnabled,
           }),
+          ...(req.skills && req.skills.length > 0 && { skills: req.skills }),
         };
 
         console.log(

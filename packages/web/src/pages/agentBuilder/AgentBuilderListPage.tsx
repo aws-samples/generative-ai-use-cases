@@ -26,6 +26,9 @@ import {
   toPortableAgent,
 } from '../../utils/agentDefinitionFile';
 import useAgentBuilderList from '../../hooks/agentBuilder/useAgentBuilderList';
+import AgentBuilderSwitch from '../../components/agentBuilder/AgentBuilderSwitch';
+import { useSkillApi } from '../../hooks/agentBuilder/useAgentSkills';
+import { toast } from 'sonner';
 
 export type AgentFilter = 'my' | 'favorites' | 'public' | 'external';
 
@@ -176,20 +179,41 @@ const AgentBuilderListPage: React.FC = () => {
     [cloneAgent]
   );
 
-  const handleExportAgent = useCallback((agent: AgentConfiguration) => {
-    const blob = new Blob([JSON.stringify(toPortableAgent(agent), null, 2)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = agentFileName(agent.name);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    setOpenDropdown(null);
-  }, []);
+  const { listSkillsOfAgent } = useSkillApi();
+
+  const handleExportAgent = useCallback(
+    async (agent: AgentConfiguration) => {
+      // The skills go into the file with their content, so the agent works
+      // the same for whoever imports it
+      let skills;
+      try {
+        skills =
+          (agent.skillIds ?? []).length > 0
+            ? await listSkillsOfAgent(agent.agentId)
+            : [];
+      } catch {
+        toast.error(t('agent_builder.export_failed'));
+        setOpenDropdown(null);
+        return;
+      }
+      const blob = new Blob(
+        [JSON.stringify(toPortableAgent(agent, skills), null, 2)],
+        {
+          type: 'application/json',
+        }
+      );
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = agentFileName(agent.name);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      setOpenDropdown(null);
+    },
+    [listSkillsOfAgent, t]
+  );
 
   const handleDeleteAgent = useCallback(
     async (agentId: string) => {
@@ -291,6 +315,10 @@ const AgentBuilderListPage: React.FC = () => {
             {t('agent_builder.create_agent')}
           </Button>
         </div>
+      </div>
+
+      <div className="flex justify-center">
+        <AgentBuilderSwitch current="agents" />
       </div>
 
       {/* Filter Tabs */}

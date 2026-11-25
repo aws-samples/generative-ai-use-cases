@@ -10,6 +10,15 @@ import {
   handleListFavoriteAgents,
   handleToggleAgentFavorite,
 } from '../../agentBuilder/handlers/agent-handlers';
+import {
+  handleCreateSkill,
+  handleDeleteSkill,
+  handleGetSkill,
+  handleListSkillContents,
+  handleListSkills,
+  handleListSkillsOfAgent,
+  handleUpdateSkill,
+} from '../../agentBuilder/handlers/skill-handlers';
 import { queryParams, requireUserName } from '../../utils/http';
 import {
   CreateAgentRequest,
@@ -51,6 +60,74 @@ const sendResult = (
   res.setHeader('Content-Type', 'application/json');
   res.status(result.statusCode).send(result.body || '{}');
 };
+
+// Skills. Registered before /:agentId so that "skills" is not read as an agent ID.
+router.get(
+  '/skills',
+  agentRoute(async (req, res) => {
+    sendResult(res, await handleListSkills(getUserId(req)));
+  })
+);
+
+router.post(
+  '/skills',
+  agentRoute(async (req, res) => {
+    sendResult(res, await handleCreateSkill(getUserId(req), req.body));
+  })
+);
+
+// The user's own skills by ID (?skillIds=a,b), for trying an unsaved agent
+router.get(
+  '/skills/contents',
+  agentRoute(async (req, res) => {
+    const { skillIds } = queryParams(req);
+    sendResult(
+      res,
+      await handleListSkillContents(
+        getUserId(req),
+        skillIds ? skillIds.split(',') : []
+      )
+    );
+  })
+);
+
+router.get(
+  '/skills/:skillId',
+  agentRoute(async (req, res) => {
+    sendResult(res, await handleGetSkill(getUserId(req), req.params.skillId));
+  })
+);
+
+router.put(
+  '/skills/:skillId',
+  agentRoute(async (req, res) => {
+    sendResult(
+      res,
+      await handleUpdateSkill(getUserId(req), req.params.skillId, req.body)
+    );
+  })
+);
+
+router.delete(
+  '/skills/:skillId',
+  agentRoute(async (req, res) => {
+    sendResult(
+      res,
+      await handleDeleteSkill(getUserId(req), req.params.skillId)
+    );
+  })
+);
+
+// The skills of an agent, for a chat with it
+router.get(
+  '/:agentId/skills',
+  agentRoute(async (req, res) => {
+    sendResult(
+      res,
+      await handleListSkillsOfAgent(getUserId(req), req.params.agentId)
+    );
+  })
+);
 
 // List public agents
 router.get(

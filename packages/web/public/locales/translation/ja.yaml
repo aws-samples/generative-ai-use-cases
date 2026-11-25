@@ -37,12 +37,15 @@ agent_builder:
   add_mcp_server_button: MCPサーバーを追加
   add_mcp_servers_help: 「MCPサーバーを追加」をクリックして、エージェントにツールと機能を追加します
   add_new_mcp_server: 新しいMCPサーバーを追加
+  add_skill: スキルを追加
   agent_chat: エージェントチャット
   agent_cloned_successfully: エージェント「{{name}}」が正常にクローンされました！
   agent_created_successfully: エージェントが正常に作成されました
   agent_deleted_successfully: エージェントが正常に削除されました
   agent_not_found: エージェントが見つかりません
   agent_updated_successfully: エージェントが正常に更新されました
+  agents: エージェント
+  agents_using_skill: このスキルを使っているエージェント
   all_categories: すべて
   arguments: 引数
   arguments_help: パッケージ名またはコマンド引数（スペース区切り）
@@ -63,14 +66,19 @@ agent_builder:
   confirm_delete: このエージェントを削除してもよろしいですか？
   create_agent: エージェントを作成
   create_first_agent_description: 最初のエージェントを作成して始めましょう
+  create_skill: スキルを作成
   create_your_first_agent: 最初のエージェントを作成
   created_by: 作成者
+  delete_skill: スキルを削除
+  delete_skill_agents_affected: '次のエージェントは、このスキルを使えなくなります:'
+  delete_skill_confirm: スキル「{{name}}」を削除しますか？
   describe_agent: エージェントの機能を説明してください
   description: 説明
   description_label: 説明
   description_placeholder: エージェントの機能を説明してください...
   description_too_long: 説明は500文字以下である必要があります
   edit_agent: エージェントを編集
+  edit_skill: スキルを編集
   editor: エディター
   enable_code_execution: コード実行を有効にする
   enable_web_search: Web検索を有効にする
@@ -82,6 +90,7 @@ agent_builder:
   environment_variables_label: 環境変数
   example_github: GitHub
   export: エクスポート
+  export_failed: このエージェントのスキルを読み込めなかったため、ファイルを書き出せませんでした。もう一度お試しください。
   external: 外部
   external_agent_description: 特別な機能を持つ事前設定済みの外部エージェント
   external_agents: 外部エージェント
@@ -98,6 +107,8 @@ agent_builder:
   import: インポート
   import_failed: エージェント定義として読み込めませんでした
   import_model_unavailable: 'ファイルのモデル（{{modelId}}）はこの環境では使えないため、利用可能な最初のモデルを選択しました'
+  import_skills_added: 'ファイルのスキルを {{count}} 個、あなたのスキルに追加しました: {{names}}。保存せずに離れても、スキルは残ります。'
+  import_skills_failed: ファイルのスキルの一部を、あなたのスキルに追加できませんでした。保存する前にスキルの欄を確認してください。
   loading_agent: エージェントを読み込み中...
   mcp_server_configuration: MCPサーバー設定
   mcp_server_description: エージェントに追加機能を提供するMCPサーバーを選択してください。これらのサーバーはセキュリティのため管理者によって事前設定されています。
@@ -107,14 +118,17 @@ agent_builder:
   my_agents: マイエージェント
   name: 名前
   name_too_long: エージェント名は100文字以下である必要があります
+  no_agents_using_skill: このスキルを使っているエージェントはまだありません。
   no_agents_yet: まだエージェントがありません
   no_external_agents_available: 利用可能な外部エージェントがありません
   no_favorite_agents_yet: まだお気に入りのエージェントがありません
+  no_matching_skills: 検索に合うスキルはありません。
   no_mcp_servers: MCPサーバーが設定されていません
   no_mcp_servers_available: 現在利用可能なMCPサーバーがありません。
   no_mcp_servers_match_filter: 現在のフィルターに一致するMCPサーバーがありません。
   no_mcp_servers_selected: MCPサーバーが選択されていません。エージェントは基本機能のみ利用できます。
   no_public_agents_available: 利用可能な公開エージェントがありません
+  no_skills_yet: スキルはまだありません。作ると、エージェントに繰り返し使う手順を渡せます。
   overwrite_confirm: 上書きする
   overwrite_prompt_message: すでにシステムプロンプトが入力されています。AIで生成したプロンプトで上書きしますか？
   overwrite_prompt_title: システムプロンプトの上書き確認
@@ -124,8 +138,11 @@ agent_builder:
     このエージェントを公開し、他のユーザーが発見して利用できるようにします。エージェントはすべてのユーザーに表示されますが、オリジナルを変更することはできません。
   quick_examples: クイック例
   quick_examples_title: クイック例
+  remove_deleted_skills: エージェントを保存するには、削除されたスキルを外してください。
+  remove_skill: スキルを外す
   search_agents: エージェントを検索...
   search_mcp_servers: MCPサーバーを検索...
+  search_skills: スキルを検索
   security_notice: セキュリティ通知
   security_notice_description: uvxコマンドのみ許可されています。セキュリティのため外部ネットワークアクセスは制限されています。
   security_restrictions: uvxコマンドのみ許可されています。セキュリティのため外部ネットワークアクセスは制限されています。
@@ -137,6 +154,26 @@ agent_builder:
   server_name_placeholder: 例：github-mcp-server
   share_publicly: 公開で共有
   showing_results: '{{total}}件中 {{start}}-{{end}}件を表示'
+  skill_character_count: '{{length}} / {{max}}'
+  skill_delete_failed: スキルを削除できませんでした
+  skill_deleted: このスキルは削除されました
+  skill_description: 説明
+  skill_description_hint: エージェントがいつこのスキルを使うか。エージェントは常にこの説明を見て、使うかを決めます。
+  skill_description_placeholder: 週報を書くときに使う
+  skill_descriptions_over_limit: エージェントを保存するには、スキルを外すか、説明を短くしてください。
+  skill_descriptions_total: '説明の合計: {{total}} / {{max}} 文字'
+  skill_instructions: 本文
+  skill_instructions_hint: Markdown。エージェントは、スキルを使うときだけ本文を読みます。
+  skill_instructions_placeholder: 作業の手順・決まりごと・例
+  skill_name: 名前
+  skill_name_hint: '英小文字・数字・ハイフン（例: weekly-report）。エージェントはこの名前でスキルを呼びます。'
+  skill_not_found: スキルが見つかりません
+  skill_preview: プレビュー
+  skill_preview_empty: 本文がここに表示されます。
+  skill_save_failed: スキルを保存できませんでした
+  skills: スキル
+  skills_description: エージェントは各スキルの名前と説明を見て、必要なときに本文を読みます。
+  skills_page_description: スキルは、エージェントが必要なときだけ読む手順です。一度書いた手順を、複数のエージェントに渡せます。
   start_chatting_with: '{{name}}とのチャットを開始'
   system_prompt: システムプロンプト
   tags: タグ

@@ -688,6 +688,16 @@ By specifying the Gateway ARN in `agentCoreGatewayArns`, an IAM policy following
 After configuration, use `mcp-proxy-for-aws` in the MCP settings to specify the endpoint.
 For details, refer to the [mcp-proxy-for-aws documentation](https://github.com/aws/mcp-proxy-for-aws).
 
+#### Skills
+
+In Agent Builder, users can give an Agent "skills". A skill is a name, a description and instructions (a procedure written in Markdown). No setting or additional resource is needed (skills are stored in the same DynamoDB table as the Agents).
+
+- The Agent always sees the names and descriptions of its skills, and loads the instructions of a skill only when a task needs them ([Skills in Strands Agents](https://strandsagents.com/docs/user-guide/sdk/plugins/skills/)). The instructions are not put in the system prompt every time, so long procedures do not weigh on ordinary conversations.
+- Skills are created from "Skills" at the top of the agent builder screen. One skill can be given to several Agents.
+- Limits: the name is up to 64 characters (lowercase letters, digits and hyphens), the description up to 1,024 characters and the instructions up to 50,000 characters. The descriptions of the skills of one Agent are up to 10,000 characters in total.
+- Only the creator can edit a skill. The instructions of the skills of a public Agent are also sent when other users use that Agent (in the same way as its system prompt). When a user clones another user's Agent, the skills are not carried over.
+- When an Agent is exported to a file, the name, description and instructions of its skills go into the file. Importing the file adds the skills to the importing user's skills. A skill with the same name and the same content is reused; when the content differs, the existing skill is not overwritten and the imported one is added under another name such as `name-2`.
+
 #### Enabling the Web Search Tool
 
 Enabling `agentBuilderWebSearchEnabled` adds a web search tool backed by the Web Search Tool of Amazon Bedrock AgentCore, and users can choose whether each Agent uses it.
