@@ -363,6 +363,8 @@ drawer:
 error:
   streamingError:
     ACCESS_DENIED: Mô hình được chọn chưa được kích hoạt. Vui lòng kích hoạt mô hình trong bảng điều khiển Amazon Bedrock.
+    ATTACHMENTS_TOO_LARGE: Tổng dung lượng tệp đính kèm trong cuộc trò chuyện này quá lớn để gửi cùng lúc (tối đa khoảng 22 MB). Các tệp đã đính kèm trước đó cũng được gửi lại mỗi lần và được tính vào tổng. Vui lòng bỏ hoặc thu nhỏ tệp đính kèm mới, hoặc bắt đầu cuộc trò chuyện mới.
+    ATTACHMENT_NOT_FOUND: Không thể đọc tệp đính kèm. Tệp có thể đã bị xóa. Vui lòng bắt đầu cuộc trò chuyện mới và đính kèm lại tệp.
     CONTEXT_TOO_LONG: Cuộc trò chuyện hoặc tệp đính kèm quá dài để mô hình đọc. Vui lòng giảm nội dung đính kèm (số trang, dòng hoặc trang tính) hoặc bắt đầu cuộc trò chuyện mới.
     DEPENDENCY_FAILED: Tài nguyên mà tác tử hoặc cơ sở tri thức gọi đến (chẳng hạn như hàm Lambda của nhóm hành động) đã gặp lỗi. Vui lòng kiểm tra cấu hình và nhật ký, sau đó thử lại.
     DOCUMENT_TOO_LARGE: Tài liệu quá lớn để gửi. Vui lòng chia nhỏ hoặc giảm nội dung tài liệu rồi thử lại.

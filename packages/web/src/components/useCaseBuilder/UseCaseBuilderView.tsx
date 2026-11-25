@@ -47,9 +47,8 @@ const ragEnabled: boolean = import.meta.env.VITE_APP_RAG_ENABLED === 'true';
 const ragKnowledgeBaseEnabled: boolean =
   import.meta.env.VITE_APP_RAG_KNOWLEDGE_BASE_ENABLED === 'true';
 
-// File size limits for UseCaseBuilder (Lambda route: API Gateway → Lambda → Bedrock Converse API)
-// - Lambda synchronous payload limit: 6MB
-// - File data is base64-encoded in the request, so max original file size ≈ 6MB / 1.33 ≈ 4.5MB
+// File size limits for UseCaseBuilder (Lambda route: browser → Lambda → Bedrock Converse API)
+// - Files are read from S3 by the Lambda function, as in the chat
 // - Match pages/ChatPage.tsx. If a difference occurs, update it
 const DEFAULT_MAX_IMAGE_COUNT = 20;
 
@@ -57,6 +56,7 @@ const baseFileLimit: FileLimit = {
   accept: AcceptedDotExtensions,
   maxFileCount: 5,
   maxFileSizeMB: 4.5,
+  maxPdfFileSizeMB: 20,
   maxImageFileCount: DEFAULT_MAX_IMAGE_COUNT,
   maxImageFileSizeMB: 3.75,
   maxVideoFileCount: 1,

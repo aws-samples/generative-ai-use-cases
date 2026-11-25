@@ -18,9 +18,9 @@ import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
 import useDropOverlay from '../hooks/useDropOverlay';
 
-// File size limits for Agent Chat (Lambda route: API Gateway → Lambda → Bedrock Agent)
-// - Lambda synchronous payload limit: 6MB
-// - File data is base64-encoded in the request, so max original file size ≈ 6MB / 1.33 ≈ 4.5MB
+// File size limits for Agent Chat (Lambda route: browser → Lambda → Bedrock Agent)
+// - Files are read from S3 by the Lambda function, as in the chat. The limits
+//   below are left as they were for Bedrock Agents
 const fileLimit: FileLimit = {
   accept: {
     doc: [

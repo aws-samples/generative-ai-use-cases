@@ -4,6 +4,8 @@ import api from './utils/api';
 import { defaultModel } from './utils/models';
 import { verifyToken } from './utils/auth';
 import { bedrockRequestMetadata } from './utils/requestMetadata';
+import { AttachmentError, resolveAttachments } from './utils/attachments';
+import { streamingChunk } from './utils/streamingChunk';
 
 declare global {
   namespace awslambda {
@@ -26,9 +28,25 @@ export const handler = awslambda.streamifyResponse(
     const userSub = event.idToken
       ? (await verifyToken(event.idToken))?.sub
       : undefined;
+    // The browser sends the S3 URL of each image and document; read them here
+    let messages = event.messages;
+    try {
+      messages = await resolveAttachments(event.messages, {
+        bucketName: process.env.BUCKET_NAME!,
+        region: process.env.AWS_REGION!,
+      });
+    } catch (e) {
+      if (!(e instanceof AttachmentError)) throw e;
+      console.error(e);
+      responseStream.write(
+        streamingChunk({ text: '', stopReason: 'error', errorCode: e.code })
+      );
+      responseStream.end();
+      return;
+    }
     for await (const token of api[model.type].invokeStream?.(
       model,
-      event.messages,
+      messages,
       event.id,
       event.idToken,
       bedrockRequestMetadata({ userSub, id: event.id })

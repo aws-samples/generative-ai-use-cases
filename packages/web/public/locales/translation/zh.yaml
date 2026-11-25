@@ -288,6 +288,8 @@ drawer:
 error:
   streamingError:
     ACCESS_DENIED: 所选模型尚未启用。请在 Amazon Bedrock 控制台中启用该模型。
+    ATTACHMENTS_TOO_LARGE: 本次对话中的附件总大小过大，无法一起发送（总计约 22 MB）。之前附加的文件每次也会一起发送，并计入总大小。请移除或缩小新的附件，或开始新的对话。
+    ATTACHMENT_NOT_FOUND: 无法读取附加的文件，可能已被删除。请开始新的对话并重新附加该文件。
     CONTEXT_TOO_LONG: 对话或附件过长，模型无法读取。请减少附件内容（页数、行数或工作表数）或开始新的对话。
     DEPENDENCY_FAILED: 代理或知识库调用的资源（例如操作组的 Lambda 函数）发生错误。请检查其配置和日志，然后重试。
     DOCUMENT_TOO_LARGE: 文档过大，无法发送。请拆分文档或减少内容后重试。
