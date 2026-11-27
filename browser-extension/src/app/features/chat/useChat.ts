@@ -53,6 +53,8 @@ const useChat = () => {
   return {
     messages,
     isEmptyMessages,
+    // The tab and the settings are loaded after the first render
+    isReady: tabId !== -1 && !!settings,
     sendMessage: async (promptSetting: PromptSetting, content: string, isReplace?: boolean) => {
       if (tabId === -1) {
         throw new Error('Tab IDが取得できませんでした');

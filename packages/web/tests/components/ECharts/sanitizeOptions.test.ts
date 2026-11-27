@@ -138,6 +138,32 @@ describe('sanitizeOptions', () => {
     expect(sanitizeOptions({ a: 'javascript:alert(1)' })).toEqual({});
   });
 
+  it('drops URLs nested in arrays and keeps the other items in place', () => {
+    expect(
+      sanitizeOptions({
+        series: [
+          {
+            markLine: { symbol: ['none', 'image://https://example.com/x.png'] },
+            itemStyle: {
+              decal: { symbol: ['rect', 'image://data:image/svg+xml,<svg/>'] },
+            },
+          },
+        ],
+        visualMap: { inRange: { symbol: ['circle', '//example.com/a.png'] } },
+        xAxis: { data: ['Jan', 'Feb'] },
+      })
+    ).toEqual({
+      series: [
+        {
+          markLine: { symbol: ['none', ''] },
+          itemStyle: { decal: { symbol: ['rect', ''] } },
+        },
+      ],
+      visualMap: { inRange: { symbol: ['circle', ''] } },
+      xAxis: { data: ['Jan', 'Feb'] },
+    });
+  });
+
   it('drops // protocol-relative URL', () => {
     expect(sanitizeOptions({ a: '//cdn.example.com/x.png' })).toEqual({});
   });

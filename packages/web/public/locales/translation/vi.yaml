@@ -37,6 +37,7 @@ auth:
   title: Generative AI Use Cases on AWS
 chat:
   advanced_options: Tùy chọn nâng cao
+  continue_output: Xuất tiếp
   create_link: Tạo liên kết
   create_link_message: Bằng cách tạo liên kết, bạn sẽ công khai lịch sử cuộc trò chuyện cho tất cả người dùng có thể đăng nhập vào ứng dụng này.
   create_system_prompt: Tạo system prompt
@@ -58,6 +59,7 @@ chat:
   save: Lưu
   saved_system_prompts: System prompt đã lưu
   search_by_title: Tìm kiếm theo tiêu đề
+  set_default_system_prompt: Bắt đầu cuộc trò chuyện mới với system prompt này
   settings: Cài đặt
   share: Chia sẻ
   share_conversation: Chia sẻ lịch sử cuộc trò chuyện
@@ -65,6 +67,7 @@ chat:
   show_system_prompt: Hiển thị system prompt
   system_prompt: System prompt
   title: Chat
+  unset_default_system_prompt: Ngừng bắt đầu cuộc trò chuyện mới với system prompt này
   view_prompt_examples: Xem ví dụ prompt
 common:
   cancel: Hủy
@@ -776,7 +779,8 @@ setting:
     typing_animation: Hiệu ứng đánh máy
     version: Phiên bản
     version_help: Tham chiếu đến version trong package.json của generative-ai-use-cases
-  recent_updates: Cập nhật gần đây
+  release_notes: Ghi chú phát hành
+  release_notes_unavailable: Không có ghi chú phát hành cho phiên bản này.
   signout: Đăng xuất
   tabs:
     account: Tài khoản
@@ -785,10 +789,8 @@ setting:
     usage: Sử dụng
   title: Thông tin cài đặt
   update:
-    message: >-
-      Có cập nhật trên GitHub. Nếu muốn sử dụng các tính năng mới nhất, vui lòng pull nhánh main của <0>generative-ai-use-cases</0> 
-      và deploy lại.
-  view_all_updates: Xem tất cả cập nhật
+    message: 'Đã có phiên bản {{version}}. Hãy xem <0>ghi chú phát hành</0> và <1>cách cập nhật</1>.'
+  view_all_release_notes: Xem tất cả ghi chú phát hành
 shared:
   contact_admin: Vui lòng liên hệ với quản trị viên.
   error: Lỗi

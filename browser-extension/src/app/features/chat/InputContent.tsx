@@ -16,7 +16,7 @@ type Props = BaseProps & {
 };
 
 const InputContent: React.FC<Props> = (props) => {
-  const { isEmptyMessages, sendMessage, clearMessages, isLoading } = useChat();
+  const { isEmptyMessages, sendMessage, clearMessages, isLoading, isReady } = useChat();
 
   const [content, setContent] = useState('');
   const [formValues, setFormValues] = useState<string[]>([]);
@@ -27,16 +27,32 @@ const InputContent: React.FC<Props> = (props) => {
     systemContext: '',
   });
 
+  // A prompt that sends at once waits until the tab and the settings are
+  // loaded: the chat can be rendered again (for example right after signing
+  // in) just before the prompt arrives
+  const [pendingSend, setPendingSend] = useState<{
+    promptSetting: PromptSetting;
+    content: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (pendingSend && isReady) {
+      setPendingSend(null);
+      sendMessage(
+        pendingSend.promptSetting,
+        pendingSend.content,
+        pendingSend.promptSetting.initializeMessages,
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingSend, isReady]);
+
   useEffect(() => {
     if (props.initPromptSetting?.initializeMessages && !props.initPromptSetting?.directSend) {
       clearMessages();
     }
     if (props.initPromptSetting?.directSend) {
-      sendMessage(
-        props.initPromptSetting,
-        props.initContent,
-        props.initPromptSetting.initializeMessages,
-      );
+      setPendingSend({ promptSetting: props.initPromptSetting, content: props.initContent });
     } else {
       if (props.initContent) {
         setContent(props.initContent);

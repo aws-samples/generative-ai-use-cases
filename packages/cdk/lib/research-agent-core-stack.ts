@@ -57,6 +57,9 @@ export class ResearchAgentCoreStack extends Stack {
       new CfnOutput(this, REMOTE_OUTPUT_KEYS.RESEARCH_AGENT_FILE_BUCKET_NAME, {
         value: this.researchAgentCore.fileBucket.bucketName,
       });
+
+      // Kept for the main stack's former import (see AgentCoreStack).
+      this.exportValue(this.researchAgentCore.fileBucket.bucketName);
     }
   }
 

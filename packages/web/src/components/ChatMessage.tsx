@@ -28,6 +28,8 @@ import FileCard from './FileCard';
 import FeedbackForm from './FeedbackForm';
 import Textarea from './Textarea';
 import useFiles from '../hooks/useFiles';
+import { FileScope } from '../hooks/useFileApi';
+import useFileScope, { FileScopeContext } from '../hooks/useFileScope';
 import { useTranslation } from 'react-i18next';
 import { formatRelativeTime, parseMessageDate } from '../utils/messageDate';
 
@@ -45,7 +47,7 @@ type Props = BaseProps & {
   onCommitEdit?: (modifiedPrompt: string) => void;
 };
 
-const ChatMessage: React.FC<Props> = (props) => {
+const ChatMessageContent: React.FC<Props> = (props) => {
   const { t, i18n } = useTranslation();
   const chatContent = useMemo(() => {
     return props.chatContent;
@@ -78,6 +80,7 @@ const ChatMessage: React.FC<Props> = (props) => {
   const [editingPrompt, setEditingPrompt] = useState('');
   const [isOpenTrace, setIsOpenTrace] = useState(false);
   const { getFileDownloadSignedUrl } = useFiles(pathname);
+  const fileScope = useFileScope();
 
   const { setTypingTextInput, typingTextOutput } = useTyping(
     chatContent?.role === 'assistant' && props.loading
@@ -98,7 +101,11 @@ const ChatMessage: React.FC<Props> = (props) => {
       Promise.all(
         chatContent.extraData.map(async (file) => {
           if (file.source.type === 's3') {
-            return await getFileDownloadSignedUrl(file.source.data, true);
+            return await getFileDownloadSignedUrl(
+              file.source.data,
+              true,
+              fileScope
+            );
           } else {
             return file.source.data;
           }
@@ -108,7 +115,7 @@ const ChatMessage: React.FC<Props> = (props) => {
       setSignedUrls([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatContent]);
+  }, [chatContent, fileScope]);
 
   const disabled = useMemo(() => {
     return isSendingFeedback || !props.chatContent?.id;
@@ -428,6 +435,21 @@ const ChatMessage: React.FC<Props> = (props) => {
         </div>
       </div>
     </div>
+  );
+};
+
+/** Files in a shared chat are signed through the share. */
+const ChatMessage: React.FC<Props> = (props) => {
+  const { pathname } = useLocation();
+  const fileScope = useMemo<FileScope | undefined>(() => {
+    const shareId = /^\/share\/([^/]+)/.exec(pathname)?.[1];
+    return shareId ? { shareId } : undefined;
+  }, [pathname]);
+
+  return (
+    <FileScopeContext.Provider value={fileScope}>
+      <ChatMessageContent {...props} />
+    </FileScopeContext.Provider>
   );
 };
 

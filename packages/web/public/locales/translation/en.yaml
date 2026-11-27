@@ -182,6 +182,7 @@ chart:
   zoom: Zoom chart
 chat:
   advanced_options: Advanced Options
+  continue_output: Continue output
   create_link: Create Link
   create_link_message: >-
     By creating a link, you will share the conversation history with all users
@@ -205,6 +206,7 @@ chat:
   save: Save
   saved_system_prompts: Saved System Prompts
   search_by_title: Search by title
+  set_default_system_prompt: Start new chats with this system prompt
   settings: Apply
   share: Share
   share_conversation: Share Conversation History
@@ -212,6 +214,7 @@ chat:
   show_system_prompt: Show system prompt
   system_prompt: System Prompt
   title: Chat
+  unset_default_system_prompt: Stop starting new chats with this system prompt
   view_prompt_examples: View Prompt Examples
 common:
   add: Add
@@ -1113,7 +1116,8 @@ setting:
     typing_animation: Typing Animation
     version: Version
     version_help: Referencing the version in package.json of generative-ai-use-cases
-  recent_updates: Recent Updates
+  release_notes: Release Notes
+  release_notes_unavailable: Release notes are not available for this version.
   signout: Sign Out
   tabs:
     account: Account
@@ -1121,11 +1125,8 @@ setting:
     system: System
     usage: Usage
   update:
-    message: >-
-      Updates are available on GitHub. If you want to use the latest features,
-      please pull the main branch of <0>generative-ai-use-cases</0> and
-      redeploy.
-  view_all_updates: View All Updates
+    message: 'Version {{version}} is available. Check the <0>release notes</0> and see <1>how to update</1>.'
+  view_all_release_notes: View All Release Notes
 shared:
   contact_admin: Please contact the administrator.
   error: Error

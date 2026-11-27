@@ -27,6 +27,8 @@ import { SWRInfiniteKeyedMutator } from 'swr/infinite';
 import { getPrompter } from '../prompts';
 import { findModelByModelId } from './useModel';
 import useFileApi from './useFileApi';
+import { initialSystemContext } from './useChatPreferences';
+import { withContinueRequest } from '../utils/continueOutput';
 
 type GenerationMode = 'normal' | 'continue' | 'retry' | 'edit';
 
@@ -202,7 +204,7 @@ const useChatState = create<{
 
   const initChatWithSystemContext = (id: string) => {
     const prompter = getPrompter(getModelId(id));
-    const systemContext = prompter.systemContext(id);
+    const systemContext = initialSystemContext(id, prompter.systemContext(id));
 
     initChat(id, [{ role: 'system', content: systemContext }], undefined);
   };
@@ -565,20 +567,11 @@ const useChatState = create<{
         ? [chatMessages[0], ...chatMessages.slice(-2, sliceEndIndex)]
         : chatMessages.slice(0, sliceEndIndex);
 
-      // If the assistant's message ends with trailing whitespace in the case of continuing to output, the following error occurs
-      // final assistant content cannot end with trailing whitespace
-      // Assistant's message is trimmed of trailing whitespace
+      // In the case of continuing to output, ask for the rest in a user
+      // message instead of prefilling the assistant's message, which newer
+      // models reject. The output is still appended to the cut-off message.
       if (generationMode === 'continue') {
-        inputMessages = inputMessages.map((m: UnrecordedMessage, i: number) => {
-          if (i === inputMessages.length - 1) {
-            return {
-              ...m,
-              content: m.content.trimEnd(),
-            };
-          } else {
-            return m;
-          }
-        });
+        inputMessages = withContinueRequest(inputMessages);
       }
 
       // In the case of retrying, set the last assistant's message to blank
@@ -1182,7 +1175,10 @@ const useChat = (id: string, chatId?: string) => {
     updateSystemContextByModel: () => {
       const modelId = getModelId(id);
       const prompter = getPrompter(modelId);
-      updateSystemContext(id, prompter.systemContext(id));
+      updateSystemContext(
+        id,
+        initialSystemContext(id, prompter.systemContext(id))
+      );
     },
     getCurrentSystemContext: () => {
       return getCurrentSystemContext(id);

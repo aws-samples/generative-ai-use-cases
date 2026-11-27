@@ -161,6 +161,8 @@ const ChatPage: React.FC = () => {
     updateSystemContextByModel,
     getCurrentSystemContext,
     retryGeneration,
+    continueGeneration,
+    getStopReason,
     forceToStop,
   } = useChat(pathname, chatId);
   const { createShareId, findShareId, deleteShareId } = useChatApi();
@@ -421,6 +423,22 @@ const ChatPage: React.FC = () => {
     );
   }, [retryGeneration, base64Cache, overrideModelParameters]);
 
+  // Ask for the rest of a response that stopped at the output token limit
+  const onContinue = useCallback(() => {
+    continueGeneration(
+      undefined,
+      withCurrentDate,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      base64Cache,
+      overrideModelParameters
+    );
+  }, [continueGeneration, base64Cache, overrideModelParameters]);
+
   const onReset = useCallback(() => {
     clear();
     setContent('');
@@ -527,6 +545,34 @@ const ChatPage: React.FC = () => {
   useEffect(() => {
     setInputSystemContext(currentSystemContext);
   }, [currentSystemContext, setInputSystemContext]);
+
+  // The saved system prompt new chats start with (kept in this browser)
+  const { defaultSystemContext, setDefaultSystemContext } =
+    useChatPreferences();
+  const defaultSystemContextId = defaultSystemContext?.systemContextId;
+  // Forget the default once its saved prompt is deleted, here or elsewhere
+  useEffect(() => {
+    if (
+      systemContextResponse &&
+      defaultSystemContextId &&
+      !systemContextResponse.some(
+        (item) => item.systemContextId === defaultSystemContextId
+      )
+    ) {
+      setDefaultSystemContext(undefined);
+    }
+  }, [systemContextResponse, defaultSystemContextId, setDefaultSystemContext]);
+
+  const onClickDefaultSystemContext = (systemContextId: string) => {
+    const item = systemContextList.find(
+      (item) => item.systemContextId === systemContextId
+    );
+    setDefaultSystemContext(
+      item && systemContextId !== defaultSystemContextId
+        ? { systemContextId, systemContext: item.systemContext }
+        : undefined
+    );
+  };
 
   const onClickSamplePrompt = useCallback(
     (params: ChatPageQueryParams) => {
@@ -758,6 +804,11 @@ const ChatPage: React.FC = () => {
               </>
             </ExpandableField>
           )}
+          {!loading && getStopReason() === 'max_tokens' && (
+            <div className="mb-2 flex justify-center">
+              <Button onClick={onContinue}>{t('chat.continue_output')}</Button>
+            </div>
+          )}
           <InputChatContent
             content={content}
             disabled={loading && !writing}
@@ -803,6 +854,8 @@ const ChatPage: React.FC = () => {
           systemContextList={systemContextList as SystemContext[]}
           onClickDeleteSystemContext={onClickDeleteSystemContext}
           onClickUpdateSystemContext={onClickUpdateSystemContext}
+          defaultSystemContextId={defaultSystemContextId}
+          onClickDefaultSystemContext={onClickDefaultSystemContext}
           forceExpand={forceExpandPromptList}
         />
       )}

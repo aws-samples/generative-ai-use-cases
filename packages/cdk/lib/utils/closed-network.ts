@@ -59,6 +59,7 @@ export const OPTIONAL_VPC_ENDPOINTS = [
   'AgentCoreGateway',
   'BedrockAgentApi',
   'Kendra',
+  'Ssm',
 ] as const;
 
 export type ClosedNetworkVpcEndpointName =
@@ -106,6 +107,8 @@ export const requiredClosedNetworkVpcEndpoints = (
       params.searchAgentEnabled ||
       (params.agents?.length ?? 0) > 0,
     Kendra: params.ragEnabled,
+    // The generic and Agent Builder runtimes read their config from SSM
+    Ssm: params.agentBuilderEnabled || params.createGenericAgentCoreRuntime,
   };
   const selected: string[] = [
     ...ALWAYS_REQUIRED_VPC_ENDPOINTS,

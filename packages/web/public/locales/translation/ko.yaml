@@ -46,6 +46,7 @@ auth:
   title: AWS 생성형 AI 사용 사례
 chat:
   advanced_options: 고급 옵션
+  continue_output: 출력 계속
   create_link: 링크 생성
   create_link_message: >-
     링크를 생성하면 이 애플리케이션에 로그인할 수 있는 모든 사용자와 대화 기록을 공유합니다.
@@ -69,6 +70,7 @@ chat:
   save: 저장
   saved_system_prompts: 저장된 시스템 프롬프트
   search_by_title: 제목으로 검색
+  set_default_system_prompt: 새 채팅을 이 시스템 프롬프트로 시작
   settings: 설정
   share: 공유
   share_conversation: 대화 기록 공유
@@ -76,6 +78,7 @@ chat:
   show_system_prompt: 시스템 프롬프트 표시
   system_prompt: 시스템 프롬프트
   title: 채팅
+  unset_default_system_prompt: 새 채팅을 이 시스템 프롬프트로 시작하지 않기
   view_prompt_examples: 프롬프트 예시 보기
 common:
   cancel: 취소
@@ -660,7 +663,8 @@ setting:
     typing_animation: 타이핑 애니메이션
     version: 버전
     version_help: generative-ai-use-cases의 package.json 버전 참조
-  recent_updates: 최근 업데이트
+  release_notes: 릴리스 노트
+  release_notes_unavailable: 이 버전의 릴리스 노트가 없습니다.
   signout: 로그아웃
   tabs:
     account: 계정
@@ -668,10 +672,8 @@ setting:
     system: 시스템
     usage: 사용량
   update:
-    message: >-
-      GitHub에 업데이트가 있습니다. 최신 기능을 사용하려면
-      <0>generative-ai-use-cases</0>의 main 브랜치를 pull하고 재배포하세요.
-  view_all_updates: 모든 업데이트 보기
+    message: '새 버전 {{version}}이(가) 릴리스되었습니다. <0>릴리스 노트</0>를 확인하고 <1>업데이트 방법</1>에 따라 업데이트하세요.'
+  view_all_release_notes: 모든 릴리스 노트 보기
 shared:
   contact_admin: 관리자에게 문의하세요.
   error: 오류

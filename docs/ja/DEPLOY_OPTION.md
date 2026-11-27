@@ -2,11 +2,9 @@
 
 ## 設定方法
 
-GenU は、parameter.ts もしくは AWS CDK の context で設定を変更します。
+GenU の設定は [packages/cdk/parameter.ts](/packages/cdk/parameter.ts) で行います。このページの設定例も parameter.ts で記載しています。
 
-**新規に構築する場合は parameter.ts での指定を推奨します。複数環境の設定を定義でき、TypeScript の型チェックでパラメータ名や値の誤りに気づけます (cdk.json では、名前を間違えた項目は何もエラーにならず無視されます)。また、アップデート時に cdk.json がコンフリクトしにくくなります。`env` で指定した環境が parameter.ts に定義されている場合は parameter.ts の値だけが使われ、cdk.json のパラメータは使われません。すでに cdk.json で設定している場合の移行方法は [アップデート方法](./UPDATE.md#設定を-cdkjson-から-parameterts-に移す場合) を参照してください。**
-
-**Context を使う場合: CDK の context は '-c' でも指定できますが、その場合コードベースに変更が入らずフロントエンドのビルドが実施されないため、このアセットに関しては全ての設定は cdk.json の設定を変更することを推奨します。**
+**parameter.ts では複数環境の設定を定義でき、TypeScript の型チェックでパラメータ名や値の誤りに気づけます (cdk.json では、名前を間違えた項目は何もエラーにならず無視されます)。また、アップデート時に cdk.json がコンフリクトしにくくなります。`env` で指定した環境が parameter.ts に定義されている場合は parameter.ts の値だけが使われ、cdk.json のパラメータは使われません。すでに cdk.json で設定している場合の移行方法は [アップデート方法](./UPDATE.md#設定を-cdkjson-から-parameterts-に移す場合) を参照してください。**
 
 ### parameter.ts の値を変更する方法
 
@@ -61,13 +59,9 @@ npm run web:devw
 npm run web:devw --env=dev2
 ```
 
-### cdk.json の値を変更する方法
+### cdk.json で設定している既存の環境
 
-[packages/cdk/cdk.json](/packages/cdk/cdk.json) の context 以下の値を変更することで設定します。例えば、`"ragEnabled": true` と設定することで RAG チャットのユースケースを有効化できます。context の値を設定した後、以下のコマンドで再度デプロイすることで設定が反映されます。
-
-```bash
-npm run cdk:deploy
-```
+parameter.ts に環境が定義されていない場合は、これまでどおり [packages/cdk/cdk.json](/packages/cdk/cdk.json) の `context` からパラメータを読み込みます。パラメータの名前と値は parameter.ts と同じで、JSON で記述します (例: `"ragEnabled": true`)。parameter.ts への移行を推奨します ([アップデート方法](./UPDATE.md#設定を-cdkjson-から-parameterts-に移す場合) 参照)。
 
 ## ユースケースの設定
 
@@ -90,18 +84,6 @@ const envs: Record<string, Partial<StackInput>> = {
     kendraIndexLanguage: 'ja',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "ragEnabled": true,
-    "kendraIndexLanguage": "ja"
-  }
-}
 ```
 
 変更後に `npm run cdk:deploy` で再度デプロイして反映させます。また、`/packages/cdk/rag-docs/docs` に保存されているデータが、自動で Kendra データソース用の S3 バケットにアップロードされます。(ただし `logs` から始まる名前のファイルは同期されませんので注意してください。)
@@ -135,18 +117,6 @@ const envs: Record<string, Partial<StackInput>> = {
     kendraDataSourceBucketName: '<Kendra S3 Data Source Bucket Name>',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "kendraIndexArn": "<Kendra Index ARN>",
-    "kendraDataSourceBucketName": "<Kendra S3 Data Source Bucket Name>"
-  }
-}
 ```
 
 変更後に `npm run cdk:deploy` で再度デプロイして反映させます。
@@ -190,26 +160,6 @@ const envs: Record<string, Partial<StackInput>> = {
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "ragKnowledgeBaseEnabled": true,
-    "ragKnowledgeBaseStorageType": "opensearch", // "opensearch" or "s3vectors"
-    "ragKnowledgeBaseId": "XXXXXXXXXX",
-    "ragKnowledgeBaseStandbyReplicas": false,
-    "ragKnowledgeBaseAdvancedParsing": false,
-    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
-    "ragKnowledgeBaseBinaryVector": false,
-    "embeddingModelId": "amazon.titan-embed-text-v2:0",
-    "rerankingModelId": "amazon.rerank-v1:0",
-    "queryDecompositionEnabled": true
-  }
-}
 ```
 
 `ragKnowledgeBaseStandbyReplicas` は自動作成される OpenSearch Serverless の冗長化に関する値です。
@@ -291,23 +241,6 @@ const envs: Record<string, Partial<StackInput>> = {
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "ragKnowledgeBaseEnabled": true,
-    "ragKnowledgeBaseId": "XXXXXXXXXX",
-    "ragKnowledgeBaseStandbyReplicas": false,
-    "ragKnowledgeBaseAdvancedParsing": true,
-    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
-    "ragKnowledgeBaseBinaryVector": false,
-    "embeddingModelId": "amazon.titan-embed-text-v2:0"
-  }
-}
 ```
 
 #### チャンク戦略を変更
@@ -417,17 +350,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentEnabled": true
-  }
-}
-```
-
 #### エージェントの基盤モデルのカスタマイズ
 
 Code Interpreter および検索エージェントで使用する基盤モデルをカスタマイズできます。デフォルトでは `global.anthropic.claude-sonnet-4-6` が使用されます。
@@ -443,17 +365,6 @@ const envs: Record<string, Partial<StackInput>> = {
     agentFoundationModel: 'global.anthropic.claude-sonnet-4-6',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentFoundationModel": "global.anthropic.claude-sonnet-4-6"
-  }
-}
 ```
 
 #### 検索エージェントのデプロイ
@@ -484,20 +395,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentEnabled": true,
-    "searchAgentEnabled": true,
-    "searchEngine": "Brave" or "Tavily",
-    "searchApiKey": "<検索エンジンの API キー>"
-  }
-}
-```
-
 変更後に `npm run cdk:deploy` で再度デプロイして反映させます。これにより、デフォルトの検索エンジン Agent がデプロイされます。
 
 > [!NOTE]
@@ -524,23 +421,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agents": [
-      {
-        "displayName": "MyCustomAgent",
-        "agentId": "XXXXXXXXX",
-        "aliasId": "YYYYYYYY"
-      }
-    ]
-  }
-}
 ```
 
 また、`packages/cdk/lib/construct/agent.ts` を改修し新たな Agent を定義することも可能です。CDK に定義した Agent を利用する場合は `agentEnabled: true` にしてください。
@@ -578,24 +458,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentEnabled": true,
-    "agents": [
-      {
-        "displayName": "Knowledge Base",
-        "agentId": "XXXXXXXXX",
-        "aliasId": "YYYYYYYY"
-      }
-    ]
-  }
-}
-```
-
 #### Agent をインライン表示にする
 
 Agent は、デフォルトでは「Agent チャット」というユースケースの中から Agent を選択する方式で利用できます。インライン表示のオプションを有効にすると、「Agent チャット」というユースケースは表示されなくなり、利用可能な全ての Agent が他のユースケースと同じように表示されるようになります。有効な Agent が存在する状態で、`inlineAgents` を `true` に設定してください。
@@ -609,17 +471,6 @@ const envs: Record<string, Partial<StackInput>> = {
     inlineAgents: true,
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "inlineAgents": true
-  }
-}
 ```
 
 ### リサーチエージェントユースケースの有効化
@@ -650,24 +501,12 @@ const envs: Record<string, Partial<StackInput>> = {
 
 - `researchAgentEnabled`: リサーチエージェント機能を有効化（Web UI表示 + Bedrock AgentCore Runtime作成）
 
-#### cdk.json での設定例
-
-```json
-{
-  "context": {
-    "researchAgentEnabled": true,
-    "researchAgentBraveApiKey": "YOUR_BRAVE_API_KEY",
-    "researchAgentTavilyApiKey": ""
-  }
-}
-```
-
 詳細な手順については、[リサーチエージェントデプロイガイド](./DEPLOY_RESEARCH_USECASE.md)を参照してください。
 
 ### MCP チャットユースケースの有効化
 
 > [!WARNING]
-> MCP チャットユースケースは Deprecated ステータスになりました。MCP の活用には AgentCore ユースケースをご利用ください。MCP チャットユースケースは v6 で完全削除予定です。
+> MCP チャットユースケースは Deprecated ステータスになりました。MCP の活用には AgentCore ユースケースをご利用ください。
 
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) とは、LLM モデルと外部データやツールを繋ぐプロトコルです。
 GenU では [Strands Agents](https://strandsagents.com/latest/) を活用して MCP に準拠したツールを実行するチャットユースケースを用意しています。
@@ -681,17 +520,6 @@ const envs: Record<string, Partial<StackInput>> = {
     mcpEnabled: true,
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "mcpEnabled": true
-  }
-}
 ```
 
 利用する MCP サーバーは [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json) に定義されております。
@@ -746,36 +574,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "flows": [
-      {
-        "flowId": "XXXXXXXXXX",
-        "aliasId": "YYYYYYYYYY",
-        "flowName": "WhatIsItFlow",
-        "description": "任意のキーワードをウェブ検索して、説明を返すフローです。文字を入力してください"
-      },
-      {
-        "flowId": "ZZZZZZZZZZ",
-        "aliasId": "OOOOOOOOOO",
-        "flowName": "RecipeFlow",
-        "description": "与えられたJSONをもとに、レシピを作成します。\n{\"dish\": \"カレーライス\", \"people\": 3} のように入力してください。"
-      },
-      {
-        "flowId": "PPPPPPPPPP",
-        "aliasId": "QQQQQQQQQQQ",
-        "flowName": "TravelPlanFlow",
-        "description": "与えられた配列をもとに、旅行計画を作成します。\n[{\"place\": \"東京\", \"day\": 3}, {\"place\": \"大阪\", \"day\": 2}] のように入力してください。"
-      }
-    ]
-  }
-}
 ```
 
 ### AgentCore ユースケースの有効化
@@ -847,30 +645,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-
-{
-  "context": {
-    "createGenericAgentCoreRuntime": true,
-    "agentCoreRegion": "us-west-2",
-    "agentCoreGatewayArns": [
-      "arn:aws:bedrock-agentcore:us-west-2:<account>:gateway/<gateway-id>"
-    ],
-    "agentCoreExternalRuntimes": [
-      {
-        "name": "AgentCore1",
-        "display_name": "カスタマーサポートエージェント",
-        "description": "顧客からの問い合わせに対応するエージェントです。",
-        "arn": "arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx"
-      }
-    ]
-  }
-}
-```
-
 > [!NOTE]
 > AgentCore ユースケースの設定を有効後に、再度無効化する場合は、`createGenericAgentCoreRuntime: false` にして再デプロイすればAgentCore ユースケースは無効化されますが、`AgentCoreStack` 自体は残ります。マネージメントコンソールを開き、`agentCoreRegion` の CloudFormation から `AgentCoreStack` というスタックを削除することで完全に消去ができます。
 
@@ -912,19 +686,6 @@ const envs: Record<string, Partial<StackInput>> = {
     agentCoreSubnetIds: ['subnet-xxxxxxxxx', 'subnet-yyyyyyyyy'],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "createGenericAgentCoreRuntime": true,
-    "agentCoreVpcId": "vpc-xxxxxxxxx",
-    "agentCoreSubnetIds": ["subnet-xxxxxxxxx", "subnet-yyyyyyyyy"]
-  }
-}
 ```
 
 > [!WARNING]
@@ -982,22 +743,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-
-{
-  "context": {
-    "agentBuilderEnabled": true,
-    "agentCoreRegion": "us-west-2",
-    "agentCoreGatewayArns": [
-      "arn:aws:bedrock-agentcore:us-west-2:<account>:gateway/<gateway-id>"
-    ]
-  }
-}
 ```
 
 ### 音声チャットユースケースの有効化
@@ -1149,17 +894,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelIds": ["anthropic.claude-3-sonnet-20240229-v1:0"]
-  }
-}
-```
-
 ### プロンプト最適化ツールの有効化
 
 プロンプト最適化ツールは入力したプロンプトを指定したモデルに最適な形に変換します。
@@ -1198,29 +932,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "hiddenUseCases": {
-      "generate": true,
-      "summarize": true,
-      "writer": true,
-      "translate": true,
-      "webContent": true,
-      "image": true,
-      "video": true,
-      "videoAnalyzer": true,
-      "diagram": true,
-      "meetingMinutes": true,
-      "voiceChat": true
-    }
-  }
-}
-```
-
 ## ユースケースビルダーの設定
 
 ユースケースビルダーはデフォルトで有効化されており、デプロイ後画面上に表示される「ビルダーモード」という項目から利用できます。ユースケースビルダーを無効化する場合は、パラメータの `useCaseBuilderEnabled` に `false` を指定します。(デフォルトは `true`)
@@ -1234,17 +945,6 @@ const envs: Record<string, Partial<StackInput>> = {
     useCaseBuilderEnabled: false,
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "useCaseBuilderEnabled": false
-  }
-}
 ```
 
 ## Amazon Bedrock のモデルを変更する
@@ -1459,59 +1159,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "ap-northeast-1",
-    "modelIds": [
-      "jp.anthropic.claude-sonnet-4-6",
-      "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
-      "jp.amazon.nova-2-lite-v1:0",
-      "apac.amazon.nova-pro-v1:0",
-      "apac.amazon.nova-lite-v1:0",
-      "apac.amazon.nova-micro-v1:0",
-      {
-        "modelId": "global.anthropic.claude-opus-4-8",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "openai.gpt-oss-120b-1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "qwen.qwen3-235b-a22b-2507-v1:0",
-        "region": "us-west-2"
-      }
-    ],
-    "imageGenerationModelIds": [
-      {
-        "modelId": "stability.stable-image-core-v1:1",
-        "region": "us-west-2"
-      },
-      {
-        "modelId": "stability.stable-image-ultra-v1:1",
-        "region": "us-west-2"
-      }
-    ],
-    "videoGenerationModelIds": [
-      {
-        "modelId": "luma.ray-v2:0",
-        "region": "us-west-2"
-      }
-    ],
-    "speechToSpeechModelIds": [
-      {
-        "modelId": "amazon.nova-2-5-sonic",
-        "region": "us-east-1"
-      }
-    ]
-  }
-}
-```
-
 ### us-east-1 (バージニア) の Amazon Bedrock のモデルを利用する例
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
@@ -1538,34 +1185,6 @@ const envs: Record<string, Partial<StackInput>> = {
     speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-east-1",
-    "modelIds": [
-      "global.anthropic.claude-opus-4-8",
-      "global.anthropic.claude-sonnet-4-6",
-      "global.anthropic.claude-haiku-4-5-20251001-v1:0",
-      "amazon.nova-pro-v1:0",
-      "amazon.nova-lite-v1:0",
-      "amazon.nova-micro-v1:0",
-      "openai.gpt-oss-120b-1:0",
-      "mistral.mistral-large-3-675b-instruct"
-    ],
-    "imageGenerationModelIds": [
-      {
-        "modelId": "stability.stable-image-core-v1:1",
-        "region": "us-west-2"
-      }
-    ],
-    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
-  }
-}
 ```
 
 ### us-west-2 (オレゴン) の Amazon Bedrock のモデルを利用する例
@@ -1595,31 +1214,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-west-2",
-    "modelIds": [
-      "global.anthropic.claude-sonnet-4-6",
-      "global.anthropic.claude-haiku-4-5-20251001-v1:0",
-      "amazon.nova-lite-v1:0",
-      "openai.gpt-oss-120b-1:0",
-      "mistral.mistral-large-3-675b-instruct",
-      "qwen.qwen3-235b-a22b-2507-v1:0"
-    ],
-    "imageGenerationModelIds": [
-      "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:1",
-      "stability.sd3-5-large-v1:0"
-    ],
-    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
-  }
-}
-```
-
 ### cross-region inference が対応しているモデルで us(北部バージニアもしくはオレゴン) の Amazon Bedrock のモデルを利用する場合
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
@@ -1647,31 +1241,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-west-2",
-    "modelIds": [
-      "us.anthropic.claude-opus-4-8",
-      "us.anthropic.claude-sonnet-4-6",
-      "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-      "us.amazon.nova-2-lite-v1:0",
-      "us.amazon.nova-pro-v1:0",
-      "us.amazon.nova-lite-v1:0",
-      "us.amazon.nova-micro-v1:0"
-    ],
-    "imageGenerationModelIds": [
-      "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:1"
-    ],
-    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
-  }
-}
-```
-
 ### ap-northeast-1 (東京) の Amazon Bedrock のモデルを利用する例
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
@@ -1697,33 +1266,6 @@ const envs: Record<string, Partial<StackInput>> = {
     speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "ap-northeast-1",
-    "modelIds": [
-      "jp.anthropic.claude-opus-4-8",
-      "jp.anthropic.claude-sonnet-4-6",
-      "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
-      "jp.amazon.nova-2-lite-v1:0",
-      "apac.amazon.nova-pro-v1:0",
-      "apac.amazon.nova-lite-v1:0",
-      "apac.amazon.nova-micro-v1:0"
-    ],
-    "imageGenerationModelIds": [
-      {
-        "modelId": "stability.stable-image-core-v1:1",
-        "region": "us-west-2"
-      }
-    ],
-    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
-  }
-}
 ```
 
 ## Amazon SageMaker のカスタムモデルを利用したい場合
@@ -1765,22 +1307,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "<SageMaker Endpoint Region>",
-    "endpointNames": [
-      "<SageMaker Endpoint Name>",
-      {
-        "modelIds": "<SageMaker Endpoint Name>",
-        "region": "<SageMaker Endpoint Region>"
-      }
-    ]
-  }
-}
 ```
 
 ## ブランディングカスタマイズ
@@ -1832,17 +1358,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "selfSignUpEnabled": false
-  }
-}
-```
-
 ### サインアップできるメールアドレスのドメインを制限する
 
 `allowedSignUpEmailDomains` に 許可するドメインのリストを指定します（デフォルトは`null`）。
@@ -1868,17 +1383,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedSignUpEmailDomains": ["amazon.com"] // null から、許可ドメインを指定することで有効化
-  }
-}
-```
-
 - `amazon.com` か `amazon.jp` のどちらかのドメインのメールアドレスであればサインアップできるように設定する例
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
@@ -1890,17 +1394,6 @@ const envs: Record<string, Partial<StackInput>> = {
     allowedSignUpEmailDomains: ['amazon.com', 'amazon.jp'],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedSignUpEmailDomains": ["amazon.com", "amazon.jp"] // null から、許可ドメインを指定することで有効化
-  }
-}
 ```
 
 ### AWS WAF による制限を有効化する
@@ -1921,18 +1414,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedIpV4AddressRanges": ["192.168.0.0/24"], // null から、許可 CIDR リストを指定することで有効化
-    "allowedIpV6AddressRanges": ["2001:0db8::/32"] // null から、許可 CIDR リストを指定することで有効化
-  }
-}
-```
-
 #### 地理的制限
 
 Web アプリへのアクセスをアクセス元の国で制限したい場合、AWS WAF による地理的制限を有効化することができます。 `allowedCountryCodes` で許可する国を Country Code の配列で指定することができます。
@@ -1949,17 +1430,6 @@ const envs: Record<string, Partial<StackInput>> = {
     allowedCountryCodes: ['JP'],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedCountryCodes": ["JP"] // null から、許可国リストを指定することで有効化
-  }
-}
 ```
 
 `allowedIpV4AddressRanges` あるいは `allowedIpV6AddressRanges` あるいは `allowedCountryCodes` のいずれかを指定して再度 `npm run cdk:deploy` を実行すると、WAF 用のスタックが us-east-1 にデプロイされます（AWS WAF V2 は CloudFront に使用する場合、us-east-1 のみしか現状対応していません）。us-east-1 で CDK を利用したことがない場合は、以下のコマンドを実行して、デプロイ前に Bootstrap を行ってください。
@@ -1989,26 +1459,13 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "samlAuthEnabled": true,
-    "samlCognitoDomainName": "your-preferred-name.auth.ap-northeast-1.amazoncognito.com",
-    "samlCognitoFederatedIdentityProviderName": "EntraID"
-  }
-}
-```
-
 - samlAuthEnabled : `true` にすることで、SAML 専用の認証画面に切り替わります。Cognito user pools を利用した従来の認証機能は利用できなくなります。
 - samlCognitoDomainName : Cognito の App integration で設定する Cognito Domain 名を指定します。
 - samlCognitoFederatedIdentityProviderName : Cognito の Sign-in experience で設定する Identity Provider の名前を指定します。
 
 ### ガードレール
 
-Converse API を使う(=テキスト出力を行う生成 AI モデル)場合はガードレールを適用させることが可能です。設定するには `guardrailEnabled` を `true` に変更しデプロイしなおします。
+Converse API を使う(=テキスト出力を行う生成 AI モデル)場合はガードレールを適用させることが可能です。RAG チャット (Knowledge Base) の回答にも適用されます。設定するには `guardrailEnabled` を `true` に変更しデプロイしなおします。
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
@@ -2019,17 +1476,6 @@ const envs: Record<string, Partial<StackInput>> = {
     guardrailEnabled: true,
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "guardrailEnabled": true
-  }
-}
 ```
 
 デフォルトで適用されるガードレールは機微情報フィルターで日本語での会話の中で効果があったものを適用しています。他にも単語フィルターのカスタム、機微情報フィルターの正規表現は機能することを確認しており、必要に応じて、`packages/cdk/lib/construct/guardrail.ts` を修正してください。詳細は[Guardrails for Amazon Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)と[CfnGuardrail](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_bedrock.CfnGuardrail.html)をご参照ください。
@@ -2080,29 +1526,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "kendraIndexScheduleEnabled": true,
-    "kendraIndexScheduleCreateCron": {
-      "minute": "0",
-      "hour": "23",
-      "month": "*",
-      "weekDay": "SUN-THU"
-    },
-    "kendraIndexScheduleDeleteCron": {
-      "minute": "0",
-      "hour": "11",
-      "month": "*",
-      "weekDay": "MON-FRI"
-    }
-  }
-}
-```
-
 Kendraのインデックスが削除されても、RAG機能はオンのままです。Webアプリケーション（GenU）ではRAG関連のメニューは表示されたままです。RAGチャットを実行すると、インデックスが存在しないためエラーが発生し、エラーメッセージに「インデックス作成・削除のスケジュールを確認してください」という旨のテキストが表示されます。
 
 スケジュールとしてEventBridgeルールを使用し、処理の制御としてStep Functionsを使用します。EventBridgeのルールを手動で無効化することでスケジュールを停止できます。また、Step Functionsのステートマシンを手動で実行することで、インデックスの作成・削除を行うことができます。
@@ -2125,17 +1548,6 @@ Kendraのインデックスが削除されても、RAG機能はオンのまま�
 
 GenU ではコスト管理等に使うためのタグをサポートしています。デフォルトでは、タグのキー名に `GenU` が設定されますが、`tagKey` を指定することでカスタムのタグキーを使用できます。
 以下に設定例を示します。
-
-`cdk.json` での設定方法
-
-```json
-// cdk.json
-  ...
-  "context": {
-    "tagKey": "MyProject",  // カスタムのタグキー（省略可能、デフォルトは "GenU"）
-    "tagValue": "dev",
-    ...
-```
 
 `parameter.ts` での設定方法
 
@@ -2175,17 +1587,6 @@ const envs: Record<string, Partial<StackInput>> = {
     dashboard: true,
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "dashboard": true
-  }
-}
 ```
 
 変更後に `npm run cdk:deploy` で再度デプロイして反映させます。`modelRegion` に指定されたリージョンに `GenerativeAiUseCasesDashboardStack` という名前の Stack がデプロイされます。出力された値はこの後の手順で利用します。
@@ -2276,19 +1677,6 @@ const envs: Record<string, Partial<StackInput>> = {
     hostedZoneId: 'XXXXXXXXXXXXXXXXXXXX',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "hostName": "genai",
-    "domainName": "example.com",
-    "hostedZoneId": "XXXXXXXXXXXXXXXXXXXX"
-  }
-}
 ```
 
 ## 別 AWS アカウントの Bedrock を利用したい場合
@@ -2427,28 +1815,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
-
-```json
-// cdk.json
-{
-  "context": {
-    "crossAccountBedrockRoleArn": "arn:aws:iam::アカウントID:role/事前に作成したロール名",
-    // Knowledge Base を利用する場合のみ
-    "ragKnowledgeBaseEnabled": true,
-    "ragKnowledgeBaseId": "YOUR_KNOWLEDGE_BASE_ID",
-    // Bedrock エージェントを利用する場合のみ
-    "agents": [
-      {
-        "displayName": "YOUR AGENT NAME",
-        "agentId": "YOUR_AGENT_ID",
-        "aliasId": "YOUR_AGENT_ALIAS_ID"
-      }
-    ]
-  }
-}
 ```
 
 設定変更後に `npm run cdk:deploy` を実行して変更内容を反映させます。

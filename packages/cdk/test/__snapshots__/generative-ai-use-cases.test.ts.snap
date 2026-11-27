@@ -14,6 +14,17 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentBuilder with web search
     "AgentBuilderAgentCoreRuntimeName": {
       "Value": "GenUAgentBuilderRuntime",
     },
+    "ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362": {
+      "Export": {
+        "Name": "AgentCoreStack:ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "GenericAgentCoreAgentCoreRuntimeRoleF34B80EA",
+          "Arn",
+        ],
+      },
+    },
     "ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F": {
       "Export": {
         "Name": "AgentCoreStack:ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F",
@@ -118,11 +129,10 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentBuilder with web search
         },
         "AgentRuntimeName": "GenUAgentBuilderRuntime",
         "EnvironmentVariables": {
-          "FILE_BUCKET": {
-            "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
-          },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "RUNTIME_CONFIG_PARAMETER": "/generative-ai-use-cases/agent-core-runtime-config",
+          "RUNTIME_CONFIG_REGION": "us-east-1",
           "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
           "WEB_SEARCH_ENABLED": "true",
           "WEB_SEARCH_EXCLUDE_DOMAINS": "[\\"excluded.example.com\\"]",
@@ -408,6 +418,12 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentBuilder with web search
               "Sid": "AllowGatewayInvocation",
             },
             {
+              "Action": "ssm:GetParameter",
+              "Effect": "Allow",
+              "Resource": "arn:aws:ssm:us-east-1:123456890123:parameter/generative-ai-use-cases/agent-core-runtime-config",
+              "Sid": "ReadRuntimeConfig",
+            },
+            {
               "Action": "bedrock-agentcore:InvokeWebSearch",
               "Effect": "Allow",
               "Resource": {
@@ -423,40 +439,6 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentBuilder with web search
                 ],
               },
               "Sid": "AllowWebSearch",
-            },
-            {
-              "Action": [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "GenericAgentCoreAgentCoreFileBucket0430DA42",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "GenericAgentCoreAgentCoreFileBucket0430DA42",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
             },
             {
               "Action": [
@@ -541,11 +523,10 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentBuilder with web search
         },
         "AgentRuntimeName": "GenUGenericRuntime",
         "EnvironmentVariables": {
-          "FILE_BUCKET": {
-            "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
-          },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "RUNTIME_CONFIG_PARAMETER": "/generative-ai-use-cases/agent-core-runtime-config",
+          "RUNTIME_CONFIG_REGION": "us-east-1",
           "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
@@ -609,6 +590,17 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentCore with VPC) 1`] = `
     },
     "AgentBuilderAgentCoreRuntimeName": {
       "Value": "GenUAgentBuilderRuntime",
+    },
+    "ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362": {
+      "Export": {
+        "Name": "AgentCoreStack:ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "GenericAgentCoreAgentCoreRuntimeRoleF34B80EA",
+          "Arn",
+        ],
+      },
     },
     "ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F": {
       "Export": {
@@ -723,11 +715,10 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentCore with VPC) 1`] = `
         },
         "AgentRuntimeName": "GenUAgentBuilderRuntime",
         "EnvironmentVariables": {
-          "FILE_BUCKET": {
-            "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
-          },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "RUNTIME_CONFIG_PARAMETER": "/generative-ai-use-cases/agent-core-runtime-config",
+          "RUNTIME_CONFIG_REGION": "us-east-1",
           "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
@@ -1025,38 +1016,10 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentCore with VPC) 1`] = `
               "Sid": "AllowGatewayInvocation",
             },
             {
-              "Action": [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
+              "Action": "ssm:GetParameter",
               "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "GenericAgentCoreAgentCoreFileBucket0430DA42",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "GenericAgentCoreAgentCoreFileBucket0430DA42",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
+              "Resource": "arn:aws:ssm:us-east-1:123456890123:parameter/generative-ai-use-cases/agent-core-runtime-config",
+              "Sid": "ReadRuntimeConfig",
             },
             {
               "Action": [
@@ -1175,11 +1138,10 @@ exports[`GenerativeAiUseCases matches the snapshot (AgentCore with VPC) 1`] = `
         },
         "AgentRuntimeName": "GenUGenericRuntime",
         "EnvironmentVariables": {
-          "FILE_BUCKET": {
-            "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
-          },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "RUNTIME_CONFIG_PARAMETER": "/generative-ai-use-cases/agent-core-runtime-config",
+          "RUNTIME_CONFIG_REGION": "us-east-1",
           "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
@@ -1978,6 +1940,33 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 1`] = `
           },
         ],
         "ServiceName": "com.amazonaws.us-east-1.s3",
+        "SubnetIds": [
+          {
+            "Ref": "ClosedVpcisolatedSubnet1Subnet2EF6D3F3",
+          },
+          {
+            "Ref": "ClosedVpcisolatedSubnet2SubnetB169C8D3",
+          },
+        ],
+        "VpcEndpointType": "Interface",
+        "VpcId": {
+          "Ref": "ClosedVpcC15583C9",
+        },
+      },
+      "Type": "AWS::EC2::VPCEndpoint",
+    },
+    "ClosedVpcVpcEndpointSsmC1EECE9B": {
+      "Properties": {
+        "PrivateDnsEnabled": true,
+        "SecurityGroupIds": [
+          {
+            "Fn::GetAtt": [
+              "ClosedVpcSecurityGroup985DC3EC",
+              "GroupId",
+            ],
+          },
+        ],
+        "ServiceName": "com.amazonaws.us-east-1.ssm",
         "SubnetIds": [
           {
             "Ref": "ClosedVpcisolatedSubnet1Subnet2EF6D3F3",
@@ -5113,6 +5102,17 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 4`] = `
     "AgentBuilderAgentCoreRuntimeName": {
       "Value": "GenUAgentBuilderRuntime",
     },
+    "ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362": {
+      "Export": {
+        "Name": "AgentCoreStack:ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "GenericAgentCoreAgentCoreRuntimeRoleF34B80EA",
+          "Arn",
+        ],
+      },
+    },
     "ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F": {
       "Export": {
         "Name": "AgentCoreStack:ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F",
@@ -5217,11 +5217,10 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 4`] = `
         },
         "AgentRuntimeName": "GenUAgentBuilderRuntime",
         "EnvironmentVariables": {
-          "FILE_BUCKET": {
-            "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
-          },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "RUNTIME_CONFIG_PARAMETER": "/generative-ai-use-cases/agent-core-runtime-config",
+          "RUNTIME_CONFIG_REGION": "us-east-1",
           "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
@@ -5505,38 +5504,10 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 4`] = `
               "Sid": "AllowGatewayInvocation",
             },
             {
-              "Action": [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
+              "Action": "ssm:GetParameter",
               "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "GenericAgentCoreAgentCoreFileBucket0430DA42",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "GenericAgentCoreAgentCoreFileBucket0430DA42",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
+              "Resource": "arn:aws:ssm:us-east-1:123456890123:parameter/generative-ai-use-cases/agent-core-runtime-config",
+              "Sid": "ReadRuntimeConfig",
             },
             {
               "Action": [
@@ -5621,11 +5592,10 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 4`] = `
         },
         "AgentRuntimeName": "GenUGenericRuntime",
         "EnvironmentVariables": {
-          "FILE_BUCKET": {
-            "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
-          },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/closed-network/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "RUNTIME_CONFIG_PARAMETER": "/generative-ai-use-cases/agent-core-runtime-config",
+          "RUNTIME_CONFIG_REGION": "us-east-1",
           "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
@@ -6287,7 +6257,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A502123049aee4e236b62863e23d4b27e601814": {
+    "APIApiDeployment3A502123d76f3347453215183c92b5385a7eecb7": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -6323,6 +6293,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "APIApifilefileNameDELETE54EB1050",
         "APIApifilefileNameOPTIONS6C97AC5A",
         "APIApifilefileName2B0471F4",
+        "APIApifileDELETEFB7786B1",
         "APIApifileOPTIONS64A72556",
         "APIApifile76AB343B",
         "APIApifileurlGET6E9EDFE6",
@@ -6457,7 +6428,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::ApiGateway::Deployment",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment5C507F9A2752a222afdf3f33f97f53a123b70aa4": {
+    "APIApiDeployment5C507F9A3e0cb7e96a994433077d4be29de3aa14": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiproxyANYB1864AFB",
@@ -6482,6 +6453,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "APIApichatsPOSTF32299AA",
         "APIApifilefileNameDELETE54EB1050",
         "APIApifilefileNameOPTIONS6C97AC5A",
+        "APIApifileDELETEFB7786B1",
         "APIApifileOPTIONS64A72556",
         "APIApifileurlGET6E9EDFE6",
         "APIApifileurlOPTIONS658BFB93",
@@ -6581,7 +6553,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A502123049aee4e236b62863e23d4b27e601814",
+          "Ref": "APIApiDeployment3A502123d76f3347453215183c92b5385a7eecb7",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -6706,6 +6678,22 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
             "CUSTOM_AGENTS_JSON": "[]",
+            "DOCUMENT_SOURCES": {
+              "Fn::Join": [
+                "",
+                [
+                  "[{\\"kind\\":\\"knowledgeBase\\",\\"bucket\\":\\"",
+                  {
+                    "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefDataSourceBucket9FA93E04BB6984D1",
+                  },
+                  "\\",\\"prefix\\":\\"docs/\\"},{\\"kind\\":\\"kendra\\",\\"bucket\\":\\"",
+                  {
+                    "Ref": "RagDataSourceBucket091872DB",
+                  },
+                  "\\",\\"prefix\\":\\"docs/\\"}]",
+                ],
+              ],
+            },
             "GUARDRAIL_IDENTIFIER": {
               "Fn::ImportValue": "GuardrailStack:ExportsOutputFnGetAttGuardrailguardrail03A76CF4GuardrailIdDBA991AF",
             },
@@ -6718,6 +6706,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
+            "KNOWLEDGE_BASE_STORAGE_TYPE": "opensearch",
             "LANGUAGE": "ja",
             "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
@@ -7371,39 +7360,6 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
             },
             {
               "Action": [
-                "s3:GetBucket*",
-                "s3:GetObject*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:s3:::",
-                      {
-                        "Fn::ImportValue": "AgentCoreStack:ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F",
-                      },
-                    ],
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:s3:::",
-                      {
-                        "Fn::ImportValue": "AgentCoreStack:ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F",
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": [
                 "kendra:Query",
                 "kendra:Retrieve",
               ],
@@ -7447,11 +7403,27 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                       {
                         "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefDataSourceBucket9FA93E04BB6984D1",
                       },
-                      "/*",
+                      "/docs/*",
                     ],
                   ],
                 },
               ],
+            },
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefDataSourceBucket9FA93E04BB6984D1",
+                    },
+                    "/docs/*.metadata.json",
+                  ],
+                ],
+              },
             },
             {
               "Action": [
@@ -8394,6 +8366,47 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         },
       },
       "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApifileDELETEFB7786B1": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "APIAuthorizer9DCC037B",
+        },
+        "HttpMethod": "DELETE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "APIApiHandler18BC61F9",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "APIApifile76AB343B",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
       "UpdateReplacePolicy": "Delete",
     },
     "APIApifileOPTIONS64A72556": {
@@ -12974,6 +12987,34 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 },
               ],
             },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "Null": {
+                  "s3:if-none-match": "false",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::ImportValue": "AgentCoreStack:ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362",
+                },
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "APIFileBucket8FB29855",
+                        "Arn",
+                      ],
+                    },
+                    "/users/*/agent-outputs/*",
+                  ],
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -13497,6 +13538,38 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         ],
       },
       "Type": "AWS::IAM::Policy",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "AgentCoreRuntimeConfig7133F329": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Name": "/generative-ai-use-cases/agent-core-runtime-config",
+        "Tags": {
+          "app": "genu",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "{\\"userPoolId\\":\\"",
+              {
+                "Ref": "AuthUserPool8115E87F",
+              },
+              "\\",\\"userPoolClientId\\":\\"",
+              {
+                "Ref": "AuthUserPoolclientA74673A9",
+              },
+              "\\",\\"fileBucket\\":\\"",
+              {
+                "Ref": "APIFileBucket8FB29855",
+              },
+              "\\",\\"fileBucketRegion\\":\\"us-east-1\\"}",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
       "UpdateReplacePolicy": "Delete",
     },
     "AgentCoreStackOutputs657336C2": {
@@ -18359,6 +18432,17 @@ exports[`GenerativeAiUseCases matches the snapshot 4`] = `
     "AgentBuilderAgentCoreRuntimeName": {
       "Value": "GenUAgentBuilderRuntime",
     },
+    "ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362": {
+      "Export": {
+        "Name": "AgentCoreStack:ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362",
+      },
+      "Value": {
+        "Fn::GetAtt": [
+          "GenericAgentCoreAgentCoreRuntimeRoleF34B80EA",
+          "Arn",
+        ],
+      },
+    },
     "ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F": {
       "Export": {
         "Name": "AgentCoreStack:ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F",
@@ -18463,11 +18547,10 @@ exports[`GenerativeAiUseCases matches the snapshot 4`] = `
         },
         "AgentRuntimeName": "GenUAgentBuilderRuntime",
         "EnvironmentVariables": {
-          "FILE_BUCKET": {
-            "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
-          },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/agent-builder/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "RUNTIME_CONFIG_PARAMETER": "/generative-ai-use-cases/agent-core-runtime-config",
+          "RUNTIME_CONFIG_REGION": "us-east-1",
           "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
@@ -18751,38 +18834,10 @@ exports[`GenerativeAiUseCases matches the snapshot 4`] = `
               "Sid": "AllowGatewayInvocation",
             },
             {
-              "Action": [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
+              "Action": "ssm:GetParameter",
               "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::GetAtt": [
-                    "GenericAgentCoreAgentCoreFileBucket0430DA42",
-                    "Arn",
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": [
-                          "GenericAgentCoreAgentCoreFileBucket0430DA42",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
+              "Resource": "arn:aws:ssm:us-east-1:123456890123:parameter/generative-ai-use-cases/agent-core-runtime-config",
+              "Sid": "ReadRuntimeConfig",
             },
             {
               "Action": [
@@ -18867,11 +18922,10 @@ exports[`GenerativeAiUseCases matches the snapshot 4`] = `
         },
         "AgentRuntimeName": "GenUGenericRuntime",
         "EnvironmentVariables": {
-          "FILE_BUCKET": {
-            "Ref": "GenericAgentCoreAgentCoreFileBucket0430DA42",
-          },
           "MCP_CONFIG_PATH": "/var/task/mcp-configs/generic/mcp.json",
           "MODEL_MAX_TOKENS": "{\\"anthropic.claude-3-sonnet-20240229-v1:0\\":4096}",
+          "RUNTIME_CONFIG_PARAMETER": "/generative-ai-use-cases/agent-core-runtime-config",
+          "RUNTIME_CONFIG_REGION": "us-east-1",
           "SUPPORTED_CACHE_FIELDS": "{\\"anthropic.claude-haiku-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-2\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5-1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-fable-5\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-8\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-7\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-6-v1\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-6\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-5-20251101-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-5-20250929-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-haiku-4-5-20251001-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-1-20250805-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-opus-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-sonnet-4-20250514-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-7-sonnet-20250219-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"anthropic.claude-3-5-haiku-20241022-v1:0\\":[\\"messages\\",\\"system\\",\\"tools\\"],\\"amazon.nova-premier-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-pro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-lite-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-micro-v1:0\\":[\\"messages\\",\\"system\\"],\\"amazon.nova-2-lite-v1:0\\":[\\"messages\\",\\"system\\"]}",
         },
         "LifecycleConfiguration": {},
@@ -19541,7 +19595,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A502123eebf7ab44b529d6a8ae471f271e68a00": {
+    "APIApiDeployment3A5021233d85dc67e0ccf2b4fce6653f7b4204dc": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -19577,6 +19631,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "APIApifilefileNameDELETE54EB1050",
         "APIApifilefileNameOPTIONS6C97AC5A",
         "APIApifilefileName2B0471F4",
+        "APIApifileDELETEFB7786B1",
         "APIApifileOPTIONS64A72556",
         "APIApifile76AB343B",
         "APIApifileurlGET6E9EDFE6",
@@ -19711,7 +19766,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::ApiGateway::Deployment",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment5C507F9A0550cc981adbb009856909b90e72a075": {
+    "APIApiDeployment5C507F9A3cccac9ba81ab6f6038a7ef69b8bb32b": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiproxyANYB1864AFB",
@@ -19736,6 +19791,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "APIApichatsPOSTF32299AA",
         "APIApifilefileNameDELETE54EB1050",
         "APIApifilefileNameOPTIONS6C97AC5A",
+        "APIApifileDELETEFB7786B1",
         "APIApifileOPTIONS64A72556",
         "APIApifileurlGET6E9EDFE6",
         "APIApifileurlOPTIONS658BFB93",
@@ -19835,7 +19891,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A502123eebf7ab44b529d6a8ae471f271e68a00",
+          "Ref": "APIApiDeployment3A5021233d85dc67e0ccf2b4fce6653f7b4204dc",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -19913,6 +19969,22 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             },
             "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
             "CUSTOM_AGENTS_JSON": "[]",
+            "DOCUMENT_SOURCES": {
+              "Fn::Join": [
+                "",
+                [
+                  "[{\\"kind\\":\\"knowledgeBase\\",\\"bucket\\":\\"",
+                  {
+                    "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefDataSourceBucket9FA93E04BB6984D1",
+                  },
+                  "\\",\\"prefix\\":\\"docs/\\"},{\\"kind\\":\\"kendra\\",\\"bucket\\":\\"",
+                  {
+                    "Ref": "RagDataSourceBucket091872DB",
+                  },
+                  "\\",\\"prefix\\":\\"docs/\\"}]",
+                ],
+              ],
+            },
             "GUARDRAIL_IDENTIFIER": {
               "Fn::ImportValue": "GuardrailStack:ExportsOutputFnGetAttGuardrailguardrail03A76CF4GuardrailIdDBA991AF",
             },
@@ -19925,6 +19997,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             "KNOWLEDGE_BASE_ID": {
               "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
             },
+            "KNOWLEDGE_BASE_STORAGE_TYPE": "opensearch",
             "LANGUAGE": "ja",
             "MODEL_IDS": "[{\\"modelId\\":\\"anthropic.claude-3-sonnet-20240229-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
             "MODEL_REGION": "us-east-1",
@@ -20548,39 +20621,6 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
             },
             {
               "Action": [
-                "s3:GetBucket*",
-                "s3:GetObject*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:s3:::",
-                      {
-                        "Fn::ImportValue": "AgentCoreStack:ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F",
-                      },
-                    ],
-                  ],
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:s3:::",
-                      {
-                        "Fn::ImportValue": "AgentCoreStack:ExportsOutputRefGenericAgentCoreAgentCoreFileBucket0430DA423298A79F",
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            {
-              "Action": [
                 "kendra:Query",
                 "kendra:Retrieve",
               ],
@@ -20624,11 +20664,27 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                       {
                         "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefDataSourceBucket9FA93E04BB6984D1",
                       },
-                      "/*",
+                      "/docs/*",
                     ],
                   ],
                 },
               ],
+            },
+            {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::",
+                    {
+                      "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefDataSourceBucket9FA93E04BB6984D1",
+                    },
+                    "/docs/*.metadata.json",
+                  ],
+                ],
+              },
             },
             {
               "Action": [
@@ -21571,6 +21627,47 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         },
       },
       "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApifileDELETEFB7786B1": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "APIAuthorizer9DCC037B",
+        },
+        "HttpMethod": "DELETE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "APIApiHandler18BC61F9",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "APIApifile76AB343B",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
       "UpdateReplacePolicy": "Delete",
     },
     "APIApifileOPTIONS64A72556": {
@@ -26121,6 +26218,34 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 },
               ],
             },
+            {
+              "Action": "s3:PutObject",
+              "Condition": {
+                "Null": {
+                  "s3:if-none-match": "false",
+                },
+              },
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::ImportValue": "AgentCoreStack:ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362",
+                },
+              },
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "APIFileBucket8FB29855",
+                        "Arn",
+                      ],
+                    },
+                    "/users/*/agent-outputs/*",
+                  ],
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -26554,6 +26679,38 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         ],
       },
       "Type": "AWS::IAM::Policy",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "AgentCoreRuntimeConfig7133F329": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Name": "/generative-ai-use-cases/agent-core-runtime-config",
+        "Tags": {
+          "app": "genu",
+        },
+        "Type": "String",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "{\\"userPoolId\\":\\"",
+              {
+                "Ref": "AuthUserPool8115E87F",
+              },
+              "\\",\\"userPoolClientId\\":\\"",
+              {
+                "Ref": "AuthUserPoolclientA74673A9",
+              },
+              "\\",\\"fileBucket\\":\\"",
+              {
+                "Ref": "APIFileBucket8FB29855",
+              },
+              "\\",\\"fileBucketRegion\\":\\"us-east-1\\"}",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::SSM::Parameter",
       "UpdateReplacePolicy": "Delete",
     },
     "AgentCoreStackOutputs657336C2": {
@@ -27067,7 +27224,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
           "Name": "GenerativeAiUseCasesStackApiSecurityHeadersPolicyFF62FE6B",
           "SecurityHeadersConfig": {
             "ContentSecurityPolicy": {
-              "ContentSecurityPolicy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://*.amazonaws.com; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com:* https://*.on.aws https://raw.githubusercontent.com https://api.github.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/;",
+              "ContentSecurityPolicy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; media-src 'self' blob: https://*.amazonaws.com; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com wss://*.amazonaws.com:* https://*.on.aws https://raw.githubusercontent.com https://api.github.com; font-src 'self' https://fonts.gstatic.com data:; object-src 'none'; frame-ancestors 'none'; frame-src 'self' https://www.youtube.com/; form-action 'self'; base-uri 'self';",
               "Override": true,
             },
             "ContentTypeOptions": {

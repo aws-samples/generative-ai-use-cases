@@ -14,6 +14,8 @@ store.subscribe(() => {
 });
 
 const PROMPT_KEY = 'promptList';
+// Context menu for the whole page; its items are the prompts
+const PAGE_MENU_ID = 'page';
 
 let prompts: SystemContext[] = [];
 
@@ -22,6 +24,11 @@ browser.tabs.onUpdated.addListener(async () => {
     browser.contextMenus.create({
       id: 'default',
       title: 'GenU拡張機能を開く',
+      contexts: ['page'],
+    });
+    browser.contextMenus.create({
+      id: PAGE_MENU_ID,
+      title: 'このページをGenUで',
       contexts: ['page'],
     });
 
@@ -33,13 +40,43 @@ browser.tabs.onUpdated.addListener(async () => {
           title: prompt.systemContextTitle,
           contexts: ['selection'],
         });
+        browser.contextMenus.create({
+          id: `${PAGE_MENU_ID}:${prompt.systemContextId}`,
+          parentId: PAGE_MENU_ID,
+          title: prompt.systemContextTitle,
+          contexts: ['page'],
+        });
       });
     });
   });
 });
 
+// The service worker is stopped while it is idle, which clears the prompts
+// loaded when the menus were made, so read them again on each click
+const loadPrompts = async (): Promise<SystemContext[]> => {
+  const value = await browser.storage.local.get(PROMPT_KEY);
+  return value[PROMPT_KEY] ?? presetPrompts;
+};
+
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (tab?.id !== undefined) {
+  if (tab?.id === undefined) {
+    return;
+  }
+  prompts = await loadPrompts();
+
+  // A prompt for the whole page: the content script reads the page and opens the chat
+  const pagePrompt = prompts.find(
+    (p) => `${PAGE_MENU_ID}:${p.systemContextId}` === info.menuItemId,
+  );
+  if (pagePrompt) {
+    Browser.tabs.sendMessage(tab.id, {
+      type: 'PAGE-CONTENT',
+      systemContext: pagePrompt,
+    } as MessagePayload);
+    return;
+  }
+
+  {
     // Send a message from the background to the TAB
     Browser.tabs.sendMessage(tab.id, { type: 'CHAT-OPEN' } as MessagePayload);
     Browser.tabs.sendMessage(tab.id, {

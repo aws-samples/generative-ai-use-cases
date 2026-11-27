@@ -2,11 +2,9 @@
 
 ## 구성 방법
 
-GenU를 사용하면 parameter.ts 또는 AWS CDK context를 통해 설정을 변경할 수 있습니다.
+GenU는 [packages/cdk/parameter.ts](/packages/cdk/parameter.ts)에서 설정합니다. 이 페이지의 설정 예시도 parameter.ts로 작성되어 있습니다.
 
-**새 환경을 구축할 때는 parameter.ts를 사용하는 것을 권장합니다. 여러 환경의 설정을 정의할 수 있고, TypeScript 타입 검사로 매개변수 이름이나 값의 오류를 발견할 수 있습니다(cdk.json에서는 이름이 잘못된 항목이 오류 없이 무시됩니다). 또한 업데이트 시 cdk.json에서 충돌이 덜 발생합니다. `env`로 지정한 환경이 parameter.ts에 정의되어 있으면 parameter.ts의 값만 사용되고 cdk.json의 매개변수는 사용되지 않습니다. 이미 cdk.json으로 설정한 경우의 이전 방법은 [업데이트 방법](./UPDATE.md#설정을-cdkjson에서-parameterts로-옮기는-경우)을 참조하세요.**
-
-**Context 사용 시: CDK context는 '-c'로 지정할 수 있지만, 코드 변경이 없으므로 프론트엔드 빌드가 트리거되지 않습니다. 이 자산의 경우 cdk.json에서 모든 설정을 변경하는 것을 권장합니다.**
+**parameter.ts에서는 여러 환경의 설정을 정의할 수 있고, TypeScript 타입 검사로 매개변수 이름이나 값의 오류를 발견할 수 있습니다(cdk.json에서는 이름이 잘못된 항목이 오류 없이 무시됩니다). 또한 업데이트 시 cdk.json에서 충돌이 덜 발생합니다. `env`로 지정한 환경이 parameter.ts에 정의되어 있으면 parameter.ts의 값만 사용되고 cdk.json의 매개변수는 사용되지 않습니다. 이미 cdk.json으로 설정한 경우의 이전 방법은 [업데이트 방법](./UPDATE.md#설정을-cdkjson에서-parameterts로-옮기는-경우)을 참조하세요.**
 
 ### parameter.ts 값 변경 방법
 
@@ -61,13 +59,9 @@ npm run web:devw
 npm run web:devw --env=dev2
 ```
 
-### cdk.json 값 변경 방법
+### cdk.json으로 설정한 기존 환경
 
-[packages/cdk/cdk.json](/packages/cdk/cdk.json)의 context 아래 값을 변경하여 설정을 구성합니다. 예를 들어, `"ragEnabled": true`로 설정하면 RAG 채팅 사용 사례가 활성화됩니다. context 값을 설정한 후 다음 명령으로 재배포하여 설정을 적용합니다:
-
-```bash
-npm run cdk:deploy
-```
+parameter.ts에 환경이 정의되어 있지 않으면 기존과 같이 [packages/cdk/cdk.json](/packages/cdk/cdk.json)의 `context`에서 매개변수를 읽습니다. 매개변수 이름과 값은 parameter.ts와 같으며 JSON으로 작성합니다(예: `"ragEnabled": true`). parameter.ts로 옮기는 것을 권장합니다([업데이트 방법](./UPDATE.md#설정을-cdkjson에서-parameterts로-옮기는-경우) 참조).
 
 ## 사용 사례 구성
 
@@ -90,19 +84,6 @@ const envs: Record<string, Partial<StackInput>> = {
     kendraIndexLanguage: 'en',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "ragEnabled": true,
-    "kendraIndexLanguage": "en"
-  }
-}
-}
 ```
 
 변경 후 `npm run cdk:deploy`로 재배포하여 변경사항을 적용합니다. `/packages/cdk/rag-docs/docs`에 저장된 데이터는 Kendra 데이터 소스용 S3 버킷에 자동으로 업로드됩니다. (`logs`로 시작하는 파일은 동기화되지 않습니다.)
@@ -136,18 +117,6 @@ const envs: Record<string, Partial<StackInput>> = {
     kendraDataSourceBucketName: '<Kendra S3 Data Source Bucket Name>',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "kendraIndexArn": "<Kendra Index ARN>",
-    "kendraDataSourceBucketName": "<Kendra S3 Data Source Bucket Name>"
-  }
-}
 ```
 
 변경 후 `npm run cdk:deploy`로 재배포하여 변경사항을 적용합니다.
@@ -190,25 +159,6 @@ const envs: Record<string, Partial<StackInput>> = {
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "ragKnowledgeBaseEnabled": true,
-    "ragKnowledgeBaseStorageType": "opensearch", // "opensearch" or "s3vectors"
-    "ragKnowledgeBaseId": "XXXXXXXXXX",
-    "ragKnowledgeBaseStandbyReplicas": false,
-    "ragKnowledgeBaseAdvancedParsing": false,
-    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
-    "embeddingModelId": "amazon.titan-embed-text-v2:0",
-    "rerankingModelId": "amazon.rerank-v1:0",
-    "queryDecompositionEnabled": true
-  }
-}
 ```
 
 `ragKnowledgeBaseStandbyReplicas`는 자동으로 생성되는 OpenSearch Serverless의 중복성과 관련됩니다:
@@ -289,22 +239,6 @@ const envs: Record<string, Partial<StackInput>> = {
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "ragKnowledgeBaseEnabled": true,
-    "ragKnowledgeBaseId": "XXXXXXXXXX",
-    "ragKnowledgeBaseStandbyReplicas": false,
-    "ragKnowledgeBaseAdvancedParsing": true,
-    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
-    "embeddingModelId": "amazon.titan-embed-text-v2:0"
-  }
-}
 ```
 
 #### 청킹 전략 변경
@@ -403,17 +337,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentEnabled": true
-  }
-}
-```
-
 #### 에이전트 기반 모델 사용자 정의
 
 Code Interpreter 및 Search Agent에서 사용하는 기반 모델을 사용자 정의할 수 있습니다. 기본적으로 `global.anthropic.claude-sonnet-4-6`이 사용됩니다.
@@ -429,17 +352,6 @@ const envs: Record<string, Partial<StackInput>> = {
     agentFoundationModel: 'global.anthropic.claude-sonnet-4-6',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentFoundationModel": "global.anthropic.claude-sonnet-4-6"
-  }
-}
 ```
 
 #### Search Agent 배포
@@ -470,20 +382,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentEnabled": true,
-    "searchAgentEnabled": true,
-    "searchEngine": "Brave" or "Tavily",
-    "searchApiKey": "<Search Engine API Key>"
-  }
-}
-```
-
 변경 후 `npm run cdk:deploy`로 재배포하여 변경사항을 적용합니다. 이렇게 하면 기본 검색 엔진 Agent가 배포됩니다.
 
 > [!NOTE]
@@ -510,23 +408,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agents": [
-      {
-        "displayName": "MyCustomAgent",
-        "agentId": "XXXXXXXXX",
-        "aliasId": "YYYYYYYY"
-      }
-    ]
-  }
-}
 ```
 
 `packages/cdk/lib/construct/agent.ts`를 수정하여 새 Agents를 정의할 수도 있습니다. CDK에서 정의된 Agents를 사용하는 경우 `agentEnabled: true`로 설정합니다.
@@ -564,24 +445,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentEnabled": true,
-    "agents": [
-      {
-        "displayName": "Knowledge Base",
-        "agentId": "XXXXXXXXX",
-        "aliasId": "YYYYYYYY"
-      }
-    ]
-  }
-}
-```
-
 #### Agents 인라인 표시
 
 기본적으로 Agents는 "Agent Chat" 사용 사례 내에서 선택할 수 있습니다. 인라인 표시 옵션을 활성화하면 "Agent Chat" 사용 사례가 더 이상 표시되지 않고 사용 가능한 모든 Agents가 다른 사용 사례처럼 표시됩니다. 유효한 Agents가 있을 때 `inlineAgents`를 `true`로 설정합니다.
@@ -595,17 +458,6 @@ const envs: Record<string, Partial<StackInput>> = {
     inlineAgents: true,
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "inlineAgents": true
-  }
-}
 ```
 
 ### 리서치 에이전트 유스케이스 활성화
@@ -632,24 +484,12 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-#### cdk.json 설정 예시
-
-```json
-{
-  "context": {
-    "researchAgentEnabled": true,
-    "researchAgentBraveApiKey": "YOUR_BRAVE_API_KEY",
-    "researchAgentTavilyApiKey": ""
-  }
-}
-```
-
 자세한 절차는 [리서치 에이전트 배포 가이드](./DEPLOY_RESEARCH_USECASE.md)를 참조하세요.
 
 ### MCP Chat 사용 사례 활성화
 
 > [!WARNING]
-> MCP Chat 사용 사례는 사용 중단되었습니다. MCP 활용을 위해서는 AgentCore 사용 사례를 사용하세요. MCP 채팅 사용 사례는 v6에서 완전히 제거될 예정입니다.
+> MCP Chat 사용 사례는 사용 중단되었습니다. MCP 활용을 위해서는 AgentCore 사용 사례를 사용하세요.
 
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction)는 LLM 모델을 외부 데이터 및 도구와 연결하는 프로토콜입니다.
 GenU에서는 [Strands Agents](https://strandsagents.com/latest/)를 사용하여 MCP 호환 도구를 실행하는 채팅 사용 사례를 제공합니다.
@@ -663,17 +503,6 @@ const envs: Record<string, Partial<StackInput>> = {
     mcpEnabled: true,
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "mcpEnabled": true
-  }
-}
 ```
 
 사용할 MCP 서버는 [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json)에 정의됩니다.
@@ -728,36 +557,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "flows": [
-      {
-        "flowId": "XXXXXXXXXX",
-        "aliasId": "YYYYYYYYYY",
-        "flowName": "WhatIsItFlow",
-        "description": "This flow searches the web for any keyword and returns an explanation. Please enter text"
-      },
-      {
-        "flowId": "ZZZZZZZZZZ",
-        "aliasId": "OOOOOOOOOO",
-        "flowName": "RecipeFlow",
-        "description": "Creates a recipe based on the given JSON.\nPlease enter like {\"dish\": \"curry rice\", \"people\": 3}."
-      },
-      {
-        "flowId": "PPPPPPPPPP",
-        "aliasId": "QQQQQQQQQQQ",
-        "flowName": "TravelPlanFlow",
-        "description": "Creates a travel plan based on the given array.\nPlease enter like [{\"place\": \"Tokyo\", \"day\": 3}, {\"place\": \"Osaka\", \"day\": 2}]."
-      }
-    ]
-  }
-}
 ```
 
 ### AgentCore 사용 사례 활성화
@@ -821,27 +620,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-
-{
-  "context": {
-    "createGenericAgentCoreRuntime": true,
-    "agentCoreRegion": "us-west-2",
-    "agentCoreExternalRuntimes": [
-      {
-        "name": "AgentCore1",
-        "display_name": "고객 지원 에이전트",
-        "description": "고객 문의에 응대하는 에이전트입니다.",
-        "arn": "arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx"
-      }
-    ]
-  }
-}
-```
-
 > [!NOTE]
 > AgentCore 사용 사례 설정을 활성화한 후 다시 비활성화하려면 `createGenericAgentCoreRuntime: false`로 설정하고 재배포하면 AgentCore 사용 사례가 비활성화되지만 `AgentCoreStack` 자체는 남아있습니다. 관리 콘솔을 열고 `agentCoreRegion`의 CloudFormation에서 `AgentCoreStack` 스택을 삭제하여 완전히 제거할 수 있습니다.
 
@@ -886,22 +664,37 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "createGenericAgentCoreRuntime": true,
-    "agentBuilderEnabled": true,
-    "agentCoreVpcId": "vpc-xxxxxxxxx",
-    "agentCoreSubnetIds": ["subnet-xxxxxxxxx", "subnet-yyyyyyyyy"]
-  }
-}
-```
-
 > [!WARNING]
 > VPC 모드를 사용할 때, 예를 들어 PRIVATE에서 PUBLIC으로의 변경으로 인해 AgentCore Runtime 삭제 시 보안 그룹이 자동 삭제되지 않습니다. AgentCore Runtime이 생성하는 AWS 관리형 ENI가 보안 그룹을 참조하기 때문에 CloudFormation에서는 삭제할 수 없습니다. AgentCore Runtime 삭제 후 관리형 ENI가 자동 삭제될 때까지 기다린 다음 수동으로 보안 그룹을 삭제하세요. 삭제가 필요한 보안 그룹 ID는 CloudFormation 출력에 표시됩니다.
+
+### AgentBuilder 사용 사례 활성화
+
+시스템 프롬프트와 임의의 MCP를 설정하여 사용자가 사용 사례별로 자유롭게 에이전트를 만들 수 있는 사용 사례입니다. (Experimental: 예고 없이 호환되지 않는 변경이 있을 수 있습니다)
+
+AgentCore 사용 사례와 마찬가지로 관리자가 [agent-builder/mcp.json](packages/cdk/lambda-python/generic-agent-core-runtime/mcp-configs/agent-builder/mcp.json)에 MCP를 미리 등록합니다. 사용자는 관리자가 등록한 MCP 중에서 원하는 것을 선택하여 사용할 수 있습니다.
+
+`agentBuilderEnabled`를 활성화하면 Agent Builder용 AgentCore Runtime이 배포됩니다.
+기본적으로 `modelRegion`에 배포되며, `agentCoreRegion`을 지정하여 변경할 수 있습니다.
+
+AWS 외부의 서비스에 접근할 때는 AgentCore Gateway를 사용합니다.
+`agentCoreGatewayArns`에 Gateway ARN을 지정하면 최소 권한 원칙에 따른 IAM 정책이 설정됩니다.
+설정 후 MCP 설정에서 `mcp-proxy-for-aws`를 사용하여 엔드포인트를 지정합니다.
+자세한 내용은 [mcp-proxy-for-aws 문서](https://github.com/aws/mcp-proxy-for-aws)를 참조하세요.
+
+**[parameter.ts](/packages/cdk/parameter.ts) 편집**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    agentBuilderEnabled: true,
+    agentCoreRegion: 'us-west-2',
+    agentCoreGatewayArns: [
+      'arn:aws:bedrock-agentcore:us-west-2:<account>:gateway/<gateway-id>',
+    ],
+  },
+};
+```
 
 ### Voice Chat 사용 사례 활성화
 
@@ -992,17 +785,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelIds": ["anthropic.claude-3-sonnet-20240229-v1:0"]
-  }
-}
-```
-
 ### 프롬프트 최적화 도구 활성화
 
 프롬프트 최적화 도구는 입력 프롬프트를 지정된 모델에 최적화된 형태로 변환합니다.
@@ -1041,29 +823,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "hiddenUseCases": {
-      "generate": true,
-      "summarize": true,
-      "writer": true,
-      "translate": true,
-      "webContent": true,
-      "image": true,
-      "video": true,
-      "videoAnalyzer": true,
-      "diagram": true,
-      "meetingMinutes": true,
-      "voiceChat": true
-    }
-  }
-}
-```
-
 ## Use Case Builder 구성
 
 Use Case Builder는 기본적으로 활성화되어 있으며 배포 후 화면에 표시되는 "Builder Mode" 옵션에서 액세스할 수 있습니다. Use Case Builder를 비활성화하려면 매개변수 `useCaseBuilderEnabled`에 `false`를 지정합니다. (기본값은 `true`)
@@ -1077,17 +836,6 @@ const envs: Record<string, Partial<StackInput>> = {
     useCaseBuilderEnabled: false,
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "useCaseBuilderEnabled": false
-  }
-}
 ```
 
 ## Amazon Bedrock 모델 변경
@@ -1288,79 +1036,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-{
-  "context": {
-    "modelRegion": "ap-northeast-1",
-    "modelIds": [
-      {
-        "modelId": "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-        "region": "us-east-1"
-      },
-      "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      {
-        "modelId": "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-        "region": "us-east-1"
-      },
-      "apac.amazon.nova-pro-v1:0",
-      "apac.amazon.nova-lite-v1:0",
-      "apac.amazon.nova-micro-v1:0",
-      {
-        "modelId": "us.deepseek.r1-v1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "us.writer.palmyra-x5-v1:0",
-        "region": "us-west-2"
-      },
-      {
-        "modelId": "us.meta.llama4-maverick-17b-instruct-v1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "us.meta.llama4-scout-17b-instruct-v1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "us.mistral.pixtral-large-2502-v1:0",
-        "region": "us-east-1"
-      }
-    ],
-    "imageGenerationModelIds": [
-      "amazon.nova-canvas-v1:0",
-      {
-        "modelId": "stability.sd3-5-large-v1:0",
-        "region": "us-west-2"
-      },
-      {
-        "modelId": "stability.stable-image-core-v1:1",
-        "region": "us-west-2"
-      },
-      {
-        "modelId": "stability.stable-image-ultra-v1:1",
-        "region": "us-west-2"
-      }
-    ],
-    "videoGenerationModelIds": [
-      "amazon.nova-reel-v1:0",
-      {
-        "modelId": "luma.ray-v2:0",
-        "region": "us-west-2"
-      }
-    ],
-    "speechToSpeechModelIds": [
-      {
-        "modelId": "amazon.nova-sonic-v1:0",
-        "region": "us-east-1"
-      }
-    ]
-  }
-}
-```
-
 ### 예제: us-east-1 (버지니아)에서 Amazon Bedrock 모델 사용
 
 **[parameter.ts](/packages/cdk/parameter.ts) 편집**
@@ -1395,39 +1070,6 @@ const envs: Record<string, Partial<StackInput>> = {
     speechToSpeechModelIds: ['amazon.nova-sonic-v1:0'],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-east-1",
-    "modelIds": [
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-sonnet-20240229-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0",
-      "amazon.nova-pro-v1:0",
-      "amazon.nova-lite-v1:0",
-      "amazon.nova-micro-v1:0",
-      "amazon.titan-text-premier-v1:0",
-      "meta.llama3-70b-instruct-v1:0",
-      "meta.llama3-8b-instruct-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2402-v1:0"
-    ],
-    "imageGenerationModelIds": [
-      "amazon.nova-canvas-v1:0",
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.stable-diffusion-xl-v1"
-    ],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:1"],
-    "speechToSpeechModelIds": ["amazon.nova-sonic-v1:0"]
-  }
-}
 ```
 
 ### 예제: us-west-2 (오레곤)에서 Amazon Bedrock 모델 사용
@@ -1465,41 +1107,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-west-2",
-    "modelIds": [
-      "anthropic.claude-3-5-sonnet-20241022-v2:0",
-      "anthropic.claude-3-5-haiku-20241022-v1:0",
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-opus-20240229-v1:0",
-      "anthropic.claude-3-sonnet-20240229-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0",
-      "meta.llama3-1-70b-instruct-v1:0",
-      "meta.llama3-1-8b-instruct-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0"
-    ],
-    "imageGenerationModelIds": [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-large-v1:0",
-      "stability.sd3-5-large-v1:0",
-      "stability.stable-image-core-v1:0",
-      "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:0",
-      "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1"
-    ]
-  }
-}
 ```
 
 ### 예제: us (버지니아 북부 또는 오레곤)에서 Amazon Bedrock의 교차 지역 추론 모델 사용
@@ -1546,48 +1153,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-west-2",
-    "modelIds": [
-      "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-haiku-20240307-v1:0",
-      "us.deepseek.r1-v1:0",
-      "us.writer.palmyra-x5-v1:0",
-      "us.writer.palmyra-x4-v1:0",
-      "us.meta.llama4-maverick-17b-instruct-v1:0",
-      "us.meta.llama4-scout-17b-instruct-v1:0",
-      "us.meta.llama3-2-11b-instruct-v1:0",
-      "us.meta.llama3-2-3b-instruct-v1:0",
-      "us.meta.llama3-2-1b-instruct-v1:0",
-      "us.amazon.nova-premier-v1:0",
-      "us.amazon.nova-pro-v1:0",
-      "us.amazon.nova-lite-v1:0",
-      "us.amazon.nova-micro-v1:0",
-      "cohere.command-r-plus-v1:0",
-      "cohere.command-r-v1:0",
-      "mistral.mistral-large-2407-v1:0"
-    ],
-    "imageGenerationModelIds": [
-      "amazon.titan-image-generator-v2:0",
-      "amazon.titan-image-generator-v1",
-      "stability.sd3-large-v1:0",
-      "stability.sd3-5-large-v1:0",
-      "stability.stable-image-core-v1:0",
-      "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:0",
-      "stability.stable-image-ultra-v1:1",
-      "stability.stable-diffusion-xl-v1"
-    ]
-  }
-}
-```
-
 ### 예제: ap-northeast-1 (도쿄)에서 Amazon Bedrock 모델 사용
 
 **[parameter.ts](/packages/cdk/parameter.ts) 편집**
@@ -1605,23 +1170,6 @@ const envs: Record<string, StackInput> = {
     videoGenerationModelIds: ['amazon.nova-reel-v1:0'],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "ap-northeast-1",
-    "modelIds": [
-      "anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "anthropic.claude-3-haiku-20240307-v1:0"
-    ],
-    "imageGenerationModelIds": ["amazon.nova-canvas-v1:0"],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:0"]
-  }
-}
 ```
 
 ## Amazon SageMaker를 사용한 사용자 정의 모델 사용
@@ -1665,22 +1213,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "<SageMaker Endpoint Region>",
-    "endpointNames": [
-      "<SageMaker Endpoint Name>",
-      {
-        "modelIds": "<SageMaker Endpoint Name>",
-        "region": "<SageMaker Endpoint Region>"
-      }
-    ]
-  }
-}
-```
-
 ## 보안 관련 설정
 
 ### 자체 가입 비활성화
@@ -1696,17 +1228,6 @@ const envs: Record<string, Partial<StackInput>> = {
     selfSignUpEnabled: false,
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "selfSignUpEnabled": false
-  }
-}
 ```
 
 ### 가입용 이메일 도메인 제한
@@ -1734,17 +1255,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedSignUpEmailDomains": ["amazon.com"] // null에서 허용된 도메인을 지정하여 활성화
-  }
-}
-```
-
 - `amazon.com` 또는 `amazon.jp` 도메인의 이메일 주소로 가입을 허용하는 예제
 
 **[parameter.ts](/packages/cdk/parameter.ts) 편집**
@@ -1756,17 +1266,6 @@ const envs: Record<string, Partial<StackInput>> = {
     allowedSignUpEmailDomains: ['amazon.com', 'amazon.jp'],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedSignUpEmailDomains": ["amazon.com", "amazon.jp"] // null에서 허용된 도메인을 지정하여 활성화
-  }
-}
 ```
 
 ### AWS WAF 제한 활성화
@@ -1787,18 +1286,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedIpV4AddressRanges": ["192.168.0.0/24"], // null에서 허용된 CIDR 목록을 지정하여 활성화
-    "allowedIpV6AddressRanges": ["2001:0db8::/32"] // null에서 허용된 CIDR 목록을 지정하여 활성화
-  }
-}
-```
-
 #### 지리적 제한
 
 원산지 국가별로 웹 앱 액세스를 제한하려면 AWS WAF 지리적 제한을 활성화할 수 있습니다. `allowedCountryCodes`에 허용된 국가를 국가 코드 배열로 지정할 수 있습니다.
@@ -1815,17 +1302,6 @@ const envs: Record<string, Partial<StackInput>> = {
     allowedCountryCodes: ['JP'],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedCountryCodes": ["JP"] // null에서 허용된 국가 목록을 지정하여 활성화
-  }
-}
 ```
 
 `allowedIpV4AddressRanges`, `allowedIpV6AddressRanges`, `allowedCountryCodes` 중 하나를 지정하고 `npm run cdk:deploy`를 다시 실행하면 WAF 스택이 us-east-1에 배포됩니다 (AWS WAF V2는 현재 CloudFront와 함께 사용할 때 us-east-1만 지원). us-east-1에서 CDK를 사용한 적이 없다면 배포 전에 다음 명령을 실행하여 부트스트랩하세요:
@@ -1855,19 +1331,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "samlAuthEnabled": true,
-    "samlCognitoDomainName": "your-preferred-name.auth.ap-northeast-1.amazoncognito.com",
-    "samlCognitoFederatedIdentityProviderName": "EntraID"
-  }
-}
-```
-
 - samlAuthEnabled: `true`로 설정하면 SAML 전용 인증 화면으로 전환됩니다. Cognito 사용자 풀을 사용한 기존 인증은 더 이상 사용할 수 없습니다.
 - samlCognitoDomainName: Cognito의 App integration에 설정할 Cognito 도메인 이름을 지정합니다.
 - samlCognitoFederatedIdentityProviderName: Cognito의 Sign-in experience에 설정할 Identity Provider 이름을 지정합니다.
@@ -1885,17 +1348,6 @@ const envs: Record<string, Partial<StackInput>> = {
     guardrailEnabled: true,
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "guardrailEnabled": true
-  }
-}
 ```
 
 기본 가드레일은 일본어 대화에서 효과가 입증된 민감한 정보 필터를 적용합니다. 사용자 정의 단어 필터와 민감한 정보 필터용 정규 표현식도 작동하는 것을 확인했으므로 필요에 따라 `packages/cdk/lib/construct/guardrail.ts`를 수정하세요. 자세한 내용은 [Amazon Bedrock용 가드레일](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html)과 [CfnGuardrail](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_bedrock.CfnGuardrail.html)을 참조하세요.
@@ -1946,29 +1398,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "kendraIndexScheduleEnabled": true,
-    "kendraIndexScheduleCreateCron": {
-      "minute": "0",
-      "hour": "23",
-      "month": "*",
-      "weekDay": "SUN-THU"
-    },
-    "kendraIndexScheduleDeleteCron": {
-      "minute": "0",
-      "hour": "11",
-      "month": "*",
-      "weekDay": "MON-FRI"
-    }
-  }
-}
-```
-
 Kendra 인덱스가 삭제되어도 RAG 기능은 계속 켜져 있습니다. 웹 애플리케이션(GenU)에서 RAG 관련 메뉴가 계속 표시됩니다. RAG 채팅을 실행할 때 인덱스가 존재하지 않아 오류가 발생하며 "인덱스 생성/삭제 일정을 확인하세요"라는 오류 메시지가 표시됩니다.
 
 일정 관리에는 EventBridge 규칙이 사용되고 프로세스 제어에는 Step Functions가 사용됩니다. EventBridge 규칙을 수동으로 비활성화하여 일정을 중지할 수 있습니다. Step Functions 상태 머신을 수동으로 실행하여 인덱스를 생성하거나 삭제할 수도 있습니다.
@@ -1990,17 +1419,6 @@ Kendra 인덱스가 삭제되어도 RAG 기능은 계속 켜져 있습니다. �
 ### 태그 설정 방법
 
 GenU는 비용 관리 및 기타 목적을 위한 태그를 지원합니다. 기본적으로 태그의 키 이름은 `GenU`로 설정되지만, `tagKey`를 지정하여 사용자 정의 태그 키를 사용할 수 있습니다. 설정 방법의 예시는 다음과 같습니다:
-
-`cdk.json`에서 설정:
-
-```json
-// cdk.json
-  ...
-  "context": {
-    "tagKey": "MyProject",  // 사용자 정의 태그 키 (선택사항, 기본값은 "GenU")
-    "tagValue": "dev",
-    ...
-```
 
 `parameter.ts`에서 설정:
 
@@ -2042,17 +1460,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "dashboard": true
-  }
-}
-```
-
 변경 후 `npm run cdk:deploy`로 재배포하여 변경사항을 적용합니다. `modelRegion`에 지정된 지역에 `GenerativeAiUseCasesDashboardStack`이라는 스택이 배포됩니다. 출력 값은 다음 단계에서 사용됩니다.
 
 다음으로 Amazon Bedrock 로그 출력을 구성합니다. [Amazon Bedrock 설정](https://console.aws.amazon.com/bedrock/home#settings)을 열고 Model invocation logging을 활성화합니다. Select the logging destinations에서 CloudWatch Logs only를 선택합니다. (S3에도 출력하려면 Both S3 and CloudWatch Logs를 선택할 수도 있습니다.) Log group name에는 `npm run cdk:deploy` 중에 출력된 `GenerativeAiUseCasesDashboardStack.BedrockLogGroup`을 지정합니다. (예: `GenerativeAiUseCasesDashboardStack-LogGroupAAAAAAAA-BBBBBBBBBBBB`) 임의의 이름으로 새 Service role을 생성합니다. Model invocation logging 설정은 `modelRegion`으로 지정된 지역에서 구성해야 합니다.
@@ -2061,6 +1468,62 @@ const envs: Record<string, Partial<StackInput>> = {
 
 > [!NOTE]
 > 모니터링 대시보드를 활성화한 후 비활성화하려면 `dashboard: false`로 설정하고 재배포합니다. 이렇게 하면 모니터링 대시보드가 비활성화되지만 `GenerativeAiUseCasesDashboardStack` 자체는 남아있습니다. 완전히 제거하려면 관리 콘솔을 열고 modelRegion의 CloudFormation에서 `GenerativeAiUseCasesDashboardStack` 스택을 삭제하세요.
+
+### 사용자별, 사용 사례별 사용 현황
+
+GenU는 Bedrock 호출에 다음 [요청 메타데이터](https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-request-metadata.html)를 붙입니다. 태그는 모델 호출 로그에 기록됩니다.
+
+| 키             | 값                                                       |
+| -------------- | -------------------------------------------------------- |
+| `genu`         | `genu` (GenU에서 호출했음을 나타냄)                      |
+| `genu_user`    | Cognito 사용자의 `sub`                                   |
+| `genu_usecase` | 사용 사례 (`chat`, `rag` 등, 페이지 경로의 첫 번째 부분) |
+
+대시보드에는 사용자별, 사용 사례별 사용 현황(Tokens by User / Tokens by Use Case)이 포함됩니다. 같은 쿼리가 CloudWatch Logs Insights의 "Saved queries"에 `GenU/<스택 이름>/TokensByUser`와 `GenU/<스택 이름>/TokensByUseCase`로 저장되므로 기간을 바꾸거나 조건을 추가할 수 있습니다. `genu_user`는 Cognito의 `sub`이므로 부서 등의 속성으로 집계하려면 Cognito 사용자 속성과 결합하세요.
+
+대시보드의 로그 그룹이 아닌 기존 로그 그룹에 모델 호출 로그를 보내는 경우에도 같은 태그로 쿼리할 수 있습니다.
+
+```
+filter requestMetadata.genu = 'genu'
+| fields requestMetadata.genu_user as user, modelId, input.inputTokenCount as inTokens, output.outputTokenCount as outTokens
+| stats sum(inTokens) as inputTokens, sum(outTokens) as outputTokens, count(*) as calls by user, modelId
+| sort inputTokens desc
+```
+
+> [!NOTE]
+>
+> - 태그는 Converse API와 InvokeModel API로 호출하는 모델(채팅이나 집필 등의 텍스트 생성, 이미지 생성)에 붙습니다. 비디오 생성(StartAsyncInvoke), 음성 채팅, Bedrock Agents, Knowledge Base 채팅, Flow 채팅, 프롬프트 최적화, AgentCore 호출에는 붙지 않습니다.
+> - 모델 호출 로그는 리전별로 기록됩니다. `modelIds`에서 여러 리전의 모델을 사용하는 경우 각 리전에서 로그를 설정하고 리전별로 쿼리하세요. 한곳에서 쿼리하려면 AWS Organizations를 사용하는 경우 [CloudWatch Logs centralization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html)으로 여러 리전의 로그를 하나의 리전에 복사할 수 있습니다.
+> - 기본적으로 모델 호출 로그에는 프롬프트와 응답 텍스트도 기록됩니다. 보존 기간과 열람할 수 있는 사람을 확인하세요.
+
+## 관리자 페이지
+
+관리자 페이지에서는 GenU의 모든 사용자의 토큰 사용량을 확인할 수 있습니다(왼쪽 아래의 방패 아이콘). GenU가 채팅 메시지와 함께 저장하는 사용량(통계 페이지와 같은 데이터)을 최근 7일, 30일, 90일 단위로 표시하며, 사용자별 합계를 CSV로 다운로드할 수 있습니다. 사용자별 표에서 사용자를 선택하면(최대 50명) 카드, 모델별 표, 차트를 해당 사용자로 좁힐 수 있습니다. 토큰 수는 입력, 출력, 캐시 읽기, 캐시 쓰기 토큰의 합계입니다.
+
+관리자 페이지는 Cognito 사용자 풀의 `SystemAdminGroup` 그룹에 속한 사용자만 열 수 있습니다. 그룹은 배포 시 생성됩니다. 사용자를 추가하려면 [Amazon Cognito 콘솔](https://console.aws.amazon.com/cognito/home)에서 사용자 풀을 열고 "그룹"에서 사용자를 추가하거나 다음 명령을 실행합니다.
+
+```bash
+aws cognito-idp admin-add-user-to-group \
+  --user-pool-id <사용자 풀 ID> \
+  --username <사용자 이름> \
+  --group-name SystemAdminGroup
+```
+
+사용자가 다시 로그인하면 관리자 페이지를 열 수 있습니다.
+
+관리자 페이지와 통계 페이지의 비용은 GenU에 포함된 AWS 정가(온디맨드, USD)로 각 모델을 호출하는 리전의 가격을 사용해 계산합니다. `global.`로 시작하는 모델은 글로벌 가격을 사용합니다. 가격표는 GenU 릴리스마다 업데이트됩니다. 릴리스를 기다리지 않고 최신 정가를 사용하려면 가격표(`packages/cdk/lambda/utils/modelPricing.generated.ts`)를 다시 생성하고 배포하세요.
+
+```bash
+npm -w packages/cdk run pricing:update
+```
+
+> [!NOTE]
+>
+> - 에이전트(Bedrock Agents, AgentCore)와 이미지, 비디오 생성의 사용량은 포함되지 않습니다. 포함하려면 위의 "사용자별, 사용 사례별 사용 현황"처럼 CloudWatch Logs Insights를 사용하세요.
+> - 비용은 정가를 사용합니다. 캐시 쓰기는 5분 캐시 요금, 200K 토큰을 넘는 요청은 표준 요금으로 계산하므로 이들을 사용하는 경우 실제보다 낮게 표시됩니다. 할인, Savings Plans, 프리 티어는 반영되지 않으므로 실제 요금은 AWS Cost Explorer에서 확인하세요. 가격표에 없는 모델은 비용에서 제외되고 "No price"로 표시됩니다.
+> - 합계는 관리자 페이지를 열 때마다 계산됩니다. 기간이 90일이고 활성 사용자가 1,000~2,000명을 넘으면 요청이 API Gateway의 29초 제한에 가까워지므로, 그 규모에서는 기간을 짧게 하거나 CloudWatch Logs Insights를 사용하세요.
+> - 사용자별 표와 CSV의 `userId`는 Cognito 사용자 이름입니다. 모델 호출 로그의 `genu_user`는 Cognito의 `sub`이므로 SAML 사용자 등에서는 두 값이 다릅니다.
+> - 사용자 풀에 `SystemAdminGroup`이라는 그룹이 이미 있으면 배포가 실패합니다. 먼저 해당 그룹을 삭제하거나 이름을 바꾸세요.
 
 ## 사용자 정의 도메인 사용
 
@@ -2085,19 +1548,6 @@ const envs: Record<string, Partial<StackInput>> = {
     hostedZoneId: 'XXXXXXXXXXXXXXXXXXXX',
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "hostName": "genai",
-    "domainName": "example.com",
-    "hostedZoneId": "XXXXXXXXXXXXXXXXXXXX"
-  }
-}
 ```
 
 ## 다른 AWS 계정에서 Bedrock 사용
@@ -2236,28 +1686,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**[packages/cdk/cdk.json](/packages/cdk/cdk.json) 편집**
-
-```json
-// cdk.json
-{
-  "context": {
-    "crossAccountBedrockRoleArn": "arn:aws:iam::AccountID:role/PreCreatedRoleName",
-    // Knowledge Base 사용 시에만
-    "ragKnowledgeBaseEnabled": true,
-    "ragKnowledgeBaseId": "YOUR_KNOWLEDGE_BASE_ID",
-    // 에이전트 사용 시에만
-    "agents": [
-      {
-        "displayName": "YOUR AGENT NAME",
-        "agentId": "YOUR_AGENT_ID",
-        "aliasId": "YOUR_AGENT_ALIAS_ID"
-      }
-    ]
-  }
-}
 ```
 
 설정을 변경한 후 `npm run cdk:deploy`를 실행하여 변경사항을 적용합니다.

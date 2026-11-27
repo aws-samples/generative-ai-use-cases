@@ -26,6 +26,7 @@ export class AgentCoreStack extends Stack {
     if (params.createGenericAgentCoreRuntime || params.agentBuilderEnabled) {
       this.genericAgentCore = new GenericAgentCore(this, 'GenericAgentCore', {
         env: params.env,
+        mainRegion: params.region,
         createGenericRuntime: params.createGenericAgentCoreRuntime,
         createAgentBuilderRuntime: params.agentBuilderEnabled,
         modelIds: params.modelIds.map((model) => model.modelId),
@@ -94,6 +95,11 @@ export class AgentCoreStack extends Stack {
       new CfnOutput(this, REMOTE_OUTPUT_KEYS.FILE_BUCKET_NAME, {
         value: this.genericAgentCore.fileBucket.bucketName,
       });
+
+      // The main stack no longer imports the bucket name. This stack deploys
+      // first, and CloudFormation refuses to delete an export another stack
+      // still imports, so the export is kept until both stacks are updated.
+      this.exportValue(this.genericAgentCore.fileBucket.bucketName);
     }
   }
 
@@ -137,5 +143,10 @@ export class AgentCoreStack extends Stack {
    */
   public get fileBucketInfo(): BucketInfo | undefined {
     return this.genericAgentCore?.fileBucketInfo;
+  }
+
+  /** Execution role of the runtimes (see GenericAgentCore.runtimeRole). */
+  public get runtimeRole() {
+    return this.genericAgentCore?.runtimeRole;
   }
 }

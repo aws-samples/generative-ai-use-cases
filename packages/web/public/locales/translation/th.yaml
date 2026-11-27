@@ -37,6 +37,7 @@ auth:
   title: Generative AI Use Cases on AWS
 chat:
   advanced_options: ตัวเลือกขั้นสูง
+  continue_output: ดำเนินการต่อ
   create_link: สร้างลิงก์
   create_link_message: การสร้างลิงก์จะแชร์ประวัติการสนทนากับผู้ใช้ทุกคนที่สามารถเข้าสู่ระบบแอปพลิเคชันนี้ได้
   create_system_prompt: สร้าง System Prompt
@@ -58,6 +59,7 @@ chat:
   save: บันทึก
   saved_system_prompts: System Prompts ที่บันทึกไว้
   search_by_title: ค้นหาตามชื่อเรื่อง
+  set_default_system_prompt: เริ่มแชทใหม่ด้วย System Prompt นี้
   settings: การตั้งค่า
   share: แชร์
   share_conversation: แชร์ประวัติการสนทนา
@@ -65,6 +67,7 @@ chat:
   show_system_prompt: แสดง system prompt
   system_prompt: System Prompt
   title: Chat
+  unset_default_system_prompt: เลิกเริ่มแชทใหม่ด้วย System Prompt นี้
   view_prompt_examples: ดูตัวอย่าง Prompt
 common:
   cancel: ยกเลิก
@@ -799,7 +802,8 @@ setting:
     typing_animation: แอนิเมชันการพิมพ์
     version: เวอร์ชัน
     version_help: อ้างอิงเวอร์ชันใน package.json ของ generative-ai-use-cases
-  recent_updates: การอัปเดตล่าสุด
+  release_notes: บันทึกประจำรุ่น
+  release_notes_unavailable: ไม่มีบันทึกประจำรุ่นสำหรับเวอร์ชันนี้
   signout: ออกจากระบบ
   tabs:
     account: บัญชี
@@ -807,9 +811,8 @@ setting:
     system: ระบบ
     usage: การใช้งาน
   update:
-    message: >-
-      มีการอัปเดตบน GitHub หากคุณต้องการใช้คุณสมบัติล่าสุด โปรดดึงสาขาหลักของ <0>generative-ai-use-cases</0> และปรับใช้ใหม่
-  view_all_updates: ดูการอัปเดตทั้งหมด
+    message: 'เวอร์ชัน {{version}} พร้อมใช้งานแล้ว โปรดตรวจสอบ<0>บันทึกประจำรุ่น</0>และดู<1>วิธีอัปเดต</1>'
+  view_all_release_notes: ดูบันทึกประจำรุ่นทั้งหมด
 shared:
   contact_admin: โปรดติดต่อผู้ดูแลระบบ
   error: ข้อผิดพลาด

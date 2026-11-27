@@ -11,7 +11,9 @@ from mcp import StdioServerParameters, stdio_client
 from strands import tool
 from strands.tools.mcp import MCPClient
 
+from . import sandbox
 from .config import WORKSPACE_DIR, get_aws_credentials, get_uv_environment
+from .user_files import agent_output_key, object_url, put_new_object, upload_new_object, workspace_file
 
 # Import strands-agents code interpreter tool
 try:
@@ -75,6 +77,8 @@ class ToolManager:
         self.mcp_tools = None
         self.session_id = None
         self.trace_id = None
+        # The code interpreter of the current request, if code execution is on
+        self.code_interpreter = None
 
     def set_session_info(self, session_id: str, trace_id: str):
         """Set session and trace IDs for tool operations"""
@@ -160,9 +164,13 @@ class ToolManager:
             logger.error(f"Error loading MCP tools by names: {e}")
             return []
 
-    def get_upload_tool(self):
-        """Get the S3 upload tool with session context"""
-        trace_id = self.trace_id
+    def get_upload_tool(self, user_sub: str | None, file_config: dict | None):
+        """Get the S3 upload tool for one request's verified caller.
+
+        The caller is bound into the tool rather than stored on this shared
+        manager, so concurrent requests in one container never mix users.
+        """
+        config = file_config
 
         @tool
         def upload_file_to_s3_and_retrieve_s3_url(filepath: str) -> str:
@@ -171,29 +179,33 @@ class ToolManager:
             Args:
                 filepath: The path to the uploading file
             """
-            bucket = os.environ.get("FILE_BUCKET")
-            if not bucket:
-                # For local testing, provide a fallback message
-                logger.warning("FILE_BUCKET environment variable not set. Using local file path for testing.")
+            if not user_sub or not config:
+                # Local testing without a GenU deployment
+                logger.warning("No verified user or runtime config. S3 upload skipped.")
                 return f"Local file path (S3 upload skipped): {filepath}"
 
-            aws_creds = get_aws_credentials()
-            region = aws_creds.get("AWS_REGION", "us-east-1")
+            # A file made by the code interpreter is in its sandbox, not here.
+            # Its bytes are uploaded as they are, without a copy on this disk.
+            data = None
+            if not os.path.exists(filepath) and self.code_interpreter is not None:
+                data = sandbox.read_file(self.code_interpreter, filepath)
+            # Anything else must be a regular file inside the workspace.
+            real_path = workspace_file(filepath, WORKSPACE_DIR) if data is None else None
 
-            if not filepath.startswith(WORKSPACE_DIR):
-                raise ValueError(f"{filepath} does not appear to be a file under the {WORKSPACE_DIR} directory. Files to be uploaded must exist under {WORKSPACE_DIR}.")
-
+            bucket = config["fileBucket"]
+            region = config["fileBucketRegion"]
             try:
-                filename = os.path.basename(filepath)
-                key = f"agentcore/{trace_id}/{filename}"
+                key = agent_output_key(user_sub, os.path.basename(real_path or filepath))
 
                 s3 = boto3.client("s3", region_name=region)
-                s3.upload_file(filepath, bucket, key)
+                if data is not None:
+                    put_new_object(s3, data, bucket, key)
+                else:
+                    upload_new_object(s3, real_path, bucket, key)
 
-                return f"https://{bucket}.s3.{region}.amazonaws.com/{key}"
+                return object_url(bucket, region, key)
             except Exception as e:
                 logger.error(f"Error uploading file to S3: {e}")
-                # For local testing, provide a fallback
                 return f"Error uploading to S3: {str(e)}. Local file path: {filepath}"
 
         return upload_file_to_s3_and_retrieve_s3_url
@@ -207,6 +219,7 @@ class ToolManager:
                 aws_creds = get_aws_credentials()
                 region = aws_creds.get("AWS_REGION", "us-east-1")
                 code_interpreter = AgentCoreCodeInterpreter(region=region)
+                self.code_interpreter = code_interpreter
                 code_interpreter_tools.append(code_interpreter.code_interpreter)
                 logger.info("Added code_interpreter tool (AgentCoreCodeInterpreter)")
             except Exception as e:
@@ -287,7 +300,14 @@ class ToolManager:
 
         return web_search
 
-    def get_tools_with_options(self, code_execution_enabled: bool = False, web_search_enabled: bool = False, mcp_servers=None) -> list[Any]:
+    def get_tools_with_options(
+        self,
+        code_execution_enabled: bool = False,
+        web_search_enabled: bool = False,
+        mcp_servers=None,
+        user_sub: str | None = None,
+        file_config: dict | None = None,
+    ) -> list[Any]:
         """
         Get tools with optional code execution and MCP servers.
 
@@ -298,6 +318,8 @@ class ToolManager:
                 - None: Load default MCP servers from mcp.json
                 - []: Empty list, no MCP servers (File Upload only)
                 - [...]: Load specified MCP servers
+            user_sub: Verified caller; output files are stored under them
+            file_config: Runtime config with the file bucket (None in local testing)
 
         Returns:
             List of all available tools
@@ -306,6 +328,7 @@ class ToolManager:
         logger.info(f"mcp_servers parameter: {mcp_servers} (type: {type(mcp_servers)})")
 
         all_tools = []
+        self.code_interpreter = None
 
         # Handle MCP servers based on parameter
         if mcp_servers is None:
@@ -328,7 +351,7 @@ class ToolManager:
         all_tools.extend(mcp_tools)
 
         # Add built-in tools (always included)
-        upload_tool = self.get_upload_tool()
+        upload_tool = self.get_upload_tool(user_sub, file_config)
         all_tools.append(upload_tool)
 
         # Add code interpreter tools if enabled

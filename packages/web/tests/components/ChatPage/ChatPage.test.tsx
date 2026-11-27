@@ -14,6 +14,9 @@ const { chatStore, hooks } = vi.hoisted(() => {
     modelId: 'opus',
     listeners,
     postChat: vi.fn(async () => true),
+    continueGeneration: vi.fn(),
+    stopReason: '',
+    loading: false,
     setModelId(id: string) {
       chatStore.modelId = id;
       listeners.forEach((l) => l());
@@ -25,7 +28,9 @@ const { chatStore, hooks } = vi.hoisted(() => {
       chat: {
         getModelId: () => chatStore.modelId,
         setModelId: (id: string) => chatStore.setModelId(id),
-        loading: false,
+        get loading() {
+          return chatStore.loading;
+        },
         writing: false,
         loadingMessages: false,
         isEmpty: true,
@@ -38,6 +43,8 @@ const { chatStore, hooks } = vi.hoisted(() => {
         updateSystemContextByModel: fn,
         getCurrentSystemContext: () => '',
         retryGeneration: fn,
+        continueGeneration: chatStore.continueGeneration,
+        getStopReason: () => chatStore.stopReason,
         forceToStop: fn,
       },
       chatApi: {
@@ -59,6 +66,7 @@ const { chatStore, hooks } = vi.hoisted(() => {
       follow: { scrollableContainer: { current: null }, setFollowing: fn },
       prompter: {
         chatPrompt: ({ content }: { content: string }) => content,
+        systemContext: () => '',
       },
     },
   };
@@ -339,5 +347,100 @@ describe('ChatPage reasoning settings', () => {
 
     fireEvent.click(screen.getByTestId('reasoning'));
     expect(screen.getByTestId('setting-label').textContent).toBe('');
+  });
+});
+
+describe('ChatPage default system prompt', () => {
+  const saved = {
+    id: 'systemContext#alice',
+    createdDate: '1',
+    systemContextId: 'systemContext#s1',
+    systemContextTitle: 'Mine',
+    systemContext: 'my prompt',
+  };
+  const original = hooks.systemContextApi.listSystemContexts;
+
+  // The choice is kept in local storage, like the other chat preferences
+  const chooseDefault = async (systemContextId: string) => {
+    localStorage.setItem(
+      'chatPreferences',
+      JSON.stringify({
+        state: {
+          defaultSystemContext: { systemContextId, systemContext: 'my prompt' },
+        },
+        version: 1,
+      })
+    );
+    await reload();
+  };
+  const storedDefault = () =>
+    JSON.parse(localStorage.getItem('chatPreferences')!).state
+      .defaultSystemContext;
+
+  beforeEach(() => {
+    localStorage.clear();
+    chatStore.modelId = 'opus';
+    const list = { data: [saved], mutate: vi.fn() };
+    hooks.systemContextApi.listSystemContexts = () => list;
+  });
+
+  afterEach(() => {
+    cleanup();
+    hooks.systemContextApi.listSystemContexts = original;
+  });
+
+  it('keeps a default whose saved system prompt exists', async () => {
+    await chooseDefault('systemContext#s1');
+    renderAt('/chat');
+    expect(storedDefault()).toEqual({
+      systemContextId: 'systemContext#s1',
+      systemContext: 'my prompt',
+    });
+  });
+
+  it('forgets a default whose saved system prompt was deleted', async () => {
+    await chooseDefault('systemContext#gone');
+    renderAt('/chat');
+    expect(storedDefault()).toBeUndefined();
+  });
+});
+
+describe('ChatPage continue output', () => {
+  const continueButton = () =>
+    screen.queryByRole('button', {
+      name: /continue_output|続きを出力|Continue output/,
+    });
+
+  beforeEach(async () => {
+    localStorage.clear();
+    chatStore.modelId = 'opus';
+    chatStore.continueGeneration.mockClear();
+    await reload();
+  });
+
+  afterEach(() => {
+    chatStore.stopReason = '';
+    chatStore.loading = false;
+    cleanup();
+  });
+
+  it('shows no button after a response that ended normally', () => {
+    chatStore.stopReason = 'end_turn';
+    renderAt('/chat');
+    expect(continueButton()).toBeNull();
+  });
+
+  it('shows no button while a response is being written', () => {
+    chatStore.stopReason = 'max_tokens';
+    chatStore.loading = true;
+    renderAt('/chat');
+    expect(continueButton()).toBeNull();
+  });
+
+  it('asks for the rest of a response that stopped at the output limit', () => {
+    chatStore.stopReason = 'max_tokens';
+    renderAt('/chat');
+    fireEvent.click(continueButton()!);
+    expect(chatStore.continueGeneration).toHaveBeenCalledTimes(1);
   });
 });

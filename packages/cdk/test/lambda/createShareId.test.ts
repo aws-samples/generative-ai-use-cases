@@ -75,7 +75,11 @@ describe('createShareId Lambda handler', () => {
     // Verify results
     expect(result.statusCode).toBe(200);
     expect(mockedFindChatById).toHaveBeenCalledWith(userId, chatId);
-    expect(mockedCreateShareId).toHaveBeenCalledWith(userId, chatId);
+    expect(mockedCreateShareId).toHaveBeenCalledWith(
+      userId,
+      chatId,
+      `sub-${userId}`
+    );
     expect(JSON.parse(result.body)).toEqual({
       shareId: mockShareId,
       userIdAndChatId: mockUserIdAndChatId,

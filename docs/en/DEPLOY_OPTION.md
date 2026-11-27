@@ -2,11 +2,9 @@
 
 ## Configuration Method
 
-GenU allows you to change settings in parameter.ts or through AWS CDK context.
+GenU is configured in [packages/cdk/parameter.ts](/packages/cdk/parameter.ts). The examples on this page use parameter.ts.
 
-**We recommend parameter.ts when building a new environment. You can define settings for multiple environments, and TypeScript type checking catches wrong parameter names and values (in cdk.json, a misspelled key is silently ignored). Updates also cause fewer conflicts in cdk.json. If the environment specified by `env` is defined in parameter.ts, only the values in parameter.ts are used and the parameters in cdk.json are ignored. To move existing settings from cdk.json, see [Update](./UPDATE.md#moving-settings-from-cdkjson-to-parameterts).**
-
-**When using Context: While CDK context can be specified with '-c', this won't trigger frontend builds since no code changes are made. For this asset, it's recommended to change all settings in cdk.json.**
+**You can define settings for multiple environments in parameter.ts, and TypeScript type checking catches wrong parameter names and values (in cdk.json, a misspelled key is silently ignored). Updates also cause fewer conflicts in cdk.json. If the environment specified by `env` is defined in parameter.ts, only the values in parameter.ts are used and the parameters in cdk.json are ignored. To move existing settings from cdk.json, see [Update](./UPDATE.md#moving-settings-from-cdkjson-to-parameterts).**
 
 ### How to change parameter.ts values
 
@@ -61,13 +59,9 @@ npm run web:devw
 npm run web:devw --env=dev2
 ```
 
-### How to change cdk.json values
+### Existing deployments configured in cdk.json
 
-Change values under the context in [packages/cdk/cdk.json](/packages/cdk/cdk.json) to configure settings. For example, setting `"ragEnabled": true` enables the RAG chat use case. After setting context values, redeploy with the following command to apply the settings:
-
-```bash
-npm run cdk:deploy
-```
+Deployments whose environment is not defined in parameter.ts still read the parameters from the `context` of [packages/cdk/cdk.json](/packages/cdk/cdk.json). The parameter names and values are the same as in parameter.ts, written as JSON (for example `"ragEnabled": true`). We recommend moving them to parameter.ts (see [Update](./UPDATE.md#moving-settings-from-cdkjson-to-parameterts)).
 
 ## Use Case Configuration
 
@@ -90,18 +84,6 @@ const envs: Record<string, Partial<StackInput>> = {
     kendraIndexLanguage: 'en',
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "ragEnabled": true,
-    "kendraIndexLanguage": "en"
-  }
-}
 ```
 
 After making changes, redeploy with `npm run cdk:deploy` to apply the changes. Data stored in `/packages/cdk/rag-docs/docs` will be automatically uploaded to the S3 bucket for Kendra data source. (Note that files starting with `logs` will not be synchronized.)
@@ -135,18 +117,6 @@ const envs: Record<string, Partial<StackInput>> = {
     kendraDataSourceBucketName: '<Kendra S3 Data Source Bucket Name>',
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "kendraIndexArn": "<Kendra Index ARN>",
-    "kendraDataSourceBucketName": "<Kendra S3 Data Source Bucket Name>"
-  }
-}
 ```
 
 After making changes, redeploy with `npm run cdk:deploy` to apply the changes.
@@ -189,25 +159,6 @@ const envs: Record<string, Partial<StackInput>> = {
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "ragKnowledgeBaseEnabled": true,
-    "ragKnowledgeBaseStorageType": "opensearch", // "opensearch" or "s3vectors"
-    "ragKnowledgeBaseId": "XXXXXXXXXX",
-    "ragKnowledgeBaseStandbyReplicas": false,
-    "ragKnowledgeBaseAdvancedParsing": false,
-    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
-    "embeddingModelId": "amazon.titan-embed-text-v2:0",
-    "rerankingModelId": "amazon.rerank-v1:0",
-    "queryDecompositionEnabled": true
-  }
-}
 ```
 
 `ragKnowledgeBaseStandbyReplicas` relates to the redundancy of automatically created OpenSearch Serverless:
@@ -288,22 +239,6 @@ const envs: Record<string, Partial<StackInput>> = {
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "ragKnowledgeBaseEnabled": true,
-    "ragKnowledgeBaseId": "XXXXXXXXXX",
-    "ragKnowledgeBaseStandbyReplicas": false,
-    "ragKnowledgeBaseAdvancedParsing": true,
-    "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
-    "embeddingModelId": "amazon.titan-embed-text-v2:0"
-  }
-}
 ```
 
 #### Changing Chunking Strategy
@@ -402,17 +337,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentEnabled": true
-  }
-}
-```
-
 #### Customizing Agent Foundation Model
 
 You can customize the foundation model used by Code Interpreter and Search Agent. By default, `global.anthropic.claude-sonnet-4-6` is used.
@@ -428,17 +352,6 @@ const envs: Record<string, Partial<StackInput>> = {
     agentFoundationModel: 'global.anthropic.claude-sonnet-4-6',
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentFoundationModel": "global.anthropic.claude-sonnet-4-6"
-  }
-}
 ```
 
 #### Deploying Search Agent
@@ -469,20 +382,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentEnabled": true,
-    "searchAgentEnabled": true,
-    "searchEngine": "Brave" or "Tavily",
-    "searchApiKey": "<Search Engine API Key>"
-  }
-}
-```
-
 After making changes, redeploy with `npm run cdk:deploy` to apply the changes. This will deploy the default search engine Agent.
 
 > [!NOTE]
@@ -509,23 +408,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agents": [
-      {
-        "displayName": "MyCustomAgent",
-        "agentId": "XXXXXXXXX",
-        "aliasId": "YYYYYYYY"
-      }
-    ]
-  }
-}
 ```
 
 You can also modify `packages/cdk/lib/construct/agent.ts` to define new Agents. If you use Agents defined in CDK, set `agentEnabled: true`.
@@ -563,24 +445,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "agentEnabled": true,
-    "agents": [
-      {
-        "displayName": "Knowledge Base",
-        "agentId": "XXXXXXXXX",
-        "aliasId": "YYYYYYYY"
-      }
-    ]
-  }
-}
-```
-
 #### Displaying Agents Inline
 
 By default, Agents can be selected from within the "Agent Chat" use case. By enabling the inline display option, the "Agent Chat" use case will no longer be displayed, and all available Agents will be displayed like other use cases. Set `inlineAgents` to `true` when you have valid Agents.
@@ -594,17 +458,6 @@ const envs: Record<string, Partial<StackInput>> = {
     inlineAgents: true,
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "inlineAgents": true
-  }
-}
 ```
 
 ### Enabling Research Agent Use Case
@@ -631,24 +484,12 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-#### Configuration Example in cdk.json
-
-```json
-{
-  "context": {
-    "researchAgentEnabled": true,
-    "researchAgentBraveApiKey": "YOUR_BRAVE_API_KEY",
-    "researchAgentTavilyApiKey": ""
-  }
-}
-```
-
 For detailed instructions, see the [Research Agent Deployment Guide](./DEPLOY_RESEARCH_USECASE.md).
 
 ### Enabling MCP Chat Use Case
 
 > [!WARNING]
-> The MCP Chat use case has been deprecated. Please use the AgentCore use case for MCP utilization. The MCP chat use case is scheduled for complete removal in v6.
+> The MCP Chat use case has been deprecated. Please use the AgentCore use case for MCP utilization.
 
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) is a protocol that connects LLM models with external data and tools.
 In GenU, we provide chat use cases that execute MCP-compliant tools using [Strands Agents](https://strandsagents.com/latest/).
@@ -662,17 +503,6 @@ const envs: Record<string, Partial<StackInput>> = {
     mcpEnabled: true,
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "mcpEnabled": true
-  }
-}
 ```
 
 The MCP servers to be used are defined in [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json).
@@ -727,36 +557,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "flows": [
-      {
-        "flowId": "XXXXXXXXXX",
-        "aliasId": "YYYYYYYYYY",
-        "flowName": "WhatIsItFlow",
-        "description": "This flow searches the web for any keyword and returns an explanation. Please enter text"
-      },
-      {
-        "flowId": "ZZZZZZZZZZ",
-        "aliasId": "OOOOOOOOOO",
-        "flowName": "RecipeFlow",
-        "description": "Creates a recipe based on the given JSON.\nPlease enter like {\"dish\": \"curry rice\", \"people\": 3}."
-      },
-      {
-        "flowId": "PPPPPPPPPP",
-        "aliasId": "QQQQQQQQQQQ",
-        "flowName": "TravelPlanFlow",
-        "description": "Creates a travel plan based on the given array.\nPlease enter like [{\"place\": \"Tokyo\", \"day\": 3}, {\"place\": \"Osaka\", \"day\": 2}]."
-      }
-    ]
-  }
-}
 ```
 
 ### Enabling AgentCore Use Case
@@ -828,30 +628,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-
-{
-  "context": {
-    "createGenericAgentCoreRuntime": true,
-    "agentCoreRegion": "us-west-2",
-    "agentCoreGatewayArns": [
-      "arn:aws:bedrock-agentcore:us-west-2:<account>:gateway/<gateway-id>"
-    ],
-    "agentCoreExternalRuntimes": [
-      {
-        "name": "AgentCore1",
-        "display_name": "Customer Support Agent",
-        "description": "An agent that responds to customer inquiries.",
-        "arn": "arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx"
-      }
-    ]
-  }
-}
-```
-
 > [!NOTE]
 > After enabling AgentCore use case settings, if you want to disable them again, you can disable the AgentCore use case by setting `createGenericAgentCoreRuntime: false` and redeploying, but the `AgentCoreStack` itself will remain. You can completely remove it by opening the Management Console and deleting the `AgentCoreStack` stack from CloudFormation in the `agentCoreRegion`.
 
@@ -893,19 +669,6 @@ const envs: Record<string, Partial<StackInput>> = {
     agentCoreSubnetIds: ['subnet-xxxxxxxxx', 'subnet-yyyyyyyyy'],
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "createGenericAgentCoreRuntime": true,
-    "agentCoreVpcId": "vpc-xxxxxxxxx",
-    "agentCoreSubnetIds": ["subnet-xxxxxxxxx", "subnet-yyyyyyyyy"]
-  }
-}
 ```
 
 > [!WARNING]
@@ -963,22 +726,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-
-{
-  "context": {
-    "agentBuilderEnabled": true,
-    "agentCoreRegion": "us-west-2",
-    "agentCoreGatewayArns": [
-      "arn:aws:bedrock-agentcore:us-west-2:<account>:gateway/<gateway-id>"
-    ]
-  }
-}
 ```
 
 ### Enabling Voice Chat Use Case
@@ -1130,17 +877,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelIds": ["anthropic.claude-3-sonnet-20240229-v1:0"]
-  }
-}
-```
-
 ### Enabling Prompt Optimization Tool
 
 The prompt optimization tool converts input prompts into an optimal form for the specified model.
@@ -1179,29 +915,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "hiddenUseCases": {
-      "generate": true,
-      "summarize": true,
-      "writer": true,
-      "translate": true,
-      "webContent": true,
-      "image": true,
-      "video": true,
-      "videoAnalyzer": true,
-      "diagram": true,
-      "meetingMinutes": true,
-      "voiceChat": true
-    }
-  }
-}
-```
-
 ## Use Case Builder Configuration
 
 The Use Case Builder is enabled by default and can be accessed from the "Builder Mode" option displayed on the screen after deployment. To disable the Use Case Builder, specify `false` for the parameter `useCaseBuilderEnabled`. (Default is `true`)
@@ -1215,17 +928,6 @@ const envs: Record<string, Partial<StackInput>> = {
     useCaseBuilderEnabled: false,
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "useCaseBuilderEnabled": false
-  }
-}
 ```
 
 ## Change Amazon Bedrock Models
@@ -1441,59 +1143,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "ap-northeast-1",
-    "modelIds": [
-      "jp.anthropic.claude-sonnet-4-6",
-      "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
-      "jp.amazon.nova-2-lite-v1:0",
-      "apac.amazon.nova-pro-v1:0",
-      "apac.amazon.nova-lite-v1:0",
-      "apac.amazon.nova-micro-v1:0",
-      {
-        "modelId": "global.anthropic.claude-opus-4-8",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "openai.gpt-oss-120b-1:0",
-        "region": "us-east-1"
-      },
-      {
-        "modelId": "qwen.qwen3-235b-a22b-2507-v1:0",
-        "region": "us-west-2"
-      }
-    ],
-    "imageGenerationModelIds": [
-      {
-        "modelId": "stability.stable-image-core-v1:1",
-        "region": "us-west-2"
-      },
-      {
-        "modelId": "stability.stable-image-ultra-v1:1",
-        "region": "us-west-2"
-      }
-    ],
-    "videoGenerationModelIds": [
-      {
-        "modelId": "luma.ray-v2:0",
-        "region": "us-west-2"
-      }
-    ],
-    "speechToSpeechModelIds": [
-      {
-        "modelId": "amazon.nova-2-5-sonic",
-        "region": "us-east-1"
-      }
-    ]
-  }
-}
-```
-
 ### Example: Using Amazon Bedrock Models in us-east-1 (Virginia)
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
@@ -1520,34 +1169,6 @@ const envs: Record<string, Partial<StackInput>> = {
     speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-east-1",
-    "modelIds": [
-      "global.anthropic.claude-opus-4-8",
-      "global.anthropic.claude-sonnet-4-6",
-      "global.anthropic.claude-haiku-4-5-20251001-v1:0",
-      "amazon.nova-pro-v1:0",
-      "amazon.nova-lite-v1:0",
-      "amazon.nova-micro-v1:0",
-      "openai.gpt-oss-120b-1:0",
-      "mistral.mistral-large-3-675b-instruct"
-    ],
-    "imageGenerationModelIds": [
-      {
-        "modelId": "stability.stable-image-core-v1:1",
-        "region": "us-west-2"
-      }
-    ],
-    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
-  }
-}
 ```
 
 ### Example: Using Amazon Bedrock Models in us-west-2 (Oregon)
@@ -1577,31 +1198,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-west-2",
-    "modelIds": [
-      "global.anthropic.claude-sonnet-4-6",
-      "global.anthropic.claude-haiku-4-5-20251001-v1:0",
-      "amazon.nova-lite-v1:0",
-      "openai.gpt-oss-120b-1:0",
-      "mistral.mistral-large-3-675b-instruct",
-      "qwen.qwen3-235b-a22b-2507-v1:0"
-    ],
-    "imageGenerationModelIds": [
-      "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:1",
-      "stability.sd3-5-large-v1:0"
-    ],
-    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
-  }
-}
-```
-
 ### Example: Using cross-region inference models from us (Northern Virginia or Oregon) Amazon Bedrock
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
@@ -1629,31 +1225,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-west-2",
-    "modelIds": [
-      "us.anthropic.claude-opus-4-8",
-      "us.anthropic.claude-sonnet-4-6",
-      "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-      "us.amazon.nova-2-lite-v1:0",
-      "us.amazon.nova-pro-v1:0",
-      "us.amazon.nova-lite-v1:0",
-      "us.amazon.nova-micro-v1:0"
-    ],
-    "imageGenerationModelIds": [
-      "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:1"
-    ],
-    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
-  }
-}
-```
-
 ### Example: Using Amazon Bedrock Models in ap-northeast-1 (Tokyo)
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
@@ -1679,33 +1250,6 @@ const envs: Record<string, Partial<StackInput>> = {
     speechToSpeechModelIds: ['amazon.nova-2-5-sonic'],
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "ap-northeast-1",
-    "modelIds": [
-      "jp.anthropic.claude-opus-4-8",
-      "jp.anthropic.claude-sonnet-4-6",
-      "jp.anthropic.claude-haiku-4-5-20251001-v1:0",
-      "jp.amazon.nova-2-lite-v1:0",
-      "apac.amazon.nova-pro-v1:0",
-      "apac.amazon.nova-lite-v1:0",
-      "apac.amazon.nova-micro-v1:0"
-    ],
-    "imageGenerationModelIds": [
-      {
-        "modelId": "stability.stable-image-core-v1:1",
-        "region": "us-west-2"
-      }
-    ],
-    "speechToSpeechModelIds": ["amazon.nova-2-5-sonic"]
-  }
-}
 ```
 
 ## When you want to use Amazon SageMaker custom models
@@ -1747,22 +1291,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "<SageMaker Endpoint Region>",
-    "endpointNames": [
-      "<SageMaker Endpoint Name>",
-      {
-        "modelIds": "<SageMaker Endpoint Name>",
-        "region": "<SageMaker Endpoint Region>"
-      }
-    ]
-  }
-}
 ```
 
 ## Branding Customization
@@ -1814,17 +1342,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "selfSignUpEnabled": false
-  }
-}
-```
-
 ### Restrict Email Domains for Sign-up
 
 Specify a list of allowed domains in `allowedSignUpEmailDomains` (default is `null`).
@@ -1850,17 +1367,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedSignUpEmailDomains": ["amazon.com"] // Change from null to specify allowed domains to enable
-  }
-}
-```
-
 - Example to allow sign-up with email addresses with either `amazon.com` or `amazon.jp` domains
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
@@ -1872,17 +1378,6 @@ const envs: Record<string, Partial<StackInput>> = {
     allowedSignUpEmailDomains: ['amazon.com', 'amazon.jp'],
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedSignUpEmailDomains": ["amazon.com", "amazon.jp"] // Change from null to specify allowed domains to enable
-  }
-}
 ```
 
 ### Enable AWS WAF Restrictions
@@ -1903,18 +1398,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedIpV4AddressRanges": ["192.168.0.0/24"], // Change from null to specify allowed CIDR list to enable
-    "allowedIpV6AddressRanges": ["2001:0db8::/32"] // Change from null to specify allowed CIDR list to enable
-  }
-}
-```
-
 #### Geographic Restrictions
 
 To restrict web app access by country of origin, you can enable AWS WAF geographic restrictions. You can specify allowed countries as an array of Country Codes with `allowedCountryCodes`.
@@ -1931,17 +1414,6 @@ const envs: Record<string, Partial<StackInput>> = {
     allowedCountryCodes: ['JP'],
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "allowedCountryCodes": ["JP"] // Change from null to specify allowed country list to enable
-  }
-}
 ```
 
 When you specify any of `allowedIpV4AddressRanges`, `allowedIpV6AddressRanges`, or `allowedCountryCodes` and run `npm run cdk:deploy` again, a WAF stack will be deployed in us-east-1 (AWS WAF V2 currently only supports us-east-1 when used with CloudFront). If you have never used CDK in us-east-1 before, run the following command to bootstrap before deployment:
@@ -1971,26 +1443,13 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "samlAuthEnabled": true,
-    "samlCognitoDomainName": "your-preferred-name.auth.ap-northeast-1.amazoncognito.com",
-    "samlCognitoFederatedIdentityProviderName": "EntraID"
-  }
-}
-```
-
 - samlAuthEnabled: Setting to `true` switches to a SAML-specific authentication screen. The conventional authentication using Cognito user pools will no longer be available.
 - samlCognitoDomainName: Specify the Cognito Domain name to be set in Cognito's App integration.
 - samlCognitoFederatedIdentityProviderName: Specify the Identity Provider name to be set in Cognito's Sign-in experience.
 
 ### Guardrails
 
-When using the Converse API (i.e., generative AI models that produce text output), guardrails can be applied. To configure this, change `guardrailEnabled` to `true` and redeploy.
+When using the Converse API (i.e., generative AI models that produce text output), guardrails can be applied. They are also applied to the answers of the RAG Chat (Knowledge Base) use case. To configure this, change `guardrailEnabled` to `true` and redeploy.
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
@@ -2001,17 +1460,6 @@ const envs: Record<string, Partial<StackInput>> = {
     guardrailEnabled: true,
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "guardrailEnabled": true
-  }
-}
 ```
 
 The default guardrail applies sensitive information filters that have proven effective in Japanese conversations. We've also confirmed that custom word filters and regular expressions for sensitive information filters work, so modify `packages/cdk/lib/construct/guardrail.ts` as needed. For details, refer to [Guardrails for Amazon Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html) and [CfnGuardrail](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_bedrock.CfnGuardrail.html).
@@ -2062,29 +1510,6 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "kendraIndexScheduleEnabled": true,
-    "kendraIndexScheduleCreateCron": {
-      "minute": "0",
-      "hour": "23",
-      "month": "*",
-      "weekDay": "SUN-THU"
-    },
-    "kendraIndexScheduleDeleteCron": {
-      "minute": "0",
-      "hour": "11",
-      "month": "*",
-      "weekDay": "MON-FRI"
-    }
-  }
-}
-```
-
 Even when the Kendra index is deleted, the RAG feature remains on. RAG-related menus continue to be displayed in the web application (GenU). When executing RAG chat, an error occurs because the index doesn't exist, and an error message indicating "Please check the index creation/deletion schedule" will be displayed.
 
 EventBridge rules are used for scheduling, and Step Functions for process control. You can stop scheduling by manually disabling the EventBridge rule. You can also manually execute the Step Functions state machine to create or delete the index.
@@ -2106,17 +1531,6 @@ EventBridge rules are used for scheduling, and Step Functions for process contro
 ### How to Set Tags
 
 GenU supports tags for cost management and other purposes. By default, the key name of the tag is set to `GenU`, but you can use a custom tag key by specifying `tagKey`. Here are examples of how to set them:
-
-Setting in `cdk.json`:
-
-```json
-// cdk.json
-  ...
-  "context": {
-    "tagKey": "MyProject",  // Custom tag key (optional, default is "GenU")
-    "tagValue": "dev",
-    ...
-```
 
 Setting in `parameter.ts`:
 
@@ -2156,17 +1570,6 @@ const envs: Record<string, Partial<StackInput>> = {
     dashboard: true,
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "dashboard": true
-  }
-}
 ```
 
 After changing, redeploy with `npm run cdk:deploy` to apply the changes. A stack named `GenerativeAiUseCasesDashboardStack` will be deployed in the region specified by `modelRegion`. The output values will be used in the next steps.
@@ -2257,19 +1660,6 @@ const envs: Record<string, Partial<StackInput>> = {
     hostedZoneId: 'XXXXXXXXXXXXXXXXXXXX',
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "hostName": "genai",
-    "domainName": "example.com",
-    "hostedZoneId": "XXXXXXXXXXXXXXXXXXXX"
-  }
-}
 ```
 
 ## Using Bedrock from a Different AWS Account
@@ -2408,28 +1798,6 @@ const envs: Record<string, Partial<StackInput>> = {
     ],
   },
 };
-```
-
-**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
-
-```json
-// cdk.json
-{
-  "context": {
-    "crossAccountBedrockRoleArn": "arn:aws:iam::AccountID:role/PreCreatedRoleName",
-    // Only when using Knowledge Base
-    "ragKnowledgeBaseEnabled": true,
-    "ragKnowledgeBaseId": "YOUR_KNOWLEDGE_BASE_ID",
-    // Only when using agents
-    "agents": [
-      {
-        "displayName": "YOUR AGENT NAME",
-        "agentId": "YOUR_AGENT_ID",
-        "aliasId": "YOUR_AGENT_ALIAS_ID"
-      }
-    ]
-  }
-}
 ```
 
 Run `npm run cdk:deploy` after changing the settings to apply the changes.

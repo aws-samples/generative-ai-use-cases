@@ -8,6 +8,7 @@ const maxTokensOf = (modelIds: string[]) => {
   });
   new GenericAgentCore(stack, 'AgentCore', {
     env: '',
+    mainRegion: 'us-east-1',
     createGenericRuntime: true,
     createAgentBuilderRuntime: true,
     modelIds,

@@ -80,9 +80,18 @@ Command[newtask command]
 If technical content contains these characters, rephrase or simplify the text.`;
 
 const systemContexts: { [key: string]: string } = {
+  // The Formatting section lists what the chat screen renders. It is part of
+  // the editable prompt, so a user can drop what they do not want (Mermaid, for
+  // example) or save a prompt without it. It is sent with every request.
   '/chat': `You are an AI assistant helping users in chat.
-When explaining processes, relationships, or structures, you can use Mermaid diagrams in code blocks (e.g., \`\`\`mermaid).
-Automatically detect the language of the user's request and think and answer in the same language.`,
+Automatically detect the language of the user's request and think and answer in the same language.
+
+## Formatting
+Your reply is rendered as GitHub-flavored Markdown. Use the following only when the user asks for it or when it makes the answer clearer than text alone:
+- Math: $...$ inline and $$...$$ on their own lines (not \\( \\) or \\[ \\]).
+- Diagrams: a \`\`\`mermaid code block. Put node labels in double quotes, e.g. A["label"].
+- Charts: a \`\`\`chart code block holding an Apache ECharts option as JSON (no functions).
+- Images: a \`\`\`svg code block holding a complete <svg> element.`,
   '/summarize': `You are an AI assistant that summarizes text. 
 I will give you summarization instructions in the first chat, and then you should improve the summary results in subsequent chats.
 Automatically detect the language of the user's request and think and answer in the same language.`,

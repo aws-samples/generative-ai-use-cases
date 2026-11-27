@@ -10,11 +10,6 @@ Well-architected application implementation with business use cases for utilizin
   <img src="./docs/assets/images/sc_lp_en.png" alt="Well-architected application implementation with business use cases for utilizing generative AI in business operations" width="68%">
 </div>
 
-> [!IMPORTANT]
-> GenU has supported multiple languages since v4.
->
-> GenU は v4 から多言語対応しました。日本語ドキュメントは[こちら](./README_ja.md)
-
 ## What's New
 
 See the [Release Notes](docs/en/RELEASE_NOTES.md) for what changed in each release, what is coming in the next one, and what to check before updating.
@@ -29,7 +24,7 @@ Here we introduce GenU's features and options by usage pattern. For comprehensiv
 <details markdown="1">
   <summary><strong><ins>I want to experience generative AI use cases</ins></strong></summary>
 
-GenU provides a variety of standard use cases leveraging generative AI. These use cases can serve as seeds for ideas on how to utilize generative AI in business operations, or they can be directly applied to business as-is. We plan to continuously add more refined use cases in the future. If unnecessary, you can also [hide specific use cases](docs/en/DEPLOY_OPTION.md#hiding-specific-use-cases) with an option. Here are the use cases provided by default.
+GenU provides a variety of standard use cases leveraging generative AI. These use cases can serve as seeds for ideas on how to utilize generative AI in business operations, or they can be directly applied to business as-is. We plan to continuously add more refined use cases in the future. If unnecessary, you can also [hide specific use cases](docs/en/DEPLOY_OPTION.md#hiding-specific-use-cases) with an option. Here are the use cases. Use cases marked (option) are turned on with a deployment option.
 
   <br/>
   <br/>
@@ -75,8 +70,8 @@ GenU provides a variety of standard use cases leveraging generative AI. These us
         <td>Image generation AI can create new images based on text or existing images. It allows for immediate visualization of ideas, potentially improving efficiency in design work. In this feature, LLMs can assist in creating prompts.</td>
       </tr>
       <tr>
-        <td>Video Generation</td>
-        <td>Video generation AI creates short videos from text. The generated videos can be used as materials in various scenarios.</td>
+        <td>Video Generation (option)</td>
+        <td>Video generation AI creates short videos from text. To use it, <a href="docs/en/DEPLOY_OPTION.md#enabling-video-generation-use-case">specify a video generation model</a>. The generated videos can be used as materials in various scenarios.</td>
       </tr>
       <tr>
         <td>Video Analysis</td>
@@ -90,8 +85,19 @@ GenU provides a variety of standard use cases leveraging generative AI. These us
         <td>Voice Chat</td>
         <td>In Voice Chat, you can have a bidirectional voice chat with generative AI. Similar to natural conversation, you can also interrupt and speak while the AI is talking. Also, by setting a system prompt, you can have voice conversations with AI that has specific roles.</td>
       </tr>
+      <tr>
+        <td>Agent Builder (option)</td>
+        <td>Create agents without code by writing instructions and choosing tools and MCP servers, then share them with other users. See <a href="docs/en/DEPLOY_OPTION.md#enabling-agentbuilder-use-case">Enabling AgentBuilder Use Case</a>.</td>
+      </tr>
+      <tr>
+        <td>Research (option)</td>
+        <td>An agent searches the web and AWS documentation and writes a report on a topic. See <a href="docs/en/DEPLOY_OPTION.md#enabling-research-agent-use-case">Enabling Research Agent Use Case</a>.</td>
+      </tr>
     </tbody>
   </table>
+
+RAG Chat, Agent Chat and AgentCore are described in the usage patterns below.
+
 </details>
 
 <details markdown="1">
@@ -102,17 +108,16 @@ PDF, Word, Excel, and other files accumulated within your organization can serve
 RAG also has the effect of preventing LLMs from providing "plausible but incorrect information" by only allowing answers based on evidence.
 
 GenU provides a RAG Chat use case.
-Two types of information sources are available for RAG Chat: [Amazon Kendra](docs/en/DEPLOY_OPTION.md) and [Knowledge Base](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case).
-When using Amazon Kendra, you can [use manually created S3 Buckets or Kendra Indexes as they are](docs/en/DEPLOY_OPTION.md#using-an-existing-amazon-kendra-index).
-
-> [!IMPORTANT]
-> Amazon Kendra entered maintenance mode on June 30, 2026, and has not accepted new customers since July 30, 2026 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). For new RAG chat deployments, we recommend the Knowledge Base option. To avoid fixed vector store costs, set `ragKnowledgeBaseStorageType` to `s3vectors`.
+RAG Chat uses [Knowledge Bases for Amazon Bedrock](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case) as its information source. To avoid fixed vector store costs, set `ragKnowledgeBaseStorageType` to `s3vectors`.
 
 When using Knowledge Base, advanced RAG features such as [Advanced Parsing](docs/en/DEPLOY_OPTION.md#enabling-advanced-parsing), [Chunk Strategy Selection](docs/en/DEPLOY_OPTION.md#changing-chunking-strategy), [Query Decomposition](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case), and [Reranking](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-knowledge-base-use-case) are available.
 Knowledge Base also allows for [Metadata Filter Settings](docs/en/DEPLOY_OPTION.md#metadata-filter-configuration).
 For example, you can meet requirements such as "switching accessible data sources by organization" or "allowing users to set filters from the UI."
 
-Additionally, it is possible to build a RAG that references data outside of AWS by [enabling MCP chat](docs/en/DEPLOY_OPTION.md#enabling-mcp-chat-use-case) and adding an external service's MCP server to [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json).
+To answer from data outside AWS, add the MCP server of the external service to the agents of the [AgentCore use case](docs/en/DEPLOY_OPTION.md#enabling-agentcore-use-case) or [Agent Builder](docs/en/DEPLOY_OPTION.md#enabling-agentbuilder-use-case).
+
+> [!NOTE]
+> Amazon Kendra entered maintenance mode on June 30, 2026, and has not accepted new customers since July 30, 2026 ([Amazon Kendra availability change](https://docs.aws.amazon.com/kendra/latest/dg/kendra-availability-change.html)). Existing users can keep using the [Amazon Kendra option](docs/en/DEPLOY_OPTION.md#enabling-rag-chat-amazon-kendra-use-case), including [an existing S3 bucket or Kendra index](docs/en/DEPLOY_OPTION.md#using-an-existing-amazon-kendra-index).
 
 </details>
 
@@ -129,11 +134,11 @@ GenU provides a feature to [import agents](docs/en/DEPLOY_OPTION.md#adding-manua
 By using GenU as a platform for agent utilization, you can leverage GenU's [rich security options](docs/en/DEPLOY_OPTION.md#security-related-settings) and [SAML authentication](docs/en/DEPLOY_OPTION.md#saml-authentication) to spread practical agents within your organization.
 Additionally, you can [hide unnecessary standard use cases](docs/en/DEPLOY_OPTION.md#hiding-specific-use-cases) or [display agents inline](docs/en/DEPLOY_OPTION.md#displaying-agents-inline) to use GenU as a more agent-focused platform.
 
-Similarly, there is an [import feature](docs/en/DEPLOY_OPTION.md#enabling-agentcore-use-cases) for AgentCore Runtime, so please make use of it.
+Similarly, there is an [import feature](docs/en/DEPLOY_OPTION.md#enabling-agentcore-use-case) for AgentCore Runtime, so please make use of it.
 
 Similarly, there is an [import feature](docs/en/DEPLOY_OPTION.md#enabling-flow-chat-use-case) for Bedrock Flows, so please make use of it.
 
-Additionally, you can create agents that perform actions on services outside AWS by [enabling MCP chat](docs/en/DEPLOY_OPTION.md#enabling-mcp-chat-use-case) and adding external MCP servers to [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json).
+To build agents yourself, [Agent Builder](docs/en/DEPLOY_OPTION.md#enabling-agentbuilder-use-case) lets users create agents without code. Agents in the AgentCore use case and Agent Builder can also act on services outside AWS through MCP servers registered by the administrator.
 
 </details>
 
@@ -160,12 +165,33 @@ In that case, please be careful about conflicts with GenU's main branch.
 
 </details>
 
+<details markdown="1">
+  <summary><strong><ins>I want to see how generative AI is used and what it costs</ins></strong></summary>
+
+GenU records the tokens each user consumes.
+Members of the `SystemAdminGroup` Cognito group can open the [admin page](docs/en/DEPLOY_OPTION.md#admin-page) to see every user's token usage and estimated cost, narrow it down by user and period, and download it as CSV.
+Each user can see their own usage and cost in the Usage tab of the settings page.
+
+With the [monitoring dashboard](docs/en/DEPLOY_OPTION.md#enabling-monitoring-dashboard), you can also follow usage by user and use case in Amazon CloudWatch, because GenU tags its Bedrock calls with the user and the use case.
+To break down the AWS bill, [add cost allocation tags](docs/en/DEPLOY_OPTION.md#how-to-set-tags) to the resources GenU creates.
+
+</details>
+
+<details markdown="1">
+  <summary><strong><ins>I want to use GenU only from my organization's network</ins></strong></summary>
+
+In [closed network mode](docs/en/CLOSED_NETWORK.md), clients reach GenU through a VPC instead of the internet, and GenU calls AWS services through VPC endpoints.
+GenU creates only the VPC endpoints for the features you enable, and AgentCore runs inside the closed VPC.
+The page lists which features work in closed network mode, the fixed cost of the VPC endpoints, and how to connect from your own network with Site-to-Site VPN, AWS Direct Connect or AWS Client VPN.
+![arch-closed-network.drawio.png](./docs/assets/images/arch-closed-network.drawio.png)
+
+If you only need to restrict who can access GenU, the [security-related settings](docs/en/DEPLOY_OPTION.md#security-related-settings) such as IP address restrictions and SAML authentication may be enough.
+
+</details>
+
 ## Deployment
 
-> [!IMPORTANT]
-> Please enable the `modelIds` (text generation), `imageGenerationModelIds` (image generation), and `videoGenerationModelIds` (video generation) in the `modelRegion` region listed in [`/packages/cdk/cdk.json`](/packages/cdk/cdk.json). ([Amazon Bedrock Model access screen](https://us-east-1.console.aws.amazon.com/bedrock/home?region=us-east-1#/modelaccess))
-
-GenU deployment uses [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/) (CDK). If you cannot prepare a CDK execution environment, refer to the following deployment methods:
+GenU deployment uses [AWS Cloud Development Kit](https://aws.amazon.com/cdk/) (CDK). If you cannot prepare a CDK execution environment, refer to the following deployment methods:
 
 - [Deployment method using AWS CloudShell (if preparing your own environment is difficult)](docs/en/DEPLOY_ON_CLOUDSHELL.md)
 - Workshop ([English](https://catalog.workshops.aws/generative-ai-use-cases) / [Japanese](https://catalog.workshops.aws/generative-ai-use-cases-jp))
@@ -184,11 +210,13 @@ Next, run the following command. All commands should be executed at the reposito
 npm ci
 ```
 
-If you've never used CDK before, you need to [Bootstrap](https://docs.aws.amazon.com/ja_jp/cdk/v2/guide/bootstrapping.html) for the first time only. The following command is unnecessary if your environment is already bootstrapped.
+If you've never used CDK before, you need to [Bootstrap](https://docs.aws.amazon.com/cdk/v2/guide/bootstrapping.html) for the first time only. The following command is unnecessary if your environment is already bootstrapped.
 
 ```bash
 npx -w packages/cdk cdk bootstrap
 ```
+
+The default settings work as they are. To choose the models or the use cases to turn on, write the settings for an environment (for example `dev`) in [packages/cdk/parameter.ts](/packages/cdk/parameter.ts) and add `-c env=dev` to the deploy command. See [Deployment Options](docs/en/DEPLOY_OPTION.md) for the parameters.
 
 Next, deploy AWS resources with the following command. Please wait for the deployment to complete (it may take about 20 minutes).
 
@@ -219,8 +247,8 @@ npm run cdk:deploy:quick
 We have published configuration and cost estimation examples for using GenU. (The service is pay-as-you-go, and actual costs will vary depending on your usage.)
 
 - [Simple Version (without RAG) Estimation](https://aws.amazon.com/jp/cdp/ai-chatbot/)
-- [With RAG (Amazon Kendra) Estimation](https://aws.amazon.com/jp/cdp/ai-chatapp/)
 - [With RAG (Knowledge Base) Estimation](https://aws.amazon.com/jp/cdp/genai-chat-app/)
+- [With RAG (Amazon Kendra) Estimation](https://aws.amazon.com/jp/cdp/ai-chatapp/) (for existing Amazon Kendra users)
 
 ## Customer Case Studies
 
