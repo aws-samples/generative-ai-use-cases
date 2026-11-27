@@ -10,6 +10,7 @@ import * as stepfunctionsTasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
 import { Arn, RemovalPolicy } from 'aws-cdk-lib';
 import { ISecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2';
+import { KENDRA_DATA_SOURCE_PREFIX } from '../../consts';
 
 const KENDRA_STATE_CFN_PARAMETER_NAME = 'kendraState';
 
@@ -119,6 +120,10 @@ class KendraDataSourceWithCfnParameter extends kendra.CfnDataSource {
  */
 export class Rag extends Construct {
   public readonly dataSourceBucketName?: string;
+  // Key prefix of the documents in the data source bucket when GenU creates
+  // the Kendra index. Undefined for an existing index, whose documents are
+  // not served: its bucket may hold more than the index covers.
+  public readonly dataSourcePrefix?: string;
   public readonly kendraIndexId: string;
   public readonly kendraIndexLanguage: string;
 
@@ -526,5 +531,8 @@ export class Rag extends Construct {
     }
 
     this.dataSourceBucketName = dataSourceBucket?.bucketName;
+    this.dataSourcePrefix = kendraIndexArnInCdkContext
+      ? undefined
+      : KENDRA_DATA_SOURCE_PREFIX;
   }
 }

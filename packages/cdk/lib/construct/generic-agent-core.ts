@@ -24,6 +24,7 @@ import {
   SUPPORTED_CACHE_FIELDS,
   modelMetadata,
 } from '@generative-ai-use-cases/common';
+import { agentCoreRuntimeConfigParameterName } from '../../consts';
 
 export interface AgentCoreRuntimeConfig {
   name: string;
@@ -38,6 +39,8 @@ export interface AgentCoreRuntimeConfig {
 
 export interface GenericAgentCoreProps {
   env: string;
+  /** Region of the main GenU stack, where the runtime config parameter lives. */
+  mainRegion: string;
   createGenericRuntime?: boolean;
   createAgentBuilderRuntime?: boolean;
   isAgentCoreNetworkPrivate?: boolean;
@@ -71,6 +74,8 @@ export class GenericAgentCore extends Construct {
   private readonly agentBuilderRuntimeConfig: AgentCoreRuntimeConfig;
   private readonly resources: RuntimeResources;
   private readonly gatewayArns?: string[];
+  private readonly envName: string;
+  private readonly mainRegion: string;
   private readonly webSearchEnabled: boolean;
 
   // Security Group ID that requires manual cleanup after AgentCore Runtime deletion
@@ -96,6 +101,8 @@ export class GenericAgentCore extends Construct {
     } = props;
 
     this.gatewayArns = gatewayArns;
+    this.envName = env;
+    this.mainRegion = props.mainRegion;
     this.webSearchEnabled = webSearchEnabled;
 
     // Create bucket first
@@ -104,7 +111,7 @@ export class GenericAgentCore extends Construct {
     // Load configurations
     const configs = this.loadConfigurations(
       env,
-      this._fileBucket.bucketName,
+      props.mainRegion,
       props.modelIds ?? [],
       closedNetworkMode,
       webSearchEnabled,
@@ -211,13 +218,19 @@ export class GenericAgentCore extends Construct {
 
   private loadConfigurations(
     env: string,
-    bucketName: string,
+    mainRegion: string,
     modelIds: string[],
     closedNetworkMode: boolean,
     webSearchEnabled: boolean,
     webSearchExcludeDomains?: string[]
   ) {
     const modelMaxTokens = this.modelMaxTokensEnvironment(modelIds);
+    // The user pool and file bucket the runtime stores output files with,
+    // published by the main stack (see agentCoreRuntimeConfigParameterName).
+    const runtimeConfigEnv = {
+      RUNTIME_CONFIG_PARAMETER: agentCoreRuntimeConfigParameterName(env),
+      RUNTIME_CONFIG_REGION: mainRegion,
+    };
     return {
       generic: {
         name: `GenUGenericRuntime${env}`,
@@ -227,7 +240,7 @@ export class GenericAgentCore extends Construct {
         networkMode: 'PUBLIC',
         serverProtocol: 'HTTP',
         environmentVariables: {
-          FILE_BUCKET: bucketName,
+          ...runtimeConfigEnv,
           MCP_CONFIG_PATH: closedNetworkMode
             ? '/var/task/mcp-configs/closed-network/mcp.json'
             : '/var/task/mcp-configs/generic/mcp.json',
@@ -244,7 +257,7 @@ export class GenericAgentCore extends Construct {
         networkMode: 'PUBLIC',
         serverProtocol: 'HTTP',
         environmentVariables: {
-          FILE_BUCKET: bucketName,
+          ...runtimeConfigEnv,
           MCP_CONFIG_PATH: '/var/task/mcp-configs/agent-builder/mcp.json',
           SUPPORTED_CACHE_FIELDS: JSON.stringify(SUPPORTED_CACHE_FIELDS),
           ...modelMaxTokens,
@@ -434,6 +447,19 @@ export class GenericAgentCore extends Construct {
       })
     );
 
+    // Runtime config published by the main stack. Output files are written to
+    // the main file bucket, whose bucket policy allows this role.
+    role.addToPolicy(
+      new PolicyStatement({
+        sid: 'ReadRuntimeConfig',
+        effect: Effect.ALLOW,
+        actions: ['ssm:GetParameter'],
+        resources: [
+          `arn:aws:ssm:${this.mainRegion}:${Stack.of(this).account}:parameter${agentCoreRuntimeConfigParameterName(this.envName)}`,
+        ],
+      })
+    );
+
     // AgentCore Web Search for the agent builder
     if (this.webSearchEnabled) {
       const stack = Stack.of(this);
@@ -448,8 +474,6 @@ export class GenericAgentCore extends Construct {
         })
       );
     }
-
-    this._fileBucket.grantWrite(role);
   }
 
   // Public getters - all non-optional
@@ -471,6 +495,11 @@ export class GenericAgentCore extends Construct {
 
   public get fileBucket(): Bucket {
     return this._fileBucket;
+  }
+
+  /** Execution role of the runtimes. The main stack lets it write output files. */
+  public get runtimeRole(): Role {
+    return this.resources.role;
   }
 
   public get fileBucketInfo(): BucketInfo {

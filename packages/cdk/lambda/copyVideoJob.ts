@@ -8,6 +8,10 @@ import {
 import { Readable } from 'stream';
 import { CopyVideoJobParams } from 'generative-ai-use-cases';
 import { updateJobStatus } from './repositoryVideoJob';
+import {
+  USER_FILE_PREFIX,
+  parseS3ObjectUrl,
+} from '@generative-ai-use-cases/common';
 
 const BUCKET_NAME: string = process.env.BUCKET_NAME!;
 const videoBucketRegionMap = JSON.parse(
@@ -19,7 +23,8 @@ const copyAndDeleteObject = async (
   srcBucket: string,
   srcRegion: string,
   dstBucket: string,
-  dstRegion: string
+  dstRegion: string,
+  dstKey: string
 ) => {
   const srcS3 = new S3Client({ region: srcRegion });
   const dstS3 = new S3Client({ region: dstRegion });
@@ -40,7 +45,7 @@ const copyAndDeleteObject = async (
   await dstS3.send(
     new PutObjectCommand({
       Bucket: dstBucket,
-      Key: `${jobId}/output.mp4`,
+      Key: dstKey,
       Body: fileBuffer,
       ContentType,
       ContentLength,
@@ -50,7 +55,7 @@ const copyAndDeleteObject = async (
   const listRes = await srcS3.send(
     new ListObjectsV2Command({
       Bucket: srcBucket,
-      Prefix: jobId,
+      Prefix: `${jobId}/`,
     })
   );
 
@@ -75,6 +80,13 @@ export const handler = async (event: CopyVideoJobParams): Promise<void> => {
   const dstBucket = BUCKET_NAME;
   const srcRegion = job.region;
   const srcBucket = videoBucketRegionMap[srcRegion];
+  // The output key was set under the owner's prefix when the job was created.
+  // A job created by an earlier version keeps its old location.
+  const output = parseS3ObjectUrl(job.output);
+  const dstKey =
+    output?.bucket === dstBucket && output.key.startsWith(USER_FILE_PREFIX)
+      ? output.key
+      : `${jobId}/output.mp4`;
 
   try {
     await copyAndDeleteObject(
@@ -82,7 +94,8 @@ export const handler = async (event: CopyVideoJobParams): Promise<void> => {
       srcBucket,
       srcRegion,
       dstBucket,
-      dstRegion
+      dstRegion,
+      dstKey
     );
 
     await updateJobStatus(job, 'Completed');

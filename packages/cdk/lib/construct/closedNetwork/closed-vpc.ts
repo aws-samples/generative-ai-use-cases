@@ -27,6 +27,8 @@ const VPC_ENDPOINTS: Record<string, ec2.InterfaceVpcEndpointAwsService> = {
   CloudWatchLogs: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
   Kendra: ec2.InterfaceVpcEndpointAwsService.KENDRA,
   Sts: ec2.InterfaceVpcEndpointAwsService.STS,
+  // AgentCore Runtime reads its config parameter
+  Ssm: ec2.InterfaceVpcEndpointAwsService.SSM,
 };
 
 /**

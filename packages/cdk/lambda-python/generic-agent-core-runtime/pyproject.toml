@@ -12,6 +12,7 @@ dependencies = [
   "uvicorn",
   "pydantic",
   "aws-opentelemetry-distro>=0.10.1",
+  "pyjwt[crypto]",
 ]
 
 [tool.uv]

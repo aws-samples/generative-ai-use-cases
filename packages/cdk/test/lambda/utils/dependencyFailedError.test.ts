@@ -35,8 +35,10 @@ jest.mock('../../../lambda/utils/bedrockClient', () => ({
 
 jest.mock('uuid', () => ({ v4: () => 'uuid' }));
 
+// Both paths refuse a request whose token cannot be verified, before the
+// Bedrock call this test is about
 jest.mock('../../../lambda/utils/auth', () => ({
-  verifyToken: async () => undefined,
+  verifyToken: async () => ({ sub: 'user' }),
 }));
 
 // Imported after BUILTIN_AGENTS_JSON is set: the agent list is read when the

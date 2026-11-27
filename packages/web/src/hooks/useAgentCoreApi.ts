@@ -9,6 +9,7 @@ import {
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import {
+  AgentCoreConfiguration,
   AgentCoreRequest,
   Model,
   UnrecordedMessage,
@@ -28,6 +29,25 @@ const region = import.meta.env.VITE_APP_REGION as string;
 const modelRegion = import.meta.env.VITE_APP_MODEL_REGION as string;
 const identityPoolId = import.meta.env.VITE_APP_IDENTITY_POOL_ID as string;
 const userPoolId = import.meta.env.VITE_APP_USER_POOL_ID as string;
+
+const runtimeArnOf = (value: string | undefined): string | null => {
+  if (!value || value === 'null') return null;
+  try {
+    return (JSON.parse(value) as AgentCoreConfiguration | null)?.arn ?? null;
+  } catch {
+    return null;
+  }
+};
+
+// Runtimes deployed by this GenU stack. Only they verify the caller's id token
+// to store output files, so it is never sent to external or research runtimes:
+// the token can be exchanged for the caller's AWS credentials.
+const idTokenRuntimeArns = new Set(
+  [
+    runtimeArnOf(import.meta.env.VITE_APP_AGENT_CORE_GENERIC_RUNTIME),
+    runtimeArnOf(import.meta.env.VITE_APP_AGENT_CORE_AGENT_BUILDER_RUNTIME),
+  ].filter((arn): arn is string => arn !== null)
+);
 
 const useAgentCoreApi = (id: string) => {
   const {
@@ -185,7 +205,14 @@ const useAgentCoreApi = (id: string) => {
           agentRuntimeArn: req.agentRuntimeArn,
           ...(req.sessionId ? { runtimeSessionId: req.sessionId } : {}),
           qualifier: req.qualifier || 'DEFAULT',
-          payload: JSON.stringify(agentCoreRequest),
+          // GenU's own runtimes store output files under the user of this
+          // token. It is added after the log line above so it never reaches
+          // the console.
+          payload: JSON.stringify(
+            idTokenRuntimeArns.has(req.agentRuntimeArn)
+              ? { ...agentCoreRequest, id_token: token }
+              : agentCoreRequest
+          ),
         };
 
         const command = new InvokeAgentRuntimeCommand(commandInput);
