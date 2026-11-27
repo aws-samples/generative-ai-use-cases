@@ -161,6 +161,8 @@ const ChatPage: React.FC = () => {
     updateSystemContextByModel,
     getCurrentSystemContext,
     retryGeneration,
+    continueGeneration,
+    getStopReason,
     forceToStop,
   } = useChat(pathname, chatId);
   const { createShareId, findShareId, deleteShareId } = useChatApi();
@@ -420,6 +422,22 @@ const ChatPage: React.FC = () => {
       overrideModelParameters
     );
   }, [retryGeneration, base64Cache, overrideModelParameters]);
+
+  // Ask for the rest of a response that stopped at the output token limit
+  const onContinue = useCallback(() => {
+    continueGeneration(
+      undefined,
+      withCurrentDate,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      base64Cache,
+      overrideModelParameters
+    );
+  }, [continueGeneration, base64Cache, overrideModelParameters]);
 
   const onReset = useCallback(() => {
     clear();
@@ -785,6 +803,11 @@ const ChatPage: React.FC = () => {
                 />
               </>
             </ExpandableField>
+          )}
+          {!loading && getStopReason() === 'max_tokens' && (
+            <div className="mb-2 flex justify-center">
+              <Button onClick={onContinue}>{t('chat.continue_output')}</Button>
+            </div>
           )}
           <InputChatContent
             content={content}
