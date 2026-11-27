@@ -512,6 +512,10 @@ language:
   ja: 日语
   ko: 韩语
   zh: 中文
+maintenance:
+  description: 此环境暂时无法使用，请稍后再试。
+  title: 正在维护中
+
 meetingMinutes:
   auto_detect_candidates: '自动检测候选: {{languages}}'
   auto_detect_change: 在设置中更改

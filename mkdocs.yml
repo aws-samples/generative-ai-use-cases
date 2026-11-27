@@ -67,6 +67,7 @@ nav:
           - Delete Resources: DESTROY.md
           - (Optional) Delete with AWS CloudShell: DESTROY_ON_CLOUDSHELL.md
           - Use as a Native App: PWA.md
+          - Maintenance Mode: MAINTENANCE.md
 
 extra:
   # Used in custom hook anchors.py

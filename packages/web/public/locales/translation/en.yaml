@@ -901,6 +901,10 @@ language:
   th: Thai
   vi: Vietnamese
   zh: Chinese
+maintenance:
+  description: This environment is temporarily unavailable. Please try again later.
+  title: Under maintenance
+
 mcp_chat:
   loading_message: Connecting to MCP server. This may take some time. Please wait...
   title: MCP Chat
