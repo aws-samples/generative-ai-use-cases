@@ -6090,6 +6090,167 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
     },
   },
   "Resources": {
+    "APIAgentDocumentSearch56313FD6": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "APIAgentDocumentSearchServiceRoleDefaultPolicy240EE1A7",
+        "APIAgentDocumentSearchServiceRole3115E9A2",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
+            "KNOWLEDGE_BASE_HYBRID_SEARCH": "true",
+            "KNOWLEDGE_BASE_ID": {
+              "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
+            },
+            "MODEL_REGION": "us-east-1",
+            "USER_POOL_CLIENT_ID": {
+              "Ref": "AuthUserPoolclientA74673A9",
+            },
+            "USER_POOL_ID": {
+              "Ref": "AuthUserPool8115E87F",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "APIAgentDocumentSearchServiceRole3115E9A2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Tags": [
+          {
+            "Key": "app",
+            "Value": "genu",
+          },
+        ],
+        "Timeout": 30,
+        "VpcConfig": {
+          "SecurityGroupIds": [
+            {
+              "Fn::GetAtt": [
+                "LambdaSeurityGroup14B5161A",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": [
+            {
+              "Fn::ImportValue": "ClosedNetworkStack:ExportsOutputRefClosedVpcisolatedSubnet1Subnet2EF6D3F36370B312",
+            },
+            {
+              "Fn::ImportValue": "ClosedNetworkStack:ExportsOutputRefClosedVpcisolatedSubnet2SubnetB169C8D3D828FC40",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIAgentDocumentSearchAgentCoreRuntimeInvokeBAA27A4D": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "APIAgentDocumentSearch56313FD6",
+            "Arn",
+          ],
+        },
+        "Principal": {
+          "Fn::ImportValue": "AgentCoreStack:ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362",
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIAgentDocumentSearchServiceRole3115E9A2": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "app",
+            "Value": "genu",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIAgentDocumentSearchServiceRoleDefaultPolicy240EE1A7": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "bedrock:*",
+                "logs:*",
+                "aws-marketplace:Subscribe",
+                "aws-marketplace:Unsubscribe",
+                "aws-marketplace:ViewSubscriptions",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "APIAgentDocumentSearchServiceRoleDefaultPolicy240EE1A7",
+        "Roles": [
+          {
+            "Ref": "APIAgentDocumentSearchServiceRole3115E9A2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+      "UpdateReplacePolicy": "Delete",
+    },
     "APIApiANY19147CC6": {
       "DeletionPolicy": "Delete",
       "Properties": {
@@ -13456,7 +13617,14 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               {
                 "Ref": "APIFileBucket8FB29855",
               },
-              "\\",\\"fileBucketRegion\\":\\"us-east-1\\"}",
+              "\\",\\"fileBucketRegion\\":\\"us-east-1\\",\\"documentSearchFunction\\":\\"",
+              {
+                "Fn::GetAtt": [
+                  "APIAgentDocumentSearch56313FD6",
+                  "Arn",
+                ],
+              },
+              "\\"}",
             ],
           ],
         },
@@ -19319,6 +19487,137 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
     },
   },
   "Resources": {
+    "APIAgentDocumentSearch56313FD6": {
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "APIAgentDocumentSearchServiceRoleDefaultPolicy240EE1A7",
+        "APIAgentDocumentSearchServiceRole3115E9A2",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": "cdk-hnb659fds-assets-123456890123-us-east-1",
+          "S3Key": "HASH-REPLACED.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "CROSS_ACCOUNT_BEDROCK_ROLE_ARN": "",
+            "KNOWLEDGE_BASE_HYBRID_SEARCH": "true",
+            "KNOWLEDGE_BASE_ID": {
+              "Fn::ImportValue": "RagKnowledgeBaseStack:ExportsOutputRefKnowledgeBaseD054384B",
+            },
+            "MODEL_REGION": "us-east-1",
+            "USER_POOL_CLIENT_ID": {
+              "Ref": "AuthUserPoolclientA74673A9",
+            },
+            "USER_POOL_ID": {
+              "Ref": "AuthUserPool8115E87F",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "APIAgentDocumentSearchServiceRole3115E9A2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs22.x",
+        "Tags": [
+          {
+            "Key": "app",
+            "Value": "genu",
+          },
+        ],
+        "Timeout": 30,
+      },
+      "Type": "AWS::Lambda::Function",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIAgentDocumentSearchAgentCoreRuntimeInvokeBAA27A4D": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "APIAgentDocumentSearch56313FD6",
+            "Arn",
+          ],
+        },
+        "Principal": {
+          "Fn::ImportValue": "AgentCoreStack:ExportsOutputFnGetAttGenericAgentCoreAgentCoreRuntimeRoleF34B80EAArn12ADF362",
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIAgentDocumentSearchServiceRole3115E9A2": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "app",
+            "Value": "genu",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIAgentDocumentSearchServiceRoleDefaultPolicy240EE1A7": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "bedrock:*",
+                "logs:*",
+                "aws-marketplace:Subscribe",
+                "aws-marketplace:Unsubscribe",
+                "aws-marketplace:ViewSubscriptions",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "APIAgentDocumentSearchServiceRoleDefaultPolicy240EE1A7",
+        "Roles": [
+          {
+            "Ref": "APIAgentDocumentSearchServiceRole3115E9A2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+      "UpdateReplacePolicy": "Delete",
+    },
     "APIApiANY19147CC6": {
       "DeletionPolicy": "Delete",
       "Properties": {
@@ -26488,7 +26787,14 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               {
                 "Ref": "APIFileBucket8FB29855",
               },
-              "\\",\\"fileBucketRegion\\":\\"us-east-1\\"}",
+              "\\",\\"fileBucketRegion\\":\\"us-east-1\\",\\"documentSearchFunction\\":\\"",
+              {
+                "Fn::GetAtt": [
+                  "APIAgentDocumentSearch56313FD6",
+                  "Arn",
+                ],
+              },
+              "\\"}",
             ],
           ],
         },

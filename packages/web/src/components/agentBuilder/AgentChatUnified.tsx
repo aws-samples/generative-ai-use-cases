@@ -42,6 +42,9 @@ interface AgentChatProps {
 const webSearchEnabledByDeployment =
   import.meta.env.VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED ===
   'true';
+// Document search needs the Knowledge Base of the RAG chat (#1870)
+const documentSearchEnabledByDeployment =
+  import.meta.env.VITE_APP_RAG_KNOWLEDGE_BASE_ENABLED === 'true';
 
 const AgentChatUnified: React.FC<AgentChatProps> = ({
   agent,
@@ -179,7 +182,8 @@ Please respond as this agent with the specified behavior and personality.`;
         agent.agentId,
         modelId,
         agent.codeExecutionEnabled ?? false,
-        agent.webSearchEnabled ?? false
+        agent.webSearchEnabled ?? false,
+        agent.documentSearchEnabled ?? false
       );
 
       setChatContent('');
@@ -278,6 +282,8 @@ Please respond as this agent with the specified behavior and personality.`;
           {/* Agent Capabilities */}
           {(agent.codeExecutionEnabled ||
             (webSearchEnabledByDeployment && agent.webSearchEnabled) ||
+            (documentSearchEnabledByDeployment &&
+              agent.documentSearchEnabled) ||
             (agent.mcpServers && agent.mcpServers.length > 0)) && (
             <div className="flex flex-wrap justify-center gap-2">
               {/* Code Execution - only show when enabled */}
@@ -293,6 +299,14 @@ Please respond as this agent with the specified behavior and personality.`;
                   {t('agent_builder.web_search')}
                 </span>
               )}
+
+              {/* Document Search - only show when enabled for the agent and the deployment */}
+              {documentSearchEnabledByDeployment &&
+                agent.documentSearchEnabled && (
+                  <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                    {t('agent_builder.document_search')}
+                  </span>
+                )}
 
               {/* MCP Server List */}
               {agent.mcpServers &&

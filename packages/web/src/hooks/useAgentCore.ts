@@ -57,7 +57,8 @@ const useAgentCore = (id: string) => {
     agentId?: string,
     modelId?: string, // Add modelId parameter
     codeExecutionEnabled?: boolean, // Add codeExecutionEnabled parameter
-    webSearchEnabled?: boolean // Add webSearchEnabled parameter
+    webSearchEnabled?: boolean, // Add webSearchEnabled parameter
+    documentSearchEnabled?: boolean // Search the Knowledge Base (#1870)
   ) => {
     // Use provided modelId or fall back to current model ID
     const targetModelId = modelId || getModelId();
@@ -113,6 +114,7 @@ const useAgentCore = (id: string) => {
       agentId,
       codeExecutionEnabled,
       webSearchEnabled,
+      documentSearchEnabled,
     };
 
     await postMessage(request);

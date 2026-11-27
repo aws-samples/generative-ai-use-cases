@@ -70,9 +70,12 @@ agent_builder:
   description_label: 説明
   description_placeholder: エージェントの機能を説明してください...
   description_too_long: 説明は500文字以下である必要があります
+  document_search: 社内文書の検索
+  document_search_description: 質問に必要なときだけ、RAG チャット（Knowledge Base）の文書を検索し、出典を示して答えます。検索できる文書は、使っている利用者が RAG チャットで見られる範囲と同じです。
   edit_agent: エージェントを編集
   editor: エディター
   enable_code_execution: コード実行を有効にする
+  enable_document_search: 社内文書の検索を有効にする
   enable_web_search: Web検索を有効にする
   enter_agent_name: エージェント名を入力
   enter_system_prompt: エージェントの動作を定義するシステムプロンプトを入力

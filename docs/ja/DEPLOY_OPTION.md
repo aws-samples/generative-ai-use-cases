@@ -745,6 +745,14 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
+#### 社内文書の検索ツール
+
+`agentBuilderEnabled` と `ragKnowledgeBaseEnabled` の両方を有効にすると、エージェントの設定に「社内文書の検索を有効にする」が表示されます。有効にしたエージェントは、質問に必要なときだけ RAG チャット (Knowledge Base) の文書を検索し、出典を Markdown のリンクで示して答えます。追加の設定はありません。
+
+- 検索は GenU の Lambda 関数が行い、RAG チャットと同じ絞り込み (`hiddenStaticExplicitFilters` と、利用者の ID トークンから作る絞り込み) が必ず掛かります。エージェントが検索できる文書は、そのエージェントを使っている利用者が RAG チャットで見られる範囲と同じです。公開されたエージェントを別の利用者が使った場合も、使っている利用者の範囲で検索します
+- AgentCore Runtime は、利用者の ID トークンを付けてこの関数を呼びます。Runtime には Knowledge Base を直接検索する権限はありません
+- 引用のリンクは RAG チャットと同じ形で、押すと文書を開けます
+
 ### 音声チャットユースケースの有効化
 
 > [!NOTE]

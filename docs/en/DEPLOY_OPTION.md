@@ -728,6 +728,14 @@ const envs: Record<string, Partial<StackInput>> = {
 };
 ```
 
+#### Document search tool
+
+With both `agentBuilderEnabled` and `ragKnowledgeBaseEnabled`, the agent settings offer "Enabling document search". An agent with it on searches the documents of the RAG chat (Knowledge Base) only when a question needs them, and cites them as Markdown links. There is nothing else to configure.
+
+- The search runs in a GenU Lambda function and always applies the same filters as the RAG chat (`hiddenStaticExplicitFilters` and the filters built from the user's id token). An agent finds only the documents that its user may see in the RAG chat, also when another user uses a public agent
+- The AgentCore runtime calls the function with the user's id token. The runtime has no permission to search the Knowledge Base itself
+- Cited links work as in the RAG chat and open the documents
+
 ### Enabling Voice Chat Use Case
 
 > [!NOTE]
