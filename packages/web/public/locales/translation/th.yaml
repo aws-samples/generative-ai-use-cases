@@ -930,6 +930,7 @@ useCaseBuilder:
   error:
     duplicate_select_options: '{{select:{{label}}}} มีตัวเลือกซ้ำกัน'
     empty_select_options: '{{select:{{label}}}} มีตัวเลือกว่างเปล่า'
+    invalid_kb_filter: 'ตัวกรองของ retrieveKnowledgeBase{{label}} ไม่ถูกต้อง: {{message}}'
     missing_kb_text_form: >-
       โปรดรวมแบบฟอร์ม {{text{{label}}}} ใน prompt template เพื่อป้อนคำค้นหาสำหรับ Knowledge Base
     missing_select_options: >-
@@ -1031,6 +1032,10 @@ useCaseBuilder:
         {{text:คำถาม}}
         </Question>
       title: RAG อย่างง่าย
+    retrieveKnowledgeBaseFilterDescription: >-
+      เพิ่ม JSON ของเมทาดาทาต่อท้ายป้ายกำกับเพื่อค้นหาเฉพาะเอกสารที่เมทาดาทาตรงกัน (ดูตัวอย่างด้านล่าง) ใส่เฉพาะค่าหมายถึงเท่ากับ ใส่ตัวดำเนินการหมายถึงการเปรียบเทียบ ตัวดำเนินการที่ใช้ได้คือ equals, notEquals, greaterThan, greaterThanOrEquals, lessThan, lessThanOrEquals, in, notIn, startsWith, stringContains และ listContains เอกสารต้องตรงทุกเงื่อนไข และใช้ร่วมกับตัวกรองที่ผู้ดูแลระบบตั้งไว้
+    retrieveKnowledgeBaseFilterExample:
+      title: ตัวอย่างการกรองด้วยเมทาดาทา
     selectPlaceholderDescription: |-
       คุณเป็นผู้เชี่ยวชาญที่มีความเชี่ยวชาญในบริการ AWS
 

@@ -902,6 +902,7 @@ useCaseBuilder:
   error:
     duplicate_select_options: '{{select:{{label}}}} chứa tùy chọn trùng lặp.'
     empty_select_options: '{{select:{{label}}}} chứa tùy chọn trống.'
+    invalid_kb_filter: 'Bộ lọc của retrieveKnowledgeBase{{label}} không hợp lệ: {{message}}'
     missing_kb_text_form: >-
       Vui lòng mô tả form {{text{{label}}}}
       để nhập truy vấn tìm kiếm Knowledge Base trong template prompt.
@@ -1008,6 +1009,10 @@ useCaseBuilder:
         {{text:Câu hỏi}}
         </questions>
       title: RAG đơn giản
+    retrieveKnowledgeBaseFilterDescription: >-
+      Thêm JSON siêu dữ liệu sau nhãn để chỉ tìm các tài liệu có siêu dữ liệu phù hợp (xem ví dụ bên dưới). Chỉ ghi giá trị nghĩa là bằng; ghi toán tử nghĩa là so sánh. Các toán tử: equals, notEquals, greaterThan, greaterThanOrEquals, lessThan, lessThanOrEquals, in, notIn, startsWith, stringContains và listContains. Tài liệu phải thỏa mọi điều kiện, cùng với bộ lọc do quản trị viên đặt.
+    retrieveKnowledgeBaseFilterExample:
+      title: Ví dụ lọc theo siêu dữ liệu
     selectPlaceholderDescription: >-
       {{select}} là placeholder để định nghĩa selectbox.
       {{select}} không thể bỏ qua nhãn và tùy chọn.

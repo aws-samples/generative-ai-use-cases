@@ -1080,6 +1080,7 @@ useCaseBuilder:
   error:
     duplicate_select_options: '{{select:{{label}}}} に重複したオプションが含まれています。'
     empty_select_options: '{{select:{{label}}}} に空のオプションが含まれています。'
+    invalid_kb_filter: 'retrieveKnowledgeBase{{label}} の絞り込みが正しくありません: {{message}}'
     missing_kb_text_form: >-
       Knowledge Base の検索クエリを入力するためのフォーム {{text{{label}}}}
       をプロンプテンプレートに内に記述してください。
@@ -1182,6 +1183,10 @@ useCaseBuilder:
         {{text:質問}}
         </質問>
       title: シンプルな RAG
+    retrieveKnowledgeBaseFilterDescription: >-
+      ラベルのあとにメタデータの JSON を続けると、検索する文書をメタデータで絞り込めます（下の例）。属性に値だけを書くと一致、演算子を書くと比較になります。使える演算子は equals、notEquals、greaterThan、greaterThanOrEquals、lessThan、lessThanOrEquals、in、notIn、startsWith、stringContains、listContains です。条件はすべて満たす文書だけが対象になり、管理者が設定した絞り込みにさらに掛かります。
+    retrieveKnowledgeBaseFilterExample:
+      title: メタデータで絞り込む例
     selectPlaceholderDescription: >-
       {{select}} はセレクトボックスを定義するための placeholder です。 {{select}}
       はラベルとオプションを省略できません。 必ず {{select:ラベル:選択肢1,選択肢2}} のように記述します。

@@ -153,6 +153,9 @@ export type RetrieveKendraResponse = RetrieveCommandOutput;
 
 export type RetrieveKnowledgeBaseRequest = {
   query: string;
+  // Narrows the search, on top of the caller's access filters (#1416):
+  // {"category": "AWS"} or {"year": {"greaterThan": 2020}}
+  filter?: Record<string, unknown>;
 };
 
 export type RetrieveKnowledgeBaseResponse = RetrieveCommandOutputKnowledgeBase;
