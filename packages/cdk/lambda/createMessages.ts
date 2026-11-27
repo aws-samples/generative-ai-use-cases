@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { requireUserName, sendJson } from './utils/http';
+import { requireUserName, requireUserSub, sendJson } from './utils/http';
 import { CreateMessagesRequest, ExtraData } from 'generative-ai-use-cases';
+import { canAccessFile, fileBucketKey } from '@generative-ai-use-cases/common';
 import {
   batchCreateMessages,
   findChatById,
@@ -97,18 +98,30 @@ const isValidFilterExtraData = (extra: ExtraData): boolean => {
   }
 };
 
-const isValidExtraData = (extra: ExtraData, bucketName: string): boolean => {
-  if (extra.source.type === 'json') {
-    return isValidFilterExtraData(extra);
+/**
+ * Shape check for one `extraData` entry. Returns the file bucket key for an
+ * S3 entry (checked against the sender afterwards), null for a valid filter
+ * entry, and false for anything else.
+ */
+const checkExtraData = (
+  extra: ExtraData,
+  bucketName: string
+): string | null | false => {
+  if (extra?.source?.type === 'json') {
+    return isValidFilterExtraData(extra) ? null : false;
   }
 
-  if (extra.source.type !== 's3') {
+  if (
+    extra?.source?.type !== 's3' ||
+    typeof extra.source.data !== 'string' ||
+    !extra.source.data.startsWith(
+      `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/`
+    )
+  ) {
     return false;
   }
 
-  return extra.source.data.startsWith(
-    `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/`
-  );
+  return fileBucketKey(extra.source.data, bucketName) ?? false;
 };
 
 export const handler = async (
@@ -118,6 +131,8 @@ export const handler = async (
   const req: CreateMessagesRequest = request.body ?? {};
   const userId: string = requireUserName(request);
   const chatId = request.params.chatId;
+  const invalidExtraData = () =>
+    sendJson(response, 400, { message: 'Invalid extraData' });
 
   // Authorization check: Verify if the specified chat belongs to the user
   const chat = await findChatById(userId, chatId);
@@ -127,16 +142,16 @@ export const handler = async (
     });
   }
 
-  if (req.messages) {
-    for (const message of req.messages) {
-      if (message.extraData && message.extraData.length > 0) {
-        for (const extra of message.extraData) {
-          if (!isValidExtraData(extra, FILE_UPLOAD_BUCKET_NAME)) {
-            return sendJson(response, 400, {
-              message: 'Invalid extraData',
-            });
-          }
-        }
+  // Attachments must be the sender's own uploads.
+  for (const message of req.messages ?? []) {
+    for (const extra of message.extraData ?? []) {
+      const key = checkExtraData(extra, FILE_UPLOAD_BUCKET_NAME);
+      if (key === false) return invalidExtraData();
+      if (
+        key !== null &&
+        !canAccessFile({ caller: requireUserSub(request), key })
+      ) {
+        return invalidExtraData();
       }
     }
   }

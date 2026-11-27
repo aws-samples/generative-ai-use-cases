@@ -56,7 +56,7 @@ jest.mock('../../../lambda/utils/bedrockClient', () => ({
 }));
 
 jest.mock('../../../lambda/utils/auth', () => ({
-  verifyToken: async () => undefined,
+  verifyToken: async () => ({ sub: 'user' }),
 }));
 
 let bedrockKbApi: ApiInterface;

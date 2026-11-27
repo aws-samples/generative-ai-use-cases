@@ -10,7 +10,11 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ProcessedStackInput } from './stack-input';
-import { LAMBDA_RUNTIME_NODEJS, TAG_KEY } from '../consts';
+import {
+  KNOWLEDGE_BASE_DATA_SOURCE_PREFIX,
+  LAMBDA_RUNTIME_NODEJS,
+  TAG_KEY,
+} from '../consts';
 import { bedrockModelArn } from './utils/model-id-utils';
 
 const UUID = '339C5FED-A1B5-43B6-B40A-5E8E59E5734D';
@@ -609,7 +613,7 @@ export class RagKnowledgeBaseStack extends Stack {
                 bucketOwnerAccountId: this.account,
               },
               filterConfiguration: {
-                inclusionPrefixes: ['docs/'],
+                inclusionPrefixes: [KNOWLEDGE_BASE_DATA_SOURCE_PREFIX],
               },
             },
             // Picks up documents added to or changed in the bucket without
@@ -627,7 +631,7 @@ export class RagKnowledgeBaseStack extends Stack {
         dataSourceConfiguration: {
           s3Configuration: {
             bucketArn: `arn:aws:s3:::${dataSourceBucket.bucketName}`,
-            inclusionPrefixes: ['docs/'],
+            inclusionPrefixes: [KNOWLEDGE_BASE_DATA_SOURCE_PREFIX],
           },
           type: 'S3',
         },

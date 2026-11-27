@@ -154,19 +154,18 @@ export type RetrieveKnowledgeBaseRequest = {
 
 export type RetrieveKnowledgeBaseResponse = RetrieveCommandOutputKnowledgeBase;
 
-export type S3Type = 'default' | 'knowledgeBase' | 'agentcore';
-
 export type BucketInfo = {
   bucketName: string;
   region: string;
 };
 
+/**
+ * `GET /file/url`: a file or cited document shown to the caller.
+ * `shareId` names the shared chat that shows it.
+ */
 export type GetFileDownloadSignedUrlRequest = {
-  bucketName: string;
-  filePrefix: string;
-  region?: string;
-  contentType?: string;
-  s3Type?: S3Type;
+  uri: string;
+  shareId?: string;
 };
 
 export type GetFileDownloadSignedUrlResponse = string;
@@ -187,7 +186,7 @@ export type GenerateVideoResponse = VideoJob;
 export type ListVideoJobsResponse = Pagination<VideoJob>;
 
 export type DeleteFileRequest = {
-  fileName: string;
+  key: string;
 };
 export type DeleteFileResponse = null;
 

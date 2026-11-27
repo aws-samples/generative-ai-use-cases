@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import { sendJson } from './utils/http';
+import { idTokenFromRequest, sendJson } from './utils/http';
 import { RetrieveCommand } from '@aws-sdk/client-bedrock-agent-runtime';
 import { RetrieveKnowledgeBaseRequest } from 'generative-ai-use-cases';
 import { initBedrockAgentRuntimeClient } from './utils/bedrockClient';
 import { knowledgeBaseRetrievalConfiguration } from './utils/knowledgeBaseRetrieval';
+import { callerRetrievalFilters, combineFilters } from './utils/request';
 
 const KNOWLEDGE_BASE_ID = process.env.KNOWLEDGE_BASE_ID;
 const MODEL_REGION = process.env.MODEL_REGION as string;
@@ -22,6 +23,13 @@ export const handler = async (
     return sendJson(response, 400, { error: 'query is not specified' });
   }
 
+  // The same filters the chat applies; without a verified token the caller
+  // cannot be matched against them.
+  const filters = await callerRetrievalFilters(idTokenFromRequest(request));
+  if (filters === null) {
+    return sendJson(response, 401, { message: 'Unauthorized' });
+  }
+
   const client = await initBedrockAgentRuntimeClient({ region: MODEL_REGION });
   const retrieveCommand = new RetrieveCommand({
     knowledgeBaseId: KNOWLEDGE_BASE_ID,
@@ -29,6 +37,7 @@ export const handler = async (
     retrievalConfiguration: knowledgeBaseRetrievalConfiguration({
       numberOfResults: 10,
       hybridSearch: HYBRID_SEARCH,
+      filter: combineFilters(filters),
     }),
   });
   const retrieveRes = await client.send(retrieveCommand);

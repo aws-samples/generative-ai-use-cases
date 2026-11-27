@@ -11,6 +11,8 @@ site*/
 
 # Jest snapshot fix files
 *.snap.fix
+# TypeScript incremental build info
+*.tsbuildinfo
 # Coding Asssitant
 .kiro/settings
 .kiro/specs

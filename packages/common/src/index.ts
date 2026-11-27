@@ -3,3 +3,7 @@ export * from './application/media';
 export * from './application/textEncoding';
 export * from './application/transcribe';
 export * from './custom/rag-knowledge-base';
+export * from './storage/file-keys';
+export * from './storage/chat-files';
+export * from './storage/document-sources';
+export * from './authz/kb-filter';

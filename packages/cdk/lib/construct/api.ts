@@ -31,7 +31,10 @@ import {
   BEDROCK_TEXT_MODELS,
 } from '@generative-ai-use-cases/common';
 import { allowS3AccessWithSourceIpCondition } from '../utils/s3-access-policy';
-import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
+import {
+  KNOWLEDGE_BASE_DATA_SOURCE_PREFIX,
+  LAMBDA_RUNTIME_NODEJS,
+} from '../../consts';
 import { warnModelEndOfLife } from '../utils/model-end-of-life';
 import {
   InterfaceVpcEndpoint,
@@ -71,6 +74,8 @@ export interface BackendApiProps {
   readonly kendraIndexLanguage?: string;
   readonly knowledgeBaseDataSourceBucketName?: string;
   readonly dataSourceBucketName?: string;
+  // Key prefix of the Kendra S3 data source GenU created.
+  readonly dataSourcePrefix?: string;
   // Use Case Builder / Agent Builder
   readonly useCaseBuilderTable?: Table;
   readonly useCaseIdIndexName?: string;
@@ -84,7 +89,6 @@ export interface BackendApiProps {
   // IP restrictions
   readonly allowedIpV4AddressRanges?: string[];
   readonly allowedIpV6AddressRanges?: string[];
-  readonly additionalS3Buckets?: Bucket[];
   // CORS
   readonly webUrl?: string;
 }
@@ -244,6 +248,28 @@ export class Api extends Construct {
         TABLE_NAME: table.tableName,
         STATS_TABLE_NAME: props.statsTable.tableName,
         KNOWLEDGE_BASE_ID: knowledgeBaseId ?? '',
+        // Where cited documents may be downloaded from (GET /file/url).
+        DOCUMENT_SOURCES: JSON.stringify([
+          ...(props.knowledgeBaseDataSourceBucketName
+            ? [
+                {
+                  kind: 'knowledgeBase',
+                  bucket: props.knowledgeBaseDataSourceBucketName,
+                  prefix: KNOWLEDGE_BASE_DATA_SOURCE_PREFIX,
+                },
+              ]
+            : []),
+          // Only for a Kendra index GenU created
+          ...(props.dataSourceBucketName && props.dataSourcePrefix !== undefined
+            ? [
+                {
+                  kind: 'kendra',
+                  bucket: props.dataSourceBucketName,
+                  prefix: props.dataSourcePrefix,
+                },
+              ]
+            : []),
+        ]),
         VIDEO_BUCKET_REGION_MAP: JSON.stringify(props.videoBucketRegionMap),
         QUERY_DECOMPOSITION_ENABLED: JSON.stringify(queryDecompositionEnabled),
         // Hybrid search is an option of OpenSearch Serverless; a managed
@@ -254,6 +280,8 @@ export class Api extends Construct {
         KNOWLEDGE_BASE_MANAGED: JSON.stringify(
           props.ragKnowledgeBaseStorageType === 'managed'
         ),
+        // Filter operators differ by vector store (cited document downloads).
+        KNOWLEDGE_BASE_STORAGE_TYPE: props.ragKnowledgeBaseStorageType ?? '',
         RERANKING_MODEL_ID: rerankingModelId ?? '',
         // RAG Kendra
         INDEX_ID: props.kendraIndexId ?? '',
@@ -506,20 +534,6 @@ export class Api extends Construct {
           ipv6: props.allowedIpV6AddressRanges || [],
         }
       );
-      // Additional buckets permissions
-      if (props.additionalS3Buckets) {
-        props.additionalS3Buckets.forEach((bucket) => {
-          allowS3AccessWithSourceIpCondition(
-            bucket.bucketName,
-            apiHandler.role!,
-            'read',
-            {
-              ipv4: props.allowedIpV4AddressRanges || [],
-              ipv6: props.allowedIpV6AddressRanges || [],
-            }
-          );
-        });
-      }
     }
 
     if (endpointNames.length > 0) {
@@ -548,7 +562,8 @@ export class Api extends Construct {
       );
     }
 
-    // Allow downloading files from Knowledge Base data source bucket
+    // Allow downloading source documents (and reading their metadata files)
+    // from the Knowledge Base data source, limited to its inclusion prefix.
     if (props.knowledgeBaseDataSourceBucketName && apiHandler.role) {
       allowS3AccessWithSourceIpCondition(
         props.knowledgeBaseDataSourceBucketName,
@@ -557,7 +572,21 @@ export class Api extends Construct {
         {
           ipv4: props.allowedIpV4AddressRanges || [],
           ipv6: props.allowedIpV6AddressRanges || [],
-        }
+        },
+        KNOWLEDGE_BASE_DATA_SOURCE_PREFIX
+      );
+      // The function reads `<key>.metadata.json` itself to evaluate retrieval
+      // filters. That request comes from the function, not from the user's
+      // network, so it cannot carry the source IP condition. Sidecars are
+      // never signed for users.
+      apiHandler.role.addToPrincipalPolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          actions: ['s3:GetObject'],
+          resources: [
+            `arn:aws:s3:::${props.knowledgeBaseDataSourceBucketName}/${KNOWLEDGE_BASE_DATA_SOURCE_PREFIX}*.metadata.json`,
+          ],
+        })
       );
     }
 
@@ -746,6 +775,9 @@ export class Api extends Construct {
     const fileUrl = file.addResource('url');
     fileUrl.addMethod('POST');
     fileUrl.addMethod('GET');
+    // A key has slashes, so it is passed as `?key=`.
+    file.addMethod('DELETE');
+    // No longer routed; kept so the existing resource is not removed.
     file.addResource('{fileName}').addMethod('DELETE');
 
     api.root.addResource('token-usage').addMethod('GET');
@@ -797,7 +829,7 @@ export class Api extends Construct {
 
     // Force a new API Gateway deployment.
     // Bump this version when route configuration changes.
-    const API_DEPLOYMENT_VERSION = 'v2';
+    const API_DEPLOYMENT_VERSION = 'v3';
     const deployment = new Deployment(this, 'ApiDeployment', { api });
     deployment.addToLogicalId(API_DEPLOYMENT_VERSION);
 

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { requireUserName, sendJson } from './utils/http';
+import { requireUserName, requireUserSub, sendJson } from './utils/http';
 import { GenerateVideoRequest } from 'generative-ai-use-cases';
 import api from './utils/api';
 import { defaultVideoGenerationModel } from './utils/models';
@@ -18,7 +18,12 @@ export const handler = async (
       req.params
     );
 
-    const res = await createJob(userId, invocationArn, req);
+    const res = await createJob(
+      userId,
+      requireUserSub(request),
+      invocationArn,
+      req
+    );
 
     return sendJson(response, 200, res);
   } catch (error) {

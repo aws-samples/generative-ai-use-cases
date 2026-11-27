@@ -10,6 +10,17 @@ export const handler = async (
   response: Response
 ): Promise<void> => {
   const req: PredictRequest = request.body ?? {};
+  // Files are passed to models through PredictStream, which checks who may
+  // read them. This route takes no S3 references.
+  if (
+    req.messages?.some((message) =>
+      message.extraData?.some((extra) => extra?.source?.type === 's3')
+    )
+  ) {
+    return sendJson(response, 400, {
+      message: 'S3 references are not supported',
+    });
+  }
   const model = req.model || defaultModel;
   const output = await api[model.type].invoke?.(
     model,

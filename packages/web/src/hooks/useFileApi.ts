@@ -5,36 +5,25 @@ import {
   GetFileDownloadSignedUrlRequest,
   GetFileDownloadSignedUrlResponse,
   DeleteFileResponse,
-  S3Type,
 } from 'generative-ai-use-cases';
+import {
+  USER_FILE_PREFIX,
+  parseS3ObjectUrl,
+} from '@generative-ai-use-cases/common';
 import useHttp from './useHttp';
 import axios from 'axios';
 
+/**
+ * The shared chat (`shareId`) an S3 URL is shown in. The server signs the
+ * files the shared chat attaches through it.
+ */
+export type FileScope = {
+  shareId?: string;
+};
+
 const useFileApi = () => {
   const http = useHttp();
-  const parseS3Url = (s3Url: string) => {
-    let result = /^s3:\/\/(?<bucketName>.+?)\/(?<prefix>.+)/.exec(s3Url);
 
-    if (!result) {
-      result =
-        /^https:\/\/s3.(?<region>.+?).amazonaws.com\/(?<bucketName>.+?)\/(?<prefix>.+)$/.exec(
-          s3Url
-        );
-
-      if (!result) {
-        result =
-          /^https:\/\/(?<bucketName>.+?).s3(|(\.|-)(?<region>.+?)).amazonaws.com\/(?<prefix>.+)$/.exec(
-            s3Url
-          );
-      }
-    }
-
-    return result?.groups as {
-      bucketName: string;
-      prefix: string;
-      region?: string;
-    };
-  };
   return {
     getSignedUrl: (req: GetFileUploadSignedUrlRequest) => {
       return http.post<GetFileUploadSignedUrlResponse>('file/url', req);
@@ -47,30 +36,29 @@ const useFileApi = () => {
         data: req.file,
       });
     },
-    getFileDownloadSignedUrl: async (s3Url: string, s3Type?: S3Type) => {
-      const { bucketName, prefix, region } = parseS3Url(s3Url);
-
-      const [filePrefix, anchorLink] = prefix.split('#');
-
-      // Get the signed URL
-      const params: GetFileDownloadSignedUrlRequest = {
-        bucketName,
-        filePrefix: decodeURIComponent(filePrefix),
-        region,
-        s3Type,
-      };
-      const { data: url } =
-        await http.api.get<GetFileDownloadSignedUrlResponse>('/file/url', {
-          params,
-        });
-      return `${url}${anchorLink ? `#${anchorLink}` : ''}`;
+    /** Download URL for an S3 URL (a file or a cited document). */
+    getFileDownloadSignedUrl: async (s3Url: string, scope?: FileScope) => {
+      const [uri, anchor] = s3Url.split('#');
+      const params: GetFileDownloadSignedUrlRequest = { uri, ...scope };
+      const { data } = await http.api.get<GetFileDownloadSignedUrlResponse>(
+        '/file/url',
+        { params }
+      );
+      return `${data}${anchor ? `#${anchor}` : ''}`;
     },
-    deleteUploadedFile: async (fileName: string) => {
-      return http.delete<DeleteFileResponse>(`file/${fileName}`);
+    /** True when the URL is one of the per-user files (`users/...`). */
+    isUserFileUrl: (s3Url: string): boolean =>
+      !!parseS3ObjectUrl(s3Url)?.key.startsWith(USER_FILE_PREFIX),
+    deleteUploadedFile: async (s3Url: string) => {
+      const key = parseS3ObjectUrl(s3Url)?.key;
+      if (!key) return null;
+      return http.api.delete<DeleteFileResponse>('/file', {
+        params: { key },
+      });
     },
     getS3Uri: (s3Url: string) => {
-      const { bucketName, prefix } = parseS3Url(s3Url);
-      return `s3://${bucketName}/${prefix}`;
+      const location = parseS3ObjectUrl(s3Url);
+      return location ? `s3://${location.bucket}/${location.key}` : s3Url;
     },
   };
 };
