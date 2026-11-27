@@ -118,8 +118,19 @@ const useAgentMemory = (
     (recordId: string) =>
       run(async () => {
         await call('delete', recordId);
-        const body = await call('list');
-        setMemories(body.memories as AgentMemories);
+        // Listing again right away can still return the record, so drop it
+        // here rather than read the list back
+        setMemories((current) =>
+          current
+            ? {
+                facts: current.facts.filter((m) => m.id !== recordId),
+                preferences: current.preferences.filter(
+                  (m) => m.id !== recordId
+                ),
+                summaries: current.summaries.filter((m) => m.id !== recordId),
+              }
+            : current
+        );
       }),
     [call, run]
   );
