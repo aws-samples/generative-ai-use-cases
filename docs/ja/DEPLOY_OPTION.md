@@ -730,6 +730,33 @@ Agent は AgentCore Web Search の API (`InvokeWebSearch`) を直接呼び出す
 > [!NOTE]
 > `tavily-search` などの検索系 MCP を併用する場合、どちらのツールを使うかは Agent が判断します。用途に応じた使い分けを明示したい場合は、システムプロンプトに記載してください (例: 機密性の高いクエリは Web Search、詳細な調査は Tavily)。
 
+#### ブラウザ操作ツールの有効化
+
+`agentBuilderBrowserEnabled` を有効化すると、Amazon Bedrock AgentCore の Browser ツールが追加され、ユーザーは Agent ごとに利用の有無を選択できます。マネージドなクラウドブラウザが AWS 側で動作するため、利用者の端末に Chrome や Playwright をインストールする必要はありません。
+
+ログインが必要なページや JavaScript で描画されるページなど、Web 検索では取得できない情報に到達できます。Agent は 1 つのタブで、以下のアクションを利用できます。アクションのたびに、ページの URL・タイトル・本文を受け取ります。
+
+| アクション | 内容                                         |
+| ---------- | -------------------------------------------- |
+| `navigate` | `http` または `https` の URL を開く          |
+| `click`    | 要素をクリックする (Playwright のセレクター) |
+| `type`     | 入力欄に文字を入力する                       |
+| `press`    | `Enter` などのキーを押す                     |
+| `read`     | 今のページをもう一度受け取る                 |
+| `back`     | 前のページに戻る                             |
+
+JavaScript の実行、Chrome DevTools Protocol のコマンド、通信の傍受、Cookie の読み書きはできません。`http` と `https` 以外の URL (`file:` や `javascript:` など) は開きません。
+
+ブラウザのセッションは、リクエストの中で Agent が初めてブラウザを使ったときに開始し、リクエストの終わりに (エラーで終わった場合も) 停止します。停止に失敗した場合も、15 分でセッションは自動的に終了します。
+
+> [!WARNING]
+> ブラウザ操作は**任意の URL に到達できます**。閲覧先のページに悪意のある指示が含まれていた場合 (プロンプトインジェクション)、Agent がそれに従い、たとえば会話の内容をそのページのフォームに入力するおそれがあります。組織のポリシーで利用しない場合は、`agentBuilderBrowserEnabled` を無効のままにしてください。無効の場合はランタイムの実行ロールにブラウザ関連の権限が付与されず、エージェントビルダーの画面にも選択肢は表示されません。
+>
+> また、到達先を限定したい場合は、ネットワーク設定を指定できる AgentCore のカスタムブラウザを利用する方式が考えられます (本実装では AWS マネージドブラウザを使用しています)。
+
+> [!NOTE]
+> ブラウザセッションは実行時間に応じた課金が発生します。料金は [Amazon Bedrock AgentCore の料金ページ](https://aws.amazon.com/bedrock/agentcore/pricing/)を参照してください。
+
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
 ```typescript

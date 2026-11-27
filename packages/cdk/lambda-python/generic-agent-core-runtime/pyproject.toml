@@ -4,7 +4,10 @@ version = "0.0.1"
 requires-python = ">=3.12"
 dependencies = [
   "strands-agents>=1.0",
-  "strands-agents-tools[agent_core_code_interpreter,agent_core_browser]",
+  "strands-agents-tools[agent_core_code_interpreter]",
+  # The browser tool (src/browser.py): an AgentCore Browser session driven with Playwright
+  "bedrock-agentcore",
+  "playwright",
   # 1.43.127 added InvokeWebSearch (the web search tool)
   "boto3>=1.43.127",
   "mcp",

@@ -73,6 +73,7 @@ async def invocations(request: Request):
         agent_id = request_data.get("agent_id")
         code_execution_enabled = request_data.get("code_execution_enabled", False)
         web_search_enabled = request_data.get("web_search_enabled", False)
+        browser_enabled = request_data.get("browser_enabled", False)
 
         # Validate required fields
         if not model_info:
@@ -110,6 +111,7 @@ async def invocations(request: Request):
                     agent_id=agent_id,
                     code_execution_enabled=code_execution_enabled,
                     web_search_enabled=web_search_enabled,
+                    browser_enabled=browser_enabled,
                     user_sub=user_sub,
                     file_config=config,
                 ):

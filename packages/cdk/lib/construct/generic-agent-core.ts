@@ -60,6 +60,8 @@ export interface GenericAgentCoreProps {
   webSearchEnabled?: boolean;
   // Domains excluded from every web search, enforced by the runtime's tool
   webSearchExcludeDomains?: string[];
+  // Let the agent builder runtime use the AgentCore Browser tool
+  browserEnabled?: boolean;
 }
 
 interface RuntimeResources {
@@ -77,6 +79,7 @@ export class GenericAgentCore extends Construct {
   private readonly envName: string;
   private readonly mainRegion: string;
   private readonly webSearchEnabled: boolean;
+  private readonly browserEnabled: boolean;
 
   // Security Group ID that requires manual cleanup after AgentCore Runtime deletion
   // Used for CloudFormation Output to remind users of manual cleanup tasks
@@ -98,12 +101,14 @@ export class GenericAgentCore extends Construct {
       closedNetworkMode = false,
       webSearchEnabled = false,
       webSearchExcludeDomains,
+      browserEnabled = false,
     } = props;
 
     this.gatewayArns = gatewayArns;
     this.envName = env;
     this.mainRegion = props.mainRegion;
     this.webSearchEnabled = webSearchEnabled;
+    this.browserEnabled = browserEnabled;
 
     // Create bucket first
     this._fileBucket = this.createFileBucket();
@@ -115,7 +120,8 @@ export class GenericAgentCore extends Construct {
       props.modelIds ?? [],
       closedNetworkMode,
       webSearchEnabled,
-      webSearchExcludeDomains
+      webSearchExcludeDomains,
+      browserEnabled
     );
     this.genericRuntimeConfig = configs.generic;
     this.agentBuilderRuntimeConfig = configs.agentBuilder;
@@ -222,7 +228,8 @@ export class GenericAgentCore extends Construct {
     modelIds: string[],
     closedNetworkMode: boolean,
     webSearchEnabled: boolean,
-    webSearchExcludeDomains?: string[]
+    webSearchExcludeDomains: string[] | undefined,
+    browserEnabled: boolean
   ) {
     const modelMaxTokens = this.modelMaxTokensEnvironment(modelIds);
     // The user pool and file bucket the runtime stores output files with,
@@ -270,6 +277,7 @@ export class GenericAgentCore extends Construct {
                 ),
               }),
           }),
+          ...(browserEnabled && { BROWSER_ENABLED: 'true' }),
         },
       },
     };
@@ -471,6 +479,25 @@ export class GenericAgentCore extends Construct {
           resources: [
             `arn:${stack.partition}:bedrock-agentcore:${stack.region}:aws:tool/web-search.v1`,
           ],
+        })
+      );
+    }
+
+    // AgentCore Browser for the agent builder, granted only when it is enabled
+    if (this.browserEnabled) {
+      role.addToPolicy(
+        new PolicyStatement({
+          sid: 'AllowBrowser',
+          effect: Effect.ALLOW,
+          actions: [
+            'bedrock-agentcore:StartBrowserSession',
+            'bedrock-agentcore:StopBrowserSession',
+            'bedrock-agentcore:GetBrowserSession',
+            'bedrock-agentcore:ListBrowserSessions',
+            'bedrock-agentcore:UpdateBrowserStream',
+            'bedrock-agentcore:ConnectBrowserAutomationStream',
+          ],
+          resources: ['*'],
         })
       );
     }

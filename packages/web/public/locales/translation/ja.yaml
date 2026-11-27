@@ -50,6 +50,9 @@ agent_builder:
   arguments_placeholder: パッケージ名 引数1 引数2
   basic_information: 基本情報
   bedrock_agent_description: 特別な機能を持つ事前設定済みのBedrockエージェント
+  browser: ブラウザ操作
+  browser_description: >-
+    このエージェントがマネージドなクラウドブラウザを操作して、ページの遷移、フォーム入力、コンテンツの抽出を行えるようにします。ログインが必要なページや JavaScript で描画されるページに有効です。任意の URL に到達でき、JavaScript の実行も含むため、必要な場合のみ有効にしてください。
   chat: チャット
   check_back_later_description: 公開エージェントについては後でもう一度確認してください
   clone: クローン
@@ -72,6 +75,7 @@ agent_builder:
   description_too_long: 説明は500文字以下である必要があります
   edit_agent: エージェントを編集
   editor: エディター
+  enable_browser: ブラウザ操作を有効にする
   enable_code_execution: コード実行を有効にする
   enable_web_search: Web検索を有効にする
   enter_agent_name: エージェント名を入力

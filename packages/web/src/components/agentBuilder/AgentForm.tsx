@@ -21,6 +21,7 @@ export interface AgentFormData {
   mcpServers: string[];
   codeExecutionEnabled: boolean;
   webSearchEnabled: boolean;
+  browserEnabled: boolean;
   isPublic: boolean;
   tags: string[];
 }
@@ -52,6 +53,11 @@ const AgentForm: React.FC<AgentFormProps> = ({
     import.meta.env.VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED ===
     'true';
 
+  // The browser is opted in at deploy time too, so hide the option when it is off
+  const browserEnabledByDeployment =
+    import.meta.env.VITE_APP_AGENT_CORE_AGENT_BUILDER_BROWSER_ENABLED ===
+    'true';
+
   // Built-in tools offered to the AI so that it can suggest them.
   // Add an entry here when a new built-in tool is introduced.
   const availableBuiltInTools = useMemo(
@@ -70,8 +76,17 @@ const AgentForm: React.FC<AgentFormProps> = ({
             },
           ]
         : []),
+      ...(browserEnabledByDeployment
+        ? [
+            {
+              id: 'browser',
+              name: t('agent_builder.browser'),
+              description: t('agent_builder.browser_description'),
+            },
+          ]
+        : []),
     ],
-    [t, webSearchEnabledByDeployment]
+    [t, webSearchEnabledByDeployment, browserEnabledByDeployment]
   );
 
   // Form state
@@ -84,6 +99,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
     mcpServers: [],
     codeExecutionEnabled: false,
     webSearchEnabled: false,
+    browserEnabled: false,
     isPublic: false,
     tags: [],
   });
@@ -133,9 +149,16 @@ const AgentForm: React.FC<AgentFormProps> = ({
         webSearchEnabled:
           webSearchEnabledByDeployment &&
           suggestedBuiltInTools.includes('webSearch'),
+        browserEnabled:
+          browserEnabledByDeployment &&
+          suggestedBuiltInTools.includes('browser'),
       }));
     }
-  }, [suggestedBuiltInTools, webSearchEnabledByDeployment]);
+  }, [
+    suggestedBuiltInTools,
+    webSearchEnabledByDeployment,
+    browserEnabledByDeployment,
+  ]);
 
   // Update formData.modelId when availableModels becomes available
   useEffect(() => {
@@ -158,6 +181,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
         mcpServers: initialData.mcpServers || [],
         codeExecutionEnabled: initialData.codeExecutionEnabled || false,
         webSearchEnabled: initialData.webSearchEnabled || false,
+        browserEnabled: initialData.browserEnabled || false,
         isPublic: initialData.isPublic || false,
         tags: initialData.tags || [],
       });
@@ -433,6 +457,33 @@ const AgentForm: React.FC<AgentFormProps> = ({
                 </label>
                 <p className="mt-1 text-xs text-gray-500">
                   {t('agent_builder.web_search_description')}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {browserEnabledByDeployment && (
+            <div className="flex items-start space-x-3">
+              <input
+                type="checkbox"
+                id="browserEnabled"
+                checked={formData.browserEnabled}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    browserEnabled: e.target.checked,
+                  })
+                }
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <div className="flex-1">
+                <label
+                  htmlFor="browserEnabled"
+                  className="block cursor-pointer text-sm font-medium text-gray-700">
+                  {t('agent_builder.enable_browser')}
+                </label>
+                <p className="mt-1 text-xs text-gray-500">
+                  {t('agent_builder.browser_description')}
                 </p>
               </div>
             </div>

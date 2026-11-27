@@ -335,6 +335,60 @@ describe('GenerativeAiUseCases', () => {
     expect(template).not.toContain('WEB_SEARCH_ENABLED');
   });
 
+  test('browser permissions are granted only when enabled', () => {
+    const enabledApp = new cdk.App();
+    const enabledParams = processedStackInputSchema.parse({
+      ...stackInput,
+      agentBuilderEnabled: true,
+      agentBuilderBrowserEnabled: true,
+    });
+    const { agentCoreStack: enabledStack } = createStacks(
+      enabledApp,
+      enabledParams
+    );
+    if (!enabledStack) {
+      throw new Error('AgentCore stack is not created');
+    }
+    Template.fromStack(enabledStack).hasResourceProperties(
+      'AWS::IAM::Policy',
+      Match.objectLike({
+        PolicyDocument: Match.objectLike({
+          Statement: Match.arrayWith([
+            Match.objectLike({
+              Sid: 'AllowBrowser',
+              Action: Match.arrayWith([
+                'bedrock-agentcore:StartBrowserSession',
+                'bedrock-agentcore:ConnectBrowserAutomationStream',
+              ]),
+            }),
+          ]),
+        }),
+      })
+    );
+    expect(JSON.stringify(Template.fromStack(enabledStack).toJSON())).toContain(
+      'BROWSER_ENABLED'
+    );
+
+    const disabledApp = new cdk.App();
+    const disabledParams = processedStackInputSchema.parse({
+      ...stackInput,
+      agentBuilderEnabled: true,
+      agentBuilderBrowserEnabled: false,
+    });
+    const { agentCoreStack: disabledStack } = createStacks(
+      disabledApp,
+      disabledParams
+    );
+    if (!disabledStack) {
+      throw new Error('AgentCore stack is not created');
+    }
+    const disabledTemplate = Template.fromStack(disabledStack).toJSON();
+    expect(JSON.stringify(disabledTemplate)).not.toContain(
+      'bedrock-agentcore:StartBrowserSession'
+    );
+    expect(JSON.stringify(disabledTemplate)).not.toContain('BROWSER_ENABLED');
+  });
+
   test('AgentCore VPC config requires both vpcId and subnetIds', () => {
     // Only vpcId is provided -> must fail
     expect(() =>

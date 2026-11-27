@@ -13532,6 +13532,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "destinationKeyPrefix": "/",
         "environment": {
           "NODE_OPTIONS": "--max-old-space-size=15000",
+          "VITE_APP_AGENT_CORE_AGENT_BUILDER_BROWSER_ENABLED": "false",
           "VITE_APP_AGENT_CORE_AGENT_BUILDER_ENABLED": "true",
           "VITE_APP_AGENT_CORE_AGENT_BUILDER_RUNTIME": {
             "Fn::Join": [
@@ -26567,6 +26568,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         },
         "environment": {
           "NODE_OPTIONS": "--max-old-space-size=15000",
+          "VITE_APP_AGENT_CORE_AGENT_BUILDER_BROWSER_ENABLED": "false",
           "VITE_APP_AGENT_CORE_AGENT_BUILDER_ENABLED": "true",
           "VITE_APP_AGENT_CORE_AGENT_BUILDER_RUNTIME": {
             "Fn::Join": [

@@ -11,7 +11,7 @@ from mcp import StdioServerParameters, stdio_client
 from strands import tool
 from strands.tools.mcp import MCPClient
 
-from . import sandbox
+from . import browser, sandbox
 from .config import WORKSPACE_DIR, get_aws_credentials, get_uv_environment
 from .user_files import agent_output_key, object_url, put_new_object, upload_new_object, workspace_file
 
@@ -79,6 +79,8 @@ class ToolManager:
         self.trace_id = None
         # The code interpreter of the current request, if code execution is on
         self.code_interpreter = None
+        # The browser session of the current request, if the browser is on
+        self.browser = None
 
     def set_session_info(self, session_id: str, trace_id: str):
         """Set session and trace IDs for tool operations"""
@@ -300,10 +302,18 @@ class ToolManager:
 
         return web_search
 
+    def get_browser_tool(self) -> Any:
+        """Get the browser tool. Its AgentCore Browser session starts on first use."""
+        region = get_aws_credentials().get("AWS_REGION", "us-east-1")
+        self.browser = browser.BrowserSession(region)
+        logger.info("Added browser tool (AgentCore Browser)")
+        return browser.make_browser_tool(self.browser)
+
     def get_tools_with_options(
         self,
         code_execution_enabled: bool = False,
         web_search_enabled: bool = False,
+        browser_enabled: bool = False,
         mcp_servers=None,
         user_sub: str | None = None,
         file_config: dict | None = None,
@@ -314,6 +324,7 @@ class ToolManager:
         Args:
             code_execution_enabled: Whether to include code interpreter tools
             web_search_enabled: Whether to include AgentCore Web Search tools
+            browser_enabled: Whether to include the browser tool
             mcp_servers: MCP server configurations
                 - None: Load default MCP servers from mcp.json
                 - []: Empty list, no MCP servers (File Upload only)
@@ -324,11 +335,12 @@ class ToolManager:
         Returns:
             List of all available tools
         """
-        logger.info(f"get_tools_with_options called with code_execution_enabled={code_execution_enabled}, web_search_enabled={web_search_enabled}")
+        logger.info(f"get_tools_with_options called with code_execution_enabled={code_execution_enabled}, web_search_enabled={web_search_enabled}, browser_enabled={browser_enabled}")
         logger.info(f"mcp_servers parameter: {mcp_servers} (type: {type(mcp_servers)})")
 
         all_tools = []
         self.code_interpreter = None
+        self.browser = None
 
         # Handle MCP servers based on parameter
         if mcp_servers is None:
@@ -369,7 +381,16 @@ class ToolManager:
             else:
                 logger.warning("Web search is not enabled for this deployment, skipping the web search tool")
 
+        # Add browser tool if enabled
+        browser_tools = []
+        if browser_enabled:
+            if os.environ.get("BROWSER_ENABLED") == "true":
+                browser_tools = [self.get_browser_tool()]
+                all_tools.extend(browser_tools)
+            else:
+                logger.warning("The browser is not enabled for this deployment, skipping the browser tool")
+
         # Log final tool count
-        logger.info(f"Total tools loaded: {len(all_tools)} (MCP: {len(mcp_tools)}, Built-in: 1, Code Interpreter: {len(code_interpreter_tools)} - {'enabled' if code_execution_enabled else 'disabled'}, Web Search: {len(web_search_tools)} - {'enabled' if web_search_enabled else 'disabled'})")
+        logger.info(f"Total tools loaded: {len(all_tools)} (MCP: {len(mcp_tools)}, Built-in: 1, Code Interpreter: {len(code_interpreter_tools)} - {'enabled' if code_execution_enabled else 'disabled'}, Web Search: {len(web_search_tools)} - {'enabled' if web_search_enabled else 'disabled'}, Browser: {len(browser_tools)} - {'enabled' if browser_enabled else 'disabled'})")
 
         return all_tools

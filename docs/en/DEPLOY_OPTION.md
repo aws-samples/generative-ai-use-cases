@@ -713,6 +713,33 @@ When `agentBuilderWebSearchEnabled` is disabled, the web search option is not sh
 > [!NOTE]
 > When you also enable a search MCP such as `tavily-search`, the Agent decides which tool to use. If you want a specific split, state it in the system prompt (for example, Web Search for sensitive queries and Tavily for deeper research).
 
+#### Enabling the Browser Tool
+
+Enabling `agentBuilderBrowserEnabled` adds the Browser tool of Amazon Bedrock AgentCore, and users can choose whether each Agent uses it. The browser runs as a managed cloud browser on the AWS side, so users do not need to install Chrome or Playwright on their machines.
+
+This makes it possible to reach information that web search cannot retrieve, such as pages behind a sign-in or pages rendered by JavaScript. The Agent works in one tab and can use the following actions. After each action, the tool returns the URL, title and text of the page.
+
+| Action     | What it does                           |
+| ---------- | -------------------------------------- |
+| `navigate` | Open an `http` or `https` URL          |
+| `click`    | Click an element (Playwright selector) |
+| `type`     | Type text into an input field          |
+| `press`    | Press a key, such as `Enter`           |
+| `read`     | Return the current page again          |
+| `back`     | Go back to the previous page           |
+
+Running JavaScript, Chrome DevTools Protocol commands, intercepting traffic and reading or writing cookies are not available. URLs other than `http` and `https` (such as `file:` and `javascript:`) are refused.
+
+A browser session starts the first time the Agent uses the browser in a request, and it is stopped when the request ends, including when it ends with an error. If the stop fails, the session ends by itself after 15 minutes.
+
+> [!WARNING]
+> The browser tool **can reach any URL**. If a visited page contains malicious instructions (prompt injection), the Agent may follow them, for example by entering what is in the conversation into a form on that page. If your organization does not allow the browser tool, leave `agentBuilderBrowserEnabled` disabled. When disabled, the runtime execution role is not granted browser permissions and the option is not shown in the agent builder.
+>
+> To restrict which destinations are reachable, consider using an AgentCore custom browser, which allows network configuration (this implementation uses the AWS managed browser).
+
+> [!NOTE]
+> Browser sessions are charged based on runtime. See the [Amazon Bedrock AgentCore pricing page](https://aws.amazon.com/bedrock/agentcore/pricing/) for details.
+
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
 ```typescript

@@ -16,6 +16,7 @@ export type PortableAgent = {
   mcpServers: string[];
   codeExecutionEnabled: boolean;
   webSearchEnabled: boolean;
+  browserEnabled: boolean;
 };
 
 export const toPortableAgent = (
@@ -28,6 +29,7 @@ export const toPortableAgent = (
   mcpServers: agent.mcpServers ?? [],
   codeExecutionEnabled: !!agent.codeExecutionEnabled,
   webSearchEnabled: !!agent.webSearchEnabled,
+  browserEnabled: !!agent.browserEnabled,
 });
 
 /**
@@ -61,6 +63,7 @@ export const fromPortableAgent = (parsed: unknown): PortableAgent => {
     codeExecutionEnabled: raw.codeExecutionEnabled === true,
     // Files written before web search existed have no such field: off.
     webSearchEnabled: raw.webSearchEnabled === true,
+    browserEnabled: raw.browserEnabled === true,
   };
 };
 

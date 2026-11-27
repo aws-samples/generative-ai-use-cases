@@ -19,6 +19,7 @@ const complete = {
   mcpServers: ['powerpoint', 'excel'],
   codeExecutionEnabled: true,
   webSearchEnabled: true,
+  browserEnabled: true,
 };
 
 describe('writing an agent out', () => {
@@ -49,6 +50,7 @@ describe('writing an agent out', () => {
       mcpServers: [],
       codeExecutionEnabled: false,
       webSearchEnabled: false,
+      browserEnabled: false,
     });
   });
 });
@@ -113,6 +115,19 @@ describe('reading an agent in', () => {
         systemPrompt: 'y',
         webSearchEnabled: value,
       }).webSearchEnabled;
+    expect(on(true)).toBe(true);
+    expect(on('true')).toBe(false);
+    expect(on(undefined)).toBe(false);
+  });
+
+  // The browser can reach any page and act on it, so it is read the same way
+  it('only enables the browser on a real true', () => {
+    const on = (value: unknown) =>
+      fromPortableAgent({
+        name: 'x',
+        systemPrompt: 'y',
+        browserEnabled: value,
+      }).browserEnabled;
     expect(on(true)).toBe(true);
     expect(on('true')).toBe(false);
     expect(on(undefined)).toBe(false);
