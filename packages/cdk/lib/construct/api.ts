@@ -405,7 +405,10 @@ export class Api extends Construct {
       bundling: bedrockSdkBundling,
       entry: './lambda/predictStream.ts',
       timeout: Duration.minutes(15),
-      memorySize: 256,
+      // Holds the attachments read from S3 (up to about 22 MB, as bytes and
+      // base64) while the request to the model is built. A 19.6 MB PDF used
+      // 262 MB at peak, more than the previous 256 MB
+      memorySize: 384,
       environment: {
         USER_POOL_ID: userPool.userPoolId,
         USER_POOL_CLIENT_ID: userPoolClient.userPoolClientId,

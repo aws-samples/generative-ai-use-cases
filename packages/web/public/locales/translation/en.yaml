@@ -523,6 +523,8 @@ drawer:
 error:
   streamingError:
     ACCESS_DENIED: The selected model is not enabled. Please enable the model in the Amazon Bedrock console.
+    ATTACHMENTS_TOO_LARGE: The attachments in this conversation are too large to send together (about 22 MB in total). Files attached earlier are sent again with each message and count toward the limit. Remove or shrink the new attachment, or start a new chat.
+    ATTACHMENT_NOT_FOUND: An attached file could not be read. It may have been deleted. Start a new chat and attach the file again.
     CONTEXT_TOO_LONG: The conversation or attachments are too long for the model. Reduce the attachment (fewer pages, rows or sheets) or start a new chat.
     DEPENDENCY_FAILED: A resource called by the agent or knowledge base (such as an action group's Lambda function) failed. Check its configuration and logs, then try again.
     DOCUMENT_TOO_LARGE: A document is too large to send. Split it or reduce its content and try again.

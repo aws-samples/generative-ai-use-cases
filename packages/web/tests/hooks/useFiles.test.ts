@@ -113,3 +113,58 @@ describe('useFiles document count across a conversation (#1685)', () => {
     expect((await check([image('a.png')], 5)).errorMessages).toEqual([]);
   });
 });
+
+describe('useFiles PDF size limit (#1334)', () => {
+  const fileLimit = {
+    accept: { doc: ['.pdf', '.docx'], image: ['.png'], video: [] },
+    maxFileCount: 5,
+    maxFileSizeMB: 4.5,
+    maxPdfFileSizeMB: 20,
+    maxImageFileCount: 20,
+    maxImageFileSizeMB: 3.75,
+    maxVideoFileCount: 1,
+    maxVideoFileSizeMB: 1000,
+  };
+  const accept = ['.pdf', '.docx', '.png'];
+  const DOCX =
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  const sized = (name: string, mimeType: string, mb: number) => {
+    const file = new File(['x'], name, { type: mimeType });
+    Object.defineProperty(file, 'size', { value: mb * 1e6 });
+    return { ...uploaded(name), file, mimeType };
+  };
+  const check = async (
+    file: UploadedFileType,
+    limit: Omit<typeof fileLimit, 'maxPdfFileSizeMB'> & {
+      maxPdfFileSizeMB?: number;
+    }
+  ) => {
+    const { result } = renderHook(() => useFiles('/chat/pdf-size'));
+    act(() => result.current.restore([file]));
+    await act(() => result.current.checkFiles(limit, accept));
+    return result.current.errorMessages;
+  };
+
+  it('allows a PDF up to its own limit', async () => {
+    expect(
+      await check(sized('big.pdf', 'application/pdf', 20), fileLimit)
+    ).toEqual([]);
+    expect(
+      await check(sized('bigger.pdf', 'application/pdf', 20.1), fileLimit)
+    ).toEqual(['files.error.fileSizeExceeded']);
+  });
+
+  it('keeps other documents at the document limit', async () => {
+    expect(await check(sized('a.docx', DOCX, 4.5), fileLimit)).toEqual([]);
+    expect(await check(sized('b.docx', DOCX, 4.6), fileLimit)).toEqual([
+      'files.error.fileSizeExceeded',
+    ]);
+  });
+
+  it('uses the document limit for PDFs when no PDF limit is set', async () => {
+    const withoutPdfLimit = { ...fileLimit, maxPdfFileSizeMB: undefined };
+    expect(
+      await check(sized('c.pdf', 'application/pdf', 4.6), withoutPdfLimit)
+    ).toEqual(['files.error.fileSizeExceeded']);
+  });
+});

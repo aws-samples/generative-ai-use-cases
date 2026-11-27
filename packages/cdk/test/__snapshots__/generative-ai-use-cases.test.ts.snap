@@ -13226,7 +13226,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
           },
         },
         "Handler": "index.handler",
-        "MemorySize": 256,
+        "MemorySize": 384,
         "Role": {
           "Fn::GetAtt": [
             "APIPredictStreamServiceRole2B2C7355",
@@ -26288,7 +26288,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
           },
         },
         "Handler": "index.handler",
-        "MemorySize": 256,
+        "MemorySize": 384,
         "Role": {
           "Fn::GetAtt": [
             "APIPredictStreamServiceRole2B2C7355",

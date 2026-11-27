@@ -147,7 +147,7 @@ const useChatState = create<{
     predictStream,
     predictTitle,
   } = useChatApi();
-  const { getS3Uri } = useFileApi();
+  const { getS3Uri, isUserFileUrl } = useFileApi();
 
   const getModelId = (id: string) => {
     return get().modelIds[id] || '';
@@ -349,8 +349,21 @@ const useChatState = create<{
                 data: s3Uri,
               },
             };
+          } else if (
+            (data.type === 'image' || data.type === 'file') &&
+            data.source.type === 's3'
+          ) {
+            // Send the S3 URL of images and documents as it is. The Lambda
+            // function reads them from S3, so the request stays small however
+            // many files the conversation has (#1334, #1348).
+            // Files saved outside the per-user layout (`users/...`, before it
+            // was introduced) cannot be read, so they are left out as before
+            // instead of failing the whole message.
+            return isUserFileUrl(data.source.data)
+              ? data
+              : { ...data, source: { ...data.source, data: '' } };
           } else {
-            // Otherwise (image and file) send base64 encoded data
+            // Otherwise send base64 encoded data
             // When predicting, the information such as "data:image/png..." is not needed, so delete it
             const base64EncodedData =
               uploadedFiles

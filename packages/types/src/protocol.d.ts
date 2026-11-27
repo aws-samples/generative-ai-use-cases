@@ -37,6 +37,9 @@ export type StreamingErrorCode =
   | 'UNSUPPORTED_FILE_TYPE'
   | 'CONTEXT_TOO_LONG'
   | 'EMPTY_MESSAGE'
+  // Attachments read from S3 before calling the model
+  | 'ATTACHMENT_NOT_FOUND'
+  | 'ATTACHMENTS_TOO_LARGE'
   | 'UNKNOWN_ERROR';
 
 export type StreamingChunk = {

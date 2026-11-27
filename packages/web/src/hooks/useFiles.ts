@@ -222,6 +222,8 @@ const useFilesState = create<{
         const getMaxFileSizeMB = (fileType: string) => {
           if (fileType.includes('image')) return fileLimit.maxImageFileSizeMB;
           if (fileType.includes('video')) return fileLimit.maxVideoFileSizeMB;
+          if (extension.toLowerCase() === 'pdf' && fileLimit.maxPdfFileSizeMB)
+            return fileLimit.maxPdfFileSizeMB;
           return fileLimit.maxFileSizeMB;
         };
         const maxSizeMB = getMaxFileSizeMB(uploadedFile.file.type) || 0;

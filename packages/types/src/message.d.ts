@@ -93,6 +93,9 @@ export type FileLimit = {
   // with every message, so they count toward maxFileCount (#1685).
   previousFileCount?: number;
   maxFileSizeMB: number;
+  // PDFs only. Bedrock accepts larger PDFs than other documents, which stay
+  // at maxFileSizeMB (#1334). Falls back to maxFileSizeMB when not set.
+  maxPdfFileSizeMB?: number;
   maxImageFileCount: number;
   maxImageFileSizeMB: number;
   maxVideoFileCount: number;
