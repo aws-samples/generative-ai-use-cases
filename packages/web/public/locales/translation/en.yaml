@@ -1490,6 +1490,7 @@ useCaseBuilder:
   modelNotFixedDescription: Users can select which model to use in this use case.
   myUseCases: My Use Cases
   noMyUseCases: No My Use Cases
+  noPublicUseCases: No public use cases yet.
   noUpdateContent: No updates available
   noUserInput: >-
     The use case is not accepting user input. Please add a placeholder to the
@@ -1506,6 +1507,8 @@ useCaseBuilder:
   promptTemplatePlaceholder: >-
     Enter a prompt template. For how to write prompt templates, please refer to
     "Help" or "Sample Collection".
+  publicUseCases: Public Use Cases
+  publicUseCasesDescription: Use cases that users have shared. Everyone who can sign in to this application can use them.
   recentlyUsed: Recently Used
   resultPlaceholder: Results will appear here
   returnToTop: Return to Top

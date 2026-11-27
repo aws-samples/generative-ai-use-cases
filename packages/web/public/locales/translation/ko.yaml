@@ -820,6 +820,7 @@ useCaseBuilder:
   modelNotFixedDescription: 사용자는 이 사용 사례에서 사용할 모델을 선택할 수 있습니다.
   myUseCases: 내 사용 사례
   noMyUseCases: 내 사용 사례 없음
+  noPublicUseCases: 아직 공개된 사용 사례가 없습니다.
   noUpdateContent: 업데이트 내용 없음
   noUserInput: >-
     사용 사례가 사용자 입력을 받지 않습니다. 프롬프트 템플릿에 플레이스홀더를 추가하거나
@@ -836,6 +837,8 @@ useCaseBuilder:
   promptTemplatePlaceholder: >-
     프롬프트 템플릿을 입력하세요. 프롬프트 템플릿 작성 방법은
     "도움말" 또는 "샘플 모음"을 참조하세요.
+  publicUseCases: 공개 사용 사례
+  publicUseCasesDescription: 사용자가 공유한 사용 사례입니다. 이 애플리케이션에 로그인할 수 있는 모든 사용자가 사용할 수 있습니다.
   recentlyUsed: 최근 사용
   resultPlaceholder: 결과가 여기에 나타납니다
   returnToTop: 맨 위로 돌아가기

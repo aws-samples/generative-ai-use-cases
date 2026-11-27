@@ -1061,6 +1061,7 @@ useCaseBuilder:
   modelNotFixedDescription: UI lựa chọn mô hình được hiển thị và người dùng có thể tự do lựa chọn mô hình.
   myUseCases: Trường hợp sử dụng của tôi
   noMyUseCases: Không có trường hợp sử dụng của tôi.
+  noPublicUseCases: Chưa có trường hợp sử dụng công khai nào.
   noUpdateContent: Không có nội dung cập nhật
   noUserInput: Trường hợp sử dụng không nhận đầu vào từ người dùng. Vui lòng thêm placeholder vào template prompt hoặc bật đính kèm tệp.
   notExistOrNotShared: Trường hợp sử dụng này không tồn tại hoặc là trường hợp sử dụng không được chia sẻ.
@@ -1073,6 +1074,8 @@ useCaseBuilder:
     Không thể tạo trường hợp sử dụng không nhận đầu vào từ người dùng.Vui lòng định nghĩa Placeholder trong template prompt hoặc 
     bật đính kèm tệp.
   promptTemplatePlaceholder: Về cách viết template prompt, vui lòng xem "Trợ giúp" hoặc "Bộ sưu tập mẫu".
+  publicUseCases: Trường hợp sử dụng công khai
+  publicUseCasesDescription: Các trường hợp sử dụng do người dùng chia sẻ. Mọi người dùng có thể đăng nhập vào ứng dụng này đều có thể sử dụng.
   recentlyUsed: Lịch sử sử dụng
   resultPlaceholder: Kết quả sẽ được hiển thị ở đây
   returnToTop: Quay về màn hình TOP

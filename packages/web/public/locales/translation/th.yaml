@@ -1093,6 +1093,7 @@ useCaseBuilder:
   modelNotFixedDescription: ผู้ใช้สามารถเลือกโมเดลที่จะใช้ใน use cases นี้
   myUseCases: Use cases ของฉัน
   noMyUseCases: ไม่มี use cases
+  noPublicUseCases: ยังไม่มี use cases สาธารณะ
   noUpdateContent: ไม่มีการอัปเดตที่พร้อมใช้งาน
   noUserInput: Use cases ไม่ได้รับอินพุตจากผู้ใช้ โปรดเพิ่ม placeholder ใน prompt template หรือเปิดการแนบไฟล์
   notExistOrNotShared: ไม่มีอยู่หรือไม่ได้แชร์
@@ -1106,6 +1107,8 @@ useCaseBuilder:
   promptTemplatePlaceholder: >-
     ป้อน prompt template
     สำหรับวิธีการเขียน prompt template โปรดดูที่ "ช่วยเหลือ" หรือ "คอลเลกชันตัวอย่าง"
+  publicUseCases: Use cases สาธารณะ
+  publicUseCasesDescription: Use cases ที่ผู้ใช้แชร์ไว้ ผู้ใช้ทุกคนที่เข้าสู่ระบบแอปพลิเคชันนี้ได้สามารถใช้ได้
   recentlyUsed: ใช้ล่าสุด
   resultPlaceholder: ผลลัพธ์จะแสดงที่นี่
   returnToTop: กลับไปด้านบน

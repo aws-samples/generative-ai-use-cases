@@ -331,6 +331,20 @@ const cases: Case[] = [
     calls: [[useCaseRepository.listRecentlyUsedUseCases, ['alice', undefined]]],
   },
   {
+    name: 'GET /usecases/public',
+    mount: useCases,
+    method: 'GET',
+    path: '/usecases/public',
+    query: { exclusiveStartKey: 'k' },
+    setup: () =>
+      mock(useCaseRepository.listPublicUseCases).mockResolvedValue({
+        data: [],
+      }),
+    status: 200,
+    responseBody: JSON.stringify({ data: [] }),
+    calls: [[useCaseRepository.listPublicUseCases, ['alice', 'k']]],
+  },
+  {
     name: 'PUT /usecases/recent/:useCaseId',
     mount: useCases,
     method: 'PUT',

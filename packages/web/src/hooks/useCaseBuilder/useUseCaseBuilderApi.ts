@@ -4,6 +4,7 @@ import {
   GetUseCaseResponse,
   ListFavoriteUseCasesResponse,
   ListRecentlyUsedUseCasesResponse,
+  ListPublicUseCasesResponse,
   ListUseCasesResponse,
   ToggleFavoriteResponse,
   ToggleShareResponse,
@@ -28,6 +29,18 @@ const useUseCaseBuilderApi = () => {
       return http.getPagination<ListUseCasesResponse>(getKey, {
         revalidateIfStale: false,
       });
+    },
+    listPublicUseCases: () => {
+      const getKey = (
+        pageIndex: number,
+        previousPageData: ListPublicUseCasesResponse
+      ) => {
+        if (previousPageData && !previousPageData.lastEvaluatedKey) return null;
+        if (pageIndex === 0) return '/usecases/public';
+        return `usecases/public?exclusiveStartKey=${previousPageData.lastEvaluatedKey}`;
+      };
+      // Others share and unshare at any time, so refetch on every visit
+      return http.getPagination<ListPublicUseCasesResponse>(getKey);
     },
     listFavoriteUseCases: () => {
       const getKey = (
