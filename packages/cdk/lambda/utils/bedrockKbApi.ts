@@ -130,7 +130,9 @@ const getExplicitFilters = async (
   idToken?: string
 ): Promise<RetrievalFilter | undefined> => {
   const payload = await verifyToken(idToken || '');
-  if (!payload) return undefined;
+  // The hidden and user-attribute filters are access rules, so a request
+  // whose token cannot be verified is refused rather than run unfiltered.
+  if (!payload) throw new Error('Invalid id token');
 
   const dynamicFilters: RetrievalFilter[] = getDynamicFilters(payload);
 

@@ -473,34 +473,7 @@ config:
 graph LR
 
 Interaction
-You can bind click events to nodes. When clicked, they can either execute a JavaScript callback or open a link in a new browser tab.
-Note:
-This feature is disabled when using securityLevel='strict', but enabled when using securityLevel='loose'.
-click nodeId callback
-click nodeId call callback()
-The nodeId is the identifier of the node.
-The callback is the name of a JavaScript function defined on the page that displays the graph, which is called with the nodeId as a parameter.
-The tooltip text is enclosed in double quotes.
-Example: 
-flowchart LR
-    A-->B
-    B-->C
-    C-->D
-    click A callback "Tooltip for a callback"
-    click B "https://www.github.com" "This is a tooltip for a link"
-    click C call callback() "Tooltip for a callback"
-    click D href "https://www.github.com" "This is a tooltip for a link"
-Links are opened in the same browser tab/window by default. You can change this behavior by adding a link target (supports _self, _blank, _parent, _top) to the click definition: 
-example: 
-flowchart LR
-    A-->B
-    B-->C
-    C-->D
-    D-->E
-    click A "https://www.github.com" _blank
-    click B "https://www.github.com" "Open this in a new tab" _blank
-    click C href "https://www.github.com" _blank
-    click D href "https://www.github.com" "Open this in a new tab" _blank
+This app renders diagrams without interactions: do not use click statements.
 
 Comments
 Comments can be entered into the flowchart, and these are ignored by the parser. Comments must be on a separate line and must start with %% (double percent sign). The text from the comment start to the next line break will be treated as a comment, including the flowchart syntax.

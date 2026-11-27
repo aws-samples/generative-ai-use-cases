@@ -279,18 +279,7 @@ classDiagram
   Student "1" --o "1" Bike : rides
 
 Interaction
-Nodes can be bound to click events. Clicks can be linked to either a JavaScript callback or a link that opens in a new browser tab. Note: This feature is disabled when using securityLevel='strict', and enabled when using securityLevel='loose'.
-These actions are defined on a separate line after all classes have been declared.
-action className "reference" "tooltip"
-click className call callback() "tooltip"
-click className href "URL" "tooltip"
-
-action is one of the following: link or callback
-className is the ID of the node the action is associated with
-reference is the URL link or callback function name
-(optional) tooltip is the string that appears when hovering over the element
-Note: The tooltip style is set with class .mermaidTooltip
-Note: The callback function is called with nodeId as a parameter.
+This app renders diagrams without interactions: do not use click, link or callback statements.
 
 Notes
 You can add notes to the diagram using "note "line1\nline2"". You can also add notes to specific classes using "note for <className> "line1\nline2"".
@@ -299,30 +288,6 @@ classDiagram
   note for MyClass "This is a note for a class"
   class MyClass{
   }
-
-URL Link:
-classDiagram
-class Shape
-link Shape "https://www.github.com" "This is a tooltip for a link"
-class Shape2
-click Shape2 href "https://www.github.com" "This is a tooltip for a link"
-
-Callback:
-classDiagram
-class Shape
-callback Shape "callbackFunction" "This is a tooltip for a callback"
-class Shape2
-click Shape2 call callbackFunction() "This is a tooltip for a callback"
-
-classDiagram
-  class Class01
-  class Class02
-  callback Class01 "callbackFunction" "Callback tooltip"
-  link Class02 "https://www.github.com" "This is a link"
-  class Class03
-  class Class04
-  click Class03 call callbackFunction() "Callback tooltip"
-  click Class04 href "https://www.github.com" "This is a link"
 
 Styling
 Styling a node

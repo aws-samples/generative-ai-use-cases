@@ -62,6 +62,8 @@ class AgentManager:
         code_execution_enabled: bool | None = False,
         web_search_enabled: bool | None = False,
         browser_enabled: bool | None = False,
+        user_sub: str | None = None,
+        file_config: dict | None = None,
     ) -> AsyncGenerator[str]:
         """Process a request and yield streaming responses as raw events"""
         browser_session = None
@@ -82,6 +84,8 @@ class AgentManager:
                 web_search_enabled=web_search_enabled,
                 browser_enabled=browser_enabled,
                 mcp_servers=mcp_servers,
+                user_sub=user_sub,
+                file_config=file_config,
             )
             logger.info(f"Loaded {len(tools)} tools (code execution: {code_execution_enabled}, web search: {web_search_enabled}, browser: {browser_enabled})")
             # This request's browser session, kept here so that the finally block

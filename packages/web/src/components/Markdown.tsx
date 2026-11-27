@@ -23,6 +23,7 @@ import { PiCheck, PiClipboard, PiSpinnerGap } from 'react-icons/pi';
 import copy from 'copy-to-clipboard';
 import { tableToClipboardHtml, tableToTsv } from '../utils/tableClipboard';
 import useFileApi from '../hooks/useFileApi';
+import useFileScope from '../hooks/useFileScope';
 import 'katex/dist/katex.min.css';
 
 // Reduce bundle size by registering only the languages used in the project
@@ -50,7 +51,6 @@ import typescript from 'react-syntax-highlighter/dist/esm/languages/prism/typesc
 import tsx from 'react-syntax-highlighter/dist/esm/languages/prism/tsx';
 import xmlDoc from 'react-syntax-highlighter/dist/esm/languages/prism/xml-doc';
 import yaml from 'react-syntax-highlighter/dist/esm/languages/prism/yaml';
-import { useLocation } from 'react-router-dom';
 
 import { MermaidWithToggle } from './Mermaid/MermaidWithToggle';
 import { SvgWithToggle } from './Svg/SvgWithToggle';
@@ -98,13 +98,7 @@ const LinkRenderer = ({
   const isS3 = useMemo(() => {
     return isS3Url(href ?? '');
   }, [isS3Url, href]);
-
-  // For Knowledge Base, we pass s3Type as a parameter
-  // since it may need to reference S3 from a different account
-  const location = useLocation();
-  const isKnowledgeBase = useMemo(() => {
-    return location.pathname.includes('/rag-knowledge-base');
-  }, [location.pathname]);
+  const fileScope = useFileScope();
 
   return (
     <>
@@ -113,10 +107,7 @@ const LinkRenderer = ({
           id={id}
           onClick={() => {
             if (!downloading) {
-              downloadDoc(
-                href ?? '',
-                isKnowledgeBase ? 'knowledgeBase' : 'default'
-              );
+              downloadDoc(href ?? '', fileScope);
             }
           }}
           className={`cursor-pointer ${downloading ? 'text-gray-400' : ''}`}>
@@ -145,6 +136,7 @@ const ImageRenderer = ({
   const { t } = useTranslation();
   const { isS3Url } = useRagFile();
   const { getFileDownloadSignedUrl } = useFileApi();
+  const fileScope = useFileScope();
   const [src, setSrc] = useState(srcProp);
   const [error, setError] = useState<string | null>(null);
 
@@ -165,7 +157,7 @@ const ImageRenderer = ({
     }
     let cancelled = false;
     getSignedUrlRef
-      .current(srcProp ?? '')
+      .current(srcProp ?? '', fileScope)
       .then((url) => {
         if (!cancelled) setSrc(url);
       })
@@ -175,7 +167,7 @@ const ImageRenderer = ({
     return () => {
       cancelled = true;
     };
-  }, [srcProp]);
+  }, [srcProp, fileScope]);
 
   if (error) {
     return (

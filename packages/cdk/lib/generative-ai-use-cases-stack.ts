@@ -32,6 +32,13 @@ import { closedNetworkWebConfig } from './utils/closed-network';
 import * as path from 'path';
 import { StackOutputs } from './construct/stack-outputs';
 import { REMOTE_OUTPUT_KEYS } from './remote-output-keys';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
+import { ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import {
+  AGENT_OUTPUT_CREATE_ONLY_CONDITION,
+  AGENT_OUTPUT_KEY_PATTERN,
+  agentCoreRuntimeConfigParameterName,
+} from '../consts';
 
 export interface GenerativeAiUseCasesStackProps extends StackProps {
   readonly params: ProcessedStackInput;
@@ -279,20 +286,38 @@ export class GenerativeAiUseCasesStack extends Stack {
       // IP restrictions
       allowedIpV4AddressRanges: params.allowedIpV4AddressRanges ?? undefined,
       allowedIpV6AddressRanges: params.allowedIpV6AddressRanges ?? undefined,
-      // Additional S3 buckets (AgentCore FileBucket)
-      additionalS3Buckets: [
-        ...(props.agentCoreStack?.fileBucket
-          ? [props.agentCoreStack.fileBucket]
-          : []),
-        ...(props.researchAgentCoreStack?.fileBucket
-          ? [props.researchAgentCoreStack.fileBucket]
-          : []),
-      ].filter(Boolean),
       // Knowledge Base data source bucket
       knowledgeBaseDataSourceBucketName:
         props.knowledgeBaseDataSourceBucketName,
       dataSourceBucketName: rag?.dataSourceBucketName,
+      dataSourcePrefix: rag?.dataSourcePrefix,
     });
+
+    // AgentCore runtimes store output files in the file bucket under the
+    // caller's prefix. Their stack is deployed before this one, so the user
+    // pool (to verify the caller's id token) and the bucket are published in
+    // an SSM parameter that the runtimes read at request time.
+    const agentCoreRuntimeRole = props.agentCoreStack?.runtimeRole;
+    if (agentCoreRuntimeRole) {
+      new StringParameter(this, 'AgentCoreRuntimeConfig', {
+        parameterName: agentCoreRuntimeConfigParameterName(params.env),
+        stringValue: this.toJsonString({
+          userPoolId: auth.userPool.userPoolId,
+          userPoolClientId: auth.client.userPoolClientId,
+          fileBucket: api.fileBucket.bucketName,
+          fileBucketRegion: this.region,
+        }),
+      });
+      api.fileBucket.addToResourcePolicy(
+        new PolicyStatement({
+          effect: Effect.ALLOW,
+          principals: [new ArnPrincipal(agentCoreRuntimeRole.roleArn)],
+          actions: ['s3:PutObject'],
+          resources: [api.fileBucket.arnForObjects(AGENT_OUTPUT_KEY_PATTERN)],
+          conditions: AGENT_OUTPUT_CREATE_ONLY_CONDITION,
+        })
+      );
+    }
 
     // WAF
     if (
@@ -331,7 +356,6 @@ export class GenerativeAiUseCasesStack extends Stack {
       const mcpApi = new McpApi(this, 'McpApi', {
         idPool: auth.idPool,
         isSageMakerStudio: props.isSageMakerStudio,
-        fileBucket: api.fileBucket,
         vpc: props.vpc,
         securityGroups,
       });

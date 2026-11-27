@@ -46,6 +46,7 @@ auth:
   title: AWS 생성형 AI 사용 사례
 chat:
   advanced_options: 고급 옵션
+  continue_output: 출력 계속
   create_link: 링크 생성
   create_link_message: >-
     링크를 생성하면 이 애플리케이션에 로그인할 수 있는 모든 사용자와 대화 기록을 공유합니다.

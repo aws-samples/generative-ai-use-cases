@@ -22,12 +22,17 @@ export const allowS3AccessWithSourceIpCondition = (
   ipConditions?: {
     ipv4?: string[] | null;
     ipv6?: string[] | null;
-  }
+  },
+  // Limit object actions to keys under this prefix (e.g. `docs/`).
+  objectPrefix = ''
 ) => {
   role.addToPrincipalPolicy(
     new PolicyStatement({
       effect: Effect.ALLOW,
-      resources: [`arn:aws:s3:::${bucketName}`, `arn:aws:s3:::${bucketName}/*`],
+      resources: [
+        `arn:aws:s3:::${bucketName}`,
+        `arn:aws:s3:::${bucketName}/${objectPrefix}*`,
+      ],
       actions:
         accessType === 'read'
           ? ['s3:GetBucket*', 's3:GetObject*', 's3:List*']

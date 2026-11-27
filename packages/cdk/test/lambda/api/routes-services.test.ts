@@ -28,6 +28,11 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 // reads (signed URLs, base64 images and titles are sent as plain strings).
 
 jest.mock('../../../lambda/repository');
+jest.mock('../../../lambda/utils/request', () => ({
+  ...jest.requireActual('../../../lambda/utils/request'),
+  // The caller's Knowledge Base filters come from a verified id token
+  callerRetrievalFilters: async () => [],
+}));
 jest.mock('../../../lambda/repositoryVideoJob');
 jest.mock('uuid', () => ({ v4: () => 'test-uuid' }));
 jest.mock('@aws-sdk/s3-request-presigner', () => ({
@@ -96,6 +101,9 @@ jest.mock('../../../lambda/utils/bedrockClient', () => ({
 const mock = (fn: unknown) => fn as jest.Mock<any, any>;
 const bedrock = api.bedrock as unknown as Record<string, jest.Mock>;
 
+// The test app gives alice the sub `sub-alice`, the owner segment of her keys
+const ALICE_FILE = 'users/sub-alice/attachments/u1/a.png';
+const ALICE_FILE_URL = `https://file-bucket.s3.us-east-1.amazonaws.com/${ALICE_FILE}`;
 const SIGNED_URL = 'https://file-bucket.s3.amazonaws.com/k?X-Amz-Signature=s';
 const INTERNAL_ERROR = JSON.stringify({ message: 'Internal Server Error' });
 const model = { type: 'bedrock', modelId: 'm' };
@@ -199,13 +207,18 @@ const cases: Case[] = [
     },
     status: 200,
     responseBody: JSON.stringify({ shareId: 's1' }),
-    calls: [[repository.createShareId, ['alice', 'c1']]],
+    calls: [[repository.createShareId, ['alice', 'c1', 'sub-alice']]],
   },
   {
     name: 'DELETE /shares/share/:shareId',
     mount: shares,
     method: 'DELETE',
     path: '/shares/share/s1',
+    setup: () =>
+      mock(repository.findUserIdAndChatId).mockResolvedValue({
+        userId: 'user#alice',
+        chatId: 'chat#c1',
+      }),
     status: 204,
     responseBody: '',
     calls: [[repository.deleteShareId, ['s1']]],
@@ -225,15 +238,16 @@ const cases: Case[] = [
     mount: file,
     method: 'GET',
     path: '/file/url',
-    query: { bucketName: 'file-bucket', filePrefix: 'k' },
+    query: { uri: ALICE_FILE_URL },
     status: 200,
     responseBody: SIGNED_URL,
   },
   {
-    name: 'DELETE /file/:fileName',
+    name: 'DELETE /file',
     mount: file,
     method: 'DELETE',
-    path: '/file/test-uuid',
+    path: '/file',
+    query: { key: ALICE_FILE },
     setup: () => mockS3Send.mockResolvedValue({}),
     status: 204,
     responseBody: '',
@@ -277,10 +291,13 @@ const cases: Case[] = [
     path: '/predict/title',
     body: {
       prompt: 'p',
-      chat: { id: 'user#alice', createdDate: '1' },
+      chat: { id: 'user#alice', createdDate: '1', chatId: 'chat#c1' },
       id: 'p1',
     },
-    setup: () => bedrock.invoke.mockResolvedValue('<output>Title</output>'),
+    setup: () => {
+      mock(repository.findChatById).mockResolvedValue(chat);
+      bedrock.invoke.mockResolvedValue('<output>Title</output>');
+    },
     status: 200,
     responseBody: 'Title',
     calls: [[repository.setChatTitle, ['user#alice', '1', 'Title', undefined]]],
@@ -414,7 +431,7 @@ const cases: Case[] = [
     mount: transcribe,
     method: 'POST',
     path: '/transcribe/start',
-    body: { audioUrl: 's3://audio/a.mp3', speakerLabel: false },
+    body: { audioUrl: `s3://file-bucket/${ALICE_FILE}`, speakerLabel: false },
     setup: () =>
       mockTranscribeSend.mockResolvedValue({
         TranscriptionJob: { TranscriptionJobName: 'test-uuid' },
@@ -447,7 +464,12 @@ const cases: Case[] = [
     calls: [
       [
         videoRepository.createJob,
-        ['alice', 'arn:invocation', { model, params: { prompt: 'cat' } }],
+        [
+          'alice',
+          'sub-alice',
+          'arn:invocation',
+          { model, params: { prompt: 'cat' } },
+        ],
       ],
     ],
   },
@@ -474,13 +496,18 @@ describe('API routes that call AWS services', () => {
     }
   });
 
-  test('DELETE /file/:fileName deletes that key in the file bucket', async () => {
+  test('DELETE /file deletes that key in the file bucket', async () => {
     mockS3Send.mockResolvedValue({});
     const app = createTestApp(...file);
-    await callApi(app, { method: 'DELETE', path: '/file/k1', user: 'alice' });
+    await callApi(app, {
+      method: 'DELETE',
+      path: '/file',
+      user: 'alice',
+      query: { key: ALICE_FILE },
+    });
     expect(mockS3Send.mock.calls[0][0].input).toEqual({
       Bucket: 'file-bucket',
-      Key: 'k1',
+      Key: ALICE_FILE,
     });
   });
 
@@ -494,7 +521,7 @@ describe('API routes that call AWS services', () => {
     });
     expect(mock(getSignedUrl).mock.calls[0][1].input).toEqual({
       Bucket: 'file-bucket',
-      Key: 'test-uuid/a.png',
+      Key: 'users/sub-alice/attachments/test-uuid/a.png',
     });
   });
 });

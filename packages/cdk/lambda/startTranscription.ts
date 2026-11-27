@@ -7,7 +7,13 @@ import {
   LanguageCode,
 } from '@aws-sdk/client-transcribe';
 import { StartTranscriptionRequest } from 'generative-ai-use-cases';
-import { sanitizeTranscribeLanguageOptions } from '@generative-ai-use-cases/common';
+import {
+  canAccessFile,
+  fileBucketKey,
+  sanitizeTranscribeLanguageOptions,
+} from '@generative-ai-use-cases/common';
+
+const BUCKET_NAME = process.env.BUCKET_NAME!;
 
 export const handler = async (
   request: Request,
@@ -24,13 +30,22 @@ export const handler = async (
     req.languageOptions
   ) as LanguageCode[];
 
+  // The audio must be one the caller uploaded.
+  const key = fileBucketKey(audioUrl ?? '', BUCKET_NAME);
+  if (
+    key === null ||
+    !canAccessFile({ caller: requireUserSub(request), key })
+  ) {
+    return sendJson(response, 403, { message: 'Forbidden' });
+  }
+
   const uuid = uuidv4();
 
   const command = new StartTranscriptionJobCommand({
     IdentifyLanguage: !languageCode, // Enable auto-detection when no language specified
     LanguageCode: languageCode ? (languageCode as LanguageCode) : undefined, // Use specified language when provided
     LanguageOptions: !languageCode ? languageOptions : undefined, // Language candidates for auto-detection only
-    Media: { MediaFileUri: audioUrl },
+    Media: { MediaFileUri: `s3://${BUCKET_NAME}/${key}` },
     TranscriptionJobName: uuid,
     Settings: {
       ShowSpeakerLabels: speakerLabel,
