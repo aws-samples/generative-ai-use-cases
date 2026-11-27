@@ -1528,6 +1528,25 @@ EventBridge rules are used for scheduling, and Step Functions for process contro
 > - Currently, there's no feature to notify of startup/shutdown errors.
 > - Each time the index is recreated, the IndexId and DataSourceId change. If other services reference these, you'll need to adapt to these changes.
 
+### Delete Files After a Number of Days
+
+Set `fileExpirationDays` to delete the files users add or generate from S3 after that many days (an S3 lifecycle rule). Without it, files are kept, as before.
+
+- Covered: the files under `users/` in the file bucket (`APIFileBucket…` in `GenerativeAiUseCasesStack`): chat attachments, audio for transcription, generated videos and files returned by agents. Also the transcription buckets and the temporary bucket of video generation
+- Days are counted from when a file was stored, not from when a chat last used it
+- An expired file no longer opens from earlier chats. Sending again in such a chat fails with an error that an attachment cannot be read; attach the file again in a new chat
+- Files stored outside `users/` by earlier versions are not covered. See the migration item in the [release notes](./RELEASE_NOTES.md)
+- Chat history in DynamoDB is not deleted
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    fileExpirationDays: 90,
+  },
+};
+```
+
 ### How to Set Tags
 
 GenU supports tags for cost management and other purposes. By default, the key name of the tag is set to `GenU`, but you can use a custom tag key by specifying `tagKey`. Here are examples of how to set them:

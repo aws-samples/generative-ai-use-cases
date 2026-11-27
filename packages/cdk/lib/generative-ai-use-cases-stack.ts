@@ -18,6 +18,7 @@ import { CfnWebACLAssociation } from 'aws-cdk-lib/aws-wafv2';
 import * as cognito from 'aws-cdk-lib/aws-cognito';
 import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { ProcessedStackInput } from './stack-input';
+import { expireUserFiles } from './utils/file-expiration';
 import {
   InterfaceVpcEndpoint,
   IVpc,
@@ -292,6 +293,12 @@ export class GenerativeAiUseCasesStack extends Stack {
       dataSourceBucketName: rag?.dataSourceBucketName,
       dataSourcePrefix: rag?.dataSourcePrefix,
     });
+
+    // Delete files users added or generated after the configured days
+    expireUserFiles(params.fileExpirationDays, api.fileBucket, [
+      transcribe.audioBucket,
+      transcribe.transcriptBucket,
+    ]);
 
     // AgentCore runtimes store output files in the file bucket under the
     // caller's prefix. Their stack is deployed before this one, so the user

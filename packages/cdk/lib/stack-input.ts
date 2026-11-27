@@ -103,6 +103,11 @@ const baseStackInputSchema = z.object({
     )
     .default([]),
   crossAccountBedrockRoleArn: z.string().nullish(),
+  // Days after which the files users add or generate (attachments, audio for
+  // transcription, generated videos, agent output files) and transcripts are
+  // deleted from S3. Unset keeps them, as before. Chat history in DynamoDB is
+  // kept either way.
+  fileExpirationDays: z.number().int().min(1).nullish(),
   // RAG
   ragEnabled: z.boolean().default(false),
   kendraIndexLanguage: z.string().default('ja'),
