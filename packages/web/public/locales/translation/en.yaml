@@ -1281,16 +1281,16 @@ useCaseBuilder:
   enterPromptTemplate: Please enter a prompt template
   enterTitle: Please enter a title
   error:
-    duplicate_select_options: '{{select:{{label}}}} contains duplicate options.'
-    empty_select_options: '{{select:{{label}}}} contains empty options.'
+    duplicate_select_options: '{{placeholder}} contains duplicate options.'
+    empty_select_options: '{{placeholder}} contains empty options.'
     missing_kb_text_form: >-
-      Please include a form {{text{{label}}}} in the prompt template to input
+      Please include a form {{placeholder}} in the prompt template to input
       the search query for Knowledge Base.
     missing_select_options: >-
       No options are set for {{select}}. Please set it like
       {{select:label:option1,option2}}
     missing_text_form: >-
-      Please include a form {{text{{label}}}} in the prompt template to input
+      Please include a form {{placeholder}} in the prompt template to input
       the search query for Amazon Kendra.
     rag_kendra_not_enabled: >-
       {{retrieveKendra}} is specified in the prompt template, but RAG Chat

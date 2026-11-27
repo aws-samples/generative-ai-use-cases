@@ -928,15 +928,15 @@ useCaseBuilder:
   enterPromptTemplate: โปรดป้อน prompt template
   enterTitle: โปรดป้อนชื่อเรื่อง
   error:
-    duplicate_select_options: '{{select:{{label}}}} มีตัวเลือกซ้ำกัน'
-    empty_select_options: '{{select:{{label}}}} มีตัวเลือกว่างเปล่า'
+    duplicate_select_options: '{{placeholder}} มีตัวเลือกซ้ำกัน'
+    empty_select_options: '{{placeholder}} มีตัวเลือกว่างเปล่า'
     missing_kb_text_form: >-
-      โปรดรวมแบบฟอร์ม {{text{{label}}}} ใน prompt template เพื่อป้อนคำค้นหาสำหรับ Knowledge Base
+      โปรดรวมแบบฟอร์ม {{placeholder}} ใน prompt template เพื่อป้อนคำค้นหาสำหรับ Knowledge Base
     missing_select_options: >-
       ไม่มีตัวเลือกที่ตั้งไว้สำหรับ {{select}} โปรดตั้งค่าเช่น
       {{select:label:option1,option2}}
     missing_text_form: >-
-      โปรดรวมแบบฟอร์ม {{text{{label}}}} ใน prompt template เพื่อป้อนคำค้นหาสำหรับ Amazon Kendra
+      โปรดรวมแบบฟอร์ม {{placeholder}} ใน prompt template เพื่อป้อนคำค้นหาสำหรับ Amazon Kendra
     rag_kendra_not_enabled: >-
       {{retrieveKendra}} ถูกระบุใน prompt template แต่ RAG Chat (Amazon Kendra) ไม่ได้เปิดใช้งานใน GenU
     rag_knowledge_base_not_enabled: >-

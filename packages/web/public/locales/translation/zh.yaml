@@ -780,11 +780,11 @@ useCaseBuilder:
   enterPromptTemplate: 请输入提示模板
   enterTitle: 请输入标题
   error:
-    duplicate_select_options: '{{select:{{label}}}} 包含重复选项。'
-    empty_select_options: '{{select:{{label}}}} 包含空选项。'
-    missing_kb_text_form: 请在提示模板中包含用于输入Knowledge Base搜索查询的表单 {{text{{label}}}}。
+    duplicate_select_options: '{{placeholder}} 包含重复选项。'
+    empty_select_options: '{{placeholder}} 包含空选项。'
+    missing_kb_text_form: 请在提示模板中包含用于输入Knowledge Base搜索查询的表单 {{placeholder}}。
     missing_select_options: '{{select}} 未设置选项。请按照 {{select:标签:选项1,选项2}} 格式设置。'
-    missing_text_form: 请在提示模板中包含用于输入Amazon Kendra搜索查询的表单 {{text{{label}}}}。
+    missing_text_form: 请在提示模板中包含用于输入Amazon Kendra搜索查询的表单 {{placeholder}}。
     rag_kendra_not_enabled: 提示模板中指定了 {{retrieveKendra}}，但GenU中未启用RAG聊天(Amazon Kendra)。
     rag_knowledge_base_not_enabled: 提示模板中指定了 {{retrieveKnowledgeBase}}，但GenU中未启用RAG聊天(Knowledge Base)。
   favorites: 收藏

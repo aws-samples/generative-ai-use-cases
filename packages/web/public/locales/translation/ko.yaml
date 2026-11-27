@@ -784,15 +784,15 @@ useCaseBuilder:
   enterPromptTemplate: 프롬프트 템플릿을 입력해주세요
   enterTitle: 제목을 입력해주세요
   error:
-    duplicate_select_options: '{{select:{{label}}}}에 중복된 옵션이 포함되어 있습니다.'
-    empty_select_options: '{{select:{{label}}}}에 빈 옵션이 포함되어 있습니다.'
+    duplicate_select_options: '{{placeholder}}에 중복된 옵션이 포함되어 있습니다.'
+    empty_select_options: '{{placeholder}}에 빈 옵션이 포함되어 있습니다.'
     missing_kb_text_form: >-
-      Knowledge Base의 검색 쿼리를 입력하기 위한 양식 {{text{{label}}}}을
+      Knowledge Base의 검색 쿼리를 입력하기 위한 양식 {{placeholder}}을
       프롬프트 템플릿에 포함해주세요.
     missing_select_options: >-
       {{select}}에 옵션이 설정되지 않았습니다. {{select:label:option1,option2}}와 같이 설정해주세요
     missing_text_form: >-
-      Amazon Kendra의 검색 쿼리를 입력하기 위한 양식 {{text{{label}}}}을
+      Amazon Kendra의 검색 쿼리를 입력하기 위한 양식 {{placeholder}}을
       프롬프트 템플릿에 포함해주세요.
     rag_kendra_not_enabled: >-
       프롬프트 템플릿에 {{retrieveKendra}}가 지정되어 있지만 GenU에서 RAG 채팅

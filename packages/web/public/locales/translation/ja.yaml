@@ -1078,13 +1078,13 @@ useCaseBuilder:
   enterPromptTemplate: プロンプトテンプレートを入力してください
   enterTitle: タイトルを入力してください
   error:
-    duplicate_select_options: '{{select:{{label}}}} に重複したオプションが含まれています。'
-    empty_select_options: '{{select:{{label}}}} に空のオプションが含まれています。'
+    duplicate_select_options: '{{placeholder}} に重複したオプションが含まれています。'
+    empty_select_options: '{{placeholder}} に空のオプションが含まれています。'
     missing_kb_text_form: >-
-      Knowledge Base の検索クエリを入力するためのフォーム {{text{{label}}}}
+      Knowledge Base の検索クエリを入力するためのフォーム {{placeholder}}
       をプロンプテンプレートに内に記述してください。
     missing_select_options: '{{select}} にオプションが設定されていません。{{select:ラベル:オプション1,オプション2}} のように設定してください'
-    missing_text_form: Amazon Kendra の検索クエリを入力するためのフォーム {{text{{label}}}} をプロンプテンプレートに内に記述してください。
+    missing_text_form: Amazon Kendra の検索クエリを入力するためのフォーム {{placeholder}} をプロンプテンプレートに内に記述してください。
     rag_kendra_not_enabled: >-
       プロンプトテンプレート内で {{retrieveKendra}} が指定されていますが GenU で RAG チャット (Amazon
       Kendra) が有効になっていません。
