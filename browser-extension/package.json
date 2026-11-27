@@ -59,7 +59,8 @@
     },
     "vite": {
       "rollup": "^4.59.0"
-    }
+    },
+    "fast-xml-parser": "^5.12.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.30",
