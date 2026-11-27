@@ -1,4 +1,4 @@
-import { Stack, StackProps, RemovalPolicy } from 'aws-cdk-lib';
+import { Duration, Stack, StackProps, RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import {
   Bucket,
@@ -26,6 +26,14 @@ export class VideoTmpBucketStack extends Stack {
       enforceSSL: true,
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
     });
+    // Generated videos are copied to the file bucket; what is left here
+    // expires with the other user files
+    if (params.fileExpirationDays) {
+      bucket.addLifecycleRule({
+        id: 'ExpireFiles',
+        expiration: Duration.days(params.fileExpirationDays),
+      });
+    }
 
     // Allow cross-account access when Bedrock is used in a different account
     if (params.crossAccountBedrockRoleArn) {
