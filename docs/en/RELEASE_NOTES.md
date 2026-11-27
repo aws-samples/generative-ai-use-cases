@@ -6,9 +6,7 @@ This page summarizes each GenU release. The full list of changes for each releas
 
 GenU is deployed and updated from release tags (see [Update Method](./UPDATE.md)). Before updating, read every release between your current version and the new one, especially the **Before you update** sections.
 
-## Upcoming (v5.6.0)
-
-These changes are merged into the `main` branch and will be included in the next release, v5.6.0. They are not in the latest release yet.
+## v5.6.0 (2026-11-27)
 
 ### Highlights
 
