@@ -60,5 +60,6 @@ export const createEvent = (
   httpMethod: req.method,
   pathParameters: pathParams,
   queryStringParameters: req.query as Record<string, string>,
+  headers: req.headers as Record<string, string>,
   body: typeof req.body === 'string' ? req.body : JSON.stringify(req.body),
 });

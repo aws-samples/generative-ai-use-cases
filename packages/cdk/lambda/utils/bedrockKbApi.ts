@@ -124,14 +124,33 @@ const getImplicitFilters = (): ImplicitFilterConfiguration | undefined => {
   }
 };
 
+/**
+ * The filters every search by this user must carry, whatever else it asks
+ * for: the fixed ones and the ones derived from the user's ID token (groups,
+ * departments, ...). Undefined when the token cannot be verified.
+ */
+export const getAccessFilters = async (
+  idToken?: string
+): Promise<RetrievalFilter[] | undefined> => {
+  const payload = await verifyToken(idToken || '');
+  if (!payload) return undefined;
+  return [...hiddenStaticExplicitFilters, ...getDynamicFilters(payload)];
+};
+
+export const combineFilters = (
+  filters: RetrievalFilter[]
+): RetrievalFilter | undefined => {
+  if (filters.length === 0) return undefined;
+  if (filters.length === 1) return filters[0];
+  return { andAll: filters };
+};
+
 const getExplicitFilters = async (
   messages: UnrecordedMessage[],
   idToken?: string
 ): Promise<RetrievalFilter | undefined> => {
-  const payload = await verifyToken(idToken || '');
-  if (!payload) return undefined;
-
-  const dynamicFilters: RetrievalFilter[] = getDynamicFilters(payload);
+  const accessFilters = await getAccessFilters(idToken);
+  if (!accessFilters) return undefined;
 
   let userDefinedExplicitFilters: RetrievalFilter[] = [];
   const lastMessage = messages[messages.length - 1];
@@ -141,14 +160,7 @@ const getExplicitFilters = async (
       .map((extra) => JSON.parse(extra.source.data) as RetrievalFilter);
   }
 
-  const aggregatedFilters: RetrievalFilter[] = [
-    ...hiddenStaticExplicitFilters,
-    ...dynamicFilters,
-    ...userDefinedExplicitFilters,
-  ];
-  if (aggregatedFilters.length === 0) return undefined;
-  if (aggregatedFilters.length === 1) return aggregatedFilters[0];
-  return { andAll: aggregatedFilters };
+  return combineFilters([...accessFilters, ...userDefinedExplicitFilters]);
 };
 
 const getRerankingConfig = ():
