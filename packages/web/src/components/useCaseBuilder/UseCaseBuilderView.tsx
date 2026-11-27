@@ -258,7 +258,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
       if (!textForm) {
         tmpErrorMessages.push(
           t('useCaseBuilder.error.missing_text_form', {
-            label: item.label === NOLABEL ? '' : ':' + item.label,
+            placeholder: `{{text${item.label === NOLABEL ? '' : ':' + item.label}}}`,
           })
         );
       }
@@ -270,7 +270,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
       if (!textForm) {
         tmpErrorMessages.push(
           t('useCaseBuilder.error.missing_kb_text_form', {
-            label: item.label === NOLABEL ? '' : ':' + item.label,
+            placeholder: `{{text${item.label === NOLABEL ? '' : ':' + item.label}}}`,
           })
         );
       }
@@ -286,7 +286,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
         if (emptyOptions.length > 0) {
           tmpErrorMessages.push(
             t('useCaseBuilder.error.empty_select_options', {
-              label: item.label,
+              placeholder: `{{select:${item.label}}}`,
             })
           );
         }
@@ -298,7 +298,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
         if (options.length !== uniqueOptions.length) {
           tmpErrorMessages.push(
             t('useCaseBuilder.error.duplicate_select_options', {
-              label: item.label,
+              placeholder: `{{select:${item.label}}}`,
             })
           );
         }

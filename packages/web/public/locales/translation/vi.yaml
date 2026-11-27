@@ -900,13 +900,13 @@ useCaseBuilder:
   enterPromptTemplate: Vui lòng nhập template prompt
   enterTitle: Vui lòng nhập tiêu đề
   error:
-    duplicate_select_options: '{{select:{{label}}}} chứa tùy chọn trùng lặp.'
-    empty_select_options: '{{select:{{label}}}} chứa tùy chọn trống.'
+    duplicate_select_options: '{{placeholder}} chứa tùy chọn trùng lặp.'
+    empty_select_options: '{{placeholder}} chứa tùy chọn trống.'
     missing_kb_text_form: >-
-      Vui lòng mô tả form {{text{{label}}}}
+      Vui lòng mô tả form {{placeholder}}
       để nhập truy vấn tìm kiếm Knowledge Base trong template prompt.
     missing_select_options: '{{select}} không có tùy chọn được thiết lập. Vui lòng thiết lập như {{select:nhãn:tùy chọn1,tùy chọn2}}'
-    missing_text_form: 'Vui lòng mô tả form {{text{{label}}}} để nhập truy vấn tìm kiếm Amazon Kendra trong template prompt.'
+    missing_text_form: 'Vui lòng mô tả form {{placeholder}} để nhập truy vấn tìm kiếm Amazon Kendra trong template prompt.'
     rag_kendra_not_enabled: >-
       {{retrieveKendra}} được chỉ định trong template prompt nhưng RAG chat (Amazon
       Kendra) không được bật trong GenU.。
