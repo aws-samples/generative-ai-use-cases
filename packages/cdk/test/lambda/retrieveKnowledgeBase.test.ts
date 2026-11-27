@@ -1,6 +1,11 @@
 import { invokeHandler } from './api/testApp';
 
 const mockSend = jest.fn();
+jest.mock('../../lambda/utils/request', () => ({
+  ...jest.requireActual('../../lambda/utils/request'),
+  // The caller's Knowledge Base filters come from a verified id token
+  callerRetrievalFilters: async () => [],
+}));
 jest.mock('../../lambda/utils/bedrockClient', () => ({
   initBedrockAgentRuntimeClient: async () => ({
     send: (...args: unknown[]) => mockSend(...args),

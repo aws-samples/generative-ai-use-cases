@@ -219,6 +219,7 @@ chart:
   zoom: Zoom chart
 chat:
   advanced_options: Advanced Options
+  continue_output: Continue output
   create_link: Create Link
   create_link_message: >-
     By creating a link, you will share the conversation history with all users

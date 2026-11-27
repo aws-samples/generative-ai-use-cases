@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { requireUserName, sendJson } from './utils/http';
+import { requireUserName, requireUserSub, sendJson } from './utils/http';
 import { createShareId, findChatById } from './repository';
 
 export const handler = async (
@@ -17,7 +17,7 @@ export const handler = async (
     });
   }
 
-  const share = await createShareId(userId, chatId);
+  const share = await createShareId(userId, chatId, requireUserSub(request));
 
   return sendJson(response, 200, share);
 };

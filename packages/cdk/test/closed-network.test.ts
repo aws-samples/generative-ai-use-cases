@@ -50,8 +50,22 @@ describe('requiredClosedNetworkVpcEndpoints', () => {
         'AgentCoreGateway',
         'BedrockAgentApi',
         'Kendra',
+        'Ssm',
       ])
     );
+  });
+
+  test('adds SSM only for the runtimes that read their config from it', () => {
+    expect(
+      requiredClosedNetworkVpcEndpoints(
+        params({ createGenericAgentCoreRuntime: true })
+      )
+    ).toContain('Ssm');
+    expect(
+      requiredClosedNetworkVpcEndpoints(
+        params({ agentCoreExternalRuntimes: [{ name: 'x', arn: 'arn:aws:x' }] })
+      )
+    ).not.toContain('Ssm');
   });
 
   test('keeps Transcribe Streaming and Polly for Translate alone', () => {

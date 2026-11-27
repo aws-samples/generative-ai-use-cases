@@ -40,7 +40,8 @@ export const callApi = async (
     path: string;
     user?: string;
     sub?: string;
-    query?: Record<string, string>;
+    // A list repeats the key (?k=a&k=b)
+    query?: Record<string, string | string[]>;
     body?: unknown;
     headers?: Record<string, string>;
   }
@@ -51,7 +52,7 @@ export const callApi = async (
     const { port } = server.address() as AddressInfo;
     const url = new URL(`http://127.0.0.1:${port}${params.path}`);
     for (const [key, value] of Object.entries(params.query ?? {})) {
-      url.searchParams.set(key, value);
+      for (const item of [value].flat()) url.searchParams.append(key, item);
     }
     const headers: Record<string, string> = { ...(params.headers ?? {}) };
     if (params.user) {
@@ -104,7 +105,7 @@ export type InvokeParams = {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   user?: string;
   sub?: string;
-  query?: Record<string, string>;
+  query?: Record<string, string | string[]>;
   path?: Record<string, string>;
   body?: unknown;
   headers?: Record<string, string>;
