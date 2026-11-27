@@ -162,6 +162,9 @@ agent_builder:
   skill_description_placeholder: 週報を書くときに使う
   skill_descriptions_over_limit: エージェントを保存するには、スキルを外すか、説明を短くしてください。
   skill_descriptions_total: '説明の合計: {{total}} / {{max}} 文字'
+  skill_export: SKILL.md を書き出す
+  skill_import: SKILL.md を読み込む
+  skill_import_failed: SKILL.md として読み込めませんでした。name と description を書いた YAML の frontmatter と、その後に手順が必要です。
   skill_instructions: 本文
   skill_instructions_hint: Markdown。エージェントは、スキルを使うときだけ本文を読みます。
   skill_instructions_placeholder: 作業の手順・決まりごと・例

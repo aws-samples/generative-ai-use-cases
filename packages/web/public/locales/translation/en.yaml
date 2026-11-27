@@ -171,6 +171,9 @@ agent_builder:
   skill_description_placeholder: Use when writing the weekly report
   skill_descriptions_over_limit: Remove skills or shorten their descriptions to save the agent.
   skill_descriptions_total: 'Descriptions: {{total}} / {{max}} characters'
+  skill_export: Export SKILL.md
+  skill_import: Import SKILL.md
+  skill_import_failed: 'Could not read that file as a SKILL.md. It needs YAML frontmatter with name and description, then the instructions.'
   skill_instructions: Instructions
   skill_instructions_hint: Markdown. The agent reads it only when it uses the skill.
   skill_instructions_placeholder: Steps, rules and examples for the task

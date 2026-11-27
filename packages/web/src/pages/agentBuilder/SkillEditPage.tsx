@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Link,
@@ -6,7 +6,12 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom';
-import { PiArrowLeft as BackIcon, PiTrash as DeleteIcon } from 'react-icons/pi';
+import {
+  PiArrowLeft as BackIcon,
+  PiDownloadSimple as ExportIcon,
+  PiTrash as DeleteIcon,
+  PiUploadSimple as ImportIcon,
+} from 'react-icons/pi';
 import {
   AGENT_SKILL_DESCRIPTION_MAX_LENGTH,
   AGENT_SKILL_INSTRUCTIONS_MAX_LENGTH,
@@ -25,6 +30,7 @@ import {
 } from '../../hooks/agentBuilder/useAgentSkills';
 import { agentReturnPath } from '../../utils/agentDraft';
 import useLeaveGuard from '../../hooks/useLeaveGuard';
+import { downloadSkillFile, fromSkillFile } from '../../utils/skillFile';
 
 const errorMessage = (err: unknown): string | undefined => {
   const data = (err as { response?: { data?: { error?: string } } })?.response
@@ -110,6 +116,22 @@ const SkillEditPage: React.FC = () => {
       if (!skillId) return (await createSkill(form)).skillId;
       await updateSkill(skillId, form);
     }, 'agent_builder.skill_save_failed');
+  // A SKILL.md fills the form; it is saved only when the user saves
+  const fileInput = useRef<HTMLInputElement>(null);
+  const handleImportFile = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    // Cleared so that choosing the same file again fires a change
+    event.target.value = '';
+    if (!file) return;
+    try {
+      setForm(fromSkillFile(await file.text()));
+      setError(null);
+    } catch {
+      setError(t('agent_builder.skill_import_failed'));
+    }
+  };
   const handleDelete = () =>
     run(async () => {
       await deleteSkill(skillId!);
@@ -146,15 +168,42 @@ const SkillEditPage: React.FC = () => {
               : t('agent_builder.create_skill')}
           </h1>
         </div>
-        {isEditMode && (
+        <div className="flex items-center gap-2">
           <Button
             outlined
-            onClick={() => setShowDeleteDialog(true)}
+            onClick={() => fileInput.current?.click()}
             disabled={saving || isLoading}>
-            <DeleteIcon className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">{t('common.delete')}</span>
+            <ImportIcon className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">
+              {t('agent_builder.skill_import')}
+            </span>
           </Button>
-        )}
+          <input
+            ref={fileInput}
+            type="file"
+            accept=".md,text/markdown"
+            onChange={handleImportFile}
+            className="hidden"
+          />
+          <Button
+            outlined
+            onClick={() => downloadSkillFile(form)}
+            disabled={!form.name.trim()}>
+            <ExportIcon className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">
+              {t('agent_builder.skill_export')}
+            </span>
+          </Button>
+          {isEditMode && (
+            <Button
+              outlined
+              onClick={() => setShowDeleteDialog(true)}
+              disabled={saving || isLoading}>
+              <DeleteIcon className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">{t('common.delete')}</span>
+            </Button>
+          )}
+        </div>
       </div>
 
       {error && (
