@@ -10,9 +10,14 @@ jest.mock('uuid', () => ({ v4: () => 'test-uuid' }));
 jest.mock('../../lambda/utils/api', () => ({ __esModule: true, default: {} }));
 jest.mock('../../lambda/utils/models', () => ({ defaultModel: {} }));
 jest.mock('../../lambda/utils/auth');
+const s3Send = jest.fn();
+jest.mock('@aws-sdk/client-s3', () => ({
+  ...jest.requireActual('@aws-sdk/client-s3'),
+  S3Client: jest.fn().mockImplementation(() => ({ send: s3Send })),
+}));
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { s3ReferencesAllowed } = require('../../lambda/predictStream');
+const { handler, s3ReferencesAllowed } = require('../../lambda/predictStream');
 
 const BUCKET = 'file-bucket';
 const video = (uri: string): PredictRequest => ({
@@ -51,6 +56,73 @@ describe('PredictStream S3 references', () => {
     ['s3://other-bucket/users/alice/attachments/u/v.mp4', false],
   ])('%s -> %s', async (uri, expected) => {
     expect(await s3ReferencesAllowed(video(uri))).toBe(expected);
+  });
+
+  test.each([
+    [
+      `https://${BUCKET}.s3.us-east-1.amazonaws.com/users/alice/attachments/u/a.png`,
+      true,
+    ],
+    [
+      `https://${BUCKET}.s3.us-east-1.amazonaws.com/users/bob/attachments/u/a.png`,
+      false,
+    ],
+    // A file from an earlier version
+    [`https://${BUCKET}.s3.us-east-1.amazonaws.com/0b7e5a1c/a.png`, false],
+  ])('image %s -> %s', async (url, expected) => {
+    const request: PredictRequest = {
+      id: 'x',
+      idToken: 'token',
+      messages: [
+        {
+          role: 'user',
+          content: 'look',
+          extraData: [
+            {
+              type: 'image',
+              name: 'a.png',
+              source: { type: 's3', mediaType: 'image/png', data: url },
+            },
+          ],
+        },
+      ],
+    };
+    expect(await s3ReferencesAllowed(request)).toBe(expected);
+  });
+
+  test("another user's document is refused before anything is read", async () => {
+    const written: string[] = [];
+    const stream = {
+      write: (chunk: string) => written.push(chunk),
+      end: jest.fn(),
+    };
+    const request: PredictRequest = {
+      id: 'x',
+      idToken: 'token',
+      messages: [
+        {
+          role: 'user',
+          content: 'summarize',
+          extraData: [
+            {
+              type: 'file',
+              name: 'b.pdf',
+              source: {
+                type: 's3',
+                mediaType: 'application/pdf',
+                data: `https://${BUCKET}.s3.us-east-1.amazonaws.com/users/bob/attachments/u/b.pdf`,
+              },
+            },
+          ],
+        },
+      ],
+    };
+
+    await handler(request, stream, {});
+
+    expect(written.join('')).toContain('ACCESS_DENIED');
+    expect(s3Send).not.toHaveBeenCalled();
+    expect(stream.end).toHaveBeenCalled();
   });
 
   test('refused when the token cannot be verified', async () => {

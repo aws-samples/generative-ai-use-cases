@@ -50,6 +50,8 @@ vi.mock('../../src/hooks/useFileApi', () => ({
   default: () => ({
     getS3Uri: (url: string) =>
       url.replace(/^https:\/\/(.+?)\.s3\..+?\.amazonaws\.com\//, 's3://$1/'),
+    isUserFileUrl: (url: string) =>
+      /^https:\/\/.+?\.s3\..+?\.amazonaws\.com\/users\//.test(url),
   }),
 }));
 vi.mock('../../src/hooks/useModel', () => ({
@@ -72,7 +74,7 @@ const uploaded = (
   name,
   type,
   mimeType,
-  s3Url: `${BUCKET_URL}/uuid/${name}`,
+  s3Url: `${BUCKET_URL}/users/u1/attachments/uuid/${name}`,
   base64EncodedData: `data:${mimeType};base64,eA==`,
   uploading: false,
   deleting: false,
@@ -96,7 +98,7 @@ const earlierTurn: RecordedMessage[] = [
         source: {
           type: 's3',
           mediaType: 'application/pdf',
-          data: `${BUCKET_URL}/uuid/old.pdf`,
+          data: `${BUCKET_URL}/users/u1/attachments/uuid/old.pdf`,
         },
       },
       {
@@ -105,7 +107,17 @@ const earlierTurn: RecordedMessage[] = [
         source: {
           type: 's3',
           mediaType: 'video/mp4',
-          data: `${BUCKET_URL}/uuid/clip.mp4`,
+          data: `${BUCKET_URL}/users/u1/attachments/uuid/clip.mp4`,
+        },
+      },
+      // Saved before the per-user layout: left out, as before
+      {
+        type: 'image',
+        name: 'legacy.png',
+        source: {
+          type: 's3',
+          mediaType: 'image/png',
+          data: `${BUCKET_URL}/0b7e5a1c/legacy.png`,
         },
       },
     ],
@@ -156,7 +168,7 @@ describe('useChat attachments (#1334)', () => {
         source: {
           type: 's3',
           mediaType: 'application/pdf',
-          data: `${BUCKET_URL}/uuid/old.pdf`,
+          data: `${BUCKET_URL}/users/u1/attachments/uuid/old.pdf`,
         },
       },
       // Videos keep going to Bedrock as an s3:// location
@@ -166,7 +178,7 @@ describe('useChat attachments (#1334)', () => {
         source: {
           type: 's3',
           mediaType: 'video/mp4',
-          data: 's3://file-bucket/uuid/clip.mp4',
+          data: 's3://file-bucket/users/u1/attachments/uuid/clip.mp4',
         },
       },
       {
@@ -175,7 +187,7 @@ describe('useChat attachments (#1334)', () => {
         source: {
           type: 's3',
           mediaType: 'application/pdf',
-          data: `${BUCKET_URL}/uuid/new.pdf`,
+          data: `${BUCKET_URL}/users/u1/attachments/uuid/new.pdf`,
         },
       },
       {
@@ -184,7 +196,7 @@ describe('useChat attachments (#1334)', () => {
         source: {
           type: 's3',
           mediaType: 'image/png',
-          data: `${BUCKET_URL}/uuid/cat.png`,
+          data: `${BUCKET_URL}/users/u1/attachments/uuid/cat.png`,
         },
       },
     ]);

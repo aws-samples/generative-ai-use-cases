@@ -1,5 +1,6 @@
 import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { ExtraData, UnrecordedMessage } from 'generative-ai-use-cases';
+import { fileBucketKey } from '@generative-ai-use-cases/common';
 
 /**
  * Upper bound for the images and documents sent to the model in one request.
@@ -28,34 +29,12 @@ export class AttachmentError extends Error {
 
 type ResolveOptions = {
   bucketName: string;
-  region: string;
   s3?: S3Client;
 };
 
 const isS3Attachment = (extra: ExtraData): boolean =>
   (extra.type === 'image' || extra.type === 'file') &&
   extra.source.type === 's3';
-
-/**
- * The object key of an uploaded file, from the URL the browser keeps for it
- * (`https://{bucket}.s3.{region}.amazonaws.com/{key}`). Only the file upload
- * bucket is read; any other URL is rejected.
- */
-export const fileKeyOf = (
-  url: string,
-  bucketName: string,
-  region: string
-): string | undefined => {
-  const prefix = `https://${bucketName}.s3.${region}.amazonaws.com/`;
-  if (!url.startsWith(prefix) || url.length === prefix.length) {
-    return undefined;
-  }
-  try {
-    return decodeURIComponent(url.slice(prefix.length));
-  } catch {
-    return undefined;
-  }
-};
 
 const isNotFound = (e: unknown): boolean => {
   const name = (e as { name?: string })?.name;
@@ -70,13 +49,17 @@ const isNotFound = (e: unknown): boolean => {
  * files the conversation has. The model needs the bytes, so they are read
  * here. Each object is read once even when several messages refer to it.
  *
+ * Who may read each file is checked before this is called
+ * (`s3ReferencesAllowed` in predictStream.ts). The key is parsed with the same
+ * `fileBucketKey`, so the file read here is the file that was checked.
+ *
  * Throws AttachmentError when a file is gone or the attachments add up to
  * more than MAX_ATTACHMENT_BYTES; the size is checked from the response
  * headers before any body is read.
  */
 export const resolveAttachments = async (
   messages: UnrecordedMessage[],
-  { bucketName, region, s3 = new S3Client({ region }) }: ResolveOptions
+  { bucketName, s3 = new S3Client({}) }: ResolveOptions
 ): Promise<UnrecordedMessage[]> => {
   const urls = messages.flatMap(
     (m) =>
@@ -87,8 +70,8 @@ export const resolveAttachments = async (
 
   const keys = new Map<string, string>();
   for (const url of new Set(urls)) {
-    const key = fileKeyOf(url, bucketName, region);
-    if (key === undefined) {
+    const key = fileBucketKey(url, bucketName);
+    if (key === null) {
       throw new AttachmentError(
         'ATTACHMENT_NOT_FOUND',
         `Not a file in the upload bucket: ${url}`

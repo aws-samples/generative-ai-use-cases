@@ -7,7 +7,6 @@ import { verifyToken } from './utils/auth';
 import { streamingChunk } from './utils/streamingChunk';
 import { bedrockRequestMetadata } from './utils/requestMetadata';
 import { AttachmentError, resolveAttachments } from './utils/attachments';
-import { streamingChunk } from './utils/streamingChunk';
 
 declare global {
   namespace awslambda {
@@ -22,8 +21,9 @@ declare global {
 }
 
 /**
- * Bedrock reads S3 references (videos) with this function's role, so each one
- * must be one of the caller's own files in the file bucket.
+ * S3 references are read with this function's role: images and documents by
+ * this function (resolveAttachments), videos by Bedrock. Each one must be one
+ * of the caller's own files in the file bucket.
  */
 export const s3ReferencesAllowed = async (
   event: PredictRequest
@@ -71,7 +71,6 @@ export const handler = awslambda.streamifyResponse(
     try {
       messages = await resolveAttachments(event.messages, {
         bucketName: process.env.BUCKET_NAME!,
-        region: process.env.AWS_REGION!,
       });
     } catch (e) {
       if (!(e instanceof AttachmentError)) throw e;

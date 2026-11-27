@@ -3,7 +3,6 @@ import { ExtraData, UnrecordedMessage } from 'generative-ai-use-cases';
 import {
   AttachmentError,
   MAX_ATTACHMENT_BYTES,
-  fileKeyOf,
   resolveAttachments,
 } from '../../../lambda/utils/attachments';
 
@@ -48,34 +47,51 @@ const fakeS3 = (
   return { s3: { send } as unknown as S3Client, send, destroyed };
 };
 
-const options = (s3: S3Client) => ({ bucketName: BUCKET, region: REGION, s3 });
+const options = (s3: S3Client) => ({ bucketName: BUCKET, s3 });
 
-describe('fileKeyOf', () => {
-  test('returns the decoded key of a file in the upload bucket', () => {
-    expect(fileKeyOf(url('abc/report%20v2.pdf'), BUCKET, REGION)).toBe(
-      'abc/report v2.pdf'
-    );
+describe('resolveAttachments keys', () => {
+  test('reads the decoded key of the URL', async () => {
+    const { s3, send } = fakeS3({ 'abc/report v2.pdf': 'pdf' });
+    const messages: UnrecordedMessage[] = [
+      {
+        role: 'user',
+        content: 'x',
+        extraData: [s3File('file', 'abc/report%20v2.pdf')],
+      },
+    ];
+
+    await resolveAttachments(messages, options(s3));
+
+    expect(send.mock.calls[0][0].input).toEqual({
+      Bucket: BUCKET,
+      Key: 'abc/report v2.pdf',
+    });
   });
 
-  test('rejects other buckets, other regions and other hosts', () => {
-    expect(
-      fileKeyOf(
-        `https://other.s3.${REGION}.amazonaws.com/abc/a.pdf`,
-        BUCKET,
-        REGION
-      )
-    ).toBeUndefined();
-    expect(
-      fileKeyOf(
-        `https://${BUCKET}.s3.us-east-1.amazonaws.com/abc/a.pdf`,
-        BUCKET,
-        REGION
-      )
-    ).toBeUndefined();
-    expect(
-      fileKeyOf(`s3://${BUCKET}/abc/a.pdf`, BUCKET, REGION)
-    ).toBeUndefined();
-    expect(fileKeyOf(url(''), BUCKET, REGION)).toBeUndefined();
+  test.each([
+    ['another bucket', `https://other.s3.${REGION}.amazonaws.com/abc/a.pdf`],
+    ['another host', `https://example.com/${BUCKET}/abc/a.pdf`],
+    ['the bucket root', `https://${BUCKET}.s3.${REGION}.amazonaws.com/`],
+  ])('rejects %s without reading it', async (_, data) => {
+    const { s3, send } = fakeS3({});
+    const messages: UnrecordedMessage[] = [
+      {
+        role: 'user',
+        content: 'x',
+        extraData: [
+          {
+            type: 'file',
+            name: 'a.pdf',
+            source: { type: 's3', mediaType: 'application/pdf', data },
+          },
+        ],
+      },
+    ];
+
+    await expect(resolveAttachments(messages, options(s3))).rejects.toEqual(
+      expect.objectContaining({ code: 'ATTACHMENT_NOT_FOUND' })
+    );
+    expect(send).not.toHaveBeenCalled();
   });
 });
 
