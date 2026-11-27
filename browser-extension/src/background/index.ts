@@ -16,6 +16,10 @@ store.subscribe(() => {
 const PROMPT_KEY = 'promptList';
 // Context menu for the whole page; its items are the prompts
 const PAGE_MENU_ID = 'page';
+// Context menu for a screenshot of the visible part of the tab
+const SCREEN_MENU_ID = 'screen';
+// Long enough for the chat panel to slide out before the screenshot
+const CHAT_CLOSE_WAIT_MS = 300;
 
 let prompts: SystemContext[] = [];
 
@@ -31,6 +35,11 @@ browser.tabs.onUpdated.addListener(async () => {
       title: 'このページをGenUで',
       contexts: ['page'],
     });
+    browser.contextMenus.create({
+      id: SCREEN_MENU_ID,
+      title: 'この画面をGenUで',
+      contexts: ['page'],
+    });
 
     browser.storage.local.get(PROMPT_KEY).then((value) => {
       prompts = value[PROMPT_KEY] ?? presetPrompts;
@@ -43,6 +52,12 @@ browser.tabs.onUpdated.addListener(async () => {
         browser.contextMenus.create({
           id: `${PAGE_MENU_ID}:${prompt.systemContextId}`,
           parentId: PAGE_MENU_ID,
+          title: prompt.systemContextTitle,
+          contexts: ['page'],
+        });
+        browser.contextMenus.create({
+          id: `${SCREEN_MENU_ID}:${prompt.systemContextId}`,
+          parentId: SCREEN_MENU_ID,
           title: prompt.systemContextTitle,
           contexts: ['page'],
         });
@@ -72,6 +87,26 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
     Browser.tabs.sendMessage(tab.id, {
       type: 'PAGE-CONTENT',
       systemContext: pagePrompt,
+    } as MessagePayload);
+    return;
+  }
+
+  // A prompt for a screenshot: close the chat so that it is not in the
+  // picture, take the visible part of the tab, then open the chat with it
+  const screenPrompt = prompts.find(
+    (p) => `${SCREEN_MENU_ID}:${p.systemContextId}` === info.menuItemId,
+  );
+  if (screenPrompt) {
+    await Browser.tabs.sendMessage(tab.id, { type: 'CHAT-CLOSE' } as MessagePayload);
+    await new Promise((resolve) => setTimeout(resolve, CHAT_CLOSE_WAIT_MS));
+    const image = await Browser.tabs.captureVisibleTab(tab.windowId, {
+      format: 'jpeg',
+      quality: 80,
+    });
+    Browser.tabs.sendMessage(tab.id, {
+      type: 'SCREENSHOT',
+      image,
+      systemContext: screenPrompt,
     } as MessagePayload);
     return;
   }

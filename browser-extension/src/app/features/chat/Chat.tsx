@@ -6,6 +6,7 @@ import { PromptSetting } from '../../../@types/settings';
 
 type Props = {
   initContent: string;
+  initImage?: string;
   initPromptSetting?: PromptSetting;
 };
 
@@ -23,6 +24,7 @@ const Chat: React.FC<Props> = (props) => {
       <InputContent
         className="fixed bottom-0 w-full"
         initContent={props.initContent}
+        initImage={props.initImage}
         initPromptSetting={props.initPromptSetting}
       />
     </div>

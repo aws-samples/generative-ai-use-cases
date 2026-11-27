@@ -25,6 +25,8 @@ const ChatPage: React.FC = () => {
   }, [hasConfiguredSettings]);
 
   const [content, setContent] = useState('');
+  // A screenshot to send with the message (data URL), '' for none
+  const [image, setImage] = useState('');
   const [promptSetting, setPromptSetting] = useState<PromptSetting>({
     systemContextId: '',
     systemContextTitle: '',
@@ -35,6 +37,9 @@ const ChatPage: React.FC = () => {
   Browser.runtime.onMessage.addListener((message: MessagePayload) => {
     if (message.type === 'CONTENT') {
       setContent(message.content);
+      setImage('');
+    } else if (message.type === 'IMAGE') {
+      setImage(message.image);
     } else if (message.type === 'SYSTEM-CONTEXT') {
       setPromptSetting(message.systemContext);
     }
@@ -45,6 +50,9 @@ const ChatPage: React.FC = () => {
     const message = event.data;
     if (message.type === 'CONTENT') {
       setContent(message.content);
+      setImage('');
+    } else if (message.type === 'IMAGE') {
+      setImage(message.image);
     } else if (message.type === 'SYSTEM-CONTEXT') {
       setPromptSetting(message.systemContext);
     }
@@ -90,7 +98,7 @@ const ChatPage: React.FC = () => {
         )}
         {!isOpenSettings && !isOpenPromptSettings && (
           <RequiresAuth>
-            <Chat initContent={content} initPromptSetting={promptSetting} />
+            <Chat initContent={content} initImage={image} initPromptSetting={promptSetting} />
           </RequiresAuth>
         )}
       </div>

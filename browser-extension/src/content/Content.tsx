@@ -10,12 +10,14 @@ const Content = () => {
   const [isOpenChat, setIsOpenChat] = useState(false);
   const iframe = useRef<null | HTMLIFrameElement>(null);
 
-  const openChat = (content: string, systemContext: SystemContext) => {
+  const openChat = (content: string, systemContext: SystemContext, image = '') => {
     setIsOpenChat(true);
     // Because Content can only use runtime messages, all TABs will receive a broadcast message (Content cannot use Browser.tabs)
     // If multiple screens are launched, all screens will be set to the value
     // Use the iframe message to send a message to a specific tab instead of the extension message
     iframe.current?.contentWindow?.postMessage({ type: 'CONTENT', content } as MessagePayload, '*');
+    // Before the prompt, so that a prompt that sends at once includes it
+    iframe.current?.contentWindow?.postMessage({ type: 'IMAGE', image } as MessagePayload, '*');
     iframe.current?.contentWindow?.postMessage(
       { type: 'SYSTEM-CONTEXT', systemContext } as MessagePayload,
       '*',
@@ -31,6 +33,8 @@ const Content = () => {
         setIsOpenChat(false);
       } else if (message.type === 'PAGE-CONTENT') {
         openChat(extractPageText(), message.systemContext);
+      } else if (message.type === 'SCREENSHOT') {
+        openChat(`# ${document.title}\n${location.href}`, message.systemContext, message.image);
       }
     };
     Browser.runtime.onMessage.addListener(listener);
