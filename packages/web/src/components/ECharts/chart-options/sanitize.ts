@@ -81,7 +81,15 @@ function sanitizeInternal(
   if (depth >= maxDepth) return undefined;
   if (typeof obj === 'function') return undefined;
   if (Array.isArray(obj))
-    return obj.map((item) => sanitizeInternal(item, maxDepth, depth + 1));
+    // Strings in arrays get the same check as object values (e.g. a list of
+    // symbols); an unsafe one becomes '' so the other items keep their index.
+    return obj.map((item) =>
+      typeof item === 'string'
+        ? isSafeStringValue(item)
+          ? item
+          : ''
+        : sanitizeInternal(item, maxDepth, depth + 1)
+    );
   if (isPlainObject(obj)) {
     const result: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {

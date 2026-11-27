@@ -3,10 +3,10 @@ import {
   PredictTitleRequest,
   UnrecordedMessage,
 } from 'generative-ai-use-cases';
-import { setChatTitle } from './repository';
+import { findChatById, setChatTitle } from './repository';
 import api from './utils/api';
 import { defaultModel } from './utils/models';
-import { getUserSub, sendText } from './utils/http';
+import { getUserSub, requireUserName, sendJson, sendText } from './utils/http';
 import { bedrockRequestMetadata } from './utils/requestMetadata';
 
 export const handler = async (
@@ -36,6 +36,18 @@ export const handler = async (
     throw new Error('Invalid request format');
   }
 
+  // The title is written to the caller's own chat, looked up by its id; the
+  // record key in the request is not used.
+  const chatId = req.chat.chatId?.startsWith('chat#')
+    ? req.chat.chatId.slice('chat#'.length)
+    : undefined;
+  const chat = chatId
+    ? await findChatById(requireUserName(request), chatId)
+    : null;
+  if (!chat) {
+    return sendJson(response, 403, { message: 'Forbidden' });
+  }
+
   // Use the lightweight default model for title generation
   const model = defaultModel;
 
@@ -62,12 +74,7 @@ export const handler = async (
     ? outputMatch[1].trim()
     : rawTitle.replace(/<([^>]+)>[\s\S]*?<\/\1>/g, '').trim();
 
-  await setChatTitle(
-    req.chat.id,
-    req.chat.createdDate,
-    title,
-    req.chat.usecase
-  );
+  await setChatTitle(chat.id, chat.createdDate, title, req.chat.usecase);
 
   return sendText(response, 200, title);
 };

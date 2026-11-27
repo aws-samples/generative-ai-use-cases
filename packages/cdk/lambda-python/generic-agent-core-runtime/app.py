@@ -1,5 +1,6 @@
 """Main FastAPI application for Generic AgentCore Runtime."""
 
+import asyncio
 import json
 import logging
 import traceback
@@ -8,6 +9,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse
 
 from src.agent import AgentManager
+from src.user_files import RuntimeConfigUnavailable, runtime_config, verified_user_sub
 from src.utils import clean_ws_directory, create_error_response, create_ws_directory
 
 # Configure root logger
@@ -78,6 +80,22 @@ async def invocations(request: Request):
         if not prompt and not messages:
             return create_error_response("Either prompt or messages is required")
 
+        # The caller, from their id token. Output files are stored under it.
+        # Without a runtime config (local testing) uploads are skipped instead.
+        # The shared workspace is left alone on these early returns: other
+        # requests in this container may be using it.
+        try:
+            # SSM and JWKS reads are blocking calls; keep them off the event loop
+            # so other requests in this container are not stalled.
+            config = await asyncio.to_thread(runtime_config)
+        except RuntimeConfigUnavailable:
+            return create_error_response("The runtime is not configured yet. Please try again later.")
+        user_sub = None
+        if config:
+            user_sub = await asyncio.to_thread(verified_user_sub, request_data.get("id_token"), config.get("userPoolId"), config.get("userPoolClientId"))
+            if user_sub is None:
+                return create_error_response("Unauthorized")
+
         # Stream response
         async def generate():
             try:
@@ -92,6 +110,8 @@ async def invocations(request: Request):
                     agent_id=agent_id,
                     code_execution_enabled=code_execution_enabled,
                     web_search_enabled=web_search_enabled,
+                    user_sub=user_sub,
+                    file_config=config,
                 ):
                     yield chunk
             finally:

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import useFileApi from './useFileApi';
+import useFileApi, { FileScope } from './useFileApi';
 import { FileLimit, UploadedFileType } from 'generative-ai-use-cases';
 import { produce } from 'immer';
 import { useCallback } from 'react';
@@ -40,7 +40,8 @@ const useFilesState = create<{
   base64Cache: Record<string, string>;
   getFileDownloadSignedUrl: (
     s3Url: string,
-    cacheBase64?: boolean
+    cacheBase64?: boolean,
+    scope?: FileScope
   ) => Promise<string>;
 }>((set, get) => {
   const api = useFileApi();
@@ -430,13 +431,10 @@ const useFilesState = create<{
 
     let targetIndex = findTargetIndex();
     if (targetIndex > -1) {
-      // "https://BUCKET_NAME.s3.REGION.amazonaws.com/FILENAME" format is set
-      const result = /https:\/\/.+\/(?<fileName>.+)/.exec(
-        get().uploadedFilesDict[id][targetIndex].s3Url ?? ''
-      );
-      const fileName = result?.groups?.fileName;
+      // "https://BUCKET_NAME.s3.REGION.amazonaws.com/<key>" format is set
+      const s3Url = get().uploadedFilesDict[id][targetIndex].s3Url ?? '';
 
-      if (fileName) {
+      if (api.isUserFileUrl(s3Url)) {
         // Set deleting state
         set(
           produce((state) => {
@@ -444,7 +442,7 @@ const useFilesState = create<{
           })
         );
 
-        await api.deleteUploadedFile(fileName);
+        await api.deleteUploadedFile(s3Url);
 
         // If other images are deleted during deletion processing, the index shifts, so get it again
         targetIndex = findTargetIndex();
@@ -466,9 +464,10 @@ const useFilesState = create<{
   // Move getFileDownloadSignedUrl to useFileApi and add Base64 cache functionality
   const getFileDownloadSignedUrl = async (
     s3Url: string,
-    cacheBase64?: boolean
+    cacheBase64?: boolean,
+    scope?: FileScope
   ) => {
-    const url = await api.getFileDownloadSignedUrl(s3Url);
+    const url = await api.getFileDownloadSignedUrl(s3Url, scope);
 
     // If Base64 cache is requested
     if (cacheBase64) {

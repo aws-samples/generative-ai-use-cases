@@ -12,6 +12,7 @@ dependencies = [
   "uvicorn",
   "pydantic",
   "aws-opentelemetry-distro>=0.10.1",
+  "pyjwt[crypto]",
 ]
 
 [tool.uv]
@@ -25,7 +26,7 @@ constraint-dependencies = [
   "cryptography>=50.0.0",
   "mcp>=1.30.0,<2",
   "multidict>=6.9.1",
-  "opentelemetry-api>=1.45.1",
+  "opentelemetry-api>=1.45.2",
   "opentelemetry-propagator-jaeger>=1.45.0",
   "pillow>=13.0.0",
   "python-multipart>=0.0.26",

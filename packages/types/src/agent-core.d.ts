@@ -12,6 +12,8 @@ export type AgentCoreRequest = StrandsRequest & {
   mcp_servers?: string[]; // Changed to string array
   session_id?: string;
   code_execution_enabled?: boolean;
+  // The caller's Cognito id token. The runtime stores output files under its user.
+  id_token?: string;
 };
 
 export type AgentCoreStreamResponse = StrandsStreamEvent;

@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import ButtonCopy from '../ButtonCopy';
 import Button from '../Button';
 import Textarea from '../Textarea';
+import { svgToDataUrl } from '../../utils/svgDataUrl';
 
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -17,7 +18,21 @@ import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 // Initialize mermaid with default config
 const defaultMermaidConfig: MermaidConfig = {
   suppressErrorRendering: true,
-  securityLevel: 'loose',
+  // Diagrams come from model output, which other content can steer: HTML in
+  // labels is encoded and click handlers are disabled.
+  securityLevel: 'strict',
+  // Settings a diagram's own frontmatter or %%{init}%% may not change. The
+  // first six are mermaid's defaults; themeCSS would let a diagram bring its
+  // own stylesheet.
+  secure: [
+    'secure',
+    'securityLevel',
+    'startOnLoad',
+    'maxTextSize',
+    'suppressErrorRendering',
+    'maxEdges',
+    'themeCSS',
+  ],
   fontFamily: 'monospace',
   fontSize: 16,
   htmlLabels: true,
@@ -33,27 +48,26 @@ interface MermaidProps {
 const Mermaid: React.FC<MermaidProps> = (props) => {
   const { t } = useTranslation();
   const { code } = props;
-  const [svgContent, setSvgContent] = useState<string>('');
+  const [src, setSrc] = useState<string | null>(null);
+  const [invalid, setInvalid] = useState(false);
 
   const render = useCallback(async () => {
     if (code) {
       try {
         const { svg } = await mermaid.render(`m${uuidv4()}`, code);
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(svg, 'image/svg+xml');
-        const svgElement = doc.querySelector('svg');
-
-        if (svgElement) {
-          svgElement.setAttribute('width', '100%');
-          svgElement.setAttribute('height', '100%');
-          setSvgContent(svgElement.outerHTML);
+        // Shown as an image, not inserted into the page (see svgToDataUrl)
+        const dataUrl = svgToDataUrl(svg);
+        if (dataUrl) {
+          setSrc(dataUrl);
+          setInvalid(false);
         }
       } catch (error) {
         console.error(error);
-        setSvgContent(`<div>${t('diagram.invalid_syntax')}</div>`);
+        setSrc(null);
+        setInvalid(true);
       }
     }
-  }, [code, t]);
+  }, [code]);
 
   useEffect(() => {
     render();
@@ -63,10 +77,13 @@ const Mermaid: React.FC<MermaidProps> = (props) => {
     <div
       onClick={props.handler}
       className="flex h-full w-full cursor-pointer content-center items-center justify-center rounded-lg bg-white p-8 duration-700">
-      <div
-        className="flex h-full w-full items-center justify-center"
-        dangerouslySetInnerHTML={{ __html: svgContent }}
-      />
+      <div className="flex h-full w-full items-center justify-center">
+        {invalid ? (
+          <div>{t('diagram.invalid_syntax')}</div>
+        ) : (
+          src && <img src={src} alt="" className="h-full w-full" />
+        )}
+      </div>
     </div>
   ) : null;
 };

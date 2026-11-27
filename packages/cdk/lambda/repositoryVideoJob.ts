@@ -22,6 +22,7 @@ import {
   InvocationType,
 } from '@aws-sdk/client-lambda';
 import { initBedrockRuntimeClient } from './utils/bedrockClient';
+import { videoOutputKey } from '@generative-ai-use-cases/common';
 
 const BUCKET_NAME: string = process.env.BUCKET_NAME!;
 const TABLE_NAME: string = process.env.TABLE_NAME!;
@@ -30,31 +31,61 @@ const dynamoDb = new DynamoDBClient({});
 const dynamoDbDocument = DynamoDBDocumentClient.from(dynamoDb);
 const lambda = new LambdaClient({});
 
+/** Where a finished video is kept: under the owner's file prefix (their sub). */
+export const videoOutputUri = (ownerSub: string, jobId: string): string =>
+  `s3://${BUCKET_NAME}/${videoOutputKey(ownerSub, jobId)}`;
+
+// The generation parameters kept on a job item, shown in the video job list.
+const VIDEO_JOB_PARAM_KEYS = [
+  'taskType',
+  'prompt',
+  'durationSeconds',
+  'dimension',
+  'fps',
+  'seed',
+  'resolution',
+  'aspectRatio',
+  'loop',
+] as const;
+
+/** The known scalar generation parameters of a request; anything else is dropped. */
+export const videoJobParams = (
+  params: unknown
+): Partial<Record<(typeof VIDEO_JOB_PARAM_KEYS)[number], unknown>> => {
+  if (!params || typeof params !== 'object') return {};
+  const source = params as Record<string, unknown>;
+  const kept: Partial<Record<(typeof VIDEO_JOB_PARAM_KEYS)[number], unknown>> =
+    {};
+  for (const key of VIDEO_JOB_PARAM_KEYS) {
+    const value = source[key];
+    if (['string', 'number', 'boolean'].includes(typeof value)) {
+      kept[key] = value;
+    }
+  }
+  return kept;
+};
+
 export const createJob = async (
   _userId: string,
+  ownerSub: string,
   invocationArn: string,
   req: GenerateVideoRequest
 ) => {
   const userId = `videoJob#${_userId}`;
   const jobId = invocationArn.split('/').slice(-1)[0];
 
-  const params = req.params;
-
-  // Do not save the information of the first frame image of Nova Reel in params
-  if (params.images && params.images.length > 0) {
-    params.images = [];
-  }
-
+  // The job's own fields come last so that nothing in the request can replace
+  // them; the first frame image of Nova Reel is not kept.
   const item = {
+    ...videoJobParams(req.params),
     id: userId,
     createdDate: `${Date.now()}`,
     jobId,
     invocationArn,
     status: 'InProgress',
-    output: `s3://${BUCKET_NAME}/${jobId}/output.mp4`,
+    output: videoOutputUri(ownerSub, jobId),
     modelId: req.model!.modelId,
     region: req.model!.region,
-    ...params,
   };
 
   await dynamoDbDocument.send(

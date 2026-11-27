@@ -20,8 +20,10 @@ import {
   UnrecordedMessage,
   BraveSearchResult,
 } from 'generative-ai-use-cases';
+import { agentOutputKey } from '@generative-ai-use-cases/common';
 import { streamingChunk } from './streamingChunk';
 import { classifyStreamingError } from './streamingError';
+import { verifyToken } from './auth';
 import { createUniqueDocumentNamer } from './fileNameUtils';
 import {
   initBedrockAgentClient,
@@ -78,10 +80,14 @@ const convertS3UriToUrl = (s3Uri: string, region: string): string => {
   return '';
 };
 
-// Encode a string to URL
+// Encode a string to URL. encodeURIComponent leaves !'()* as is; they are
+// encoded too so a Markdown link and the API's URL parser read the whole key.
 const encodeUrlString = (str: string): string => {
   try {
-    return encodeURIComponent(str);
+    return encodeURIComponent(str).replace(
+      /[!'()*]/g,
+      (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`
+    );
   } catch (e) {
     console.error('Failed to URL-encode string:', e);
     return str;
@@ -125,8 +131,20 @@ const bedrockAgentApi: ApiInterface = {
   invoke: async () => {
     throw new Error('Not Implemented');
   },
-  invokeStream: async function* (model: Model, messages: UnrecordedMessage[]) {
+  invokeStream: async function* (
+    model: Model,
+    messages: UnrecordedMessage[],
+    _id: string,
+    idToken?: string
+  ) {
     try {
+      // Files the agent returns are saved under the caller's prefix, so the
+      // caller has to be known before the agent runs.
+      const userSub = (await verifyToken(idToken ?? ''))?.sub;
+      if (!userSub) {
+        throw new Error('Invalid id token');
+      }
+
       // Get Agent
       if (!agentMap[model.modelId]) {
         throw new Error('Agent not found');
@@ -257,9 +275,8 @@ const bedrockAgentApi: ApiInterface = {
             existingFiles.add(file.name || '');
 
             // Upload the file to S3
-            const uuid = uuidv4();
             const bucket = process.env.BUCKET_NAME;
-            const key = `${uuid}/${file.name}`;
+            const key = agentOutputKey(userSub, uuidv4(), file.name || 'file');
             const command = new PutObjectCommand({
               Bucket: bucket,
               Key: key,

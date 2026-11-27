@@ -15,6 +15,8 @@ process.env.TABLE_NAME = 'test-table';
 process.env.STATS_TABLE_NAME = 'test-stats-table';
 
 import {
+  createShareId,
+  deleteShareId,
   findChatById,
   findSystemContextById,
   listMessages,
@@ -114,6 +116,137 @@ describe('findSystemContextById', () => {
     await findSystemContextById('user-1', 'sc-1');
 
     expect(mockSend.mock.calls[0][0].input.ScanIndexForward).toBe(false);
+  });
+});
+
+describe('chat share links', () => {
+  // An in-memory table answering the Query and TransactWrite calls the share
+  // functions make.
+  type Item = Record<string, string>;
+  let table: Item[];
+
+  const useTable = () => {
+    mockSend.mockImplementation(async (command) => {
+      const name = command.constructor.name;
+      const input = command.input;
+      if (name === 'QueryCommand') {
+        const id = input.ExpressionAttributeValues[':id'];
+        return { Items: table.filter((item) => item.id === id) };
+      }
+      if (name === 'TransactWriteCommand') {
+        for (const op of input.TransactItems) {
+          if (op.Put) table.push(op.Put.Item);
+          if (op.Delete) {
+            const { id, createdDate } = op.Delete.Key;
+            table = table.filter(
+              (item) => !(item.id === id && item.createdDate === createdDate)
+            );
+          }
+        }
+        return {};
+      }
+      if (name === 'UpdateCommand') {
+        const { id, createdDate } = input.Key;
+        const item = table.find(
+          (row) => row.id === id && row.createdDate === createdDate
+        );
+        if (item) item.ownerSub = input.ExpressionAttributeValues[':ownerSub'];
+        return {};
+      }
+      throw new Error(`unexpected command ${name}`);
+    });
+  };
+
+  beforeEach(() => {
+    table = [];
+    useTable();
+  });
+
+  it('returns the existing link when a chat is shared again', async () => {
+    const first = await createShareId('alice', 'c1', 'alice-sub');
+    const second = await createShareId('alice', 'c1', 'alice-sub');
+
+    expect(second.shareId.shareId).toBe(first.shareId.shareId);
+    expect(table.filter((item) => item.id.startsWith('share#'))).toHaveLength(
+      1
+    );
+    expect(first.userIdAndChatId.ownerSub).toBe('alice-sub');
+  });
+
+  it('records the owner sub on a link created before it was kept', async () => {
+    table = [
+      { id: 'user#alice_chat#c1', createdDate: '1', shareId: 'share#old' },
+      {
+        id: 'share#old',
+        createdDate: '1',
+        userId: 'user#alice',
+        chatId: 'chat#c1',
+      },
+    ];
+
+    const share = await createShareId('alice', 'c1', 'alice-sub');
+
+    expect(share.shareId.shareId).toBe('share#old');
+    expect(share.userIdAndChatId.ownerSub).toBe('alice-sub');
+    expect(table.find((item) => item.id === 'share#old')?.ownerSub).toBe(
+      'alice-sub'
+    );
+  });
+
+  it('revokes every link of the chat, including ones made before', async () => {
+    // Two links left by an older version that created one per share
+    table = [
+      { id: 'user#alice_chat#c1', createdDate: '1', shareId: 'share#old' },
+      {
+        id: 'share#old',
+        createdDate: '1',
+        userId: 'user#alice',
+        chatId: 'chat#c1',
+      },
+      { id: 'user#alice_chat#c1', createdDate: '2', shareId: 'share#new' },
+      {
+        id: 'share#new',
+        createdDate: '2',
+        userId: 'user#alice',
+        chatId: 'chat#c1',
+      },
+      // Another chat's link stays
+      { id: 'user#alice_chat#c2', createdDate: '3', shareId: 'share#other' },
+      {
+        id: 'share#other',
+        createdDate: '3',
+        userId: 'user#alice',
+        chatId: 'chat#c2',
+      },
+    ];
+
+    await deleteShareId('new');
+
+    expect(table.map((item) => item.id).sort()).toEqual([
+      'share#other',
+      'user#alice_chat#c2',
+    ]);
+  });
+
+  it('removes a pointer that has no share id', async () => {
+    table = [
+      { id: 'user#alice_chat#c1', createdDate: '1' },
+      { id: 'user#alice_chat#c1', createdDate: '2', shareId: 'share#new' },
+      {
+        id: 'share#new',
+        createdDate: '2',
+        userId: 'user#alice',
+        chatId: 'chat#c1',
+      },
+    ];
+
+    await deleteShareId('new');
+
+    expect(table).toEqual([]);
+  });
+
+  it('does nothing for a link that does not exist', async () => {
+    await expect(deleteShareId('missing')).resolves.toBeUndefined();
   });
 });
 

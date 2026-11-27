@@ -80,6 +80,24 @@ const queryFirstMatch = async <T>(
   return null;
 };
 
+/** Run a Query and return every item, following LastEvaluatedKey. */
+const queryAllItems = async <T>(
+  input: Omit<QueryCommandInput, 'ExclusiveStartKey'>
+): Promise<T[]> => {
+  const items: T[] = [];
+  let exclusiveStartKey: QueryCommandInput['ExclusiveStartKey'] = undefined;
+
+  do {
+    const res: QueryCommandOutput = await dynamoDbDocument.send(
+      new QueryCommand({ ...input, ExclusiveStartKey: exclusiveStartKey })
+    );
+    items.push(...((res.Items ?? []) as T[]));
+    exclusiveStartKey = res.LastEvaluatedKey;
+  } while (exclusiveStartKey);
+
+  return items;
+};
+
 export const findChatById = async (
   _userId: string,
   _chatId: string
@@ -589,13 +607,47 @@ export const deleteSystemContext = async (
 
 export const createShareId = async (
   _userId: string,
-  _chatId: string
+  _chatId: string,
+  // The owner's Cognito sub: files are read through the link by it.
+  ownerSub: string
 ): Promise<{
   shareId: ShareId;
   userIdAndChatId: UserIdAndChatId;
 }> => {
   const userId = `user#${_userId}`;
   const chatId = `chat#${_chatId}`;
+
+  // A chat has at most one link: sharing it again returns the existing one,
+  // so revoking the link the user sees revokes access to the chat.
+  const existing = await findShareId(_userId, _chatId);
+  if (existing) {
+    const existingTarget = await findUserIdAndChatId(
+      existing.shareId.split('#').slice(1).join('#')
+    );
+    if (existingTarget) {
+      // A link created before ownerSub was recorded gets it now, from the
+      // owner's own request, so its files open through the link again.
+      if (existingTarget.ownerSub !== ownerSub) {
+        await dynamoDbDocument.send(
+          new UpdateCommand({
+            TableName: TABLE_NAME,
+            Key: {
+              id: existingTarget.id,
+              createdDate: existingTarget.createdDate,
+            },
+            UpdateExpression: 'set #ownerSub = :ownerSub',
+            ExpressionAttributeNames: { '#ownerSub': 'ownerSub' },
+            ExpressionAttributeValues: { ':ownerSub': ownerSub },
+          })
+        );
+      }
+      return {
+        shareId: existing,
+        userIdAndChatId: { ...existingTarget, ownerSub },
+      };
+    }
+  }
+
   const createdDate = `${Date.now()}`;
   const shareId = `share#${crypto.randomUUID()}`;
 
@@ -610,6 +662,7 @@ export const createShareId = async (
     createdDate,
     userId,
     chatId,
+    ownerSub,
   };
 
   await dynamoDbDocument.send(
@@ -687,39 +740,50 @@ export const findShareId = async (
   }
 };
 
+/**
+ * Revokes every link of the chat the share belongs to, not only `_shareId`.
+ * Older versions created a new link each time a chat was shared, and only
+ * one of them is shown to the user, so the others must go with it.
+ */
 export const deleteShareId = async (_shareId: string): Promise<void> => {
   const userIdAndChatId = await findUserIdAndChatId(_shareId);
-  const share = await findShareId(
-    // SAML authentication includes # in userId
-    // Example: user#EntraID_hogehoge.com#EXT#@hogehoge.onmicrosoft.com
-    userIdAndChatId!.userId.split('#').slice(1).join('#'),
-    userIdAndChatId!.chatId.split('#')[1]
-  );
+  if (!userIdAndChatId) return;
 
-  await dynamoDbDocument.send(
-    new TransactWriteCommand({
-      TransactItems: [
-        {
-          Delete: {
-            TableName: TABLE_NAME,
-            Key: {
-              id: share!.id,
-              createdDate: share!.createdDate,
-            },
-          },
-        },
-        {
-          Delete: {
-            TableName: TABLE_NAME,
-            Key: {
-              id: userIdAndChatId!.id,
-              createdDate: userIdAndChatId!.createdDate,
-            },
-          },
-        },
-      ],
-    })
-  );
+  const pointers = await queryAllItems<ShareId>({
+    TableName: TABLE_NAME,
+    KeyConditionExpression: '#id = :id',
+    ExpressionAttributeNames: { '#id': 'id' },
+    ExpressionAttributeValues: {
+      ':id': `${userIdAndChatId.userId}_${userIdAndChatId.chatId}`,
+    },
+  });
+
+  const keys = new Map<string, { id: string; createdDate: string }>();
+  const addKey = (id: string, createdDate: string) =>
+    keys.set(`${id}\u0000${createdDate}`, { id, createdDate });
+
+  addKey(userIdAndChatId.id, userIdAndChatId.createdDate);
+  for (const pointer of pointers) {
+    addKey(pointer.id, pointer.createdDate);
+    // A pointer without a share id has nothing more to revoke
+    if (!pointer.shareId?.startsWith('share#')) continue;
+    const target = await findUserIdAndChatId(
+      pointer.shareId.slice('share#'.length)
+    );
+    if (target) addKey(target.id, target.createdDate);
+  }
+
+  // TransactWriteItems takes at most 100 items.
+  const allKeys = [...keys.values()];
+  for (let i = 0; i < allKeys.length; i += 100) {
+    await dynamoDbDocument.send(
+      new TransactWriteCommand({
+        TransactItems: allKeys.slice(i, i + 100).map((Key) => ({
+          Delete: { TableName: TABLE_NAME, Key },
+        })),
+      })
+    );
+  }
 };
 
 export const aggregateTokenUsage = async (

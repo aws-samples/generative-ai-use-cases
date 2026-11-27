@@ -37,6 +37,7 @@ auth:
   title: Generative AI Use Cases on AWS
 chat:
   advanced_options: ตัวเลือกขั้นสูง
+  continue_output: ดำเนินการต่อ
   create_link: สร้างลิงก์
   create_link_message: การสร้างลิงก์จะแชร์ประวัติการสนทนากับผู้ใช้ทุกคนที่สามารถเข้าสู่ระบบแอปพลิเคชันนี้ได้
   create_system_prompt: สร้าง System Prompt

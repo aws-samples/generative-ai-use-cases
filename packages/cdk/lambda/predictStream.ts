@@ -1,8 +1,10 @@
 import { Handler, Context } from 'aws-lambda';
 import { PredictRequest } from 'generative-ai-use-cases';
+import { canAccessFile, fileBucketKey } from '@generative-ai-use-cases/common';
 import api from './utils/api';
 import { defaultModel } from './utils/models';
 import { verifyToken } from './utils/auth';
+import { streamingChunk } from './utils/streamingChunk';
 import { bedrockRequestMetadata } from './utils/requestMetadata';
 import { AttachmentError, resolveAttachments } from './utils/attachments';
 import { streamingChunk } from './utils/streamingChunk';
@@ -19,9 +21,45 @@ declare global {
   }
 }
 
+/**
+ * Bedrock reads S3 references (videos) with this function's role, so each one
+ * must be one of the caller's own files in the file bucket.
+ */
+export const s3ReferencesAllowed = async (
+  event: PredictRequest
+): Promise<boolean> => {
+  const bucket = process.env.BUCKET_NAME!;
+  const urls = (event.messages ?? []).flatMap((message) =>
+    (message.extraData ?? [])
+      .filter((extra) => extra?.source?.type === 's3')
+      .map((extra) => extra.source.data ?? '')
+  );
+  if (urls.length === 0) return true;
+
+  const caller = (await verifyToken(event.idToken ?? ''))?.sub;
+  if (!caller) return false;
+  return urls.every((url) => {
+    const key = fileBucketKey(url, bucket);
+    return key !== null && canAccessFile({ caller, key });
+  });
+};
+
 export const handler = awslambda.streamifyResponse(
   async (event, responseStream, context) => {
     context.callbackWaitsForEmptyEventLoop = false;
+
+    if (!(await s3ReferencesAllowed(event))) {
+      responseStream.write(
+        streamingChunk({
+          text: '',
+          stopReason: 'error',
+          errorCode: 'ACCESS_DENIED',
+        })
+      );
+      responseStream.end();
+      return;
+    }
+
     const model = event.model || defaultModel;
     // This Lambda is invoked directly, so the user comes from the verified
     // id token; an unverifiable token only leaves the user out of the tags.
