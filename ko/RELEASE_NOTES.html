@@ -1,0 +1,2315 @@
+
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://aws-samples.github.io/generative-ai-use-cases/ko/RELEASE_NOTES.html">
+      
+      
+        <link rel="prev" href="UPDATE.html">
+      
+      
+        <link rel="next" href="DEVELOPMENT.html">
+      
+      
+        
+          <link rel="alternate" href="../en/RELEASE_NOTES.html" hreflang="en">
+        
+          <link rel="alternate" href="../ja/RELEASE_NOTES.html" hreflang="ja">
+        
+          <link rel="alternate" href="RELEASE_NOTES.html" hreflang="ko">
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>릴리스 노트 - Generative AI Use Cases (GenU)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/custom/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website" />
+<meta property="og:title" content="릴리스 노트 - Generative AI Use Cases (GenU)" />
+<meta property="og:image" content="https://aws-samples.github.io/generative-ai-use-cases/assets/images/social/ko/RELEASE_NOTES.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://aws-samples.github.io/generative-ai-use-cases/ko/RELEASE_NOTES.html" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" content="릴리스 노트 - Generative AI Use Cases (GenU)" />
+<meta property="twitter:image" content="https://aws-samples.github.io/generative-ai-use-cases/assets/images/social/ko/RELEASE_NOTES.png" />
+</head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#release-notes" class="md-skip">
+          콘텐츠로 이동
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="상단/헤더">
+    <a href="index.html" title="Generative AI Use Cases (GenU)" class="md-header__button md-logo" aria-label="Generative AI Use Cases (GenU)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Generative AI Use Cases (GenU)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              릴리스 노트
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="언어설정">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../en/RELEASE_NOTES.html" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../ja/RELEASE_NOTES.html" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="RELEASE_NOTES.html" hreflang="ko" class="md-select__link">
+              한국어
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="검색" placeholder="검색" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="검색">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="공유" aria-label="공유" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="지우기" aria-label="지우기" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            검색 초기화
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aws-samples/generative-ai-use-cases" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/generative-ai-use-cases
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="탭" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  개요
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="CHART_TOOL.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="ABOUT.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="네비게이션" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="Generative AI Use Cases (GenU)" class="md-nav__button md-logo" aria-label="Generative AI Use Cases (GenU)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Generative AI Use Cases (GenU)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aws-samples/generative-ai-use-cases" title="저장소로 이동" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/generative-ai-use-cases
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    개요
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Features
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Features
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="CHART_TOOL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chart Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    배포
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    배포
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ABOUT.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEPLOY_ON_CLOUDSHELL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (선택사항) AWS CloudShell로 배포하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEPLOY_OPTION.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    배포 옵션
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    인증
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    인증
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="SAML_WITH_GOOGLE_WORKSPACE.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Google Workspace로 인증하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="SAML_WITH_ENTRA_ID.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microsoft Entra ID로 인증하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    브라우저 확장 프로그램
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    브라우저 확장 프로그램
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    개요
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_BUILD.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    빌드
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_INSTALL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    설치
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_SAML.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAML 인증
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    기타
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    기타
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="UPDATE.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    업데이트
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    릴리스 노트
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="RELEASE_NOTES.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    릴리스 노트
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v560-2026-11-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.6.0 (2026-11-27)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.6.0 (2026-11-27)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-you-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you update
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v550-2026-07-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.5.0 (2026-07-19)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.5.0 (2026-07-19)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v540-2026-01-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.4.0 (2026-01-13)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.4.0 (2026-01-13)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v530-2025-10-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.3.0 (2025-10-27)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.3.0 (2025-10-27)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v520-2025-10-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.2.0 (2025-10-15)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.2.0 (2025-10-15)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v510---v512-2025-08-29---2025-09-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.1.0 - v5.1.2 (2025-08-29 - 2025-09-11)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.1.0 - v5.1.2 (2025-08-29 - 2025-09-11)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-you-update_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you update
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v500---v501-2025-08-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.0.0 - v5.0.1 (2025-08-26)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.0.0 - v5.0.1 (2025-08-26)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-you-update_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you update
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEVELOPMENT.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    로컬 개발 환경
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DESTROY.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    리소스 삭제
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DESTROY_ON_CLOUDSHELL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (선택사항) AWS CloudShell로 리소스 삭제하기
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="PWA.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    네이티브 앱처럼 사용하는 방법
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="목차">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      목차
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v560-2026-11-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.6.0 (2026-11-27)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.6.0 (2026-11-27)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-you-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you update
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixes
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v550-2026-07-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.5.0 (2026-07-19)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.5.0 (2026-07-19)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v540-2026-01-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.4.0 (2026-01-13)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.4.0 (2026-01-13)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v530-2025-10-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.3.0 (2025-10-27)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.3.0 (2025-10-27)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v520-2025-10-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.2.0 (2025-10-15)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.2.0 (2025-10-15)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v510---v512-2025-08-29---2025-09-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.1.0 - v5.1.2 (2025-08-29 - 2025-09-11)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.1.0 - v5.1.2 (2025-08-29 - 2025-09-11)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-you-update_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you update
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v500---v501-2025-08-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.0.0 - v5.0.1 (2025-08-26)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.0.0 - v5.0.1 (2025-08-26)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#highlights_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Highlights
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#for-administrators_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For administrators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#before-you-update_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Before you update
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/aws-samples/generative-ai-use-cases/blob/main/docs/en/RELEASE_NOTES.md" title="이 페이지를 편집" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/aws-samples/generative-ai-use-cases/raw/main/docs/en/RELEASE_NOTES.md" title="페이지소스 보기" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="release-notes">Release Notes<a class="headerlink" href="#release-notes" title="Permanent link">&para;</a></h1>
+<!-- The Highlights section of each release is also shown on the settings page of the app. Write it for the people who use GenU, and only include changes they notice when they use the app. Put changes for administrators (deployment settings, infrastructure, operations) under "For administrators" or "Before you update". -->
+
+<p>This page summarizes each GenU release. The full list of changes for each release is on the <a href="https://github.com/aws-samples/generative-ai-use-cases/releases">Releases page</a>.</p>
+<p>GenU is deployed and updated from release tags (see <a href="UPDATE.html">Update Method</a>). Before updating, read every release between your current version and the new one, especially the <strong>Before you update</strong> sections.</p>
+<h2 id="v560-2026-11-27">v5.6.0 (2026-11-27)<a class="headerlink" href="#v560-2026-11-27" title="Permanent link">&para;</a></h2>
+<h3 id="highlights">Highlights<a class="headerlink" href="#highlights" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chat</strong>: the model selector moved into the input toolbar, chat history is grouped by date, the selected model and reasoning settings are kept across reloads, Markdown tables can be copied for pasting into spreadsheets, <code>&lt;br&gt;</code> in a table cell breaks the line, the chat model knows today's date, and leaving the page with an unsent message asks for confirmation. A response that stops at the output limit can be continued with "Continue output". (#1788, #1781, #1787, #1782, #1786, #1783, #1784, #1863)</li>
+<li><strong>Attachments</strong>: the files attached in a chat are read from S3 on the server instead of being sent from the browser, so a chat can hold about 22 MB of attachments in total (about 4.5 MB before), and a PDF can be up to 20 MB. (#1865)</li>
+<li><strong>System prompt</strong>: each user chooses the system prompt their new chats start with, edits to the system prompt apply right away, and the chat model is told what the chat screen can render. (#1848, #1844)</li>
+<li><strong>Sidebar and settings</strong>: the sidebar can be collapsed to icons and resized, and each user chooses the use cases it shows (favorites). The settings page has General, Usage, Account and System tabs; the Usage tab shows each user's own token usage and cost, and the System tab shows these release notes. (#1830, #1831)</li>
+<li><strong>Speech</strong>: voice and language selection in Voice Chat, a choice of languages for automatic language detection in speech recognition (Settings), and Amazon Nova 2.5 Sonic for Voice Chat. (#1727, #1779, #1726)</li>
+<li><strong>Agent Builder</strong>: agent definitions can be shared as JSON files, and AgentCore Web Search can be added as a tool. (#1689, #1673)</li>
+<li><strong>AgentCore</strong>: the code interpreter works on the files attached to the chat and hands its output files back, answers can be as long as on the Converse path, and the thinking trace of Claude Opus 4.7 and later is shown. (#1767, #1768, #1772)</li>
+<li><strong>Browser extension</strong>: answers are shown as Markdown with a copy button, and the context menu can send the text of the whole page. (#1852, #1854, #1853)</li>
+<li><strong>Files in earlier chats</strong>: attachments, images, generated videos and agent output files saved before this release open again only after the administrator moves them (see Before you update). Diagrams are shown as images.</li>
+<li><strong>New models</strong> (available when the administrator enables them): Claude Opus 5, Claude Fable 5, Claude Opus 5.5, Claude Sonnet 5.5, Claude Haiku 5.5, Claude Fable 5.1 / 5.2, OpenAI GPT-6 / GPT-6.1 / GPT-6.2 Sol / GPT-6.2 Astra / GPT-5.4 / GPT-5.5 / GPT-5.6, Moonshot AI Kimi K3 / K3.1 / K2.5, Grok 4.6 / 4.7, GLM 5, DeepSeek V3.2, MiniMax M2.5, NVIDIA Nemotron 3 Super 120B, Qwen3 Coder Next, Palmyra Vision 7B. (#1652, #1646, #1707, #1712, #1724, #1709, #1755, #1704, #1795, #1832)</li>
+</ul>
+<h3 id="for-administrators">For administrators<a class="headerlink" href="#for-administrators" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Knowledge Base: S3 Vectors can be used as a lower-cost vector store, and guardrails also check RAG chat answers. (#1471, #1649)</li>
+<li>An admin page shows every user's token usage and estimated cost, with filters by user and period and a CSV download. Bedrock calls are tagged with the user and the use case, so usage can also be analyzed in the model invocation logs. (#1827)</li>
+<li>Administrators are told in the System tab of the settings page when a newer release is available.</li>
+<li>Closed network mode runs AgentCore inside the closed VPC, creates only the VPC endpoints for the features in use, and warns at deploy time about settings that do not work in a closed network. (#1814, #1761, #1723)</li>
+<li>Deployments warn about models that Bedrock no longer offers or will retire. (#1832)</li>
+<li>The deployment and update guides use release tags, and an agent skill helps merge a new release into a customized deployment. (#1766, #1777)</li>
+<li>A custom domain can be set at the zone apex, without <code>hostName</code>. (#1834)</li>
+<li><code>allowedDevOrigins</code> lets a frontend running on your machine call the deployed API. (#1808)</li>
+</ul>
+<h3 id="before-you-update">Before you update<a class="headerlink" href="#before-you-update" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Knowledge Base Web Crawler data source removed</strong>: Bedrock no longer allows new Web Crawler connectors on customer-managed knowledge bases. Updating deletes the existing <code>web-crawler-data-source</code> and the documents it ingested. Documents from the S3 data source are not affected. (#1747)</li>
+<li><strong>Default image and video models</strong>: Nova Canvas and Nova Reel reached end of life. The default image model is now Stable Image Core (<code>us-west-2</code>), and video generation is off by default. To keep video generation, set <code>videoGenerationModelIds</code> to <code>luma.ray-v2:0</code> in <code>us-west-2</code> and bootstrap that region. Deployments that set their own models are not affected. (#1791)</li>
+<li><strong>Default text models</strong>: if <code>modelIds</code> is not set, <code>us.deepseek.r1-v1:0</code> (end of life 2027-03-30) is replaced by <code>openai.gpt-oss-120b-1:0</code>. Deployments that set <code>modelIds</code> are not affected. (#1832)</li>
+<li><strong>End-of-life warnings with the default settings</strong>: the default image model <code>stability.stable-image-core-v1:1</code> is Legacy (end of life 2027-05-09), so the default settings show one warning at deploy time. Bedrock has no active text-to-image model to switch to yet. (#1832)</li>
+<li><strong>Model capabilities corrected</strong>: Mistral Large 3 and Ministral 3 accept image attachments, Gemma 3 no longer accepts document attachments, and DeepSeek-R1 no longer shows the reasoning option, to match what Bedrock accepts. (#1832)</li>
+<li><strong>Default Knowledge Base advanced parsing model</strong>: the default is now <code>global.anthropic.claude-sonnet-4-6</code>, because the previous default (Claude 3 Sonnet) reached end of life on 2026-11-13. (#1813)</li>
+<li><strong>Closed network mode: VPC endpoints</strong>: VPC endpoints of features that are not enabled are deleted. If other workloads in an imported VPC use them, list them in <code>closedNetworkAdditionalVpcEndpoints</code> before deploying.</li>
+<li><strong>Closed network mode: test instance</strong>: the test instance type changes to <code>t3.large</code>. Set <code>closedNetworkTestEnvironmentInstanceType: 'r6i.large'</code> to keep the previous type.</li>
+<li><strong>Closed network mode: AgentCore</strong>: if AgentCore is enabled, its runtime moves into the closed VPC, and <code>agentCoreRegion</code> must equal <code>region</code>. <code>researchAgentEnabled</code> cannot be combined with closed network mode.</li>
+<li><strong>Closed network mode: API Gateway</strong>: the API Gateway resource policy changes form, and the API deployment is recreated. Requests from endpoints that are not allowed now get 403 instead of 401. (#1814, #1723)</li>
+<li><strong>New Cognito group</strong>: <code>SystemAdminGroup</code> is created. If the user pool already has a group with this name, the update fails. (#1827)</li>
+<li><strong>Settings page</strong>: the list of recent pull requests on the System tab is replaced by the release notes of the deployed version, read from <code>docs/en/RELEASE_NOTES.md</code> and <code>docs/ja/RELEASE_NOTES.md</code> at build time. The notice of a newer release is shown only to members of <code>SystemAdminGroup</code> and compares the full version with the latest release on GitHub.</li>
+<li><strong>Meeting minutes transcription</strong> starts with automatic language detection (Japanese and English by default) instead of the UI language. The languages can be changed in Settings. (#1779)</li>
+<li><strong>Custom domain without <code>hostName</code></strong>: if <code>domainName</code> and <code>hostedZoneId</code> are set and <code>hostName</code> is not, the update now creates a certificate and an A record for the zone apex (<code>domainName</code> itself). Before, no custom domain was set up. Remove <code>domainName</code> and <code>hostedZoneId</code> if you do not want this. The update fails if the zone apex already has an A record. (#1834)</li>
+<li><strong>Files and documents are authorized by the server</strong>: the server now decides which file or document a user may open, delete or pass to a model. New files are stored under a per-user prefix (<code>users/&lt;sub&gt;/</code>, the user's Cognito <code>sub</code>) in the file bucket. After the update:</li>
+<li>Files stored before this release are no longer shown or accepted as input: chat attachments and images, generated videos, and files returned by agents (Bedrock Agent, AgentCore and MCP chat). Earlier chats still open, but their files do not.</li>
+<li>A shared chat shows the files it attaches (<code>extraData</code>), not files that only appear as links in the message text.</li>
+<li>Cited documents can be downloaded only from the Knowledge Base or Kendra data source that GenU created (<code>docs/</code> in its data source bucket), and Knowledge Base documents only when the user's retrieval filters allow them. Documents of an existing Kendra index or an external Knowledge Base can no longer be downloaded.</li>
+<li>MCP chat no longer returns files.</li>
+<li>A share link created before the update shows the chat's new files only after the owner opens the share dialog of that chat again.</li>
+<li>Files are tied to the user's <code>sub</code> in the Cognito user pool. A user deleted and created again, or a user pool replaced by a new one, no longer reaches the earlier files. To find one user's files, look up their <code>sub</code> in Cognito and list <code>users/&lt;sub&gt;/</code> in the file bucket.</li>
+<li>Mermaid diagrams are shown as images. Click interactions, styles set in the diagram and HTML in labels other than line breaks and formatting no longer take effect.</li>
+<li>The parameters of <code>GET /file/url</code> and <code>DELETE /file</code> changed. Your own clients that call these routes must be updated.</li>
+<li><strong>Files stored before this release</strong>: they stay in the buckets, no longer reachable from the app. An optional script moves them to the prefix of the user whose chat or video job points at them, and records the owner on earlier share links, so users see their earlier files again (<a href="https://github.com/aws-samples/generative-ai-use-cases/tree/main/packages/cdk/scripts/migrate-user-files"><code>packages/cdk/scripts/migrate-user-files</code></a>). It copies inside S3 without deleting, saves the earlier value of every record it changes so the migration can be undone, and reports files it cannot tie to a single user instead of moving them. Run it without <code>--apply</code> first and check the report. Decide whether to keep or delete the files at their earlier keys under your data retention policy. They are the objects whose key does not start with <code>users/</code> in the file bucket (<code>APIFileBucket…</code> in <code>GenerativeAiUseCasesStack</code>), and all objects in the AgentCore file bucket (<code>AgentCoreFileBucket…</code> in <code>AgentCoreStack</code>), which is no longer written to. Deleting objects cannot be undone; list them first and check the list before you delete anything.</li>
+</ul>
+<h3 id="security">Security<a class="headerlink" href="#security" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The server decides which file or document a user may open, delete or pass to a model, instead of using the bucket and key the request names. See the <a href="https://github.com/aws-samples/generative-ai-use-cases/security/advisories/GHSA-ppq8-v83g-mj96">security advisory</a> and Before you update.</li>
+</ul>
+<h3 id="fixes">Fixes<a class="headerlink" href="#fixes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Long chat messages are saved without rolling back the turn, and very large pasted text becomes an attachment. (#1757)</li>
+<li>Bedrock rejection reasons (for example image size limits) are shown to the user. (#1789, #1822)</li>
+<li>Attached files with the same name, Shift_JIS / EUC-JP documents, blank text and file name characters that Bedrock rejects are handled. (#1756, #1805, #1679, #1765, #1801, #1677)</li>
+<li>Ministral 3 and Qwen3 235B work again (their default <code>maxTokens</code> was above the model's limit), and models that do not accept a system prompt no longer get an empty one. (#1832)</li>
+<li>Without a configured flow, <code>/flow-chat</code> shows the "not found" page. (#1829)</li>
+<li>The app keeps working after the browser's page translation is used. (#1828, #1833)</li>
+<li>Use cases that call <code>{{retrieveKnowledgeBase}}</code> work with an S3 Vectors Knowledge Base. (#1837)</li>
+<li>Agent gallery sync, S3 permissions when no IP ranges are set, and reading long chats. (#1826)</li>
+<li>Large images are scaled down to 2,576 px on the longest side when attached, so Bedrock no longer rejects them for their dimensions. Models that accept fewer than 20 images limit the attachment count (1 for Llama 3.2 Vision, 8 for Llama 4). (#1835, #1836)</li>
+<li>Meeting minutes: real-time transcription reconnects when the stream stops on its own, and the audio sample rate is sent to Transcribe. (#1645, #1758)</li>
+<li>Writer and chat continuation no longer send an assistant prefill, which newer Claude models reject, and prompt caching applies to Claude Fable 5, 5.1 and 5.2. (#1705, #1851, #1839)</li>
+<li>Video generation copies finished videos again. (#1790)</li>
+<li>Attachments are kept when a message is too large to send, and documents attached earlier in a chat are counted toward the limit. (#1800, #1810)</li>
+</ul>
+<h2 id="v550-2026-07-19">v5.5.0 (2026-07-19)<a class="headerlink" href="#v550-2026-07-19" title="Permanent link">&para;</a></h2>
+<h3 id="highlights_1">Highlights<a class="headerlink" href="#highlights_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>New models</strong> (available when the administrator enables them): Claude Sonnet 5, Claude Opus 4.8, Claude Opus 4.7, Claude Opus 4.6 / Sonnet 4.6.</li>
+<li><strong>AgentCore</strong>: a list screen for AgentCore.</li>
+<li><strong>Research use case</strong>.</li>
+<li><strong>RAG chat (Knowledge Base)</strong>: improved citations.</li>
+<li><strong>Meeting minutes</strong>: custom prompts, download of generated minutes, screen sleep prevention during recording.</li>
+<li><strong>Markdown</strong>: ECharts charts and SVG preview in code blocks.</li>
+<li><strong>Browser extension</strong>: model switching.</li>
+</ul>
+<h3 id="for-administrators_1">For administrators<a class="headerlink" href="#for-administrators_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>VPC configuration for the AgentCore Runtime.</li>
+<li>Knowledge Base: Web Crawler data source and system prompt customization.</li>
+<li>Security: script injection mitigation in the auto deploy workflow, <code>unsafe-eval</code> removed from the CSP, dependency CVEs resolved.</li>
+<li>The API Lambda functions were consolidated into one Express application, and Cognito is reached through VPC endpoints in closed network mode.</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.5.0">Full changelog</a></p>
+<h2 id="v540-2026-01-13">v5.4.0 (2026-01-13)<a class="headerlink" href="#v540-2026-01-13" title="Permanent link">&para;</a></h2>
+<h3 id="highlights_2">Highlights<a class="headerlink" href="#highlights_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Agent Builder</strong>: create agents without code, with automatic system prompt generation.</li>
+<li><strong>Mermaid diagrams and math rendering</strong> in chat.</li>
+<li><strong>Chat history</strong>: bulk delete.</li>
+<li><strong>Meeting minutes</strong>: a warning before leaving the page during a recording.</li>
+<li><strong>New models</strong> (available when the administrator enables them): Claude Opus 4.5, Nemotron 3 Nano 30B and 17 more models.</li>
+</ul>
+<h3 id="for-administrators_2">For administrators<a class="headerlink" href="#for-administrators_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Branding: custom logo and title.</li>
+<li>A default model setting.</li>
+<li>AgentCore: faster MCP loading and AgentCore Gateway support.</li>
+<li><code>destroy.sh</code> for deleting the resources and a <code>cdk:diff</code> shortcut.</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.4.0">Full changelog</a></p>
+<h2 id="v530-2025-10-27">v5.3.0 (2025-10-27)<a class="headerlink" href="#v530-2025-10-27" title="Permanent link">&para;</a></h2>
+<h3 id="highlights_3">Highlights<a class="headerlink" href="#highlights_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>New models</strong> (available when the administrator enables them): Claude Haiku 4.5.</li>
+</ul>
+<h3 id="for-administrators_3">For administrators<a class="headerlink" href="#for-administrators_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Custom tag keys for cost management.</li>
+<li>AgentCore use cases in closed network mode.</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.3.0">Full changelog</a></p>
+<h2 id="v520-2025-10-15">v5.2.0 (2025-10-15)<a class="headerlink" href="#v520-2025-10-15" title="Permanent link">&para;</a></h2>
+<h3 id="highlights_4">Highlights<a class="headerlink" href="#highlights_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>New models</strong> (available when the administrator enables them): Claude Sonnet 4.5, with extended thinking.</li>
+<li><strong>Meeting minutes</strong>: real-time translation improvements.</li>
+</ul>
+<h3 id="for-administrators_4">For administrators<a class="headerlink" href="#for-administrators_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Prompt caching for Claude Sonnet 4.5.</li>
+<li>Maximum number of agent loops can be set.</li>
+<li>Deploying from SageMaker Code Editor with the private network options.</li>
+<li>End-of-life models removed.</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.2.0">Full changelog</a></p>
+<h2 id="v510---v512-2025-08-29---2025-09-11">v5.1.0 - v5.1.2 (2025-08-29 - 2025-09-11)<a class="headerlink" href="#v510---v512-2025-08-29---2025-09-11" title="Permanent link">&para;</a></h2>
+<h3 id="highlights_5">Highlights<a class="headerlink" href="#highlights_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Chat</strong>: a reasoning toggle.</li>
+<li><strong>AgentCore</strong>: UI improvements, and uploaded files no longer disappear in agent use cases.</li>
+</ul>
+<h3 id="for-administrators_5">For administrators<a class="headerlink" href="#for-administrators_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Global cross-Region inference.</li>
+<li>Fixes for closed network mode.</li>
+</ul>
+<h3 id="before-you-update_1">Before you update<a class="headerlink" href="#before-you-update_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>SageMaker endpoints</strong> are called with the TGI Messages API, and the application-side prompt templates were removed. Use TGI 1.4.0 or later, with a <code>chat_template</code> in the model's <code>tokenizer_config.json</code> (v5.1.0).</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.1.0">v5.1.0</a> / <a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.1.1">v5.1.1</a> / <a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.1.2">v5.1.2</a></p>
+<h2 id="v500---v501-2025-08-26">v5.0.0 - v5.0.1 (2025-08-26)<a class="headerlink" href="#v500---v501-2025-08-26" title="Permanent link">&para;</a></h2>
+<h3 id="highlights_6">Highlights<a class="headerlink" href="#highlights_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>AgentCore</strong>: a use case for agents on Amazon Bedrock AgentCore.</li>
+<li><strong>Voice Chat</strong> is generally available.</li>
+<li><strong>New models</strong> (available when the administrator enables them): OpenAI GPT OSS 20B / 120B.</li>
+</ul>
+<h3 id="for-administrators_6">For administrators<a class="headerlink" href="#for-administrators_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Closed network mode: access GenU only from a VPC.</li>
+<li>Tags for cost management.</li>
+</ul>
+<h3 id="before-you-update_2">Before you update<a class="headerlink" href="#before-you-update_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>MCP Chat</strong> is deprecated and will be removed in a future major version.</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.0.0">v5.0.0</a> / <a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.0.1">v5.0.1</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  맨위로
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="하단/푸터" >
+        
+          
+          <a href="UPDATE.html" class="md-footer__link md-footer__link--prev" aria-label="이전: 업데이트">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                이전
+              </span>
+              <div class="md-ellipsis">
+                업데이트
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="DEVELOPMENT.html" class="md-footer__link md-footer__link--next" aria-label="다음: 로컬 개발 환경">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                다음
+              </span>
+              <div class="md-ellipsis">
+                로컬 개발 환경
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2025, Amazon Web Services, Inc. or its affiliates. All rights reserved.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.trackings", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\ud074\ub9bd\ubcf4\ub4dc\uc5d0 \ubcf5\uc0ac\ub428", "clipboard.copy": "\ud074\ub9bd\ubcf4\ub4dc\ub85c \ubcf5\uc0ac", "search.result.more.one": "\uc774 \ubb38\uc11c\uc5d0\uc11c 1\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.more.other": "\uc774 \ubb38\uc11c\uc5d0\uc11c #\uac1c\uc758 \uac80\uc0c9 \uacb0\uacfc \ub354 \ubcf4\uae30", "search.result.none": "\uac80\uc0c9\uc5b4\uc640 \uc77c\uce58\ud558\ub294 \ubb38\uc11c\uac00 \uc5c6\uc2b5\ub2c8\ub2e4", "search.result.one": "1\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.other": "#\uac1c\uc758 \uc77c\uce58\ud558\ub294 \ubb38\uc11c", "search.result.placeholder": "\uac80\uc0c9\uc5b4\ub97c \uc785\ub825\ud558\uc138\uc694", "search.result.term.missing": "\ud3ec\ud568\ub418\uc9c0 \uc54a\uc740 \uac80\uc0c9\uc5b4", "select.version": "\ubc84\uc804 \uc120\ud0dd"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>

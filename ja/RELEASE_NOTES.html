@@ -1,0 +1,2315 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://aws-samples.github.io/generative-ai-use-cases/ja/RELEASE_NOTES.html">
+      
+      
+        <link rel="prev" href="UPDATE.html">
+      
+      
+        <link rel="next" href="DEVELOPMENT.html">
+      
+      
+        
+          <link rel="alternate" href="../en/RELEASE_NOTES.html" hreflang="en">
+        
+          <link rel="alternate" href="RELEASE_NOTES.html" hreflang="ja">
+        
+          <link rel="alternate" href="../ko/RELEASE_NOTES.html" hreflang="ko">
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
+    
+    
+      
+        <title>リリースノート - Generative AI Use Cases (GenU)</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/custom/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  
+<meta property="og:type" content="website" />
+<meta property="og:title" content="リリースノート - Generative AI Use Cases (GenU)" />
+<meta property="og:image" content="https://aws-samples.github.io/generative-ai-use-cases/assets/images/social/ja/RELEASE_NOTES.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:url" content="https://aws-samples.github.io/generative-ai-use-cases/ja/RELEASE_NOTES.html" />
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:title" content="リリースノート - Generative AI Use Cases (GenU)" />
+<meta property="twitter:image" content="https://aws-samples.github.io/generative-ai-use-cases/assets/images/social/ja/RELEASE_NOTES.png" />
+</head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="deep-orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#リリースノート" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="index.html" title="Generative AI Use Cases (GenU)" class="md-header__button md-logo" aria-label="Generative AI Use Cases (GenU)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Generative AI Use Cases (GenU)
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              リリースノート
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="言語切り替え">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../en/RELEASE_NOTES.html" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="RELEASE_NOTES.html" hreflang="ja" class="md-select__link">
+              日本語
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../ko/RELEASE_NOTES.html" hreflang="ko" class="md-select__link">
+              한국어
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="共有" aria-label="共有" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aws-samples/generative-ai-use-cases" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/generative-ai-use-cases
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  概要
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="CHART_TOOL.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Features
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="ABOUT.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting started
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="index.html" title="Generative AI Use Cases (GenU)" class="md-nav__button md-logo" aria-label="Generative AI Use Cases (GenU)" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Generative AI Use Cases (GenU)
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aws-samples/generative-ai-use-cases" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-samples/generative-ai-use-cases
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概要
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Features
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Features
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="CHART_TOOL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chart Tool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_1" id="__nav_3_1_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    デプロイ方法
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    デプロイ方法
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="ABOUT.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    クイックスタート
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEPLOY_ON_CLOUDSHELL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (オプション) AWS CloudShell でデプロイする
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEPLOY_OPTION.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    デプロイオプション
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    認証
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    認証
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="SAML_WITH_GOOGLE_WORKSPACE.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Google Workspace で認証する
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="SAML_WITH_ENTRA_ID.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Microsoft Entra ID で認証する
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ブラウザ拡張機能
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    ブラウザ拡張機能
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    概要
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_BUILD.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ビルド
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_INSTALL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    インストール
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="EXTENSION_SAML.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    SAML 認証
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    その他
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    その他
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="UPDATE.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    アップデート方法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    リリースノート
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="RELEASE_NOTES.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    リリースノート
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v560-2026-11-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.6.0 (2026-11-27)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.6.0 (2026-11-27)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#アップデート前の確認事項" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        アップデート前の確認事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#セキュリティ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        セキュリティ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#修正" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        修正
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v550-2026-07-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.5.0 (2026-07-19)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.5.0 (2026-07-19)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v540-2026-01-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.4.0 (2026-01-13)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.4.0 (2026-01-13)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v530-2025-10-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.3.0 (2025-10-27)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.3.0 (2025-10-27)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v520-2025-10-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.2.0 (2025-10-15)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.2.0 (2025-10-15)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v510---v512-2025-08-29---2025-09-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.1.0 - v5.1.2 (2025-08-29 - 2025-09-11)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.1.0 - v5.1.2 (2025-08-29 - 2025-09-11)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#アップデート前の確認事項_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        アップデート前の確認事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v500---v501-2025-08-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.0.0 - v5.0.1 (2025-08-26)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.0.0 - v5.0.1 (2025-08-26)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#アップデート前の確認事項_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        アップデート前の確認事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DEVELOPMENT.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ローカル開発環境構築手順
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DESTROY.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    リソースの削除方法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="DESTROY_ON_CLOUDSHELL.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    (オプション) AWS CloudShell でリソースを削除する
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="PWA.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ネイティブアプリのように利用する方法
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v560-2026-11-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.6.0 (2026-11-27)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.6.0 (2026-11-27)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#アップデート前の確認事項" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        アップデート前の確認事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#セキュリティ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        セキュリティ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#修正" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        修正
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v550-2026-07-19" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.5.0 (2026-07-19)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.5.0 (2026-07-19)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v540-2026-01-13" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.4.0 (2026-01-13)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.4.0 (2026-01-13)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v530-2025-10-27" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.3.0 (2025-10-27)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.3.0 (2025-10-27)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v520-2025-10-15" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.2.0 (2025-10-15)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.2.0 (2025-10-15)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v510---v512-2025-08-29---2025-09-11" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.1.0 - v5.1.2 (2025-08-29 - 2025-09-11)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.1.0 - v5.1.2 (2025-08-29 - 2025-09-11)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#アップデート前の確認事項_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        アップデート前の確認事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v500---v501-2025-08-26" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        v5.0.0 - v5.0.1 (2025-08-26)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="v5.0.0 - v5.0.1 (2025-08-26)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#主な変更_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        主な変更
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#管理者向け_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        管理者向け
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#アップデート前の確認事項_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        アップデート前の確認事項
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+    <a href="https://github.com/aws-samples/generative-ai-use-cases/blob/main/docs/ja/RELEASE_NOTES.md" title="編集" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/aws-samples/generative-ai-use-cases/raw/main/docs/ja/RELEASE_NOTES.md" title="このページの原文を表示" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="リリースノート">リリースノート<a class="headerlink" href="#リリースノート" title="Permanent link">&para;</a></h1>
+<!-- 各リリースの「主な変更」はアプリの設定画面にも表示されます。GenU を使う人に向けて書き、アプリを使うときに気づく変更だけを入れてください。デプロイの設定、インフラ、運用など管理者向けの変更は「管理者向け」や「アップデート前の確認事項」に書いてください。 -->
+
+<p>GenU の各リリースの概要です。リリースごとの変更の一覧は <a href="https://github.com/aws-samples/generative-ai-use-cases/releases">Releases ページ</a> をご参照ください。</p>
+<p>GenU はリリースタグからデプロイ・アップデートします (<a href="UPDATE.html">アップデート方法</a> 参照)。アップデートする前に、現在のバージョンから新しいバージョンまでのすべてのリリース、特に <strong>アップデート前の確認事項</strong> をご確認ください。</p>
+<h2 id="v560-2026-11-27">v5.6.0 (2026-11-27)<a class="headerlink" href="#v560-2026-11-27" title="Permanent link">&para;</a></h2>
+<h3 id="主な変更">主な変更<a class="headerlink" href="#主な変更" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>チャット</strong>: モデルの選択を入力欄のツールバーに移動、会話履歴を日付ごとに表示、選択したモデルと推論の設定をリロード後も保持、Markdown の表をスプレッドシートに貼り付けられる形でコピー、表のセル内の <code>&lt;br&gt;</code> で改行、チャットのモデルが今日の日付を把握、未送信のメッセージがあるままページを離れるときに確認するようになりました。回答が出力の上限で止まったときは「続きを出力」で続けられます。(#1788, #1781, #1787, #1782, #1786, #1783, #1784, #1863)</li>
+<li><strong>添付ファイル</strong>: チャットの添付をブラウザから送らず、サーバーが S3 から読むようになりました。1 つのチャットで添付できる量の合計が約 4.5 MB から約 22 MB に増え、PDF は 1 つ 20 MB まで付けられます。(#1865)</li>
+<li><strong>システムプロンプト</strong>: 新しいチャットで使うシステムプロンプトを各ユーザーが選べるようになり、システムプロンプトの編集はすぐに反映され、チャットのモデルにチャット画面で表示できる形式を伝えるようになりました。(#1848, #1844)</li>
+<li><strong>サイドバーと設定画面</strong>: サイドバーをアイコン表示に折りたたんだり幅を変えたりでき、表示するユースケースを各ユーザーが選べるようになりました (お気に入り)。設定画面は「一般」「使用量」「アカウント」「システム」のタブに分かれ、「使用量」タブで自分のトークン使用量とコストを、「システム」タブでこのリリースノートを確認できます。(#1830, #1831)</li>
+<li><strong>音声</strong>: 音声チャットで声と言語を選べるようになりました。音声認識の言語の自動判別の対象言語を設定画面で選べるようになり、音声チャットで Amazon Nova 2.5 Sonic を使えるようになりました。(#1727, #1779, #1726)</li>
+<li><strong>Agent Builder</strong>: エージェントの定義を JSON ファイルで共有でき、ツールに AgentCore Web Search を追加できるようになりました。(#1689, #1673)</li>
+<li><strong>AgentCore</strong>: コードインタープリターがチャットに添付したファイルを扱い、作成したファイルを返せるようになりました。回答の長さの上限が Converse の経路と同じになり、Claude Opus 4.7 以降の思考過程が表示されます。(#1767, #1768, #1772)</li>
+<li><strong>ブラウザ拡張機能</strong>: 回答を Markdown で表示してコピーでき、コンテキストメニューからページ全体の本文を送れるようになりました。(#1852, #1854, #1853)</li>
+<li><strong>過去のチャットのファイル</strong>: このリリースより前に保存した添付ファイル、画像、生成した動画、エージェントが出力したファイルは、管理者が移行するまで開けません (アップデート前の確認事項を参照)。図は画像として表示されます。</li>
+<li><strong>新しいモデル</strong> (管理者が有効にすると使えます): Claude Opus 5、Claude Fable 5、Claude Opus 5.5、Claude Sonnet 5.5、Claude Haiku 5.5、Claude Fable 5.1 / 5.2、OpenAI GPT-6 / GPT-6.1 / GPT-6.2 Sol / GPT-6.2 Astra / GPT-5.4 / GPT-5.5 / GPT-5.6、Moonshot AI Kimi K3 / K3.1 / K2.5、Grok 4.6 / 4.7、GLM 5、DeepSeek V3.2、MiniMax M2.5、NVIDIA Nemotron 3 Super 120B、Qwen3 Coder Next、Palmyra Vision 7B。(#1652, #1646, #1707, #1712, #1724, #1709, #1755, #1704, #1795, #1832)</li>
+</ul>
+<h3 id="管理者向け">管理者向け<a class="headerlink" href="#管理者向け" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Knowledge Base: より低コストなベクトルストアとして S3 Vectors を使えるようになり、ガードレールが RAG チャットの回答にも適用されるようになりました。(#1471, #1649)</li>
+<li>管理者ページで、全ユーザーのトークン使用量と推定コストを、ユーザーや期間で絞り込んで確認し、CSV でダウンロードできるようになりました。Bedrock の呼び出しにユーザーとユースケースのタグが付くため、モデル呼び出しログでも利用状況を分析できます。(#1827)</li>
+<li>新しいリリースが出ると、設定画面の「システム」タブで管理者にお知らせするようになりました。</li>
+<li>閉域モードで、AgentCore が閉域 VPC 内で動作し、VPC エンドポイントは利用する機能の分だけ作成されるようになりました。閉域モードで使えない設定はデプロイ時に警告されます。(#1814, #1761, #1723)</li>
+<li>Bedrock で提供終了済み、または提供終了予定のモデルを設定している場合、デプロイ時に警告するようになりました。(#1832)</li>
+<li>デプロイとアップデートの手順がリリースタグを使う形になり、カスタマイズした環境に新しいリリースをマージするためのエージェントスキルを追加しました。(#1766, #1777)</li>
+<li><code>hostName</code> を指定せず、ゾーンの頂点 (Zone Apex) にカスタムドメインを設定できるようになりました。(#1834)</li>
+<li><code>allowedDevOrigins</code> で、手元で動かしているフロントエンドからデプロイ済みの API を呼べるようになりました。(#1808)</li>
+</ul>
+<h3 id="アップデート前の確認事項">アップデート前の確認事項<a class="headerlink" href="#アップデート前の確認事項" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Knowledge Base の Web Crawler データソースの削除</strong>: Bedrock で、カスタマー管理の Knowledge Base に新しく Web Crawler コネクタを作成できなくなりました。アップデートすると、既存の <code>web-crawler-data-source</code> と、そこから取り込んだドキュメントが削除されます。S3 データソースのドキュメントには影響しません。(#1747)</li>
+<li><strong>画像・動画生成のデフォルトモデル</strong>: Nova Canvas と Nova Reel が提供終了 (EOL) になりました。画像生成のデフォルトは Stable Image Core (<code>us-west-2</code>) になり、動画生成はデフォルトで無効になりました。動画生成を続けて使う場合は、<code>videoGenerationModelIds</code> に <code>us-west-2</code> の <code>luma.ray-v2:0</code> を指定し、そのリージョンを bootstrap してください。モデルを自分で指定している環境には影響しません。(#1791)</li>
+<li><strong>テキストモデルのデフォルト</strong>: <code>modelIds</code> を設定していない場合、<code>us.deepseek.r1-v1:0</code> (2027-03-30 に提供終了) が <code>openai.gpt-oss-120b-1:0</code> に置き換わります。<code>modelIds</code> を設定している環境には影響しません。(#1832)</li>
+<li><strong>デフォルト設定での提供終了の警告</strong>: 画像生成のデフォルトモデル <code>stability.stable-image-core-v1:1</code> は Legacy (2027-05-09 に提供終了) のため、デフォルト設定ではデプロイ時に警告が 1 件表示されます。現時点で切り替え先となる Bedrock のテキストから画像を生成するモデルはありません。(#1832)</li>
+<li><strong>モデルの機能の修正</strong>: Bedrock が受け付ける内容に合わせて、Mistral Large 3 と Ministral 3 で画像を添付できるようになり、Gemma 3 ではドキュメントを添付できなくなり、DeepSeek-R1 では推論の切り替えが表示されなくなりました。(#1832)</li>
+<li><strong>Knowledge Base の Advanced Parsing のデフォルトモデル</strong>: これまでのデフォルト (Claude 3 Sonnet) が 2026-11-13 に提供終了になったため、<code>global.anthropic.claude-sonnet-4-6</code> に変わりました。(#1813)</li>
+<li><strong>閉域モード: VPC エンドポイント</strong>: 有効にしていない機能の VPC エンドポイントは削除されます。インポートした VPC で他のワークロードが使っている場合は、デプロイ前に <code>closedNetworkAdditionalVpcEndpoints</code> に指定してください。</li>
+<li><strong>閉域モード: 検証用インスタンス</strong>: 検証用インスタンスのタイプが <code>t3.large</code> に変わります。以前のタイプを使い続ける場合は <code>closedNetworkTestEnvironmentInstanceType: 'r6i.large'</code> を指定してください。</li>
+<li><strong>閉域モード: AgentCore</strong>: AgentCore を有効にしている場合、ランタイムが閉域 VPC 内に移り、<code>agentCoreRegion</code> は <code>region</code> と同じである必要があります。<code>researchAgentEnabled</code> は閉域モードと併用できません。</li>
+<li><strong>閉域モード: API Gateway</strong>: API Gateway のリソースポリシーの形が変わり、API のデプロイメントが作り直されます。許可していないエンドポイントからのリクエストは 401 ではなく 403 になります。(#1814, #1723)</li>
+<li><strong>新しい Cognito グループ</strong>: <code>SystemAdminGroup</code> が作成されます。ユーザープールに同じ名前のグループがすでにある場合、アップデートが失敗します。(#1827)</li>
+<li><strong>設定画面</strong>: 「システム」タブの最近の Pull Request の一覧は、デプロイしているバージョンのリリースノートに置き換わりました。リリースノートはビルド時に <code>docs/en/RELEASE_NOTES.md</code> と <code>docs/ja/RELEASE_NOTES.md</code> から読み込みます。新しいリリースのお知らせは <code>SystemAdminGroup</code> のメンバーにだけ表示され、GitHub の最新のリリースとバージョン全体を比べます。</li>
+<li><strong>議事録の文字起こし</strong> は、UI の言語ではなく自動判別 (デフォルトは日本語と英語) で始まるようになりました。対象言語は設定画面で変更できます。(#1779)</li>
+<li><strong><code>hostName</code> なしのカスタムドメイン</strong>: <code>domainName</code> と <code>hostedZoneId</code> を設定し <code>hostName</code> を設定していない場合、アップデートするとゾーンの頂点 (<code>domainName</code> そのもの) の証明書と A レコードが作成されます。これまではカスタムドメインは設定されませんでした。不要な場合は <code>domainName</code> と <code>hostedZoneId</code> を削除してください。ゾーンの頂点に A レコードがすでにある場合、アップデートが失敗します。(#1834)</li>
+<li><strong>ファイルと文書の認可をサーバーで行うように</strong>: ユーザーが開く・削除する・モデルに渡すファイルや文書を、サーバーが判定するようになりました。新しいファイルは、ファイル用バケットのユーザーごとのプレフィックス (<code>users/&lt;sub&gt;/</code>、<code>sub</code> は Cognito のユーザーの <code>sub</code>) に保存されます。アップデート後は次のようになります。</li>
+<li>このリリースより前に保存されたファイルは、表示も入力としての利用もできなくなります。対象は、チャットの添付ファイルと画像、生成した動画、エージェント (Bedrock Agent、AgentCore、MCP チャット) が返したファイルです。過去のチャット自体は開けますが、そのファイルは開けません。</li>
+<li>共有したチャットで表示されるのは、メッセージに添付したファイル (<code>extraData</code>) だけです。本文中のリンクとして現れるだけのファイルは表示されません。</li>
+<li>引用文書をダウンロードできるのは、GenU が作成した Knowledge Base または Kendra のデータソース (データソースバケットの <code>docs/</code>) の文書だけで、Knowledge Base の文書はそのユーザーの検索フィルタで許可される場合だけです。既存の Kendra インデックスや外部の Knowledge Base の文書はダウンロードできなくなります。</li>
+<li>MCP チャットはファイルを返さなくなります。</li>
+<li>アップデート前に作成した共有リンクでは、チャットの持ち主がそのチャットの共有ダイアログをもう一度開くまで、新しいファイルが表示されません。</li>
+<li>ファイルは Cognito ユーザープールのユーザーの <code>sub</code> に結び付きます。ユーザーを削除して作り直した場合や、ユーザープールを新しく作り直した場合は、以前のファイルに届かなくなります。特定のユーザーのファイルを探すときは、Cognito でそのユーザーの <code>sub</code> を確認し、ファイル用バケットの <code>users/&lt;sub&gt;/</code> を一覧してください。</li>
+<li>Mermaid の図は画像として表示されます。クリック操作、図の中で指定したスタイル、改行と書式以外のラベル中の HTML は効かなくなります。</li>
+<li><code>GET /file/url</code> と <code>DELETE /file</code> のパラメータが変わりました。これらを呼び出す独自のクライアントは更新が必要です。</li>
+<li><strong>このリリースより前に保存されたファイル</strong>: バケットには残りますが、アプリからは開けなくなります。任意で実行できるスクリプト (<a href="https://github.com/aws-samples/generative-ai-use-cases/tree/main/packages/cdk/scripts/migrate-user-files"><code>packages/cdk/scripts/migrate-user-files</code></a>) で、そのファイルを指しているチャットや動画ジョブの持ち主のプレフィックスに移し、以前の共有リンクに持ち主を記録できます。移したあとは、利用者は以前のファイルをまた開けます。スクリプトは S3 の中でコピーして元のファイルを消さず、書き換えるレコードの変更前の値を保存するので元に戻せます。持ち主を 1 人に決められないファイルは移さずにレポートに出します。まず <code>--apply</code> を付けずに実行して、レポートを確認してください。元のキーのファイルを残すか削除するかは、データの保存方針に従って判断してください。対象は、ファイル用バケット (<code>GenerativeAiUseCasesStack</code> の <code>APIFileBucket…</code>) のうちキーが <code>users/</code> で始まらないオブジェクトと、書き込まれなくなった AgentCore のファイル用バケット (<code>AgentCoreStack</code> の <code>AgentCoreFileBucket…</code>) のすべてのオブジェクトです。削除は元に戻せません。削除する前に一覧を出して内容を確認してください。</li>
+</ul>
+<h3 id="セキュリティ">セキュリティ<a class="headerlink" href="#セキュリティ" title="Permanent link">&para;</a></h3>
+<ul>
+<li>ユーザーが開く・削除する・モデルに渡すファイルや文書を、リクエストが指定するバケットとキーではなくサーバーが判定するようになりました。<a href="https://github.com/aws-samples/generative-ai-use-cases/security/advisories/GHSA-ppq8-v83g-mj96">セキュリティアドバイザリ</a> と「アップデート前の確認事項」を参照してください。</li>
+</ul>
+<h3 id="修正">修正<a class="headerlink" href="#修正" title="Permanent link">&para;</a></h3>
+<ul>
+<li>長いメッセージを送ったときに会話が巻き戻らずに保存され、非常に長いテキストを貼り付けると添付ファイルになるようになりました。(#1757)</li>
+<li>Bedrock がリクエストを拒否した理由 (画像サイズの上限など) を表示するようになりました。(#1789, #1822)</li>
+<li>同じ名前の添付ファイル、Shift_JIS / EUC-JP のドキュメント、空のテキスト、Bedrock が受け付けないファイル名の文字に対応しました。(#1756, #1805, #1679, #1765, #1801, #1677)</li>
+<li>Ministral 3 と Qwen3 235B が再び使えるようになりました (デフォルトの <code>maxTokens</code> がモデルの上限を超えていました)。システムプロンプトを受け付けないモデルに空のシステムプロンプトを送らなくなりました。(#1832)</li>
+<li>フローを設定していない場合、<code>/flow-chat</code> は「見つかりません」のページになります。(#1829)</li>
+<li>ブラウザのページ翻訳を使ったあとも正しく動くようになりました。(#1828, #1833)</li>
+<li>S3 Vectors の Knowledge Base で、<code>{{retrieveKnowledgeBase}}</code> を使うユースケースが動くようになりました。(#1837)</li>
+<li>エージェントギャラリーの同期、IP 制限を設定していない場合の S3 の権限、長い会話の読み込みを修正しました。(#1826)</li>
+<li>大きな画像は添付時に長辺 2,576 px に縮小し、画像の縦横で Bedrock に拒否されないようになりました。画像を 20 枚まで受け付けないモデルでは添付できる枚数を制限します (Llama 3.2 Vision は 1 枚、Llama 4 は 8 枚)。(#1835, #1836)</li>
+<li>議事録: リアルタイムの文字起こしが意図せず止まったときに再接続し、音声のサンプルレートを Transcribe に送るようになりました。(#1645, #1758)</li>
+<li>新しい Claude モデルが受け付けないアシスタントのプレフィルを、文章生成と続きの生成で送らなくなりました。Claude Fable 5、5.1、5.2 にプロンプトキャッシュが効くようになりました。(#1705, #1851, #1839)</li>
+<li>動画生成で、完了した動画が再びコピーされるようになりました。(#1790)</li>
+<li>送信できないほど大きなメッセージでも添付ファイルが残り、チャットで前に添付したドキュメントも上限に数えるようになりました。(#1800, #1810)</li>
+</ul>
+<h2 id="v550-2026-07-19">v5.5.0 (2026-07-19)<a class="headerlink" href="#v550-2026-07-19" title="Permanent link">&para;</a></h2>
+<h3 id="主な変更_1">主な変更<a class="headerlink" href="#主な変更_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>新しいモデル</strong> (管理者が有効にすると使えます): Claude Sonnet 5、Claude Opus 4.8、Claude Opus 4.7、Claude Opus 4.6 / Sonnet 4.6。</li>
+<li><strong>AgentCore</strong>: AgentCore の一覧画面。</li>
+<li><strong>リサーチのユースケース</strong>。</li>
+<li><strong>RAG チャット (Knowledge Base)</strong>: 引用の改善。</li>
+<li><strong>議事録</strong>: カスタムプロンプト、生成した議事録のダウンロード、録音中の画面スリープ防止。</li>
+<li><strong>Markdown</strong>: コードブロックでの ECharts のグラフと SVG のプレビュー。</li>
+<li><strong>ブラウザ拡張機能</strong>: モデルの切り替え。</li>
+</ul>
+<h3 id="管理者向け_1">管理者向け<a class="headerlink" href="#管理者向け_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>AgentCore Runtime の VPC 設定。</li>
+<li>Knowledge Base: Web Crawler データソースとシステムプロンプトのカスタマイズ。</li>
+<li>セキュリティ: 自動デプロイのワークフローでのスクリプトインジェクション対策、CSP から <code>unsafe-eval</code> を削除、依存パッケージの CVE への対応。</li>
+<li>API の Lambda 関数を 1 つの Express アプリケーションにまとめ、閉域モードでは Cognito に VPC エンドポイント経由で接続するようになりました。</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.5.0">変更の一覧</a></p>
+<h2 id="v540-2026-01-13">v5.4.0 (2026-01-13)<a class="headerlink" href="#v540-2026-01-13" title="Permanent link">&para;</a></h2>
+<h3 id="主な変更_2">主な変更<a class="headerlink" href="#主な変更_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Agent Builder</strong>: コードを書かずにエージェントを作成でき、システムプロンプトも自動生成できます。</li>
+<li>チャットでの <strong>Mermaid の図と数式の表示</strong>。</li>
+<li><strong>会話履歴</strong>: 一括削除。</li>
+<li><strong>議事録</strong>: 録音中にページを離れようとすると警告。</li>
+<li><strong>新しいモデル</strong> (管理者が有効にすると使えます): Claude Opus 4.5、Nemotron 3 Nano 30B ほか 17 モデル。</li>
+</ul>
+<h3 id="管理者向け_2">管理者向け<a class="headerlink" href="#管理者向け_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>ブランディング: ロゴとタイトルのカスタマイズ。</li>
+<li>デフォルトモデルの設定。</li>
+<li>AgentCore: MCP の読み込みの高速化と AgentCore Gateway への対応。</li>
+<li>リソースを削除する <code>destroy.sh</code> と <code>cdk:diff</code> のショートカット。</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.4.0">変更の一覧</a></p>
+<h2 id="v530-2025-10-27">v5.3.0 (2025-10-27)<a class="headerlink" href="#v530-2025-10-27" title="Permanent link">&para;</a></h2>
+<h3 id="主な変更_3">主な変更<a class="headerlink" href="#主な変更_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>新しいモデル</strong> (管理者が有効にすると使えます): Claude Haiku 4.5。</li>
+</ul>
+<h3 id="管理者向け_3">管理者向け<a class="headerlink" href="#管理者向け_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>コスト管理用のタグのキーをカスタマイズ。</li>
+<li>閉域モードでの AgentCore のユースケース。</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.3.0">変更の一覧</a></p>
+<h2 id="v520-2025-10-15">v5.2.0 (2025-10-15)<a class="headerlink" href="#v520-2025-10-15" title="Permanent link">&para;</a></h2>
+<h3 id="主な変更_4">主な変更<a class="headerlink" href="#主な変更_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>新しいモデル</strong> (管理者が有効にすると使えます): Claude Sonnet 4.5 (Extended Thinking に対応)。</li>
+<li><strong>議事録</strong>: リアルタイム翻訳の改善。</li>
+</ul>
+<h3 id="管理者向け_4">管理者向け<a class="headerlink" href="#管理者向け_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Claude Sonnet 4.5 のプロンプトキャッシュ。</li>
+<li>エージェントのループの最大回数を設定。</li>
+<li>プライベートネットワークのオプションを使った SageMaker Code Editor からのデプロイ。</li>
+<li>提供終了したモデルの削除。</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.2.0">変更の一覧</a></p>
+<h2 id="v510---v512-2025-08-29---2025-09-11">v5.1.0 - v5.1.2 (2025-08-29 - 2025-09-11)<a class="headerlink" href="#v510---v512-2025-08-29---2025-09-11" title="Permanent link">&para;</a></h2>
+<h3 id="主な変更_5">主な変更<a class="headerlink" href="#主な変更_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>チャット</strong>: 推論の切り替え。</li>
+<li><strong>AgentCore</strong>: UI の改善と、エージェントのユースケースでアップロードしたファイルが消える問題の修正。</li>
+</ul>
+<h3 id="管理者向け_5">管理者向け<a class="headerlink" href="#管理者向け_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>グローバルのクロスリージョン推論。</li>
+<li>閉域モードに関する修正。</li>
+</ul>
+<h3 id="アップデート前の確認事項_1">アップデート前の確認事項<a class="headerlink" href="#アップデート前の確認事項_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>SageMaker エンドポイント</strong> は TGI の Messages API で呼び出すようになり、アプリケーション側のプロンプトテンプレートは削除されました。TGI 1.4.0 以降を使い、モデルの <code>tokenizer_config.json</code> に <code>chat_template</code> があることを確認してください (v5.1.0)。</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.1.0">v5.1.0</a> / <a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.1.1">v5.1.1</a> / <a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.1.2">v5.1.2</a></p>
+<h2 id="v500---v501-2025-08-26">v5.0.0 - v5.0.1 (2025-08-26)<a class="headerlink" href="#v500---v501-2025-08-26" title="Permanent link">&para;</a></h2>
+<h3 id="主な変更_6">主な変更<a class="headerlink" href="#主な変更_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>AgentCore</strong>: Amazon Bedrock AgentCore 上のエージェントを使うユースケース。</li>
+<li><strong>音声チャット</strong> の一般提供。</li>
+<li><strong>新しいモデル</strong> (管理者が有効にすると使えます): OpenAI GPT OSS 20B / 120B。</li>
+</ul>
+<h3 id="管理者向け_6">管理者向け<a class="headerlink" href="#管理者向け_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>閉域モード: VPC 内からのみ GenU にアクセスする構成。</li>
+<li>コスト管理用のタグ。</li>
+</ul>
+<h3 id="アップデート前の確認事項_2">アップデート前の確認事項<a class="headerlink" href="#アップデート前の確認事項_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>MCP チャット</strong> は非推奨になり、今後のメジャーバージョンで削除されます。</li>
+</ul>
+<p><a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.0.0">v5.0.0</a> / <a href="https://github.com/aws-samples/generative-ai-use-cases/releases/tag/v5.0.1">v5.0.1</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="フッター" >
+        
+          
+          <a href="UPDATE.html" class="md-footer__link md-footer__link--prev" aria-label="前: アップデート方法">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                前
+              </span>
+              <div class="md-ellipsis">
+                アップデート方法
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="DEVELOPMENT.html" class="md-footer__link md-footer__link--next" aria-label="次: ローカル開発環境構築手順">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                次
+              </span>
+              <div class="md-ellipsis">
+                ローカル開発環境構築手順
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      © 2025, Amazon Web Services, Inc. or its affiliates. All rights reserved.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.tabs.sticky", "navigation.top", "navigation.trackings", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a5f9d56c.min.js"></script>
+      
+    
+  </body>
+</html>
