@@ -32,6 +32,7 @@ import {
   splitSelectOptions,
 } from '../../utils/UseCaseBuilderUtils';
 import useRagKnowledgeBaseApi from '../../hooks/useRagKnowledgeBaseApi';
+import { knowledgeBaseFiltersFromJson } from '@generative-ai-use-cases/common';
 import useRagApi from '../../hooks/useRagApi';
 import useFiles from '../../hooks/useFiles';
 import ZoomUpImage from '../ZoomUpImage';
@@ -265,6 +266,18 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
     }
 
     for (const item of retrieveKnowledgeBaseItems) {
+      if (item.filter) {
+        try {
+          knowledgeBaseFiltersFromJson(item.filter);
+        } catch (e) {
+          tmpErrorMessages.push(
+            t('useCaseBuilder.error.invalid_kb_filter', {
+              label: item.label === NOLABEL ? '' : ':' + item.label,
+              message: e instanceof Error ? e.message : String(e),
+            })
+          );
+        }
+      }
       const textForm = textFormItems.find((i) => i.label === item.label);
 
       if (!textForm) {
@@ -333,7 +346,9 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
       for (const item of sameLabelItems) {
         let placeholder;
 
-        if (item.label !== NOLABEL) {
+        if (item.placeholder) {
+          placeholder = item.placeholder;
+        } else if (item.label !== NOLABEL) {
           if (item.options) {
             placeholder = `{{${item.inputType}:${item.label}:${item.options}}}`;
           } else {
@@ -359,12 +374,16 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
             prompt = prompt.replace(new RegExp(placeholder, 'g'), '');
           }
         } else if (item.inputType === 'retrieveKnowledgeBase') {
+          // Replaced as a string: a filter's braces would be read as a pattern
           if (ragKnowledgeBaseEnabled && values[item.label].length > 0) {
-            const res = await retrieveKnowledgeBase(values[item.label]);
+            const res = await retrieveKnowledgeBase(
+              values[item.label],
+              item.filter ? JSON.parse(item.filter) : undefined
+            );
             const resJson = JSON.stringify(res.data.retrievalResults);
-            prompt = prompt.replace(new RegExp(placeholder, 'g'), resJson);
+            prompt = prompt.split(placeholder).join(resJson);
           } else {
-            prompt = prompt.replace(new RegExp(placeholder, 'g'), '');
+            prompt = prompt.split(placeholder).join('');
           }
         }
       }

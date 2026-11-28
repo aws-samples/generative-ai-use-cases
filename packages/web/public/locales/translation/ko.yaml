@@ -787,6 +787,7 @@ useCaseBuilder:
   error:
     duplicate_select_options: '{{select:{{label}}}}에 중복된 옵션이 포함되어 있습니다.'
     empty_select_options: '{{select:{{label}}}}에 빈 옵션이 포함되어 있습니다.'
+    invalid_kb_filter: 'retrieveKnowledgeBase{{label}}의 필터가 올바르지 않습니다: {{message}}'
     missing_kb_text_form: >-
       Knowledge Base의 검색 쿼리를 입력하기 위한 양식 {{text{{label}}}}을
       프롬프트 템플릿에 포함해주세요.

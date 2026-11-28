@@ -783,6 +783,7 @@ useCaseBuilder:
   error:
     duplicate_select_options: '{{select:{{label}}}} 包含重复选项。'
     empty_select_options: '{{select:{{label}}}} 包含空选项。'
+    invalid_kb_filter: 'retrieveKnowledgeBase{{label}} 的筛选条件无效：{{message}}'
     missing_kb_text_form: 请在提示模板中包含用于输入Knowledge Base搜索查询的表单 {{text{{label}}}}。
     missing_select_options: '{{select}} 未设置选项。请按照 {{select:标签:选项1,选项2}} 格式设置。'
     missing_text_form: 请在提示模板中包含用于输入Amazon Kendra搜索查询的表单 {{text{{label}}}}。
@@ -871,6 +872,10 @@ useCaseBuilder:
         {{text:问题}}
         </问题>
       title: 简单RAG
+    retrieveKnowledgeBaseFilterDescription: >-
+      在标签后加上元数据 JSON，即可只检索元数据符合条件的文档（见下例）。只写值表示等于，写运算符表示比较。可用的运算符有 equals、notEquals、greaterThan、greaterThanOrEquals、lessThan、lessThanOrEquals、in、notIn、startsWith、stringContains 和 listContains。文档必须满足所有条件，并且在管理员设置的筛选条件之上生效。
+    retrieveKnowledgeBaseFilterExample:
+      title: 按元数据筛选的示例
     selectPlaceholderDescription: >-
       {{select}} 是用于定义选择框的占位符。 {{select}} 不能省略标签和选项。 必须按照 {{select:标签:选项1,选项2}}
       格式编写。 选项以逗号分隔定义。如果不想显示标签，可以使用 {{select::选项1,选项2}} 这样的空字符标签。(空字符标签与无标签不同。)

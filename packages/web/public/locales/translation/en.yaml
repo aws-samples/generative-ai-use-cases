@@ -1289,6 +1289,7 @@ useCaseBuilder:
   error:
     duplicate_select_options: '{{select:{{label}}}} contains duplicate options.'
     empty_select_options: '{{select:{{label}}}} contains empty options.'
+    invalid_kb_filter: 'The filter of retrieveKnowledgeBase{{label}} is not valid: {{message}}'
     missing_kb_text_form: >-
       Please include a form {{text{{label}}}} in the prompt template to input
       the search query for Knowledge Base.
@@ -1427,6 +1428,10 @@ useCaseBuilder:
         {{text:Question}}
         </Question>
       title: Simple RAG
+    retrieveKnowledgeBaseFilterDescription: >-
+      Add metadata JSON after the label to search only the documents whose metadata matches (see the examples below). A value alone means equals; an object of operators compares. The operators are equals, notEquals, greaterThan, greaterThanOrEquals, lessThan, lessThanOrEquals, in, notIn, startsWith, stringContains and listContains. Documents must meet every condition, on top of the filters the administrator has set.
+    retrieveKnowledgeBaseFilterExample:
+      title: Examples of filtering by metadata
     selectPlaceholderDescription: |-
       You are a specialist with expertise in AWS services.
 

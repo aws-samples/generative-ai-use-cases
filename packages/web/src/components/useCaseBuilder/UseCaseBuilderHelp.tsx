@@ -47,6 +47,13 @@ const Placeholder: React.FC<{
   );
 };
 
+// Not translated: the JSON would be read as i18next interpolation
+const KNOWLEDGE_BASE_FILTER_EXAMPLES = [
+  '{{retrieveKnowledgeBase:query:{"category":"AWS"}}}',
+  '{{retrieveKnowledgeBase:query:{"category":"AWS","year":{"greaterThan":2020}}}}',
+  '{{retrieveKnowledgeBase:query:{"tag":{"in":["AWS","Bedrock"]}}}}',
+].join('\n');
+
 const UseCaseBuilderHelp = () => {
   const { t } = useTranslation();
 
@@ -146,6 +153,17 @@ const UseCaseBuilderHelp = () => {
                 prompt={t(
                   'useCaseBuilder.help.retrieveKnowledgeBaseExample.prompt'
                 )}
+              />
+              <div className="mt-4">
+                {t(
+                  'useCaseBuilder.help.retrieveKnowledgeBaseFilterDescription'
+                )}
+              </div>
+              <PromptSample
+                title={t(
+                  'useCaseBuilder.help.retrieveKnowledgeBaseFilterExample.title'
+                )}
+                prompt={KNOWLEDGE_BASE_FILTER_EXAMPLES}
               />
             </div>
           </div>
