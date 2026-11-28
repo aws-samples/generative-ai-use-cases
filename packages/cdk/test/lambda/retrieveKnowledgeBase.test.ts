@@ -54,3 +54,22 @@ describe('POST /rag-knowledge-base/retrieve search type', () => {
     }
   );
 });
+
+describe('POST /rag-knowledge-base/retrieve on a managed knowledge base', () => {
+  afterEach(() => {
+    delete process.env.KNOWLEDGE_BASE_MANAGED;
+  });
+
+  test('uses the managed search settings, which run hybrid search themselves', async () => {
+    process.env.KNOWLEDGE_BASE_MANAGED = 'true';
+    const res = await invokeHandler(loadHandler('false'), {
+      user: 'alice',
+      body: { query: 'q' },
+    });
+    expect(res.statusCode).toBe(200);
+    const config = mockSend.mock.calls[0][0].input.retrievalConfiguration;
+    expect(config).toEqual({
+      managedSearchConfiguration: { numberOfResults: 10 },
+    });
+  });
+});

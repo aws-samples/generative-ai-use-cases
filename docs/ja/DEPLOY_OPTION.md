@@ -142,6 +142,17 @@ arn:aws:kendra:ap-northeast-1:333333333333:index/77777777-3333-4444-aaaa-1111111
 
 - `opensearch`: OpenSearch Serverless を使用（従来動作）
 - `s3vectors`: Amazon S3 Vectors を使用（低コスト、固定費なし）
+- `managed`: Amazon Bedrock Managed Knowledge Base を使用（ベクトルストアを持たない。埋め込みと再ランクのモデルは Bedrock が管理）
+
+`managed` を選ぶと、ベクトルストア (OpenSearch Serverless / S3 Vectors) は作成されず、Bedrock がベクトルの保存・埋め込み・ハイブリッド検索・再ランクを行います ([Build a managed knowledge base](https://docs.aws.amazon.com/bedrock/latest/userguide/kb-build-managed.html))。次の点に注意してください。
+
+- `embeddingModelId` は使われません。`ragKnowledgeBaseAdvancedParsing`・`ragKnowledgeBaseBinaryVector`・`ragKnowledgeBaseStandbyReplicas` を有効にするとデプロイ時にエラーになります (文書の解析は Managed Knowledge Base に組み込まれています)
+- メタデータフィルターでは `startsWith` と `stringContains` が使えません。RAG チャットのフィルターの選択肢にも表示されません。また、暗黙のフィルター (`implicitFilters`) は使われません
+- メタデータの値は文字列・数値・文字列のリストだけが使えます。真偽値 (`true` / `false`) を含むメタデータファイルの文書は取り込みに失敗します。サンプルの文書は真偽値の属性 (`is_public`) を除いて配置され、RAG チャットの真偽値のフィルターも表示されません
+- `rerankingModelId` を指定すると、組み込みの再ランクの代わりにそのモデルを使います
+- `ragKnowledgeBaseSyncSchedule: 'daily'` を指定すると、データソースが 1 日 1 回、自動で同期されます (時刻は AWS が空いている時間を選び、指定できません)。S3 に置いた文書の追加・変更・削除が、手で同期を始めなくても反映されます。既定は `'none'` (自動で同期しない) です
+- 使えるリージョンが限られます。`modelRegion` が [対応リージョン](https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-regions.html) である必要があります。なお、AWS GovCloud (US-West) では Bedrock が管理する埋め込みモデルが使えないため、この設定では作成できません
+- 種類の変更 (`opensearch` / `s3vectors` から `managed`、またはその逆) はナレッジベースの作り直しになり、取り込んだデータも作り直しになります
 
 **[parameter.ts](/packages/cdk/parameter.ts) を編集**
 
@@ -150,7 +161,7 @@ arn:aws:kendra:ap-northeast-1:333333333333:index/77777777-3333-4444-aaaa-1111111
 const envs: Record<string, Partial<StackInput>> = {
   dev: {
     ragKnowledgeBaseEnabled: true,
-    ragKnowledgeBaseStorageType: 'opensearch', // 'opensearch' or 's3vectors'
+    ragKnowledgeBaseStorageType: 'opensearch', // 'opensearch', 's3vectors' or 'managed'
     ragKnowledgeBaseId: 'XXXXXXXXXX',
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: false,

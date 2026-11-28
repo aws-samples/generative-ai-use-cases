@@ -128,9 +128,16 @@ const baseStackInputSchema = z.object({
   // RAG KB
   ragKnowledgeBaseEnabled: z.boolean().default(false),
   ragKnowledgeBaseId: z.string().nullish(),
+  // 'managed' creates a Bedrock Managed Knowledge Base: Bedrock keeps the
+  // vectors and runs the embedding and reranking models, so no vector store
+  // is created and embeddingModelId is not used.
   ragKnowledgeBaseStorageType: z
-    .enum(['opensearch', 's3vectors'])
+    .enum(['opensearch', 's3vectors', 'managed'])
     .default('opensearch'),
+  // How often a managed knowledge base syncs its data source by itself.
+  // 'daily' runs once a day at an off-peak time AWS chooses; 'none' (the
+  // default) leaves every sync to be started by hand. Used only with 'managed'.
+  ragKnowledgeBaseSyncSchedule: z.enum(['none', 'daily']).default('none'),
   embeddingModelId: z.string().default('amazon.titan-embed-text-v2:0'),
   ragKnowledgeBaseStandbyReplicas: z.boolean().default(false),
   ragKnowledgeBaseAdvancedParsing: z.boolean().default(false),
@@ -301,6 +308,20 @@ export const stackInputSchema = baseStackInputSchema
       message:
         'agentCoreRegion must equal region when closedNetworkMode=true (the AgentCore Runtime shares the closed VPC, which exists in a single region)',
       path: ['agentCoreRegion'],
+    }
+  )
+  .refine(
+    (data) =>
+      data.ragKnowledgeBaseStorageType !== 'managed' ||
+      !(
+        data.ragKnowledgeBaseAdvancedParsing ||
+        data.ragKnowledgeBaseBinaryVector ||
+        data.ragKnowledgeBaseStandbyReplicas
+      ),
+    {
+      message:
+        'ragKnowledgeBaseAdvancedParsing, ragKnowledgeBaseBinaryVector and ragKnowledgeBaseStandbyReplicas cannot be used with ragKnowledgeBaseStorageType=managed (a managed knowledge base parses documents and keeps the vectors itself)',
+      path: ['ragKnowledgeBaseStorageType'],
     }
   )
   .refine((data) => !(data.closedNetworkMode && data.researchAgentEnabled), {

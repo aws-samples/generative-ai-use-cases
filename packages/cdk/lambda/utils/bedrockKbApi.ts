@@ -1,4 +1,5 @@
 import {
+  AgenticRetrieveStreamCommand,
   DependencyFailedException,
   GuardrailConfiguration,
   ImplicitFilterConfiguration,
@@ -8,7 +9,6 @@ import {
   RetrievedReference,
   ServiceQuotaExceededException,
   ThrottlingException,
-  VectorSearchRerankingConfiguration,
 } from '@aws-sdk/client-bedrock-agent-runtime';
 
 import {
@@ -25,6 +25,7 @@ import { streamingChunk } from './streamingChunk';
 import { classifyStreamingError } from './streamingError';
 import { verifyToken } from './auth';
 import { initBedrockAgentRuntimeClient } from './bedrockClient';
+import { knowledgeBaseRetrievalConfiguration } from './knowledgeBaseRetrieval';
 
 const MODEL_REGION = process.env.MODEL_REGION as string;
 
@@ -62,15 +63,17 @@ const convertS3UriToUrl = (s3Uri: string, region: string): string => {
 const resolveSourceUrl = (ref: RetrievedReference): string | undefined => {
   const region = process.env.MODEL_REGION || '';
   if (ref?.location?.s3Location?.uri) {
-    return convertS3UriToUrl(ref.location.s3Location.uri, region);
+    const uri = ref.location.s3Location.uri;
+    // A managed knowledge base gives the object's https URL already
+    return uri.startsWith('https://') ? uri : convertS3UriToUrl(uri, region);
   }
   if (ref?.location?.webLocation?.url) {
     return ref.location.webLocation.url;
   }
-  // Fallback: x-amz-bedrock-kb-source-uri metadata
-  const sourceUri = ref?.metadata?.['x-amz-bedrock-kb-source-uri'] as
-    | string
-    | undefined;
+  // Fallback: the source URI metadata (a managed knowledge base names its
+  // reserved metadata with an underscore prefix)
+  const sourceUri = (ref?.metadata?.['x-amz-bedrock-kb-source-uri'] ??
+    ref?.metadata?.['_source_uri']) as string | undefined;
   if (!sourceUri) return undefined;
   return sourceUri.startsWith('s3://')
     ? convertS3UriToUrl(sourceUri, region)
@@ -81,7 +84,10 @@ const resolveSourceUrl = (ref: RetrievedReference): string | undefined => {
 const resolveDisplayTitle = (ref: RetrievedReference, url: string): string => {
   const metadataTitle =
     (ref?.metadata?.['title'] as string | undefined) ||
-    (ref?.metadata?.['x-amz-bedrock-kb-document-title'] as string | undefined);
+    (ref?.metadata?.['x-amz-bedrock-kb-document-title'] as
+      | string
+      | undefined) ||
+    (ref?.metadata?.['_document_title'] as string | undefined);
   if (metadataTitle) return metadataTitle;
 
   const isWebSource = !ref?.location?.s3Location?.uri;
@@ -154,18 +160,9 @@ const getExplicitFilters = async (
   return { andAll: aggregatedFilters };
 };
 
-const getRerankingConfig = ():
-  | VectorSearchRerankingConfiguration
-  | undefined => {
+const getRerankingModelArn = (): string | undefined => {
   if (!process.env.RERANKING_MODEL_ID) return undefined;
-  return {
-    type: 'BEDROCK_RERANKING_MODEL',
-    bedrockRerankingConfiguration: {
-      modelConfiguration: {
-        modelArn: `arn:aws:bedrock:${process.env.MODEL_REGION}::foundation-model/${process.env.RERANKING_MODEL_ID}`,
-      },
-    },
-  };
+  return `arn:aws:bedrock:${process.env.MODEL_REGION}::foundation-model/${process.env.RERANKING_MODEL_ID}`;
 };
 
 const getGuardrailConfig = (): GuardrailConfiguration | undefined => {
@@ -198,6 +195,143 @@ $output_format_instructions$`,
   return config;
 };
 
+// A managed knowledge base does not take RetrieveAndGenerate. It answers
+// through agentic retrieval instead: a model plans sub-queries, searches for
+// each, and writes the answer with citations. 3 iterations is what AWS
+// suggests for a single knowledge base; it bounds the time and the model calls.
+const MANAGED_KNOWLEDGE_BASE = process.env.KNOWLEDGE_BASE_MANAGED === 'true';
+const MANAGED_MAX_AGENT_ITERATION = 3;
+
+/**
+ * The answer of a managed knowledge base, with footnotes like those of
+ * RetrieveAndGenerate. The answer text arrives all at once just before the
+ * result, so it is written out from the result, where the citations give
+ * the span of the answer that each source supports.
+ */
+async function* invokeManagedKnowledgeBase(
+  model: Model,
+  messages: UnrecordedMessage[],
+  explicitFilters: RetrievalFilter | undefined
+) {
+  const rerankingModelArn = getRerankingModelArn();
+  const guardrail = getGuardrailConfig();
+  const command = new AgenticRetrieveStreamCommand({
+    // The conversation so far, so a follow-up question is understood
+    messages: messages
+      .filter(
+        (message) =>
+          (message.role === 'user' || message.role === 'assistant') &&
+          message.content
+      )
+      .map((message) => ({
+        role: message.role as 'user' | 'assistant',
+        content: { text: message.content },
+      })),
+    retrievers: [
+      {
+        configuration: {
+          knowledgeBase: {
+            knowledgeBaseId: process.env.KNOWLEDGE_BASE_ID,
+            ...(explicitFilters && {
+              retrievalOverrides: { filter: explicitFilters },
+            }),
+          },
+        },
+      },
+    ],
+    agenticRetrieveConfiguration: {
+      foundationModelType: 'CUSTOM',
+      foundationModelConfiguration: {
+        type: 'BEDROCK_FOUNDATION_MODEL',
+        bedrockFoundationModelConfiguration: {
+          modelConfiguration: { modelArn: model.modelId },
+        },
+      },
+      ...(rerankingModelArn && {
+        rerankingModelType: 'CUSTOM',
+        rerankingConfiguration: {
+          type: 'BEDROCK_RERANKING_MODEL',
+          bedrockRerankingConfiguration: {
+            modelConfiguration: { modelArn: rerankingModelArn },
+          },
+        },
+      }),
+      maxAgentIteration: MANAGED_MAX_AGENT_ITERATION,
+    },
+    ...(guardrail && {
+      policyConfiguration: {
+        bedrockGuardrailConfiguration: {
+          guardrailId: guardrail.guardrailId,
+          guardrailVersion: guardrail.guardrailVersion,
+        },
+      },
+    }),
+  });
+
+  const client = await initBedrockAgentRuntimeClient({ region: MODEL_REGION });
+  const res = await client.send(command);
+  if (!res.stream) return;
+
+  for await (const event of res.stream) {
+    if (!event.result) continue;
+    const results = event.result.results ?? [];
+    const answer = event.result.generatedResponse?.answer ?? '';
+    const citations = [...(event.result.generatedResponse?.citations ?? [])]
+      .filter((citation) => citation.endIndex !== undefined)
+      .sort((a, b) => (a.endIndex ?? 0) - (b.endIndex ?? 0));
+
+    const sources: {
+      [url: string]: { refId: number; title: string; pageNumber?: string };
+    } = {};
+    let position = 0;
+    for (const citation of citations) {
+      const end = Math.min(citation.endIndex ?? 0, answer.length);
+      if (end > position) {
+        yield streamingChunk({ text: answer.slice(position, end) });
+        position = end;
+      }
+      // Two passages of the same page mark one source, once
+      const marked = new Set<number>();
+      for (const reference of citation.references ?? []) {
+        const result = results[reference.resultIndex ?? -1];
+        if (!result) continue;
+        const ref: RetrievedReference = {
+          content: { text: result.content?.text },
+          metadata: result.metadata,
+          location: {
+            type: 'S3',
+            s3Location: { uri: result.metadata?.['_source_uri'] as string },
+          },
+        };
+        const url = resolveSourceUrl(ref);
+        if (!url) continue;
+        const pageNumber =
+          result.metadata?.['_excerpt_page_number']?.toString();
+        const refUrl = buildRefUrl(ref, url, pageNumber);
+        if (sources[refUrl] === undefined) {
+          sources[refUrl] = {
+            refId: Object.keys(sources).length,
+            title: resolveDisplayTitle(ref, url),
+            pageNumber,
+          };
+        }
+        const refId = sources[refUrl].refId;
+        if (marked.has(refId)) continue;
+        marked.add(refId);
+        yield streamingChunk({ text: `[^${refId}]` });
+      }
+    }
+    if (answer.length > position) {
+      yield streamingChunk({ text: answer.slice(position) });
+    }
+    for (const [url, { refId, title, pageNumber }] of Object.entries(sources)) {
+      yield streamingChunk({
+        text: `\n[^${refId}]: [${title}${pageNumber ? `(${pageNumber} page)` : ''}](${url})`,
+      });
+    }
+  }
+}
+
 const bedrockKbApi: ApiInterface = {
   invoke: async () => {
     throw new Error('Not Implemented');
@@ -210,6 +344,11 @@ const bedrockKbApi: ApiInterface = {
   ) {
     try {
       const explicitFilters = await getExplicitFilters(messages, idToken);
+
+      if (MANAGED_KNOWLEDGE_BASE) {
+        yield* invokeManagedKnowledgeBase(model, messages, explicitFilters);
+        return;
+      }
 
       const systemMessage = messages.find((msg) => msg.role === 'system');
       const userSystemContext = systemMessage?.content || '';
@@ -252,13 +391,11 @@ $output_format_instructions$`;
             knowledgeBaseId: process.env.KNOWLEDGE_BASE_ID,
             modelArn: model.modelId,
             generationConfiguration,
-            retrievalConfiguration: {
-              vectorSearchConfiguration: {
-                filter: explicitFilters,
-                implicitFilterConfiguration: getImplicitFilters(),
-                rerankingConfiguration: getRerankingConfig(),
-              },
-            },
+            retrievalConfiguration: knowledgeBaseRetrievalConfiguration({
+              filter: explicitFilters,
+              implicitFilterConfiguration: getImplicitFilters(),
+              rerankingModelArn: getRerankingModelArn(),
+            }),
             orchestrationConfiguration: getOrchestrationConfig(),
           },
         },

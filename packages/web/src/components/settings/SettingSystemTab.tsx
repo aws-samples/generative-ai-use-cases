@@ -93,7 +93,13 @@ const SettingSystemTab: React.FC = () => {
           name={t('setting.items.rag_kb_enabled')}
           value={
             ragKnowledgeBaseEnabled
-              ? `true (${ragKnowledgeBaseStorageType === 's3vectors' ? 'Amazon S3 Vectors' : 'OpenSearch Serverless'})`
+              ? `true (${
+                  ragKnowledgeBaseStorageType === 's3vectors'
+                    ? 'Amazon S3 Vectors'
+                    : ragKnowledgeBaseStorageType === 'managed'
+                      ? 'Managed Knowledge Base'
+                      : 'OpenSearch Serverless'
+                })`
               : 'false'
           }
         />

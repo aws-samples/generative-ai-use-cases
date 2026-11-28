@@ -444,6 +444,116 @@ describe('GenerativeAiUseCases', () => {
     }
   );
 
+  test('a managed knowledge base needs no vector store', () => {
+    const app = new cdk.App();
+    const params = processedStackInputSchema.parse({
+      ...stackInput,
+      ragKnowledgeBaseEnabled: true,
+      ragKnowledgeBaseStorageType: 'managed',
+    });
+
+    const { ragKnowledgeBaseStack, generativeAiUseCasesStack } = createStacks(
+      app,
+      params
+    );
+    if (!ragKnowledgeBaseStack || !generativeAiUseCasesStack) {
+      throw new Error('Stack was not created');
+    }
+    const template = Template.fromStack(ragKnowledgeBaseStack);
+
+    template.hasResourceProperties('AWS::Bedrock::KnowledgeBase', {
+      KnowledgeBaseConfiguration: {
+        Type: 'MANAGED',
+        ManagedKnowledgeBaseConfiguration: { EmbeddingModelType: 'MANAGED' },
+      },
+      StorageConfiguration: Match.absent(),
+    });
+    template.hasResourceProperties('AWS::Bedrock::DataSource', {
+      DataSourceConfiguration: {
+        Type: 'MANAGED_KNOWLEDGE_BASE_CONNECTOR',
+        ManagedKnowledgeBaseConnectorConfiguration: {
+          ConnectorParameters: Match.objectLike({
+            type: 'S3',
+            connectionConfiguration: Match.objectLike({
+              bucketOwnerAccountId: Match.anyValue(),
+            }),
+            filterConfiguration: { inclusionPrefixes: ['docs/'] },
+          }),
+          // Synced by hand unless the deployment asks for a schedule
+          SyncSchedule: Match.absent(),
+        },
+      },
+    });
+    // The documents, and each sample metadata file written without its
+    // boolean attributes
+    const deployment = Object.values(
+      template.findResources('Custom::CDKBucketDeployment')
+    )[0] as { Properties: { SourceObjectKeys: unknown[] } };
+    expect(deployment.Properties.SourceObjectKeys).toHaveLength(3);
+
+    template.resourceCountIs('AWS::OpenSearchServerless::Collection', 0);
+    template.resourceCountIs('AWS::S3Vectors::VectorBucket', 0);
+
+    // Both the API (Retrieve) and the streaming function (the RAG chat)
+    // query it as a managed knowledge base
+    const functions = Template.fromStack(
+      generativeAiUseCasesStack
+    ).findResources('AWS::Lambda::Function');
+    const managedFunctions = Object.keys(functions).filter(
+      (id) =>
+        (
+          functions[id].Properties?.Environment?.Variables as
+            | Record<string, unknown>
+            | undefined
+        )?.KNOWLEDGE_BASE_MANAGED === 'true'
+    );
+    expect(managedFunctions.some((id) => id.includes('ApiHandler'))).toBe(true);
+    expect(managedFunctions.some((id) => id.includes('PredictStream'))).toBe(
+      true
+    );
+  });
+
+  test('a managed knowledge base can sync daily', () => {
+    const app = new cdk.App();
+    const params = processedStackInputSchema.parse({
+      ...stackInput,
+      ragKnowledgeBaseEnabled: true,
+      ragKnowledgeBaseStorageType: 'managed',
+      ragKnowledgeBaseSyncSchedule: 'daily',
+    });
+    const { ragKnowledgeBaseStack } = createStacks(app, params);
+    if (!ragKnowledgeBaseStack) {
+      throw new Error('Stack was not created');
+    }
+    Template.fromStack(ragKnowledgeBaseStack).hasResourceProperties(
+      'AWS::Bedrock::DataSource',
+      {
+        DataSourceConfiguration: {
+          ManagedKnowledgeBaseConnectorConfiguration: Match.objectLike({
+            SyncSchedule: { Daily: {} },
+          }),
+        },
+      }
+    );
+  });
+
+  test('a managed knowledge base rejects the settings of a vector store', () => {
+    for (const setting of [
+      'ragKnowledgeBaseAdvancedParsing',
+      'ragKnowledgeBaseBinaryVector',
+      'ragKnowledgeBaseStandbyReplicas',
+    ]) {
+      expect(() =>
+        stackInputSchema.parse({
+          ...stackInput,
+          ragKnowledgeBaseEnabled: true,
+          ragKnowledgeBaseStorageType: 'managed',
+          [setting]: true,
+        })
+      ).toThrow(/ragKnowledgeBaseStorageType=managed/);
+    }
+  });
+
   test('allowedDevOrigins rejects values that are not origins', () => {
     // The API handler compares the Origin header exactly, so a path or a
     // trailing slash would silently never match.
