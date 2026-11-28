@@ -69,9 +69,12 @@ agent_builder:
   description_label: Description
   description_placeholder: Describe what your agent does...
   description_too_long: Description must be 500 characters or less
+  document_search: Document search
+  document_search_description: 'Lets this agent search the documents of the RAG chat (Knowledge Base) when a question needs them, with the same access as the user, and cite them.'
   edit_agent: Edit Agent
   editor: Editor
   enable_code_execution: Enabling code execution
+  enable_document_search: Enabling document search
   enable_web_search: Enabling web search
   enter_agent_name: Enter the agent name
   enter_system_prompt: Enter a system prompt that defines the agent behavior

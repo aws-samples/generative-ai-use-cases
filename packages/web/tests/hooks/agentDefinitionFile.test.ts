@@ -19,6 +19,7 @@ const complete = {
   mcpServers: ['powerpoint', 'excel'],
   codeExecutionEnabled: true,
   webSearchEnabled: true,
+  documentSearchEnabled: true,
 };
 
 describe('writing an agent out', () => {
@@ -49,6 +50,7 @@ describe('writing an agent out', () => {
       mcpServers: [],
       codeExecutionEnabled: false,
       webSearchEnabled: false,
+      documentSearchEnabled: false,
     });
   });
 });
@@ -113,6 +115,19 @@ describe('reading an agent in', () => {
         systemPrompt: 'y',
         webSearchEnabled: value,
       }).webSearchEnabled;
+    expect(on(true)).toBe(true);
+    expect(on('true')).toBe(false);
+    expect(on(undefined)).toBe(false);
+  });
+
+  // A file written before document search existed reads as off (#1870)
+  it('only enables document search on a real true', () => {
+    const on = (value: unknown) =>
+      fromPortableAgent({
+        name: 'x',
+        systemPrompt: 'y',
+        documentSearchEnabled: value,
+      }).documentSearchEnabled;
     expect(on(true)).toBe(true);
     expect(on('true')).toBe(false);
     expect(on(undefined)).toBe(false);

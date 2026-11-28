@@ -62,6 +62,8 @@ export interface BackendApiProps {
   readonly table: Table;
   readonly statsTable: Table;
   readonly knowledgeBaseId?: string;
+  // Agent Builder agents may search the Knowledge Base (#1870)
+  readonly agentDocumentSearchEnabled?: boolean;
   readonly agents?: string;
   readonly guardrailIdentify?: string;
   readonly guardrailVersion?: string;
@@ -96,6 +98,7 @@ export interface BackendApiProps {
 export class Api extends Construct {
   readonly api: RestApi;
   readonly predictStreamFunction: NodejsFunction;
+  readonly agentDocumentSearchFunction?: NodejsFunction;
   readonly invokeFlowFunction: NodejsFunction;
   readonly optimizePromptFunction: NodejsFunction;
   readonly apiHandler: NodejsFunction;
@@ -440,6 +443,30 @@ export class Api extends Construct {
     fileBucket.grantReadWrite(predictStreamFunction);
     predictStreamFunction.grantInvoke(idPool.authenticatedRole);
 
+    // Document search of Agent Builder agents. The AgentCore runtime invokes
+    // it with the caller's id token, and it applies the RAG chat's filters.
+    const agentDocumentSearchFunction =
+      props.agentDocumentSearchEnabled && knowledgeBaseId
+        ? new NodejsFunction(this, 'AgentDocumentSearch', {
+            runtime: LAMBDA_RUNTIME_NODEJS,
+            bundling: bedrockSdkBundling,
+            entry: './lambda/searchDocumentsForAgent.ts',
+            timeout: Duration.seconds(30),
+            environment: {
+              USER_POOL_ID: userPool.userPoolId,
+              USER_POOL_CLIENT_ID: userPoolClient.userPoolClientId,
+              MODEL_REGION: modelRegion,
+              KNOWLEDGE_BASE_ID: knowledgeBaseId,
+              KNOWLEDGE_BASE_HYBRID_SEARCH: JSON.stringify(
+                props.ragKnowledgeBaseStorageType !== 's3vectors'
+              ),
+              CROSS_ACCOUNT_BEDROCK_ROLE_ARN: crossAccountBedrockRoleArn ?? '',
+            },
+            vpc,
+            securityGroups,
+          })
+        : undefined;
+
     const invokeFlowFunction = new NodejsFunction(this, 'InvokeFlow', {
       runtime: LAMBDA_RUNTIME_NODEJS,
       bundling: bedrockSdkBundling,
@@ -618,6 +645,7 @@ export class Api extends Construct {
       });
       apiHandler.role?.addToPrincipalPolicy(bedrockPolicy);
       predictStreamFunction.role?.addToPrincipalPolicy(bedrockPolicy);
+      agentDocumentSearchFunction?.role?.addToPrincipalPolicy(bedrockPolicy);
       invokeFlowFunction.role?.addToPrincipalPolicy(bedrockPolicy);
       optimizePromptFunction.role?.addToPrincipalPolicy(bedrockPolicy);
     } else {
@@ -635,6 +663,8 @@ export class Api extends Construct {
       apiHandler.role?.addToPrincipalPolicy(assumeRolePolicy);
       predictStreamFunction.role?.addToPrincipalPolicy(logsPolicy);
       predictStreamFunction.role?.addToPrincipalPolicy(assumeRolePolicy);
+      agentDocumentSearchFunction?.role?.addToPrincipalPolicy(logsPolicy);
+      agentDocumentSearchFunction?.role?.addToPrincipalPolicy(assumeRolePolicy);
     }
 
     // API Gateway
@@ -834,6 +864,7 @@ export class Api extends Construct {
 
     this.api = api;
     this.predictStreamFunction = predictStreamFunction;
+    this.agentDocumentSearchFunction = agentDocumentSearchFunction;
     this.invokeFlowFunction = invokeFlowFunction;
     this.optimizePromptFunction = optimizePromptFunction;
     this.modelRegion = modelRegion;

@@ -21,6 +21,7 @@ export interface AgentFormData {
   mcpServers: string[];
   codeExecutionEnabled: boolean;
   webSearchEnabled: boolean;
+  documentSearchEnabled: boolean;
   isPublic: boolean;
   tags: string[];
 }
@@ -52,6 +53,10 @@ const AgentForm: React.FC<AgentFormProps> = ({
     import.meta.env.VITE_APP_AGENT_CORE_AGENT_BUILDER_WEB_SEARCH_ENABLED ===
     'true';
 
+  // Document search needs the Knowledge Base of the RAG chat (#1870)
+  const documentSearchEnabledByDeployment =
+    import.meta.env.VITE_APP_RAG_KNOWLEDGE_BASE_ENABLED === 'true';
+
   // Built-in tools offered to the AI so that it can suggest them.
   // Add an entry here when a new built-in tool is introduced.
   const availableBuiltInTools = useMemo(
@@ -70,8 +75,17 @@ const AgentForm: React.FC<AgentFormProps> = ({
             },
           ]
         : []),
+      ...(documentSearchEnabledByDeployment
+        ? [
+            {
+              id: 'documentSearch',
+              name: t('agent_builder.document_search'),
+              description: t('agent_builder.document_search_description'),
+            },
+          ]
+        : []),
     ],
-    [t, webSearchEnabledByDeployment]
+    [t, webSearchEnabledByDeployment, documentSearchEnabledByDeployment]
   );
 
   // Form state
@@ -84,6 +98,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
     mcpServers: [],
     codeExecutionEnabled: false,
     webSearchEnabled: false,
+    documentSearchEnabled: false,
     isPublic: false,
     tags: [],
   });
@@ -133,9 +148,16 @@ const AgentForm: React.FC<AgentFormProps> = ({
         webSearchEnabled:
           webSearchEnabledByDeployment &&
           suggestedBuiltInTools.includes('webSearch'),
+        documentSearchEnabled:
+          documentSearchEnabledByDeployment &&
+          suggestedBuiltInTools.includes('documentSearch'),
       }));
     }
-  }, [suggestedBuiltInTools, webSearchEnabledByDeployment]);
+  }, [
+    suggestedBuiltInTools,
+    webSearchEnabledByDeployment,
+    documentSearchEnabledByDeployment,
+  ]);
 
   // Update formData.modelId when availableModels becomes available
   useEffect(() => {
@@ -158,6 +180,7 @@ const AgentForm: React.FC<AgentFormProps> = ({
         mcpServers: initialData.mcpServers || [],
         codeExecutionEnabled: initialData.codeExecutionEnabled || false,
         webSearchEnabled: initialData.webSearchEnabled || false,
+        documentSearchEnabled: initialData.documentSearchEnabled || false,
         isPublic: initialData.isPublic || false,
         tags: initialData.tags || [],
       });
@@ -433,6 +456,33 @@ const AgentForm: React.FC<AgentFormProps> = ({
                 </label>
                 <p className="mt-1 text-xs text-gray-500">
                   {t('agent_builder.web_search_description')}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {documentSearchEnabledByDeployment && (
+            <div className="flex items-start space-x-3">
+              <input
+                type="checkbox"
+                id="documentSearchEnabled"
+                checked={formData.documentSearchEnabled}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    documentSearchEnabled: e.target.checked,
+                  })
+                }
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <div className="flex-1">
+                <label
+                  htmlFor="documentSearchEnabled"
+                  className="block cursor-pointer text-sm font-medium text-gray-700">
+                  {t('agent_builder.enable_document_search')}
+                </label>
+                <p className="mt-1 text-xs text-gray-500">
+                  {t('agent_builder.document_search_description')}
                 </p>
               </div>
             </div>

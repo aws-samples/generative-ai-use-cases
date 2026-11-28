@@ -258,6 +258,10 @@ export class GenerativeAiUseCasesStack extends Stack {
       table: database.table,
       statsTable: database.statsTable,
       knowledgeBaseId: params.ragKnowledgeBaseId || props.knowledgeBaseId,
+      agentDocumentSearchEnabled:
+        params.agentBuilderEnabled &&
+        params.ragKnowledgeBaseEnabled &&
+        !!props.agentCoreStack?.runtimeRole,
       agents: agentsJson,
       guardrailIdentify: props.guardrailIdentifier,
       guardrailVersion: props.guardrailVersion,
@@ -309,7 +313,16 @@ export class GenerativeAiUseCasesStack extends Stack {
           userPoolClientId: auth.client.userPoolClientId,
           fileBucket: api.fileBucket.bucketName,
           fileBucketRegion: this.region,
+          ...(api.agentDocumentSearchFunction && {
+            documentSearchFunction: api.agentDocumentSearchFunction.functionArn,
+          }),
         }),
+      });
+      // Agents search documents through this function with the caller's id
+      // token (#1870)
+      api.agentDocumentSearchFunction?.addPermission('AgentCoreRuntimeInvoke', {
+        principal: new ArnPrincipal(agentCoreRuntimeRole.roleArn),
+        action: 'lambda:InvokeFunction',
       });
       api.fileBucket.addToResourcePolicy(
         new PolicyStatement({

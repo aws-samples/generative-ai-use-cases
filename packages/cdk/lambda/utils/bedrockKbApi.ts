@@ -59,7 +59,9 @@ const convertS3UriToUrl = (s3Uri: string, region: string): string => {
 };
 
 // Resolve source URL from a retrieved reference
-const resolveSourceUrl = (ref: RetrievedReference): string | undefined => {
+export const resolveSourceUrl = (
+  ref: RetrievedReference
+): string | undefined => {
   const region = process.env.MODEL_REGION || '';
   if (ref?.location?.s3Location?.uri) {
     return convertS3UriToUrl(ref.location.s3Location.uri, region);
@@ -78,7 +80,10 @@ const resolveSourceUrl = (ref: RetrievedReference): string | undefined => {
 };
 
 // Resolve display title from a retrieved reference
-const resolveDisplayTitle = (ref: RetrievedReference, url: string): string => {
+export const resolveDisplayTitle = (
+  ref: RetrievedReference,
+  url: string
+): string => {
   const metadataTitle =
     (ref?.metadata?.['title'] as string | undefined) ||
     (ref?.metadata?.['x-amz-bedrock-kb-document-title'] as string | undefined);
@@ -95,7 +100,7 @@ const resolveDisplayTitle = (ref: RetrievedReference, url: string): string => {
 };
 
 // Build reference URL with encoding and page anchor
-const buildRefUrl = (
+export const buildRefUrl = (
   ref: RetrievedReference,
   url: string,
   pageNumber?: string

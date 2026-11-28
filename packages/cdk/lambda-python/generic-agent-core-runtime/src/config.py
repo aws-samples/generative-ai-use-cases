@@ -80,7 +80,14 @@ def get_uv_environment() -> dict[str, str]:
     }
 
 
-def get_system_prompt(user_system_prompt: str = None, web_search_enabled: bool = False) -> str:
+DOCUMENT_SEARCH_SYSTEM_PROMPT = """
+When a question may depend on the organization's own documents, search them with the search_documents tool before answering.
+Answer from what the documents say, and cite each document you use by copying its cite_as (a Markdown link) as it is.
+If the documents do not answer the question, say so instead of guessing.
+"""
+
+
+def get_system_prompt(user_system_prompt: str = None, web_search_enabled: bool = False, document_search_enabled: bool = False) -> str:
     """Combine user system prompt with fixed system prompt"""
     prompts = []
     if user_system_prompt:
@@ -88,6 +95,8 @@ def get_system_prompt(user_system_prompt: str = None, web_search_enabled: bool =
     prompts.append(FIXED_SYSTEM_PROMPT)
     if web_search_enabled:
         prompts.append(WEB_SEARCH_SYSTEM_PROMPT)
+    if document_search_enabled:
+        prompts.append(DOCUMENT_SEARCH_SYSTEM_PROMPT)
     return "\n".join(prompts)
 
 

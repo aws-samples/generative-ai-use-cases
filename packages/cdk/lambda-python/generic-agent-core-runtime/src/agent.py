@@ -12,6 +12,7 @@ from strands.models import BedrockModel
 
 from . import sandbox
 from .config import extract_model_info, get_code_interpreter_prompt, get_max_iterations, get_max_tokens, get_system_prompt, supports_prompt_cache, supports_tools_cache
+from .document_search import make_document_search_tool
 from .tools import ToolManager
 from .types import Message, ModelInfo
 from .utils import (
@@ -63,6 +64,8 @@ class AgentManager:
         web_search_enabled: bool | None = False,
         user_sub: str | None = None,
         file_config: dict | None = None,
+        document_search_enabled: bool | None = False,
+        id_token: str | None = None,
     ) -> AsyncGenerator[str]:
         """Process a request and yield streaming responses as raw events"""
         try:
@@ -73,8 +76,15 @@ class AgentManager:
             # Extract model info
             model_id, region = extract_model_info(model_info)
 
+            # Document search needs the deployment's search function and the
+            # verified caller's token; without them the agent has no such tool
+            document_search_function = (file_config or {}).get("documentSearchFunction")
+            document_search = bool(document_search_enabled and document_search_function and id_token)
+            if document_search_enabled and not document_search:
+                logger.warning("Document search is not available for this request, skipping the document search tool")
+
             # Combine system prompts
-            combined_system_prompt = get_system_prompt(system_prompt, web_search_enabled=bool(web_search_enabled))
+            combined_system_prompt = get_system_prompt(system_prompt, web_search_enabled=bool(web_search_enabled), document_search_enabled=document_search)
 
             # Get tools (MCP handling is done in ToolManager)
             tools = self.tool_manager.get_tools_with_options(
@@ -84,7 +94,9 @@ class AgentManager:
                 user_sub=user_sub,
                 file_config=file_config,
             )
-            logger.info(f"Loaded {len(tools)} tools (code execution: {code_execution_enabled}, web search: {web_search_enabled})")
+            if document_search:
+                tools.append(make_document_search_tool(document_search_function, id_token))
+            logger.info(f"Loaded {len(tools)} tools (code execution: {code_execution_enabled}, web search: {web_search_enabled}, document search: {document_search})")
 
             # Log agent info
             if agent_id:

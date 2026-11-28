@@ -73,6 +73,7 @@ async def invocations(request: Request):
         agent_id = request_data.get("agent_id")
         code_execution_enabled = request_data.get("code_execution_enabled", False)
         web_search_enabled = request_data.get("web_search_enabled", False)
+        document_search_enabled = request_data.get("document_search_enabled", False)
 
         # Validate required fields
         if not model_info:
@@ -112,6 +113,9 @@ async def invocations(request: Request):
                     web_search_enabled=web_search_enabled,
                     user_sub=user_sub,
                     file_config=config,
+                    document_search_enabled=document_search_enabled,
+                    # Only a token verified above searches documents as its user
+                    id_token=request_data.get("id_token") if user_sub else None,
                 ):
                     yield chunk
             finally:
