@@ -223,7 +223,9 @@ export class Api extends Construct {
       timeout: Duration.minutes(15),
       memorySize: 1024,
       bundling: {
-        ...bedrockSdkBundling,
+        // TranscribeAudio (voice input in the chat) is newer than the Lambda
+        // runtime's built-in SDK, so bundle client-transcribe as well
+        nodeModules: [...bedrockSdkModules, '@aws-sdk/client-transcribe'],
         commandHooks: {
           beforeBundling: () => [],
           beforeInstall: () => [],
@@ -354,6 +356,8 @@ export class Api extends Construct {
           'transcribe:GetTranscriptionJob',
           'transcribe:ListTranscriptionJobs',
           'transcribe:TagResource',
+          // Voice input in the chat
+          'transcribe:TranscribeAudio',
         ],
         resources: ['*'],
       })
@@ -811,6 +815,7 @@ export class Api extends Construct {
     transcribe.addResource('start').addMethod('POST');
     transcribe.addResource('url').addMethod('POST');
     transcribe.addResource('result').addResource('{jobName}').addMethod('GET');
+    transcribe.addResource('audio').addMethod('POST');
 
     // --- Routes from SpeechToSpeech Construct (v5) ---
     api.root.addResource('speech-to-speech').addMethod('POST');

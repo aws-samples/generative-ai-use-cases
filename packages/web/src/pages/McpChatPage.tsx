@@ -220,6 +220,7 @@ const McpChatPage: React.FC = () => {
           </ExpandableField>
         )}
         <InputChatContent
+          voiceInput
           content={content}
           disabled={loading}
           onChangeContent={setContent}

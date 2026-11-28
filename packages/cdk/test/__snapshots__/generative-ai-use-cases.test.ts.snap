@@ -6073,6 +6073,9 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
     "VideoGenerateModelIds": {
       "Value": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
     },
+    "VoiceInputEnabled": {
+      "Value": "true",
+    },
     "WebUrl": {
       "Value": {
         "Fn::GetAtt": [
@@ -6254,7 +6257,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A502123c4f4ce0a10bf920e1a959bf4405550d8": {
+    "APIApiDeployment3A502123d76f3347453215183c92b5385a7eecb7": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -6360,6 +6363,9 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "APIApitokenusageGETF4970022",
         "APIApitokenusageOPTIONS59BB9297",
         "APIApitokenusageD4EF3867",
+        "APIApitranscribeaudioOPTIONSBEC651AD",
+        "APIApitranscribeaudioPOST1DCC3F0F",
+        "APIApitranscribeaudio5CC84BD2",
         "APIApitranscribeOPTIONS5030955A",
         "APIApitranscribe874542A9",
         "APIApitranscriberesultjobNameGET5C0FF2AB",
@@ -6493,6 +6499,8 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         "APIApisystemcontextsPOST3883EC4A",
         "APIApitokenusageGETF4970022",
         "APIApitokenusageOPTIONS59BB9297",
+        "APIApitranscribeaudioOPTIONSBEC651AD",
+        "APIApitranscribeaudioPOST1DCC3F0F",
         "APIApitranscribeOPTIONS5030955A",
         "APIApitranscriberesultjobNameGET5C0FF2AB",
         "APIApitranscriberesultjobNameOPTIONS7E77FDC0",
@@ -6545,7 +6553,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A502123c4f4ce0a10bf920e1a959bf4405550d8",
+          "Ref": "APIApiDeployment3A502123d76f3347453215183c92b5385a7eecb7",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -7196,6 +7204,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
                 "transcribe:GetTranscriptionJob",
                 "transcribe:ListTranscriptionJobs",
                 "transcribe:TagResource",
+                "transcribe:TranscribeAudio",
               ],
               "Effect": "Allow",
               "Resource": "*",
@@ -10887,6 +10896,105 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
       "Type": "AWS::ApiGateway::Method",
       "UpdateReplacePolicy": "Delete",
     },
+    "APIApitranscribeaudio5CC84BD2": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ParentId": {
+          "Ref": "APIApitranscribe874542A9",
+        },
+        "PathPart": "audio",
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitranscribeaudioOPTIONSBEC651AD": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": {
+          "IntegrationResponses": [
+            {
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Credentials": "'true'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Credentials": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": {
+          "Ref": "APIApitranscribeaudio5CC84BD2",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitranscribeaudioPOST1DCC3F0F": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "APIAuthorizer9DCC037B",
+        },
+        "HttpMethod": "POST",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "APIApiHandler18BC61F9",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "APIApitranscribeaudio5CC84BD2",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
     "APIApitranscriberesult3CDED854": {
       "DeletionPolicy": "Delete",
       "Properties": {
@@ -13675,6 +13783,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
           },
           "VITE_APP_USE_CASE_BUILDER_ENABLED": "true",
           "VITE_APP_VIDEO_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
+          "VITE_APP_VOICE_INPUT_ENABLED": "true",
         },
         "outputEnvFile": false,
         "outputSourceDirectory": "../packages/web/dist",
@@ -19294,6 +19403,9 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
     "VideoGenerateModelIds": {
       "Value": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
     },
+    "VoiceInputEnabled": {
+      "Value": "true",
+    },
     "WebUrl": {
       "Value": {
         "Fn::Join": [
@@ -19483,7 +19595,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::IAM::Role",
       "UpdateReplacePolicy": "Delete",
     },
-    "APIApiDeployment3A502123693984b185e61986626e7246b829131d": {
+    "APIApiDeployment3A5021233d85dc67e0ccf2b4fce6653f7b4204dc": {
       "DeletionPolicy": "Delete",
       "DependsOn": [
         "APIApiApi4XXDCF913C8",
@@ -19589,6 +19701,9 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "APIApitokenusageGETF4970022",
         "APIApitokenusageOPTIONS59BB9297",
         "APIApitokenusageD4EF3867",
+        "APIApitranscribeaudioOPTIONSBEC651AD",
+        "APIApitranscribeaudioPOST1DCC3F0F",
+        "APIApitranscribeaudio5CC84BD2",
         "APIApitranscribeOPTIONS5030955A",
         "APIApitranscribe874542A9",
         "APIApitranscriberesultjobNameGET5C0FF2AB",
@@ -19722,6 +19837,8 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
         "APIApisystemcontextsPOST3883EC4A",
         "APIApitokenusageGETF4970022",
         "APIApitokenusageOPTIONS59BB9297",
+        "APIApitranscribeaudioOPTIONSBEC651AD",
+        "APIApitranscribeaudioPOST1DCC3F0F",
         "APIApitranscribeOPTIONS5030955A",
         "APIApitranscriberesultjobNameGET5C0FF2AB",
         "APIApitranscriberesultjobNameOPTIONS7E77FDC0",
@@ -19774,7 +19891,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       ],
       "Properties": {
         "DeploymentId": {
-          "Ref": "APIApiDeployment3A502123693984b185e61986626e7246b829131d",
+          "Ref": "APIApiDeployment3A5021233d85dc67e0ccf2b4fce6653f7b4204dc",
         },
         "RestApiId": {
           "Ref": "APIApiFFA96F67",
@@ -20348,6 +20465,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
                 "transcribe:GetTranscriptionJob",
                 "transcribe:ListTranscriptionJobs",
                 "transcribe:TagResource",
+                "transcribe:TranscribeAudio",
               ],
               "Effect": "Allow",
               "Resource": "*",
@@ -24039,6 +24157,105 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
       "Type": "AWS::ApiGateway::Method",
       "UpdateReplacePolicy": "Delete",
     },
+    "APIApitranscribeaudio5CC84BD2": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ParentId": {
+          "Ref": "APIApitranscribe874542A9",
+        },
+        "PathPart": "audio",
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitranscribeaudioOPTIONSBEC651AD": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "Integration": {
+          "IntegrationResponses": [
+            {
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Credentials": "'true'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'",
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+              },
+              "StatusCode": "204",
+            },
+          ],
+          "RequestTemplates": {
+            "application/json": "{ statusCode: 200 }",
+          },
+          "Type": "MOCK",
+        },
+        "MethodResponses": [
+          {
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Credentials": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Origin": true,
+            },
+            "StatusCode": "204",
+          },
+        ],
+        "ResourceId": {
+          "Ref": "APIApitranscribeaudio5CC84BD2",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "APIApitranscribeaudioPOST1DCC3F0F": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": {
+          "Ref": "APIAuthorizer9DCC037B",
+        },
+        "HttpMethod": "POST",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "APIApiHandler18BC61F9",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": {
+          "Ref": "APIApitranscribeaudio5CC84BD2",
+        },
+        "RestApiId": {
+          "Ref": "APIApiFFA96F67",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+      "UpdateReplacePolicy": "Delete",
+    },
     "APIApitranscriberesult3CDED854": {
       "DeletionPolicy": "Delete",
       "Properties": {
@@ -26710,6 +26927,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
           },
           "VITE_APP_USE_CASE_BUILDER_ENABLED": "true",
           "VITE_APP_VIDEO_MODEL_IDS": "[{\\"modelId\\":\\"amazon.nova-reel-v1:0\\",\\"region\\":\\"us-east-1\\"}]",
+          "VITE_APP_VOICE_INPUT_ENABLED": "true",
         },
         "outputEnvFile": false,
         "outputSourceDirectory": "../packages/web/dist",

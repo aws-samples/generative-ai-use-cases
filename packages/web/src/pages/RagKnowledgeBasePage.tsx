@@ -514,6 +514,7 @@ const RagKnowledgeBasePage: React.FC = () => {
             </ExpandableField>
           )}
           <InputChatContent
+            voiceInput
             content={content}
             disabled={loading && !writing}
             onChangeContent={setContent}

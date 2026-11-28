@@ -126,6 +126,7 @@ const RagPage: React.FC = () => {
 
         <div className="fixed bottom-0 z-0 flex w-full items-end justify-center lg:pr-[var(--sidebar-w,16rem)] print:hidden">
           <InputChatContent
+            voiceInput
             content={content}
             disabled={loading && !writing}
             onChangeContent={setContent}
