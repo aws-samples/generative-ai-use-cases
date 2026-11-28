@@ -18,6 +18,10 @@ import {
   AgentRuntimeArtifact,
 } from '@aws-cdk/aws-bedrock-agentcore-alpha';
 import { BucketInfo } from 'generative-ai-use-cases';
+import {
+  AgentCoreRuntimePlatformVersion,
+  setRuntimePlatformVersion,
+} from '../utils/agent-core-runtime';
 import * as path from 'path';
 
 export interface ResearchAgentCoreProps {
@@ -25,17 +29,20 @@ export interface ResearchAgentCoreProps {
   braveApiKey?: string;
   tavilyApiKey?: string;
   gatewayArns?: string[];
+  runtimePlatformVersion?: AgentCoreRuntimePlatformVersion;
 }
 
 export class ResearchAgentCore extends Construct {
   private readonly _fileBucket: Bucket;
   private readonly _runtime: Runtime;
   private readonly _role: Role;
+  private readonly runtimePlatformVersion?: AgentCoreRuntimePlatformVersion;
 
   constructor(scope: Construct, id: string, props: ResearchAgentCoreProps) {
     super(scope, id);
 
     const { env, braveApiKey = '', tavilyApiKey = '', gatewayArns } = props;
+    this.runtimePlatformVersion = props.runtimePlatformVersion;
 
     // Create bucket
     this._fileBucket = new Bucket(this, 'ResearchAgentFileBucket', {
@@ -86,7 +93,7 @@ export class ResearchAgentCore extends Construct {
       environmentVariables.TAVILY_API_KEY = tavilyApiKey;
     }
 
-    return new Runtime(this, 'ResearchAgentCoreRuntime', {
+    const runtime = new Runtime(this, 'ResearchAgentCoreRuntime', {
       runtimeName: `GenUResearchRuntime${env}`,
       agentRuntimeArtifact: AgentRuntimeArtifact.fromAsset(
         path.join(__dirname, '../../lambda-python/research-agent-core-runtime')
@@ -96,6 +103,8 @@ export class ResearchAgentCore extends Construct {
       protocolConfiguration: ProtocolType.HTTP,
       environmentVariables,
     });
+    setRuntimePlatformVersion(runtime, this.runtimePlatformVersion);
+    return runtime;
   }
 
   private createExecutionRole(): Role {

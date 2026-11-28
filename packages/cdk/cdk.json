@@ -78,6 +78,7 @@
     "agentCoreVpcId": null,
     "agentCoreSubnetIds": null,
     "agentCoreGatewayArns": [],
+    "agentCoreRuntimePlatformVersion": "V1",
     "researchAgentEnabled": false,
     "researchAgentBraveApiKey": "",
     "researchAgentTavilyApiKey": "",

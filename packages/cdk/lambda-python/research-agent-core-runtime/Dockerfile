@@ -1,17 +1,24 @@
-# Use ARM64 base image for Bedrock AgentCore compatibility
-FROM --platform=linux/arm64 public.ecr.aws/docker/library/python:3.13
+# Use ARM64 base image for Bedrock AgentCore compatibility.
+# Amazon Linux 2023 provides a snapshot-safe OpenSSL, which AgentCore Runtime
+# platform version V2 needs: it starts every session from a snapshot of the
+# running agent, and this OpenSSL reseeds its random state after a restore.
+FROM --platform=linux/arm64 public.ecr.aws/amazonlinux/amazonlinux:2023
 
 WORKDIR /var/task
 
 # Environment variables for UV package manager
 ENV UV_NO_CACHE=1
 ENV UV_NO_MANAGED_PYTHON=1
-ENV UV_PYTHON=/usr/local/bin/python
+ENV UV_PYTHON=/usr/bin/python3.13
 ENV UV_INSTALL_DIR=/usr/local/bin
 ENV UV_PROJECT_ENVIRONMENT=/tmp/.venv
 
 # Install system dependencies
-RUN apt-get update -y && apt-get install curl nodejs npm -y
+# Python and Node.js from Amazon Linux use the system OpenSSL
+# (uv must not download its own Python, which bundles another OpenSSL)
+RUN dnf swap -y openssl-libs openssl-snapsafe-libs \
+    && dnf install -y python3.13 nodejs22 nodejs22-npm tar gzip \
+    && dnf clean all
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Pre-install mcp-remote for faster startup

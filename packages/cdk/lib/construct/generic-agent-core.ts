@@ -19,6 +19,10 @@ import {
   AgentRuntimeArtifact,
 } from '@aws-cdk/aws-bedrock-agentcore-alpha';
 import { BucketInfo } from 'generative-ai-use-cases';
+import {
+  AgentCoreRuntimePlatformVersion,
+  setRuntimePlatformVersion,
+} from '../utils/agent-core-runtime';
 import * as path from 'path';
 import {
   SUPPORTED_CACHE_FIELDS,
@@ -60,6 +64,7 @@ export interface GenericAgentCoreProps {
   webSearchEnabled?: boolean;
   // Domains excluded from every web search, enforced by the runtime's tool
   webSearchExcludeDomains?: string[];
+  runtimePlatformVersion?: AgentCoreRuntimePlatformVersion;
 }
 
 interface RuntimeResources {
@@ -77,6 +82,7 @@ export class GenericAgentCore extends Construct {
   private readonly envName: string;
   private readonly mainRegion: string;
   private readonly webSearchEnabled: boolean;
+  private readonly runtimePlatformVersion?: AgentCoreRuntimePlatformVersion;
 
   // Security Group ID that requires manual cleanup after AgentCore Runtime deletion
   // Used for CloudFormation Output to remind users of manual cleanup tasks
@@ -104,6 +110,7 @@ export class GenericAgentCore extends Construct {
     this.envName = env;
     this.mainRegion = props.mainRegion;
     this.webSearchEnabled = webSearchEnabled;
+    this.runtimePlatformVersion = props.runtimePlatformVersion;
 
     // Create bucket first
     this._fileBucket = this.createFileBucket();
@@ -334,7 +341,7 @@ export class GenericAgentCore extends Construct {
       securityGroup
     );
 
-    return new Runtime(this, `${type}AgentCoreRuntime`, {
+    const runtime = new Runtime(this, `${type}AgentCoreRuntime`, {
       runtimeName: config.name,
       agentRuntimeArtifact: AgentRuntimeArtifact.fromAsset(
         path.join(__dirname, `../../${config.dockerPath}`)
@@ -344,6 +351,8 @@ export class GenericAgentCore extends Construct {
       protocolConfiguration: ProtocolType.HTTP,
       environmentVariables: config.environmentVariables,
     });
+    setRuntimePlatformVersion(runtime, this.runtimePlatformVersion);
+    return runtime;
   }
 
   private createNetworkConfiguration(

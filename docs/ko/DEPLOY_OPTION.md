@@ -667,6 +667,30 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!WARNING]
 > VPC 모드를 사용할 때, 예를 들어 PRIVATE에서 PUBLIC으로의 변경으로 인해 AgentCore Runtime 삭제 시 보안 그룹이 자동 삭제되지 않습니다. AgentCore Runtime이 생성하는 AWS 관리형 ENI가 보안 그룹을 참조하기 때문에 CloudFormation에서는 삭제할 수 없습니다. AgentCore Runtime 삭제 후 관리형 ENI가 자동 삭제될 때까지 기다린 다음 수동으로 보안 그룹을 삭제하세요. 삭제가 필요한 보안 그룹 ID는 CloudFormation 출력에 표시됩니다.
 
+#### AgentCore Runtime 플랫폼 버전
+
+`agentCoreRuntimePlatformVersion`에 `V2`를 지정하면 GenU가 생성하는 AgentCore Runtime(Generic Runtime, AgentBuilder Runtime, Research Agent Runtime)을 [플랫폼 버전 V2](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html)로 생성합니다. 기본값은 `V1`입니다.
+
+V2는 준비된 에이전트의 스냅샷에서 각 세션을 시작하므로 새 세션이 더 빨리 시작됩니다.
+
+> [!NOTE]
+>
+> - V2는 Runtime을 생성하거나 업데이트할 때마다 스냅샷을 만들기 때문에, 배포 시 Runtime 생성·업데이트에 몇 분이 걸립니다.
+> - V2를 사용할 수 있는 리전은 [AWS 공식 문서](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html)를 확인하세요.
+> - `V2`에서 `V1`로 되돌릴 수도 있습니다.
+
+**[parameter.ts](/packages/cdk/parameter.ts) 편집**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    agentBuilderEnabled: true,
+    agentCoreRuntimePlatformVersion: 'V2',
+  },
+};
+```
+
 ### AgentBuilder 사용 사례 활성화
 
 시스템 프롬프트와 임의의 MCP를 설정하여 사용자가 사용 사례별로 자유롭게 에이전트를 만들 수 있는 사용 사례입니다. (Experimental: 예고 없이 호환되지 않는 변경이 있을 수 있습니다)
