@@ -22,7 +22,7 @@ import FileCard from './FileCard';
 import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
 import useUserSetting from '../hooks/useUserSetting';
-import useVoiceInput from '../hooks/useVoiceInput';
+import useVoiceInput, { voiceInputEnabled } from '../hooks/useVoiceInput';
 import Tooltip from './Tooltip';
 import {
   createPastedTextFile,
@@ -73,14 +73,10 @@ type Props = {
     onSetting?: () => void;
   };
 
-// Off only in a closed network deployment without the Transcribe endpoint.
-// Unset (local development against an older stack, tests) means on.
-const voiceInputEnabled: boolean =
-  import.meta.env.VITE_APP_VOICE_INPUT_ENABLED !== 'false';
-
 const InputChatContent: React.FC<Props> = (props) => {
   const { t, i18n } = useTranslation();
-  const { settingSubmitCmdOrCtrlEnter } = useUserSetting();
+  const { settingSubmitCmdOrCtrlEnter, settingShowVoiceInput } =
+    useUserSetting();
 
   // The transcript arrives after the recording, so append it to the text as
   // it is then, not as it was when the recording started
@@ -94,7 +90,10 @@ const InputChatContent: React.FC<Props> = (props) => {
     onChangeContentRef.current(current + separator + text);
   });
   const showVoiceInput =
-    !!props.voiceInput && voiceInputEnabled && voice.supported;
+    !!props.voiceInput &&
+    voiceInputEnabled &&
+    settingShowVoiceInput &&
+    voice.supported;
   const { pathname } = useLocation();
   const { loading: chatLoading, isEmpty: chatIsEmpty } = useChat(pathname);
   const {

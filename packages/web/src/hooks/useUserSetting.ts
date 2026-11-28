@@ -21,6 +21,9 @@ const useUserSetting = () => {
     'showEmail',
     true
   );
+  // Microphone button in the chat inputs
+  const [settingShowVoiceInput, setSettingShowVoiceInput] =
+    useLocalStorageBoolean('showVoiceInput', true);
 
   // Candidate languages for automatic language identification in
   // transcription, stored as a JSON array like the other settings
@@ -50,6 +53,8 @@ const useUserSetting = () => {
     setSettingShowTools,
     settingShowEmail,
     setSettingShowEmail,
+    settingShowVoiceInput,
+    setSettingShowVoiceInput,
   };
 };
 

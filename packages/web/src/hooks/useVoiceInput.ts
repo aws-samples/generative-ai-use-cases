@@ -4,13 +4,19 @@ import {
   TranscribeAudioResponse,
 } from 'generative-ai-use-cases';
 import useHttp from './useHttp';
+import { getTranscribeLanguageOptions } from '../utils/AudioUtils';
 
 // Long enough for a spoken chat message, and well under the API limit
 // (about 4 KB per second of Opus).
 export const MAX_RECORDING_MS = 2 * 60 * 1000;
 
-// Display language of GenU -> language of TranscribeAudio. Thai and
-// Vietnamese are not supported, so the server's default (Japanese) is used.
+// Off only in a closed network deployment without the Transcribe endpoint.
+// Unset (local development against an older stack, tests) means on.
+export const voiceInputEnabled: boolean =
+  import.meta.env.VITE_APP_VOICE_INPUT_ENABLED !== 'false';
+
+// Display language of GenU -> language of TranscribeAudio, used when none of
+// the user's candidate languages is supported (Thai and Vietnamese are not).
 const SPEECH_LANGUAGES: Record<string, string> = {
   ja: 'ja',
   en: 'en',
@@ -68,6 +74,9 @@ const useVoiceInput = (
           TranscribeAudioRequest
         >('transcribe/audio', {
           audio: await blobToBase64(blob),
+          // The same candidates as the other speech recognition screens,
+          // read now so a change on the Settings page applies right away
+          languageOptions: getTranscribeLanguageOptions(),
           language: speechLanguage(displayLanguage),
         });
         if (res.data.text) {

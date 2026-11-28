@@ -82,6 +82,45 @@ describe('transcribeAudio handler', () => {
     expect(transcribeSend.mock.calls[0][0].input.Language).toBe('en');
   });
 
+  test('identifies the language among the candidates from the Settings page', async () => {
+    transcribeSend.mockResolvedValue({
+      TranscriptResponse: {
+        Metadata: { LanguageCode: 'ja-JP' },
+        Results: { Transcript: '料金 を 教え て' },
+      },
+    });
+
+    const res = await invokeHandler(handler, {
+      user: 'user1',
+      body: {
+        audio,
+        languageOptions: ['ja-JP', 'en-US', 'zh-CN', 'th-TH'],
+        language: 'en',
+      },
+    });
+
+    // Joined because the identified language is Japanese
+    expect(JSON.parse(res.body)).toEqual({ text: '料金を教えて' });
+    const input = transcribeSend.mock.calls[0][0].input;
+    expect(input.LanguageDetectionMode).toBe('IDENTIFY_LANGUAGE');
+    // Base codes, Chinese as it is, Thai left out as unsupported
+    expect(input.LanguageOptions).toEqual(['ja', 'en', 'zh-CN']);
+    expect(input.Language).toBeUndefined();
+  });
+
+  test('uses the one supported candidate instead of identifying', async () => {
+    transcribeSend.mockResolvedValue(transcriptOf(''));
+
+    await invokeHandler(handler, {
+      user: 'user1',
+      body: { audio, languageOptions: ['ko-KR', 'th-TH', 'vi-VN'] },
+    });
+
+    const input = transcribeSend.mock.calls[0][0].input;
+    expect(input.Language).toBe('ko');
+    expect(input.LanguageDetectionMode).toBeUndefined();
+  });
+
   test('falls back to Japanese for an unsupported language', async () => {
     transcribeSend.mockResolvedValue(transcriptOf(''));
 

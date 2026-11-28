@@ -1111,6 +1111,7 @@ setting:
     show_email: Show Email
     show_tools: Show Tools
     show_use_case_builder: Show Use Case Builder
+    show_voice_input: Show Voice Input
     transcribe_languages: Auto-detect languages for speech recognition
     transcribe_languages_help: 'Languages to choose from when the speech recognition language is set to "auto" (meeting minutes, voice input, file transcription). Choose 2 to 5. The more languages you choose, the more often short utterances are misidentified.'
     typing_animation: Typing Animation

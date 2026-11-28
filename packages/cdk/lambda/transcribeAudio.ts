@@ -3,6 +3,7 @@ import {
   TranscribeClient,
   TranscribeAudioCommand,
   BadRequestException,
+  LanguageDetectionMode,
   SyncLanguage,
 } from '@aws-sdk/client-transcribe';
 import {
@@ -19,12 +20,58 @@ export const MAX_AUDIO_BYTES = 5 * 1024 * 1024;
 
 const SYNC_LANGUAGES = Object.values(SyncLanguage) as string[];
 
+// A candidate from the Settings page (ja-JP, en-US, zh-CN, ...) as the
+// language TranscribeAudio takes: the base code, or the code itself for
+// Chinese. Undefined for a language it does not support (Thai, Vietnamese).
+export const syncLanguage = (code: string): SyncLanguage | undefined => {
+  if (SYNC_LANGUAGES.includes(code)) return code as SyncLanguage;
+  const base = code.split('-')[0];
+  return base !== 'zh' && SYNC_LANGUAGES.includes(base)
+    ? (base as SyncLanguage)
+    : undefined;
+};
+
+/**
+ * How to tell TranscribeAudio the language: identify it among the user's
+ * candidates when at least two are supported (one is rejected), otherwise
+ * the one supported candidate, the display language, or Japanese.
+ */
+export const languageSettings = (
+  languageOptions: unknown,
+  language: unknown
+):
+  | { Language: SyncLanguage }
+  | {
+      LanguageDetectionMode: typeof LanguageDetectionMode.IDENTIFY_LANGUAGE;
+      LanguageOptions: SyncLanguage[];
+    } => {
+  const candidates = Array.isArray(languageOptions)
+    ? [
+        ...new Set(
+          languageOptions
+            .filter((c): c is string => typeof c === 'string')
+            .map(syncLanguage)
+            .filter((c): c is SyncLanguage => !!c)
+        ),
+      ]
+    : [];
+  if (candidates.length >= 2) {
+    return {
+      LanguageDetectionMode: LanguageDetectionMode.IDENTIFY_LANGUAGE,
+      LanguageOptions: candidates,
+    };
+  }
+  const fallback =
+    typeof language === 'string' ? syncLanguage(language) : undefined;
+  return { Language: candidates[0] ?? fallback ?? SyncLanguage.JA };
+};
+
 // Japanese and Chinese transcripts come back with a space between every word.
 // Remove a space when either side is not ASCII, and keep the spaces between
 // ASCII words such as "Amazon Bedrock".
 export const joinWords = (transcript: string, language: string): string => {
   const text = transcript.trim();
-  if (language !== 'ja' && !language.startsWith('zh')) {
+  if (!language.startsWith('ja') && !language.startsWith('zh')) {
     return text;
   }
   // eslint-disable-next-line no-control-regex
@@ -56,20 +103,21 @@ export const handler = async (
       reason: 'audioFileTooLarge',
     });
   }
-  const language =
-    req.language && SYNC_LANGUAGES.includes(req.language)
-      ? (req.language as SyncLanguage)
-      : SyncLanguage.JA;
+  const languages = languageSettings(req.languageOptions, req.language);
 
   try {
     const client = new TranscribeClient({});
     const res = await client.send(
       new TranscribeAudioCommand({
         Media: { MediaBytes: audio },
-        Language: language,
+        ...languages,
       })
     );
     const transcript = res.TranscriptResponse?.Results?.Transcript ?? '';
+    // The identified language (ja-JP, ...) when it was identified
+    const language =
+      res.TranscriptResponse?.Metadata?.LanguageCode ??
+      ('Language' in languages ? languages.Language : '');
     const body: TranscribeAudioResponse = {
       text: joinWords(transcript, language),
     };

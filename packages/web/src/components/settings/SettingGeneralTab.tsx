@@ -10,6 +10,7 @@ import SettingItem from './SettingItem';
 import useUserSetting from '../../hooks/useUserSetting';
 import useTranscribeLanguageLabels from '../../hooks/useTranscribeLanguageLabels';
 import { supportedLngs } from '../../i18n/config';
+import { voiceInputEnabled } from '../../hooks/useVoiceInput';
 
 const SettingGeneralTab: React.FC = () => {
   const { i18n, t } = useTranslation();
@@ -26,6 +27,8 @@ const SettingGeneralTab: React.FC = () => {
     setSettingShowTools,
     settingShowEmail,
     setSettingShowEmail,
+    settingShowVoiceInput,
+    setSettingShowVoiceInput,
   } = useUserSetting();
 
   const transcribeLanguageLabels = useTranscribeLanguageLabels();
@@ -143,6 +146,19 @@ const SettingGeneralTab: React.FC = () => {
           />
         }
       />
+
+      {voiceInputEnabled && (
+        <SettingItem
+          name={t('setting.items.show_voice_input')}
+          value={
+            <Switch
+              checked={settingShowVoiceInput}
+              label=""
+              onSwitch={setSettingShowVoiceInput}
+            />
+          }
+        />
+      )}
     </div>
   );
 };

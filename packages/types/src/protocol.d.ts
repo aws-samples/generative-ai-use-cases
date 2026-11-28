@@ -208,7 +208,11 @@ export type StartTranscriptionResponse = {
 export type TranscribeAudioRequest = {
   // The recording, base64 encoded (WebM, Ogg, WAV, MP3, ...)
   audio: string;
-  // Language of the speech (ja, en, ko, zh-CN, ...). Japanese when not set
+  // The user's candidate languages for automatic identification (ja-JP,
+  // en-US, ...), the same setting as the other speech recognition screens
+  languageOptions?: string[];
+  // Language of the speech (ja, en, ko, zh-CN, ...), used when fewer than two
+  // of the candidates can be identified. Japanese when not set either
   language?: string;
 };
 
