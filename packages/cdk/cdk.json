@@ -29,6 +29,7 @@
     "ragKnowledgeBaseId": null,
     "ragKnowledgeBaseStorageType": "opensearch",
     "ragKnowledgeBaseStandbyReplicas": false,
+    "ragKnowledgeBaseOpenSearchNextGen": false,
     "ragKnowledgeBaseAdvancedParsing": false,
     "ragKnowledgeBaseAdvancedParsingModelId": "global.anthropic.claude-sonnet-4-6",
     "ragKnowledgeBaseBinaryVector": false,

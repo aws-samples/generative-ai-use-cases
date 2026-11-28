@@ -112,4 +112,12 @@ describe('stateful resources', () => {
       })
     ).toMatchSnapshot();
   });
+  test('opensearch NextGen', () => {
+    expect(
+      statefulResources({
+        ...stackInput,
+        ragKnowledgeBaseOpenSearchNextGen: true,
+      })
+    ).toMatchSnapshot();
+  });
 });
