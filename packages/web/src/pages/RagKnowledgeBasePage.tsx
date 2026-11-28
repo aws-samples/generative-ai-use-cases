@@ -470,7 +470,7 @@ const RagKnowledgeBasePage: React.FC = () => {
         </div>
 
         <div
-          className={`fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-[var(--sidebar-w,16rem)] print:hidden`}>
+          className={`pointer-events-none fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-[var(--sidebar-w,16rem)] print:hidden [&>*]:pointer-events-auto`}>
           {isEmpty && (
             <ExpandableField
               label={t('chat.system_prompt')}
