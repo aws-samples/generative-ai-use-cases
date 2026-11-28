@@ -56,7 +56,18 @@ jest.mock('../../../lambda/utils/bedrockClient', () => ({
 }));
 
 jest.mock('../../../lambda/utils/auth', () => ({
-  verifyToken: async () => ({ sub: 'user' }),
+  verifyToken: async () => ({ sub: 'user', 'cognito:groups': ['sales'] }),
+}));
+
+// A deployment that limits the documents by the caller's group, as the
+// examples in custom/rag-knowledge-base.ts do
+const groupFilter = { listContains: { key: 'groups', value: 'sales' } };
+jest.mock('@generative-ai-use-cases/common', () => ({
+  ...jest.requireActual('@generative-ai-use-cases/common'),
+  getDynamicFilters: (payload: { 'cognito:groups'?: string[] }) =>
+    (payload['cognito:groups'] ?? []).map((group) => ({
+      listContains: { key: 'groups', value: group },
+    })),
 }));
 
 let bedrockKbApi: ApiInterface;
@@ -114,6 +125,46 @@ describe('RAG chat on a managed knowledge base', () => {
       input.agenticRetrieveConfiguration.foundationModelConfiguration
         .bedrockFoundationModelConfiguration.modelConfiguration.modelArn
     ).toBe('jp.anthropic.claude-haiku-5-5');
+  });
+
+  test("searches only the documents the caller's filters allow", async () => {
+    const userFilter = { equals: { key: 'category', value: 'manual' } };
+    sent.length = 0;
+    await text(
+      bedrockKbApi.invokeStream(
+        model,
+        [
+          {
+            role: 'user',
+            content: 'What is Nova Micro?',
+            extraData: [
+              {
+                type: 'json',
+                name: 'filter',
+                source: {
+                  type: 'json',
+                  mediaType: 'application/json',
+                  data: JSON.stringify(userFilter),
+                },
+              },
+            ],
+          },
+        ],
+        'id',
+        'id-token'
+      )
+    );
+    const input = sent[0].input as {
+      retrievers: {
+        configuration: {
+          knowledgeBase: { retrievalOverrides?: { filter?: unknown } };
+        };
+      }[];
+    };
+    // The filter from the caller's own token, and the one chosen in the chat
+    expect(
+      input.retrievers[0].configuration.knowledgeBase.retrievalOverrides?.filter
+    ).toEqual({ andAll: [groupFilter, userFilter] });
   });
 
   test('puts a footnote where each source supports the answer', async () => {

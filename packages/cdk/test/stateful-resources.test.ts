@@ -30,7 +30,12 @@ const REPLACEMENT_PROPERTIES: Record<string, string[]> = {
     'CollectionGroupName',
     'Tags',
   ],
-  'AWS::Bedrock::KnowledgeBase': ['StorageConfiguration'],
+  // Type and the vector or managed configuration inside it replace the
+  // knowledge base, and a managed one keeps the vectors itself
+  'AWS::Bedrock::KnowledgeBase': [
+    'StorageConfiguration',
+    'KnowledgeBaseConfiguration',
+  ],
   'AWS::S3Vectors::VectorBucket': [
     'VectorBucketName',
     'EncryptionConfiguration',

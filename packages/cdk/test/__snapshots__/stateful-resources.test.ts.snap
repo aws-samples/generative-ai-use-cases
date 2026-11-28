@@ -137,6 +137,12 @@ exports[`stateful resources S3 Vectors knowledge base 1`] = `
   },
   "RagKnowledgeBaseStack/KnowledgeBase": {
     "DeletionPolicy": null,
+    "KnowledgeBaseConfiguration": {
+      "Type": "VECTOR",
+      "VectorKnowledgeBaseConfiguration": {
+        "EmbeddingModelArn": "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0",
+      },
+    },
     "StorageConfiguration": {
       "S3VectorsConfiguration": {
         "IndexArn": "arn:aws:s3vectors:us-east-1:123456890123:bucket/generative-ai-use-cases-jp-s3vectors/index/generative-ai-use-cases-jp-s3vectors-index",
@@ -316,6 +322,12 @@ exports[`stateful resources closed network mode 1`] = `
   },
   "RagKnowledgeBaseStack/KnowledgeBase": {
     "DeletionPolicy": null,
+    "KnowledgeBaseConfiguration": {
+      "Type": "VECTOR",
+      "VectorKnowledgeBaseConfiguration": {
+        "EmbeddingModelArn": "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0",
+      },
+    },
     "StorageConfiguration": {
       "OpensearchServerlessConfiguration": {
         "CollectionArn": {
@@ -498,6 +510,12 @@ exports[`stateful resources default 1`] = `
   },
   "RagKnowledgeBaseStack/KnowledgeBase": {
     "DeletionPolicy": null,
+    "KnowledgeBaseConfiguration": {
+      "Type": "VECTOR",
+      "VectorKnowledgeBaseConfiguration": {
+        "EmbeddingModelArn": "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0",
+      },
+    },
     "StorageConfiguration": {
       "OpensearchServerlessConfiguration": {
         "CollectionArn": {
@@ -670,6 +688,12 @@ exports[`stateful resources managed knowledge base 1`] = `
   },
   "RagKnowledgeBaseStack/KnowledgeBase": {
     "DeletionPolicy": null,
+    "KnowledgeBaseConfiguration": {
+      "ManagedKnowledgeBaseConfiguration": {
+        "EmbeddingModelType": "MANAGED",
+      },
+      "Type": "MANAGED",
+    },
     "StorageConfiguration": null,
     "Type": "AWS::Bedrock::KnowledgeBase",
     "UpdateReplacePolicy": null,
