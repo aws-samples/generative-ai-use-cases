@@ -15,7 +15,10 @@ import {
   PiRobot as RobotIcon,
   PiPencil as EditIcon,
   PiArrowLeft as BackIcon,
+  PiBrain as MemoryIcon,
 } from 'react-icons/pi';
+import AgentMemoryModal from './AgentMemoryModal';
+import { agentMemoryAvailable } from '../../hooks/agentBuilder/useAgentMemory';
 import ButtonIcon from '../ButtonIcon';
 import Select from '../Select';
 import useDropOverlay from '../../hooks/useDropOverlay';
@@ -78,6 +81,9 @@ const AgentChatUnified: React.FC<AgentChatProps> = ({
 
   const [chatContent, setChatContent] = useState('');
   const [initialized, setInitialized] = useState(false);
+  const [memoryOpen, setMemoryOpen] = useState(false);
+  // Memory needs both the deployment and this agent to allow it
+  const memoryOn = agentMemoryAvailable && !!agent?.memoryEnabled;
 
   // Get models from MODELS
   const { modelIds: availableModels, modelDisplayName } = MODELS;
@@ -179,7 +185,8 @@ Please respond as this agent with the specified behavior and personality.`;
         agent.agentId,
         modelId,
         agent.codeExecutionEnabled ?? false,
-        agent.webSearchEnabled ?? false
+        agent.webSearchEnabled ?? false,
+        memoryOn
       );
 
       setChatContent('');
@@ -202,6 +209,7 @@ Please respond as this agent with the specified behavior and personality.`;
     sessionId,
     uploadedFiles,
     clearFiles,
+    memoryOn,
   ]);
 
   const handleResetChat = useCallback(() => {
@@ -251,9 +259,28 @@ Please respond as this agent with the specified behavior and personality.`;
               <EditIcon />
             </ButtonIcon>
           )}
+          {memoryOn && (
+            <button
+              type="button"
+              className="flex items-center gap-1 rounded border px-2 py-1 text-sm text-gray-700 hover:bg-gray-100"
+              onClick={() => setMemoryOpen(true)}>
+              <MemoryIcon />
+              {t('agent_builder.memory_button')}
+            </button>
+          )}
           {actions}
         </div>
       </div>
+
+      {memoryOn && (
+        <AgentMemoryModal
+          isOpen={memoryOpen}
+          onClose={() => setMemoryOpen(false)}
+          agentRuntimeArn={getAgentBuilderRuntime()?.arn}
+          agentId={agent.agentId}
+          agentName={agent.name}
+        />
+      )}
 
       {/* Controls - all stacked vertically for consistent layout */}
       {showAgentInfo && (
@@ -278,6 +305,7 @@ Please respond as this agent with the specified behavior and personality.`;
           {/* Agent Capabilities */}
           {(agent.codeExecutionEnabled ||
             (webSearchEnabledByDeployment && agent.webSearchEnabled) ||
+            memoryOn ||
             (agent.mcpServers && agent.mcpServers.length > 0)) && (
             <div className="flex flex-wrap justify-center gap-2">
               {/* Code Execution - only show when enabled */}
@@ -291,6 +319,12 @@ Please respond as this agent with the specified behavior and personality.`;
               {webSearchEnabledByDeployment && agent.webSearchEnabled && (
                 <span className="inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
                   {t('agent_builder.web_search')}
+                </span>
+              )}
+
+              {memoryOn && (
+                <span className="inline-block rounded bg-purple-100 px-2 py-1 text-xs font-medium text-purple-800">
+                  {t('agent_builder.memory_badge')}
                 </span>
               )}
 

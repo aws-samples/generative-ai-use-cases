@@ -30,6 +30,8 @@ export type AgentContent = {
   modelId: string;
   codeExecutionEnabled?: boolean;
   webSearchEnabled?: boolean;
+  // Remember what each user tells this agent, past one conversation
+  memoryEnabled?: boolean;
   tags?: string[];
   isPublic?: boolean;
   createdByEmail?: string;
@@ -41,6 +43,7 @@ export type AgentInTable = AgentCommon &
     description: string; // Required in table
     codeExecutionEnabled: boolean;
     webSearchEnabled: boolean;
+    memoryEnabled?: boolean;
     isPublic: boolean;
     tags: string[];
     starCount: number; // Number of users who favorited this agent
@@ -122,6 +125,7 @@ export type BaseAgentResponse = {
   mcpServers: MCPServerReference[]; // Changed to string array
   codeExecutionEnabled: boolean;
   webSearchEnabled: boolean;
+  memoryEnabled?: boolean;
   tags: string[];
   isPublic: boolean;
   createdAt: string;
@@ -191,4 +195,5 @@ export type AgentCoreRuntimeRequest = {
   agentId?: string; // Agent ID for logging/tracking
   codeExecutionEnabled?: boolean; // Code execution setting
   webSearchEnabled?: boolean; // Web search setting
+  memoryEnabled?: boolean; // Remember the user across conversations
 };

@@ -674,6 +674,29 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!WARNING]
 > When using VPC mode, security groups are not automatically deleted when AgentCore Runtime is deleted due to changes such as from PRIVATE to PUBLIC. This is because AWS-managed ENIs created by AgentCore Runtime reference the security groups, making them undeletable by CloudFormation. After deleting AgentCore Runtime, wait for the managed ENIs to be automatically deleted, then manually delete the security groups. The security group IDs that need to be deleted are displayed in the CloudFormation outputs. Note: if the initial deployment fails (e.g., unsupported AZ), the security group may also remain and need to be cleaned up manually.
 
+#### Agent memory (AgentCore Memory)
+
+Enabling `agentCoreMemoryEnabled` lets Agent Builder agents remember the facts and preferences users state, and a summary of each conversation, and use them in later conversations. Each agent chooses whether to use it with "Remember each user".
+
+- Memory is kept per user and per agent. Users are told apart by the `sub` of the id token the runtime verifies, so memory is never mixed with another user's or another agent's
+- Users can view their own memory from the "Memory" button on the chat screen, and delete it one item at a time or all at once
+- `agentCoreMemoryExpirationDays` (7 to 365, default 90) is how many days the conversations themselves are kept. The facts, preferences and summaries drawn from them stay until the user deletes them
+- It requires `agentBuilderEnabled`. Without it the deployment fails
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    agentBuilderEnabled: true,
+    agentCoreMemoryEnabled: true,
+    agentCoreMemoryExpirationDays: 90,
+  },
+};
+```
+
+> [!NOTE]
+> AgentCore Memory is charged for storing conversations and for creating and retrieving memories. See [Amazon Bedrock AgentCore pricing](https://aws.amazon.com/bedrock/agentcore/pricing/).
+
 ### Enabling AgentBuilder Use Case
 
 This is a use case where users can freely create Agents for each use case by configuring system prompts and arbitrary MCPs. (Experimental: Breaking changes may be made without notice)

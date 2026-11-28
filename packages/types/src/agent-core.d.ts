@@ -14,6 +14,11 @@ export type AgentCoreRequest = StrandsRequest & {
   code_execution_enabled?: boolean;
   // The caller's Cognito id token. The runtime stores output files under its user.
   id_token?: string;
+  // Agent memory: recall and record this turn, for the verified caller
+  memory_enabled?: boolean;
+  // The memory screen's requests, answered without running the agent
+  memory_action?: 'list' | 'delete' | 'delete_all';
+  memory_record_id?: string;
 };
 
 export type AgentCoreStreamResponse = StrandsStreamEvent;

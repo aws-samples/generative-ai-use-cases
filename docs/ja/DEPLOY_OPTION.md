@@ -691,6 +691,29 @@ const envs: Record<string, Partial<StackInput>> = {
 > [!WARNING]
 > VPC モードを使用する場合、例えば PRIVATE から PUBLIC への変更により AgentCore Runtime 削除時にセキュリティグループが自動削除されません。AgentCore Runtime が作成する AWS マネージドな ENI がセキュリティグループを参照するため、CloudFormation では削除できません。AgentCore Runtime 削除後、マネージド ENI が自動削除されるまで待ってから、手動でセキュリティグループを削除してください。削除が必要なセキュリティグループ ID は CloudFormation の出力に表示されます。
 
+#### エージェントの記憶 (AgentCore Memory)
+
+`agentCoreMemoryEnabled` を有効にすると、Agent Builder のエージェントが、利用者が話した事実や好み、会話の要約を覚えて、次の会話で使えるようになります。エージェントごとに「利用者ごとの記憶を有効にする」で使うかどうかを選びます。
+
+- 記憶は利用者ごと・エージェントごとに分かれます。利用者は、Runtime が検証した ID トークンの `sub` で区別されるので、ほかの利用者や別のエージェントの記憶とは混ざりません
+- 利用者はチャット画面の「記憶」ボタンから、自分の記憶を見たり、1 件ずつまたはすべて消したりできます
+- `agentCoreMemoryExpirationDays` (7〜365、既定は 90) は、会話そのものの記録を残す日数です。そこから作られた事実・好み・要約は、利用者が消すまで残ります
+- `agentBuilderEnabled` が必要です。設定されていない場合はデプロイ時にエラーになります
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    agentBuilderEnabled: true,
+    agentCoreMemoryEnabled: true,
+    agentCoreMemoryExpirationDays: 90,
+  },
+};
+```
+
+> [!NOTE]
+> AgentCore Memory は、会話の記録の保存と、記憶の作成・検索に応じた料金がかかります。料金は [Amazon Bedrock AgentCore の料金ページ](https://aws.amazon.com/bedrock/agentcore/pricing/)を参照してください。
+
 ### AgentBuilder ユースケースの有効化
 
 ユーザーがシステムプロンプトと任意の MCP を設定することでユースケースごとの Agent を自由に作成できるユースケースです。(Experimental: 予告なく破壊的変更を行うことがあります)

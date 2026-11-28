@@ -19,6 +19,7 @@ const complete = {
   mcpServers: ['powerpoint', 'excel'],
   codeExecutionEnabled: true,
   webSearchEnabled: true,
+  memoryEnabled: true,
 };
 
 describe('writing an agent out', () => {
@@ -49,6 +50,7 @@ describe('writing an agent out', () => {
       mcpServers: [],
       codeExecutionEnabled: false,
       webSearchEnabled: false,
+      memoryEnabled: false,
     });
   });
 });

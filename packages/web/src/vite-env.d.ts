@@ -38,6 +38,7 @@ interface ImportMetaEnv {
   readonly VITE_APP_AGENT_CORE_GENERIC_RUNTIME: string;
   readonly VITE_APP_AGENT_CORE_AGENT_BUILDER_ENABLED: string;
   readonly VITE_APP_AGENT_CORE_AGENT_BUILDER_RUNTIME: string;
+  readonly VITE_APP_AGENT_CORE_MEMORY_ENABLED: string;
   readonly VITE_APP_AGENT_CORE_EXTERNAL_RUNTIMES: string;
   readonly VITE_APP_RESEARCH_AGENT_ENABLED: string;
   readonly VITE_APP_RESEARCH_AGENT_RUNTIME: string;

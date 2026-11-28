@@ -5863,6 +5863,9 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
         ],
       },
     },
+    "AgentCoreMemoryEnabled": {
+      "Value": "false",
+    },
     "AgentEnabled": {
       "Value": "true",
     },
@@ -13688,6 +13691,7 @@ exports[`GenerativeAiUseCases matches the snapshot (closed network mode) 6`] = `
               ],
             ],
           },
+          "VITE_APP_AGENT_CORE_MEMORY_ENABLED": "false",
           "VITE_APP_AGENT_ENABLED": "true",
           "VITE_APP_API_ENDPOINT": {
             "Fn::Join": [
@@ -19192,6 +19196,9 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
           ],
         ],
       },
+    },
+    "AgentCoreMemoryEnabled": {
+      "Value": "false",
     },
     "AgentEnabled": {
       "Value": "true",
@@ -26832,6 +26839,7 @@ exports[`GenerativeAiUseCases matches the snapshot 6`] = `
               ],
             ],
           },
+          "VITE_APP_AGENT_CORE_MEMORY_ENABLED": "false",
           "VITE_APP_AGENT_ENABLED": "true",
           "VITE_APP_API_ENDPOINT": {
             "Fn::Join": [

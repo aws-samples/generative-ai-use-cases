@@ -73,6 +73,7 @@ agent_builder:
   edit_agent: エージェントを編集
   editor: エディター
   enable_code_execution: コード実行を有効にする
+  enable_memory: 利用者ごとの記憶を有効にする
   enable_web_search: Web検索を有効にする
   enter_agent_name: エージェント名を入力
   enter_system_prompt: エージェントの動作を定義するシステムプロンプトを入力
@@ -103,6 +104,19 @@ agent_builder:
   mcp_server_description: エージェントに追加機能を提供するMCPサーバーを選択してください。これらのサーバーはセキュリティのため管理者によって事前設定されています。
   mcp_servers: MCPサーバー
   mcp_servers_description: MCPサーバーを追加して、エージェントにツールと機能を提供します
+  memory_badge: 記憶あり
+  memory_button: 記憶を見る
+  memory_delete: この記憶を消す
+  memory_delete_all: すべて消す
+  memory_delete_all_confirm: このエージェントの記憶と会話の記録をすべて消します。元に戻せません。
+  memory_description: 利用者が話した事実や好み、会話の要約を覚え、次の会話で使います。記憶は利用者ごと・エージェントごとに分かれ、利用者は自分の記憶を見て消せます。
+  memory_empty: まだ何も覚えていません。
+  memory_explanation: このエージェントがあなたについて覚えていることです。ほかの人やほかのエージェントからは見えません。
+  memory_kind_facts: 事実
+  memory_kind_heading: '{{kind}}（{{count}}）'
+  memory_kind_preferences: 好み
+  memory_kind_summaries: 過去の会話の要約
+  memory_title: '{{name}} が覚えていること'
   model: モデル
   my_agents: マイエージェント
   name: 名前

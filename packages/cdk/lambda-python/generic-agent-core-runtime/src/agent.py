@@ -10,7 +10,7 @@ import boto3
 from strands import Agent as StrandsAgent
 from strands.models import BedrockModel
 
-from . import sandbox
+from . import memory, sandbox
 from .config import extract_model_info, get_code_interpreter_prompt, get_max_iterations, get_max_tokens, get_system_prompt, supports_prompt_cache, supports_tools_cache
 from .tools import ToolManager
 from .types import Message, ModelInfo
@@ -63,6 +63,7 @@ class AgentManager:
         web_search_enabled: bool | None = False,
         user_sub: str | None = None,
         file_config: dict | None = None,
+        memory_enabled: bool | None = False,
     ) -> AsyncGenerator[str]:
         """Process a request and yield streaming responses as raw events"""
         try:
@@ -129,6 +130,20 @@ class AgentManager:
                 combined_system_prompt += "\n" + get_code_interpreter_prompt(paths)
                 hooks.append(sandbox.CodeInterpreterHook(code_interpreter))
 
+            # What this user told this agent before. Only for an agent that
+            # uses memory, and only for a caller the runtime could identify.
+            use_memory = bool(memory_enabled and memory.enabled() and user_sub and agent_id)
+            user_text = _text_of(prompt)
+            # Preferences go into the system prompt, which stays the same while
+            # they do; what was found for this request goes with the message.
+            if use_memory:
+                recalled = await asyncio.to_thread(memory.recall, user_sub, agent_id, user_text)
+                if recalled.standing:
+                    combined_system_prompt = f"{combined_system_prompt}\n\n{recalled.standing}"
+                processed_prompt = memory.with_recalled(processed_prompt, recalled.for_request)
+                if recalled.standing or recalled.for_request:
+                    logger.info("Recalled memories for this request")
+
             # Create Strands agent and stream response
             agent = StrandsAgent(
                 system_prompt=combined_system_prompt,
@@ -139,9 +154,18 @@ class AgentManager:
                 hooks=hooks,
             )
 
+            answer: list[str] = []
             async for event in agent.stream_async(processed_prompt):
                 if "event" in event:
+                    delta = event["event"].get("contentBlockDelta", {}).get("delta", {}).get("text")
+                    if delta:
+                        answer.append(delta)
                     yield json.dumps(event, ensure_ascii=False) + "\n"
+
+            # Record the turn once it is answered; the long-term memories are
+            # drawn from it in the background, by AgentCore.
+            if use_memory:
+                await asyncio.to_thread(memory.remember, user_sub, agent_id, session_id, user_text, "".join(answer))
 
         except Exception as e:
             logger.error(f"Error processing agent request: {e}", exc_info=True)
@@ -159,3 +183,10 @@ class AgentManager:
             # Cleanup is handled automatically by the dynamic MCP client
             if user_id:
                 logger.debug(f"Session cleanup for user {user_id} handled automatically")
+
+
+def _text_of(prompt: str | list[dict[str, Any]] | None) -> str:
+    """The text the user typed this turn (attachments are left out)."""
+    if isinstance(prompt, str):
+        return prompt
+    return "\n".join(b["text"] for b in prompt or [] if isinstance(b, dict) and isinstance(b.get("text"), str))
