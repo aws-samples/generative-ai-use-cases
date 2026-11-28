@@ -38,6 +38,8 @@ import ResearchAgentPage from './pages/ResearchAgentPage.tsx';
 import AgentBuilderListPage from './pages/agentBuilder/AgentBuilderListPage.tsx';
 import AgentBuilderEditPage from './pages/agentBuilder/AgentBuilderEditPage';
 import AgentBuilderChatPage from './pages/agentBuilder/AgentBuilderChatPage';
+import SkillListPage from './pages/agentBuilder/SkillListPage';
+import SkillEditPage from './pages/agentBuilder/SkillEditPage';
 import { MODELS } from './hooks/useModel';
 import { Authenticator } from '@aws-amplify/ui-react';
 import UseCaseBuilderEditPage from './pages/useCaseBuilder/UseCaseBuilderEditPage.tsx';
@@ -249,6 +251,24 @@ const routes: RouteObject[] = [
     ? {
         path: '/agent-builder/create',
         element: <AgentBuilderEditPage />,
+      }
+    : null,
+  agentBuilderEnabled
+    ? {
+        path: '/agent-builder/skills',
+        element: <SkillListPage />,
+      }
+    : null,
+  agentBuilderEnabled
+    ? {
+        path: '/agent-builder/skills/create',
+        element: <SkillEditPage />,
+      }
+    : null,
+  agentBuilderEnabled
+    ? {
+        path: '/agent-builder/skills/:skillId/edit',
+        element: <SkillEditPage />,
       }
     : null,
   agentBuilderEnabled

@@ -12,6 +12,7 @@ from strands.models import BedrockModel
 
 from . import sandbox
 from .config import extract_model_info, get_code_interpreter_prompt, get_max_iterations, get_max_tokens, get_system_prompt, supports_prompt_cache, supports_tools_cache
+from .skills import skills_plugins
 from .tools import ToolManager
 from .types import Message, ModelInfo
 from .utils import (
@@ -61,6 +62,7 @@ class AgentManager:
         agent_id: str | None = None,
         code_execution_enabled: bool | None = False,
         web_search_enabled: bool | None = False,
+        skills: list[dict[str, Any]] | None = None,
         user_sub: str | None = None,
         file_config: dict | None = None,
     ) -> AsyncGenerator[str]:
@@ -137,6 +139,7 @@ class AgentManager:
                 tools=tools,
                 callback_handler=self.iteration_limit_handler,
                 hooks=hooks,
+                plugins=skills_plugins(skills),
             )
 
             async for event in agent.stream_async(processed_prompt):

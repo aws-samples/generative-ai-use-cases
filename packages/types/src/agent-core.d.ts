@@ -1,3 +1,4 @@
+import { AgentSkillContent } from './agent-builder';
 import { Model } from './message';
 
 export type AgentCoreConfiguration = {
@@ -12,6 +13,7 @@ export type AgentCoreRequest = StrandsRequest & {
   mcp_servers?: string[]; // Changed to string array
   session_id?: string;
   code_execution_enabled?: boolean;
+  skills?: AgentSkillContent[];
   // The caller's Cognito id token. The runtime stores output files under its user.
   id_token?: string;
 };

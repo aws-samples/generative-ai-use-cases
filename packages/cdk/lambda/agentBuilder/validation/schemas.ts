@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import {
+  AGENT_SKILL_DESCRIPTION_MAX_LENGTH,
+  AGENT_SKILL_INSTRUCTIONS_MAX_LENGTH,
+  AGENT_SKILL_NAME_MAX_LENGTH,
+  AGENT_SKILL_NAME_PATTERN,
+} from '@generative-ai-use-cases/common';
 
 // MCP Server Reference Schema (what users specify)
 export const MCPServerReferenceSchema = z
@@ -81,6 +87,47 @@ export const MCPServerConfigSchema = z
     }
   );
 
+// Skill Schemas
+export const SkillIdSchema = z.string().uuid('Invalid skill ID format');
+
+// BatchGetItem reads at most 100 keys at a time; the total length of the
+// descriptions is what actually limits the skills of an agent.
+export const SkillIdsSchema = z
+  .array(SkillIdSchema)
+  .max(100, 'Maximum 100 skills allowed')
+  .optional()
+  .default([]);
+
+export const SkillRequestSchema = z.object({
+  name: z
+    .string()
+    .min(1, 'Skill name is required')
+    .max(
+      AGENT_SKILL_NAME_MAX_LENGTH,
+      `Skill name must be ${AGENT_SKILL_NAME_MAX_LENGTH} characters or less`
+    )
+    .regex(
+      AGENT_SKILL_NAME_PATTERN,
+      'Skill name must be lowercase letters, digits and single hyphens, not starting or ending with a hyphen'
+    ),
+  description: z
+    .string()
+    .trim()
+    .min(1, 'Skill description is required')
+    .max(
+      AGENT_SKILL_DESCRIPTION_MAX_LENGTH,
+      `Skill description must be ${AGENT_SKILL_DESCRIPTION_MAX_LENGTH.toLocaleString('en-US')} characters or less`
+    ),
+  instructions: z
+    .string()
+    .trim()
+    .min(1, 'Skill instructions are required')
+    .max(
+      AGENT_SKILL_INSTRUCTIONS_MAX_LENGTH,
+      `Skill instructions must be ${AGENT_SKILL_INSTRUCTIONS_MAX_LENGTH.toLocaleString('en-US')} characters or less`
+    ),
+});
+
 // Agent Schemas
 export const CreateAgentRequestSchema = z.object({
   name: z
@@ -103,6 +150,7 @@ export const CreateAgentRequestSchema = z.object({
     .default([]),
   codeExecutionEnabled: z.boolean().optional().default(false),
   webSearchEnabled: z.boolean().optional().default(false),
+  skillIds: SkillIdsSchema,
   isPublic: z.boolean().optional().default(false),
   tags: z
     .array(z.string().max(50, 'Each tag must be 50 characters or less'))
@@ -131,6 +179,7 @@ export const UpdateAgentRequestSchema = z.object({
     .max(10, 'Maximum 10 MCP servers allowed'),
   codeExecutionEnabled: z.boolean().optional().default(false),
   webSearchEnabled: z.boolean().optional().default(false),
+  skillIds: SkillIdsSchema,
   isPublic: z.boolean().optional().default(false),
   tags: z
     .array(z.string().max(50, 'Each tag must be 50 characters or less'))
@@ -175,4 +224,5 @@ export type ShareAgentRequestValidation = z.infer<
 export type CloneAgentRequestValidation = z.infer<
   typeof CloneAgentRequestSchema
 >;
+export type SkillRequestValidation = z.infer<typeof SkillRequestSchema>;
 export type MCPServerConfigValidation = z.infer<typeof MCPServerConfigSchema>;

@@ -6,6 +6,8 @@ interface UsePreventNavigationOptions {
   blockInternalNavigation?: boolean;
   /** Block browser operations (reload, close tab). Default: true */
   blockBrowserNavigation?: boolean;
+  /** Let a navigation through without asking, checked when it happens */
+  allow?: (nextPathname: string) => boolean;
 }
 
 /**
@@ -18,15 +20,19 @@ const usePreventNavigation = (
   hasUnsavedChanges: boolean,
   options: UsePreventNavigationOptions = {}
 ) => {
-  const { blockInternalNavigation = true, blockBrowserNavigation = true } =
-    options;
+  const {
+    blockInternalNavigation = true,
+    blockBrowserNavigation = true,
+    allow,
+  } = options;
 
   // Block app-internal navigation (sidebar links, back button)
   const blocker = useBlocker(
     ({ currentLocation, nextLocation }) =>
       blockInternalNavigation &&
       hasUnsavedChanges &&
-      currentLocation.pathname !== nextLocation.pathname
+      currentLocation.pathname !== nextLocation.pathname &&
+      !allow?.(nextLocation.pathname)
   );
 
   // Block browser operations (reload, close tab, navigate to external URL)

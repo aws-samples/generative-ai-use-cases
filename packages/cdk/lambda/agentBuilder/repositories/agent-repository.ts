@@ -290,6 +290,7 @@ export const createAgent = async (
     mcpServers: content.mcpServers,
     codeExecutionEnabled: content.codeExecutionEnabled ?? false,
     webSearchEnabled: content.webSearchEnabled ?? false,
+    skillIds: content.skillIds || [],
     tags: content.tags || [],
     isPublic: content.isPublic ?? false,
     starCount: 0,
@@ -374,6 +375,7 @@ export const updateAgent = async (
     description: content.description || '',
     codeExecutionEnabled: content.codeExecutionEnabled ?? false,
     webSearchEnabled: content.webSearchEnabled ?? false,
+    skillIds: content.skillIds || [],
     tags: content.tags || [],
     isPublic: isNowPublic,
     updatedAt: now,
@@ -392,7 +394,7 @@ export const updateAgent = async (
             TableName: TABLE_NAME,
             Key: { id: agent.id, dataType: agent.dataType },
             UpdateExpression:
-              'set #name = :name, description = :description, systemPrompt = :systemPrompt, modelId = :modelId, mcpServers = :mcpServers, codeExecutionEnabled = :codeExecutionEnabled, webSearchEnabled = :webSearchEnabled, tags = :tags, isPublic = :isPublic, updatedAt = :updatedAt, createdByEmail = :createdByEmail',
+              'set #name = :name, description = :description, systemPrompt = :systemPrompt, modelId = :modelId, mcpServers = :mcpServers, codeExecutionEnabled = :codeExecutionEnabled, webSearchEnabled = :webSearchEnabled, skillIds = :skillIds, tags = :tags, isPublic = :isPublic, updatedAt = :updatedAt, createdByEmail = :createdByEmail',
             ExpressionAttributeNames: { '#name': 'name' },
             ExpressionAttributeValues: {
               ':name': content.name,
@@ -402,6 +404,7 @@ export const updateAgent = async (
               ':mcpServers': content.mcpServers,
               ':codeExecutionEnabled': content.codeExecutionEnabled ?? false,
               ':webSearchEnabled': content.webSearchEnabled ?? false,
+              ':skillIds': content.skillIds || [],
               ':tags': content.tags || [],
               ':isPublic': isNowPublic,
               ':updatedAt': now,
@@ -420,6 +423,45 @@ export const updateAgent = async (
       ],
     })
   );
+};
+
+// The name and skills of each of the user's agents
+export const listAgentSkillIds = async (
+  userId: string
+): Promise<{ agentId: string; name: string; skillIds: string[] }[]> => {
+  const agents: { agentId: string; name: string; skillIds: string[] }[] = [];
+  let exclusiveStartKey: Record<string, unknown> | undefined;
+
+  do {
+    const result = await dynamoDbDocument.send(
+      new QueryCommand({
+        TableName: TABLE_NAME,
+        KeyConditionExpression:
+          '#id = :id and begins_with(#dataType, :dataTypePrefix)',
+        ProjectionExpression: 'agentId, #name, skillIds',
+        ExpressionAttributeNames: {
+          '#id': 'id',
+          '#dataType': 'dataType',
+          '#name': 'name',
+        },
+        ExpressionAttributeValues: {
+          ':id': `agent#${userId}`,
+          ':dataTypePrefix': 'agent#',
+        },
+        ExclusiveStartKey: exclusiveStartKey,
+      })
+    );
+    for (const item of result.Items || []) {
+      agents.push({
+        agentId: item.agentId,
+        name: item.name,
+        skillIds: item.skillIds || [],
+      });
+    }
+    exclusiveStartKey = result.LastEvaluatedKey;
+  } while (exclusiveStartKey);
+
+  return agents;
 };
 
 export const deleteAgent = async (

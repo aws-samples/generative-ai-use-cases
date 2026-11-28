@@ -23,6 +23,11 @@ vi.mock('../../../src/hooks/useMCPServers', () => ({
   default: () => [],
 }));
 
+// Skills are covered by AgentForm.skills.test.tsx
+vi.mock('../../../src/hooks/agentBuilder/useAgentSkills', () => ({
+  useSkillList: () => ({ skills: [], isLoading: false }),
+}));
+
 // Built-in tools the AI suggests, set per test
 const promptGeneration = vi.hoisted(() => ({
   suggestedBuiltInTools: [] as string[],

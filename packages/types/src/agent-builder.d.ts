@@ -30,6 +30,7 @@ export type AgentContent = {
   modelId: string;
   codeExecutionEnabled?: boolean;
   webSearchEnabled?: boolean;
+  skillIds?: string[]; // Skills of the agent's creator
   tags?: string[];
   isPublic?: boolean;
   createdByEmail?: string;
@@ -122,6 +123,7 @@ export type BaseAgentResponse = {
   mcpServers: MCPServerReference[]; // Changed to string array
   codeExecutionEnabled: boolean;
   webSearchEnabled: boolean;
+  skillIds: string[];
   tags: string[];
   isPublic: boolean;
   createdAt: string;
@@ -191,4 +193,48 @@ export type AgentCoreRuntimeRequest = {
   agentId?: string; // Agent ID for logging/tracking
   codeExecutionEnabled?: boolean; // Code execution setting
   webSearchEnabled?: boolean; // Web search setting
+  skills?: AgentSkillContent[]; // Skills the agent can load
+};
+
+// Agent skill: instructions an agent loads when a task needs them
+// Table: PartitionKey=skill#{userId}, SortKey=skill#{skillId}
+export type AgentSkillContent = {
+  name: string;
+  description: string;
+  instructions: string;
+};
+
+export type AgentSkillInTable = AgentSkillContent & {
+  id: string; // skill#{userId}
+  dataType: string; // skill#{skillId}
+  skillId: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type AgentSkill = AgentSkillContent & {
+  skillId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+// A skill in a list, without its instructions
+export type AgentSkillSummary = Omit<AgentSkill, 'instructions'>;
+
+export type CreateAgentSkillRequest = AgentSkillContent;
+export type UpdateAgentSkillRequest = AgentSkillContent;
+
+export type ListAgentSkillsResponse = {
+  skills: AgentSkillSummary[];
+};
+
+// A skill with the user's agents that use it
+export type GetAgentSkillResponse = AgentSkill & {
+  agents: { agentId: string; name: string }[];
+};
+
+// What a chat with an agent sends to the runtime
+export type ListSkillsOfAgentResponse = {
+  skills: AgentSkillContent[];
 };
